@@ -19,10 +19,10 @@ from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
 
 
 class DictMixin(object):
-    def __setitem__(self, key: Any, item: Any) -> None:
+    def __setitem__(self, key: Union[str, bytes], item: Any) -> None:
         self.__dict__[key] = item
 
-    def __getitem__(self, key: Any) -> Any:
+    def __getitem__(self, key: Union[str, bytes]) -> Any:
         return self.__dict__[key]
 
     def __repr__(self) -> str:
@@ -31,7 +31,7 @@ class DictMixin(object):
     def __len__(self) -> int:
         return len(self.keys())
 
-    def __delitem__(self, key: Any) -> None:
+    def __delitem__(self, key: Union[str, bytes]) -> None:
         self.__dict__[key] = None
 
     def __eq__(self, other: Any) -> bool:
@@ -47,7 +47,7 @@ class DictMixin(object):
     def __str__(self) -> str:
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
-    def has_key(self, k: Any) -> bool:
+    def has_key(self, k: Union[str, bytes]) -> bool:
         return k in self.__dict__
 
     def update(self, *args: Any, **kwargs: Any) -> None:
@@ -62,7 +62,7 @@ class DictMixin(object):
     def items(self) -> List:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def get(self, key: Any, default: Optional[Any] = None) -> Any:
+    def get(self, key: Union[str, bytes], default: Optional[Any] = None) -> Any:
         if key in self.__dict__:
             return self.__dict__[key]
         return default
