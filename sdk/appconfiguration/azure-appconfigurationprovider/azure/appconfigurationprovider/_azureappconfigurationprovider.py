@@ -136,7 +136,8 @@ class AzureAppConfigurationProvider:
 
         if referenced_client:
             try:
-                return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
+                return referenced_client.get_secret(key_vault_identifier.name,
+                    version=key_vault_identifier.version).value
             except ResourceNotFoundError:
                 raise KeyVaultReferenceError("Key Vault %s does not contain secret %s" % (
                     key_vault_identifier.vault_url, key_vault_identifier.name))
