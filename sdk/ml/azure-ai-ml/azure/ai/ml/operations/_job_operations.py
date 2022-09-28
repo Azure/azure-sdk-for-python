@@ -1166,7 +1166,7 @@ class JobOperations(_ScopeDependentOperations):
             and getattr(pipeline_job.component, "_source", None) == ComponentSource.YAML_COMPONENT
         ):
             pipeline_job.component = resolver(
-                pipeline_job._to_component(silent=True),
+                pipeline_job.component,
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
 

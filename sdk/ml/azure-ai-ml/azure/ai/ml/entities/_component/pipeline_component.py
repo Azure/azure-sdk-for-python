@@ -69,6 +69,7 @@ class PipelineComponent(Component):
         inputs: Dict = None,
         outputs: Dict = None,
         jobs: Dict[str, BaseNode] = None,
+        is_deterministic: bool = None,
         **kwargs,
     ):
         kwargs[COMPONENT_TYPE] = NodeType.PIPELINE
@@ -80,6 +81,7 @@ class PipelineComponent(Component):
             display_name=display_name,
             inputs=inputs,
             outputs=outputs,
+            is_deterministic=is_deterministic,
             **kwargs,
         )
         self._jobs = self._process_jobs(jobs) if jobs else {}
