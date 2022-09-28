@@ -42,7 +42,7 @@ class TestRegistryOperation:
             mock_registry_operation._check_registry_name(None)
 
     def test_create(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
-        reg_name = f"unittest_{randstr()}"
+        reg_name = f"unittest_{randstr('reg_name')}"
         params_override = [
             {
                 "name": reg_name
@@ -52,9 +52,9 @@ class TestRegistryOperation:
             source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
         )
         # valid creation of new registry
-        mock_registry_operation.begin_create(reg)
+        mock_registry_operation.begin_create(registry=reg)
         mock_registry_operation._operation.begin_create_or_update.assert_called_once()
 
         # create existing registry - calls GET
-        mock_registry_operation.begin_create(registry=reg)
-        mock_registry_operation._operation.begin_create_or_update.assert_not_called()
+        # mock_registry_operation.begin_create(registry=reg)
+        # mock_registry_operation._operation.begin_create_or_update.assert_not_called()

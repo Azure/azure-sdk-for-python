@@ -6,10 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
 import warnings
+from typing import TYPE_CHECKING
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (ClientAuthenticationError,
+                                   HttpResponseError, ResourceExistsError,
+                                   ResourceNotFoundError, map_error)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -25,9 +27,11 @@ from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import (Any, Callable, Dict, Generic, Iterable, Optional,
+                        TypeVar, Union)
     T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+    ClsType = Optional[Callable[[
+        PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -261,6 +265,8 @@ def build_create_or_update_request_initial(
     )
 
 # fmt: on
+
+
 class RegistriesOperations(object):
     """RegistriesOperations operations.
 
@@ -306,16 +312,19 @@ class RegistriesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.RegistryTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop(
+            'api_version', "2022-10-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryTrackedResourceArmPaginatedResult"]
+        # type: ClsType["_models.RegistryTrackedResourceArmPaginatedResult"]
+        cls = kwargs.pop('cls', None)
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
@@ -326,7 +335,7 @@ class RegistriesOperations(object):
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
@@ -339,7 +348,8 @@ class RegistriesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("RegistryTrackedResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize(
+                "RegistryTrackedResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -348,21 +358,25 @@ class RegistriesOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(
+                request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(status_code=response.status_code,
+                          response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
-
 
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/registries'}  # type: ignore
+    list_by_subscription.metadata = {
+        'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/registries'}  # type: ignore
 
     @distributed_trace
     def list(
@@ -390,16 +404,19 @@ class RegistriesOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.RegistryTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop(
+            'api_version', "2022-10-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.RegistryTrackedResourceArmPaginatedResult"]
+        # type: ClsType["_models.RegistryTrackedResourceArmPaginatedResult"]
+        cls = kwargs.pop('cls', None)
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -411,7 +428,7 @@ class RegistriesOperations(object):
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
@@ -425,7 +442,8 @@ class RegistriesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("RegistryTrackedResourceArmPaginatedResult", pipeline_response)
+            deserialized = self._deserialize(
+                "RegistryTrackedResourceArmPaginatedResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -434,21 +452,25 @@ class RegistriesOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(
+                request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+                map_error(status_code=response.status_code,
+                          response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(
+                    response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
-
 
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries'}  # type: ignore
+    list.metadata = {
+        'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries'}  # type: ignore
 
     @distributed_trace
     def delete(
@@ -480,9 +502,9 @@ class RegistriesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop(
+            'api_version', "2022-10-01-preview")  # type: str
 
-        
         request = build_delete_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
@@ -493,19 +515,23 @@ class RegistriesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(status_code=response.status_code,
+                      response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
-
+    delete.metadata = {
+        'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
 
     @distributed_trace
     def get(
@@ -537,9 +563,9 @@ class RegistriesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+        api_version = kwargs.pop(
+            'api_version', "2022-10-01-preview")  # type: str
 
-        
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
@@ -550,13 +576,17 @@ class RegistriesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(status_code=response.status_code,
+                      response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Registry', pipeline_response)
 
@@ -566,7 +596,6 @@ class RegistriesOperations(object):
         return deserialized
 
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
-
 
     @distributed_trace
     def update(
@@ -601,10 +630,13 @@ class RegistriesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            'api_version', "2022-10-01-preview")  # type: str
+        content_type = kwargs.pop(
+            'content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'PartialRegistryPartialTrackedResource')
+        _json = self._serialize.body(
+            body, 'PartialRegistryPartialTrackedResource')
 
         request = build_update_request(
             subscription_id=self._config.subscription_id,
@@ -618,13 +650,17 @@ class RegistriesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            map_error(status_code=response.status_code,
+                      response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(
+                response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Registry', pipeline_response)
 
@@ -633,8 +669,8 @@ class RegistriesOperations(object):
 
         return deserialized
 
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
-
+    update.metadata = {
+        'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
 
     def _create_or_update_initial(
         self,
@@ -650,8 +686,10 @@ class RegistriesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop(
+            'api_version', "2022-10-01-preview")  # type: str
+        content_type = kwargs.pop(
+            'content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'Registry')
 
@@ -667,12 +705,15 @@ class RegistriesOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+        if response.status_code not in [200, 201, 202]:
+            map_error(status_code=response.status_code,
+                      response=response, error_map=error_map)
+            raise HttpResponseError(
+                response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
             deserialized = self._deserialize('Registry', pipeline_response)
@@ -680,13 +721,16 @@ class RegistriesOperations(object):
         if response.status_code == 201:
             deserialized = self._deserialize('Registry', pipeline_response)
 
+        if response.status_code == 202:
+            deserialized = self._deserialize('Registry', pipeline_response)
+
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
-
+    _create_or_update_initial.metadata = {
+        'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
 
     @distributed_trace
     def begin_create_or_update(
@@ -722,15 +766,19 @@ class RegistriesOperations(object):
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Registry]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        api_version = kwargs.pop(
+            'api_version', "2022-10-01-preview")  # type: str
+        content_type = kwargs.pop(
+            'content_type', "application/json")  # type: Optional[str]
+        # type: Union[bool, azure.core.polling.PollingMethod]
+        polling = kwargs.pop('polling', True)
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cont_token = kwargs.pop('continuation_token',
+                                None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
@@ -738,7 +786,7 @@ class RegistriesOperations(object):
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
         kwargs.pop('error_map', None)
@@ -750,10 +798,13 @@ class RegistriesOperations(object):
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, lro_options={
+                                        'final-state-via': 'location'}, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
@@ -764,4 +815,5 @@ class RegistriesOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
+    begin_create_or_update.metadata = {
+        'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}'}  # type: ignore
