@@ -336,7 +336,7 @@ def _http_send(logger, data_to_send, service_endpoint_uri, send_timeout=10):
         },
     )
     try:
-        response = http_client_t.urlopen(request, timeout=send_timeout)
+        response = http_client_t.urlopen(request, timeout=send_timeout) # nosec
         logger.info("Sending %d bytes", len(content))
         status_code = response.getcode()
         if 200 <= status_code < 300:
