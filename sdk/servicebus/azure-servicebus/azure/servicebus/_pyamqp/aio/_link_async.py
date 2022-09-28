@@ -8,8 +8,6 @@ from typing import Optional
 import uuid
 import logging
 
-import asyncio
-
 from ..endpoints import Source, Target
 from ..constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
 from ..performatives import (

@@ -6,7 +6,6 @@
 
 import logging
 from datetime import datetime
-import asyncio
 
 from ..utils import utc_now, utc_from_timestamp
 from ._management_link_async import ManagementLink
