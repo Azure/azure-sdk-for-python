@@ -23,7 +23,6 @@ def mock_registry_operation(
     )
 
 
-@pytest.mark.unittest
 class TestRegistryOperation:
     def test_list(self, mock_registry_operation: RegistryOperations) -> None:
         mock_registry_operation.list()
@@ -39,7 +38,7 @@ class TestRegistryOperation:
             mock_registry_operation._check_registry_name(None)
 
     def test_create(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
-        reg_name = f"unittest_{randstr()}"
+        reg_name = f"unittest_{randstr('reg_name')}"
         params_override = [
             {
                 "name": reg_name

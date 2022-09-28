@@ -20,7 +20,7 @@ class TestRegistry(AzureRecordedTestCase):
         crud_registry_client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
-        reg_name = f"e2etest_{randstr("reg_name")}"
+        reg_name = f"e2etest_{randstr('reg_name')}"
         params_override = [
             {
                 "name": reg_name,

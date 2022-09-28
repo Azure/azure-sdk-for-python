@@ -119,23 +119,14 @@ class RegistryOperations:
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """
-        existing_registry = None
-        try:
-            existing_registry = self.get(name=registry.name)
-        except Exception:  # pylint: disable=broad-except
-            pass
-
-        if existing_registry:
-            # for now return existing registries until UPDATE is implemented
-            return existing_registry
-
         registry_data = registry._to_rest_object()
         poller = self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
             registry_name=registry.name,
             body=registry_data,
             polling=self._get_polling(registry.name),
-             cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: Registry._from_rest_object(
+                deserialized),
         )
 
         return poller
