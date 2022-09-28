@@ -29,21 +29,20 @@ def check_parameters(
 
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
     ci = Path(folder_path, "ci.yml")
-    ci_template_path = template_path / 'ci.yml'
     service_name = folder_path.name
-    name = package_name.split('-')[-1]
+    safe_name = package_name.replace("-", "")
     if not ci.exists():
-        with open(ci_template_path, "r") as file_in:
-            content = file_in.readlines()
-        content = [line.replace("ServiceName", service_name).replace('PackageName', name) for line in content]
+        env = Environment(loader=FileSystemLoader(template_path), keep_trailing_newline=True)
+        template = env.get_template('ci.yml')
+        content = template.render(package_name=package_name, service_name=service_name, safe_name=safe_name)
     else:
         with open(ci, "r") as file_in:
             content = file_in.readlines()
             for line in content:
-                if f'{package_name}' in line:
+                if package_name in line:
                     return
             content.append(f'    - name: {package_name}\n')
-            content.append(f'      safeName: {package_name.replace("-", "")}\n')
+            content.append(f'      safeName: {safe_name}\n')
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
@@ -69,7 +68,8 @@ def generate_swagger_readme(work_path: str, env: Environment, **kwargs: Any) -> 
 
     # render file
     template = env.get_template('README.md')
-    result = template.render(**kwargs)
+    input_file = kwargs.pop("input_file", "").split(",")
+    result = template.render(input_file=input_file, **kwargs)
     swagger_readme = swagger_path / Path('README.md')
     with open(swagger_readme, 'w') as fd:
         fd.write(result)
