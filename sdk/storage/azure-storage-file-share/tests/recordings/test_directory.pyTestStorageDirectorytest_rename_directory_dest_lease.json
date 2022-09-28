@@ -1,0 +1,287 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea?restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:25 GMT",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 21:24:22 GMT",
+        "ETag": "\u00220x8DAA197D0A43531\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea/dir1?restype=directory",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:25 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "inherit",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "ETag": "\u00220x8DAA197D0B70C6E\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:24 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-09-28T21:24:24.0137326Z",
+        "x-ms-file-creation-time": "2022-09-28T21:24:24.0137326Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2022-09-28T21:24:24.0137326Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "17100207456270243504*9622787259914961209",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea/dir2?restype=directory",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:25 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "inherit",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "ETag": "\u00220x8DAA197D0C847F4\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:24 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-09-28T21:24:24.1266676Z",
+        "x-ms-file-creation-time": "2022-09-28T21:24:24.1266676Z",
+        "x-ms-file-id": "11529285414812647424",
+        "x-ms-file-last-write-time": "2022-09-28T21:24:24.1266676Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "17100207456270243504*9622787259914961209",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea/dir2/test",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-content-length": "11",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:25 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "Inherit",
+        "x-ms-type": "file",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "ETag": "\u00220x8DAA197D0DF27F1\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:24 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-09-28T21:24:24.2765809Z",
+        "x-ms-file-creation-time": "2022-09-28T21:24:24.2765809Z",
+        "x-ms-file-id": "16140971433240035328",
+        "x-ms-file-last-write-time": "2022-09-28T21:24:24.2765809Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "3254952746172754359*9622787259914961209",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea/dir2/test?comp=range",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "11",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:25 GMT",
+        "x-ms-range": "bytes=0-10",
+        "x-ms-version": "2021-06-08",
+        "x-ms-write": "update"
+      },
+      "RequestBody": "SGVsbG8gV29ybGQ=",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Content-MD5": "sQqNsWTgdUEFt6mb5y4/5Q==",
+        "Date": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "ETag": "\u00220x8DAA197D0F126B0\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:24 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-last-write-time": "2022-09-28T21:24:24.3945136Z",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea/dir2/test?comp=lease",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:25 GMT",
+        "x-ms-lease-action": "acquire",
+        "x-ms-lease-duration": "-1",
+        "x-ms-proposed-lease-id": "c79ba41e-0bb7-44e7-a2e6-c0df844539a5",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "ETag": "\u00220x8DAA197D0F126B0\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:24 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-lease-id": "c79ba41e-0bb7-44e7-a2e6-c0df844539a5",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea/dir2%2Ftest?restype=directory\u0026comp=rename",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:26 GMT",
+        "x-ms-destination-lease-id": "c79ba41e-0bb7-44e7-a2e6-c0df844539a5",
+        "x-ms-file-rename-replace-if-exists": "true",
+        "x-ms-file-rename-source": "https://storagename.file.core.windows.net/utsharea4022fea/dir1",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "ETag": "\u00220x8DAA197D1152417\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:24 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-09-28T21:24:24.6303767Z",
+        "x-ms-file-creation-time": "2022-09-28T21:24:24.0137326Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2022-09-28T21:24:24.0137326Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "17100207456270243504*9622787259914961209",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea4022fea/dir2%2Ftest?restype=directory",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 21:24:26 GMT",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 21:24:23 GMT",
+        "ETag": "\u00220x8DAA197D1152417\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 21:24:24 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2022-09-28T21:24:24.6303767Z",
+        "x-ms-file-creation-time": "2022-09-28T21:24:24.0137326Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2022-09-28T21:24:24.0137326Z",
+        "x-ms-file-parent-id": "11529285414812647424",
+        "x-ms-file-permission-key": "17100207456270243504*9622787259914961209",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

@@ -18,7 +18,8 @@ from azure.storage.fileshare import (
     ShareServiceClient,
     StorageErrorCode,
 )
-from devtools_testutils.storage import StorageTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
@@ -26,7 +27,7 @@ TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S
                         'S-1-5-21-397955417-626881126-188441444-3053964)'
 
 
-class StorageDirectoryTest(StorageTestCase):
+class TestStorageDirectory(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
@@ -49,7 +50,11 @@ class StorageDirectoryTest(StorageTestCase):
 
     # --Test cases for directories ----------------------------------------------
     @FileSharePreparer()
-    def test_create_directories(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_directories(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -57,10 +62,14 @@ class StorageDirectoryTest(StorageTestCase):
         created = share_client.create_directory('dir1')
 
         # Assert
-        self.assertTrue(created)
+        assert created
 
     @FileSharePreparer()
-    def test_create_directories_with_metadata(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_directories_with_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         metadata = {'hello': 'world', 'number': '42'}
@@ -70,23 +79,31 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         md = directory.get_directory_properties().metadata
-        self.assertDictEqual(md, metadata)
+        assert md == metadata
 
     @FileSharePreparer()
-    def test_create_directories_fail_on_exist(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_directories_fail_on_exist(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
         # Act
         created = share_client.create_directory('dir1')
-        with self.assertRaises(ResourceExistsError):
+        with pytest.raises(ResourceExistsError):
             share_client.create_directory('dir1')
 
         # Assert
-        self.assertTrue(created)
+        assert created
 
     @FileSharePreparer()
-    def test_create_directory_set_smb_properties(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_directory_set_smb_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -103,15 +120,19 @@ class StorageDirectoryTest(StorageTestCase):
         directory_properties = directory_client.get_directory_properties()
 
         # Assert
-        self.assertIsNotNone(directory_properties)
-        self.assertEqual(file_creation_time, directory_properties.creation_time)
-        self.assertEqual(file_last_write_time, directory_properties.last_write_time)
-        self.assertEqual(file_change_time, directory_properties.change_time)
-        self.assertIn('ReadOnly', directory_properties.file_attributes)
-        self.assertIn('Directory', directory_properties.file_attributes)
+        assert directory_properties is not None
+        assert file_creation_time == directory_properties.creation_time
+        assert file_last_write_time == directory_properties.last_write_time
+        assert file_change_time == directory_properties.change_time
+        assert 'ReadOnly' in directory_properties.file_attributes
+        assert 'Directory' in directory_properties.file_attributes
 
     @FileSharePreparer()
-    def test_create_subdirectories(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_subdirectories(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -120,11 +141,15 @@ class StorageDirectoryTest(StorageTestCase):
         created = directory.create_subdirectory('dir2')
 
         # Assert
-        self.assertTrue(created)
-        self.assertEqual(created.directory_path, 'dir1/dir2')
+        assert created
+        assert created.directory_path == 'dir1/dir2'
 
     @FileSharePreparer()
-    def test_create_subdirectories_with_metadata(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_subdirectories_with_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -134,13 +159,17 @@ class StorageDirectoryTest(StorageTestCase):
         created = directory.create_subdirectory('dir2', metadata=metadata)
 
         # Assert
-        self.assertTrue(created)
-        self.assertEqual(created.directory_path, 'dir1/dir2')
+        assert created
+        assert created.directory_path == 'dir1/dir2'
         sub_metadata = created.get_directory_properties().metadata
-        self.assertEqual(sub_metadata, metadata)
+        assert sub_metadata == metadata
 
     @FileSharePreparer()
-    def test_create_file_in_directory(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_file_in_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         file_data = b'12345678' * 1024
         file_name = self.get_resource_name('file')
@@ -152,10 +181,14 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         file_content = new_file.download_file().readall()
-        self.assertEqual(file_content, file_data)
+        assert file_content == file_data
 
     @FileSharePreparer()
-    def test_delete_file_in_directory(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_delete_file_in_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         file_name = self.get_resource_name('file')
         share_client = self.fsc.get_share_client(self.share_name)
@@ -166,23 +199,31 @@ class StorageDirectoryTest(StorageTestCase):
         deleted = directory.delete_file(file_name)
 
         # Assert
-        self.assertIsNone(deleted)
-        with self.assertRaises(ResourceNotFoundError):
+        assert deleted is None
+        with pytest.raises(ResourceNotFoundError):
             new_file.get_file_properties()
 
     @FileSharePreparer()
-    def test_share_directory_exists(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_share_directory_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
 
         directory2 = share_client.get_directory_client("dir2")
 
-        self.assertTrue(directory.exists())
-        self.assertFalse(directory2.exists())
+        assert directory.exists()
+        assert not directory2.exists()
 
     @FileSharePreparer()
-    def test_delete_subdirectories(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_delete_subdirectories(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -192,13 +233,17 @@ class StorageDirectoryTest(StorageTestCase):
         deleted = directory.delete_subdirectory('dir2')
 
         # Assert
-        self.assertIsNone(deleted)
+        assert deleted is None
         subdir = directory.get_subdirectory_client('dir2')
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             subdir.get_directory_properties()
 
     @FileSharePreparer()
-    def test_get_directory_properties(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_directory_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -207,12 +252,16 @@ class StorageDirectoryTest(StorageTestCase):
         props = directory.get_directory_properties()
 
         # Assert
-        self.assertIsNotNone(props)
-        self.assertIsNotNone(props.etag)
-        self.assertIsNotNone(props.last_modified)
+        assert props is not None
+        assert props.etag is not None
+        assert props.last_modified is not None
 
     @FileSharePreparer()
-    def test_get_directory_properties_with_snapshot(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_directory_properties_with_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         metadata = {"test1": "foo", "test2": "bar"}
@@ -227,13 +276,17 @@ class StorageDirectoryTest(StorageTestCase):
         props = snap_dir.get_directory_properties()
 
         # Assert
-        self.assertIsNotNone(props)
-        self.assertIsNotNone(props.etag)
-        self.assertIsNotNone(props.last_modified)
-        self.assertDictEqual(metadata, props.metadata)
+        assert props is not None
+        assert props.etag is not None
+        assert props.last_modified is not None
+        assert metadata == props.metadata
 
     @FileSharePreparer()
-    def test_get_directory_metadata_with_snapshot(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_directory_metadata_with_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         metadata = {"test1": "foo", "test2": "bar"}
@@ -248,23 +301,31 @@ class StorageDirectoryTest(StorageTestCase):
         snapshot_metadata = snap_dir.get_directory_properties().metadata
 
         # Assert
-        self.assertIsNotNone(snapshot_metadata)
-        self.assertDictEqual(metadata, snapshot_metadata)
+        assert snapshot_metadata is not None
+        assert metadata == snapshot_metadata
 
     @FileSharePreparer()
-    def test_get_directory_properties_with_non_existing_directory(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_directory_properties_with_non_existing_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
 
         # Act
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             directory.get_directory_properties()
 
             # Assert
 
     @FileSharePreparer()
-    def test_directory_exists(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_directory_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -273,35 +334,47 @@ class StorageDirectoryTest(StorageTestCase):
         exists = directory.get_directory_properties()
 
         # Assert
-        self.assertTrue(exists)
+        assert exists
 
     @FileSharePreparer()
-    def test_directory_not_exists(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_directory_not_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
 
         # Act
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             directory.get_directory_properties()
 
         # Assert
 
     @FileSharePreparer()
-    def test_directory_parent_not_exists(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_directory_parent_not_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('missing1/missing2')
 
         # Act
-        with self.assertRaises(ResourceNotFoundError) as e:
+        with pytest.raises(ResourceNotFoundError) as e:
             directory.get_directory_properties()
 
         # Assert
-        self.assertEqual(e.exception.error_code, StorageErrorCode.parent_not_found)
+        assert e.value.error_code == StorageErrorCode.parent_not_found
 
     @FileSharePreparer()
-    def test_directory_exists_with_snapshot(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_directory_exists_with_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -314,10 +387,14 @@ class StorageDirectoryTest(StorageTestCase):
         exists = snap_dir.get_directory_properties()
 
         # Assert
-        self.assertTrue(exists)
+        assert exists
 
     @FileSharePreparer()
-    def test_directory_not_exists_with_snapshot(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_directory_not_exists_with_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
@@ -327,13 +404,17 @@ class StorageDirectoryTest(StorageTestCase):
         share_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot)
         snap_dir = share_client.get_directory_client('dir1')
 
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             snap_dir.get_directory_properties()
 
         # Assert
 
     @FileSharePreparer()
-    def test_get_set_directory_metadata(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_set_directory_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -344,10 +425,14 @@ class StorageDirectoryTest(StorageTestCase):
         md = directory.get_directory_properties().metadata
 
         # Assert
-        self.assertDictEqual(md, metadata)
+        assert md == metadata
 
     @FileSharePreparer()
-    def test_set_directory_properties_with_empty_smb_properties(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_set_directory_properties_with_empty_smb_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory_client = share_client.create_directory('dir1')
@@ -359,15 +444,16 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         # Make sure set empty smb_properties doesn't change smb_properties
-        self.assertEqual(directory_properties_on_creation.creation_time,
-                          directory_properties.creation_time)
-        self.assertEqual(directory_properties_on_creation.last_write_time,
-                          directory_properties.last_write_time)
-        self.assertEqual(directory_properties_on_creation.permission_key,
-                          directory_properties.permission_key)
+        assert directory_properties_on_creation.creation_time == directory_properties.creation_time
+        assert directory_properties_on_creation.last_write_time == directory_properties.last_write_time
+        assert directory_properties_on_creation.permission_key == directory_properties.permission_key
 
     @FileSharePreparer()
-    def test_set_directory_properties_with_file_permission_key(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_set_directory_properties_with_file_permission_key(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory_client = share_client.create_directory('dir1')
@@ -392,13 +478,17 @@ class StorageDirectoryTest(StorageTestCase):
         directory_properties = directory_client.get_directory_properties()
 
         # Assert
-        self.assertIsNotNone(directory_properties)
-        self.assertEqual(directory_properties.creation_time, new_creation_time)
-        self.assertEqual(directory_properties.last_write_time, new_last_write_time)
-        self.assertEqual(directory_properties.change_time, new_change_time)
+        assert directory_properties is not None
+        assert directory_properties.creation_time == new_creation_time
+        assert directory_properties.last_write_time == new_last_write_time
+        assert directory_properties.change_time == new_change_time
 
     @FileSharePreparer()
-    def test_list_subdirectories_and_files(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_subdirectories_and_files(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -413,22 +503,26 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(directory.list_directories_and_files())
 
         # Assert
-        self.assertEqual(len(list_dir), 6)
-        self.assertEqual(list_dir[0]['name'], 'subdir1')
-        self.assertEqual(list_dir[0]['is_directory'], True)
-        self.assertEqual(list_dir[1]['name'], 'subdir2')
-        self.assertEqual(list_dir[1]['is_directory'], True)
-        self.assertEqual(list_dir[2]['name'], 'subdir3')
-        self.assertEqual(list_dir[2]['is_directory'], True)
-        self.assertEqual(list_dir[3]['name'], 'file1')
-        self.assertEqual(list_dir[3]['is_directory'], False)
-        self.assertEqual(list_dir[4]['name'], 'file2')
-        self.assertEqual(list_dir[4]['is_directory'], False)
-        self.assertEqual(list_dir[5]['name'], 'file3')
-        self.assertEqual(list_dir[5]['is_directory'], False)
+        assert len(list_dir) == 6
+        assert list_dir[0]['name'] == 'subdir1'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'subdir2'
+        assert list_dir[1]['is_directory'] == True
+        assert list_dir[2]['name'] == 'subdir3'
+        assert list_dir[2]['is_directory'] == True
+        assert list_dir[3]['name'] == 'file1'
+        assert list_dir[3]['is_directory'] == False
+        assert list_dir[4]['name'] == 'file2'
+        assert list_dir[4]['is_directory'] == False
+        assert list_dir[5]['name'] == 'file3'
+        assert list_dir[5]['is_directory'] == False
 
     @FileSharePreparer()
-    def test_list_subdirectories_and_files_include_other_data(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_subdirectories_and_files_include_other_data(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -442,34 +536,42 @@ class StorageDirectoryTest(StorageTestCase):
         # Act
         list_dir = list(directory.list_directories_and_files(include=["timestamps", "Etag", "Attributes", "PermissionKey"]))
 
-        self.assertEqual(len(list_dir), 6)
-        self.assertIsNotNone(list_dir[0].etag)
-        self.assertIsNotNone(list_dir[1].file_attributes)
-        self.assertIsNotNone(list_dir[1].last_access_time)
-        self.assertIsNotNone(list_dir[1].last_write_time)
-        self.assertIsNotNone(list_dir[2].change_time)
-        self.assertIsNotNone(list_dir[2].creation_time)
-        self.assertIsNotNone(list_dir[2].file_id)
+        assert len(list_dir) == 6
+        assert list_dir[0].etag is not None
+        assert list_dir[1].file_attributes is not None
+        assert list_dir[1].last_access_time is not None
+        assert list_dir[1].last_write_time is not None
+        assert list_dir[2].change_time is not None
+        assert list_dir[2].creation_time is not None
+        assert list_dir[2].file_id is not None
         try:
             share_client.delete_share()
         except:
             pass
 
     @FileSharePreparer()
-    def test_list_subdirectories_and_files_include_extended_info(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_subdirectories_and_files_include_extended_info(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
         directory.create_subdirectory("subdir1")
 
         list_dir = list(directory.list_directories_and_files(include_extended_info=True))
-        self.assertEqual(len(list_dir), 1)
-        self.assertIsNotNone(list_dir[0].file_id)
-        self.assertIsNone(list_dir[0].file_attributes)
-        self.assertIsNone(list_dir[0].last_access_time)
+        assert len(list_dir) == 1
+        assert list_dir[0].file_id is not None
+        assert list_dir[0].file_attributes is None
+        assert list_dir[0].last_access_time is None
 
     @FileSharePreparer()
-    def test_list_subdirectories_and_files_with_prefix(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_subdirectories_and_files_with_prefix(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -484,16 +586,20 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(directory.list_directories_and_files(name_starts_with="sub"))
 
         # Assert
-        self.assertEqual(len(list_dir), 3)
-        self.assertEqual(list_dir[0]['name'], 'subdir1')
-        self.assertEqual(list_dir[0]['is_directory'], True)
-        self.assertEqual(list_dir[1]['name'], 'subdir2')
-        self.assertEqual(list_dir[1]['is_directory'], True)
-        self.assertEqual(list_dir[2]['name'], 'subdir3')
-        self.assertEqual(list_dir[2]['is_directory'], True)
+        assert len(list_dir) == 3
+        assert list_dir[0]['name'] == 'subdir1'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'subdir2'
+        assert list_dir[1]['is_directory'] == True
+        assert list_dir[2]['name'] == 'subdir3'
+        assert list_dir[2]['is_directory'] == True
 
     @FileSharePreparer()
-    def test_list_subdirectories_and_files_with_snapshot(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_subdirectories_and_files_with_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -513,17 +619,21 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(snapshot_dir.list_directories_and_files())
 
         # Assert
-        self.assertEqual(len(list_dir), 3)
-        self.assertEqual(list_dir[0]['name'], 'subdir1')
-        self.assertEqual(list_dir[0]['is_directory'], True)
-        self.assertEqual(list_dir[1]['name'], 'subdir2')
-        self.assertEqual(list_dir[1]['is_directory'], True)
-        self.assertEqual(list_dir[2]['name'], 'file1')
-        self.assertEqual(list_dir[2]['is_directory'], False)
-        self.assertEqual(list_dir[2]['size'], 5)
+        assert len(list_dir) == 3
+        assert list_dir[0]['name'] == 'subdir1'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'subdir2'
+        assert list_dir[1]['is_directory'] == True
+        assert list_dir[2]['name'] == 'file1'
+        assert list_dir[2]['is_directory'] == False
+        assert list_dir[2]['size'] == 5
 
     @FileSharePreparer()
-    def test_list_nested_subdirectories_and_files(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_nested_subdirectories_and_files(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -538,15 +648,19 @@ class StorageDirectoryTest(StorageTestCase):
         list_dir = list(directory.list_directories_and_files())
 
         # Assert
-        self.assertEqual(len(list_dir), 2)
-        self.assertEqual(list_dir[0]['name'], 'subdir1')
-        self.assertEqual(list_dir[0]['is_directory'], True)
-        self.assertEqual(list_dir[1]['name'], 'file1')
-        self.assertEqual(list_dir[1]['is_directory'], False)
-        self.assertEqual(list_dir[1]['size'], 5)
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == 'subdir1'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'file1'
+        assert list_dir[1]['is_directory'] == False
+        assert list_dir[1]['size'] == 5
 
     @FileSharePreparer()
-    def test_delete_directory_with_existing_share(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_delete_directory_with_existing_share(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -555,24 +669,32 @@ class StorageDirectoryTest(StorageTestCase):
         deleted = directory.delete_directory()
 
         # Assert
-        self.assertIsNone(deleted)
-        with self.assertRaises(ResourceNotFoundError):
+        assert deleted is None
+        with pytest.raises(ResourceNotFoundError):
             directory.get_directory_properties()
 
     @FileSharePreparer()
-    def test_delete_directory_with_non_existing_directory(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_delete_directory_with_non_existing_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
 
         # Act
-        with self.assertRaises(ResourceNotFoundError):
+        with pytest.raises(ResourceNotFoundError):
             directory.delete_directory()
 
         # Assert
 
     @FileSharePreparer()
-    def test_get_directory_properties_server_encryption(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_directory_properties_server_encryption(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         directory = share_client.create_directory('dir1')
@@ -581,13 +703,17 @@ class StorageDirectoryTest(StorageTestCase):
         props = directory.get_directory_properties()
 
         # Assert
-        self.assertIsNotNone(props)
-        self.assertIsNotNone(props.etag)
-        self.assertIsNotNone(props.last_modified)
-        self.assertTrue(props.server_encrypted)
+        assert props is not None
+        assert props.etag is not None
+        assert props.last_modified is not None
+        assert props.server_encrypted
 
     @FileSharePreparer()
-    def test_rename_directory(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -598,10 +724,14 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
+        assert props is not None
 
     @FileSharePreparer()
-    def test_rename_directory_different_directory(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory_different_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -616,10 +746,14 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
+        assert props is not None
 
     @FileSharePreparer()
-    def test_rename_directory_ignore_readonly(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory_ignore_readonly(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -637,11 +771,15 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
-        self.assertTrue(props.is_directory)
+        assert props is not None
+        assert props.is_directory
 
     @FileSharePreparer()
-    def test_rename_directory_file_permission(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory_file_permission(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
         file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
@@ -653,11 +791,15 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
-        self.assertEqual(file_permission_key, props.permission_key)
+        assert props is not None
+        assert file_permission_key == props.permission_key
 
     @FileSharePreparer()
-    def test_rename_directory_preserve_permission(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory_preserve_permission(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -670,11 +812,15 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
-        self.assertEqual(source_permission_key, props.permission_key)
+        assert props is not None
+        assert source_permission_key == props.permission_key
 
     @FileSharePreparer()
-    def test_rename_directory_smb_properties(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory_smb_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -695,15 +841,19 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
-        self.assertTrue(props.is_directory)
-        self.assertEqual(str(file_attributes), props.file_attributes.replace(' ', ''))
-        self.assertEqual(file_creation_time, props.creation_time)
-        self.assertEqual(file_last_write_time, props.last_write_time)
-        self.assertEqual(file_change_time, props.change_time)
+        assert props is not None
+        assert props.is_directory
+        assert str(file_attributes), props.file_attributes.replace(' ' == '')
+        assert file_creation_time == props.creation_time
+        assert file_last_write_time == props.last_write_time
+        assert file_change_time == props.change_time
 
     @FileSharePreparer()
-    def test_rename_directory_dest_lease(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory_dest_lease(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
@@ -719,16 +869,20 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
-        self.assertTrue(props.is_directory)
+        assert props is not None
+        assert props.is_directory
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
-    def test_rename_directory_share_sas(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_rename_directory_share_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
-        token = generate_share_sas(
+        token = self.generate_sas(
+            generate_share_sas,
             share_client.account_name,
             share_client.share_name,
             share_client.credential.account_key,
@@ -746,7 +900,7 @@ class StorageDirectoryTest(StorageTestCase):
 
         # Assert
         props = new_directory.get_directory_properties()
-        self.assertIsNotNone(props)
+        assert props is not None
 
 
 # ------------------------------------------------------------------------------
