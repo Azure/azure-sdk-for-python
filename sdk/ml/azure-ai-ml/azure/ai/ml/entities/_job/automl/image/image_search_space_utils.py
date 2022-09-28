@@ -217,9 +217,9 @@ def _convert_sweep_dist_str_item_to_dict(
         elif isinstance(sweep_dist_obj, Randint):
             sweep_dist = RandintSchema().dump(sweep_dist_obj)
         else:
-            msg = f"Invalid sweep distribution {sweep_distribution_str}"
+            msg = "Invalid sweep distribution {}"
             raise ValidationException(
-                message=msg,
+                message=msg.format(sweep_distribution_str),
                 no_personal_data_message=msg,
                 target=ErrorTarget.AUTOML,
                 error_category=ErrorCategory.USER_ERROR,

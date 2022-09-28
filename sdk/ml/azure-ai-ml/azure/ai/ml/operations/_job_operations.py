@@ -1050,11 +1050,11 @@ class JobOperations(_ScopeDependentOperations):
     def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Job:
         """Resolve arm_id for CommandJob."""
         if job.code is not None and is_registry_id_for_resource(job.code):
-            msg = f"Format not supported for code asset: {job.code}"
+            msg = "Format not supported for code asset: {}"
             raise ValidationException(
-                message=msg,
+                message=msg.format(job.code),
                 target=ErrorTarget.JOB,
-                no_personal_data_message=msg,
+                no_personal_data_message=msg.format("[job.code]"),
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
@@ -1071,11 +1071,11 @@ class JobOperations(_ScopeDependentOperations):
     def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Job:
         """Resolve arm_id for SparkJob."""
         if job.code is not None and is_registry_id_for_resource(job.code):
-            msg = f"Format not supported for code asset: {job.code}"
+            msg = "Format not supported for code asset: {}"
             raise JobException(
-                message=msg,
+                message=msg.format(job.code),
                 target=ErrorTarget.JOB,
-                no_personal_data_message=msg,
+                no_personal_data_message=msg.format("[job.code]"),
                 error_category=ErrorCategory.USER_ERROR,
             )
 
