@@ -76,6 +76,11 @@ def generate_swagger_readme(work_path: str, env: Environment, **kwargs: Any) -> 
     return swagger_readme
 
 
+def generate_toml_file(target_path: Path) -> None:
+    with open(target_path / "sdk_packaging.toml", "w") as file_out:
+        file_out.write("[packaging]\nauto_update = false\n\n")
+
+
 def get_autorest_version() -> str:
     with open(_CONFIG_FILE, 'r') as file_in:
         config = json.load(file_in)
@@ -113,6 +118,9 @@ def build_package(**kwargs) -> None:
 
     # generate sample framework
     generate_test_sample(_TEMPLATE_SAMPLES, work_path / Path('samples'), **kwargs)
+
+    # generate .toml file to avoid udpate_pr in CI
+    generate_toml_file(work_path)
 
     _LOGGER.info("Build complete: %s", package_name)
 
