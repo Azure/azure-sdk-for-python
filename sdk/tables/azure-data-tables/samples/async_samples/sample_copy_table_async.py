@@ -24,15 +24,16 @@ USAGE:
 """
 
 
-from datetime import datetime
-from uuid import uuid4, UUID
-import copy
-import os
-import json
 import asyncio
+import copy
+import json
+import os
 from azure.storage.blob.aio import BlobServiceClient
 from azure.data.tables.aio import TableServiceClient
+from datetime import datetime
+from random import randrange
 from dotenv import find_dotenv, load_dotenv
+from uuid import uuid4, UUID
 
 
 class CopyTableSamples(object):
@@ -44,8 +45,8 @@ class CopyTableSamples(object):
         self.table_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
-        self.copy_to_blob_table_name = "mytable1"
-        self.copy_to_table_table_name = "mytable2"
+        self.copy_to_blob_table_name = self._get_random_name()
+        self.copy_to_table_table_name = self._get_random_name()
         self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = "DefDefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
@@ -125,6 +126,9 @@ class CopyTableSamples(object):
     async def _tear_down(self):
         await self.table_client.delete_table()
         await self.container_client.delete_container()
+
+    def _get_random_name(self):
+        return "mytable" + str(randrange(100))
 
 
 async def main():
