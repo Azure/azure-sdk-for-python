@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from __future__ import annotations
 import uuid
 import logging
 import time
 import asyncio
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from ..constants import (
     ConnectionState,
@@ -21,6 +22,8 @@ from ._receiver_async import ReceiverLink
 from ._management_link_async import ManagementLink
 from ..performatives import BeginFrame, EndFrame, FlowFrame, TransferFrame, DispositionFrame
 from .._encode import encode_frame
+if TYPE_CHECKING:
+    from ..error import AMQPError
 
 _LOGGER = logging.getLogger(__name__)
 

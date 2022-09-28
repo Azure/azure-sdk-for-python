@@ -59,9 +59,9 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
 
     async def _put_token(self, token, token_type, audience, expires_on=None):
         # type: (str, str, str, datetime) -> None
-        message = Message(
+        message = Message(  # type: ignore # TODO: missing positional args header, etc.
             value=token,
-            properties=Properties(message_id=self._mgmt_link.next_message_id),
+            properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore
             application_properties={
                 CBS_NAME: audience,
                 CBS_OPERATION: CBS_PUT_TOKEN,

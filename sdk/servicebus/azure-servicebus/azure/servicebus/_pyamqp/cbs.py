@@ -10,7 +10,12 @@ from datetime import datetime
 from .utils import utc_now, utc_from_timestamp
 from .management_link import ManagementLink
 from .message import Message, Properties
-from .error import AuthenticationException, ErrorCondition, TokenAuthFailure, TokenExpired
+from .error import (
+    AuthenticationException,
+    ErrorCondition,
+    TokenAuthFailure,
+    TokenExpired,
+)
 from .constants import (
     CbsState,
     CbsAuthState,
@@ -55,8 +60,8 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             raise ValueError("get_token must be a callable object.")
 
         self._auth = auth
-        self._encoding = 'UTF-8'
-        self._auth_timeout = kwargs.get('auth_timeout')
+        self._encoding = "UTF-8"
+        self._auth_timeout = kwargs.get("auth_timeout")
         self._token_put_time = None
         self._expires_on = None
         self._token = None
@@ -70,9 +75,9 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
 
     def _put_token(self, token, token_type, audience, expires_on=None):
         # type: (str, str, str, datetime) -> None
-        message = Message(
+        message = Message(  # type: ignore  # TODO: missing positional args header, etc.
             value=token,
-            properties=Properties(message_id=self._mgmt_link.next_message_id),
+            properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore
             application_properties={
                 CBS_NAME: audience,
                 CBS_OPERATION: CBS_PUT_TOKEN,
@@ -91,7 +96,10 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
 
     def _on_amqp_management_open_complete(self, management_open_result):
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
-            _LOGGER.debug("CSB with status: %r encounters unexpected AMQP management open complete.", self.state)
+            _LOGGER.debug(
+                "CSB with status: %r encounters unexpected AMQP management open complete.",
+                self.state,
+            )
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
             _LOGGER.info(
@@ -99,10 +107,14 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
                 self._connection._container_id,  # pylint:disable=protected-access
             )
         elif self.state == CbsState.OPENING:
-            self.state = CbsState.OPEN if management_open_result == ManagementOpenResult.OK else CbsState.CLOSED
+            self.state = (
+                CbsState.OPEN
+                if management_open_result == ManagementOpenResult.OK
+                else CbsState.CLOSED
+            )
             _LOGGER.info(
                 "CBS for connection %r completed opening with status: %r",
-                self._connection._container_id, # pylint: disable=protected-access
+                self._connection._container_id,  # pylint: disable=protected-access
                 management_open_result,
             )  # pylint:disable=protected-access
 
@@ -124,7 +136,12 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             )  # pylint:disable=protected-access
 
     def _on_execute_operation_complete(
-        self, execute_operation_result, status_code, status_description, _, error_condition=None
+        self,
+        execute_operation_result,
+        status_code,
+        status_description,
+        _,
+        error_condition=None,
     ):
         if error_condition:
             _LOGGER.info("CBS Put token error: %r", error_condition)
@@ -146,23 +163,38 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             # put-token-message sending failure, rejected
             self._token_status_code = 0
             self._token_status_description = "Auth message has been rejected."
-        elif execute_operation_result == ManagementExecuteOperationResult.FAILED_BAD_STATUS:
+        elif (
+            execute_operation_result
+            == ManagementExecuteOperationResult.FAILED_BAD_STATUS
+        ):
             self.auth_state = CbsAuthState.ERROR
 
     def _update_status(self):
-        if self.auth_state == CbsAuthState.OK or self.auth_state == CbsAuthState.REFRESH_REQUIRED:
+        if (
+            self.auth_state == CbsAuthState.OK
+            or self.auth_state == CbsAuthState.REFRESH_REQUIRED
+        ):
             _LOGGER.debug("update_status In refresh required or OK.")
             is_expired, is_refresh_required = check_expiration_and_refresh_status(
                 self._expires_on, self._refresh_window
             )
-            _LOGGER.debug("is expired == %r, is refresh required == %r", is_expired, is_refresh_required)
+            _LOGGER.debug(
+                "is expired == %r, is refresh required == %r",
+                is_expired,
+                is_refresh_required,
+            )
             if is_expired:
                 self.auth_state = CbsAuthState.EXPIRED
             elif is_refresh_required:
                 self.auth_state = CbsAuthState.REFRESH_REQUIRED
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
-            _LOGGER.debug("In update status, in progress. token put time: %r", self._token_put_time)
-            put_timeout = check_put_timeout_status(self._auth_timeout, self._token_put_time)
+            _LOGGER.debug(
+                "In update status, in progress. token put time: %r",
+                self._token_put_time,
+            )
+            put_timeout = check_put_timeout_status(
+                self._auth_timeout, self._token_put_time
+            )
             if put_timeout:
                 self.auth_state = CbsAuthState.TIMEOUT
 
@@ -202,7 +234,12 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             self._token = access_token.token
         self._token_put_time = int(utc_now().timestamp())
-        self._put_token(self._token, self._auth.token_type, self._auth.audience, utc_from_timestamp(self._expires_on))
+        self._put_token(
+            self._token,
+            self._auth.token_type,
+            self._auth.audience,
+            utc_from_timestamp(self._expires_on),
+        )
 
     def handle_token(self):
         if not self._cbs_link_ready():
@@ -217,13 +254,15 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             return True
         if self.auth_state == CbsAuthState.REFRESH_REQUIRED:
             _LOGGER.info(
-                "Token on connection %r will expire soon - attempting to refresh.", self._connection._container_id
+                "Token on connection %r will expire soon - attempting to refresh.",
+                self._connection._container_id,
             )  # pylint:disable=protected-access
             self.update_token()
             return False
         if self.auth_state == CbsAuthState.FAILURE:
             raise AuthenticationException(
-                condition=ErrorCondition.InternalError, description="Failed to open CBS authentication link."
+                condition=ErrorCondition.InternalError,
+                description="Failed to open CBS authentication link.",
             )
         if self.auth_state == CbsAuthState.ERROR:
             raise TokenAuthFailure(
@@ -234,4 +273,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         if self.auth_state == CbsAuthState.TIMEOUT:
             raise TimeoutError("Authentication attempt timed-out.")
         if self.auth_state == CbsAuthState.EXPIRED:
-            raise TokenExpired(condition=ErrorCondition.InternalError, description="CBS Authentication Expired.")
+            raise TokenExpired(
+                condition=ErrorCondition.InternalError,
+                description="CBS Authentication Expired.",
+            )

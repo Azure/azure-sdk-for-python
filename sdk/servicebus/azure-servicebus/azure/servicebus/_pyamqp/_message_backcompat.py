@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
-from typing import Callable
+from typing import Callable, cast
 from enum import Enum
 
 from ._encode import encode_payload
@@ -31,7 +31,7 @@ class MessageState(Enum):
 
     def __eq__(self, __o: object) -> bool:
         try:
-            return self.value == __o.value
+            return self.value == cast(Enum, __o).value
         except AttributeError:
             return super().__eq__(__o)
 

@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+# TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from enum import Enum
 from collections import namedtuple
 
@@ -181,10 +182,10 @@ class RetryPolicy:
         return min(settings['max_backoff'], backoff_value)
 
 
-AMQPError = namedtuple('error', ['condition', 'description', 'info'])
-AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields)
-AMQPError._code = 0x0000001d # pylint: disable=protected-access
-AMQPError._definition = ( # pylint: disable=protected-access
+AMQPError = namedtuple('AMQPError', ['condition', 'description', 'info'], defaults=[None, None])
+AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields) # type: ignore
+AMQPError._code = 0x0000001d # type: ignore # pylint: disable=protected-access
+AMQPError._definition = ( # type: ignore # pylint: disable=protected-access
     FIELD('condition', AMQPTypes.symbol, True, None, False),
     FIELD('description', AMQPTypes.string, False, None, False),
     FIELD('info', FieldDefinition.fields, False, None, False),

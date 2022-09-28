@@ -14,6 +14,7 @@
 #   - the behavior of Messages which have been transferred on the Link, but have not yet reached a
 #     terminal state at the receiver, when the source is destroyed.
 
+# TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from collections import namedtuple
 
 from .types import AMQPTypes, FieldDefinition, ObjDefinition
@@ -128,7 +129,7 @@ class ApacheFilters(object):
 
 
 Source = namedtuple(
-    'source',
+    'Source',
     [
         'address',
         'durable',
@@ -142,9 +143,9 @@ Source = namedtuple(
         'outcomes',
         'capabilities'
     ])
-Source.__new__.__defaults__ = (None,) * len(Source._fields)
-Source._code = 0x00000028 # pylint: disable=protected-access
-Source._definition = ( # pylint: disable=protected-access
+Source.__new__.__defaults__ = (None,) * len(Source._fields) # type: ignore
+Source._code = 0x00000028 # type: ignore # pylint: disable=protected-access
+Source._definition = ( # type: ignore # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
     FIELD("durable", AMQPTypes.uint, False, "none", False),
     FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),
@@ -217,7 +218,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 Target = namedtuple(
-    'target',
+    'Target',
     [
         'address',
         'durable',
@@ -227,9 +228,9 @@ Target = namedtuple(
         'dynamic_node_properties',
         'capabilities'
     ])
-Target._code = 0x00000029 # pylint: disable=protected-access
-Target.__new__.__defaults__ = (None,) * len(Target._fields) # pylint: disable=protected-access
-Target._definition = ( # pylint: disable=protected-access
+Target._code = 0x00000029 # type: ignore # pylint: disable=protected-access
+Target.__new__.__defaults__ = (None,) * len(Target._fields) # type: ignore # type: ignore # pylint: disable=protected-access
+Target._definition = ( # type: ignore # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
     FIELD("durable", AMQPTypes.uint, False, "none", False),
     FIELD("expiry_policy", AMQPTypes.symbol, False, ExpiryPolicy.SessionEnd, False),

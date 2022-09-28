@@ -9,7 +9,7 @@ import logging
 import time
 import queue
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload
+from typing import Any, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
 import certifi
 
@@ -17,9 +17,7 @@ from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
 from ._management_operation_async import ManagementOperation
 from ._cbs_async import CBSAuthenticator
-from ..client import AMQPClientSync
-from ..client import ReceiveClientSync
-from ..client import SendClientSync
+from ..client import AMQPClientSync, ReceiveClientSync, SendClientSync, Outcomes
 from ..message import _MessageDelivery
 from ..constants import (
     MessageDeliveryState,
@@ -876,7 +874,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
         batchable = kwargs.pop('batchable', None)
         if outcome.lower() == 'accepted':
-            state = Accepted()
+            state: Outcomes = Accepted()
         elif outcome.lower() == 'released':
             state = Released()
         elif outcome.lower() == 'rejected':
@@ -888,7 +886,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         else:
             raise ValueError("Unrecognized message output: {}".format(outcome))
         try:
-            first, last = delivery_id
+            first, last = cast(Tuple, delivery_id)
         except TypeError:
             first = delivery_id
             last = None

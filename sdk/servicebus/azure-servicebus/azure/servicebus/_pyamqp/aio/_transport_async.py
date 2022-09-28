@@ -382,9 +382,8 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         _, returned_header = await self.receive_frame(verify_frame_type=None)
         if returned_header[1] == TLS_HEADER_FRAME:
             raise ValueError(
-                "Mismatching TLS header protocol. Excpected: {}, received: {}".format(
-                    TLS_HEADER_FRAME, returned_header[1]
-                )
+                f"""Mismatching TLS header protocol. Expected: {TLS_HEADER_FRAME!r},"""
+                """received: {returned_header[1]!r}"""
             )
 
 
