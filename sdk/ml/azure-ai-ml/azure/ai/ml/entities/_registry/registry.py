@@ -91,14 +91,18 @@ class Registry(Resource):
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        # Change name of region_details to user-shown name
+
+        # Change name of region_details to user-shown name 'replication_locations'
         self.replication_locations = self.region_details
+        
         # Grab the first acr account of the first region and set that
         # as the system-wide container registry.
         if self.replication_locations and len(self.replication_locations) > 0:
             if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
                 self.container_registry = self.replication_locations[0].acr_config[0]
-        # Change single-list managed storage accounts to not be lists
+
+        # Change single-list managed storage accounts to not be lists.
+        # (Since users enter managed storage accounts as non-list singletons)
         for region_detail in self.replication_locations:
             if region_detail.storage_config and isinstance(
                 region_detail.storage_config[0], SystemCreatedStorageAccount

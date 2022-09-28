@@ -7,7 +7,6 @@ from typing import List, Union
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails as RestAcrDetails
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ArmResourceId as RestArmResourceId
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SkuTier
 from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountDetails as RestStorageAccountDetails
 from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountType as RestStorageAccountType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount

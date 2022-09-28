@@ -11,7 +11,7 @@ from azure.ai.ml.entities._registry.registry_support_classes import SystemCreate
 
 from .system_created_acr_account import SystemCreatedAcrAccountSchema
 from .system_created_storage_account import SystemCreatedStorageAccountSchema
-from .util import acr_format_validator, storage_account_validator
+from .util import storage_account_validator
 
 
 # Differs from the swagger def in that the acr_details can only be supplied as a

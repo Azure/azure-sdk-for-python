@@ -458,9 +458,9 @@ class MLClient(object):
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
-
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory. Details will be provided in the error message.
         :return: The workspace object for an existing Azure ML Workspace.
-        :rtype: MLClient
+        :rtype: ~azure.ai.ml.MLClient
         """
 
         path = Path(".") if path is None else Path(path)

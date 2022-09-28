@@ -27,7 +27,6 @@ class TestPipelineComponentEntity:
             "display_name": "Hello World Pipeline Component",
             "description": "This is the basic pipeline component",
             "tags": {"tag": "tagvalue", "owner": "sdkteam"},
-            "is_deterministic": True,
             "inputs": {
                 "component_in_number": {
                     "type": "number",
@@ -82,7 +81,6 @@ class TestPipelineComponentEntity:
                 },
                 "component_in_path": {"description": "A path", "type": "uri_folder"},
             },
-            "is_deterministic": True,
             "jobs": {
                 "component_a_job": {
                     "properties": {},
@@ -151,7 +149,6 @@ class TestPipelineComponentEntity:
                 },
                 "component_in_path": {"description": "A path for pipeline " "component", "type": "uri_folder"},
             },
-            "is_deterministic": True,
             "jobs": {
                 "pipeline_component": {
                     "component": {
@@ -169,7 +166,7 @@ class TestPipelineComponentEntity:
                             },
                             "component_in_path": {"description": "A " "path", "type": "uri_folder"},
                         },
-                        "is_deterministic": True,
+                        "is_deterministic": None,
                         "jobs": {
                             "component_a_job": {
                                 "component": {
@@ -250,7 +247,6 @@ class TestPipelineComponentEntity:
                 "job_in_other_number": {"default": "15", "type": "integer"},
                 "job_in_path": {"type": "uri_folder", "mode": "ro_mount"},
             },
-            "is_deterministic": True,
             "jobs": {
                 "hello_world_component": {
                     "properties": {},

@@ -12,19 +12,19 @@ import docker
 from docker.errors import BuildError, DockerException, ImageNotFound, NotFound
 from docker.models.containers import Container
 
-from azure.ai.ml._local_endpoints.errors import (
+from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
+from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
+from azure.ai.ml._utils._logger_utils import initialize_logger_info
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
+from azure.ai.ml.exceptions import (
     DockerEngineNotAvailableError,
     InvalidLocalEndpointError,
-    LocalEndpointImageBuildCondaError,
     LocalEndpointImageBuildError,
     LocalEndpointInFailedStateError,
     LocalEndpointNotFoundError,
     MultipleLocalDeploymentsFoundError,
 )
-from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
-from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
-from azure.ai.ml._utils._logger_utils import initialize_logger_info
-from azure.ai.ml.constants._endpoint import LocalEndpointConstants
+
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
@@ -399,7 +399,7 @@ class DockerClient(object):
                     first_line = False
                 if "stream" in status:
                     if "An unexpected error has occurred. Conda has prepared the above report." in status["stream"]:
-                        raise LocalEndpointImageBuildCondaError(
+                        raise LocalEndpointImageBuildError(
                             status["stream"],
                             conda_file_path=conda_source_path,
                             conda_yaml_contents=conda_yaml_contents,

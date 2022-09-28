@@ -79,6 +79,7 @@ class BatchDeployment(Deployment):
     :type scoring_script: Union[str, PathLike], optional
     :param instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
     :type instance_count: int, optional
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be successfully validated. Details will be provided in the error message.
     """
 
     def __init__(

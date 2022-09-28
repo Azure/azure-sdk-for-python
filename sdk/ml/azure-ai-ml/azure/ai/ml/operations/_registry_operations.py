@@ -70,8 +70,9 @@ class RegistryOperations:
 
         :param name: Name of the registry.
         :type name: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Registry name cannot be successfully validated. Details will be provided in the error message.
         :return: The registry with the provided name.
-        :rtype: Registry
+        :rtype: ~azure.ai.ml.entities.Registry
         """
 
         registry_name = self._check_registry_name(name)
