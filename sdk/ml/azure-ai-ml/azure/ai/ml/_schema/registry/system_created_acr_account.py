@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from curses.has_key import has_key
 from marshmallow import ValidationError, fields, post_load, pre_dump, post_dump
 
 from azure.ai.ml._schema import StringTransformedEnum, NestedField

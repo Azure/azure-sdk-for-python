@@ -496,6 +496,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         msg = "Spark can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
             target=ErrorTarget.SPARK_JOB,
         )
