@@ -18,7 +18,6 @@ from ._component.parallel_component import ParallelComponent
 from ._component.pipeline_component import PipelineComponent
 from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
-from ._compute._identity import IdentityConfiguration
 from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
 from ._compute._usage import Usage, UsageName
 from ._compute._user_assigned_identity import UserAssignedIdentity
@@ -92,7 +91,11 @@ from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedId
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import WorkspaceKeys
-from ._credentials import PatTokenConfiguration
+from ._credentials import (
+    PatTokenConfiguration, SasTokenConfiguration, ManagedIdentityConfiguration,
+    AccountKeyConfiguration, UsernamePasswordConfiguration, ServicePrincipalConfiguration,
+    CertificateConfiguration, UserIdentityConfiguration, AmlTokenConfiguration, IdentityConfiguration
+)
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -160,7 +163,6 @@ __all__ = [
     "ComputeInstance",
     "UnsupportedCompute",
     "KubernetesCompute",
-    "IdentityConfiguration",
     "NetworkSettings",
     "Component",
     "PipelineJobSettings",
@@ -213,4 +215,13 @@ __all__ = [
     "Spark",
     "Pipeline",
     "PatTokenConfiguration",
+    "SasTokenConfiguration",
+    "ManagedIdentityConfiguration",
+    "AccountKeyConfiguration",
+    "ServicePrincipalConfiguration",
+    "CertificateConfiguration",
+    "UsernamePasswordConfiguration",
+    "UserIdentityConfiguration",
+    "AmlTokenConfiguration",
+    "IdentityConfiguration",
 ]
