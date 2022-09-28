@@ -235,6 +235,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-messaging-webpubsubservice pyjwt>=1.7.1
 #override azure-messaging-webpubsubservice six>=1.12.0
 #override azure-messaging-webpubsubservice cryptography>=2.8.0
+#override azure-mgmt-security azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
 #override azure-iot-deviceupdate azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-alertsmanagement msrest>=0.7.1
@@ -382,6 +383,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-cosmosdb azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datafactory azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-scvmm msrest>=0.6.21
+#override azure-mgmt-security msrest>=0.7.1
 #override azure-mgmt-scvmm azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-reservations msrest>=0.7.1
 #override azure-mgmt-reservations azure-mgmt-core>=1.3.2,<2.0.0
