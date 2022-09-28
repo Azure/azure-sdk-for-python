@@ -12,7 +12,7 @@ from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.workspace.connections.credentials import (
     ManagedIdentityCredentialsSchema,
-    PatTokenCredentialsSchema,
+    PatTokenConfigurationSchema,
     SasTokenCredentialsSchema,
     ServicePrincipalCredentialsSchema,
     UsernamePasswordCredentialsSchema,
@@ -38,7 +38,7 @@ class WorkspaceConnectionSchema(PathAwareSchema):
     target = fields.Str()
     credentials = UnionField(
         [
-            NestedField(PatTokenCredentialsSchema),
+            NestedField(PatTokenConfigurationSchema),
             NestedField(SasTokenCredentialsSchema),
             NestedField(UsernamePasswordCredentialsSchema),
             NestedField(ManagedIdentityCredentialsSchema),

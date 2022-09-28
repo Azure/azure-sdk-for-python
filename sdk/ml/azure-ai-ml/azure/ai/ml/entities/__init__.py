@@ -92,6 +92,7 @@ from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedId
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import WorkspaceKeys
+from ._credentials import PatTokenConfiguration
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -211,4 +212,5 @@ __all__ = [
     "Sweep",
     "Spark",
     "Pipeline",
+    "PatTokenConfiguration",
 ]
