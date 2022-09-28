@@ -55,6 +55,7 @@ class BaseNodeSchema(PathAwareSchema):
         values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
     )
     properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
+    comment = fields.Str()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
