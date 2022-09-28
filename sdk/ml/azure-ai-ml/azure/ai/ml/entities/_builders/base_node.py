@@ -80,7 +80,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     :type tags: dict[str, str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
-    :param comment: Comment of the node.
+    :param comment: Comment of the node, which will be shown in Designer canvas.
     :type comment: str
     :param display_name: Display name of the job.
     :type display_name: str
