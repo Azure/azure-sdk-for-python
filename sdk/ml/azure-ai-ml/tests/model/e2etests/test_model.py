@@ -202,7 +202,6 @@ class TestModel(AzureRecordedTestCase):
         assert model.name in model_list
 
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
-        print("promoting model")
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = f"model_{randstr('name')}"
