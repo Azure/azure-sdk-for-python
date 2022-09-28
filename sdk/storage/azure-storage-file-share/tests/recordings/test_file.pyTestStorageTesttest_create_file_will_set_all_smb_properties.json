@@ -1,0 +1,111 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharef37c3096?restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 22:46:41 GMT",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 22:46:39 GMT",
+        "ETag": "\u00220x8DAA1A34ED33AF0\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 22:46:40 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharef37c3096/filef37c3096",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-content-length": "1024",
+        "x-ms-date": "Wed, 28 Sep 2022 22:46:41 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "Inherit",
+        "x-ms-type": "file",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Wed, 28 Sep 2022 22:46:40 GMT",
+        "ETag": "\u00220x8DAA1A34EE4BB3E\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 22:46:40 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-09-28T22:46:40.1700670Z",
+        "x-ms-file-creation-time": "2022-09-28T22:46:40.1700670Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2022-09-28T22:46:40.1700670Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "3254952746172754359*9622787259914961209",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utsharef37c3096/filef37c3096",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Wed, 28 Sep 2022 22:46:41 GMT",
+        "x-ms-version": "2021-06-08"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "1024",
+        "Content-Type": "application/octet-stream",
+        "Date": "Wed, 28 Sep 2022 22:46:40 GMT",
+        "ETag": "\u00220x8DAA1A34EE4BB3E\u0022",
+        "Last-Modified": "Wed, 28 Sep 2022 22:46:40 GMT",
+        "Server": [
+          "Windows-Azure-File/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-file-attributes": "Archive",
+        "x-ms-file-change-time": "2022-09-28T22:46:40.1700670Z",
+        "x-ms-file-creation-time": "2022-09-28T22:46:40.1700670Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2022-09-28T22:46:40.1700670Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "3254952746172754359*9622787259914961209",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-type": "File",
+        "x-ms-version": "2021-06-08"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
