@@ -24,7 +24,6 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 
 async def search_inside_geometry():
-    # [START search_point_of_interest]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -118,7 +117,6 @@ async def search_inside_geometry():
     print(result2.__dict__)
     print(f'Id of the first result item of result 3: {result3.results[0].id}')
 
-    # [END search_point_of_interest]
 
 if __name__ == '__main__':
     asyncio.run(search_inside_geometry())

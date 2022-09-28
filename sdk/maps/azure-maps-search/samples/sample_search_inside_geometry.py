@@ -22,7 +22,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def search_inside_geometry():
-    # [START search_inside_geometry]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -120,8 +119,6 @@ def search_inside_geometry():
     print(result3.results[0].address.local_name)
     print(result3.results[0].address.country_subdivision)
     print(f'Id of the first result item of result 3: {result3.results[0].id}')
-
-    # [END search_inside_geometry]
 
 if __name__ == '__main__':
     search_inside_geometry()

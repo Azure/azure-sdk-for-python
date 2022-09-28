@@ -22,7 +22,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def reverse_search_address():
-    # [START reverse_search_address]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -32,7 +31,6 @@ def reverse_search_address():
 
     print("Get Search Address Reverse:")
     print(result.results[0].address)
-    # [END reverse_search_address]
 
 if __name__ == '__main__':
    reverse_search_address()

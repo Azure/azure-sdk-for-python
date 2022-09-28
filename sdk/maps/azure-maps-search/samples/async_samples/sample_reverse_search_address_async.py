@@ -23,7 +23,6 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 
 async def reverse_search_address_async():
-    # [START reverse_search_address_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
@@ -34,7 +33,6 @@ async def reverse_search_address_async():
 
     print("Get Search Address Reverse:")
     print(result)
-    # [END reverse_search_address_async]
 
 if __name__ == '__main__':
     asyncio.run(reverse_search_address_async())
