@@ -28,7 +28,7 @@ spec:
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendlistasync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 7200']
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_async --duration 7200']
       {{- end -}}
 
       {{ if eq .Stress.Scenario "sendconsumeasync" }}
