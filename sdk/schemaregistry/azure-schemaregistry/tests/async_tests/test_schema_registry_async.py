@@ -72,7 +72,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
 
             with pytest.raises(TypeError) as exc:
                 await client.get_schema(group_name=schemaregistry_group, version=schema_properties.version, logging_enable=True)
-            assert "'name' is a required keyword" in str(exc)
+            assert "Missing" in str(exc)
 
             returned_schema_properties = await client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 

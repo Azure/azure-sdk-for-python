@@ -62,7 +62,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         with pytest.raises(TypeError) as exc:
             client.get_schema(group_name=schemaregistry_group, name=name, logging_enable=True)
-        assert "'version' is a required keyword" in str(exc)
+        assert "Missing" in str(exc)
 
         assert returned_version_schema.properties.id == schema_properties.id
         assert returned_version_schema.properties.format == "Avro"
