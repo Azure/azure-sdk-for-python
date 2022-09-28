@@ -67,7 +67,7 @@ class TestCommandJob(AzureRecordedTestCase):
 
         assert command_job.name == job_name
         assert command_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
-        assert command_job.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert command_job.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert command_job.compute == "cpu-cluster"
         check_tid_in_url(client, command_job)
 
