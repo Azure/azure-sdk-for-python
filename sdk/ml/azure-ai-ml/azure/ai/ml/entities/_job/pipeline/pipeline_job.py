@@ -44,13 +44,12 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import InputsAttrDict, OutputsAttrDict, PipelineInput, PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
-from azure.ai.ml.exceptions import ErrorTarget
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 
 module_logger = logging.getLogger(__name__)
 
@@ -290,12 +289,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             if job.type != "pipeline":
                 continue
             if job.settings.on_init:
-                validation_result.append_warning(
+                validation_result.append_error(
                     yaml_path=f"jobs.{job_name}.settings.on_init",
                     message="On_init is not supported for subgraph.",
                 )
             if job.settings.on_finalize:
-                validation_result.append_warning(
+                validation_result.append_error(
                     yaml_path=f"jobs.{job_name}.settings.on_finalize",
                     message="On_finalize is not supported for subgraph",
                 )
@@ -319,12 +318,16 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             # no input to validate job
             _validate_job = self.jobs[_validate_job_name]
             for _input_name in _validate_job.inputs:
+                if not hasattr(_validate_job.inputs[_input_name]._data, "_data_binding"):
+                    continue
                 _data_binding = _validate_job.inputs[_input_name]._data._data_binding()
                 if is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
             # no output from validate job
             for _job_name, _job in self.jobs.items():
                 for _input_name in _job.inputs:
+                    if not hasattr(_job.inputs[_input_name]._data, "_data_binding"):
+                        continue
                     _data_binding = _job.inputs[_input_name]._data._data_binding()
                     if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                         return False

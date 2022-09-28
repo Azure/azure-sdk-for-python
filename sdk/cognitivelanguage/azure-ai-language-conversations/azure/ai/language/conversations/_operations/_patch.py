@@ -7,11 +7,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
-from ._operations import ConversationAnalysisClientOperationsMixin as ConversationAnalysisClientOperationsMixinGenerated
+from ._operations import (
+    ConversationAnalysisClientOperationsMixin as ConversationAnalysisClientOperationsMixinGenerated,
+)
 
 
-ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ = \
-    """Analyzes the input conversation utterance.
+ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ = """Analyzes the input
+    conversation utterance.
 
     See https://docs.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
     for more information.
@@ -31,15 +33,18 @@ ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ 
 
             # JSON input template you can fill out and use as your body input.
             task = {
-                "kind": "str", # Required. Enumeration of supported Conversation tasks. Known values are: "Conversation".
+                "kind": "str", # Required. Enumeration of supported Conversation tasks. Known values: "Conversation".
                 "analysisInput": {
                     "conversationItem": {
                         "id": "str", # Required. The ID of a conversation item.
                         "participantId": "str", # Required. The participant ID of a conversation item.
-                        "modality": "string", # Required, Enumeration of supported conversational modalities. Known values are: "text", and "transcript".
-                        "language": "str", # Optional. The override language of a conversation item in BCP 47 language representation.
+                        "modality": "string", # Required, Enumeration of supported conversational modalities. Known
+                          values are: "text", and "transcript".
+                        "language": "str", # Optional. The override language of a conversation item in BCP 47 language
+                          representation.
                         "text": "str", # Required. The text input.
-                        "role": "str"  # Optional. The role of the participant. Known values are: "agent", "customer", and "generic".
+                        "role": "str"  # Optional. The role of the participant. Known values are: "agent",
+                          "customer", and "generic".
                     }
                 },
                 "parameters": {
@@ -49,10 +54,12 @@ ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ 
                       "TextElements_v8". Specifies the method used to interpret string offsets. Set
                       to "UnicodeCodePoint" for Python strings. Known values are:
                       "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
-                    "verbose": "bool", # Optional. If true, the service will return more detailed information in the response.
+                    "verbose": "bool", # Optional. If true, the service will return more detailed information in the
+                      response.
                     "isLoggingEnabled": "bool", # Optional. If true, the service will keep the query for further review.
                     "directTarget": "str", # Optional. The name of a target project to forward the request to.
-                    "targetProjectParameters": "dict" # Optional. A dictionary representing the parameters for each target project.
+                    "targetProjectParameters": "dict" # Optional. A dictionary representing the parameters for each
+                      target project.
                 }
             }
     
@@ -61,20 +68,23 @@ ConversationAnalysisClientOperationsMixinGenerated.analyze_conversation.__doc__ 
     
             # response body for status code(s): 200
             response.json() == {
-                "kind": "str", # Required. Enumeration of supported conversational task results. Known values are: "ConversationResult".
+                "kind": "str", # Required. Enumeration of supported conversational task results. Known values are:
+                  "ConversationResult".
                 "result": {
                     "query": "str", # Required. The conversation utterance given by the caller.
-                    "detectedLanguage": "str", # Optional. The system detected language for the query in BCP 47 language representation.
+                    "detectedLanguage": "str", # Optional. The system detected language for the query in BCP 47
+                      language representation.
                     "prediction": {
                         "topIntent": "str", # Required. The intent with the highest score.
-                        "projectKind": "str", # Required. The type of the project. Known values are: "Conversation" and "Orchestration".
+                        "projectKind": "str", # Required. The type of the project. Known values are: "Conversation"
+                          and "Orchestration".
                     }
                 }
             }
     """
 
-ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis.__doc__ = \
-    """Submit analysis job for conversations.
+ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis.__doc__ = """Submit analysis
+    job for conversations.
 
     Submit a collection of conversations for analysis. Specify one or more unique tasks to be
     executed.
@@ -113,7 +123,8 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
               "tasks": [
                 {
                   "taskName": "str",  # Optional. Associate a name with the task.
-                  "kind": "str",  # Required. Known values are "ConversationalPIITask" and "ConversationalSummarizationTask".
+                  "kind": "str",  # Required. Known values are "ConversationalPIITask" and
+                    "ConversationalSummarizationTask".
                   "parameters": {
                     ... # summarization_task_parameters or pii_task_parameters (see below)
                   }
@@ -161,13 +172,15 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
                         "itn": "str",  # Optional. Inverse Text Normalization representation of input. The inverse -
                           text - normalized form is the recognized text from Microsoft's Speech to Text API, with
                           phone numbers, numbers, abbreviations, and other transformations applied.
-                        "maskedItn": "str",  # Optional. The Inverse Text Normalized format with profanity masking applied.
+                        "maskedItn": "str",  # Optional. The Inverse Text Normalized format with profanity masking
+                          applied.
                         "lexical": "str",  # Optional. The lexical form of the recognized text from speech to text
                           API with the actual words recognized.
                         "audioTimings": [  # Optional. The list of word level audio timing information.
                             {
                                 "word": "str",  # Optional. The word recognized.
-                                "offset": "int",  # Optional. Offset from start of speech audio, in ticks. 1 tick = 100 ns.
+                                "offset": "int",  # Optional. Offset from start of speech audio, in ticks.
+                                  1 tick = 100 ns.
                                 "duration": "int"  # Optional. Duration of word articulation, in ticks. 1 tick = 100 ns.
                             }
                         ]
@@ -278,7 +291,9 @@ ConversationAnalysisClientOperationsMixinGenerated.begin_conversation_analysis._
     """
 
 
-class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientOperationsMixinGenerated):
+class ConversationAnalysisClientOperationsMixin(
+    ConversationAnalysisClientOperationsMixinGenerated
+):
     ...
 
 

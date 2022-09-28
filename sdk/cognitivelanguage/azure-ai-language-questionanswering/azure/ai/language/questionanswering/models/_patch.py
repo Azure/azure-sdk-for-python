@@ -34,6 +34,7 @@ class MetadataFilter(MetadataFilterGenerated):
          "AND", "OR".
         :paramtype logical_operation: str
         """
+        # pylint:disable=useless-super-delegation
         super().__init__(metadata=metadata, logical_operation=logical_operation, **kwargs)
 
 

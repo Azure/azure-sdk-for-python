@@ -63,7 +63,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncIterable[JSON]:
         """Gets all projects for a user.
 
-        Gets all projects for a user.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/list-projects
+        for more information.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
          None.
@@ -171,7 +173,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     async def get_project_details(self, project_name: str, **kwargs: Any) -> JSON:
         """Get the requested project metadata.
 
-        Get the requested project metadata.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/get-project-details
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -253,7 +257,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> JSON:
         """Create or update a project.
 
-        Create or update a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -311,7 +317,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> JSON:
         """Create or update a project.
 
-        Create or update a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -353,7 +361,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     async def create_project(self, project_name: str, options: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Create or update a project.
 
-        Create or update a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -511,7 +521,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
         """Delete the project.
 
-        Delete the project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/delete-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -617,7 +629,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     async def _export_initial(
-        self, project_name: str, *, format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
+        self, project_name: str, *, file_format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
@@ -634,7 +646,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         request = build_export_request(
             project_name=project_name,
-            format=format,
+            file_format=file_format,
             asset_kind=asset_kind,
             api_version=self._config.api_version,
             headers=_headers,
@@ -675,17 +687,19 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
     @distributed_trace_async
     async def begin_export(
-        self, project_name: str, *, format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
+        self, project_name: str, *, file_format: str = "json", asset_kind: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Export project metadata and assets.
 
-        Export project metadata and assets.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/export
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -757,7 +771,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         if cont_token is None:
             raw_result = await self._export_initial(  # type: ignore
                 project_name=project_name,
-                format=format,
+                file_format=file_format,
                 asset_kind=asset_kind,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -803,7 +817,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[Union[JSON, IO]] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
@@ -834,7 +848,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         request = build_import_assets_request(
             project_name=project_name,
-            format=format,
+            file_format=file_format,
             asset_kind=asset_kind,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -882,22 +896,24 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[JSON] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Import project assets.
 
-        Import project assets.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param options: Project assets the needs to be imported. Default value is None.
         :type options: JSON
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -1099,22 +1115,24 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[IO] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Import project assets.
 
-        Import project assets.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param options: Project assets the needs to be imported. Default value is None.
         :type options: IO
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -1184,22 +1202,24 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         project_name: str,
         options: Optional[Union[JSON, IO]] = None,
         *,
-        format: str = "json",
+        file_format: str = "json",
         asset_kind: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[JSON]:
         """Import project assets.
 
-        Import project assets.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param options: Project assets the needs to be imported. Is either a model type or a IO type.
          Default value is None.
         :type options: JSON or IO
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is "json".
-        :paramtype format: str
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is "json".
+        :paramtype file_format: str
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str
@@ -1274,7 +1294,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
             raw_result = await self._import_assets_initial(  # type: ignore
                 project_name=project_name,
                 options=options,
-                format=format,
+                file_format=file_format,
                 asset_kind=asset_kind,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -1376,7 +1396,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncLROPoller[JSON]:
         """Deploy project to production.
 
-        Deploy project to production.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/deploy-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1459,7 +1481,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncIterable[JSON]:
         """List all deployments of a project.
 
-        List all deployments of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/list-deployments
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1558,7 +1582,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncIterable[JSON]:
         """Gets all the synonyms of a project.
 
-        Gets all the synonyms of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/get-synonyms
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1657,7 +1683,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> None:
         """Updates all the synonyms of a project.
 
-        Updates all the synonyms of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-synonyms
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1692,7 +1720,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> None:
         """Updates all the synonyms of a project.
 
-        Updates all the synonyms of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-synonyms
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1712,7 +1742,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> None:
         """Updates all the synonyms of a project.
 
-        Updates all the synonyms of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-synonyms
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1780,7 +1812,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncIterable[JSON]:
         """Gets all the sources of a project.
 
-        Gets all the sources of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/get-sources
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1953,7 +1987,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the sources of a project.
 
-        Updates the sources of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-sources
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2020,7 +2056,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the sources of a project.
 
-        Updates the sources of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-sources
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2064,7 +2102,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the sources of a project.
 
-        Updates the sources of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-sources
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2236,7 +2276,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncIterable[JSON]:
         """Gets all the QnAs of a project.
 
-        Gets all the QnAs of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/get-qnas
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2489,7 +2531,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the QnAs of a project.
 
-        Updates the QnAs of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-qnas
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2670,7 +2714,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the QnAs of a project.
 
-        Updates the QnAs of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-qnas
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2791,7 +2837,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> AsyncLROPoller[AsyncIterable[JSON]]:
         """Updates the QnAs of a project.
 
-        Updates the QnAs of a project.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/update-qnas
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3033,7 +3081,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> None:
         """Update Active Learning feedback.
 
-        Update Active Learning feedback.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/add-feedback
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3068,7 +3118,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> None:
         """Update Active Learning feedback.
 
-        Update Active Learning feedback.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/add-feedback
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3088,7 +3140,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
     ) -> None:
         """Update Active Learning feedback.
 
-        Update Active Learning feedback.
+        See
+        https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering-projects/add-feedback
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str

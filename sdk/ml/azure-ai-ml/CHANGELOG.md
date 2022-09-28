@@ -6,19 +6,24 @@
  - Support passing JobService as argument to Command()
  - Added support for custom setup scripts on compute instances.
  - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
+ - Support `month_days` in `RecurrencePattern` when using `RecurrenceSchedule`.
+ - Support `ml_client.schedules.list` with `list_view_type`, default to `ENABLED_ONLY`.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
 - Deprecated parameter path has been removed from load and dump methods.
+- JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
+- Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
+- Fix identity passthrough job with single file code
 
 ### Other Changes
  - Removed declaration on Python 3.6 support
  - Added support for custom setup scripts on compute instances.
  - Updated dependencies upper bounds to be major versions.
 
-## 0.1.0b7 (In progress)
+## 0.1.0b7 (2022-09-22)
 
 ### Features Added
  - Spark job submission.
@@ -30,7 +35,7 @@
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
  - Added Idle Shutdown support for Compute Instances, allowing instances to shutdown after a set period of inactivity.
- - JobOperations.cancel() returns a LROPoller.
+ - Syntax validation on scoring scripts of Batch Deployment and Online Deployment will prevent the user from submitting bad deployments.
 
 ### Breaking Changes
  - Change (begin_)create_or_update typehints to use generics.
@@ -38,8 +43,6 @@
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
  - JobOperations.download defaults to "." instead of Path.cwd()
- - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
- - Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
 
@@ -47,7 +50,7 @@
  - Show 'properties' on data assets
 
 
-## 0.1.0b6
+## 0.1.0b6 (2022-08-09)
 
 ### Features Added
 

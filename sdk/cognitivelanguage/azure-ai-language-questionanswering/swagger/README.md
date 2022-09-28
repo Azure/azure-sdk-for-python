@@ -17,6 +17,14 @@ cd <swagger-folder>
 autorest
 ```
 
+1) After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
+
+`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
+
+2) Revert the changes made by the script in all files except:
+.../azure-sdk-for-python/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/_operations/__init__.py
+.../azure-sdk-for-python/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/aio/_operations/__init__.py
+
 ### Settings
 
 ```yaml
@@ -69,6 +77,17 @@ title: QuestionAnsweringAuthoringClient
 ## Customizations
 
 ### General customizations
+
+#### Add docs to authoring operations
+
+```yaml
+directive:
+- from: questionanswering-authoring.json
+  where: $.paths.*.*
+  transform: |
+    var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+    $.description = "See https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/" + operationId + " for more information.";
+```
 
 ```yaml
 # Define HTTP 200 responses for LROs to document result model.
@@ -331,4 +350,14 @@ directive:
     where: $["paths"]["/query-knowledgebases/projects/{projectName}"]["patch"]
     transform: >
         $["parameters"][1]["x-ms-client-name"] = "options";
+```
+
+#### Rename format parameter
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["parameters"]["ImportExportFormatParameter"]
+    transform: >
+        $["x-ms-client-name"] = "file_format";
 ```

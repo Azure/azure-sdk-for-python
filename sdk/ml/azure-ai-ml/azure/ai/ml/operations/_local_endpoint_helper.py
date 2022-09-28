@@ -19,12 +19,11 @@ from azure.ai.ml._local_endpoints.docker_client import (
     get_scoring_uri_from_container,
     get_status_from_container,
 )
-from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
 
 module_logger = logging.getLogger(__name__)
 

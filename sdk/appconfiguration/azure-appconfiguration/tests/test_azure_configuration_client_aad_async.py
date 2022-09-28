@@ -295,7 +295,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
         await self.add_for_test(client, to_list_kv)
-        custom_headers = {"If-Match": to_list_kv.etag}
+        custom_headers = {"If-Match": to_list_kv.etag or ""}
         items = await self.convert_to_list(client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
@@ -392,7 +392,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
     async def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         to_list_kv = self.create_config_setting()
-        custom_headers = {"If-Match": to_list_kv.etag}
+        custom_headers = {"If-Match": to_list_kv.etag or ""}
         items = await self.convert_to_list(self.client.list_revisions(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
