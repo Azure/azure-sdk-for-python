@@ -11,7 +11,7 @@ import uuid
 import datetime
 import warnings
 from enum import Enum
-from typing import Any, Callable, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
+from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
 #from uamqp.authentication.common import AMQPAuth
 from ._pyamqp.message import Message
