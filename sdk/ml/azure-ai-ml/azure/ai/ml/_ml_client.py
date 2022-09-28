@@ -150,14 +150,6 @@ class MLClient(object):
                         print(ws.name, ":", ws.location, ":", ws.description)
         """
 
-        if registry_name and workspace_name:
-            raise ValidationException(
-            message="Both workspace_name and registry_name cannot be used together, for the ml client",
-            no_personal_data_message="Both workspace_name and registry_name are used",
-            target=ErrorTarget.GENERAL,
-            error_category=ErrorCategory.USER_ERROR,
-        )
-
         if credential is None:
             raise ValueError("credential can not be None")
         if not registry_name:
