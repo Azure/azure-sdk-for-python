@@ -1,15 +1,13 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
 from datetime import datetime, timedelta
 
-from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+import pytest
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import (
     generate_share_sas,
     NTFSAttributes,
@@ -18,8 +16,9 @@ from azure.storage.fileshare import (
     ShareServiceClient,
     StorageErrorCode,
 )
+
 from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
@@ -860,7 +859,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         source_directory = share_client.create_directory('dir1')
         dest_directory = share_client.create_directory('dir2')
         dest_file = dest_directory.upload_file('test', b'Hello World')
-        lease = dest_file.acquire_lease()
+        lease = dest_file.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         new_directory = source_directory.rename_directory(
