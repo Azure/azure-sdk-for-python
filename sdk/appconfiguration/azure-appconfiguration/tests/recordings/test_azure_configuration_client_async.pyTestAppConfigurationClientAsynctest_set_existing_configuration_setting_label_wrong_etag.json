@@ -11,7 +11,7 @@
         "If-Match": "\u0022wrong etag\u0022",
         "User-Agent": "azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "x-ms-content-sha256": "GI4hFuRGgpyIkQs2af42T0GWy\u002B2SnFOyphbnP29FWXc=",
-        "x-ms-date": "Sep, 27 2022 20:05:51.097815 GMT"
+        "x-ms-date": "Sep, 28 2022 07:43:16.422623 GMT"
       },
       "RequestBody": {
         "key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309",
@@ -31,10 +31,10 @@
         "Access-Control-Expose-Headers": "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-useragent, x-ms-content-sha256, x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token, x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime, retry-after-ms, x-ms-request-id, x-ms-client-session-id, x-ms-effective-locale, WWW-Authenticate, traceparent, tracestate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Tue, 27 Sep 2022 20:05:51 GMT",
+        "Date": "Wed, 28 Sep 2022 07:43:16 GMT",
         "Server": "openresty/1.17.8.2",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "x-ms-correlation-request-id": "6374f73b-0b1c-4542-866b-ff2cdc1eaa5c"
+        "x-ms-correlation-request-id": "a4c1ca93-e4d2-4cd4-82a6-f2f9df58f895"
       },
       "ResponseBody": null
     }

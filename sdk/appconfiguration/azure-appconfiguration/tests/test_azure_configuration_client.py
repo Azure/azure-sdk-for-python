@@ -967,8 +967,7 @@ class TestAppConfigurationClientUnitTest:
         with pytest.raises(TypeError):
             _ = SecretReferenceConfigurationSetting("blash", value="blash")
     
-    @app_config_decorator
-    def test_mock_policies(self, appconfiguration_connection_string):
+    def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, HttpTransport
         from azure.core.pipeline import PipelineRequest, PipelineResponse
         class MockTransport(HttpTransport):
@@ -997,7 +996,7 @@ class TestAppConfigurationClientUnitTest:
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
         client = AzureAppConfigurationClient.from_connection_string(
-            appconfiguration_connection_string, transport=MockTransport()
+            os.environ["APPCONFIGURATION_CONNECTION_STRING"], transport=MockTransport()
         )
         client.list_configuration_settings()
 
