@@ -44,13 +44,13 @@ def authentication_maps_service_client_with_aad_credential():
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, AZURE_MAPS_CLIENT_ID
     """
     # [START create_maps_geolocation_service_client_with_aad]
-    from azure.identity.aio import DefaultAzureCredential
-    from azure.maps.geolocation import MapsRenderClient
+    from azure.identity import DefaultAzureCredential
+    from azure.maps.geolocation import MapsGeolocationClient
 
     credential = DefaultAzureCredential()
     maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
-    maps_geolocation_client = MapsRenderClient(client_id=maps_client_id, credential=credential)
+    maps_geolocation_client = MapsGeolocationClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_geolocation_service_client_with_aad]
 
     result = maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")

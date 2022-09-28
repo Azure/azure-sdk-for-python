@@ -20,11 +20,29 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
     """Azure Maps Geolocation REST APIs.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :type credential:
+        ~azure.core.credentials.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :keyword str client_id:
+        Specifies which account is intended for usage with the Azure AD security model.
+        It represents a unique ID for the Azure Maps account.
     :keyword api_version:
-            The API version of the service to use for requests. It defaults to the latest service version.
-            Setting to an older version may result in reduced feature compatibility.
+        The API version of the service to use for requests. It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_maps_geolocation_service_client_with_key_async]
+            :end-before: [END create_maps_geolocation_service_client_with_key_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MapsGeolocationClient with an subscription key.
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_maps_geolocation_service_client_with_aad_async]
+            :end-before: [END create_maps_geolocation_service_client_with_aad_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MapsGeolocationClient with a token credential.
     """
     def __init__(
         self,
@@ -47,12 +65,25 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
         this information  to block or alter certain content based on geographical locations where the
         application is being viewed from.
 
-        :param ip_address: The IP address. Both IPv4 and IPv6 are allowed. Required.
+        :param ip_address:
+            The IP address. Both IPv4 and IPv6 are allowed. Required.
         :type ip_address: str
-        :return: IpAddressToLocation
-        :rtype: ~azure.maps.geolocation.models.IpAddressToLocation
+        :return:
+            IpAddressToLocation
+        :rtype:
+            ~azure.maps.geolocation.models.IpAddressToLocation
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_geolocation_async.py
+                :start-after: [START get_geolocation_async]
+                :end-before: [END get_geolocation_async]
+                :language: python
+                :dedent: 4
+                :caption:  Return the ISO country code for the provided IP address.
         """
+
         geolocation_result = await self._geolocation_client.get_location(
             format="json",
             ip_address=ip_address,

@@ -47,12 +47,12 @@ async def authentication_maps_service_client_with_aad_credential_async():
     """
     # [START create_maps_geolocation_service_client_with_aad_async]
     from azure.identity.aio import DefaultAzureCredential
-    from azure.maps.geolocation.aio import MapsRenderClient
+    from azure.maps.geolocation.aio import MapsGeolocationClient
 
     credential = DefaultAzureCredential()
     maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
-    maps_geolocation_client = MapsRenderClient(client_id=maps_client_id, credential=credential)
+    maps_geolocation_client = MapsGeolocationClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_geolocation_service_client_with_aad_async]
 
     async with maps_geolocation_client:
