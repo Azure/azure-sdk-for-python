@@ -23,21 +23,23 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import sys
 
 # pylint: disable=undefined-all-variable
 
-__all__ = [
-    'PyodideTransport',
-]
+if sys.version_info >= (3, 7):
+    __all__ = [
+        'PyodideTransport',
+    ]
 
-def __dir__():
-    return __all__
+    def __dir__():
+        return __all__
 
-def __getattr__(name):
-    if name == 'PyodideTransport':
-        try:
-            from ._pyodide import PyodideTransport
-            return PyodideTransport
-        except ImportError:
-            raise ImportError("pyodide package is not installed")
-    raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
+    def __getattr__(name):
+        if name == 'PyodideTransport':
+            try:
+                from ._pyodide import PyodideTransport
+                return PyodideTransport
+            except ImportError:
+                raise ImportError("pyodide package is not installed")
+        raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")
