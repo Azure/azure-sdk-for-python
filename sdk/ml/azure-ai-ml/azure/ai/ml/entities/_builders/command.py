@@ -247,7 +247,7 @@ class Command(BaseNode):
             msg = "Can't set command property for a registered component {}"
             raise ValidationException(
                 message=msg.format(self.component),
-                no_personal_data_message=msg.format(self.component),
+                no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -272,7 +272,7 @@ class Command(BaseNode):
             msg = "Can't set code property for a registered component {}"
             raise ValidationException(
                 message=msg.format(self.component),
-                no_personal_data_message=msg.format(self.component),
+                no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -595,7 +595,7 @@ class Command(BaseNode):
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )
