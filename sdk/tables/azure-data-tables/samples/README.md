@@ -25,7 +25,7 @@ These sample programs show common scenarios for the Tables client's offerings.
 |[sample_query_tables.py][query_tables] and [sample_query_tables_async.py][query_tables_async]|Querying tables in a storage account|
 |[sample_update_upsert_merge_entities.py][update_upsert_merge] and [sample_update_upsert_merge_entities_async.py][update_upsert_merge_async]| Updating, upserting, and merging entities|
 |[sample_batching.py][sample_batch] and [sample_batching_async.py][sample_batch_async]| Committing many requests in a single batch|
-|[sample_copy_table.py][sample_copy_table] and [sample_copy_table_async.py][sample_copy_table_async]| Copying table between Tables table and Storage blob|
+|[sample_copy_table.py][sample_copy_table] and [sample_copy_table_async.py][sample_copy_table_async]| Copying a table between Tables table and Storage blob|
 
 
 ### Prerequisites
