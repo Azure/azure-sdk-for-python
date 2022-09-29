@@ -652,7 +652,8 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
                 )
                 return
             for _ in range(batch):
-                if await asyncio.ensure_future(self._listen_one_frame(wait=wait, **kwargs)):
+                if await self._listen_one_frame(wait=wait, **kwargs):
+                # if await asyncio.ensure_future(self._listen_one_frame(wait=wait, **kwargs)):
                     # TODO: compare the perf difference between ensure_future and direct await
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
