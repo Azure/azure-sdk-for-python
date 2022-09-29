@@ -49,6 +49,12 @@ class SenderLink(Link):
         super(SenderLink, self).__init__(session, handle, name, role, target_address=target_address, **kwargs)
         self._pending_deliveries = []
 
+    @classmethod
+    def from_incoming_frame(cls, session, handle, frame):
+        # TODO: Assuming we establish all links for now...
+        # check link_create_from_endpoint in C lib
+        raise NotImplementedError("Pending")
+
     # In theory we should not need to purge pending deliveries on attach/dettach - as a link should
     # be resume-able, however this is not yet supported.
     async def _incoming_attach(self, frame):

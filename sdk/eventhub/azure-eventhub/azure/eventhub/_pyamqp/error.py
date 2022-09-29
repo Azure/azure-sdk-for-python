@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+# TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from enum import Enum
 from collections import namedtuple
 
@@ -87,7 +88,7 @@ class ErrorCondition(bytes, Enum):
     SocketError = b"amqp:socket-error"
 
 
-class RetryMode(str, Enum):
+class RetryMode(str, Enum):  # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
     EXPONENTIAL = 'exponential'
     FIXED = 'fixed'
 
@@ -149,7 +150,7 @@ class RetryPolicy:
             'history': []
         }
 
-    def increment(self, settings, error):
+    def increment(self, settings, error):  # pylint: disable=no-self-use
         settings['total'] -= 1
         settings['history'].append(error)
         if settings['total'] < 0:
@@ -181,10 +182,10 @@ class RetryPolicy:
         return min(settings['max_backoff'], backoff_value)
 
 
-AMQPError = namedtuple('error', ['condition', 'description', 'info'])
-AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields)
-AMQPError._code = 0x0000001d # pylint: disable=protected-access
-AMQPError._definition = ( # pylint: disable=protected-access
+AMQPError = namedtuple('AMQPError', ['condition', 'description', 'info'], defaults=[None, None])
+AMQPError.__new__.__defaults__ = (None,) * len(AMQPError._fields) # type: ignore
+AMQPError._code = 0x0000001d # type: ignore # pylint: disable=protected-access
+AMQPError._definition = ( # type: ignore # pylint: disable=protected-access
     FIELD('condition', AMQPTypes.symbol, True, None, False),
     FIELD('description', AMQPTypes.string, False, None, False),
     FIELD('info', FieldDefinition.fields, False, None, False),
@@ -278,7 +279,7 @@ class AMQPLinkRedirect(AMQPLinkError):
         self.network_host = info.get(b'network-host', b'').decode('utf-8')
         self.port = int(info.get(b'port', SECURE_PORT))
         self.address = info.get(b'address', b'').decode('utf-8')
-        super(AMQPLinkError, self).__init__(condition, description=description, info=info)
+        super().__init__(condition, description=description, info=info)
 
 
 class AuthenticationException(AMQPException):
@@ -300,9 +301,8 @@ class TokenExpired(AuthenticationException):
 
 
 class TokenAuthFailure(AuthenticationException):
-    """
+    """Failure to authenticate with token."""
 
-    """
     def __init__(self, status_code, status_description, **kwargs):
         encoding = kwargs.get("encoding", 'utf-8')
         self.status_code = status_code
@@ -332,13 +332,12 @@ class MessageSendFailed(MessageException):
     :param bytes condition: The error code.
     :keyword str description: A description of the error.
     :keyword dict info: A dictionary of additional data associated with the error.
-
     """
 
 
 class ErrorResponse(object):
-    """
-    """
+    """AMQP error object."""
+
     def __init__(self, **kwargs):
         self.condition = kwargs.get("condition")
         self.description = kwargs.get("description")

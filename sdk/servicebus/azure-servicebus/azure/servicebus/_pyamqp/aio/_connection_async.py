@@ -214,7 +214,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if self.state == ConnectionState.END:
             return
         await self._set_state(ConnectionState.END)
-        self._transport.close()
+        await self._transport.close()
 
     def _can_read(self):
         # type: () -> bool
@@ -653,7 +653,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             cast(float, self._last_frame_received_time),
         ) or (await self._get_remote_timeout(now)):
             await self.close(
-                # TODO: check error condition
                 error=AMQPError(
                     condition=ErrorCondition.ConnectionCloseForced,
                     description="No frame received for the idle timeout.",
@@ -735,7 +734,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     cast(float, self._idle_timeout),
                     cast(float, self._last_frame_received_time),
                 ) or (await self._get_remote_timeout(now)):
-                    # TODO: check error condition
                     await self.close(
                         error=AMQPError(
                             condition=ErrorCondition.ConnectionCloseForced,

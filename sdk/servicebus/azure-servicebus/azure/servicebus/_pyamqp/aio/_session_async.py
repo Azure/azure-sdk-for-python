@@ -167,8 +167,21 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[1]] = self.links[frame[0].decode("utf-8")]  # name and handle
             await self._input_handles[frame[1]]._incoming_attach(frame) # pylint: disable=protected-access
         except KeyError:
-            outgoing_handle = self._get_next_output_handle()  # TODO: catch max-handles error
-            if frame[2] == Role.Sender:  # role
+            try:
+                outgoing_handle = self._get_next_output_handle()
+            except ValueError:
+                # detach the link that would have been set.
+                await self.links[frame[0].decode('utf-8')].detach(
+                    error=AMQPError(
+                        condition=ErrorCondition.LinkDetachForced,
+                        description="Cannot allocate more handles, the max number of handles is {}. Detaching link".format(
+                            self.handle_max
+                        ),
+                        info=None,
+                    )
+                )
+                return
+            if frame[2] == Role.Sender:
                 new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
             else:
                 new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
@@ -282,7 +295,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         try:
             await self._input_handles[frame[0]]._incoming_transfer(frame)  # pylint: disable=protected-access
         except KeyError:
-            pass  # TODO: "unattached handle"
+            await self._set_state(SessionState.DISCARDING)
+            await self.end(error=AMQPError(
+                    condition=ErrorCondition.SessionUnattachedHandle,
+                    description="Invalid handle reference in received frame: Handle is not currently associated with an attached link"))
         if self.incoming_window == 0:
             self.incoming_window = self.target_incoming_window
             await self._outgoing_flow()
@@ -310,7 +326,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             #     self._input_handles.pop(link.remote_handle, None)
             #     self._output_handles.pop(link.handle, None)
         except KeyError:
-            pass  # TODO: close session with unattached-handle
+            await self._set_state(SessionState.DISCARDING)
+            await self._connection.close(error=AMQPError(
+                condition=ErrorCondition.SessionUnattachedHandle,
+                description="Invalid handle reference in received frame: Handle is not currently associated with an attached link"))
 
     async def _wait_for_response(self, wait, end_state):
         # type: (Union[bool, float], SessionState) -> None

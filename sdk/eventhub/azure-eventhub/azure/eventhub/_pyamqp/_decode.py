@@ -8,7 +8,7 @@
 import struct
 import uuid
 import logging
-from typing import List, Union, Tuple, Dict, Callable  # pylint: disable=unused-import
+from typing import List, Optional, Tuple, Dict, Callable, Any, cast, Union  # pylint: disable=unused-import
 
 
 from .message import Message, Header, Properties
@@ -236,7 +236,7 @@ def _decode_described(buffer):
     buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
     buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
     try:
-        composite_type = _COMPOSITES[descriptor]
+        composite_type = cast(int, _COMPOSITES[descriptor])
         return buffer, {composite_type: value}
     except KeyError:
         return buffer, value
@@ -244,7 +244,7 @@ def _decode_described(buffer):
 
 def decode_payload(buffer):
     # type: (memoryview) -> Message
-    message = {}
+    message: Dict[str, Union[Properties, Header, Dict, bytes, List]] = {}
     while buffer:
         # Ignore the first two bytes, they will always be the constructors for
         # described type then ulong.
@@ -262,12 +262,12 @@ def decode_payload(buffer):
             message["application_properties"] = value
         elif descriptor == 117:
             try:
-                message["data"].append(value)
+                cast(List, message["data"]).append(value)
             except KeyError:
                 message["data"] = [value]
         elif descriptor == 118:
             try:
-                message["sequence"].append(value)
+                cast(List, message["sequence"]).append(value)
             except KeyError:
                 message["sequence"] = [value]
         elif descriptor == 119:
@@ -293,7 +293,7 @@ def decode_frame(data):
         # list8 0xc0: data[4] is size, data[5] is count
         count = data[5]
         buffer = data[6:]
-    fields = [None] * count
+    fields: List[Optional[memoryview]] = [None] * count
     for i in range(count):
         buffer, fields[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
     if frame_type == 20:
@@ -302,7 +302,7 @@ def decode_frame(data):
 
 
 def decode_empty_frame(header):
-    # type: (memory) -> bytes
+    # type: (memoryview) -> Tuple[int, bytes]
     if header[0:4] == _HEADER_PREFIX:
         return 0, header.tobytes()
     if header[5] == 0:
@@ -310,7 +310,7 @@ def decode_empty_frame(header):
     raise ValueError("Received unrecognized empty frame")
 
 
-_DECODE_BY_CONSTRUCTOR = [None] * 256  # type: List[Callable[memoryview]]
+_DECODE_BY_CONSTRUCTOR: List[Callable] = cast(List[Callable], [None] * 256)
 _DECODE_BY_CONSTRUCTOR[0] = _decode_described
 _DECODE_BY_CONSTRUCTOR[64] = _decode_null
 _DECODE_BY_CONSTRUCTOR[65] = _decode_true

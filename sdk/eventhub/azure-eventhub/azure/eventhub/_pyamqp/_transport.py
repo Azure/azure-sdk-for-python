@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -51,33 +51,35 @@ import certifi
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
-from .constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, TransportType, AMQP_WS_SUBPROTOCOL
+from .constants import (
+    TLS_HEADER_FRAME,
+    WEBSOCKET_PORT,
+    TransportType,
+    AMQP_WS_SUBPROTOCOL,
+)
 
 
 try:
     import fcntl
 except ImportError:  # pragma: no cover
-    fcntl = None  # noqa
-try:
-    from os import set_cloexec  # Python 3.4?
-except ImportError:  # pragma: no cover
-    # TODO: Drop this once we drop Python 2.7 support
-    def set_cloexec(fd, cloexec):  # noqa
-        """Set flag to close fd after exec."""
-        if fcntl is None:
-            return
-        try:
-            FD_CLOEXEC = fcntl.FD_CLOEXEC
-        except AttributeError:
-            raise NotImplementedError(
-                "close-on-exec flag not supported on this platform",
-            )
-        flags = fcntl.fcntl(fd, fcntl.F_GETFD)
-        if cloexec:
-            flags |= FD_CLOEXEC
-        else:
-            flags &= ~FD_CLOEXEC
-        return fcntl.fcntl(fd, fcntl.F_SETFD, flags)
+    fcntl = None    # type: ignore  # noqa
+
+def set_cloexec(fd, cloexec):  # noqa
+    """Set flag to close fd after exec."""
+    if fcntl is None:
+        return
+    try:
+        FD_CLOEXEC = fcntl.FD_CLOEXEC
+    except AttributeError:
+        raise NotImplementedError(
+            "close-on-exec flag not supported on this platform",
+        )
+    flags = fcntl.fcntl(fd, fcntl.F_GETFD)
+    if cloexec:
+        flags |= FD_CLOEXEC
+    else:
+        flags &= ~FD_CLOEXEC
+    return fcntl.fcntl(fd, fcntl.F_SETFD, flags)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -141,20 +143,21 @@ class UnexpectedFrame(Exception):
     pass
 
 
-class _AbstractTransport(object):
+class _AbstractTransport(object):  # pylint: disable=too-many-instance-attributes
     """Common superclass for TCP and SSL transports."""
 
     def __init__(
         self,
         host,
+        *,
         port=AMQP_PORT,
         connect_timeout=None,
         read_timeout=None,
-        write_timeout=None,
         socket_settings=None,
         raise_on_initial_eintr=True,
-        **kwargs
+        **kwargs    # pylint: disable=unused-argument
     ):
+        self._quick_recv = None
         self.connected = False
         self.sock = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
@@ -163,7 +166,6 @@ class _AbstractTransport(object):
 
         self.connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self.read_timeout = read_timeout or READ_TIMEOUT_INTERVAL
-        self.write_timeout = write_timeout
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
@@ -176,7 +178,6 @@ class _AbstractTransport(object):
             self._init_socket(
                 self.socket_settings,
                 self.read_timeout,
-                self.write_timeout,
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -283,7 +284,9 @@ class _AbstractTransport(object):
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                entries = socket.getaddrinfo(host, port, family, socket.SOCK_STREAM, SOL_TCP)
+                entries = socket.getaddrinfo(
+                    host, port, family, socket.SOCK_STREAM, SOL_TCP
+                )
                 entries_num = len(entries)
             except socket.gaierror:
                 # we may have depleted all our options
@@ -291,7 +294,9 @@ class _AbstractTransport(object):
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise e if e is not None else socket.error("failed to resolve broker hostname")
+                    raise e if e is not None else socket.error(
+                        "failed to resolve broker hostname"
+                    )
                 continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker
@@ -317,7 +322,7 @@ class _AbstractTransport(object):
                     # hurray, we established connection
                     return
 
-    def _init_socket(self, socket_settings, read_timeout, write_timeout):
+    def _init_socket(self, socket_settings, read_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
@@ -365,7 +370,7 @@ class _AbstractTransport(object):
         for opt, val in tcp_opts.items():
             self.sock.setsockopt(SOL_TCP, opt, val)
 
-    def _read(self, n, initial=False):
+    def _read(self, n, initial=False, buffer=None, _errnos=None):
         """Read exactly n bytes from the peer."""
         raise NotImplementedError("Must be overriden in subclass")
 
@@ -387,7 +392,7 @@ class _AbstractTransport(object):
             # calling this method.
             try:
                 self.sock.shutdown(socket.SHUT_RDWR)
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-except
                 # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
                 #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
                 _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
@@ -395,7 +400,7 @@ class _AbstractTransport(object):
             self.sock = None
         self.connected = False
 
-    def read(self, verify_frame_type=0, **kwargs):
+    def read(self, verify_frame_type=0):
         read = self._read
         read_frame_buffer = BytesIO()
         try:
@@ -409,6 +414,10 @@ class _AbstractTransport(object):
             size = struct.unpack(">I", size)[0]
             offset = frame_header[4]
             frame_type = frame_header[5]
+            if verify_frame_type is not None and frame_type != verify_frame_type:
+                raise ValueError(
+                    f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                )
 
             # >I is an unsigned int, but the argument to sock.recv is signed,
             # so we know the size can be at most 2 * SIGNED_INT_MAX
@@ -416,7 +425,9 @@ class _AbstractTransport(object):
             payload = memoryview(bytearray(payload_size))
             if size > SIGNED_INT_MAX:
                 read_frame_buffer.write(read(SIGNED_INT_MAX, buffer=payload))
-                read_frame_buffer.write(read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
+                read_frame_buffer.write(
+                    read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
+                )
             else:
                 read_frame_buffer.write(read(payload_size, buffer=payload))
         except (socket.timeout, TimeoutError):
@@ -445,7 +456,7 @@ class _AbstractTransport(object):
                 self.connected = False
             raise
 
-    def receive_frame(self, *args, **kwargs):
+    def receive_frame(self, **kwargs):
         try:
             header, channel, payload = self.read(**kwargs)
             if not payload:
@@ -465,17 +476,21 @@ class _AbstractTransport(object):
             data = header + encoded_channel + performative
         self.write(data)
 
-    def negotiate(self, encode, decode):
+    def negotiate(self):
         pass
 
 
 class SSLTransport(_AbstractTransport):
     """Transport that works over SSL."""
 
-    def __init__(self, host, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
-        self.sslopts = ssl if isinstance(ssl, dict) else {}
+    def __init__(
+        self, host, *, port=AMQPS_PORT, connect_timeout=None, ssl_opts=None, **kwargs
+    ):
+        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self._read_buffer = BytesIO()
-        super(SSLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, **kwargs)
+        super(SSLTransport, self).__init__(
+            host, port=port, connect_timeout=connect_timeout, **kwargs
+        )
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
@@ -488,14 +503,16 @@ class SSLTransport(_AbstractTransport):
             return self._wrap_context(sock, sslopts, **context)
         return self._wrap_socket_sni(sock, **sslopts)
 
-    def _wrap_context(self, sock, sslopts, check_hostname=None, **ctx_options):
+    def _wrap_context(  # pylint: disable=no-self-use
+        self, sock, sslopts, check_hostname=None, **ctx_options
+    ):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
         ctx.check_hostname = check_hostname
         return ctx.wrap_socket(sock, **sslopts)
 
-    def _wrap_socket_sni(
+    def _wrap_socket_sni(  # pylint: disable=no-self-use
         self,
         sock,
         keyfile=None,
@@ -532,9 +549,14 @@ class SSLTransport(_AbstractTransport):
             #'ssl_version': ssl_version
         }
 
-        sock = ssl.wrap_socket(**opts)
+        # TODO: We need to refactor this.
+        sock = ssl.wrap_socket(**opts)  # pylint: disable=deprecated-method
         # Set SNI headers if supported
-        if (server_hostname is not None) and (hasattr(ssl, "HAS_SNI") and ssl.HAS_SNI) and (hasattr(ssl, "SSLContext")):
+        if (
+            (server_hostname is not None)
+            and (hasattr(ssl, "HAS_SNI") and ssl.HAS_SNI)
+            and (hasattr(ssl, "SSLContext"))
+        ):
             context = ssl.SSLContext(opts["ssl_version"])
             context.verify_mode = cert_reqs
             if cert_reqs != ssl.CERT_NONE:
@@ -552,14 +574,20 @@ class SSLTransport(_AbstractTransport):
             except OSError:
                 pass
 
-    def _read(self, toread, initial=False, buffer=None, _errnos=(errno.ENOENT, errno.EAGAIN, errno.EINTR)):
+    def _read(
+        self,
+        n,
+        initial=False,
+        buffer=None,
+        _errnos=(errno.ENOENT, errno.EAGAIN, errno.EINTR),
+    ):
         # According to SSL_read(3), it can at most return 16kb of data.
         # Thus, we use an internal read buffer like TCPTransport._read
         # to get the exact number of bytes wanted.
         length = 0
-        view = buffer or memoryview(bytearray(toread))
+        view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
-        toread -= nbytes
+        toread = n - nbytes
         length += nbytes
         try:
             while toread:
@@ -606,51 +634,15 @@ class SSLTransport(_AbstractTransport):
     def negotiate(self):
         with self.block():
             self.write(TLS_HEADER_FRAME)
-            channel, returned_header = self.receive_frame(verify_frame_type=None)
+            _, returned_header = self.receive_frame(verify_frame_type=None)
             if returned_header[1] == TLS_HEADER_FRAME:
                 raise ValueError(
-                    "Mismatching TLS header protocol. Excpected: {}, received: {}".format(
-                        TLS_HEADER_FRAME, returned_header[1]
-                    )
+                    f"""Mismatching TLS header protocol. Expected: {TLS_HEADER_FRAME!r},"""
+                    """received: {returned_header[1]!r}"""
                 )
 
 
-class TCPTransport(_AbstractTransport):
-    """Transport that deals directly with TCP socket."""
-
-    def _setup_transport(self):
-        # Setup to _write() directly to the socket, and
-        # do our own buffered reads.
-        self._write = self.sock.sendall
-        self._read_buffer = EMPTY_BUFFER
-        self._quick_recv = self.sock.recv
-
-    def _read(self, n, initial=False, _errnos=(errno.EAGAIN, errno.EINTR)):
-        """Read exactly n bytes from the socket."""
-        recv = self._quick_recv
-        rbuf = self._read_buffer
-        try:
-            while len(rbuf) < n:
-                try:
-                    s = self.sock.read(n - len(rbuf))
-                except socket.error as exc:
-                    if exc.errno in _errnos:
-                        if initial and self.raise_on_initial_eintr:
-                            raise socket.timeout()
-                        continue
-                    raise
-                if not s:
-                    raise IOError("Server unexpectedly closed connection")
-                rbuf += s
-        except:  # noqa
-            self._read_buffer = rbuf
-            raise
-
-        result, self._read_buffer = rbuf[:n], rbuf[n:]
-        return result
-
-
-def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
+def Transport(host, transport_type, connect_timeout=None, ssl_opts=True, **kwargs):
     """Create transport.
 
     Given a few parameters from the Connection constructor,
@@ -659,17 +651,25 @@ def Transport(host, transport_type, connect_timeout=None, ssl=False, **kwargs):
     if transport_type == TransportType.AmqpOverWebsocket:
         transport = WebSocketTransport
     else:
-        transport = SSLTransport if ssl else TCPTransport
-    return transport(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        transport = SSLTransport
+    return transport(host, connect_timeout=connect_timeout, ssl_opts=ssl_opts, **kwargs)
 
 
 class WebSocketTransport(_AbstractTransport):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
-        self.sslopts = ssl if isinstance(ssl, dict) else {}
+    def __init__(
+        self,
+        host,
+        *,
+        port=WEBSOCKET_PORT,
+        connect_timeout=None,
+        ssl_opts=None,
+        **kwargs,
+    ):
+        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self._connect_timeout = connect_timeout or WS_TIMEOUT_INTERVAL
         self._host = host
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        super().__init__(host, port, connect_timeout, **kwargs)
+        super().__init__(host, port=port, connect_timeout=connect_timeout, **kwargs)
         self.ws = None
         self._http_proxy = kwargs.get("http_proxy", None)
 
@@ -696,9 +696,11 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_auth=http_proxy_auth,
             )
         except ImportError:
-            raise ValueError("Please install websocket-client library to use websocket transport.")
+            raise ValueError(
+                "Please install websocket-client library to use websocket transport."
+            )
 
-    def _read(self, n, initial=False, buffer=None, **kwargs):  # pylint: disable=unused-arguments
+    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
         from websocket import WebSocketTimeoutException
 

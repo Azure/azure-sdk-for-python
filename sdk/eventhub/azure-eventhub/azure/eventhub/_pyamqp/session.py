@@ -4,30 +4,30 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from __future__ import annotations
 import uuid
 import logging
 import time
+from typing import Union, Optional, TYPE_CHECKING
 
 from .constants import (
-    INCOMING_WINDOW,
-    OUTGOING_WINDOW,
     ConnectionState,
     SessionState,
     SessionTransferState,
     Role
 )
-from .endpoints import Source, Target
 from .sender import SenderLink
 from .receiver import ReceiverLink
 from .management_link import ManagementLink
 from .performatives import BeginFrame, EndFrame, FlowFrame, TransferFrame, DispositionFrame
 from ._encode import encode_frame
-from azure.eventhub._pyamqp.error import AMQPError, AMQPSessionError, ErrorCondition
+if TYPE_CHECKING:
+    from .error import AMQPError
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Session(object):
+class Session(object):  # pylint: disable=too-many-instance-attributes
     """
     :param int remote_channel: The remote channel for this Session.
     :param int next_outgoing_id: The transfer-id of the first transfer id the sender will send.
@@ -75,8 +75,8 @@ class Session(object):
         self.end()
 
     @classmethod
-    def from_incoming_frame(cls, connection, channel, frame):
-        # check session_create_from_endpoint in C lib
+    def from_incoming_frame(cls, connection, channel):
+        # TODO: check session_create_from_endpoint in C lib
         new_session = cls(connection, channel)
         return new_session
 
@@ -358,7 +358,7 @@ class Session(object):
             new_state = SessionState.DISCARDING if error else SessionState.END_SENT
             self._set_state(new_state)
             self._wait_for_response(wait, SessionState.UNMAPPED)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             _LOGGER.info("An error occurred when ending the session: %r", exc)
             self._set_state(SessionState.UNMAPPED)
 

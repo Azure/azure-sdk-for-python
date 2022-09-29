@@ -5,13 +5,20 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
-from typing import Callable
+from typing import Callable, cast
 from enum import Enum
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
 from .error import AMQPError
 from .message import Header, Properties
+
+
+def _encode_property(value):
+    try:
+        return value.encode("UTF-8")
+    except AttributeError:
+        return value
 
 
 class MessageState(Enum):
@@ -24,7 +31,7 @@ class MessageState(Enum):
 
     def __eq__(self, __o: object) -> bool:
         try:
-            return self.value == __o.value
+            return self.value == cast(Enum, __o).value
         except AttributeError:
             return super().__eq__(__o)
 
@@ -38,7 +45,7 @@ RECEIVE_STATES = (MessageState.ReceivedSettled, MessageState.ReceivedUnsettled)
 PENDING_STATES = (MessageState.WaitingForSendAck, MessageState.WaitingToBeSent)
 
 
-class LegacyMessage(object):
+class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
     def __init__(self, message, **kwargs):
         self._message = message
         self.state = MessageState.SendComplete
@@ -149,22 +156,22 @@ class LegacyBatchMessage(LegacyMessage):
     size_offset = 0
 
 
-class LegacyMessageProperties(object):
+class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, properties):
-        self.message_id = self._encode_property(properties.message_id)
-        self.user_id = self._encode_property(properties.user_id)
-        self.to = self._encode_property(properties.to)
-        self.subject = self._encode_property(properties.subject)
-        self.reply_to = self._encode_property(properties.reply_to)
-        self.correlation_id = self._encode_property(properties.correlation_id)
-        self.content_type = self._encode_property(properties.content_type)
-        self.content_encoding = self._encode_property(properties.content_encoding)
+        self.message_id = _encode_property(properties.message_id)
+        self.user_id = _encode_property(properties.user_id)
+        self.to = _encode_property(properties.to)
+        self.subject = _encode_property(properties.subject)
+        self.reply_to = _encode_property(properties.reply_to)
+        self.correlation_id = _encode_property(properties.correlation_id)
+        self.content_type = _encode_property(properties.content_type)
+        self.content_encoding = _encode_property(properties.content_encoding)
         self.absolute_expiry_time = properties.absolute_expiry_time
         self.creation_time = properties.creation_time
-        self.group_id = self._encode_property(properties.group_id)
+        self.group_id = _encode_property(properties.group_id)
         self.group_sequence = properties.group_sequence
-        self.reply_to_group_id = self._encode_property(properties.reply_to_group_id)
+        self.reply_to_group_id = _encode_property(properties.reply_to_group_id)
 
     def __str__(self):
         return str(
@@ -184,12 +191,6 @@ class LegacyMessageProperties(object):
                 "reply_to_group_id": self.reply_to_group_id,
             }
         )
-
-    def _encode_property(self, value):
-        try:
-            return value.encode("UTF-8")
-        except AttributeError:
-            return value
 
     def get_properties_obj(self):
         return Properties(

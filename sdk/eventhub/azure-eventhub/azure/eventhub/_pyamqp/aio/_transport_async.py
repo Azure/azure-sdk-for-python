@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -37,12 +37,10 @@ import errno
 import socket
 import ssl
 import struct
-from ssl import SSLContext, SSLError
-from contextlib import contextmanager
+from ssl import SSLError
 from io import BytesIO
 import logging
-from threading import Lock
-from typing import Optional
+
 
 import certifi
 
@@ -60,32 +58,14 @@ from .._transport import (
     set_cloexec,
     AMQP_PORT,
     TIMEOUT_INTERVAL,
-    WebSocketTransport,
 )
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_running_loop():
-    try:
-        import asyncio  # pylint: disable=import-error
-
-        return asyncio.get_running_loop()
-    except AttributeError:  # 3.6
-        loop = None
-        try:
-            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
-        except AttributeError:
-            _LOGGER.warning("This version of Python is deprecated, please upgrade to >= v3.6")
-        if loop is None:
-            _LOGGER.warning("No running event loop")
-            loop = asyncio.get_event_loop()
-        return loop
-
-
 class AsyncTransportMixin:
-    async def receive_frame(self, timeout=None, *args, **kwargs):
+    async def receive_frame(self, timeout=None, **kwargs):
         try:
             header, channel, payload = await asyncio.wait_for(self.read(**kwargs), timeout=timeout)
             if not payload:
@@ -97,7 +77,7 @@ class AsyncTransportMixin:
         except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
             return None, None
 
-    async def read(self, verify_frame_type=0, **kwargs):
+    async def read(self, verify_frame_type=0):
         async with self.socket_lock:
             read_frame_buffer = BytesIO()
             try:
@@ -111,6 +91,9 @@ class AsyncTransportMixin:
                 size = struct.unpack(">I", size)[0]
                 offset = frame_header[4]
                 frame_type = frame_header[5]
+                if verify_frame_type is not None and frame_type != verify_frame_type:
+                    raise ValueError(f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}")
+
 
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
@@ -148,13 +131,12 @@ class AsyncTransportMixin:
         await self.write(data)
         # _LOGGER.info("OCH%d -> %r", channel, frame)
 
-
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
             return sslopts
         try:
             if "context" in sslopts:
-                return self._build_ssl_context(sslopts, **sslopts.pop("context"))
+                return self._build_ssl_context(**sslopts.pop("context"))
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
                 ssl_version = ssl.PROTOCOL_TLS
@@ -180,28 +162,26 @@ class AsyncTransportMixin:
         except TypeError:
             raise TypeError("SSL configuration must be a dictionary, or the value True.")
 
-    def _build_ssl_context(self, sslopts, check_hostname=None, **ctx_options):
+    def _build_ssl_context(self, check_hostname=None, **ctx_options):  # pylint: disable=no-self-use
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
         ctx.check_hostname = check_hostname
         return ctx
 
-
-class AsyncTransport(AsyncTransportMixin):
+class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-attributes
     """Common superclass for TCP and SSL transports."""
 
     def __init__(
         self,
         host,
+        *,
         port=AMQP_PORT,
         connect_timeout=None,
-        read_timeout=None,
-        write_timeout=None,
-        ssl=False,
+        ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
-        **kwargs,
+        **kwargs    # pylint: disable=unused-argument
     ):
         self.connected = False
         self.sock = None
@@ -212,14 +192,10 @@ class AsyncTransport(AsyncTransportMixin):
         self.host, self.port = to_host_port(host, port)
 
         self.connect_timeout = connect_timeout
-        self.read_timeout = read_timeout
-        self.write_timeout = write_timeout
         self.socket_settings = socket_settings
-        self.loop = get_running_loop()
+        self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl)
-
-    
+        self.sslopts = self._build_ssl_opts(ssl_opts)
 
     async def connect(self):
         try:
@@ -227,11 +203,7 @@ class AsyncTransport(AsyncTransportMixin):
             if self.connected:
                 return
             await self._connect(self.host, self.port, self.connect_timeout)
-            self._init_socket(
-                self.socket_settings,
-                self.read_timeout,
-                self.write_timeout,
-            )
+            self._init_socket(self.socket_settings)
             self.reader, self.writer = await asyncio.open_connection(
                 sock=self.sock, ssl=self.sslopts, server_hostname=self.host if self.sslopts else None
             )
@@ -270,7 +242,8 @@ class AsyncTransport(AsyncTransportMixin):
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise (e if e is not None else socket.error("failed to resolve broker hostname"))
+                    raise e if e is not None else socket.error("failed to resolve broker hostname")
+                continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker
             for i, res in enumerate(entries):
@@ -295,25 +268,13 @@ class AsyncTransport(AsyncTransportMixin):
                     # hurray, we established connection
                     return
 
-    def _init_socket(self, socket_settings, read_timeout, write_timeout):
+    def _init_socket(self, socket_settings):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
-
-        # set socket timeouts
-        # for timeout, interval in ((socket.SO_SNDTIMEO, write_timeout),
-        #                           (socket.SO_RCVTIMEO, read_timeout)):
-        #     if interval is not None:
-        #         sec = int(interval)
-        #         usec = int((interval - sec) * 1000000)
-        #         self.sock.setsockopt(
-        #             socket.SOL_SOCKET, timeout,
-        #             pack('ll', sec, usec),
-        #         )
-
         self.sock.settimeout(1)  # set socket back to non-blocking mode
 
-    def _get_tcp_socket_defaults(self, sock):
+    def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
         tcp_opts = {}
         for opt in KNOWN_TCP_OPTS:
             enum = None
@@ -404,7 +365,7 @@ class AsyncTransport(AsyncTransportMixin):
                 self.connected = False
             raise
 
-    async def receive_frame_with_lock(self, *args, **kwargs):
+    async def receive_frame_with_lock(self, **kwargs):
         try:
             async with self.socket_lock:
                 header, channel, payload = await self.read(**kwargs)
@@ -423,10 +384,9 @@ class AsyncTransport(AsyncTransportMixin):
         channel, returned_header = await self.receive_frame(verify_frame_type=None)
         if returned_header[1] == TLS_HEADER_FRAME:
             raise ValueError(
-                "Mismatching TLS header protocol. Excpected: {}, received: {}".format(
-                    TLS_HEADER_FRAME, returned_header[1]
+                    f"""Mismatching TLS header protocol. Expected: {TLS_HEADER_FRAME!r},"""
+                    """received: {returned_header[1]!r}"""
                 )
-            )
 
 
 class WebSocketTransportAsync(AsyncTransportMixin):

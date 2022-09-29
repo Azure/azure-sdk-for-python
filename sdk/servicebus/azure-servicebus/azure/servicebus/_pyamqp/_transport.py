@@ -91,6 +91,8 @@ AMQP_FRAME = memoryview(b"AMQP")
 EMPTY_BUFFER = bytes()
 SIGNED_INT_MAX = 0x7FFFFFFF
 TIMEOUT_INTERVAL = 1
+WS_TIMEOUT_INTERVAL = 1
+READ_TIMEOUT_INTERVAL = 0.2
 
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r"\[([\.0-9a-f:]+)\](?::(\d+))?")
@@ -150,6 +152,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         *,
         port=AMQP_PORT,
         connect_timeout=None,
+        read_timeout=None,
         socket_settings=None,
         raise_on_initial_eintr=True,
         **kwargs    # pylint: disable=unused-argument
@@ -162,6 +165,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.host, self.port = to_host_port(host, port)
 
         self.connect_timeout = connect_timeout or TIMEOUT_INTERVAL
+        self.read_timeout = read_timeout or READ_TIMEOUT_INTERVAL
         self.socket_settings = socket_settings
         self.socket_lock = Lock()
 
@@ -171,8 +175,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             if self.connected:
                 return
             self._connect(self.host, self.port, self.connect_timeout)
-            self._init_socket(self.socket_settings)
-            self.sock.settimeout(0.2)
+            self._init_socket(
+                self.socket_settings,
+                self.read_timeout,
+            )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
@@ -316,17 +322,28 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     # hurray, we established connection
                     return
 
-    def _init_socket(self, socket_settings):
+    def _init_socket(self, socket_settings, read_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
+
+        # set socket timeouts
+        # for timeout, interval in ((socket.SO_SNDTIMEO, write_timeout),
+        #                           (socket.SO_RCVTIMEO, read_timeout)):
+        #     if interval is not None:
+        #         sec = int(interval)
+        #         usec = int((interval - sec) * 1000000)
+        #         self.sock.setsockopt(
+        #             socket.SOL_SOCKET, timeout,
+        #             pack('ll', sec, usec),
+        #         )
         self._setup_transport()
         # TODO: a greater timeout value is needed in long distance communication
         #  we should either figure out a reasonable value error/dynamically adjust the timeout
-        #  1 second is enough for perf analysis
-        self.sock.settimeout(1)  # set socket back to non-blocking mode
+        #  0.2 second is enough for perf analysis
+        self.sock.settimeout(read_timeout)  # set socket back to non-blocking mode
 
-    def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
+    def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}
         for opt in KNOWN_TCP_OPTS:
             enum = None
@@ -486,16 +503,16 @@ class SSLTransport(_AbstractTransport):
             return self._wrap_context(sock, sslopts, **context)
         return self._wrap_socket_sni(sock, **sslopts)
 
-    def _wrap_context(
+    def _wrap_context(  # pylint: disable=no-self-use
         self, sock, sslopts, check_hostname=None, **ctx_options
-    ):  # pylint: disable=no-self-use
+    ):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
         ctx.check_hostname = check_hostname
         return ctx.wrap_socket(sock, **sslopts)
 
-    def _wrap_socket_sni(
+    def _wrap_socket_sni(  # pylint: disable=no-self-use
         self,
         sock,
         keyfile=None,
@@ -508,7 +525,7 @@ class SSLTransport(_AbstractTransport):
         server_hostname=None,
         ciphers=None,
         ssl_version=None,
-    ):  # pylint: disable=no-self-use
+    ):
         """Socket wrap with SNI headers.
 
         Default `ssl.wrap_socket` method augmented with support for
@@ -649,7 +666,7 @@ class WebSocketTransport(_AbstractTransport):
         **kwargs,
     ):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
+        self._connect_timeout = connect_timeout or WS_TIMEOUT_INTERVAL
         self._host = host
         self._custom_endpoint = kwargs.get("custom_endpoint")
         super().__init__(host, port=port, connect_timeout=connect_timeout, **kwargs)
@@ -683,7 +700,7 @@ class WebSocketTransport(_AbstractTransport):
                 "Please install websocket-client library to use websocket transport."
             )
 
-    def _read(self, n, initial=False, buffer=None, _errnos=None):
+    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
         from websocket import WebSocketTimeoutException
 

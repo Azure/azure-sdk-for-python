@@ -204,9 +204,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         if self.state != CbsState.OPEN:
             return False
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
-            # TODO: raise proper error type also should this be a ClientError?
-            #  Think how upper layer handle this exception + condition code
-            raise AuthenticationException(
+            raise TokenAuthFailure(
                 condition=ErrorCondition.ClientError,
                 description="CBS authentication link is in broken status, please recreate the cbs link.",
             )

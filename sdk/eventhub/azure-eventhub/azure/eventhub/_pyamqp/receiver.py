@@ -28,10 +28,16 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
 
+    @classmethod
+    def from_incoming_frame(cls, session, handle, frame):
+        # TODO: Assuming we establish all links for now...
+        # check link_create_from_endpoint in C lib
+        raise NotImplementedError("Pending")
+
     def _process_incoming_message(self, frame, message):
         try:
             return self._on_transfer(frame, message)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Handler function failed with error: %r", e)
         return None
 
@@ -64,7 +70,13 @@ class ReceiverLink(Link):
                     _LOGGER.info("   %r", message, extra=self.network_trace_params)
             delivery_state = self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
-                self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
+                self._outgoing_disposition(
+                    first=frame[1],
+                    last=frame[1],
+                    settled=True,
+                    state=delivery_state,
+                    batchable=None
+                )
 
     def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:

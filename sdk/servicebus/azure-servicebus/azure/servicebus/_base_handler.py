@@ -18,7 +18,7 @@ except ImportError:
 
 from ._pyamqp.utils import generate_sas_token, amqp_string_value
 from ._pyamqp.message import Message, Properties
-from ._pyamqp.client import AMQPClientSync
+from ._pyamqp.client import AMQPClient as AMQPClientSync
 
 from ._common._configuration import Configuration
 from .exceptions import (

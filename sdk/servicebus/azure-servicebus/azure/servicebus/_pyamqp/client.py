@@ -53,7 +53,7 @@ Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
 _logger = logging.getLogger(__name__)
 
 
-class AMQPClientSync(object):  # pylint: disable=too-many-instance-attributes
+class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
     """An AMQP client.
     :param hostname: The AMQP endpoint to connect to.
     :type hostname: str
@@ -272,7 +272,6 @@ class AMQPClientSync(object):  # pylint: disable=too-many-instance-attributes
          multiple clients.
         :type connection: ~pyamqp.Connection
         """
-
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
@@ -418,11 +417,11 @@ class AMQPClientSync(object):  # pylint: disable=too-many-instance-attributes
         return status, description, response
 
 
-class SendClientSync(AMQPClientSync):
-    """
+class SendClient(AMQPClient):
+    """ 
     An AMQP client for sending messages.
-    :param target: The target AMQP service endpoint. This can either be the URI as
-     a string or a ~pyamqp.endpoint.Target object.
+    :param target: The target AMQP service endpoint. This can either be the URI as	
+     a string or a ~pyamqp.endpoint.Target object.	
     :type target: str, bytes or ~pyamqp.endpoint.Target
     :keyword auth: Authentication for the connection. This should be one of the following:
         - pyamqp.authentication.SASLAnonymous
@@ -517,7 +516,7 @@ class SendClientSync(AMQPClientSync):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", None)
-        super(SendClientSync, self).__init__(hostname, **kwargs)
+        super(SendClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
@@ -650,7 +649,7 @@ class SendClientSync(AMQPClientSync):
         self._do_retryable_operation(self._send_message_impl, message=message, **kwargs)
 
 
-class ReceiveClientSync(AMQPClientSync):
+class ReceiveClient(AMQPClient):
     """
     An AMQP client for receiving messages.
     :param source: The source AMQP service endpoint. This can either be the URI as
@@ -753,7 +752,7 @@ class ReceiveClientSync(AMQPClientSync):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
-        super(ReceiveClientSync, self).__init__(hostname, **kwargs)
+        super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
         """Determine whether the client is ready to start receiving messages.
@@ -862,7 +861,7 @@ class ReceiveClientSync(AMQPClientSync):
 
     def close(self):
         self._received_messages = queue.Queue()
-        super(ReceiveClientSync, self).close()
+        super(ReceiveClient, self).close()
 
     def receive_message_batch(self, **kwargs):
         """Receive a batch of messages. Messages returned in the batch have already been
