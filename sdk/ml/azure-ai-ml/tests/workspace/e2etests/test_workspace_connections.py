@@ -198,7 +198,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-        connection_list = client.connections.list(camel_to_snake(connection_type=ConnectionCategory.GIT))
+        connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.GIT))
 
         for conn in connection_list:
             print(conn)

@@ -153,15 +153,15 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
         self.username = username
         self.password = password
 
-    def _to_rest_object(self) -> RestWorkspaceConnectionUsernamePassword:
+    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionUsernamePassword:
         return RestWorkspaceConnectionUsernamePassword(username=self.username, password=self.password)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestWorkspaceConnectionUsernamePassword) \
+    def _from_workspace_connection_rest_object(cls, obj: RestWorkspaceConnectionUsernamePassword) \
             -> "UsernamePasswordConfiguration":
         return cls(
-            username=obj.username if obj.username else None,
-            password=obj.password if obj.password else None,
+            username=obj.username if obj and obj.username else None,
+            password=obj.password if obj and obj.password else None,
         )
 
     def __eq__(self, other: object) -> bool:
