@@ -1,0 +1,749 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.11.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 29 Sep 2022 07:30:50 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13777.6 - SCUS ProdSlices",
+        "x-ms-httpver": "1.1",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.11.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 29 Sep 2022 07:30:50 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13672.8 - NCUS ProdSlices",
+        "x-ms-httpver": "1.1",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "52e7f900-9b4d-489c-ba89-1a69eaa07b49",
+        "Connection": "keep-alive",
+        "Content-Length": "288",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "cookie;",
+        "User-Agent": "azsdk-python-identity/1.11.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "linux",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.19.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "52e7f900-9b4d-489c-ba89-1a69eaa07b49",
+        "Content-Length": "114",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 29 Sep 2022 07:30:50 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.13777.6 - WUS2 ProdSlices",
+        "x-ms-httpver": "1.1",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/providers/Microsoft.App/operations?api-version=2022-06-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-appcontainers/2.0.0b1 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2384_0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2022-01-01-preview, 2022-03-01, 2022-06-01-preview",
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 29 Sep 2022 07:30:49 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b0b96dec-01fa-4a00-84e6-92439223c068",
+        "x-ms-ratelimit-remaining-tenant-reads": "11999",
+        "x-ms-routing-request-id": "CENTRALUS:20220929T073050Z:b0b96dec-01fa-4a00-84e6-92439223c068",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "name": "microsoft.app/register/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Microsoft Apps resource provider",
+              "operation": "Register microsoft.app resource provider",
+              "description": "Register microsoft.app resource provider for the subscription"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/unregister/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Microsoft Apps resource provider",
+              "operation": "Unregister microsoft.app resource provider",
+              "description": "Unregister microsoft.app resource provider for the subscription"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App",
+              "operation": "Create or Update Container App",
+              "description": "Create or update a Container App"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/join/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Join Managed Environment",
+              "description": "Allows to create a Container App in a Managed Environment"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App",
+              "operation": "Delete Container App",
+              "description": "Delete a Container App"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App",
+              "operation": "Read Container App",
+              "description": "Get a Container App"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/locations/containerappoperationstatuses/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App",
+              "operation": "Read Container App Operation Status",
+              "description": "Get a Container App Long Running Operation Status"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/locations/containerappoperationresults/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App",
+              "operation": "Read Container App Operation Result",
+              "description": "Get a Container App Long Running Operation Result"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/listsecrets/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Secret",
+              "operation": "List Container App Secrets",
+              "description": "List secrets of a container app"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/listcustomhostnameanalysis/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Custom Host Name Anaylysis",
+              "operation": "List Container App Custom Host Name Anaylysis",
+              "description": "List custom host name analysis result"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/authtoken/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Auth Token",
+              "operation": "Auth Token for Container App Dev APIs",
+              "description": "Get Auth Token for Container App Dev APIs to get log stream, exec or port forward from a container"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/revisions/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Revision",
+              "operation": "Read Container App Revision",
+              "description": "Get revision of a container app"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/revisions/replicas/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Revision Replica",
+              "operation": "Read Container App Revision Replica",
+              "description": "Get replica of a container app revision"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/revisions/restart/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Revision",
+              "operation": "Restart Container App Revision",
+              "description": "Restart a container app revision"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/revisions/activate/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Revision",
+              "operation": "Activate Container App Revision",
+              "description": "Activate a container app revision"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/revisions/deactivate/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Revision",
+              "operation": "Deactivate Container App Revision",
+              "description": "Deactivate a container app revision"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/authconfigs/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App AuthConfig",
+              "operation": "Read Container App Auth Configuration",
+              "description": "Get auth config of a container app"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/authconfigs/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App AuthConfig",
+              "operation": "Create or Update Container App Auth Configuration",
+              "description": "Create or update auth config of a container app"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/authconfigs/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App AuthConfig",
+              "operation": "Delete Container App Auth Configuration",
+              "description": "Delete auth config of a container app"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Read Managed Environment",
+              "description": "Get a Managed Environment"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Create or Update Managed Environment",
+              "description": "Create or update a Managed Environment"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Delete Managed Environment",
+              "description": "Delete a Managed Environment"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/locations/managedenvironmentoperationstatuses/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Read Managed Environment Operation Status",
+              "description": "Get a Managed Environment Long Running Operation Status"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/locations/managedenvironmentoperationresults/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Read Managed Environment Operation Result",
+              "description": "Get a Managed Environment Long Running Operation Result"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/authtoken/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment Auth Token",
+              "operation": "Auth Token fo Managed Environment Dev APIs",
+              "description": "Get Auth Token for Managed Environment Dev APIs to get log stream, exec or port forward from a container"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/currentworkloadprofilestates/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Read Current Workload Profile State",
+              "description": "Get Current Workload Profile States for Premium Cluster"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/sourcecontrols/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Source Control",
+              "operation": "Create or Update Container App Source Control",
+              "description": "Create or Update Container App Source Control Configuration"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/sourcecontrols/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Source Control",
+              "operation": "Get Container App Source Control",
+              "description": "Get Container App Source Control Configuration"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/sourcecontrols/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Source Control",
+              "operation": "Delete Container App Source Control",
+              "description": "Delete Container App Source Control Configuration"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/sourcecontrols/operationresults/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Source Control",
+              "operation": "Get Container App Source Control Operation Result",
+              "description": "Get Container App Source Control Long Running Operation Result"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/certificates/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Certificate",
+              "operation": "Create or Update Managed Environment Certificate",
+              "description": "Create or update a Managed Environment Certificate"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/certificates/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Certificate",
+              "operation": "Read Managed Environment Certificate",
+              "description": "Get a Managed Environment\u0027s Certificate"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/certificates/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Certificates",
+              "operation": "Delete Managed Environment\u0027s Certificate",
+              "description": "Delete a Managed Environment\u0027s Certificate"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/storages/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment Storage",
+              "operation": "Read Managed Environment Storage.",
+              "description": "Get storage for a Managed Environment."
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/storages/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment Storage",
+              "operation": "Create or Update a Managed Environment Storage.",
+              "description": "Create or Update a storage of Managed Environment."
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/storages/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Delete a Managed Environment Storage",
+              "description": "Delete a storage of Managed Environment."
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/daprcomponents/write",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment Dapr Component",
+              "operation": "Create or Update Managed Environment Dapr Component",
+              "description": "Create or Update Managed Environment Dapr Component"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/daprcomponents/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment Dapr Component",
+              "operation": "Read Managed Environment Dapr Component",
+              "description": "Read Managed Environment Dapr Component"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/daprcomponents/delete",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment Dapr Component",
+              "operation": "Delete Managed Environment Dapr Component",
+              "description": "Delete Managed Environment Dapr Component"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/daprcomponents/listsecrets",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Dapr Component Secret",
+              "operation": "List Dapr Component Secrets",
+              "description": "List Secrets of a Dapr Component"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/containerapps/detectors/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Detector",
+              "operation": "Read Container App Detector",
+              "description": "Get detector of a container app"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/checknameavailability/action",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment",
+              "operation": "Check Managed Environment Name Availability",
+              "description": "Check reource name availability for a Managed Environment"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/managedenvironments/detectors/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Managed Environment Detector",
+              "operation": "Read Managed Environment Detector",
+              "description": "Get detector of a managed environment"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/operations/read",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps",
+              "resource": "Container App Operation",
+              "operation": "Get Container App Operations",
+              "description": "Get a list of supported container app operations"
+            },
+            "origin": "user, system"
+          },
+          {
+            "name": "microsoft.app/",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft Apps"
+            },
+            "origin": "user, system"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
