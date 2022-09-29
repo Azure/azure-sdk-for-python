@@ -31,15 +31,9 @@ from devtools_testutils import add_general_regex_sanitizer, test_proxy, set_bodi
 def add_sanitizers(test_proxy):
     set_bodiless_matcher()
     
-    client_id = os.environ.get("CONTAINERREGISTRY_CLIENT_ID", "client-id")
+    client_id = os.environ.get("APPCONFIGURATION_CLIENT_ID", "client-id")
     add_general_regex_sanitizer(regex=client_id, value="client-id")
-    client_secret = os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET", "client-secret")
+    client_secret = os.environ.get("APPCONFIGURATION_CLIENT_SECRET", "client-secret")
     add_general_regex_sanitizer(regex=client_secret, value="client-secret")
     tenant_id = os.environ.get("APPCONFIGURATION_TENANT_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tenant_id)
-    # sanitizes random UUIDs that are sent in batch request headers and bodies
-    add_general_regex_sanitizer(
-        value="00000000-0000-0000-0000-000000000000",
-        regex="batch[a-z]*_([0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b)",
-        group_for_replace="1",
-    )
