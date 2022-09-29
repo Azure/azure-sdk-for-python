@@ -42,7 +42,7 @@ class TestRegistryOperation:
             mock_registry_operation._check_registry_name(None)
 
     def test_create(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
-        reg_name = f"unittest_{randstr('reg_name')}"
+        reg_name = f"unittest{randstr('reg_name')}"
         params_override = [
             {
                 "name": reg_name
