@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import copy
 import hashlib
 import json
 import os
@@ -164,7 +163,7 @@ To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-cod
 
 def get_md5_string(text):
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()
+        return hashlib.md5(text.encode("utf8")).hexdigest() # nosec
     except Exception as ex:
         raise ex
 
@@ -300,24 +299,74 @@ def _general_copy(src, dst):
         shutil.copy2(src, dst)
 
 
-def get_rest_dict(target_obj, clear_empty_value=False):
-    """Convert object to dict and convert OrderedDict to dict."""
-    if isinstance(target_obj, RestTranslatableMixin):
-        target_obj = target_obj._to_rest_object()
+def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
+    """Convert object to dict and convert OrderedDict to dict.
+    Allow data binding expression as value, disregarding of the type defined in rest object.
+    """
     if target_obj is None:
         return None
+    if isinstance(target_obj, dict):
+        result = {}
+        for key, value in target_obj.items():
+            if value is None:
+                continue
+            if key in ["additional_properties"]:
+                continue
+            result[key] = get_rest_dict_for_node_attrs(value, clear_empty_value)
+        return result
+    if isinstance(target_obj, list):
+        result = []
+        for item in target_obj:
+            result.append(get_rest_dict_for_node_attrs(item, clear_empty_value))
+        return result
+    if isinstance(target_obj, RestTranslatableMixin):
+        # note that the rest object may be invalid as data binding expression may not fit
+        # rest object structure
+        return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
+
     if isinstance(target_obj, msrest.serialization.Model):
-        result = target_obj.as_dict()
-    else:
-        result = copy.deepcopy(target_obj.__dict__)
-    result = convert_ordered_dict_to_dict(result)
-    to_del = ["additional_properties"]
-    if clear_empty_value:
-        to_del.extend(filter(lambda x: result.get(x) is None, result.keys()))
-    for key in to_del:
-        if key in result:
-            del result[key]
-    return result
+        # can't use result.as_dict() as data binding expression may not fit rest object structure
+        return get_rest_dict_for_node_attrs(target_obj.__dict__, clear_empty_value=clear_empty_value)
+
+    if not isinstance(target_obj, (str, int, float, bool)):
+        raise ValueError("Unexpected type {}".format(type(target_obj)))
+
+    return target_obj
+
+
+class _DummyRestModelFromDict(msrest.serialization.Model):
+    """A dummy rest model that can be initialized from dict, return base_dict[attr_name]
+    for getattr(self, attr_name) when attr_name is a public attrs; return None when trying to get
+    a non-existent public attribute.
+    """
+
+    def __init__(self, rest_dict):
+        self._rest_dict = rest_dict or {}
+        super().__init__()
+
+    def __getattribute__(self, item):
+        if not item.startswith("_"):
+            return self._rest_dict.get(item, None)
+        return super().__getattribute__(item)
+
+
+def from_rest_dict_to_dummy_rest_object(rest_dict):
+    """Create a dummy rest object based on a rest dict, which is a primitive dict containing
+    attributes in a rest object.
+    For example, for a rest object class like:
+        class A(msrest.serialization.Model):
+            def __init__(self, a, b):
+                self.a = a
+                self.b = b
+        rest_object = A(1, None)
+        rest_dict = {"a": 1}
+        regenerated_rest_object = from_rest_dict_to_fake_rest_object(rest_dict)
+        assert regenerated_rest_object.a == 1
+        assert regenerated_rest_object.b is None
+    """
+    if rest_dict is None or isinstance(rest_dict, dict):
+        return _DummyRestModelFromDict(rest_dict)
+    raise ValueError("Unexpected type {}".format(type(rest_dict)))
 
 
 def extract_label(input_str: str):

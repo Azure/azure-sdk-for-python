@@ -451,7 +451,10 @@ class YamlLocationResolver:
 
     def _resolve_recursively(self, attrs: List[str], source_path: Path):
         with open(source_path, encoding="utf-8") as f:
-            loaded_yaml = strictyaml.load(f.read())
+            try:
+                loaded_yaml = strictyaml.load(f.read())
+            except strictyaml.exceptions.StrictYAMLError as e:
+                return "can't resolve location:\n{}".format(e).split("\n"), None
 
         while attrs:
             attr = attrs[-1]

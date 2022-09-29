@@ -5,13 +5,13 @@
 # pylint: disable=protected-access,no-self-use
 
 import random
+import re
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
-from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
 from azure.ai.ml._scope_dependent_operations import (
@@ -22,12 +22,19 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies,validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
 from azure.ai.ml.entities import OnlineDeployment
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    InvalidVSCodeRequestError,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -75,6 +82,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         *,
         local: bool = False,
         vscode_debug: bool = False,
+        skip_script_validation: bool = False,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
@@ -84,6 +92,17 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type local: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.DeploymentException: Raised if OnlineDeployment type is unsupported. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointInFailedStateError: Raised if local endpoint is in a failed state.
+        :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if Docker image cannot be found for local deployment.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointImageBuildError: Raised if Docker image cannot be successfully built for local deployment.
+        :raises ~azure.ai.ml.exceptions.RequiredLocalArtifactsNotFoundError: Raised if  local artifacts cannot be found for local deployment.
+        :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint. VSCode debug is only supported for local endpoints.
+        :raises ~azure.ai.ml.exceptions.VSCodeCommandNotFound: Raised if VSCode instance cannot be instantiated.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
         """
@@ -97,6 +116,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                 )
+            if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
+                validate_scoring_script(deployment)
 
             path_format_arguments = {
                 "endpointName": deployment.name,
@@ -148,7 +169,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str, *, local: bool = False) -> OnlineDeployment:
+    def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
         :param name: The name of the deployment
@@ -156,7 +177,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: bool, optional
+        :type local: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: a deployment entity
         :rtype: ~azure.ai.ml.entities.OnlineDeployment
         """
@@ -178,7 +200,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str, *, local: bool = False) -> LROPoller[None]:
+    def delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment
@@ -186,7 +208,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: bool, optional
+        :type local: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[None]
         """

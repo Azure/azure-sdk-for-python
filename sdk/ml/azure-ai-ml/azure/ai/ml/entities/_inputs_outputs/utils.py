@@ -12,7 +12,7 @@ from enum import EnumMeta
 from inspect import Parameter, signature
 
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.exceptions  import UserErrorException
 
 
 def is_parameter_group(obj):

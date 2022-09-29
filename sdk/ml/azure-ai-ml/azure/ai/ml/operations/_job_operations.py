@@ -73,7 +73,7 @@ from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
-from azure.ai.ml.entities._job.job_errors import JobParsingError, PipelineChildJobError
+from azure.ai.ml.entities.job_errors import JobParsingError, PipelineChildJobError
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.service_instance import ServiceInstance
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
@@ -91,10 +91,12 @@ from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
-from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict
+from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
 from ..entities._validation import ValidationResult, _ValidationResultBuilder
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
@@ -137,6 +139,7 @@ class JobOperations(_ScopeDependentOperations):
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation_2022_06_preview = service_client_06_2022_preview.jobs
+        self._service_client = service_client_06_2022_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -188,7 +191,9 @@ class JobOperations(_ScopeDependentOperations):
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
             )
             self._dataset_dataplane_operations_client = DatasetDataplaneOperations(
-                self._operation_scope, self._operation_config, service_client_dataset_dataplane
+                self._operation_scope,
+                self._operation_config,
+                service_client_dataset_dataplane,
             )
         return self._dataset_dataplane_operations_client
 
@@ -199,7 +204,9 @@ class JobOperations(_ScopeDependentOperations):
                 self._credential, base_url=self._api_url, **self._service_client_kwargs
             )
             self._model_dataplane_operations_client = ModelDataplaneOperations(
-                self._operation_scope, self._operation_config, service_client_model_dataplane
+                self._operation_scope,
+                self._operation_config,
+                service_client_model_dataplane,
             )
         return self._model_dataplane_operations_client
 
@@ -209,11 +216,12 @@ class JobOperations(_ScopeDependentOperations):
             self._api_base_url = self._get_workspace_url(url_key=API_URL_KEY)
         return self._api_base_url
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        parent_job_name: str = None,
         *,
+        parent_job_name: str = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
         **kwargs,
     ) -> Iterable[Job]:
@@ -251,6 +259,7 @@ class JobOperations(_ScopeDependentOperations):
         except JobParsingError:
             pass
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Get a job resource.
@@ -294,13 +303,16 @@ class JobOperations(_ScopeDependentOperations):
             k: ServiceInstance._from_rest_object(v, node_index) for k, v in service_instances_dict.instances.items()
         }
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
-    def cancel(self, name: str) -> None:
+    def begin_cancel(self, name: str) -> LROPoller[None]:
         """Cancel job resource.
 
         :param str name: Name of the job.
         :return: None, or the result of cls(response)
         :rtype: None
+        :return: A poller to track the operation status.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
         return self._operation_2022_06_preview.begin_cancel(
@@ -313,7 +325,7 @@ class JobOperations(_ScopeDependentOperations):
     def try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
-        if compute == ComputeType.ADF:
+        if str(compute) == ComputeType.ADF:
             return compute
 
         if compute is not None:
@@ -324,6 +336,8 @@ class JobOperations(_ScopeDependentOperations):
                 compute_name = compute.name
             elif isinstance(compute, str):
                 compute_name = compute
+            elif isinstance(compute, PipelineInput):
+                compute_name = str(compute)
             else:
                 raise ValueError(
                     "compute must be either an arm id of Compute, a Compute object or a compute name but got {}".format(
@@ -344,6 +358,7 @@ class JobOperations(_ScopeDependentOperations):
                 raise ResourceNotFoundError(response=response)
         return None
 
+    @distributed_trace
     @experimental
     @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
@@ -410,6 +425,7 @@ class JobOperations(_ScopeDependentOperations):
         validation_result.resolve_location_for_diagnostics(job._source_path)
         return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
@@ -438,8 +454,14 @@ class JobOperations(_ScopeDependentOperations):
         :param skip_validation: whether to skip validation before creating/updating the job. Note that dependent
             resources like anonymous component won't skip their validation in creating.
         :type skip_validation: bool
+        :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if Job cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Job model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job object or attributes correctly formatted. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :raises ~azure.ai.ml.exceptions.DockerEngineNotAvailableError: Raised if Docker Engine is not available for local job.
         :return: Created or updated job.
-        :rtype: Job
+        :rtype: ~azure.ai.ml.entities.Job
         """
         try:
             if isinstance(job, BaseNode) and not (
@@ -539,6 +561,7 @@ class JobOperations(_ScopeDependentOperations):
             body=job_object,
         )
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archive a job or restore an archived job.
@@ -550,6 +573,7 @@ class JobOperations(_ScopeDependentOperations):
 
         self._archive_or_restore(name=name, is_archived=True)
 
+    @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Archive a job or restore an archived job.
@@ -561,6 +585,7 @@ class JobOperations(_ScopeDependentOperations):
 
         self._archive_or_restore(name=name, is_archived=False)
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
     def stream(self, name: str) -> None:
         """Stream logs of a job.
@@ -577,6 +602,7 @@ class JobOperations(_ScopeDependentOperations):
             self._runs_operations, job_object, self._datastore_operations, requests_pipeline=self._requests_pipeline
         )
 
+    @distributed_trace
     @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
     def download(
         self,
@@ -592,6 +618,16 @@ class JobOperations(_ScopeDependentOperations):
         :param Union[PathLike, str] download_path: Local path as download destination, defaults to '.'.
         :param str output_name: Named output to download, defaults to None.
         :param bool all: Whether to download logs and all named outputs, defaults to False.
+        :param name: Name of a job.
+        :type name: str
+        :param download_path: Local path as download destination, defaults to '.'.
+        :type download_path: Union[PathLike, str]
+        :param output_name: Named output to download, defaults to None.
+        :type output_name: str
+        :param all: Whether to download logs and all named outputs, defaults to False.
+        :type all: bool
+        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded. Details will be provided in the error message.
         """
         job_details = self.get(name)
         # job is reused, get reused job to download
@@ -1016,11 +1052,11 @@ class JobOperations(_ScopeDependentOperations):
     def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Job:
         """Resolve arm_id for CommandJob."""
         if job.code is not None and is_registry_id_for_resource(job.code):
-            msg = f"Format not supported for code asset: {job.code}"
+            msg = "Format not supported for code asset: {}"
             raise ValidationException(
-                message=msg,
+                message=msg.format(job.code),
                 target=ErrorTarget.JOB,
-                no_personal_data_message=msg,
+                no_personal_data_message=msg.format("[job.code]"),
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
@@ -1037,11 +1073,11 @@ class JobOperations(_ScopeDependentOperations):
     def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Job:
         """Resolve arm_id for SparkJob."""
         if job.code is not None and is_registry_id_for_resource(job.code):
-            msg = f"Format not supported for code asset: {job.code}"
+            msg = "Format not supported for code asset: {}"
             raise JobException(
-                message=msg,
+                message=msg.format(job.code),
                 target=ErrorTarget.JOB,
-                no_personal_data_message=msg,
+                no_personal_data_message=msg.format("[job.code]"),
                 error_category=ErrorCategory.USER_ERROR,
             )
 
@@ -1132,7 +1168,7 @@ class JobOperations(_ScopeDependentOperations):
             and getattr(pipeline_job.component, "_source", None) == ComponentSource.YAML_COMPONENT
         ):
             pipeline_job.component = resolver(
-                pipeline_job._to_component(silent=True),
+                pipeline_job.component,
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
 

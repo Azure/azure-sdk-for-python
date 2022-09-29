@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationPri
 from azure.ai.ml._schema.automl.nlp_vertical.nlp_vertical import NlpVerticalSchema
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, fields
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
 class TextClassificationSchema(NlpVerticalSchema):

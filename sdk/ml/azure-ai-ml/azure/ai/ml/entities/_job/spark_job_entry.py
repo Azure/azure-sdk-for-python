@@ -6,6 +6,7 @@
 from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJobPythonEntry, SparkJobScalaEntry
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class SparkJobEntryType:
@@ -13,7 +14,7 @@ class SparkJobEntryType:
     SPARK_JOB_CLASS_ENTRY = "SparkJobScalaEntry"
 
 
-class SparkJobEntry:
+class SparkJobEntry(RestTranslatableMixin):
     """Entry for spark job.
 
     :param entry_type: Can be python or scala entry.

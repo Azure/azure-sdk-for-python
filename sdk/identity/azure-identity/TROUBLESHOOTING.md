@@ -13,7 +13,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot DefaultAzureCredential Authentication Issues](#troubleshoot-defaultazurecredential-authentication-issues)
 - [Troubleshoot EnvironmentCredential Authentication Issues](#troubleshoot-environmentcredential-authentication-issues)
 - [Troubleshoot ClientSecretCredential Authentication Issues](#troubleshoot-clientsecretcredential-authentication-issues)
-- [Troubleshoot ClientCertificateCredential Authentication Issues](#troubleshooting-clientcertificatecredential-authentication-issues)
+- [Troubleshoot ClientCertificateCredential Authentication Issues](#troubleshoot-clientcertificatecredential-authentication-issues)
 - [Troubleshoot UsernamePasswordCredential Authentication Issues](#troubleshoot-usernamepasswordcredential-authentication-issues)
 - [Troubleshoot ManagedIdentityCredential Authentication Issues](#troubleshoot-managedidentitycredential-authentication-issues)
   - [Azure Virtual Machine Managed Identity](#azure-virtual-machine-managed-identity)

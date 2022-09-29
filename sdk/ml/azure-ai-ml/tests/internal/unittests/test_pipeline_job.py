@@ -104,8 +104,7 @@ class TestPipelineJob:
 
         dsl_pipeline: PipelineJob = pipeline_func()
         set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
-        result = dsl_pipeline._validate()
-        assert result._to_dict() == {"result": "Succeeded"}
+        assert dsl_pipeline._validate().passed, repr(dsl_pipeline._validate())
 
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         for input_name, dataset_name in input_data_names.items():
@@ -162,6 +161,48 @@ class TestPipelineJob:
             "value": "${{parent.inputs.pipeline_input}}",
         }
         assert pipeline_rest_dict.jobs["node"]["inputs"]["input_path"] == expected_rest_obj
+
+    @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    def test_internal_component_output_as_pipeline_component_output(self):
+        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        component_func = load_component(yaml_path, params_override=[{"inputs": {}}])
+
+        @pipeline()
+        def sub_pipeline_func():
+            node = component_func()
+            node.adla_account_name = "adla_account_name"
+            return node.outputs
+
+        sub_pipeline_1 = sub_pipeline_func()
+        assert sub_pipeline_1._validate().passed
+        assert sub_pipeline_1.outputs["data_any_file"].type == "uri_file"
+
+        # confirm that the output won't change in further call
+        sub_pipeline_2 = sub_pipeline_func()
+        assert sub_pipeline_2.outputs["data_any_file"].type == "uri_file"
+
+        @pipeline()
+        def pipeline_func():
+            sub_pipeline_func()
+
+        dsl_pipeline: PipelineJob = pipeline_func()
+        assert dsl_pipeline._validate().passed
+        dsl_pipeline._to_rest_object()
+        pipeline_component = dsl_pipeline.jobs["sub_pipeline_func"].component
+        assert pipeline_component._to_rest_object().properties.component_spec["outputs"] == {
+            "data_any_directory": {"type": "uri_folder"},
+            "data_any_file": {"type": "uri_file"},  # AnyFile => uri_file
+            "data_azureml_dataset": {"type": "uri_folder"},
+            "data_cosmos_structured_stream": {"type": "uri_folder"},
+            "data_csv_file": {"type": "uri_folder"},
+            "data_data_frame_directory": {"type": "uri_folder"},
+            "data_image_directory": {"type": "uri_folder"},
+            "data_model_directory": {"type": "uri_folder"},
+            "data_path": {"type": "uri_folder"},
+            "data_transformation_directory": {"type": "uri_folder"},
+            "data_untrained_model_directory": {"type": "uri_folder"},
+            "data_zip_file": {"type": "uri_folder"},
+        }
 
     def test_ipp_internal_component_in_pipeline(self):
         yaml_path = "./tests/test_configs/internal/ipp-component/spec.yaml"
@@ -349,6 +390,7 @@ class TestPipelineJob:
             node_internal.adla_account_name = "adla_account_name"
             node_internal.scope_param = "-tokens 50"
             node_internal.custom_job_name_suffix = "component_sdk_test"
+            node_internal.properties["AZURE_ML_PathOnCompute_mock_output"] = "mock_path"
 
         dsl_pipeline: PipelineJob = pipeline_func()
         internal_node_name = "node_internal"
@@ -370,6 +412,7 @@ class TestPipelineJob:
                 "TextData": {"path": "azureml:scope_tsv:1", "type": "mltable"},
             },
             "outputs": {},
+            "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         assert pydash.omit(scope_node._to_rest_object(), "componentId") == {
             "_source": "YAML.COMPONENT",
@@ -383,6 +426,7 @@ class TestPipelineJob:
             },
             "outputs": {},
             "type": "ScopeComponent",
+            "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         scope_node._validate(raise_error=True)
 
@@ -429,7 +473,7 @@ class TestPipelineJob:
 
     def test_components_input_output(self):
         yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
-        component: InternalComponent = load_component(path=yaml_path)
+        component: InternalComponent = load_component(yaml_path)
 
         fake_input = Input(type=AssetTypes.MLTABLE, path="azureml:scope_tsv:1")
         inputs = {

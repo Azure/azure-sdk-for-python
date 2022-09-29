@@ -14,12 +14,12 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
 
 from ..rest import schema as rest_schema, schema_groups as rest_schema_groups
 
@@ -49,7 +49,6 @@ class SchemaGroupsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
     def list(self, **kwargs: Any) -> JSON:
         """Get list of schema groups.
 
@@ -69,7 +68,12 @@ class SchemaGroupsOperations:
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -125,7 +129,6 @@ class SchemaOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
     def get_by_id(self, id: str, **kwargs: Any) -> Iterator[bytes]:
         """Get a registered schema by its unique ID reference.
 
@@ -138,7 +141,12 @@ class SchemaOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -183,7 +191,6 @@ class SchemaOperations:
 
         return cast(Iterator[bytes], deserialized)
 
-    @distributed_trace
     def get_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> JSON:
         """Get list schema versions.
 
@@ -208,7 +215,12 @@ class SchemaOperations:
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -248,7 +260,6 @@ class SchemaOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace
     def get_schema_version(
         self, group_name: str, schema_name: str, schema_version: int, **kwargs: Any
     ) -> Iterator[bytes]:
@@ -267,7 +278,12 @@ class SchemaOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -314,7 +330,6 @@ class SchemaOperations:
 
         return cast(Iterator[bytes], deserialized)
 
-    @distributed_trace
     def query_id_by_content(  # pylint: disable=inconsistent-return-statements
         self, group_name: str, schema_name: str, schema_content: IO, **kwargs: Any
     ) -> None:
@@ -338,6 +353,7 @@ class SchemaOperations:
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
+            304: ResourceNotModifiedError,
             415: HttpResponseError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -390,7 +406,6 @@ class SchemaOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @distributed_trace
     def register(  # pylint: disable=inconsistent-return-statements
         self, group_name: str, schema_name: str, schema_content: IO, **kwargs: Any
     ) -> None:
@@ -415,6 +430,7 @@ class SchemaOperations:
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
+            304: ResourceNotModifiedError,
             415: HttpResponseError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})

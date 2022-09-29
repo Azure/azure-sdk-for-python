@@ -80,6 +80,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     :type tags: dict[str, str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
+    :param comment: Comment of the pipeline node, which will be shown in designer canvas.
+    :type comment: str
     :param display_name: Display name of the job.
     :type display_name: str
     :param compute: Compute definition containing the compute information for the step
@@ -114,6 +116,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         description: str = None,
         tags: Dict = None,
         properties: Dict = None,
+        comment: str = None,
         compute: str = None,
         experiment_name: str = None,
         **kwargs,
@@ -133,6 +136,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             experiment_name=experiment_name,
             **kwargs,
         )
+        self.comment = comment
 
         # initialize io
         inputs = resolve_pipeline_parameters(inputs)
@@ -396,11 +400,15 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 computeId=self.compute,
                 inputs=self._to_rest_inputs(),
                 outputs=self._to_rest_outputs(),
+                properties=self.properties,
                 _source=self._source,
                 # add all arbitrary attributes to support setting unknown attributes
                 **self._get_attrs(),
             )
         )
+        # only add comment in REST object when it is set
+        if self.comment is not None:
+            rest_obj.update(dict(comment=self.comment))
 
         return convert_ordered_dict_to_dict(rest_obj)
 

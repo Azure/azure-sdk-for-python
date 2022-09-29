@@ -142,7 +142,7 @@ def parameter_group(_cls):
         local_vars = ", ".join(locals.keys())
         txt = f"def __create_fn__({local_vars}):\n{txt}\n return {name}"
         ns = {}
-        exec(txt, globals, ns)  # pylint: disable=exec-used
+        exec(txt, globals, ns)  # pylint: disable=exec-used # nosec
         return ns["__create_fn__"](**locals)
 
     def _create_init_fn(cls, fields):  # pylint: disable=unused-argument

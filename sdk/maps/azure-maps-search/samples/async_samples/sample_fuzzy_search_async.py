@@ -22,7 +22,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 async def fuzzy_search_async():
-    # [START fuzzy_search_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
@@ -35,7 +34,6 @@ async def fuzzy_search_async():
     print("Total results: {}".format(result.num_results))
     print("Address from the first item in results: ")
     print(result.results[0].address)
-    # [END fuzzy_search_async]
 
 if __name__ == '__main__':
     asyncio.run(fuzzy_search_async())

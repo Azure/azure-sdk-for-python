@@ -22,7 +22,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def search_point_of_interest():
-    # [START search_point_of_interest]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -31,7 +30,6 @@ def search_point_of_interest():
     result = maps_search_client.search_point_of_interest("juice bars")
     print("Get Search POI:")
     print(result)
-    # [END search_point_of_interest]
 
 if __name__ == '__main__':
     search_point_of_interest()

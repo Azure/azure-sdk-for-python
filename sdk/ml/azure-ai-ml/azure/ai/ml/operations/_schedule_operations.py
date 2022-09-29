@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 from typing import Any, Iterable
 
-from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -18,6 +18,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
+from .._restclient.v2022_10_01_preview.models import ListViewType, ScheduleListViewType
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import AzureMLResourceType, LROConfigurations
 from . import JobOperations
@@ -41,14 +42,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_06_2022_preview: ServiceClient062022Preview,
+        service_client_10_2022_preview: ServiceClient102022Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self.service_client_06_2022_preview = service_client_06_2022_preview.schedules
+        self.service_client = service_client_10_2022_preview.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -70,12 +71,17 @@ class ScheduleOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
-    def list(self) -> Iterable[JobSchedule]:
+    def list(
+        self,
+        *,
+        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,
+    ) -> Iterable[JobSchedule]:
         """List schedules in specified workspace.
 
+        :param list_view_type: View type for including/excluding (for example) archived schedules. Default: ENABLED_ONLY.
+        :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list JobSchedule.
         :rtype: Iterable[JobSchedule]
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         def safe_from_rest_object(objs):
@@ -87,9 +93,10 @@ class ScheduleOperations(_ScopeDependentOperations):
                     print(f"Translate {obj.name} to JobSchedule failed with: {e}")
             return result
 
-        return self.service_client_06_2022_preview.list(
+        return self.service_client.list(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
+            # list_view_type=list_view_type,
             cls=safe_from_rest_object,
             **self._kwargs,
         )
@@ -116,9 +123,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         :param name: Schedule name.
         :type name: str
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        poller = self.service_client_06_2022_preview.begin_delete(
+        poller = self.service_client.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             name=name,
@@ -139,9 +145,8 @@ class ScheduleOperations(_ScopeDependentOperations):
         :type name: str
         :return: The schedule object.
         :rtype: JobSchedule
-        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self.service_client_06_2022_preview.get(
+        return self.service_client.get(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             name=name,
@@ -161,7 +166,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         :type schedule: JobSchedule
         :return: An instance of LROPoller that returns JobSchedule if no_wait=True, or JobSchedule if no_wait=False
         :rtype: Union[LROPoller, JobSchedule]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: Union[LROPoller, ~azure.ai.ml.entities.JobSchedule]
         """
 
         schedule._validate(raise_error=True)
@@ -170,7 +175,7 @@ class ScheduleOperations(_ScopeDependentOperations):
             self._job_operations._resolve_arm_id_or_upload_dependencies(schedule.create_job)
         # Create schedule
         schedule_data = schedule._to_rest_object()
-        poller = self.service_client_06_2022_preview.begin_create_or_update(
+        poller = self.service_client.begin_create_or_update(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             name=schedule.name,

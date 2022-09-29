@@ -36,7 +36,12 @@ SUPPORTED_STORAGE_TYPES = [
 
 class AzureMLDatastorePathUri:
     """Parser for an azureml:// datastore path URI, e.g.:
-    azureml://datastores/mydatastore/paths/images/dogs."""
+    azureml://datastores/mydatastore/paths/images/dogs'.
+
+    :param uri: The AzureML datastore path URI.
+    :type uri: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore path URI is incorrectly formatted.
+    '"""
 
     def __init__(self, uri: str):
         if uri.startswith(FILE_PREFIX):

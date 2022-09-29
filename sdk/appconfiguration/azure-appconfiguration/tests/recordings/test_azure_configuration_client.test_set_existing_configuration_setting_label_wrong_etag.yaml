@@ -22,7 +22,7 @@ interactions:
       x-ms-content-sha256:
       - GI4hFuRGgpyIkQs2af42T0GWy+2SnFOyphbnP29FWXc=
       x-ms-date:
-      - Aug, 16 2022 23:19:16.869293 GMT
+      - Sep, 15 2022 23:55:32.935815 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
@@ -45,7 +45,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 16 Aug 2022 23:19:16 GMT
+      - Thu, 15 Sep 2022 23:55:32 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:

@@ -46,7 +46,7 @@ from .._job.spark_helpers import (
     _validate_spark_configurations,
 )
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
-from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
+from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -427,16 +427,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def _to_rest_object(self, **kwargs) -> dict:
         self._validate_fields()
         rest_obj = super()._to_rest_object(**kwargs)
-        entry = self.entry._to_rest_object() if self.entry else None
-        identity = self.identity._to_rest_object() if self.identity else None
-        resources = self.resources._to_rest_object() if self.resources else None
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 dict(
                     componentId=self._get_component_id(),
-                    identity=get_rest_dict(identity),
-                    resources=get_rest_dict(resources),
-                    entry=get_rest_dict(entry),
+                    identity=get_rest_dict_for_node_attrs(self.identity),
+                    resources=get_rest_dict_for_node_attrs(self.resources),
+                    entry=get_rest_dict_for_node_attrs(self.entry),
                 )
             )
         )
@@ -499,6 +496,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         msg = "Spark can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
             target=ErrorTarget.SPARK_JOB,
         )

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -17,10 +17,6 @@ from ._configuration import QuestionAnsweringAuthoringClientConfiguration
 from ._operations import QuestionAnsweringAuthoringClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
 
 class QuestionAnsweringAuthoringClient(
     QuestionAnsweringAuthoringClientOperationsMixin
@@ -29,7 +25,8 @@ class QuestionAnsweringAuthoringClient(
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">
+    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.

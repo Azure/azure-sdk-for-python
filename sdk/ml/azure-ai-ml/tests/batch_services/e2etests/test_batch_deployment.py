@@ -14,6 +14,7 @@ from azure.ai.ml.entities import BatchDeployment, BatchEndpoint, Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.polling import LROPoller
 
 
 @contextmanager
@@ -142,7 +143,9 @@ class TestBatchDeployment(AzureRecordedTestCase):
                 job = client.jobs.get(job.name)
                 if timeout is not None and time.time() - poll_start_time > timeout:
                     # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
-                    client.jobs.cancel(job.name)
+                    cancel_poller = client.jobs.begin_cancel(job.name)
+                    assert isinstance(cancel_poller, LROPoller)
+                    assert cancel_poller.result() is None
                     return JobStatus.CANCELED
             return job.status
 

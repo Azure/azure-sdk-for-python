@@ -73,7 +73,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         :param environment: Environment object
         :type environment: Environment
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Created or updated Environment object
+        :rtype: ~azure.ai.ml.entities.Environment
         """
         try:
             sas_uri = None
@@ -197,7 +200,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the environment. (mutually exclusive with version)
         :type label: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated. Details will be provided in the error message.
         :return: Environment object
+        :rtype: ~azure.ai.ml.entities.Environment
         """
         if version and label:
             msg = "Cannot specify both version and label."

@@ -13,7 +13,7 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.459782 GMT
+      - Sep, 15 2022 23:55:27.301794 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
@@ -36,13 +36,13 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:08 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzM3;sn=11338737
+      - zAJw6V16=Nzo1IzEwNDgyODM=;sn=1048283
       transfer-encoding:
       - chunked
     status:
@@ -66,19 +66,19 @@ interactions:
       If-None-Match:
       - '*'
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzM3
+      - zAJw6V16=Nzo1IzEwNDgyODM=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.586115 GMT
+      - Sep, 15 2022 23:55:27.432422 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"_NnSPmlAqK7bJhTHFKRFmVdy8kXsh28wTbRiLMkLEv0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"}'
+      string: '{"etag":"O1nqiinD1XEoyPsW0UqaeHZVRseMNp67ZAa3MT7fU6w","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -96,17 +96,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       etag:
-      - '"_NnSPmlAqK7bJhTHFKRFmVdy8kXsh28wTbRiLMkLEv0"'
+      - '"O1nqiinD1XEoyPsW0UqaeHZVRseMNp67ZAa3MT7fU6w"'
       last-modified:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzM4;sn=11338738
+      - zAJw6V16=Nzo1IzEwNDgyODQ=;sn=1048284
       transfer-encoding:
       - chunked
     status:
@@ -122,19 +122,19 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzM4
+      - zAJw6V16=Nzo1IzEwNDgyODQ=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.633344 GMT
+      - Sep, 15 2022 23:55:27.477208 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"_NnSPmlAqK7bJhTHFKRFmVdy8kXsh28wTbRiLMkLEv0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"}]}'
+      string: '{"items":[{"etag":"O1nqiinD1XEoyPsW0UqaeHZVRseMNp67ZAa3MT7fU6w","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -152,13 +152,13 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzM5;sn=11338739
+      - zAJw6V16=Nzo1IzEwNDgyODU=;sn=1048285
       transfer-encoding:
       - chunked
     status:
@@ -176,13 +176,13 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzM5
+      - zAJw6V16=Nzo1IzEwNDgyODU=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.664579 GMT
+      - Sep, 15 2022 23:55:27.515640 GMT
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
@@ -205,7 +205,7 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
@@ -231,19 +231,19 @@ interactions:
       If-None-Match:
       - '*'
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzM5
+      - zAJw6V16=Nzo1IzEwNDgyODU=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 4rt07HteiPg5NxofrgzMmlQPTVbo1no7aKxDSI5uUU4=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.712266 GMT
+      - Sep, 15 2022 23:55:27.552706 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"0Jgz1klENibYuea9-phXvNWsc5CGpG9thkAdgzqg0ck","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"}'
+      string: '{"etag":"t0jHEXaAWx5K35NPFWXYiFIIHh1urbgrI7LzV-Nym94","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -261,17 +261,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       etag:
-      - '"0Jgz1klENibYuea9-phXvNWsc5CGpG9thkAdgzqg0ck"'
+      - '"t0jHEXaAWx5K35NPFWXYiFIIHh1urbgrI7LzV-Nym94"'
       last-modified:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzQw;sn=11338740
+      - zAJw6V16=Nzo1IzEwNDgyODY=;sn=1048286
       transfer-encoding:
       - chunked
     status:
@@ -287,19 +287,19 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzQw
+      - zAJw6V16=Nzo1IzEwNDgyODY=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.758814 GMT
+      - Sep, 15 2022 23:55:27.602504 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv?label=%00&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"0Jgz1klENibYuea9-phXvNWsc5CGpG9thkAdgzqg0ck","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"}]}'
+      string: '{"items":[{"etag":"t0jHEXaAWx5K35NPFWXYiFIIHh1urbgrI7LzV-Nym94","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -317,13 +317,13 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzQx;sn=11338741
+      - zAJw6V16=Nzo1IzEwNDgyODc=;sn=1048287
       transfer-encoding:
       - chunked
     status:
@@ -339,20 +339,20 @@ interactions:
       Connection:
       - keep-alive
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzQx
+      - zAJw6V16=Nzo1IzEwNDgyODc=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.790901 GMT
+      - Sep, 15 2022 23:55:27.650295 GMT
     method: GET
     uri: https://fake_app_config.azconfig-test.io/kv?api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"0Jgz1klENibYuea9-phXvNWsc5CGpG9thkAdgzqg0ck","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"},{"etag":"_NnSPmlAqK7bJhTHFKRFmVdy8kXsh28wTbRiLMkLEv0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"}]}'
+      string: '{"items":[{"etag":"t0jHEXaAWx5K35NPFWXYiFIIHh1urbgrI7LzV-Nym94","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"},{"etag":"O1nqiinD1XEoyPsW0UqaeHZVRseMNp67ZAa3MT7fU6w","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -370,13 +370,13 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzQx;sn=11338741
+      - zAJw6V16=Nzo1IzEwNDgyODc=;sn=1048287
       transfer-encoding:
       - chunked
     status:
@@ -394,19 +394,19 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzQx
+      - zAJw6V16=Nzo1IzEwNDgyODc=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.837827 GMT
+      - Sep, 15 2022 23:55:27.688663 GMT
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"0Jgz1klENibYuea9-phXvNWsc5CGpG9thkAdgzqg0ck","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"}'
+      string: '{"etag":"t0jHEXaAWx5K35NPFWXYiFIIHh1urbgrI7LzV-Nym94","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -424,17 +424,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       etag:
-      - '"0Jgz1klENibYuea9-phXvNWsc5CGpG9thkAdgzqg0ck"'
+      - '"t0jHEXaAWx5K35NPFWXYiFIIHh1urbgrI7LzV-Nym94"'
       last-modified:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzQy;sn=11338742
+      - zAJw6V16=Nzo1IzEwNDgyODg=;sn=1048288
       transfer-encoding:
       - chunked
     status:
@@ -452,19 +452,19 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4NzQy
+      - zAJw6V16=Nzo1IzEwNDgyODg=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:19:09.885472 GMT
+      - Sep, 15 2022 23:55:27.735270 GMT
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"_NnSPmlAqK7bJhTHFKRFmVdy8kXsh28wTbRiLMkLEv0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-08-16T23:19:09+00:00"}'
+      string: '{"etag":"O1nqiinD1XEoyPsW0UqaeHZVRseMNp67ZAa3MT7fU6w","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2022-09-15T23:55:27+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -482,17 +482,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       etag:
-      - '"_NnSPmlAqK7bJhTHFKRFmVdy8kXsh28wTbRiLMkLEv0"'
+      - '"O1nqiinD1XEoyPsW0UqaeHZVRseMNp67ZAa3MT7fU6w"'
       last-modified:
-      - Tue, 16 Aug 2022 23:19:09 GMT
+      - Thu, 15 Sep 2022 23:55:27 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4NzQz;sn=11338743
+      - zAJw6V16=Nzo1IzEwNDgyODk=;sn=1048289
       transfer-encoding:
       - chunked
     status:

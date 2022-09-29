@@ -33,7 +33,8 @@ def _authentication_policy(credential, **kwargs):
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
-    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.
+    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class
+    Microsoft machine learning algorithms.
 
     The API can be used to analyze unstructured text for tasks such as sentiment
     analysis, key phrase extraction, language detection and question answering.
@@ -47,6 +48,9 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
         or a token credential from :mod:`azure.identity`.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str default_language: Sets the default language to use for all operations.
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
