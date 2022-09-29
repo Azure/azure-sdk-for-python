@@ -14,20 +14,20 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = "eastus"
 
-class TestMgmt{{package.upper()}}(AzureMgmtRecordedTestCase):
+class TestMgmt{{package.upper()}}{{op_group.upper()}}(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client({{client}})
 
-    {% for func in functions -%}
+    {% for op in operations -%}
     @recorded_by_proxy
-    def test_{{package}}_{{operation}}_{{func["name"]}}(self):
+    def test_{{op_group}}_{{func["name"]}}(self):
         # it proves that we can normally send request but maybe needs additional parameters
         with suppress(HttpResponseError):
-            result = self.mgmt_client.{{operation}}.{{func["name"]}}()
-            {% if func["return_type"] == "Polling" -%}
+            result = self.mgmt_client.{{op_group}}.{{op["name"]}}()
+            {% if op["return_type"] == "Polling" -%}
             assert result.result() is not None
-            {% elif func["return_type"] == "Interable" -%}
+            {% elif op["return_type"] == "Interable" -%}
             assert list(result) is not None
             {% else -%}
             assert result is not None

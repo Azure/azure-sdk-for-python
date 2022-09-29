@@ -131,7 +131,7 @@ def start_test_proxy():
 class ReturnType(str, Enum):
     POLLING = 'Polling'
     INTERABLE = 'Interable'
-    STRING = 'String'
+    GENERAL = 'General'
 
 
 class CodegenTestPR:
@@ -472,7 +472,7 @@ class CodegenTestPR:
     @staticmethod
     def get_function(function_attr):
         signature = inspect.signature(function_attr)
-        return_type = ReturnType.STRING
+        return_type = ReturnType.GENERAL
         if 'LROPoller' in str(signature.return_annotation):
             return_type = ReturnType.POLLING
         elif 'Iterable' in str(signature.return_annotation):
@@ -524,13 +524,7 @@ class CodegenTestPR:
         tests_info = {'client': client_name, 'operations': operations_info}
         return tests_info
 
-    def config_test(self, test_path, template_path):
-        if not Path(f'{test_path}/conftest.py').exists():
-            with open(template_path/'conftest.py', 'r') as fr:
-                content = fr.read()
-            with open(f'{test_path}/conftest.py', 'w') as fw:
-                fw.write(content)
-
+    def config_ci(self):
         # config ci.yml
         ci_path = f'{Path(self.sdk_code_path()).parent}/ci.yml'
         new_lines = ''
@@ -559,23 +553,29 @@ class CodegenTestPR:
         template_path = Path('scripts/auto_release/templates')
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path))
         temp = env.get_template('testcase.py')
-        for operation_name, functions in operations.items():
-            if operation_name != 'Operations':
-                operation_name = re.sub(r'([a-z])([A-Z])', r'\1_\2', operation_name)[:-11]
-            operation_name = operation_name.lower()
+        for op_group_name, operations in operations.items():
+            if op_group_name != 'Operations':
+                op_group_name = re.sub(r'([a-z])([A-Z])', r'\1_\2', op_group_name)[:-11]
+            op_group_name = op_group_name.lower()
             temp_out = temp.render(module=module_name,
                                    package=self.package_name,
                                    client=client_name,
-                                   operation=operation_name,
-                                   functions=functions
+                                   op_group=op_group_name,
+                                   operations=operations
                                    )
 
             with suppress(black.NothingChanged):
                 file_content = black.format_file_contents(temp_out, fast=True, mode=_BLACK_MODE)
-                with open(f'{test_path}/test_mgmt_{self.package_name.lower()}_{operation_name}.py', 'w', encoding='utf-8') as f:
+                with open(f'{test_path}/test_{op_group_name}.py', 'w', encoding='utf-8') as f:
                     f.writelines(file_content)
 
-        self.config_test(test_path, template_path)
+        # add conftest.py
+        if not Path(f'{test_path}/conftest.py').exists():
+            temp_conftest = env.get_template('conftest.py')
+            with open(f'{test_path}/conftest.py', 'w') as fw:
+                fw.write(temp_conftest.render())
+
+        self.config_ci()
 
     @return_origin_path
     def run_test_proc(self):
@@ -583,11 +583,7 @@ class CodegenTestPR:
         os.chdir(self.sdk_code_path())
         succeeded_result = 'Live test success'
         failed_result = 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
-        try:
-            print_check(f'pytest  --collect-only')
-        except:
-            log('live test run done, do not find any test !!!')
-            self.prepare_tests()
+        self.prepare_tests()
 
         try:
             print_check(f'pytest -s')
