@@ -67,12 +67,6 @@ TIMEOUT_SAMPLES = {
     },
     "azure-servicebus": {
         "failure_and_recovery.py": (10),
-        "receive_iterator_queue.py": (10),
-        "sample_code_servicebus.py": (30),
-        "session_pool_receive.py": (20),
-        "receive_iterator_queue_async.py": (10),
-        "sample_code_servicebus_async.py": (30),
-        "session_pool_receive_async.py": (20),
     },
 }
 
@@ -109,6 +103,13 @@ IGNORED_SAMPLES = {
         "mgmt_topic_async.py",
         "proxy_async.py",
         "receive_deferred_message_queue_async.py",
+        "send_and_receive_amqp_annotated_message_async.py",
+        "send_and_receive_amqp_annotated_message.py",
+        "sample_code_servicebus_async.py",
+        "receive_iterator_queue_async.py",
+        "session_pool_receive_async.py",
+        "receive_iterator_queue.py",
+        "sample_code_servicebus.py"
     ],
     "azure-communication-chat": [
         "chat_client_sample_async.py",
