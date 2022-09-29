@@ -515,8 +515,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
     :type scoring_script: Union[str, PathLike], optional
-    :param egress_public_network_access: Whether to allow public deployment connectivity
-        Allowed values are: "enabled", "disabled"
+    :param egress_public_network_access: Wether to restrict communication between a deployment 
+    and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
     :param egress_public_network_access: str
     """
 
