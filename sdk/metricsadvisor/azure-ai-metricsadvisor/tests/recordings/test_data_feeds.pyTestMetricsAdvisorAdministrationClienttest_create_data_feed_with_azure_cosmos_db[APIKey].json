@@ -9,57 +9,88 @@
         "Connection": "keep-alive",
         "Content-Length": "709",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5573fbbe-5e0c-11ec-b528-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022dataSourceType\u0022: \u0022AzureCosmosDB\u0022, \u0022dataFeedName\u0022: \u0022cosmosfeed909f2bbc-3ce2-402b-9c91-1294a4a4cc24\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022}], \u0022dataStartFrom\u0022: \u00222019-10-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: 0, \u0022maxConcurrency\u0022: -1, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022viewMode\u0022: \u0022Private\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022connectionString\u0022: \u0022azure_cosmosdb_connection_string\u0022, \u0022sqlQuery\u0022: \u0022\u0027SELECT * FROM Items I where I.Timestamp \u003E= @StartTime and I.Timestamp \u003C @EndTime\u0027\u0022, \u0022database\u0022: \u0022adsample\u0022, \u0022collectionId\u0022: \u0022adsample\u0022}}",
+      "RequestBody": {
+        "dataSourceType": "AzureCosmosDB",
+        "dataFeedName": "cosmosfeedae05bd07-fed5-47e6-a022-61c07bd26bda",
+        "granularityName": "Daily",
+        "metrics": [
+          {
+            "metricName": "cost"
+          },
+          {
+            "metricName": "revenue"
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category"
+          },
+          {
+            "dimensionName": "city"
+          }
+        ],
+        "dataStartFrom": "2019-10-01T00:00:00.000Z",
+        "startOffsetInSeconds": 0,
+        "maxConcurrency": -1,
+        "minRetryIntervalInSeconds": -1,
+        "stopRetryAfterInSeconds": -1,
+        "viewMode": "Private",
+        "authenticationType": "Basic",
+        "dataSourceParameter": {
+          "connectionString": "azure_cosmosdb_connection_string",
+          "sqlQuery": "\u0027SELECT * FROM Items I where I.Timestamp \u003E= @StartTime and I.Timestamp \u003C @EndTime\u0027",
+          "database": "adsample",
+          "collectionId": "adsample"
+        }
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "cda1fbe0-b9e9-4b1b-9290-e630ae502a47",
+        "apim-request-id": "ae5cd537-1a34-47f9-9257-c43266a90bcf",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:06:01 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/caa46165-5399-414f-bba4-bf185a04e45c",
+        "Date": "Thu, 29 Sep 2022 23:21:34 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/b0120e93-f725-4e6d-98f2-d77e508d577e",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "512",
-        "X-Request-ID": "cda1fbe0-b9e9-4b1b-9290-e630ae502a47"
+        "x-envoy-upstream-service-time": "489",
+        "X-Request-ID": "ae5cd537-1a34-47f9-9257-c43266a90bcf"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/caa46165-5399-414f-bba4-bf185a04e45c",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/b0120e93-f725-4e6d-98f2-d77e508d577e",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "55cb104e-5e0c-11ec-a67f-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ae34bd58-1cfa-48ca-92c0-e759c1972361",
+        "apim-request-id": "5069a158-b4e5-4001-8a4f-626aec5b04ea",
         "Content-Length": "1294",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:06:01 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:34 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "173",
-        "X-Request-ID": "ae34bd58-1cfa-48ca-92c0-e759c1972361"
+        "x-envoy-upstream-service-time": "192",
+        "X-Request-ID": "5069a158-b4e5-4001-8a4f-626aec5b04ea"
       },
       "ResponseBody": {
-        "dataFeedId": "caa46165-5399-414f-bba4-bf185a04e45c",
-        "dataFeedName": "cosmosfeed909f2bbc-3ce2-402b-9c91-1294a4a4cc24",
+        "dataFeedId": "b0120e93-f725-4e6d-98f2-d77e508d577e",
+        "dataFeedName": "cosmosfeedae05bd07-fed5-47e6-a022-61c07bd26bda",
         "metrics": [
           {
-            "metricId": "4ffff72f-a16e-46c1-bee7-448107d2cf67",
+            "metricId": "2e064695-0661-4084-8746-6fe8b7fd01f3",
             "metricName": "cost",
             "metricDisplayName": "cost",
             "metricDescription": ""
           },
           {
-            "metricId": "b43fbf9f-e6b9-4978-8acc-7bb7a4d87a87",
+            "metricId": "e0dcf16f-cc70-430b-832b-1e68f75b534b",
             "metricName": "revenue",
             "metricDisplayName": "revenue",
             "metricDescription": ""
@@ -96,7 +127,7 @@
         "viewers": [],
         "creator": "krpratic@microsoft.com",
         "status": "Active",
-        "createdTime": "2021-12-16T01:06:01Z",
+        "createdTime": "2022-09-29T23:21:34Z",
         "isAdmin": true,
         "actionLinkTemplate": "",
         "dataSourceParameter": {
@@ -108,32 +139,31 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/caa46165-5399-414f-bba4-bf185a04e45c",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/b0120e93-f725-4e6d-98f2-d77e508d577e",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "55eaba9f-5e0c-11ec-b131-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "0c49128a-8755-4ea6-beeb-92c45d5ee0aa",
+        "apim-request-id": "a0854279-60cc-420b-af74-a0c5b00a6767",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:06:01 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "324",
-        "X-Request-ID": "0c49128a-8755-4ea6-beeb-92c45d5ee0aa"
+        "x-envoy-upstream-service-time": "314",
+        "X-Request-ID": "a0854279-60cc-420b-af74-a0c5b00a6767"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "data_feed_id": "caa46165-5399-414f-bba4-bf185a04e45c",
-    "data_feed_name": "cosmosfeed909f2bbc-3ce2-402b-9c91-1294a4a4cc24"
+    "data_feed_id": "b0120e93-f725-4e6d-98f2-d77e508d577e",
+    "data_feed_name": "cosmosfeedae05bd07-fed5-47e6-a022-61c07bd26bda"
   }
 }
