@@ -8,7 +8,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, IO, Optional, Union, cast, overload, List, BinaryIO
+import time
 
+import azure.core.exceptions
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -130,6 +132,35 @@ class TestOperations(TestOperationsGenerated):
         if cls:
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
+
+    def check_validation_status(self, test_id: str, refresh_time: int = 10, time_out: int = 600):
+        """Check if the JMX file is validated to run test
+
+        :param test_id: Unique id for the test [required]
+        :type test_id: str
+
+        :param refresh_time: time difference (in secs) for next request [default = 10 sec]
+        :type refresh_time: int
+
+        :param time_out: time to stop polling for the validation status (in secs) [default = 600 sec]
+        :type time_out: int
+        """
+        start_time = time.time()
+
+        while time.time() - start_time < time_out:
+            result = self.get_load_test(test_id)
+
+            try:
+                if result["inputArtifacts"]["testScriptUrl"]["validationStatus"] == "VALIDATION_SUCCESS":
+                    return "VALIDATION_SUCCESS"
+
+            # if JMX file is not found then result will not have the key, "inputArtificats"
+            except TypeError:
+                raise azure.core.exceptions.ResourceNotFoundError(f"No JMX file found to validate with TestID {test_id}")
+
+            time.sleep(refresh_time)
+
+        return "TIMEOUT"
 
 
 class AppComponentOperations:

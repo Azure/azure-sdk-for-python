@@ -21,7 +21,8 @@ USAGE:
 """
 from azure.developer.loadtesting import LoadTestingClient
 
-# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer-loadtesting/README.md
+# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
+# -loadtesting/README.md
 from azure.identity import DefaultAzureCredential
 
 # importing os and dotenv for managing and loading environment variables
@@ -40,25 +41,4 @@ client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTES
 TEST_ID = "my-new-sdk-test-id"
 
 # checking if jmx file is validated
-start_time = time.time()
-
-TIMEOUT = 6000
-REFRESH_TIME = 10
-
-
-while time.time() - start_time < TIMEOUT:
-    result = client.load_test_administration.get_load_test(
-        TEST_ID
-    )
-
-    # checking if the file was validated successfully
-    if result["inputArtifacts"]["testScriptUrl"]["validationStatus"] == "VALIDATION_SUCCESS":
-        break
-
-    time.sleep(REFRESH_TIME)
-
-if time.time() - start_time < TIMEOUT:
-    print("Validation was successful")
-
-else:
-    print("System TimedOut")
+print(client.load_test_administration.check_validation_status(TEST_ID))
