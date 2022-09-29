@@ -1,11 +1,11 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides [Azure Active Directory (AAD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication through a set of convenient TokenCredential implementations. It enables Azure SDK clients to authenticate with AAD, while also allowing other Python apps to authenticate with AAD work and school accounts, Microsoft personal accounts (MSA), and other Identity providers like [AAD B2C](https://learn.microsoft.com/azure/active-directory-b2c/overview) service.
+The Azure Identity library provides [Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication through a set of convenient TokenCredential implementations. It enables Azure SDK clients to authenticate with Azure AD, while also allowing other Python apps to authenticate with Azure AD work and school accounts, Microsoft personal accounts (MSA), and other Identity providers like [Azure AD B2C](https://learn.microsoft.com/azure/active-directory-b2c/overview) service.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
 | [API reference documentation][ref_docs]
-| [Azure Active Directory documentation](https://learn.microsoft.com/azure/active-directory/)
+| [Azure AD documentation](https://learn.microsoft.com/azure/active-directory/)
 
 ## Getting started
 
@@ -57,16 +57,15 @@ service client to authenticate requests. Service clients across the Azure SDK
 accept a credential instance when they are constructed, and use that credential
 to authenticate requests.
 
-The Azure Identity library focuses on OAuth authentication with Azure Active
-Directory (AAD). It offers a variety of credential classes capable of acquiring
-an AAD access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of
+The Azure Identity library focuses on OAuth authentication with Azure AD. It offers a variety of credential classes capable of acquiring
+an Azure AD access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of
 this library's credential classes.
 
 ### DefaultAzureCredential
 
 `DefaultAzureCredential` is appropriate for most applications which will run in the Azure Cloud because it combines common production credentials with development credentials. `DefaultAzureCredential` attempts to authenticate via the following mechanisms in this order, stopping when one succeeds:
 
->Note: `DefaultAzureCredential` is intended to simplify getting started with the SDK by handling common
+>Note: `DefaultAzureCredential` is intended to simplify getting started with the library by handling common
 >scenarios with reasonable default behaviors. Developers who want more control or whose scenario
 >isn't served by the default settings should use other credential types.
 
@@ -198,15 +197,15 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 ## Managed identity support
 
-The [Managed identity authentication](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via either the `DefaultAzureCredential` or the `ManagedIdentityCredential` directly for the following Azure Services:
+[Managed identity authentication](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via either the `DefaultAzureCredential` or the `ManagedIdentityCredential` directly for the following Azure services:
 
+* [Azure App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=python)
+* [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
+* [Azure Cloud Shell](https://learn.microsoft.com/azure/cloud-shell/msi-authorization)
+* [Azure Kubernetes Service](https://learn.microsoft.com/azure/aks/use-managed-identity)
+* [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
 * [Azure Virtual Machines](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
 * [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
-* [Azure App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=python)
-* [Azure Kubernetes Service](https://learn.microsoft.com/azure/aks/use-managed-identity)
-* [Azure Cloud Shell](https://learn.microsoft.com/azure/cloud-shell/msi-authorization)
-* [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
-* [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
 
 ### Examples
 
@@ -231,7 +230,7 @@ client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
 
 ## Cloud configuration
-Credentials default to authenticating to the Azure Active Directory endpoint for
+Credentials default to authenticating to the Azure AD endpoint for
 Azure Public Cloud. To access resources in other clouds, such as Azure Government
 or a private cloud, configure credentials with the `authority` argument.
 [AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts)
@@ -332,8 +331,7 @@ describes why authentication failed. When raised by
 `DefaultAzureCredential` or `ChainedTokenCredential`,
 the message collects error messages from each credential in the chain.
 
-For more details on handling specific Azure Active Directory errors please refer to the
-Azure Active Directory
+For more details on handling specific Azure AD errors, see the Azure AD
 [error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
 
 ### Logging
