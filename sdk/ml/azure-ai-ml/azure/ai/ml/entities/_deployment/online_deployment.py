@@ -538,16 +538,15 @@ class ManagedOnlineDeployment(OnlineDeployment):
         environment_variables: Dict[str, str] = None,
         instance_type: str = None,
         instance_count: int = None,
-        data_collector: DataCollector = None,
         code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
         scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
         **kwargs,
     ):
 
         kwargs["type"] = EndpointComputeType.MANAGED.value
-
         self.private_network_connection = kwargs.pop("private_network_connection", None)
         self.egress_public_network_access = kwargs.pop("egress_public_network_access", None)
+        self.data_collector = kwargs.pop("data_collector", None)
 
         super(ManagedOnlineDeployment, self).__init__(
             name=name,
@@ -571,7 +570,6 @@ class ManagedOnlineDeployment(OnlineDeployment):
             **kwargs,
         )
 
-        self.data_collector = data_collector
         self.readiness_probe = readiness_probe
 
     def _to_dict(self) -> Dict:
