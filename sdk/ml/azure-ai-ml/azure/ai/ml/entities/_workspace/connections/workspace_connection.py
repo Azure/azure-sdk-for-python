@@ -209,15 +209,15 @@ class WorkspaceConnection(Resource):
         workspace_connection_properties_class = None
         auth_type = self.credentials.type if self._credentials else None
 
-        if auth_type == ConnectionAuthType.PAT:
+        if auth_type == camel_to_snake(ConnectionAuthType.PAT):
             workspace_connection_properties_class = PATAuthTypeWorkspaceConnectionProperties
-        elif auth_type == ConnectionAuthType.MANAGED_IDENTITY:
+        elif auth_type == camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY):
             workspace_connection_properties_class = ManagedIdentityAuthTypeWorkspaceConnectionProperties
-        elif auth_type == ConnectionAuthType.USERNAME_PASSWORD:
+        elif auth_type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD):
             workspace_connection_properties_class = UsernamePasswordAuthTypeWorkspaceConnectionProperties
-        elif auth_type == ConnectionAuthType.SAS:
+        elif auth_type == camel_to_snake(ConnectionAuthType.SAS):
             workspace_connection_properties_class = SASAuthTypeWorkspaceConnectionProperties
-        elif auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
+        elif auth_type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL):
             workspace_connection_properties_class = ServicePrincipalAuthTypeWorkspaceConnectionProperties
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
@@ -226,7 +226,7 @@ class WorkspaceConnection(Resource):
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.metadata,
-            auth_type=auth_type,
+            # auth_type=auth_type,
             category=_snake_to_camel(self.type),
         )
 
