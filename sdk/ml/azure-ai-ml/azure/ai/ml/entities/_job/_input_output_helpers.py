@@ -191,7 +191,8 @@ def to_rest_dataset_literal_inputs(
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
             validate_pipeline_input_key_contains_allowed_characters(input_name)
-        else:
+        elif job_type:
+            # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
             if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
