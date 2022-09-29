@@ -291,12 +291,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             if job.settings.on_init:
                 validation_result.append_error(
                     yaml_path=f"jobs.{job_name}.settings.on_init",
-                    message="On_init is not supported for subgraph.",
+                    message="On_init is not supported for pipeline component.",
                 )
             if job.settings.on_finalize:
                 validation_result.append_error(
                     yaml_path=f"jobs.{job_name}.settings.on_finalize",
-                    message="On_finalize is not supported for subgraph",
+                    message="On_finalize is not supported for pipeline component.",
                 )
 
         # quick return if neither on_init nor on_finalize is set
