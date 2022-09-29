@@ -34,4 +34,7 @@ extends:
     - name: azure-ai-ml
       safeName: azureaiml
       skipVerifyChangeLog: true
-    SetDevVersion: true
+
+variables:
+  - name: SetDevVersion
+    value: true
