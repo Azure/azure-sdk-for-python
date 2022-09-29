@@ -26,7 +26,7 @@ def _create_image_job(
     target_column_name: str,
     primary_metric: Union[str, ClassificationPrimaryMetrics] = None,
     validation_data: Optional[Input] = None,
-    validation_data_size: Optional[float] = 0.2,
+    validation_data_size: Optional[float] = None,
     **kwargs
 ):
     """Helper function to create objects for AutoML Image jobs."""
@@ -101,7 +101,7 @@ def image_classification_multilabel(
     target_column_name: str,
     primary_metric: Union[str, ClassificationMultilabelPrimaryMetrics] = None,
     validation_data: Optional[Input] = None,
-    validation_data_size: Optiona[float] = 0.2,
+    validation_data_size: Optiona[float] = None,
     **kwargs,
 ) -> ImageClassificationMultilabelJob:
     """Creates an object for AutoML Image multi-label Classification job.
@@ -154,7 +154,7 @@ def image_object_detection(
     target_column_name: str,
     primary_metric: Union[str, ObjectDetectionPrimaryMetrics] = None,
     validation_data: Optional[Input] = None,
-    validation_data_size: Optional[float] = 0.2,
+    validation_data_size: Optional[float] = None,
     **kwargs,
 ) -> ImageObjectDetectionJob:
     """Creates an object for AutoML Image Object Detection job.
@@ -206,7 +206,7 @@ def image_instance_segmentation(
     target_column_name: str,
     primary_metric: Union[str, InstanceSegmentationPrimaryMetrics] = None,
     validation_data: Optional[Input] = None,
-    validation_data_size: Optional[float] = 0.2,
+    validation_data_size: Optional[float] = None,
     **kwargs,
 ) -> ImageInstanceSegmentationJob:
     """Creates an object for AutoML Image Instance Segmentation job.
