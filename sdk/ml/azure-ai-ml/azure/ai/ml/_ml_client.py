@@ -34,8 +34,8 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsC
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._http_utils import HttpPipeline
-from azure.ai.ml._utils._registry_utils import get_registry_service_client
-from azure.ai.ml._utils.utils import _is_https_url
+from azure.ai.ml._utils._registry_utils import RegistryDiscovery
+from azure.ai.ml._utils.utils import _is_https_url, _validate_missing_sub_or_rg_and_raise
 from azure.ai.ml.constants._common import REGISTRY_DISCOVERY_BASE_URI, AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -90,8 +90,8 @@ class MLClient(object):
     def __init__(
         self,
         credential: TokenCredential,  # type: TokenCredential
-        subscription_id: str,  # type: str
-        resource_group_name: str,  # type: str
+        subscription_id: str = None,  # type: str
+        resource_group_name: str = None,  # type: str
         workspace_name: str = None,  # type: str
         registry_name: str = None,  # type: str
         **kwargs: Any,  # type: Any
@@ -100,14 +100,14 @@ class MLClient(object):
 
         :param credential: Credential to use for authentication.
         :type credential: TokenCredential
-        :param subscription_id: Azure subscription ID.
+        :param subscription_id: Azure subscription ID, optional for registry assets only.
         :type subscription_id: str
-        :param resource_group_name: Azure resource group.
+        :param resource_group_name: Azure resource group, optional for registry assets only.
         :type resource_group_name: str
-        :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations.
+        :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only.
             Defaults to None
         :type workspace_name: str, optional
-        :param registry_name: Registry to use in the client, only used in the context of registry assets.
+        :param registry_name: Registry to use in the client, optional for non registry dependent operations only.
             Defaults to None
         :type registry_name: str, optional
         :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider to set this to False if not using this SDK in an interactive setup. Defaults to True.
@@ -150,8 +150,11 @@ class MLClient(object):
                     for ws in ml_client.workspaces.list():
                         print(ws.name, ":", ws.location, ":", ws.description)
         """
+
         if credential is None:
             raise ValueError("credential can not be None")
+        if not registry_name:
+            _validate_missing_sub_or_rg_and_raise(subscription_id, resource_group_name)
         self._credential = credential
 
         show_progress = kwargs.pop("show_progress", True)
@@ -166,6 +169,26 @@ class MLClient(object):
                 cloud_name,
             )
         module_logger.debug("Cloud configured in MLClient: '%s'.", cloud_name)
+
+        # registry_name is present when the operations need referring assets from registry.
+        # the subscription, resource group, if provided, will be ignored and replaced by
+        # whatever is received from the registry discovery service.
+        if registry_name:
+            # This will come back later
+            # _get_mfe_base_url_from_registry_discovery_service(self._workspaces, workspace_name)
+            base_url = REGISTRY_DISCOVERY_BASE_URI
+            kwargs_registry = {**kwargs}
+            kwargs_registry.pop("base_url", None)
+            self._service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
+                credential=self._credential, base_url=base_url, **kwargs_registry
+            )
+            registry_discovery = RegistryDiscovery(
+                self._credential, registry_name, self._service_client_registry_discovery_client, **kwargs_registry
+            )
+            self._service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
+            subscription_id = registry_discovery.subscription_id
+            resource_group_name = registry_discovery.resource_group
+
         self._operation_scope = OperationScope(subscription_id, resource_group_name, workspace_name, registry_name)
 
         # Cannot send multiple base_url as azure-cli sets the base_url automatically.
@@ -282,23 +305,6 @@ class MLClient(object):
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)
-
-        if registry_name:
-            # This will come back later
-            # _get_mfe_base_url_from_registry_discovery_service(self._workspaces, workspace_name)
-            base_url = REGISTRY_DISCOVERY_BASE_URI
-            kwargs_registry = {**kwargs}
-            kwargs_registry.pop("base_url", None)
-            self._service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
-                credential=self._credential, base_url=base_url, **kwargs_registry
-            )
-            self._service_client_10_2021_dataplanepreview = get_registry_service_client(
-                subscription_id=self._operation_scope._subscription_id,
-                registry_name=registry_name,
-                credential=self._credential,
-                service_client_registry_discovery_client=self._service_client_registry_discovery_client,
-                **kwargs_registry,
-            )
 
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
