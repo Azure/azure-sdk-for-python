@@ -4,7 +4,7 @@
 
 """Entrypoints for creating AutoML tasks."""
 
-from typing import Union
+from typing import Union,Optional
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
@@ -24,9 +24,9 @@ def _create_image_job(
     job_cls,
     training_data: Input,
     target_column_name: str,
-    primary_metric: Union[str, ClassificationPrimaryMetrics, None],
-    validation_data: Union[Input, None],
-    validation_data_size: Union[float, None],
+    primary_metric: Union[str, ClassificationPrimaryMetrics] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = 0.2,
     **kwargs
 ):
     """Helper function to create objects for AutoML Image jobs."""
@@ -46,9 +46,9 @@ def image_classification(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: Union[str, ClassificationPrimaryMetrics, None],
-    validation_data: Union[Input, None],
-    validation_data_size: Union[float, None],
+    primary_metric: Union[str, ClassificationPrimaryMetrics] = None,
+    validation_data: Optiona[Input] = None,
+    validation_data_size: Optional[float] = 0.2,
     **kwargs,
 ) -> ImageClassificationJob:
     """Creates an object for AutoML Image multi-class Classification job.
@@ -99,9 +99,9 @@ def image_classification_multilabel(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: Union[str, ClassificationMultilabelPrimaryMetrics, None],
-    validation_data: Union[Input, None],
-    validation_data_size: Union[float, None],
+    primary_metric: Union[str, ClassificationMultilabelPrimaryMetrics] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optiona[float] = 0.2,
     **kwargs,
 ) -> ImageClassificationMultilabelJob:
     """Creates an object for AutoML Image multi-label Classification job.
@@ -152,9 +152,9 @@ def image_object_detection(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: Union[str, ObjectDetectionPrimaryMetrics, None],
-    validation_data: Union[Input, None],
-    validation_data_size: Union[float, None],
+    primary_metric: Union[str, ObjectDetectionPrimaryMetrics] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = 0.2,
     **kwargs,
 ) -> ImageObjectDetectionJob:
     """Creates an object for AutoML Image Object Detection job.
@@ -204,9 +204,9 @@ def image_instance_segmentation(
     *,
     training_data: Input,
     target_column_name: str,
-    primary_metric: Union[str, InstanceSegmentationPrimaryMetrics, None],
-    validation_data: Union[Input, None],
-    validation_data_size: Union[float, None],
+    primary_metric: Union[str, InstanceSegmentationPrimaryMetrics] = None,
+    validation_data: Optional[Input] = None,
+    validation_data_size: Optional[float] = 0.2,
     **kwargs,
 ) -> ImageInstanceSegmentationJob:
     """Creates an object for AutoML Image Instance Segmentation job.
