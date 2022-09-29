@@ -71,7 +71,8 @@ class TestRegistrySchema:
                 load_from_dict(RegistrySchema, target, context)
             assert e_info
             assert isinstance(e_info._excinfo[1], ValidationError)
-            assert "Invalid input type" in e_info._excinfo[1].messages[0]
+            assert "NOT_A_REAL_ACCOUNT_TYPE" in e_info._excinfo[1].messages[0]
+            assert "passed is not in set" in e_info._excinfo[1].messages[0]
 
     def test_deserialize_bad_arm_resource_id(self) -> None:
         path = Path("./tests/test_configs/registry/registry_bad_arm_resource_id.yaml")
