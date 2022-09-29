@@ -96,7 +96,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
-from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict
+from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
 from ..entities._validation import ValidationResult, _ValidationResultBuilder
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
@@ -325,7 +325,7 @@ class JobOperations(_ScopeDependentOperations):
     def try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
-        if compute == ComputeType.ADF:
+        if str(compute) == ComputeType.ADF:
             return compute
 
         if compute is not None:
@@ -336,6 +336,8 @@ class JobOperations(_ScopeDependentOperations):
                 compute_name = compute.name
             elif isinstance(compute, str):
                 compute_name = compute
+            elif isinstance(compute, PipelineInput):
+                compute_name = str(compute)
             else:
                 raise ValueError(
                     "compute must be either an arm id of Compute, a Compute object or a compute name but got {}".format(
@@ -1050,11 +1052,11 @@ class JobOperations(_ScopeDependentOperations):
     def _resolve_arm_id_for_command_job(self, job: Command, resolver: Callable) -> Job:
         """Resolve arm_id for CommandJob."""
         if job.code is not None and is_registry_id_for_resource(job.code):
-            msg = f"Format not supported for code asset: {job.code}"
+            msg = "Format not supported for code asset: {}"
             raise ValidationException(
-                message=msg,
+                message=msg.format(job.code),
                 target=ErrorTarget.JOB,
-                no_personal_data_message=msg,
+                no_personal_data_message=msg.format("[job.code]"),
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
@@ -1071,11 +1073,11 @@ class JobOperations(_ScopeDependentOperations):
     def _resolve_arm_id_for_spark_job(self, job: Spark, resolver: Callable) -> Job:
         """Resolve arm_id for SparkJob."""
         if job.code is not None and is_registry_id_for_resource(job.code):
-            msg = f"Format not supported for code asset: {job.code}"
+            msg = "Format not supported for code asset: {}"
             raise JobException(
-                message=msg,
+                message=msg.format(job.code),
                 target=ErrorTarget.JOB,
-                no_personal_data_message=msg,
+                no_personal_data_message=msg.format("[job.code]"),
                 error_category=ErrorCategory.USER_ERROR,
             )
 
@@ -1166,7 +1168,7 @@ class JobOperations(_ScopeDependentOperations):
             and getattr(pipeline_job.component, "_source", None) == ComponentSource.YAML_COMPONENT
         ):
             pipeline_job.component = resolver(
-                pipeline_job._to_component(silent=True),
+                pipeline_job.component,
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
 
