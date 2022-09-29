@@ -28,7 +28,7 @@
 ####
 
 # PRLabel: %AgriFood
-/sdk/agrifood/azure-agrifood-farming                                 TODO
+/sdk/agrifood/azure-agrifood-farming                                 @bhargav-kansagara
 
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
@@ -49,7 +49,7 @@
 /sdk/loganalytics/azure-loganalytics/                                @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
 # PRLabel: %Attestation
-/sdk/attestation/azure-security-attestation                          @anilba06 @Azure/azure-sdk-write-attestation @gkostal
+/sdk/attestation/azure-security-attestation                          @anilba06 @Azure/azure-sdk-write-attestation @gkostal @larryo
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
@@ -76,7 +76,7 @@
 /sdk/communication/                                                  @acsdevx-msft
 
 # PRLabel: %Confidential Ledger
-sdk/confidentialledger/azure-confidentialledger                      TODO
+sdk/confidentialledger/azure-confidentialledger                      @lynshi
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
@@ -144,7 +144,7 @@ sdk/confidentialledger/azure-confidentialledger                      TODO
 /sdk/maps/                                                           TODO
 
 # PRLabel: %Mixed Reality
-/sdk/mixedreality/                                                   TODO
+/sdk/mixedreality/azure-mixedreality-authentication                  @crtreasu TODO
 /sdk/remoterendering/                                                TODO
 
 # PRLabel: %Purview
@@ -181,7 +181,7 @@ sdk/confidentialledger/azure-confidentialledger                      TODO
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
 
 # PRLabel: %Cognitive - Metrics Advisor
-/sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
+/sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico @iscai-msft
 
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
