@@ -29,8 +29,10 @@ _INTEGER_MIN = Int32.minval
 class ApplicationInsightsSampler(Sampler):
     """Sampler that implements the same probability sampling algorithm as the ApplicationInsights SDKs."""
 
-    # sampling_ratio takes values in the range [0,1]
+    # sampling_ratio must take a value in the range [0,1]
     def __init__(self, sampling_ratio: float = 1.0):
+        if not (0.0 <= sampling_ratio and sampling_ratio <= 1.0):
+            raise ValueError("sampling_ratio must be in the range [0,1]")
         self._ratio = sampling_ratio
         self._sample_rate = round(sampling_ratio * 100)
 

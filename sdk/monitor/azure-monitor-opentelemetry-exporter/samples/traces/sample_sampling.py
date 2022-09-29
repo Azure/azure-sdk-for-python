@@ -16,7 +16,7 @@ from azure.monitor.opentelemetry.exporter import (
 
 # Sampler expects a sample rate of between 0 and 1 inclusive
 # A rate of 0.75 means approximately 75% of your telemetry will be sent
-sampler = ApplicationInsightsSampler(0.75)
+sampler = ApplicationInsightsSampler(1.1)
 trace.set_tracer_provider(TracerProvider(sampler=sampler))
 tracer = trace.get_tracer(__name__)
 exporter = AzureMonitorTraceExporter(
