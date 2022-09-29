@@ -3,8 +3,3 @@ name: registry_name
 location: WestCentralUS
 replication_locations:
   - location: WestCentralUS
-    storage_config:
-      - /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Storage/storageAccounts/testwsswstorage16668f03c
-      - storage_account_hns: False
-        storage_account_type: Standard_RAGRS
-container_registry: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.ContainerRegistry/registries/clie2etestacr1
