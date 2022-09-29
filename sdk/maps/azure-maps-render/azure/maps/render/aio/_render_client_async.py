@@ -35,6 +35,21 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_maps_render_service_client_with_key_async]
+            :end-before: [END create_maps_render_service_client_with_key_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MapsRenderClient with an subscription key.
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START create_maps_render_service_client_with_aad_async]
+            :end-before: [END create_maps_render_service_client_with_aad_async]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MapsRenderClient with a token credential.
     """
     def __init__(
         self,
@@ -92,6 +107,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             Iterator of the response bytes
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_map_tile_async.py
+                :start-after: [START get_map_tile_async]
+                :end-before: [END get_map_tile_async]
+                :language: python
+                :dedent: 4
+                :caption: Return map tiles in vector or raster formats.
         """
 
         return await self._render_client.get_map_tile(
@@ -120,6 +144,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :return: MapTileset
         :rtype: ~azure.maps.render.models.MapTileset
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_map_tileset_async.py
+                :start-after: [START get_map_tileset_async]
+                :end-before: [END get_map_tileset_async]
+                :language: python
+                :dedent: 4
+                :caption: Return metadata for a tileset.
         """
         return await self._render_client.get_map_tileset(
             tileset_id=tileset_id,
@@ -154,6 +187,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :return: MapAttribution
         :rtype: ~azure.maps.render.models.MapAttribution
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_map_attribution_async.py
+                :start-after: [START get_map_attribution_async]
+                :end-before: [END get_map_attribution_async]
+                :language: python
+                :dedent: 4
+                :caption: Return map copyright attribution information for a section of a tileset.
         """
         bounds=[
             bounds.south,
@@ -221,6 +263,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :return: Get Copyright Caption Result
         :rtype: ~azure.maps.render.models.CopyrightCaption
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_copyright_caption_async.py
+                :start-after: [START get_copyright_caption_async]
+                :end-before: [END get_copyright_caption_async]
+                :language: python
+                :dedent: 4
+                :caption: Return serve copyright information for Render Tile service.
         """
         return await self._render_client.get_copyright_caption(
             **kwargs
@@ -284,7 +335,18 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :return: Iterator of the response bytes
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_map_static_image_async.py
+                :start-after: [START get_map_static_image_async]
+                :end-before: [END get_map_static_image_async]
+                :language: python
+                :dedent: 4
+                :caption: Return static image service renders a user-defined,
+                    rectangular image containing a map section using a zoom level from 0 to 20.
         """
+
         _center=kwargs.pop("center", None)
         if _center is not None:
             _center = [_center[0], _center[1]]
@@ -321,6 +383,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :return: Copyright result
         :rtype: ~azure.maps.render.models.Copyright
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_copyright_from_bounding_box_async.py
+                :start-after: [START get_copyright_from_bounding_box_async]
+                :end-before: [END get_copyright_from_bounding_box_async]
+                :language: python
+                :dedent: 4
+                :caption: Return copyright information for a given bounding box.
         """
         _include_text=kwargs.pop("include_text", True)
 
@@ -362,7 +433,17 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :return: Copyright result
         :rtype: ~azure.maps.render.models.Copyright
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_copyright_for_tile_async.py
+                :start-after: [START get_copyright_for_tile_async]
+                :end-before: [END get_copyright_for_tile_async]
+                :language: python
+                :dedent: 4
+                :caption: Returns the copyright information for a given tile.
         """
+
         _include_text=kwargs.pop("include_text", True)
 
         return await self._render_client.get_copyright_for_tile(
@@ -391,6 +472,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :return: Copyright result
         :rtype: ~azure.maps.render.models.Copyright
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_get_copyright_for_world_async.py
+                :start-after: [START get_copyright_for_world_async]
+                :end-before: [END get_copyright_for_world_async]
+                :language: python
+                :dedent: 4
+                :caption: Returns the copyright information for the world.
         """
         _include_text=kwargs.pop("include_text", True)
 

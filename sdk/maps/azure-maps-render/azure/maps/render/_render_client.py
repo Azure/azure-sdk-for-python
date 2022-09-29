@@ -31,6 +31,21 @@ class MapsRenderClient(MapsRenderClientBase):
             The API version of the service to use for requests. It defaults to the latest service version.
             Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_maps_render_service_client_with_key]
+            :end-before: [END create_maps_render_service_client_with_key]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MapsRenderClient with an subscription key.
+        .. literalinclude:: ../samples/sample_authentication.py
+            :start-after: [START create_maps_render_service_client_with_aad]
+            :end-before: [END create_maps_render_service_client_with_aad]
+            :language: python
+            :dedent: 4
+            :caption: Creating the MapsRenderClient with a token credential.
     """
     def __init__(
         self,
@@ -88,6 +103,15 @@ class MapsRenderClient(MapsRenderClientBase):
             Iterator of the response bytes
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_map_tile.py
+                :start-after: [START get_map_tile]
+                :end-before: [END get_map_tile]
+                :language: python
+                :dedent: 4
+                :caption: Return map tiles in vector or raster formats.
         """
 
         return self._render_client.get_map_tile(
@@ -116,6 +140,15 @@ class MapsRenderClient(MapsRenderClientBase):
         :return: MapTileset
         :rtype: ~azure.maps.render.models.MapTileset
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_map_tileset.py
+                :start-after: [START get_map_tileset]
+                :end-before: [END get_map_tileset]
+                :language: python
+                :dedent: 4
+                :caption: Return metadata for a tileset.
         """
         return self._render_client.get_map_tileset(
             tileset_id=tileset_id,
@@ -150,6 +183,15 @@ class MapsRenderClient(MapsRenderClientBase):
         :return: MapAttribution
         :rtype: ~azure.maps.render.models.MapAttribution
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_map_attribution.py
+                :start-after: [START get_map_attribution]
+                :end-before: [END get_map_attribution]
+                :language: python
+                :dedent: 4
+                :caption: Return map copyright attribution information for a section of a tileset.
         """
         bounds=[
             bounds.south,
@@ -218,6 +260,15 @@ class MapsRenderClient(MapsRenderClientBase):
         :return: Get Copyright Caption Result
         :rtype: ~azure.maps.render.models.CopyrightCaption
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_copyright_caption.py
+                :start-after: [START get_copyright_caption]
+                :end-before: [END get_copyright_caption]
+                :language: python
+                :dedent: 4
+                :caption: Return serve copyright information for Render Tile service.
         """
 
         return self._render_client.get_copyright_caption(
@@ -282,6 +333,16 @@ class MapsRenderClient(MapsRenderClientBase):
         :return: Iterator of the response bytes
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_map_static_image.py
+                :start-after: [START get_map_static_image]
+                :end-before: [END get_map_static_image]
+                :language: python
+                :dedent: 4
+                :caption: Return static image service renders a user-defined,
+                    rectangular image containing a map section using a zoom level from 0 to 20.
         """
 
         _center=kwargs.pop("center", None)
@@ -320,6 +381,15 @@ class MapsRenderClient(MapsRenderClientBase):
         :return: Copyright result
         :rtype: ~azure.maps.render.models.Copyright
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_copyright_from_bounding_box.py
+                :start-after: [START get_copyright_from_bounding_box]
+                :end-before: [END get_copyright_from_bounding_box]
+                :language: python
+                :dedent: 4
+                :caption: Return copyright information for a given bounding box.
         """
 
         _include_text=kwargs.pop("include_text", True)
@@ -362,6 +432,15 @@ class MapsRenderClient(MapsRenderClientBase):
         :return: Copyright result
         :rtype: ~azure.maps.render.models.Copyright
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_copyright_for_tile.py
+                :start-after: [START get_copyright_for_tile]
+                :end-before: [END get_copyright_for_tile]
+                :language: python
+                :dedent: 4
+                :caption: Returns the copyright information for a given tile.
         """
 
         _include_text=kwargs.pop("include_text", True)
@@ -392,6 +471,15 @@ class MapsRenderClient(MapsRenderClientBase):
         :return: Copyright result
         :rtype: ~azure.maps.render.models.Copyright
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_get_copyright_for_world.py
+                :start-after: [START get_copyright_for_world]
+                :end-before: [END get_copyright_for_world]
+                :language: python
+                :dedent: 4
+                :caption: Returns the copyright information for the world.
         """
 
         _include_text=kwargs.pop("include_text", True)

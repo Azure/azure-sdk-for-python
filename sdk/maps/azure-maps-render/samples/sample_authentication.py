@@ -44,7 +44,7 @@ def authentication_maps_service_client_with_aad_credential():
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, AZURE_MAPS_CLIENT_ID
     """
     # [START create_maps_render_service_client_with_aad]
-    from azure.identity.aio import DefaultAzureCredential
+    from azure.identity import DefaultAzureCredential
     from azure.maps.render import MapsRenderClient
 
     credential = DefaultAzureCredential()

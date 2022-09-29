@@ -21,7 +21,7 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def get_map_tileset():
-    # [START get_map_tile]
+    # [START get_map_tileset]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render import MapsRenderClient
     from azure.maps.render.models import TilesetID
@@ -32,7 +32,7 @@ def get_map_tileset():
 
     print("Get map tileset result:")
     print(result)
-    # [END get_map_tile]
+    # [END get_map_tileset]
 
 if __name__ == '__main__':
     get_map_tileset()
