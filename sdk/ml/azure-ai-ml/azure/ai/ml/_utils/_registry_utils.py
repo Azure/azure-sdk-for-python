@@ -18,33 +18,57 @@ module_logger = logging.getLogger(__name__)
 MFE_PATH_PREFIX = "mferp/managementfrontend"
 
 
-def _get_registry_discovery_uri(
-    service_client_registry_discovery_client: ServiceClientRegistryDiscovery,
-    registry_name: str,
-) -> str:
-    response = (
-        service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(
-            registry_name
-        )
-    )
-    return f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
-
-
-def get_registry_service_client(
-    subscription_id: str,
-    credential: str,
-    registry_name: str,
-    service_client_registry_discovery_client: ServiceClientRegistryDiscovery,
-    **kwargs,
-) -> AzureMachineLearningWorkspaces:
-    base_url = _get_registry_discovery_uri(service_client_registry_discovery_client, registry_name)
-    service_client_10_2021_dataplanepreview = AzureMachineLearningWorkspaces(
-        subscription_id=subscription_id,
-        credential=credential,
-        base_url=base_url,
+class RegistryDiscovery:
+    def __init__(
+        self,
+        credential: str,
+        registry_name: str,
+        service_client_registry_discovery_client: ServiceClientRegistryDiscovery,
         **kwargs,
-    )
-    return service_client_10_2021_dataplanepreview
+    ):
+        self.credential = credential
+        self.registry_name = registry_name
+        self.service_client_registry_discovery_client = service_client_registry_discovery_client
+        self.kwargs = kwargs
+
+    def _get_registry_details(self) -> str:
+        response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(
+            self.registry_name
+        )
+        self.base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
+        self._subscription_id = response.subscription_id
+        self._resource_group = response.resource_group
+
+    def get_registry_service_client(self) -> AzureMachineLearningWorkspaces:
+        self._get_registry_details()
+        self.kwargs.pop("subscription_id", None)
+        self.kwargs.pop("resource_group", None)
+        service_client_10_2021_dataplanepreview = AzureMachineLearningWorkspaces(
+            subscription_id=self._subscription_id,
+            resource_group=self._resource_group,
+            credential=self.credential,
+            base_url=self.base_url,
+            **self.kwargs,
+        )
+        return service_client_10_2021_dataplanepreview
+
+    @property
+    def subscription_id(self) -> str:
+        """The subscription id of the registry.
+
+        :return: Subscription Id
+        :rtype: str
+        """
+        return self._subscription_id
+
+    @property
+    def resource_group(self) -> str:
+        """The resource group of the registry.
+
+        :return: Resource Group
+        :rtype: str
+        """
+        return self._resource_group
 
 
 def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> str:
