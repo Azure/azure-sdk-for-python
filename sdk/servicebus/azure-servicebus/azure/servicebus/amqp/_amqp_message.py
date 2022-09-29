@@ -9,7 +9,7 @@ import time
 import uuid
 from datetime import datetime
 import warnings
-from typing import Optional, Any, cast, Mapping, Union, Dict, List
+from typing import Optional, Any, cast, Mapping, Union, Dict, List, Tuple
 
 from msrest.serialization import TZ_UTC
 import uamqp
@@ -19,10 +19,10 @@ from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
 
 
 class DictMixin(object):
-    def __setitem__(self, key: Union[str, bytes], item: Any) -> None:
+    def __setitem__(self, key: str, item: Optional[Union[str, bytes, int, bool, uuid.UUID]]) -> None:
         self.__dict__[key] = item
 
-    def __getitem__(self, key: Union[str, bytes]) -> Any:
+    def __getitem__(self, key: str) -> Optional[Union[str, bytes, int, bool, uuid.UUID]]:
         return self.__dict__[key]
 
     def __repr__(self) -> str:
@@ -31,7 +31,7 @@ class DictMixin(object):
     def __len__(self) -> int:
         return len(self.keys())
 
-    def __delitem__(self, key: Union[str, bytes]) -> None:
+    def __delitem__(self, key: str) -> None:
         self.__dict__[key] = None
 
     def __eq__(self, other: Any) -> bool:
@@ -47,22 +47,22 @@ class DictMixin(object):
     def __str__(self) -> str:
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
-    def has_key(self, k: Union[str, bytes]) -> bool:
+    def has_key(self, k: str) -> bool:
         return k in self.__dict__
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         return self.__dict__.update(*args, **kwargs)
 
-    def keys(self) -> List:
+    def keys(self) -> List[str]:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self) -> List:
+    def values(self) -> List[Optional[Union[str, bytes, int, bool, uuid.UUID]]]:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self) -> List:
+    def items(self) -> List[Tuple[str, Optional[Union[str, bytes, int, bool, uuid.UUID]]]]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def get(self, key: Union[str, bytes], default: Optional[Any] = None) -> Any:
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
         if key in self.__dict__:
             return self.__dict__[key]
         return default
