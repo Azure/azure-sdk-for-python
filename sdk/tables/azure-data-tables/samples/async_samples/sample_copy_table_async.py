@@ -67,7 +67,7 @@ class CopyTableSamples(object):
     async def copy_table_from_table_to_blob(self):
         await self._setup_table()
         try:
-            self.container_client = await self.blob_service_client.create_container(self.copy_to_blob_table_name)           
+            self.container_client = await self.blob_service_client.create_container(self.copy_to_blob_table_name)
             # Upload in-memory table data to a blob that stays in a container
             async for entity in self.table_client.list_entities():
                 # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
@@ -128,7 +128,7 @@ class CopyTableSamples(object):
         await self.container_client.delete_container()
 
     def _get_random_name(self):
-        return "mytable" + str(randrange(100))
+        return "mytableasync" + str(randrange(100))
 
 
 async def main():
