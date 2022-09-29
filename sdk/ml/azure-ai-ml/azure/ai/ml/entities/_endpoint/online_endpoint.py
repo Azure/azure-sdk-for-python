@@ -365,6 +365,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
     :type kind: str, optional,
     :param public_network_access: Whether to allow public endpoint connectivity
+        Allowed values are: "enabled", "disabled"
     :type public_network_access: str
     """
 
