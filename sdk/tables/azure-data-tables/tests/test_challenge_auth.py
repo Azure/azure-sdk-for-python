@@ -15,7 +15,6 @@ from azure.data.tables._authentication import BearerTokenChallengePolicy
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
-from devtools_testutils.sanitizers import add_general_regex_sanitizer
 from preparers import tables_decorator
 from _shared.testcase import TableTestCase
 
