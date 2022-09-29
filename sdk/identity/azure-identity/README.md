@@ -1,6 +1,6 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides [Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication through a set of convenient TokenCredential implementations. It enables Azure SDK clients to authenticate with Azure AD, while also allowing other Python apps to authenticate with Azure AD work and school accounts, Microsoft personal accounts (MSA), and other Identity providers like [Azure AD B2C](https://learn.microsoft.com/azure/active-directory-b2c/overview) service.
+The Azure Identity library provides [Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/en-us/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations which can be used to construct Azure SDK clients which support Azure AD token authentication.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
