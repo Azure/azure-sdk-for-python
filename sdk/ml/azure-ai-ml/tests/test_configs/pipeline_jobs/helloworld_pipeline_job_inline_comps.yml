@@ -41,7 +41,7 @@ jobs:
     compute: azureml:cpu-cluster
 
     component:
-      $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+#      $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
       command: >-
         echo Hello World &
         echo ${{inputs.component_in_number}}
