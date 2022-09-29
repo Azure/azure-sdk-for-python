@@ -125,7 +125,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     @classmethod
     def _from_workspace_connection_rest_object(cls, obj: RestWorkspaceConnectionPersonalAccessToken) \
             -> "PatTokenConfiguration":
-        return cls(pat=obj.pat if obj.pat else None)
+        return cls(pat=obj.pat if obj and obj.pat else None)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, PatTokenConfiguration):

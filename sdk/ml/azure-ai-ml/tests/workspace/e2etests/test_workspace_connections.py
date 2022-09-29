@@ -7,6 +7,7 @@ import pytest
 
 from azure.ai.ml import MLClient, load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
 
 from devtools_testutils import AzureRecordedTestCase
@@ -76,8 +77,8 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
 
         assert wps_connection.name == wps_connection_name
-        assert wps_connection.credentials.type == ConnectionAuthType.PAT
-        assert wps_connection.type == ConnectionCategory.GIT
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.GIT)
         # TODO : Uncomment once service side returns creds correctly
         # assert wps_connection.credentials.pat == "dummy_pat"
 
@@ -85,13 +86,13 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
 
         assert wps_connection.name == wps_connection_name
-        assert wps_connection.credentials.type == ConnectionAuthType.PAT
-        assert wps_connection.type == ConnectionCategory.GIT
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.GIT)
 
         wps_connection = client.connections.get(name=wps_connection_name)
         assert wps_connection.name == wps_connection_name
-        assert wps_connection.credentials.type == ConnectionAuthType.PAT
-        assert wps_connection.type == ConnectionCategory.GIT
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.GIT)
         assert wps_connection.metadata is None
         # TODO : Uncomment once service side returns creds correctly
         # assert wps_connection.credentials.pat == "dummpy_pat_update"
@@ -101,7 +102,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-        connection_list = client.connections.list(connection_type=ConnectionCategory.GIT)
+        connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.GIT))
 
         for conn in connection_list:
             print(conn)
