@@ -14,7 +14,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = "eastus"
 
-class TestMgmt{{package.upper()}}{{op_group.upper()}}(AzureMgmtRecordedTestCase):
+class TestMgmt{{package.capitalize()}}(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client({{client}})

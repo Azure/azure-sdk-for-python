@@ -582,17 +582,26 @@ class CodegenTestPR:
         # run test
         os.chdir(self.sdk_code_path())
         succeeded_result = 'Live test success'
+        succeeded_generate_result = 'Generate tests successfully\n'
         failed_result = 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
-        self.prepare_tests()
+        failed_generate_result = 'Generate tests failed, please check the info in pipeline log\n'
+        try:
+            self.prepare_tests()
+        except Exception as e:
+            self.test_result = failed_generate_result
+            log(f'test generate failed, please fix it locally\ninfo: {e}')
+        else:
+            log(succeeded_generate_result)
+            self.test_result = succeeded_generate_result
 
         try:
             print_check(f'pytest -s')
         except:
             log('some test failed, please fix it locally')
-            self.test_result = failed_result
+            self.test_result += failed_result
         else:
             log('live test run done, do not find failure !!!')
-            self.test_result = succeeded_result
+            self.test_result += succeeded_result
 
     def run_test(self):
         self.prepare_test_env()
