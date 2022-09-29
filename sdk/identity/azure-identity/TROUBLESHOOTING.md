@@ -48,7 +48,7 @@ except ClientAuthenticationError as ex:
 
 ### CredentialUnavailableError
 
-The `CredentialUnavailableError` is a special error type derived from `ClientAuthenticationError`. This error type is used to indicate that the credential can’t authenticate in the current environment, due to lack of required configuration or setup. This error is also used as a signal to chained credential types, such as `DefaultAzureCredential` and `ChainedTokenCredential`, that the chained credential should continue to try other credential types later in the chain.
+The `CredentialUnavailableError` is a special error type derived from `ClientAuthenticationError`. This error type is used to indicate that the credential can't authenticate in the current environment, due to lack of required configuration or setup. This error is also used as a signal to chained credential types, such as `DefaultAzureCredential` and `ChainedTokenCredential`, that the chained credential should continue to try other credential types later in the chain.
 
 ### Permission issues
 
@@ -108,7 +108,7 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 | Error Code | Description | Mitigation |
 |---|---|---|
 |AADSTS700027|Client assertion contains an invalid signature.|Ensure the specified certificate has been uploaded to the AAD application registration. Instructions for uploading certificates to the application registration can be found [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#option-1-upload-a-certificate).|
-|AADSTS700016|The specified application wasn’t found in the specified tenant.| Ensure the specified `client_id` and `tenant_id` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal).
+|AADSTS700016|The specified application wasn't found in the specified tenant.| Ensure the specified `client_id` and `tenant_id` are correct for your application registration. For multi-tenant apps, ensure the application has been added to the desired tenant by a tenant admin. To add a new application in the desired tenant, follow the instructions [here](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal).
 
 ## Troubleshoot `ClientAssertionCredential` authentication issues
 
@@ -145,8 +145,8 @@ The `ManagedIdentityCredential` is designed to work on a variety of Azure hosts 
 
 | Error Message |Description| Mitigation |
 |---|---|---|
-|The requested identity hasn’t been assigned to this resource.|The IMDS endpoint responded with a status code of 400, indicating the requested identity isn't assigned to the VM.|If using a user assigned identity, ensure the specified `client_id` is correct.<p/><p/>If using a system assigned identity, make sure it has been enabled properly. Instructions to enable the system assigned identity on an Azure VM can be found [here](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm#enable-system-assigned-managed-identity-on-an-existing-vm).|
-|The request failed due to a gateway error.|The request to the IMDS endpoint failed due to a gateway error, 502 or 504 status code.|Calls via proxy or gateway aren’t supported by IMDS. Disable proxies or gateways running on the VM for calls to the IMDS endpoint `http://169.254.169.254/`|
+|The requested identity hasn't been assigned to this resource.|The IMDS endpoint responded with a status code of 400, indicating the requested identity isn't assigned to the VM.|If using a user assigned identity, ensure the specified `client_id` is correct.<p/><p/>If using a system assigned identity, make sure it has been enabled properly. Instructions to enable the system assigned identity on an Azure VM can be found [here](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm#enable-system-assigned-managed-identity-on-an-existing-vm).|
+|The request failed due to a gateway error.|The request to the IMDS endpoint failed due to a gateway error, 502 or 504 status code.|Calls via proxy or gateway aren't supported by IMDS. Disable proxies or gateways running on the VM for calls to the IMDS endpoint `http://169.254.169.254/`|
 |No response received from the managed identity endpoint.|No response was received for the request to IMDS or the request timed out.|<ul><li>Ensure managed identity has been properly configured on the VM. Instructions for configuring the manged identity can be found [here](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm).</li><li>Verify the IMDS endpoint is reachable on the VM, see [below](#verifying-imds-is-available-on-the-vm) for instructions.</li></ul>|
 |Multiple attempts failed to obtain a token from the managed identity endpoint.|Retries to retrieve a token from the IMDS endpoint have been exhausted.|<ul><li>Refer to inner exception messages for more details on specific failures. If the data has been truncated, more detail can be obtained by [collecting logs](#logging).</li><li>Ensure managed identity has been properly configured on the VM. Instructions for configuring the manged identity can be found [here](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-portal-windows-vm).</li><li>Verify the IMDS endpoint is reachable on the VM, see [below](#verify-imds-is-available-on-the-vm) for instructions.</li></ul>|
 
@@ -165,7 +165,7 @@ curl 'http://169.254.169.254/metadata/identity/oauth2/token?resource=https://man
 `CredentialUnavailableError`
 | Error Message |Description| Mitigation |
 |---|---|---|
-|ManagedIdentityCredential authentication unavailable.|The environment variables configured by the App Services host weren’t present.|<ul><li>Ensure the managed identity has been properly configured on the App Service. Instructions for configuring the managed identity can be found [here](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=dotnet).</li><li>Verify the App Service environment is properly configured and the managed identity endpoint is available. See [below](#verify-the-app-service-managed-identity-endpoint-is-available) for instructions.</li></ul>|
+|ManagedIdentityCredential authentication unavailable.|The environment variables configured by the App Services host weren't present.|<ul><li>Ensure the managed identity has been properly configured on the App Service. Instructions for configuring the managed identity can be found [here](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=dotnet).</li><li>Verify the App Service environment is properly configured and the managed identity endpoint is available. See [below](#verify-the-app-service-managed-identity-endpoint-is-available) for instructions.</li></ul>|
 
 #### __Verify the App Service managed identity endpoint is available__
 
@@ -202,7 +202,7 @@ curl 'http://169.254.169.254/metadata/identity/oauth2/token?resource=https://man
 `CredentialUnavailableError`
 | Error Message |Description| Mitigation |
 |---|---|---|
-|Azure CLI not installed|The Azure CLI isn’t installed or couldn’t be found.|<ul><li>Ensure the Azure CLI is properly installed. Installation instructions can be found [here](https://learn.microsoft.com/cli/azure/install-azure-cli).</li><li>Validate the installation location has been added to the `PATH` environment variable.</li></ul>|
+|Azure CLI not installed|The Azure CLI isn't installed or couldn't be found.|<ul><li>Ensure the Azure CLI is properly installed. Installation instructions can be found [here](https://learn.microsoft.com/cli/azure/install-azure-cli).</li><li>Validate the installation location has been added to the `PATH` environment variable.</li></ul>|
 |Please run 'az login' to set up account|No account is currently logged into the Azure CLI, or the login has expired.|<ul><li>Log into the Azure CLI using the `az login` command. More information on authentication in the Azure CLI can be found [here](https://learn.microsoft.com/cli/azure/authenticate-azure-cli).</li><li>Validate that the Azure CLI can obtain tokens. See [below](#verify-the-azure-cli-can-obtain-tokens) for instructions.</li></ul>|
 
 #### __Verify the Azure CLI can obtain tokens__
@@ -213,7 +213,7 @@ You can manually verify that the Azure CLI is properly authenticated, and can ob
 az account show
 ```
 
-Once you've verified the Azure CLI is using correct account, you can validate that it’s able to obtain tokens for this account.
+Once you've verified the Azure CLI is using correct account, you can validate that it's able to obtain tokens for this account.
 
 ```bash
 az account get-access-token --output json --resource https://management.core.windows.net
@@ -226,8 +226,8 @@ az account get-access-token --output json --resource https://management.core.win
 `CredentialUnavailableError`
 | Error Message |Description| Mitigation |
 |---|---|---|
-|PowerShell isn’t installed.|No local installation of PowerShell was found.|Ensure that PowerShell is properly installed on the machine. Instructions for installing PowerShell can be found [here](https://learn.microsoft.com/powershell/scripting/install/installing-powershell).|
-|Az.Account module >= 2.2.0 isn’t installed.|The Az.Account module needed for authentication in Azure PowerShell isn’t installed.|Install the latest Az.Account module. Installation instructions can be found [here](https://learn.microsoft.com/powershell/azure/install-az-ps).|
+|PowerShell isn't installed.|No local installation of PowerShell was found.|Ensure that PowerShell is properly installed on the machine. Instructions for installing PowerShell can be found [here](https://learn.microsoft.com/powershell/scripting/install/installing-powershell).|
+|Az.Account module >= 2.2.0 isn't installed.|The Az.Account module needed for authentication in Azure PowerShell isn't installed.|Install the latest Az.Account module. Installation instructions can be found [here](https://learn.microsoft.com/powershell/azure/install-az-ps).|
 |Please run 'Connect-AzAccount' to set up account.|No account is currently logged into Azure PowerShell.|<ul><li>Login to Azure PowerShell using the `Connect-AzAccount` command. More instructions for authenticating Azure PowerShell can be found [here](https://learn.microsoft.com/powershell/azure/authenticate-azureps)</li><li>Validate that Azure PowerShell can obtain tokens. See [below](#verify-azure-powershell-can-obtain-tokens) for instructions.</li></ul>|
 
 #### __Verify Azure PowerShell can obtain tokens__
@@ -242,7 +242,7 @@ Name                                     Account             SubscriptionName   
 Subscription1 (xxxxxxxx-xxxx-xxxx-xxx... test@outlook.com    Subscription1       AzureCloud          xxxxxxxx-x...
 ```
 
-Once you've verified Azure PowerShell is using correct account, you can validate that it’s able to obtain tokens for this account.
+Once you've verified Azure PowerShell is using correct account, you can validate that it's able to obtain tokens for this account.
 
 ```bash
 Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
@@ -256,7 +256,7 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 
 | Error Message |Description| Mitigation |
 |---|---|---|
-|The current credential is not configured to acquire tokens for tenant <tenant ID>|The application must configure the credential to allow acquiring tokens from the requested tenant.|Add the requested tenant ID it to the AdditionallyAllowedTenants on the credential options, or add \"*\" to AdditionallyAllowedTenants to allow acquiring tokens for any tenant.</p>This exception was added as part of a breaking change to multi tenant authentication in version `1.11.0`. Users experiencing this error after upgrading can find details on the change and migration in [BREAKING_CHANGES.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md#1110) |
+|The current credential is not configured to acquire tokens for tenant <tenant ID>|The application must configure the credential to allow acquiring tokens from the requested tenant.|Add the requested tenant ID it to the AdditionallyAllowedTenants on the credential options, or add \"*\" to AdditionallyAllowedTenants to allow acquiring tokens for any tenant.</p>This exception was added as part of a breaking change to multi-tenant authentication in version `1.11.0`. Users experiencing this error after upgrading can find details on the change and migration in [BREAKING_CHANGES.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md#1110). |
 
 ## Get additional help
 

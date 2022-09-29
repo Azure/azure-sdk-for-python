@@ -290,24 +290,24 @@ environment variables. Each type of authentication requires values for specific
 variables:
 
 #### Service principal with secret
-|variable name|value
+|Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
-|`AZURE_TENANT_ID`|id of the application's Azure Active Directory tenant
+|`AZURE_CLIENT_ID`|ID of an Azure AD application
+|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
 |`AZURE_CLIENT_SECRET`|one of the application's client secrets
 
 #### Service principal with certificate
-|variable name|value
+|Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
-|`AZURE_TENANT_ID`|id of the application's Azure Active Directory tenant
+|`AZURE_CLIENT_ID`|ID of an Azure AD application
+|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
 |`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key
 |`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any
 
 #### Username and password
-|variable name|value
+|Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
+|`AZURE_CLIENT_ID`|ID of an Azure AD application
 |`AZURE_USERNAME`|a username (usually an email address)
 |`AZURE_PASSWORD`|that user's password
 
