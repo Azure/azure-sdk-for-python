@@ -970,6 +970,7 @@ class TestAppConfigurationClientUnitTest:
     async def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, AsyncHttpTransport
         from azure.core.pipeline import PipelineRequest, PipelineResponse
+        from consts import APPCONFIGURATION_CONNECTION_STRING
         class MockTransport(AsyncHttpTransport):
             def __init__(self):
                 self.auth_headers = []
@@ -988,7 +989,7 @@ class TestAppConfigurationClientUnitTest:
                 return response
 
         def new_method(self, request):
-            request.http_request.headers["Authorization"] = uuid4()
+            request.http_request.headers["Authorization"] = str(uuid4())
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
         # Store the method to restore later
@@ -996,7 +997,7 @@ class TestAppConfigurationClientUnitTest:
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
         client = AzureAppConfigurationClient.from_connection_string(
-            os.environ["APPCONFIGURATION_CONNECTION_STRING"], transport=MockTransport()
+            APPCONFIGURATION_CONNECTION_STRING, transport=MockTransport()
         )
         client.list_configuration_settings()
 
