@@ -11,19 +11,19 @@ from typing import Iterable
 from docker.models.containers import Container
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import EndpointStub
 from azure.ai.ml._local_endpoints.docker_client import (
     DockerClient,
+    get_endpoint_json_from_container,
     get_scoring_uri_from_container,
     get_status_from_container,
-    get_endpoint_json_from_container,
 )
-from azure.ai.ml._local_endpoints.errors import InvalidLocalEndpointError, LocalEndpointNotFoundError
 from azure.ai.ml._utils._endpoint_utils import local_endpoint_polling_wrapper
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, LocalEndpointConstants
 from azure.ai.ml.entities import OnlineEndpoint
-from azure.ai.ml._ml_exceptions import ValidationException, log_and_raise_error
+from azure.ai.ml.exceptions import InvalidLocalEndpointError, LocalEndpointNotFoundError, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class _LocalEndpointHelper(object):
                 endpoint=endpoint,
             )
             return self.get(endpoint_name=endpoint.name)
-        except Exception as ex: # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -157,6 +157,7 @@ class _LocalEndpointHelper(object):
         else:
             raise LocalEndpointNotFoundError(endpoint_name=name)
 
+
 def _convert_container_to_endpoint(container: Container, endpoint_json: dict = None) -> OnlineEndpoint:
     """Converts provided Container for local deployment to OnlineEndpoint
     entity.
@@ -181,6 +182,7 @@ def _convert_container_to_endpoint(container: Container, endpoint_json: dict = N
         provisioning_state=LocalEndpointConstants.ENDPOINT_STATE_SUCCEEDED,
         scoring_uri=scoring_uri,
     )
+
 
 def _convert_json_to_endpoint(endpoint_json: dict, **kwargs) -> OnlineEndpoint:
     """Converts metadata json and kwargs to OnlineEndpoint entity.

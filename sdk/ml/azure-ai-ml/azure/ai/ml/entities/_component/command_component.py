@@ -7,7 +7,6 @@ from typing import Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
@@ -15,6 +14,7 @@ from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
@@ -54,6 +54,7 @@ class CommandComponent(Component, ParameterizedCommand):
     :type instance_count: int
     :param is_deterministic: Whether the command component is deterministic.
     :type is_deterministic: bool
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated. Details will be provided in the error message.
     """
 
     def __init__(

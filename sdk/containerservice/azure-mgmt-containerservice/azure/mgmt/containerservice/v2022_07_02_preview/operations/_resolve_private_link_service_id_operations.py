@@ -8,7 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -19,7 +26,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -27,43 +35,47 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_post_request(
-    resource_group_name: str,
-    resource_name: str,
-    subscription_id: str,
-    **kwargs: Any
+    resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resolvePrivateLinkServiceId")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resolvePrivateLinkServiceId",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url(
+            "resource_name",
+            resource_name,
+            "str",
+            max_length=63,
+            min_length=1,
+            pattern=r"^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$",
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class ResolvePrivateLinkServiceIdOperations:
     """
@@ -83,7 +95,6 @@ class ResolvePrivateLinkServiceIdOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
 
     @overload
     def post(
@@ -145,7 +156,6 @@ class ResolvePrivateLinkServiceIdOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace
     def post(
         self,
@@ -176,16 +186,19 @@ class ResolvePrivateLinkServiceIdOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PrivateLinkResource]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateLinkResource]
 
         content_type = content_type or "application/json"
         _json = None
@@ -193,7 +206,7 @@ class ResolvePrivateLinkServiceIdOperations:
         if isinstance(parameters, (IO, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, 'PrivateLinkResource')
+            _json = self._serialize.body(parameters, "PrivateLinkResource")
 
         request = build_post_request(
             resource_group_name=resource_group_name,
@@ -203,7 +216,7 @@ class ResolvePrivateLinkServiceIdOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.post.metadata['url'],
+            template_url=self.post.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -211,9 +224,7 @@ class ResolvePrivateLinkServiceIdOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -222,12 +233,11 @@ class ResolvePrivateLinkServiceIdOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
+        deserialized = self._deserialize("PrivateLinkResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resolvePrivateLinkServiceId"}  # type: ignore
-
+    post.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resolvePrivateLinkServiceId"}  # type: ignore

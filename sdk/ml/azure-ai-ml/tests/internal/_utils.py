@@ -10,28 +10,29 @@ DATA_VERSION = "2"
 
 PARAMETERS_TO_TEST = [
     # which of them are available for other components?
+    # [NOTE] migration skip: sync pipeline changes during soft code complete.
+    # (
+    #     "tests/test_configs/internal/ls_command_component.yaml",
+    #     {},
+    #     {
+    #         "compute": "cpu-cluster",  # runsettings.target
+    #         "environment": None,  # runsettings.environment
+    #         # TODO: "resources.priority": 5,  # runsettings.priority  # JobResourceConfiguration doesn't have priority
+    #         "limits.timeout": 300,  # runsettings.timeout_seconds
+    #         "resources.instance_type": "1Gi",  # runsettings.resource_layout.instance_type
+    #         "resources.instance_count": 2,  # runsettings.resource_layout.instance_count/node_count
+    #         "resources.shm_size": "4g",  # runsettings.docker_configuration.shm_size
+    #         "resources.docker_args": "--cpus=2 --memory=1GB",  # runsettings.docker_configuration.docker_args
+    #         # runsettings.docker_configuration.user_docker/shared_volumes are removed
+    #         # https://github.com/Azure/azureml_run_specification/blob/master/specs/docker_run_config.md
+    #     },
+    #     {
+    #         "default_compute": "cpu-cluster",
+    #         "default_datastore": None,
+    #     },
+    # ),  # Command
     (
-        "./tests/test_configs/internal/ls_command_component.yaml",
-        {},
-        {
-            "compute": "cpu-cluster",  # runsettings.target
-            "environment": None,  # runsettings.environment
-            # TODO: "resources.priority": 5,  # runsettings.priority  # JobResourceConfiguration doesn't have priority
-            "limits.timeout": 300,  # runsettings.timeout_seconds
-            "resources.instance_type": "1Gi",  # runsettings.resource_layout.instance_type
-            "resources.instance_count": 2,  # runsettings.resource_layout.instance_count/node_count
-            "resources.shm_size": "4g",  # runsettings.docker_configuration.shm_size
-            "resources.docker_args": "--cpus=2 --memory=1GB",  # runsettings.docker_configuration.docker_args
-            # runsettings.docker_configuration.user_docker/shared_volumes are removed
-            # https://github.com/Azure/azureml_run_specification/blob/master/specs/docker_run_config.md
-        },
-        {
-            "default_compute": "cpu-cluster",
-            "default_datastore": None,
-        },
-    ),  # Command
-    (
-        "./tests/test_configs/internal/distribution-component/component_spec.yaml",  # Distributed
+        "tests/test_configs/internal/distribution-component/component_spec.yaml",  # Distributed
         {
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
         },
@@ -51,7 +52,7 @@ PARAMETERS_TO_TEST = [
         },
     ),
     (
-        "./tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
+        "tests/test_configs/internal/batch_inference/batch_score.yaml",  # Parallel
         {
             "model_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"),
             "images_to_score": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
@@ -60,6 +61,7 @@ PARAMETERS_TO_TEST = [
             "resources.instance_count": 1,  # runsettings.parallel.node_count
             "max_concurrency_per_instance": 2,  # runsettings.parallel.max_concurrency_per_instance
             "error_threshold": 5,  # runsettings.parallel.error_threshold
+            "mini_batch_size": 2,  # runsettings.parallel.mini_batch_size
             "logging_level": "DEBUG",  # runsettings.parallel.logging_level
             "retry_settings.timeout": 300,  # runsettings.parallel.run_invocation_timeout
             "retry_settings.max_retries": 2,  # runsettings.parallel.run_max_try
@@ -71,7 +73,7 @@ PARAMETERS_TO_TEST = [
         },
     ),
     (
-        "./tests/test_configs/internal/scope-component/component_spec.yaml",
+        "tests/test_configs/internal/scope-component/component_spec.yaml",
         {
             "TextData": Input(
                 type=AssetTypes.MLTABLE,
@@ -100,7 +102,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Scope
     (
-        "./tests/test_configs/internal/hdi-component/component_spec.yaml",
+        "tests/test_configs/internal/hdi-component/component_spec.yaml",
         {
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
         },
@@ -124,7 +126,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # HDInsight
     (
-        "./tests/test_configs/internal/hemera-component/component.yaml",
+        "tests/test_configs/internal/hemera-component/component.yaml",
         {},
         {},  # no specific run settings
         {
@@ -133,7 +135,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Hemera
     (
-        "./tests/test_configs/internal/data-transfer-component/component_spec.yaml",
+        "tests/test_configs/internal/data-transfer-component/component_spec.yaml",
         {
             "source_data": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
         },
@@ -145,7 +147,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Data Transfer
     (
-        "./tests/test_configs/internal/starlite-component/component_spec.yaml",
+        "tests/test_configs/internal/starlite-component/component_spec.yaml",
         {
             "FileList": Input(type=AssetTypes.MLTABLE, path="mltable_starlite_sample_output@latest"),
             "FileListFileName": "\\output.tsv",
@@ -158,7 +160,7 @@ PARAMETERS_TO_TEST = [
         },
     ),  # Starlite
     (
-        "./tests/test_configs/internal/ae365exepool-component/component_spec.yaml",
+        "tests/test_configs/internal/ae365exepool-component/component_spec.yaml",
         {
             "HeronId": "c6c849c5-4d52-412a-b4de-6cc5755bca73",
             "DataToLookAt": Input(type=AssetTypes.MLTABLE, path="mltable_reghits@latest"),

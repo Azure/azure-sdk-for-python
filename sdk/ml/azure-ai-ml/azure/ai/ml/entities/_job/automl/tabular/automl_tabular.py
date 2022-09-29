@@ -7,7 +7,6 @@
 from abc import ABC
 from typing import Dict, List, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     AutoNCrossValidations,
     CustomNCrossValidations,
@@ -15,7 +14,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     StackEnsembleSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
@@ -24,6 +23,7 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
 )
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class AutoMLTabular(AutoMLVertical, ABC):

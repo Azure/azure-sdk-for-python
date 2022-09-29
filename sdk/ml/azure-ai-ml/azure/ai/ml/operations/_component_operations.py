@@ -7,15 +7,19 @@
 import time
 import types
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Union
+from typing import Callable, Dict, Iterable, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import (
     AML_INTERNAL_LOGGER_NAMESPACE,
     ActivityType,
@@ -36,6 +40,7 @@ from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
@@ -60,11 +65,12 @@ class ComponentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Dict,
     ):
-        super(ComponentOperations, self).__init__(operation_scope)
+        super(ComponentOperations, self).__init__(operation_scope, operation_config)
         if "app_insights_handler" in kwargs:
             logger.addHandler(kwargs.pop("app_insights_handler"))
         self._version_operation = service_client.component_versions
@@ -74,7 +80,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -148,15 +154,18 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Component:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
         :param name: Name of the code component.
         :type name: str
         :param version: Version of the component.
-        :type version: str
+        :type version: Optional[str]
         :param label: Label of the component. (mutually exclusive with version)
-        :type label: str
+        :type label: Optional[str]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully identified and retrieved. Details will be provided in the error message.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -256,6 +265,13 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param skip_validation: whether to skip validation before creating/updating the component
         :type skip_validation: bool
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ComponentException: Raised if Component type is unsupported. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Component model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -418,7 +434,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        get_arm_id_and_fill_back = OperationOrchestrator(self._all_operations, self._operation_scope).get_asset_arm_id
+        get_arm_id_and_fill_back = OperationOrchestrator(
+            self._all_operations, self._operation_scope, self._operation_config
+        ).get_asset_arm_id
 
         # resolve component's code
         _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
@@ -458,11 +476,12 @@ class ComponentOperations(_ScopeDependentOperations):
                     base_path,
                 )
             elif isinstance(job_instance, AutoMLJob):
-                self._job_operations._resolve_automl_job_inputs(job_instance, base_path, inside_pipeline=True)
+                self._job_operations._resolve_automl_job_inputs(job_instance)
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
         from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
         from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -504,6 +523,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
         for key, job_instance in jobs.items():
             preprocess_job(job_instance)
+            if isinstance(job_instance, LoopNode):
+                job_instance = job_instance.body
             if isinstance(job_instance, AutoMLJob):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):

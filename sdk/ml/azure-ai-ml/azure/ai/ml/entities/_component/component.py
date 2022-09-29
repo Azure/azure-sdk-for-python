@@ -10,7 +10,6 @@ from typing import IO, AnyStr, Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerData,
     ComponentContainerDetails,
@@ -33,6 +32,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, 
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -81,6 +81,7 @@ class Component(
     :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated. Details will be provided in the error message.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -119,6 +120,7 @@ class Component(
             creation_context=creation_context,
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
+            source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
@@ -139,13 +141,17 @@ class Component(
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
+
+    @property
+    def _func(self):
         from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 
-        # validate input names before create component function
-        # TODO(1924371): discuss if validate & update self._func after input changes
-        self._validate_io_names(self._inputs)
-        self._validate_io_names(self._outputs)
-        self._func = _generate_component_function(self)
+        # validate input/output names before creating component function
+        validation_result = self._validate_io_names(self.inputs)
+        validation_result.merge_with(self._validate_io_names(self.outputs))
+        validation_result.try_raise(error_target=self._get_validation_error_target())
+
+        return _generate_component_function(self)
 
     @property
     def type(self) -> str:
@@ -215,9 +221,7 @@ class Component(
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the component content into a file in yaml format.
 
         :param dest: The destination to receive this component's content.
@@ -227,15 +231,10 @@ class Component(
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like a
-            path input.
-        :type path: Union[str, Pathlike]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @staticmethod
     def _resolve_component_source_from_id(id):
@@ -251,7 +250,7 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(cls, io_dict: Dict, raise_error=True):
+    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> ValidationResult:
         """Validate input/output names, raise exception if invalid."""
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
@@ -271,7 +270,7 @@ class Component(
                 )
             else:
                 lower2original_kwargs[lower_key] = name
-        return validation_result.try_raise(error_target=ErrorTarget.COMPONENT, raise_error=raise_error)
+        return validation_result.try_raise(error_target=cls._get_validation_error_target(), raise_error=raise_error)
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -395,8 +394,9 @@ class Component(
                 message="Not a valid code value: git paths are not supported.",
                 yaml_path="code",
             )
-        # validate inputs names before creation in case user added invalid inputs after entity built
+        # validate inputs names
         validation_result.merge_with(self._validate_io_names(self.inputs, raise_error=False))
+        validation_result.merge_with(self._validate_io_names(self.outputs, raise_error=False))
 
         return validation_result
 

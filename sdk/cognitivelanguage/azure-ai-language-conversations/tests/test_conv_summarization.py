@@ -3,24 +3,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-from testcase import (
-    ConversationTest,
-    GlobalConversationAccountPreparer
-)
 from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase
 
 
-class TestConversationalSummarizationTests(ConversationTest):
+class TestConversationalSummarization(AzureRecordedTestCase):
 
-    @GlobalConversationAccountPreparer()
-    def test_conversational_summarization(self, endpoint, key):
+    def test_polling_interval(self, conversation_creds):
+        # test default
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]))
+        assert client._config.polling_interval == 5
+        # test override
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
+        assert client._config.polling_interval == 1
+
+    def test_conversational_summarization(self, recorded_test, conversation_creds):
         # analyze query
-        client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"],
+            AzureKeyCredential(conversation_creds["key"])
+        )
         with client:
             poller = client.begin_conversation_analysis(
                 task={

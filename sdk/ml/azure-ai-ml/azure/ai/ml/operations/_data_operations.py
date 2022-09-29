@@ -16,17 +16,10 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._ml_exceptions import (
-    AssetPathException,
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -46,6 +39,13 @@ from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
+from azure.ai.ml.exceptions import (
+    AssetPathException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -58,12 +58,13 @@ class DataOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: ServiceClient052022,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
 
-        super(DataOperations, self).__init__(operation_scope)
+        super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
@@ -116,7 +117,9 @@ class DataOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the data asset. (mutually exclusive with version)
         :type label: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully identified and retrieved. Details will be provided in the error message.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -157,8 +160,12 @@ class DataOperations(_ScopeDependentOperations):
         If not already in storage, asset will be uploaded to the workspace's blob storage.
 
         :param data: Data asset object.
-        :type data: Data
+        :type data: azure.ai.ml.entities.Data
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Data artifact path is already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
         try:
             name = data.name

@@ -306,6 +306,8 @@ except ZeroDivisionError:
 The following sections provide several code snippets covering some of the most common tasks, including:
 
 * [Using different metric instruments](#metric-instrument-usage)
+* [Customizing outputted metrics with views](#metric-custom-views)
+* [Recording instruments with attributes](#metric-record-attributes)
 
 #### Metric instrument usage
 
@@ -375,6 +377,93 @@ histogram.record(99.9)
 
 # Async Gauge
 gauge = meter.create_observable_gauge("gauge", [observable_gauge_func])
+
+```
+
+#### Metric custom views
+
+```python
+import os
+
+from opentelemetry import metrics
+from opentelemetry.sdk.metrics import Counter, MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.view import View
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
+
+exporter = AzureMonitorMetricExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+# Create a view matching the counter instrument `my.counter`
+# and configure the new name `my.counter.total` for the result metrics stream
+change_metric_name_view = View(
+    instrument_type=Counter,
+    instrument_name="my.counter",
+    name="my.counter.total",
+)
+
+reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
+provider = MeterProvider(
+    metric_readers=[
+        reader,
+    ],
+    views=[
+        change_metric_name_view,
+    ],
+)
+metrics.set_meter_provider(provider)
+
+meter = metrics.get_meter_provider().get_meter("view-name-change")
+my_counter = meter.create_counter("my.counter")
+my_counter.add(100)
+
+```
+
+#### Metric record attributes
+
+```python
+import os
+
+from opentelemetry import metrics
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+
+from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
+
+exporter = AzureMonitorMetricExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
+metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
+
+attribute_set1 = {
+    "key1": "val1"
+}
+attribute_set2 = {
+    "key2": "val2"
+}
+large_attribute_set = {}
+for i in range(20):
+    key = "key{}".format(i)
+    val = "val{}".format(i)
+    large_attribute_set[key] = val
+
+meter = metrics.get_meter_provider().get_meter("sample")
+
+# Counter
+counter = meter.create_counter("attr1_counter")
+counter.add(1, attribute_set1)
+
+# Counter2
+counter2 = meter.create_counter("attr2_counter")
+counter2.add(10, attribute_set1)
+counter2.add(30, attribute_set2)
+
+# Counter3
+counter3 = meter.create_counter("large_attr_counter")
+counter3.add(100, attribute_set1)
+counter3.add(200, large_attribute_set)
 
 ```
 

@@ -45,16 +45,22 @@ def get_batch_id_from_poller(polling_method):
 class MapsSearchClient(AsyncMapsSearchClientBase):
     """Azure Maps Search REST APIs.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
-    :keyword str base_url: Supported Maps Services or Language resource
-     base_url (protocol and hostname, for example: 'https://<resource-name>.mapsservices.azure.com').
-    :keyword str client_id: Specifies which account is intended for usage with the Azure AD security model.
-     It represents a unique ID for the Azure Maps account.
-    :keyword api_version: The API version of the service to use for requests.
-     It defaults to the latest service version.
-     Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version: str
+    :param credential:
+        Credential needed for the client to connect to Azure.
+    :type credential:
+        ~azure.core.credentials.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :keyword str base_url:
+        Supported Maps Services or Language resource base_url
+        (protocol and hostname, for example: 'https://us.atlas.microsoft.com').
+    :keyword str client_id:
+        Specifies which account is intended for usage with the Azure AD security model.
+        It represents a unique ID for the Azure Maps account.
+    :keyword api_version:
+        The API version of the service to use for requests.
+        It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
+    :paramtype api_version:
+        str
     """
     def __init__(
         self,
@@ -78,10 +84,14 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         format. The geometry ID is returned in the sourceGeometry object under "geometry" and "id" in
         either a Search Address or Search Fuzzy call.
 
-        :param geometry_ids: List of geometry UUIDs, previously retrieved from an Online Search request.
-        :type geometry_ids: list[str]
-        :return: The result list of Polygon/Geometries.
-        :rtype: List[~azure.maps.search.models.Polygon]
+        :param geometry_ids:
+            list of geometry UUIDs string, previously retrieved from an Online Search request.
+        :type geometry_ids:
+            list[str]
+        :return:
+            The result list of Polygon/Geometries.
+        :rtype:
+            List[~azure.maps.search.models.Polygon]
         """
         polygon_result = await self._search_client.list_polygons(
             geometry_ids,
@@ -108,71 +118,102 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         specify only the countries for which your application needs coverage, as the default behavior
         will be to search the entire world, potentially returning unnecessary results.
 
-        :param query: The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
-         as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
-         -122.125679"). Must be properly URL encoded.
-        :type query: str
-        :keyword bool is_type_ahead: Boolean. If the typeahead flag is set,
-         the query will be interpreted as a partial input and the search will enter predictive mode.
-        :keyword str top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
-         maximum: 100.
-        :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
-         minimum: 0 and maximum: 1900.
-        :keyword list[int] category_filter: A comma-separated list of category set IDs
-         which could be used to restrict the result to specific Points of Interest categories.
-        :param country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :type country_filter: list[str]
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area.
-        :keyword LatLon coordinates: coordinates as (lat, long)
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area.
-        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
-         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
-        :keyword str language: Language in which search results should be returned. Should be one of
-         supported IETF language tags, case insensitive. When data in specified language is not
-         available for a specific field, default language is used.
-        :keyword  extended_postal_codes_for: Indexes for which extended postal codes should be included in
-         the results.
-        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword int min_fuzzy_level: Minimum fuzziness level to be used.
-        :keyword int max_fuzzy_level: Maximum fuzziness level to be used.
-        :keyword index_filter: A comma separated list of indexes which should be utilized for the search.
-         Item order does not matter.
-        :paramtype index_filter: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword list[str] brand_filter: A comma-separated list of brand names which could be used to restrict the
-         result to specific brands. Item order does not matter. When multiple brands are provided, only
-         results that belong to (at least) one of the provided list will be returned. Brands that
-         contain a "," in their name should be put into quotes.
-        :keyword electric_vehicle_connector_filter: A comma-separated list of connector types which could
-         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
-         Item order does not matter. When multiple connector types are provided, only results that
-         belong to (at least) one of the provided list will be returned.
-        :paramtype electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
-        :keyword entity_type: Specifies the level of filtering performed on geographies. Narrows the
-         search for specified geography entity types, e.g. return only municipality. The resulting
-         response will contain the geography ID as well as the entity type matched. If you provide more
-         than one entity as a comma separated list, endpoint will return the 'smallest entity
-         available'.
-        :paramtype entity_type: str or ~azure.maps.search.models.GeographicEntityType
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-         Different countries have different views of such regions, and the View parameter allows your
-         application to comply with the view required by the country your application will be serving.
-         By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
-         request. It is your responsibility to determine the location of your users, and then set the
-         View parameter correctly for that location. Alternatively, you have the option to set
-         ‘View=Auto’, which will return the map data based on the IP  address of the request.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword operating_hours: Hours of operation for a POI (Points of Interest). The availability of
-         hours of operation will vary based on the data available. If not passed, then no opening hours
-         information will be returned.
-         Supported value: nextSevenDays.
-        :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: The results of the search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param query:
+            The applicable query string (e.g., "seattle", "pizza"). Can *also* be specified
+            as a comma separated string composed by latitude followed by longitude (e.g., "47.641268,
+            -122.125679"). Must be properly URL encoded.
+        :type query:
+            str
+        :keyword bool is_type_ahead:
+            Boolean. If the typeahead flag is set, the query will be interpreted as a
+            partial input and the search will enter predictive mode.
+        :keyword str top:
+            Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+            maximum: 100.
+        :keyword int skip:
+            Starting offset of the returned results within the full result set. Default: 0,
+            minimum: 0 and maximum: 1900.
+        :keyword list[int] category_filter:
+            A comma-separated list of category set IDs which could be used to
+            restrict the result to specific Points of Interest categories. ID order does not matter. When
+            multiple category identifiers are provided, only POIs that belong to (at least) one of the
+            categories from the provided list will be returned. The list of supported categories can be
+            discovered using  `POI Categories API`.
+        :keyword int radius_in_meters:
+            The radius in meters to for the results to be constrained to the
+            defined area.
+        :keyword LatLon coordinates:
+            coordinates as (lat, lon)
+        :keyword country_filter:
+            Comma separated string of country codes, e.g. FR,ES. This will limit the
+            search to the specified countries.
+        :paramtype country_filter:
+            list[str]
+        :keyword BoundingBox bounding_box:
+            north(top), west(left), south(bottom), east(right)
+            position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
+        :keyword str language:
+            Language in which search results should be returned. Should be one of
+            supported IETF language tags, case insensitive. When data in specified language is not
+            available for a specific field, default language is used.
+        :keyword extended_postal_codes_for:
+            Indexes for which extended postal codes should be included in
+            the results.
+        :paramtype extended_postal_codes_for:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword int min_fuzzy_level:
+            Minimum fuzziness level to be used.
+        :keyword int max_fuzzy_level:
+            Maximum fuzziness level to be used.
+        :keyword index_filter:
+            A comma separated list of indexes which should be utilized for the search.
+            Item order does not matter.
+        :paramtype index_filter:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword list[str] brand_filter:
+            A comma-separated list of brand names which could be used to restrict the
+            result to specific brands. Item order does not matter. When multiple brands are provided, only
+            results that belong to (at least) one of the provided list will be returned. Brands that
+            contain a "," in their name should be put into quotes.
+        :keyword electric_vehicle_connector_filter:
+            A comma-separated list of connector types which could
+            be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+            Item order does not matter. When multiple connector types are provided, only results that
+            belong to (at least) one of the provided list will be returned.
+        :paramtype electric_vehicle_connector_filter:
+            list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :keyword entity_type:
+            Specifies the level of filtering performed on geographies. Narrows the
+            search for specified geography entity types, e.g. return only municipality. The resulting
+            response will contain the geography ID as well as the entity type matched. If you provide more
+            than one entity as a comma separated list, endpoint will return the 'smallest entity
+            available'.
+        :paramtype entity_type:
+            str or ~azure.maps.search.models.GeographicEntityType
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+            Different countries have different views of such regions, and the View parameter allows your
+            application to comply with the view required by the country your application will be serving.
+            By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
+            request. It is your responsibility to determine the location of your users, and then set the
+            View parameter correctly for that location. Alternatively, you have the option to set
+            ‘View=Auto’, which will return the map data based on the IP  address of the request.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :keyword operating_hours:
+            Hours of operation for a POI (Points of Interest). The availability of
+            hours of operation will vary based on the data available. If not passed, then no opening hours
+            information will be returned.
+            Supported value: nextSevenDays.
+        :paramtype operating_hours:
+            str or ~azure.maps.search.models.OperatingHoursRange
+        :return:
+            The results of the search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
 
         coordinates = kwargs.pop("coordinates", (0, 0))
@@ -199,13 +240,17 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         subcategories together with their translations and synonyms. The returned content can be used
         to provide more meaningful results through other Search Service APIs,
 
-        :keyword str language: Language in which search results should be returned. Should be one of
-         supported IETF language tags, except NGT and NGT-Latn. Language tag is case insensitive. When
-         data in specified language is not available for a specific field, default language is used
-         (English).
-        :return: The result as list of point of interest categories.
-        :rtype: List[~azure.maps.search.models.PointOfInterestCategory]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword str language:
+            Language in which search results should be returned. Should be one of
+            supported IETF language tags, except NGT and NGT-Latn. Language tag is case insensitive. When
+            data in specified language is not available for a specific field, default language is used
+            (English).
+        :return:
+            The result as list of point of interest categories.
+        :rtype:
+            List[~azure.maps.search.models.PointOfInterestCategory]
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         result = await self._search_client.get_point_of_interest_category_tree(
             **kwargs
@@ -218,39 +263,59 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         coordinates: LatLon,
         **kwargs: Any
     ) -> ReverseSearchAddressResult:
-        """**Reverse Geocode to an Address**
+        """**Search Address Reverse Batch API**
 
         There may be times when you need to translate a  coordinate (example: 37.786505, -122.3862)
         into a human understandable street address. Most often  this is needed in tracking applications
         where you receive a GPS feed from the device or asset and  wish to know what address where the
         coordinate is located. This endpoint will return address information for a given coordinate.
 
-        :param coordinates: The applicable coordinates as (lat, lon)
-        :type coordinates: LatLon
-        :param language: Language in which search results should be returned.
-        :type language: str
-        :keyword bool include_speed_limit: Boolean. To enable return of the posted speed limit.
-        :keyword int heading: The directional heading of the vehicle in degrees, for travel along a segment
-         of roadway.
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area.
-        :keyword str number: If a number is sent in along with the request, the response may include the side
-         of the street (Left/Right) and also an offset position for that number.
-        :keyword bool include_road_use: Boolean. To enable return of the road use array for reverse geocodes
-         at street level.
-        :keyword road_use: To restrict reverse geocodes to a certain type of road use.
-        :paramtype road_use: list[str or ~azure.maps.search.models.RoadUseType]
-        :keyword bool allow_freeform_newline: Format of newlines in the formatted address.
-        :keyword bool include_match_type: Include information on the type of match the geocoder achieved in
-         the response.
-        :keyword entity_type: Specifies the level of filtering performed on geographies.
-        :paramtype entity_type: str or ~azure.maps.search.models.GeographicEntityType
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: The results of the search
-        :rtype: ~azure.maps.search.models.ReverseSearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param coordinates:
+            The applicable coordinates as (lat, lon)
+        :type coordinates:
+            LatLon
+        :param language:
+            Language in which search results should be returned.
+        :type language:
+            str
+        :keyword bool include_speed_limit:
+            Boolean. To enable return of the posted speed limit.
+        :keyword int heading:
+            The directional heading of the vehicle in degrees, for travel along a segment
+            of roadway.
+        :keyword int radius_in_meters:
+            The radius in meters to for the results to be constrained to the
+            defined area.
+        :keyword str number:
+            If a number is sent in along with the request, the response may include the side
+            of the street (Left/Right) and also an offset position for that number.
+        :keyword bool include_road_use:
+            Boolean. To enable return of the road use array for reverse geocodes
+            at street level.
+        :keyword road_use:
+            To restrict reverse geocodes to a certain type of road use.
+        :paramtype road_use:
+            list[str or ~azure.maps.search.models.RoadUseType]
+        :keyword bool allow_freeform_newline:
+            Format of newlines in the formatted address.
+        :keyword bool include_match_type:
+            Include information on the type of match the geocoder achieved in
+            the response.
+        :keyword entity_type:
+            Specifies the level of filtering performed on geographies.
+        :paramtype entity_type:
+            str or ~azure.maps.search.models.GeographicEntityType
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :return:
+            The results of the search
+        :rtype:
+            ~azure.maps.search.models.ReverseSearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         result = await self._search_client.reverse_search_address(
             query=[coordinates[0], coordinates[1]],
@@ -272,30 +337,41 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         coordinate is  located.
         This endpoint will return cross street information  for a given coordinate.
 
-        :param coordinates: The applicable coordinates as (lat, lon)
-        :type coordinates: LatLon
-        :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
-         maximum: 100.
-        :keyword int heading: The directional heading of the vehicle in degrees, for travel along a segment
-         of roadway. 0 is North, 90 is East and so on, values range from -360 to 360. The precision can
-         include up to one decimal place.
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area.
-        :keyword str language: Language in which search results should be returned. Should be one of
-         supported IETF language tags, case insensitive. When data in specified language is not
-         available for a specific field, default language is used.
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-         Different countries have different views of such regions, and the View parameter allows your
-         application to comply with the view required by the country your application will be serving.
-         By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
-         request. It is your responsibility to determine the location of your users, and then set the
-         View parameter correctly for that location. Alternatively, you have the option to set
-         ‘View=Auto’, which will return the map data based on the IP  address of the request.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: The results of the reverse search.
-        :rtype: ~azure.maps.search.models.ReverseSearchCrossStreetAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param coordinates:
+            The applicable coordinates as (lat, lon)
+        :type coordinates:
+            LatLon
+        :keyword int top:
+            Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+            maximum: 100.
+        :keyword int heading:
+            The directional heading of the vehicle in degrees, for travel along a segment
+            of roadway. 0 is North, 90 is East and so on, values range from -360 to 360. The precision can
+            include up to one decimal place.
+        :keyword int radius_in_meters:
+            The radius in meters to for the results to be constrained to the
+            defined area.
+        :keyword str language:
+            Language in which search results should be returned. Should be one of
+            supported IETF language tags, case insensitive. When data in specified language is not
+            available for a specific field, default language is used.
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+            Different countries have different views of such regions, and the View parameter allows your
+            application to comply with the view required by the country your application will be serving.
+            By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
+            request. It is your responsibility to determine the location of your users, and then set the
+            View parameter correctly for that location. Alternatively, you have the option to set
+            ‘View=Auto’, which will return the map data based on the IP  address of the request.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :return:
+            The results of the reverse search.
+        :rtype:
+            ~azure.maps.search.models.ReverseSearchCrossStreetAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         return await self._search_client.reverse_search_cross_street_address(
             query=[coordinates[0], coordinates[1]],
@@ -314,48 +390,67 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         The Search Along Route endpoint allows you to perform a fuzzy search for POIs along a specified
         route.
 
-        :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
-         Must be properly URL encoded.
-        :type query: str
-        :param max_detour_time: Maximum detour time of the point of interest in seconds. Max value is
-         3600 seconds.
-        :type max_detour_time: int
-        :param route: This represents the route to search along and should be a valid ``GeoJSON
-         LineString`` type.
-        :type route: ~azure.maps.search.models.SearchAlongRouteOptions
-        :keyword int top: Maximum number of responses that will be returned. Default value is 10. Max value
+        :param query:
+            The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
+            Must be properly URL encoded.
+        :type query:
+            str
+        :param max_detour_time:
+            Maximum detour time of the point of interest in seconds. Max value is
+            3600 seconds.
+        :type max_detour_time:
+            int
+        :param route:
+            This represents the route to search along and should be a valid ``GeoJSON
+            LineString`` type.
+        :type route:
+            ~azure.maps.search.models.SearchAlongRouteOptions
+        :keyword int top:
+            Maximum number of responses that will be returned. Default value is 10. Max value
          is 20.
-        :keyword list[str] brand_filter: A comma-separated list of brand names which could be used to restrict the
-         result to specific brands. Item order does not matter. When multiple brands are provided, only
-         results that belong to (at least) one of the provided list will be returned. Brands that
-         contain a "," in their name should be put into quotes.
-        :keyword list[int] category_filter: A comma-separated list of category set IDs
-         which could be used to restrict the result to specific Points of Interest categories.
-        :keyword electric_vehicle_connector_filter: A comma-separated list of connector types which could
-         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
-         Item order does not matter. When multiple connector types are provided, only results that
-         belong to (at least) one of the provided list will be returned.
-        :paramtype electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-         Different countries have different views of such regions, and the View parameter allows your
-         application to comply with the view required by the country your application will be serving.
-         By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
-         request. It is your responsibility to determine the location of your users, and then set the
-         View parameter correctly for that location. Alternatively, you have the option to set
-         ‘View=Auto’, which will return the map data based on the IP  address of the request. The View
-         parameter in Azure Maps must be used in compliance with applicable laws, including those
-         regarding mapping, of the country where maps, images and other data and third party content
-         that you are authorized to  access via Azure Maps is made available. Example: view=IN.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword operating_hours: Hours of operation for a POI (Points of Interest). The availability of
-         hours of operation will vary based on the data available. If not passed, then no opening hours
-         information will be returned.
-         Supported value: nextSevenDays.
-        :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: The results of the search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword list[str] brand_filter:
+            A comma-separated list of brand names which could be used to restrict the
+            result to specific brands. Item order does not matter. When multiple brands are provided, only
+            results that belong to (at least) one of the provided list will be returned. Brands that
+            contain a "," in their name should be put into quotes.
+        :keyword list[int] category_filter:
+            A comma-separated list of category set IDs
+            which could be used to restrict the result to specific Points of Interest categories.
+            ID order does not matter.
+        :keyword electric_vehicle_connector_filter:
+            A comma-separated list of connector types which could
+            be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+            Item order does not matter. When multiple connector types are provided, only results that
+            belong to (at least) one of the provided list will be returned.
+        :paramtype electric_vehicle_connector_filter:
+            list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+            Different countries have different views of such regions, and the View parameter allows your
+            application to comply with the view required by the country your application will be serving.
+            By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
+            request. It is your responsibility to determine the location of your users, and then set the
+            View parameter correctly for that location. Alternatively, you have the option to set
+            ‘View=Auto’, which will return the map data based on the IP  address of the request. The View
+            parameter in Azure Maps must be used in compliance with applicable laws, including those
+            regarding mapping, of the country where maps, images and other data and third party content
+            that you are authorized to  access via Azure Maps is made available. Example: view=IN.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :keyword operating_hours:
+            Hours of operation for a POI (Points of Interest). The availability of
+            hours of operation will vary based on the data available. If not passed, then no opening hours
+            information will be returned.
+            Supported value: nextSevenDays.
+        :paramtype operating_hours:
+            str or ~azure.maps.search.models.OperatingHoursRange
+        :return:
+            The results of the search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         result = await self._search_client.search_along_route(
             query,
@@ -376,46 +471,65 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         The Search Geometry endpoint allows you to perform a free form search inside a single geometry
         or many of them.
 
-        :param query: The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
-         Must be properly URL encoded.
-        :type query: str
-        :param geometry: This represents the geometry for one or more geographical features (parks,
-         state boundary etc.) to search in and should be a GeoJSON compliant type.
-         We are accepting GeoJson object or geo_interface
-        :type geometry: obejct or str
-        :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
-         maximum: 100.
-        :keyword str language: Language in which search results should be returned. Should be one of
-         supported IETF language tags, case insensitive. When data in specified language is not
-         available for a specific field, default language is used.
-        :keyword list[int] category_filter: A comma-separated list of category set IDs
-         which could be used to restrict the result to specific Points of Interest categories.
-        :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
-         the results.
-        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword index_filter: A comma separated list of indexes which should be utilized for the search.
-         Item order does not matter.
-        :paramtype index_filter: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-         Different countries have different views of such regions, and the View parameter allows your
-         application to comply with the view required by the country your application will be serving.
-         By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
-         request. It is your responsibility to determine the location of your users, and then set the
-         View parameter correctly for that location. Alternatively, you have the option to set
-         ‘View=Auto’, which will return the map data based on the IP  address of the request. The View
-         parameter in Azure Maps must be used in compliance with applicable laws, including those
-         regarding mapping, of the country where maps, images and other data and third party content
-         that you are authorized to  access via Azure Maps is made available. Example: view=IN.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword operating_hours: Hours of operation for a POI (Points of Interest). The availability of
-         hours of operation will vary based on the data available. If not passed, then no opening hours
-         information will be returned.
-         Supported value: nextSevenDays.
-        :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: The results of search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param query:
+            The POI name to search for (e.g., "statue of liberty", "starbucks", "pizza").
+            Must be properly URL encoded.
+        :type query:
+            str
+        :param geometry:
+            This represents the geometry for one or more geographical features (parks,
+            state boundary etc.) to search in and should be a GeoJSON compliant type.
+            We are accepting GeoJson object or geo_interface
+        :type geometry:
+            obejct or str
+        :keyword int top:
+            Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+            maximum: 100.
+        :keyword str language:
+            Language in which search results should be returned. Should be one of
+            supported IETF language tags, case insensitive. When data in specified language is not
+            available for a specific field, default language is used.
+        :keyword list[int] category_filter:
+            A comma-separated list of category set IDs
+            which could be used to restrict the result to specific Points of Interest categories.
+            ID order does not matter.
+        :keyword extended_postal_codes_for:
+            Indexes for which extended postal codes should be included in
+            the results.
+        :paramtype extended_postal_codes_for:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword index_filter:
+            A comma separated list of indexes which should be utilized for the search.
+            Item order does not matter.
+        :paramtype index_filter:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+            Different countries have different views of such regions, and the View parameter allows your
+            application to comply with the view required by the country your application will be serving.
+            By default, the View parameter is set to “Unified” even if you haven’t defined it in  the
+            request. It is your responsibility to determine the location of your users, and then set the
+            View parameter correctly for that location. Alternatively, you have the option to set
+            ‘View=Auto’, which will return the map data based on the IP  address of the request. The View
+            parameter in Azure Maps must be used in compliance with applicable laws, including those
+            regarding mapping, of the country where maps, images and other data and third party content
+            that you are authorized to  access via Azure Maps is made available. Example: view=IN.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :keyword operating_hours:
+            Hours of operation for a POI (Points of Interest). The availability of
+            hours of operation will vary based on the data available. If not passed, then no opening hours
+            information will be returned.
+            Supported value: nextSevenDays.
+        :paramtype operating_hours:
+            str or ~azure.maps.search.models.OperatingHoursRange
+        :return:
+            The results of search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         result = await self._search_client.search_inside_geometry(
             query,
@@ -438,42 +552,62 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         by country or bounding box.  Endpoint will return only POI results matching the query string.
         Response includes POI details such as address, coordinate location and category.
 
-        :param query: The POI name to search for (e.g., "statue of liberty", "starbucks"), must be
-         properly URL encoded.
-        :type query: str
-        :keyword bool is_type_ahead: Boolean. If the typeahead flag is set,
-         the query will be interpreted as a partial input and the search will enter predictive mode.
-        :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
-         maximum: 100.
-        :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
-         minimum: 0 and maximum: 1900.
-        :keyword list[int] category_filter: A comma-separated list of category set IDs
-         which could be used to restrict the result to specific Points of Interest categories.
-        :keyword country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :paramtype country_filter: list[str]
-        :keyword LatLon coordinates: coordinates as (lat, lon)
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area.
-        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
-         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
-        :keyword str language: Language in which search results should be returned.
-        :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
-         the results.
-        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.PointOfInterestExtendedPostalCodes]
-        :keyword list[str] brand_filter: A comma-separated list of brand names which could be used to restrict the
-         result to specific brands.
-        :keyword electric_vehicle_connector_filter: A comma-separated list of connector types which could
-         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
-        :paramtype electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword operating_hours: Hours of operation for a POI (Points of Interest).
-        :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: The results of search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param query:
+            The POI name to search for (e.g., "statue of liberty", "starbucks"), must be
+            properly URL encoded.
+        :type query:
+            str
+        :keyword bool is_type_ahead:
+            Boolean. If the typeahead flag is set, the query will be interpreted as a
+            partial input and the search will enter predictive mode.
+        :keyword int top:
+            Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+            maximum: 100.
+        :keyword int skip:
+            Starting offset of the returned results within the full result set. Default: 0,
+            minimum: 0 and maximum: 1900.
+        :keyword list[int] category_filter:
+            A comma-separated list of category set IDs which could be used to
+            restrict the result to specific Points of Interest categories.
+        :keyword list[int] country_filter:
+            Comma separated string of country codes, e.g. FR,ES. This will limit the
+            search to the specified countries.
+        :keyword LatLon coordinates:
+            coordinates as (lat, lon)
+        :keyword int radius_in_meters:
+            The radius in meters to for the results to be constrained to the
+            defined area.
+        :keyword BoundingBox bounding_box:
+            north(top), west(left), south(bottom), east(right)
+            position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
+        :keyword extended_postal_codes_for:
+            Indexes for which extended postal codes should be included in
+            the results.
+        :paramtype extended_postal_codes_for:
+            list[str or ~azure.maps.search.models.PointOfInterestExtendedPostalCodes]
+        :keyword list[str] brand_filter:
+            A comma-separated list of brand names which could be used to restrict the
+            result to specific brands.
+        :keyword electric_vehicle_connector_filter:
+            A comma-separated list of connector types which could
+            be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+        :paramtype electric_vehicle_connector_filter:
+            list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :keyword operating_hours:
+            Hours of operation for a POI (Points of Interest).
+        :paramtype operating_hours:
+            str or ~azure.maps.search.models.OperatingHoursRange
+        :return:
+            The results of search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError
         """
         coordinates = kwargs.pop("coordinates", (0, 0))
         bounding_box = kwargs.pop("bounding_box", BoundingBox())
@@ -500,34 +634,52 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         search method may be the right choice. This endpoint will only return POI results, and does not
         take in a search query parameter.
 
-        :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
-         maximum: 100.
-        :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
-         minimum: 0 and maximum: 1900.
-        :keyword list[int] category_filter: A comma-separated list of category set IDs which
-         could be used to restrict the result to specific Points of Interest categories. ID order does not matter.
-        :keyword list[str] country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :param coordinates: The applicable coordinates as (lat, lon)
-        :type coordinates: LatLon
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area, Min value is 1, Max Value is 50000.
-        :keyword str language: Language in which search results should be returned. Should be one of
-         supported IETF language tags, case insensitive.
-        :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
-         the results.
-        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword list[str] brand_filter: A comma-separated list of brand names which could be used to restrict the
-         result to specific brands. Item order does not matter.
-        :keyword electric_vehicle_connector_filter: A comma-separated list of connector types which could
-         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
-        :paramtype electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: The results of search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword int top:
+            Maximum number of responses that will be returned. Default: 10, minimum: 1 and
+            maximum: 100.
+        :keyword int skip:
+            Starting offset of the returned results within the full result set. Default: 0,
+            minimum: 0 and maximum: 1900.
+        :keyword list[int] category_filter:
+            A comma-separated list of category set IDs which could be used to
+            restrict the result to specific Points of Interest categories. ID order does not matter.
+        :keyword list[str] country_filter:
+            Comma separated string of country codes, e.g. FR,ES. This will limit the
+            search to the specified countries.
+        :param coordinates:
+            The applicable coordinates as (lat, lon)
+        :type coordinates:
+            LatLon
+        :keyword int radius_in_meters:
+            The radius in meters to for the results to be constrained to the
+            defined area, Min value is 1, Max Value is 50000.
+        :keyword str language:
+            Language in which search results should be returned. Should be one of
+            supported IETF language tags, case insensitive.
+        :keyword extended_postal_codes_for:
+            Indexes for which extended postal codes should be included in
+            the results.
+        :paramtype extended_postal_codes_for:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword list[str] brand_filter:
+            A comma-separated list of brand names which could be used to restrict the
+            result to specific brands. Item order does not matter.
+        :keyword electric_vehicle_connector_filter:
+            A comma-separated list of connector types which could
+            be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+        :paramtype electric_vehicle_connector_filter:
+            list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :return:
+            The results of search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError
         """
 
         result = await self._search_client.search_nearby_point_of_interest(
@@ -551,45 +703,66 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         which are categorized as specified.  Response includes POI details such as address, coordinate
         location and classification.
 
-        :param query: The POI category to search for (e.g., "AIRPORT", "RESTAURANT"), must be properly
-         URL encoded.
-        :type query: str
-        :keyword bool is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
-         partial input and the search will enter predictive mode.
-        :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
-         maximum: 100.
-        :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
-         minimum: 0 and maximum: 1900.
-        :keyword LatLon coordinates: coordinates as (lat, lon)
-        :keyword list[int] category_filter: A comma-separated list of category set IDs which could be used to
-         restrict the result to specific Points of Interest categories.
-        :keyword country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :paramtype country_filter: list[str]
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area.
-        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
-         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
-        :keyword str language: Language in which search results should be returned.
-        :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
-         the results.
-        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword list[str] brand_filter: A comma-separated list of brand names which could be used to restrict the
-         result to specific brands. Item order does not matter.
-        :keyword electric_vehicle_connector_filter: A comma-separated list of connector types which could
-         be used to restrict the result to Electric Vehicle Station supporting specific connector types.
-        :paramtype electric_vehicle_connector_filter: list[str or ~azure.maps.search.models.ElectricVehicleConnector]
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :keyword operating_hours: Hours of operation for a POI (Points of Interest). The availability of
-         hours of operation will vary based on the data available. If not passed, then no opening hours
-         information will be returned.
-         Supported value: nextSevenDays.
-        :paramtype operating_hours: str or ~azure.maps.search.models.OperatingHoursRange
-        :return: The results of search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param query:
+            The POI category to search for (e.g., "AIRPORT", "RESTAURANT"), must be properly URL encoded.
+        :type query:
+            str
+        :keyword bool is_type_ahead:
+            Boolean. If the typeahead flag is set, the query will be interpreted as a
+            partial input and the search will enter predictive mode.
+        :keyword int top:
+            Maximum number of responses that will be returned. Default: 10, minimum: 1 and maximum: 100.
+        :keyword int skip:
+            Starting offset of the returned results within the full result set. Default: 0,
+            minimum: 0 and maximum: 1900.
+        :keyword LatLon coordinates:
+            coordinates as (lat, lon)
+        :keyword list[int] category_filter:
+            A comma-separated list of category set IDs which could be used to
+            restrict the result to specific Points of Interest categories.
+        :keyword country_filter:
+            Comma separated string of country codes, e.g. FR,ES. This will limit the
+            search to the specified countries.
+        :paramtype country_filter:
+            list[str]
+        :keyword int radius_in_meters:
+            The radius in meters to for the results to be constrained to the
+            defined area.
+        :keyword BoundingBox bounding_box:
+            north(top), west(left), south(bottom), east(right)
+            position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
+        :keyword str language:
+            Language in which search results should be returned.
+        :keyword extended_postal_codes_for:
+            Indexes for which extended postal codes should be included in the results.
+        :paramtype extended_postal_codes_for:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword list[str] brand_filter:
+            A comma-separated list of brand names which could be used to restrict the
+            result to specific brands. Item order does not matter.
+        :keyword electric_vehicle_connector_filter:
+            A comma-separated list of connector types which could
+            be used to restrict the result to Electric Vehicle Station supporting specific connector types.
+        :paramtype electric_vehicle_connector_filter:
+            list[str or ~azure.maps.search.models.ElectricVehicleConnector]
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :keyword operating_hours:
+            Hours of operation for a POI (Points of Interest). The availability of
+            hours of operation will vary based on the data available. If not passed, then no opening hours
+            information will be returned.
+            Supported value: nextSevenDays.
+        :paramtype operating_hours:
+            str or ~azure.maps.search.models.OperatingHoursRange
+        :return:
+            The results of search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError
         """
 
         coordinates = kwargs.pop("coordinates", (0, 0))
@@ -622,35 +795,52 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         street or intersections as well as higher level geographies such as city centers, counties,
         states etc.
 
-        :param query: The address to search for (e.g., "1 Microsoft way, Redmond, WA"), must be
-         properly URL encoded.
-        :type query: str
-        :keyword bool is_type_ahead: Boolean. If the typeahead flag is set, the query will be interpreted as a
-         partial input and the search will enter predictive mode.
-        :keyword int top: Maximum number of responses that will be returned. Default: 10, minimum: 1 and
-         maximum: 100.
-        :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
-         minimum: 0 and maximum: 1900.
-        :keyword int radius_in_meters: The radius in meters to for the results to be constrained to the
-         defined area.
-        :keyword LatLon coordinates: coordinates as (lat, lon)
-        :keyword country_filter: Comma separated string of country codes, e.g. FR,ES. This will limit the
-         search to the specified countries.
-        :paramtype country_filter: list[str]
-        :keyword BoundingBox bounding_box: north(top), west(left), south(bottom), east(right)
-         position of the bounding box as float. E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
-        :keyword str language: Language in which search results should be returned.
-        :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
-         the results.
-        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword entity_type: Specifies the level of filtering performed on geographies.
-        :paramtype entity_type: str or ~azure.maps.search.models.GeographicEntityType
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-        :paramtype localized_map_view: str or ~azure.maps.search._generated.models.LocalizedMapView
-        :return: The results of search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param query:
+            The address to search for (e.g., "1 Microsoft way, Redmond, WA"), must be properly URL encoded.
+        :type query:
+            str
+        :keyword bool is_type_ahead:
+            Boolean. If the typeahead flag is set, the query will be interpreted as a
+            partial input and the search will enter predictive mode.
+        :keyword int top:
+            Maximum number of responses that will be returned. Default: 10, minimum: 1 and maximum: 100.
+        :keyword int skip:
+            Starting offset of the returned results within the full result set. Default: 0,
+            minimum: 0 and maximum: 1900.
+        :keyword int radius_in_meters:
+            The radius in meters to for the results to be constrained to the defined area.
+        :keyword LatLon coordinates:
+            coordinates as (lat, lon)
+        :keyword country_filter:
+            Comma separated string of country codes, e.g. FR,ES. This will limit the
+            search to the specified countries.
+        :paramtype country_filter:
+            list[str]
+        :keyword BoundingBox bounding_box:
+            north(top), west(left), south(bottom), east(right)
+            position of the bounding box as float.
+            E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
+        :keyword str language:
+            Language in which search results should be returned.
+        :keyword extended_postal_codes_for:
+            Indexes for which extended postal codes should be included in the results.
+        :paramtype extended_postal_codes_for:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword entity_type:
+            Specifies the level of filtering performed on geographies.
+        :paramtype entity_type:
+            str or ~azure.maps.search.models.GeographicEntityType
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows
+            you to show the correct maps for a certain country/region for geopolitically disputed regions.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search._generated.models.LocalizedMapView
+        :return:
+            The results of search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError
         """
         coordinates = kwargs.pop("coordinates", (0, 0))
         bounding_box = kwargs.pop("bounding_box", BoundingBox())
@@ -679,22 +869,34 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         It will also handle everything from exact  street addresses or street or intersections as well
         as higher level geographies such as city centers,  counties, states etc.
 
-        :param structured_address: structured address type
-        :type structured_address: ~azure.maps.search._models.StructuredAddress
-        :type top: int
-        :keyword int skip: Starting offset of the returned results within the full result set. Default: 0,
-         minimum: 0 and maximum: 1900.
-        :keyword extended_postal_codes_for: Indexes for which extended postal codes should be included in
-         the results.
-        :paramtype extended_postal_codes_for: list[str or ~azure.maps.search.models.SearchIndexes]
-        :keyword entity_type: Specifies the level of filtering performed on geographies.
-        :paramtype entity_type: str or ~azure.maps.search.models.GeographicEntityType
-        :keyword localized_map_view: The View parameter (also called the "user region" parameter) allows
-         you to show the correct maps for a certain country/region for geopolitically disputed regions.
-        :paramtype localized_map_view: str or ~azure.maps.search.models.LocalizedMapView
-        :return: The results of search.
-        :rtype: ~azure.maps.search.models.SearchAddressResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param structured_address:
+            structured address type
+        :type structured_address:
+            ~azure.maps.search._models.StructuredAddress
+        :type top:
+            int
+        :keyword int skip:
+            Starting offset of the returned results within the full result set.
+            Default: 0, minimum: 0 and maximum: 1900.
+        :keyword extended_postal_codes_for:
+            Indexes for which extended postal codes should be included in the results.
+        :paramtype extended_postal_codes_for:
+            list[str or ~azure.maps.search.models.SearchIndexes]
+        :keyword entity_type:
+            Specifies the level of filtering performed on geographies.
+        :paramtype entity_type:
+            str or ~azure.maps.search.models.GeographicEntityType
+        :keyword localized_map_view:
+            The View parameter (also called the "user region" parameter) allows you to show
+            the correct maps for a certain country/region for geopolitically disputed regions.
+        :paramtype localized_map_view:
+            str or ~azure.maps.search.models.LocalizedMapView
+        :return:
+            The results of search.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError
         """
         result = await self._search_client.search_structured_address(
             country_code=structured_address.country_code,
@@ -723,12 +925,17 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
         API up to **100** queries.
 
-        :param search_queries: The list of search fuzzy queries/requests to process. The list can
-         contain  a max of 10,000 queries and must contain at least 1 query.
-        :type search_queries: List[str]
-        :return: The results of search batch request.
-        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param search_queries:
+            The list of search fuzzy queries/requests to process. The list can
+            contain a max of 10,000 queries and must contain at least 1 query.
+        :type search_queries:
+            List[str]
+        :return:
+            The results of search batch request.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressBatchResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError
         """
         batch_items = [{"query": f"?query={query}"} for query in search_queries] if search_queries else []
 
@@ -773,13 +980,19 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
         API up to **100** queries.
 
-        :keyword search_queries: The list of search fuzzy queries/requests to process.
-        The list can contain a max of 10,000 queries and must contain at least 1 query.
-        :paramtype search_queries: List[str]
-        :keyword str batch_id: Batch id for querying the operation.
-        :return: The results of search batch request.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.search.models.SearchAddressBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :keyword search_queries:
+            The list of search fuzzy queries/requests to process.
+            The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :paramtype search_queries:
+            List[str]
+        :keyword str batch_id:
+            Batch id for querying the operation.
+        :return:
+            The results of search batch request.
+        :rtype:
+            ~azure.core.polling.AsyncLROPoller[~azure.maps.search.models.SearchAddressBatchResult]
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         batch_id = kwargs.pop("batch_id", None)
         search_queries = kwargs.pop("search_queries", None)
@@ -808,12 +1021,17 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
     ) -> SearchAddressBatchResult:
         """**Search Address Batch API**
 
-        :param search_queries: The list of search fuzzy queries/requests to process. The list can
-         contain  a max of 10,000 queries and must contain at least 1 query.
-        :type search_queries: List[str]
-        :return: The results of search batch request.
-        :rtype: ~azure.maps.search.models.SearchAddressBatchResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :param search_queries:
+            The list of search fuzzy queries/requests to process. The list can
+            contain  a max of 10,000 queries and must contain at least 1 query.
+        :type search_queries:
+            List[str]
+        :return:
+            The results of search batch request.
+        :rtype:
+            ~azure.maps.search.models.SearchAddressBatchResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         batch_items = [{"query": f"?query={query}"} for query in search_queries] if search_queries else []
 
@@ -860,13 +1078,19 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         synchronously (sync). The async API allows caller to batch up to **10,000** queries and sync
         API up to **100** queries.
 
-        :keyword search_queries: The list of search fuzzy queries/requests to process.
-        The list can contain a max of 10,000 queries and must contain at least 1 query.
-        :paramtype search_queries: List[str]
-        :keyword str batch_id: Batch id for querying the operation.
-        :return: The results of search batch request.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.search.models.SearchAddressBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError
+        :keyword search_queries:
+            The list of search fuzzy queries/requests to process.
+            The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :paramtype search_queries:
+            List[str]
+        :keyword str batch_id:
+            Batch id for querying the operation.
+        :return:
+            The results of search batch request.
+        :rtype:
+            ~azure.core.polling.AsyncLROPoller[~azure.maps.search.models.SearchAddressBatchResult]
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         batch_id = kwargs.pop("batch_id", None)
         search_queries = kwargs.pop("search_queries", None)
@@ -902,11 +1126,15 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         API up to **100** queries.
 
         :param search_queries: The list of search fuzzy queries/requests to process.
-        The list can contain a max of 10,000 queries and must contain at least 1 query.
-        :type search_queries: List[str]
-        :return: The results of search batch request.
-        :rtype: ~azure.maps.search.models.ReverseSearchAddressBatchProcessResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+            The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :type search_queries:
+            List[str]
+        :return:
+            The results of search batch request.
+        :rtype:
+            ~azure.maps.search.models.ReverseSearchAddressBatchProcessResult
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         batch_items = [{"query": f"?query={query}"} for query in search_queries] if search_queries else []
 
@@ -953,13 +1181,17 @@ class MapsSearchClient(AsyncMapsSearchClientBase):
         API up to **100** queries.
 
         :keyword search_queries: The list of search fuzzy queries/requests to process.
-        The list can contain a max of 10,000 queries and must contain at least 1 query.
-        :paramtype search_queries: List[str]
-        :keyword str batch_id: Batch id for querying the operation.
-        :return: The results of reverse search batch request.
+            The list can contain a max of 10,000 queries and must contain at least 1 query.
+        :paramtype search_queries:
+            List[str]
+        :keyword str batch_id:
+            Batch id for querying the operation.
+        :return:
+            The results of reverse search batch request.
         :paramtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.maps.search.models.ReverseSearchAddressBatchProcessResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+            ~azure.core.polling.AsyncLROPoller[~azure.maps.search.models.ReverseSearchAddressBatchProcessResult]
+        :raises:
+            ~azure.core.exceptions.HttpResponseError:
         """
         batch_id = kwargs.pop("batch_id", None)
         search_queries = kwargs.pop("search_queries", None)

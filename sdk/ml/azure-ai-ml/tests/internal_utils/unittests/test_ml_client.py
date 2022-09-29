@@ -24,7 +24,9 @@ from azure.ai.ml import (
 )
 from azure.ai.ml._azure_environments import AzureEnvironments
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, ClientSecretCredential
+from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml._scope_dependent_operations import OperationScope
 
 
 @pytest.mark.unittest
@@ -80,6 +82,26 @@ class TestMachineLearningClient:
 
         assert "fake-sub-id" == client.subscription_id
         assert "fake-rg-name" == client.resource_group_name
+
+    def test_show_progress(self) -> None:
+        client = MLClient(
+            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+        )
+
+        assert client.jobs._show_progress  # By default show_progress is True
+        assert client.data._show_progress
+        assert client.models._show_progress
+
+        client = MLClient(
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
+            show_progress=False,
+        )
+
+        assert not client.jobs._show_progress
+        assert not client.data._show_progress
+        assert not client.models._show_progress
 
     @patch("azure.ai.ml._ml_client._get_base_url_from_metadata")
     def test_mfe_url_overwrite(self, mock_get_mfe_url_override, mock_credential):
@@ -397,3 +419,32 @@ class TestMachineLearningClient:
             )
             assert ml_client._kwargs["cloud"] == "SomeInvalidCloudName"
         assert "Unknown cloud environment supplied" in str(e)
+
+
+    def test_ml_client_validation_rg_sub_missing_throws(
+        self, auth: ClientSecretCredential
+    ) -> None:
+        with pytest.raises(ValidationException) as exception:
+            MLClient(
+                credential=auth,
+            )
+        message = exception.value.args[0]
+        assert (
+            message
+            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
+        )
+
+
+    def test_ml_client_with_no_rg_sub_for_ws_throws(
+        self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential
+    ) -> None:
+        with pytest.raises(ValidationException) as exception:
+            MLClient(
+                credential=auth,
+                workspace_name=e2e_ws_scope.workspace_name,
+            )
+        message = exception.value.args[0]
+        assert (
+            message
+            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
+        )

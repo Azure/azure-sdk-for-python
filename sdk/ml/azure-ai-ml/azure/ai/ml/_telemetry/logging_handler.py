@@ -52,6 +52,7 @@ test_subscriptions = [
     "b17253fa-f327-42d6-9686-f3e553e2452",
     "74eccef0-4b8d-4f83-b5f9-fa100d155b22",
     "4faaaf21-663f-4391-96fd-47197c630979",
+    "00000000-0000-0000-0000-000000000",
 ]
 
 
@@ -335,7 +336,7 @@ def _http_send(logger, data_to_send, service_endpoint_uri, send_timeout=10):
         },
     )
     try:
-        response = http_client_t.urlopen(request, timeout=send_timeout)
+        response = http_client_t.urlopen(request, timeout=send_timeout) # nosec
         logger.info("Sending %d bytes", len(content))
         status_code = response.getcode()
         if 200 <= status_code < 300:

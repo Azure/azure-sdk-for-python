@@ -5,7 +5,6 @@ from azure.ai.ml import load_component
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -18,7 +17,7 @@ class TestSparkComponentEntity:
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         spark_component = load_component(
-            path=component_yaml,
+            component_yaml,
         )
 
         assert isinstance(spark_component.py_files, list) and spark_component.py_files[0] == "utils.zip"
@@ -44,7 +43,7 @@ class TestSparkComponentEntity:
             description="Aml Spark add greeting column test module",
             version="1",
             inputs={
-                "file_input": {"type": "uri_file"},
+                "file_input": {"type": "uri_file", "mode": "direct"},
             },
             driver_cores=2,
             driver_memory="1g",
@@ -66,7 +65,7 @@ class TestSparkComponentEntity:
         component_dict = pydash.omit(component_dict, *omit_fields)
 
         yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
-        yaml_component = load_component(path=yaml_path)
+        yaml_component = load_component(yaml_path)
         yaml_component_dict = yaml_component._to_rest_object().as_dict()
         yaml_component_dict = pydash.omit(yaml_component_dict, *omit_fields)
 
@@ -75,13 +74,14 @@ class TestSparkComponentEntity:
     def test_spark_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "type": "spark",
+            "properties": {},
             "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "py_files": ["utils.zip"],
             "jars": None,
             "files": ["my_files.txt"],
             "archives": None,
-            "identity": None,
+            "identity": {"identity_type": "UserIdentity"},
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -102,7 +102,7 @@ class TestSparkComponentEntity:
             "componentId": "fake_component",
         }
         yaml_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
-        yaml_component_version = load_component(path=yaml_path)
+        yaml_component_version = load_component(yaml_path)
         pipeline_input = PipelineInput(name="pipeline_input", owner="pipeline", meta=None)
         yaml_component = yaml_component_version(file_input=pipeline_input)
         yaml_component.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}

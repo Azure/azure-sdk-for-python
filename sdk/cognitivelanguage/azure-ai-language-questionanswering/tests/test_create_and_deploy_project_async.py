@@ -5,50 +5,27 @@
 # ------------------------------------
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    GlobalQuestionAnsweringAccountPreparer,
-)
-from asynctestcase import (
-    AsyncQuestionAnsweringTest,
-    QnaAuthoringAsyncHelper
-)
-from azure.ai.language.questionanswering.projects.aio import QuestionAnsweringProjectsClient
+from helpers import QnaAuthoringAsyncHelper
+from testcase import QuestionAnsweringTestCase
 
-class CreateAndDeployTests(AsyncQuestionAnsweringTest):
 
-    @pytest.mark.live_test_only
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_create_project_aad(self, qna_account, qna_key):
-        token = self.get_credential(QuestionAnsweringProjectsClient, is_async=True)
-        client = QuestionAnsweringProjectsClient(qna_account, token)
+class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
 
-        # create project
-        project_name = "IssacNewton"
-        await client.create_project(
-            project_name=project_name,
-            options={
-                "description": "biography of Sir Issac Newton",
-                "language": "en",
-                "multilingualResource": True,
-                "settings": {
-                    "defaultAnswer": "no answer"
-                }
-            })
+    def test_polling_interval(self, qna_creds):
+        # test default
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        assert client._config.polling_interval == 5
+        # test override
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), polling_interval=1)
+        assert client._config.polling_interval == 1
 
-        # list projects
-        qna_projects = client.list_projects()
-        found = False
-        async for p in qna_projects:
-            if ("projectName" in p) and p["projectName"] == project_name:
-                found = True
-        assert found
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_create_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    @pytest.mark.asyncio
+    async def test_create_project_aad(self, recorded_test, qna_creds):
+        token = self.get_credential(QuestionAnsweringAuthoringClient, is_async=True)
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], token)
 
         # create project
         project_name = "IssacNewton"
@@ -71,10 +48,34 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
                 found = True
         assert found
 
+    @pytest.mark.asyncio
+    async def test_create_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    async def test_deploy_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+        # create project
+        project_name = "IssacNewton"
+        await client.create_project(
+            project_name=project_name,
+            options={
+                "description": "biography of Sir Issac Newton",
+                "language": "en",
+                "multilingualResource": True,
+                "settings": {
+                    "defaultAnswer": "no answer"
+                }
+            })
+
+        # list projects
+        qna_projects = client.list_projects()
+        found = False
+        async for p in qna_projects:
+            if ("projectName" in p) and p["projectName"] == project_name:
+                found = True
+        assert found
+
+    @pytest.mark.asyncio
+    async def test_deploy_project(self, recorded_test, qna_creds):
+        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create deployable project
         project_name = "IssacNewton"
@@ -92,7 +93,9 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
             deployment_name=deployment_name,
             **self.kwargs_for_polling
         )
-        await deployment_poller.result()
+        project = await deployment_poller.result()
+        assert project["lastDeployedDateTime"]
+        assert project["deploymentName"] == "production"
 
         # assert
         deployments = client.list_deployments(
@@ -103,7 +106,3 @@ class CreateAndDeployTests(AsyncQuestionAnsweringTest):
             if ("deploymentName" in d) and d["deploymentName"] == deployment_name:
                 deployment_found = True
         assert deployment_found
-
-
-
-

@@ -1,3 +1,4 @@
+import pydash
 import pytest
 from marshmallow import ValidationError
 
@@ -36,8 +37,7 @@ class TestScheduleSchema:
                 "outputs": {},
                 "jobs": {
                     "a": {
-                        "$schema": "{}",
-                        "command": "echo hello ${{inputs.hello_string}}",
+                        "properties": {},
                         "environment_variables": {},
                         "inputs": {"hello_string": {"path": "${{parent.inputs.hello_string_top_level_input}}"}},
                         "outputs": {},
@@ -55,8 +55,7 @@ class TestScheduleSchema:
                         "type": "command",
                     },
                     "b": {
-                        "$schema": "{}",
-                        "command": 'echo "world" >> ${{outputs.world_output}}/world.txt',
+                        "properties": {},
                         "environment_variables": {},
                         "inputs": {},
                         "outputs": {},
@@ -74,8 +73,7 @@ class TestScheduleSchema:
                         "type": "command",
                     },
                     "c": {
-                        "$schema": "{}",
-                        "command": "echo ${{inputs.world_input}}/world.txt",
+                        "properties": {},
                         "environment_variables": {},
                         "inputs": {"world_input": {"path": "${{parent.jobs.b.outputs.world_output}}"}},
                         "outputs": {},
