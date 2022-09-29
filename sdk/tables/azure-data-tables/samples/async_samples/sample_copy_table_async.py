@@ -65,6 +65,7 @@ class CopyTableSamples(object):
         }
 
     async def copy_table_from_table_to_blob(self):
+        print("Start to copy table from Tables table to Storage blob.")
         await self._setup_table()
         try:
             self.container_client = await self.blob_service_client.create_container(self.copy_to_blob_table_name)
@@ -77,10 +78,12 @@ class CopyTableSamples(object):
                 blob_name = entity["PartitionKey"] + entity["RowKey"]
                 blob_client = self.blob_service_client.get_blob_client(self.copy_to_blob_table_name, blob_name)
                 await blob_client.upload_blob(json.dumps(entity))
+            print("Done!")
         finally:
             await self._tear_down()
 
     async def copy_table_from_blob_to_table(self):
+        print("Start to copy table from Storage blob to Tables table.")
         await self._setup_blob()
         try:
             # Download entities from blob to memory
@@ -99,6 +102,7 @@ class CopyTableSamples(object):
                 entity["product_id"] = UUID(entity["product_id"])
                 entity["barcode"] = entity["barcode"].encode("utf-8")
                 await self.table_client.upsert_entity(entity)
+            print("Done!")
         finally:
             await self._tear_down()
 
