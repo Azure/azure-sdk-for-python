@@ -11,8 +11,4 @@ from ._settingselector import SettingSelector
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = [
-    "AzureAppConfigurationProvider",
-    "AzureAppConfigurationKeyVaultOptions",
-    "SettingSelector"
-]
+__all__ = ["AzureAppConfigurationProvider", "AzureAppConfigurationKeyVaultOptions", "SettingSelector"]

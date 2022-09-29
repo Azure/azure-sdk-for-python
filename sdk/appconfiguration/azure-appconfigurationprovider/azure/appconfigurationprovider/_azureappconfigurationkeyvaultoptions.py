@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+
 class AzureAppConfigurationKeyVaultOptions:
     """
     Options for connecting to Key Vault.

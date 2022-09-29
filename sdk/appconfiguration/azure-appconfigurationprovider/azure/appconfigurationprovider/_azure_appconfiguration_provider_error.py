@@ -4,5 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
+
 class KeyVaultReferenceError(ValueError):
     """Raised when a Key Vault reference is invalid."""

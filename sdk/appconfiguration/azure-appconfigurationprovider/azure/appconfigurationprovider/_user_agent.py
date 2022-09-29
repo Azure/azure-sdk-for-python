@@ -6,6 +6,4 @@
 
 from ._version import VERSION
 
-USER_AGENT = "python-appconfigurationprovider/{}".format(
-    VERSION
-)
+USER_AGENT = "python-appconfigurationprovider/{}".format(VERSION)
