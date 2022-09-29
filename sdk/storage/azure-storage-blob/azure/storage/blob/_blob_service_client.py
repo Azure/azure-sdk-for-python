@@ -152,7 +152,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             conn_str,  # type: str
             credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
             **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+        ) -> "BlobServiceClient":  # type: (...) -> ClassType
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
