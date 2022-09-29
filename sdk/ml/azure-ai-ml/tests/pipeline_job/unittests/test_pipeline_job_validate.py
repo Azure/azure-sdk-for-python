@@ -113,7 +113,6 @@ class TestPipelineJobValidate:
         assert expected_validation_result.pop("message") in result_dict[0].pop("message")
         assert result_dict[0] == expected_validation_result
 
-    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_pipeline_job_type_sensitive_error_message(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml"
         pipeline_job: PipelineJob = load_job(test_path)
@@ -123,6 +122,20 @@ class TestPipelineJobValidate:
         del job_dict["jobs"]["hello_world_component_inline_with_schema"]["component"]["environment"]
         errors = pipeline_job._schema_for_validation.validate(job_dict)
         type_sensitive_union_field = pipeline_job._schema_for_validation.dump_fields["jobs"].value_field
+        print(errors)
+        print({
+            "jobs": {
+                "hello_world_component_inline": {
+                    "value": {
+                        "type": f"Value {unsupported_node_type!r} passed is "
+                        f"not in set {type_sensitive_union_field.allowed_types}",
+                    }
+                },
+                "hello_world_component_inline_with_schema": {
+                    "value": {"component": {"environment": ["Missing data for required field."]}}
+                },
+            }
+        })
         assert errors == {
             "jobs": {
                 "hello_world_component_inline": {
