@@ -21,7 +21,7 @@ class TestMgmt{{package.upper()}}{{op_group.upper()}}(AzureMgmtRecordedTestCase)
 
     {% for op in operations -%}
     @recorded_by_proxy
-    def test_{{op_group}}_{{func["name"]}}(self):
+    def test_{{op_group}}_{{op["name"]}}(self):
         # it proves that we can normally send request but maybe needs additional parameters
         with suppress(HttpResponseError):
             result = self.mgmt_client.{{op_group}}.{{op["name"]}}()
