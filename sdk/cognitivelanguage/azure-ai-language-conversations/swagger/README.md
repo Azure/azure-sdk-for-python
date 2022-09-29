@@ -80,11 +80,13 @@ directive:
   transform: |
     var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
     $.description = $.description + " See https://learn.microsoft.com/rest/api/language/" + operationId + " for more information.";
-- from: analyzeconversations.json
-  where: $.paths.*.*
-  transform: |
-    var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase().split("/")[1];
-    $.description = $.description + " See https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/" + operationId + " for more information.";
+
+- where-operation: AnalyzeConversation_SubmitJob
+  transform: >
+    $.description = $.description + " For examples on calling this method, see the docs.\n\nConversation summarization: https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/summarization/quickstart?tabs=conversation-summarization&pivots=rest-api \nConversation PII: https://learn.microsoft.com/azure/cognitive-services/language-service/personally-identifiable-information/how-to-call-for-conversations?tabs=rest-api \nConversation sentiment analysis: TODO";
+- where-operation: ConversationAnalysis_AnalyzeConversation
+  transform: >
+    $.description = $.description + " See https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation for more information.";
 ```
 
 
