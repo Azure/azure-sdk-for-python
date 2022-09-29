@@ -1,11 +1,14 @@
 from typing import Callable
-from unittest.mock import DEFAULT, Mock
+from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
 from azure.ai.ml import load_registry
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.operations import RegistryOperations
+from azure.core.exceptions import ResourceExistsError
+from azure.core.polling import LROPoller
+from pytest_mock import MockFixture
 
 
 @pytest.fixture
@@ -23,13 +26,14 @@ def mock_registry_operation(
     )
 
 
+@pytest.mark.unittest
 class TestRegistryOperation:
     def test_list(self, mock_registry_operation: RegistryOperations) -> None:
         mock_registry_operation.list()
         mock_registry_operation._operation.list.assert_called_once()
 
     def test_get(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
-        mock_registry_operation.get(randstr())
+        mock_registry_operation.get(f"unittest_{randstr('reg_name')}")
         mock_registry_operation._operation.get.assert_called_once()
 
     def test_check_registry_name(self, mock_registry_operation: RegistryOperations):
@@ -38,7 +42,7 @@ class TestRegistryOperation:
             mock_registry_operation._check_registry_name(None)
 
     def test_create(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
-        reg_name = f"unittest_{randstr('reg_name')}"
+        reg_name = f"unittest{randstr('reg_name')}"
         params_override = [
             {
                 "name": reg_name
@@ -48,9 +52,9 @@ class TestRegistryOperation:
             source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
         )
         # valid creation of new registry
-        mock_registry_operation.begin_create(reg)
+        mock_registry_operation.begin_create(registry=reg)
         mock_registry_operation._operation.begin_create_or_update.assert_called_once()
 
         # create existing registry - calls GET
-        mock_registry_operation.begin_create(registry=reg)
-        mock_registry_operation._operation.begin_create_or_update.assert_not_called()
+        # mock_registry_operation.begin_create(registry=reg)
+        # mock_registry_operation._operation.begin_create_or_update.assert_not_called()
