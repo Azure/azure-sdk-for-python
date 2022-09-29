@@ -102,4 +102,4 @@ async def async_arr_client(account_info):
         polling_interval=polling_interval
     )
     yield client
-    client.close()
+    await client.close()
