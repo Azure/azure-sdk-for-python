@@ -232,7 +232,7 @@ class TestCommandJob(AzureRecordedTestCase):
         job = client.jobs.create_or_update(job=job)
 
         job.name = randstr("job_name_2")
-        job.environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        job.environment = "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
 
         job = client.jobs.create_or_update(job=job)
         assert job.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
