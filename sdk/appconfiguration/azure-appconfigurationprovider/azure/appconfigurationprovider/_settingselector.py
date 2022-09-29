@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+
 class SettingSelector:
     """
     Selects a set of configuration settings from Azure App Configuration.

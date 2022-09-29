@@ -6,10 +6,7 @@
 
 import json
 from azure.appconfiguration import AzureAppConfigurationClient
-from azure.keyvault.secrets import (
-     SecretClient,
-     KeyVaultSecretIdentifier
-)
+from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from azure.core.exceptions import ResourceNotFoundError
 from ._settingselector import SettingSelector
 from ._azure_appconfiguration_provider_error import KeyVaultReferenceError
@@ -53,13 +50,11 @@ class AzureAppConfigurationProvider:
 
         key_vault_options = kwargs.pop("key_vault_options", None)
 
-        provider.__buildprovider(connection_string, endpoint,
-                                 credential, key_vault_options)
+        provider.__buildprovider(connection_string, endpoint, credential, key_vault_options)
 
         selects = kwargs.pop("selects", {SettingSelector("*", "\0")})
 
-        provider._trim_prefixes = sorted(kwargs.pop(
-            "trimmed_key_prefixes", []), key=len, reverse=True)
+        provider._trim_prefixes = sorted(kwargs.pop("trimmed_key_prefixes", []), key=len, reverse=True)
 
         provider._dict = {}
 
@@ -67,14 +62,15 @@ class AzureAppConfigurationProvider:
 
         for select in selects:
             configurations = provider._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter)
+                key_filter=select.key_filter, label_filter=select.label_filter
+            )
             for config in configurations:
 
                 trimmed_key = config.key
                 # Trim the key if it starts with one of the prefixes provided
                 for trim in provider._trim_prefixes:
                     if config.key.startswith(trim):
-                        trimmed_key = config.key[len(trim):]
+                        trimmed_key = config.key[len(trim) :]
                         break
 
                 if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
@@ -95,58 +91,60 @@ class AzureAppConfigurationProvider:
         headers = {}
         correlation_context = "RequestType=Startup"
 
-        if (key_vault_options and
-                (key_vault_options.credential or
-                key_vault_options.secret_clients or key_vault_options.secret_resolver)):
+        if key_vault_options and (
+            key_vault_options.credential or key_vault_options.secret_clients or key_vault_options.secret_resolver
+        ):
             correlation_context += ",UsesKeyVault"
 
         headers["Correlation-Context"] = correlation_context
         useragent = USER_AGENT
 
-        if (connection_string and endpoint):
-            raise AttributeError(
-                "Both connection_string and endpoint are set. Only one of these should be set.")
+        if connection_string and endpoint:
+            raise AttributeError("Both connection_string and endpoint are set. Only one of these should be set.")
 
         if connection_string:
             self._client = AzureAppConfigurationClient.from_connection_string(
-                connection_string, user_agent=useragent, headers=headers)
+                connection_string, user_agent=useragent, headers=headers
+            )
             return
-        self._client = AzureAppConfigurationClient(
-            endpoint, credential, user_agent=useragent, headers=headers)
+        self._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
 
     @staticmethod
     def __resolve_keyvault_reference(config, key_vault_options, secret_clients):
         if key_vault_options is None:
-            raise AttributeError(
-                "Key Vault options must be set to resolve Key Vault references.")
+            raise AttributeError("Key Vault options must be set to resolve Key Vault references.")
 
         if config.secret_id is None:
-            raise AttributeError(
-                "Key Vault reference must have a uri value.")
+            raise AttributeError("Key Vault reference must have a uri value.")
 
         key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
         referenced_client = next(
-            (client for client in secret_clients if client.vault_url == key_vault_identifier.vault_url), None)
+            (client for client in secret_clients if client.vault_url == key_vault_identifier.vault_url), None
+        )
 
         if referenced_client is None and key_vault_options.credential is not None:
             referenced_client = SecretClient(
-                vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential)
+                vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential
+            )
             secret_clients[key_vault_identifier.vault_url] = referenced_client
 
         if referenced_client:
             try:
-                return referenced_client.get_secret(key_vault_identifier.name,
-                    version=key_vault_identifier.version).value
+                return referenced_client.get_secret(
+                    key_vault_identifier.name, version=key_vault_identifier.version
+                ).value
             except ResourceNotFoundError:
-                raise KeyVaultReferenceError("Key Vault %s does not contain secret %s" % (
-                    key_vault_identifier.vault_url, key_vault_identifier.name))
-
+                raise KeyVaultReferenceError(
+                    "Key Vault %s does not contain secret %s"
+                    % (key_vault_identifier.vault_url, key_vault_identifier.name)
+                )
 
         if key_vault_options.secret_resolver is not None:
             return key_vault_options.secret_resolver(config.secret_id)
         raise KeyVaultReferenceError(
-            "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url))
+            "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
+        )
 
     @staticmethod
     def __is_json_content_type(content_type):
@@ -154,9 +152,9 @@ class AzureAppConfigurationProvider:
             return False
 
         content_type = content_type.strip().lower()
-        mime_type = content_type.split(';')[0].strip()
+        mime_type = content_type.split(";")[0].strip()
 
-        type_parts = mime_type.split('/')
+        type_parts = mime_type.split("/")
         if len(type_parts) != 2:
             return False
 
@@ -164,7 +162,7 @@ class AzureAppConfigurationProvider:
         if main_type != "application":
             return False
 
-        sub_types = sub_type.split('+')
+        sub_types = sub_type.split("+")
         if "json" in sub_types:
             return True
 
