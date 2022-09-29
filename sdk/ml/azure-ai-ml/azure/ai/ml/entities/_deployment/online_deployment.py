@@ -511,8 +511,6 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type instance_type: str
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
-    :param data_collector: Allows model data collector for deployment.
-    :type data_collector: DataCollector, optional
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
