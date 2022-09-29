@@ -126,7 +126,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :type optional: bool
     :param description: Description of the input
     :type description: str
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     _EMPTY = Parameter.empty
@@ -161,7 +162,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type description: str
         :param datastore: The datastore to upload local files to.
         :type datastore: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -190,7 +192,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -219,7 +222,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -242,7 +246,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -265,7 +270,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     def __init__(
@@ -653,7 +659,8 @@ class EnumInput(Input):
         :type description: str
         :param optional: If the param is optional.
         :type optional: bool
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
         enum_values = self._assert_enum_valid(enum)
         # This is used to parse enum class instead of enum str value if a enum class is provided.

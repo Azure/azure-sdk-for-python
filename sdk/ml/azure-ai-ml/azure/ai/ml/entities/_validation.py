@@ -143,7 +143,7 @@ class ValidationResult(object):
             return self
 
         if self._warnings:
-            module_logger.info("Warnings: {}".format(self._warnings))
+            module_logger.info("Warnings: %s", self._warnings)
 
         if not self.passed:
             message = (

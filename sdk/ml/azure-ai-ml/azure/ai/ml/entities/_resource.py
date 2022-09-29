@@ -108,9 +108,9 @@ class Resource(ABC):
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         """
-        pass
 
     @classmethod
+    # pylint: disable=unused-argument
     def _resolve_cls_and_type(cls, data, params_override):
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
@@ -143,8 +143,8 @@ class Resource(ABC):
         :return: Resource
         :rtype: Resource
         """
-        pass
 
+    # pylint: disable:unused-argument
     def _get_arm_resource(self, **kwargs):
         """Get arm resource.
 
@@ -156,7 +156,9 @@ class Resource(ABC):
         """
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
+        # pylint: disable=no-member
         template = get_template(resource_type=self._arm_type)
+        # pylint: disable=no-member
         template["copy"]["name"] = f"{self._arm_type}Deployment"
         return template
 
@@ -170,6 +172,7 @@ class Resource(ABC):
         :rtype: dict
         """
         resource = self._get_arm_resource(**kwargs)
+        # pylint: disable=no-member
         param = self._to_arm_resource_param(**kwargs)
         return [(resource, param)]
 

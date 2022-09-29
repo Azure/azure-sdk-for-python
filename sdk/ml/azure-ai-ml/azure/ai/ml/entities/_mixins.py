@@ -81,7 +81,7 @@ class DictMixin(object):
 
 
 class TelemetryMixin:
-    def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument, no-self-use
         """Return the telemetry values of object."""
         return {}
 

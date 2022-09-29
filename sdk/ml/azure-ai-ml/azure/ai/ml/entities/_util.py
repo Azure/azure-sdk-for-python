@@ -156,8 +156,11 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     ref_doc_link_error_msg = REF_DOC_ERROR_MESSAGE_MAP.get(schema, "")
     if ref_doc_link_error_msg:
         additional_message += f"\n{ref_doc_link_error_msg}"
-    additional_message += """\nThe easiest way to author a specification file is using IntelliSense and auto-completion Azure ML VS code extension provides: https://code.visualstudio.com/docs/datascience/azure-machine-learning
-To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code"""
+    additional_message += (
+        "\nThe easiest way to author a specification file is using IntelliSense and auto-completion Azure ML VS "
+        "code extension provides: https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
+        "To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code"
+    )
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
@@ -190,83 +193,6 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
             )
 
 
-class SnakeToPascalDescriptor(object):
-
-    """A data descriptor that transforms value from snake_case to CamelCase in
-    setter, CamelCase to snake_case in getter.
-
-    When the optional private_name is provided, the descriptor will set
-    the private_name in the object's __dict__.
-    """
-
-    def __init__(
-        self,
-        private_name=None,
-        *,
-        transformer=camel_to_snake,
-        reverse_transformer=snake_to_pascal,
-    ):
-        self.private_name = private_name
-        self.transformer = transformer
-        self.reverse_transformer = reverse_transformer
-
-    def __set_name__(self, owner, name):
-        self.public_name = name
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-
-        key = self.private_name or self.public_name
-        value = obj.__dict__.get(key, None)
-        return self.transformer(value) if value else None
-
-    def __set__(self, obj, val):
-
-        key = self.private_name or self.public_name
-        value = self.reverse_transformer(val)
-        obj.__dict__[key] = value
-
-    def __delete__(self, obj):
-        key = self.private_name or self.public_name
-        obj.__dict__.pop(key, None)
-
-
-class LiteralToListDescriptor(object):
-
-    """A data descriptor that transforms singular literal values to lists in
-    the setter.
-
-    The getter always returns a list When the optional private_name is
-    provided, the descriptor will set the private_name in the object's
-    __dict__.
-    """
-
-    def __init__(self, private_name=None):
-        self.private_name = private_name
-
-    def __set_name__(self, owner, name):
-        self.public_name = name
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-
-        key = self.private_name or self.public_name
-        return obj.__dict__.get(key, None)
-
-    def __set__(self, obj, val):
-
-        key = self.private_name or self.public_name
-        if not isinstance(val, list) and val is not None:
-            val = [val]
-        obj.__dict__[key] = val
-
-    def __delete__(self, obj):
-        key = self.private_name or self.public_name
-        obj.__dict__.pop(key, None)
-
-
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List]) -> Union[Dict, List]:
     """Convert ordered dict to dict.
 
@@ -281,8 +207,7 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List]) -> Union[Dict
             target_object[key] = convert_ordered_dict_to_dict(dict_candidate)
     if isinstance(target_object, OrderedDict):
         return dict(**target_object)
-    else:
-        return target_object
+    return target_object
 
 
 def _general_copy(src, dst):
@@ -322,6 +247,7 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
     if isinstance(target_obj, RestTranslatableMixin):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
+        # pylint: disable=protected-access
         return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
 
     if isinstance(target_obj, msrest.serialization.Model):
@@ -372,8 +298,7 @@ def from_rest_dict_to_dummy_rest_object(rest_dict):
 def extract_label(input_str: str):
     if "@" in input_str:
         return input_str.rsplit("@", 1)
-    else:
-        return input_str, None
+    return input_str, None
 
 
 def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):

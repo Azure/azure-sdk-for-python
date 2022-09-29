@@ -20,10 +20,8 @@ class Objective(RestTranslatableMixin):
     :type primary_metric: str
     """
 
-    goal = SnakeToPascalDescriptor()
-
     def __init__(self, goal: str = None, primary_metric: str = None):
-        self.goal = goal
+        self.goal = goal.lower()
         self.primary_metric = primary_metric
 
     def _to_rest_object(self) -> RestObjective:

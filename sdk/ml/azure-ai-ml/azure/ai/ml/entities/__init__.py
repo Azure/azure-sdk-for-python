@@ -42,7 +42,6 @@ from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationS
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import KubernetesOnlineEndpoint, ManagedOnlineEndpoint, OnlineEndpoint
-from ._job.base_job import _BaseJob
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
 from ._job.input_port import InputPort
