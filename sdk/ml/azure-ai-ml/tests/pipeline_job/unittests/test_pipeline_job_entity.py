@@ -42,7 +42,6 @@ def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
 class TestPipelineJobEntity:
-    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_automl_node_in_pipeline_regression(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.yml"
 
@@ -1435,7 +1434,6 @@ class TestPipelineJobEntity:
             "type": "command",
         }
 
-    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     def test_job_properties(self):
         pipeline_job: PipelineJob = load_job(
             source="./tests/test_configs/pipeline_jobs/pipeline_job_with_properties.yml"
@@ -1449,3 +1447,10 @@ class TestPipelineJobEntity:
             assert len(node_dict["properties"]) == 1
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
+
+    def test_comment_in_pipeline(self) -> None:
+        pipeline_job = load_job(source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_comment.yml")
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
+        assert rest_pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"

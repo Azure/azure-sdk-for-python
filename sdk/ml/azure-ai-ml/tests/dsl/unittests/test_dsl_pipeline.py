@@ -181,6 +181,18 @@ class TestDSLPipeline:
         assert pipeline.component.outputs["job_out_path"].description == "a path output"
         assert pipeline.description == pipeline.component.description
 
+    def test_dsl_pipeline_comment(self) -> None:
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline
+        def sample_pipeline_with_comment():
+            node = hello_world_component_func(component_in_path=Input(path="/a/path/on/ds"), component_in_number=1)
+            node.comment = "arbitrary string"
+
+        pipeline = sample_pipeline_with_comment()
+        assert pipeline.jobs["node"].comment == "arbitrary string"
+
     def test_dsl_pipeline_sweep_node(self) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
@@ -3240,7 +3252,6 @@ class TestDSLPipeline:
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
             "tags": {},
-            "is_deterministic": True,
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
@@ -3480,7 +3491,6 @@ class TestDSLPipeline:
             "tags": {"key": "val"},
             "version": "2",
             "display_name": "pipeline_comp",
-            "is_deterministic": True,
             "inputs": {"path": {"type": "uri_folder"}},
             "outputs": {"component_out_path": {"type": "uri_folder"}},
             "type": "pipeline",
@@ -3534,7 +3544,6 @@ class TestDSLPipeline:
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
             "tags": {},
-            "is_deterministic": True,
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
@@ -3623,7 +3632,6 @@ class TestDSLPipeline:
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
             "tags": {},
-            "is_deterministic": True,
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",

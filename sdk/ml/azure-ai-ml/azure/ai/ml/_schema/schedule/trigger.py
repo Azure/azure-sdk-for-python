@@ -19,7 +19,7 @@ from azure.ai.ml.constants import TimeZone
 class TriggerSchema(metaclass=PatchedSchemaMeta):
     start_time = UnionField([fields.DateTime(), DateTimeStr()])
     end_time = UnionField([fields.DateTime(), DateTimeStr()])
-    time_zone = fields.Str(validate=validate.OneOf([o.value for o in TimeZone]))
+    time_zone = fields.Str()
 
     @post_dump(pass_original=True)
     def resolve_time_zone(self, data, original_data, **kwargs):  # pylint: disable=no-self-use, unused-argument
