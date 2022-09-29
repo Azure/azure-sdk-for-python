@@ -18,7 +18,8 @@ from azure.ai.ml.entities._workspace.connections.credentials import (
     ServicePrincipalCredentials,
     UsernamePasswordCredentials,
 )
-from azure.ai.ml.entities._credentials import PatTokenConfiguration
+from azure.ai.ml.entities._credentials import PatTokenConfiguration, SasTokenConfiguration, \
+    UsernamePasswordConfiguration, ManagedIdentityConfiguration, ServicePrincipalConfiguration
 
 
 class WorkspaceCredentialsSchema(metaclass=PatchedSchemaMeta):
@@ -39,7 +40,7 @@ class PatTokenConfigurationSchema(metaclass=PatchedSchemaMeta):
         return PatTokenConfiguration(**data)
 
 
-class SasTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
+class SasTokenConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.SAS,
         casing_transform=camel_to_snake,
@@ -48,12 +49,12 @@ class SasTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
     pat = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> SasTokenCredentials:
+    def make(self, data: Dict[str, str], **kwargs) -> SasTokenConfiguration:
         data.pop("type")
-        return SasTokenCredentials(**data)
+        return SasTokenConfiguration(**data)
 
 
-class UsernamePasswordCredentialsSchema(metaclass=PatchedSchemaMeta):
+class UsernamePasswordConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.USERNAME_PASSWORD,
         casing_transform=camel_to_snake,
@@ -63,12 +64,12 @@ class UsernamePasswordCredentialsSchema(metaclass=PatchedSchemaMeta):
     password = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> UsernamePasswordCredentials:
+    def make(self, data: Dict[str, str], **kwargs) -> UsernamePasswordConfiguration:
         data.pop("type")
-        return UsernamePasswordCredentials(**data)
+        return UsernamePasswordConfiguration(**data)
 
 
-class ManagedIdentityCredentialsSchema(metaclass=PatchedSchemaMeta):
+class ManagedIdentityConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.MANAGED_IDENTITY,
         casing_transform=camel_to_snake,
@@ -78,12 +79,12 @@ class ManagedIdentityCredentialsSchema(metaclass=PatchedSchemaMeta):
     resource_id = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> ManagedIdentityCredentials:
+    def make(self, data: Dict[str, str], **kwargs) -> ManagedIdentityConfiguration:
         data.pop("type")
-        return ManagedIdentityCredentials(**data)
+        return ManagedIdentityConfiguration(**data)
 
 
-class ServicePrincipalCredentialsSchema(metaclass=PatchedSchemaMeta):
+class ServicePrincipalConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.SERVICE_PRINCIPAL,
         casing_transform=camel_to_snake,
@@ -95,6 +96,6 @@ class ServicePrincipalCredentialsSchema(metaclass=PatchedSchemaMeta):
     tenant_id = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> ServicePrincipalCredentials:
+    def make(self, data: Dict[str, str], **kwargs) -> ServicePrincipalConfiguration:
         data.pop("type")
-        return ServicePrincipalCredentials(**data)
+        return ServicePrincipalConfiguration(**data)

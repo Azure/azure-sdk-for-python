@@ -315,7 +315,7 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
             resource_id: str = None,
             object_id: str = None,
     ):
-        self.type = camel_to_snake(IdentityConfigurationType.MANAGED)
+        self.type = camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
         self.client_id = client_id
         # TODO: Check if both client_id and resource_id are required
         self.resource_id = resource_id
@@ -326,10 +326,10 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
 
     @classmethod
     def _from_workspace_connection_rest_object(cls,
-                                               obj: RestWorkspaceConnectionManagedIdentity) -> "ManagedIdentityConfiguration":
+            obj: RestWorkspaceConnectionManagedIdentity) -> "ManagedIdentityConfiguration":
         return cls(
-            client_id=obj.client_id,
-            resource_id=obj.resource_id,
+            client_id=obj.client_id if obj else None,
+            resource_id=obj.resource_id if obj else None,
         )
 
     def _to_job_rest_object(self) -> RestJobManagedIdentity:
