@@ -15,12 +15,12 @@
       "ResponseHeaders": {
         "Content-Length": "204",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 02:40:34 GMT",
+        "Date": "Thu, 29 Sep 2022 01:55:57 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: C5B49DC3156B49148EB984096EF23682 Ref B: TPE30EDGE0507 Ref C: 2022-09-22T02:40:34Z"
+        "X-MSEdge-Ref": "Ref A: 6B056A8EE48B43EE870BE6EE016ABAE0 Ref B: TYBEDGE0908 Ref C: 2022-09-29T01:55:58Z"
       },
       "ResponseBody": "[{\u0022Id\u0022:\u0022America/Vancouver\u0022,\u0022IsAlias\u0022:false,\u0022HasZone1970Location\u0022:true},{\u0022Id\u0022:\u0022America/Los_Angeles\u0022,\u0022IsAlias\u0022:false,\u0022HasZone1970Location\u0022:true},{\u0022Id\u0022:\u0022PST8PDT\u0022,\u0022IsAlias\u0022:false,\u0022HasZone1970Location\u0022:false}]"
     }

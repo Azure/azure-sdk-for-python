@@ -15,16 +15,16 @@
       "ResponseHeaders": {
         "Content-Length": "441",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 02:40:31 GMT",
+        "Date": "Thu, 29 Sep 2022 01:55:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 1F2A52E717EF4B8E99017EFECC09C6A5 Ref B: TPE30EDGE0507 Ref C: 2022-09-22T02:40:30Z"
+        "X-MSEdge-Ref": "Ref A: B4C6CA406E5E4CA09C56976B38E0E25A Ref B: TYBEDGE0908 Ref C: 2022-09-29T01:55:56Z"
       },
       "ResponseBody": {
-        "Version": "2022c",
-        "ReferenceUtcTimestamp": "2022-09-22T02:40:31.0082375Z",
+        "Version": "2022d",
+        "ReferenceUtcTimestamp": "2022-09-29T01:55:56.2458666Z",
         "TimeZones": [
           {
             "Id": "America/New_York",
@@ -38,7 +38,7 @@
               "Tag": "EDT",
               "StandardOffset": "-05:00:00",
               "DaylightSavings": "01:00:00",
-              "WallTime": "2022-09-21T22:40:31.0082375-04:00",
+              "WallTime": "2022-09-28T21:55:56.2458666-04:00",
               "PosixTzValidYear": 2022,
               "PosixTz": "EST\u002B5EDT,M3.2.0,M11.1.0"
             }

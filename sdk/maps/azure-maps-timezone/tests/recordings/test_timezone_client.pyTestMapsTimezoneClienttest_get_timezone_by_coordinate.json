@@ -15,16 +15,16 @@
       "ResponseHeaders": {
         "Content-Length": "557",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 22 Sep 2022 02:40:31 GMT",
+        "Date": "Thu, 29 Sep 2022 01:55:56 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 279BDE7764E5495D900FE8A489F35474 Ref B: TPE30EDGE0507 Ref C: 2022-09-22T02:40:31Z"
+        "X-MSEdge-Ref": "Ref A: A5BB1F9189B54851A0B90D4DEA0A7C35 Ref B: TYBEDGE0908 Ref C: 2022-09-29T01:55:56Z"
       },
       "ResponseBody": {
-        "Version": "2022c",
-        "ReferenceUtcTimestamp": "2022-09-22T02:40:31.9531522Z",
+        "Version": "2022d",
+        "ReferenceUtcTimestamp": "2022-09-29T01:55:56.8323388Z",
         "TimeZones": [
           {
             "Id": "Europe/Berlin",
@@ -38,11 +38,11 @@
               "Tag": "CEST",
               "StandardOffset": "01:00:00",
               "DaylightSavings": "01:00:00",
-              "WallTime": "2022-09-22T04:40:31.9531522\u002B02:00",
+              "WallTime": "2022-09-29T03:55:56.8323388\u002B02:00",
               "PosixTzValidYear": 2022,
               "PosixTz": "CET-1CEST,M3.4.0,M10.5.0/3",
-              "Sunrise": "2022-09-22T06:52:03.1395503\u002B02:00",
-              "Sunset": "2022-09-22T19:07:34.8500216\u002B02:00"
+              "Sunrise": "2022-09-29T07:03:50.5726113\u002B02:00",
+              "Sunset": "2022-09-29T18:50:56.8282198\u002B02:00"
             }
           }
         ]

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import re
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.maps.timezone import MapsTimezoneClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
@@ -23,7 +24,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
         timezone = self.client.get_timezone_by_id("America/New_York")
 
         assert timezone is not None
-        assert timezone.version == '2022c'
+        assert re.search(r"^\d{4}[a-z]+", timezone.version) is not None
         assert len(timezone.time_zones) == 1
         assert timezone.time_zones[0].id == "America/New_York"
         assert timezone.time_zones[0].names.generic == "Eastern Time"
@@ -40,7 +41,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
         timezone = self.client.get_timezone_by_coordinates(coordinates=(52.5069,13.2843))
 
         assert timezone is not None
-        assert timezone.version == '2022c'
+        assert re.search(r"^\d{4}[a-z]+", timezone.version) is not None
         assert len(timezone.time_zones) == 1
         assert timezone.time_zones[0].id == "Europe/Berlin"
         assert timezone.time_zones[0].names.generic == "Central European Time"
@@ -77,7 +78,7 @@ class TestMapsTimezoneClient(AzureRecordedTestCase):
     def test_get_iana_version(self, **kwargs):
         version = self.client.get_iana_version()
 
-        assert version == "2022c"
+        assert re.search(r"^\d{4}[a-z]+", version) is not None
 
     @MapsTimezonePreparer()
     @recorded_by_proxy
