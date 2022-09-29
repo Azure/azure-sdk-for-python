@@ -263,6 +263,7 @@ def test_servicebus_message_time_to_live():
 
 class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
 
+    @pytest.mark.skip("unskip after adding PyamqpTransport + pass in _to_outgoing_amqp_message to LegacyMessage")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -390,6 +391,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
 
             # TODO: Test updating message and resending
 
+    @pytest.mark.skip("unskip after adding PyamqpTransport + pass in _to_outgoing_amqp_message to LegacyMessage")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

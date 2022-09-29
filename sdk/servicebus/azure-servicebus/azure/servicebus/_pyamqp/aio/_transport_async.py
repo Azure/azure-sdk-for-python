@@ -426,7 +426,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
-    async def _read(self, n, buffer=None):
+    async def _read(self, n, initial=False, buffer=None): # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
         from websocket import WebSocketTimeoutException
 
