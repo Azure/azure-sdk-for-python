@@ -824,10 +824,12 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
 class DockerProxy:
     def __getattribute__(self, name: str) -> Any:
         try:
-            import docker
+            import docker # pylint: disable=import-error
             return getattr(docker, name)
         except ModuleNotFoundError:
-            raise Exception("Please install docker in the current python environment with `pip install docker` and try again.")
+            raise Exception(
+                "Please install docker in the current python environment with `pip install docker` and try again."
+            )
 
 
 def get_all_enum_values_iter(enum_type):
