@@ -498,7 +498,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        select: Optional[Union[str, "_models.SelectPermissions"]] = None,
+        select: Optional[Union[str, _models.SelectPermissions]] = None,
         **kwargs: Any
     ) -> _models.Gallery:
         """Retrieves information about a Shared Image Gallery.

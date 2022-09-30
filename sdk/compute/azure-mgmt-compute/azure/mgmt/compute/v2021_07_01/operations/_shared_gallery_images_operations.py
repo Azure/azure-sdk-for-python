@@ -41,7 +41,7 @@ def build_list_request(
     gallery_unique_name: str,
     subscription_id: str,
     *,
-    shared_to: Optional[Union[str, "_models.SharedToValues"]] = None,
+    shared_to: Optional[Union[str, _models.SharedToValues]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -130,7 +130,7 @@ class SharedGalleryImagesOperations:
         self,
         location: str,
         gallery_unique_name: str,
-        shared_to: Optional[Union[str, "_models.SharedToValues"]] = None,
+        shared_to: Optional[Union[str, _models.SharedToValues]] = None,
         **kwargs: Any
     ) -> Iterable["_models.SharedGalleryImage"]:
         """List shared gallery images by subscription id or tenant id.
