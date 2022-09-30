@@ -34,14 +34,14 @@ class JobService(RestTranslatableMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter", "jupyterlab", "ssh", "tensorboard"]] = None,
+        job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         self.endpoint = endpoint
-        self.job_service_type = job_service_type.lower() if job_service_type else None
+        self.job_service_type = job_service_type
         self.status = status
         self.port = port
         self.properties = properties
@@ -71,7 +71,7 @@ class JobService(RestTranslatableMixin):
         """
         return cls(
             endpoint=obj.endpoint,
-            job_service_type=obj.job_service_type.lower() if obj.job_service_type else None,
+            job_service_type=obj.job_service_type,
             status=obj.status,
             port=obj.port,
             properties=obj.properties,
