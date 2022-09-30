@@ -116,6 +116,21 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
+    def test_pipeline_job_create_with_registries(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
+            params_override=params_override,
+        )
+        assert pipeline_job.jobs.get("a").environment == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
+        job = client.jobs.create_or_update(pipeline_job)
+        assert job.name == params_override[0]["name"]
+        assert job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
+
     @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.parametrize(
         "pipeline_job_path",
