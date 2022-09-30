@@ -322,7 +322,7 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-    def try_get_compute_arm_id(self, compute: Union[Compute, str]):
+    def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
         if str(compute) == ComputeType.ADF:
@@ -411,14 +411,14 @@ class JobOperations(_ScopeDependentOperations):
         # TODO: use remote call to validate the entire job after MFE API is ready
         if validation_result.passed and isinstance(job, PipelineJob):
             try:
-                job.compute = self.try_get_compute_arm_id(job.compute)
+                job.compute = self._try_get_compute_arm_id(job.compute)
             except Exception as e:  # pylint: disable=broad-except
                 validation_result.append_error(yaml_path="compute", message=str(e))
 
             for node_name, node in job.jobs.items():
                 try:
                     if not isinstance(node, DoWhile):
-                        node.compute = self.try_get_compute_arm_id(node.compute)
+                        node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 

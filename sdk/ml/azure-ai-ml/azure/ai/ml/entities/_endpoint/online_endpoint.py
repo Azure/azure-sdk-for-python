@@ -64,6 +64,7 @@ class OnlineEndpoint(Endpoint):
 
     def __init__(
         self,
+        *,
         name: str = None,
         tags: Dict[str, Any] = None,
         properties: Dict[str, Any] = None,

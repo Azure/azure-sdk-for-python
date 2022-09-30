@@ -4,7 +4,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._common import AssetTypes, GitProperties, InputOutputModes, ModelType, TimeZone
+from ._common import AssetTypes, InputOutputModes, ModelType, TimeZone
 from ._component import ParallelTaskType
 from ._deployment import BatchDeploymentOutputAction
 from ._job import DistributionType, ImportSourceType, JobType
@@ -17,7 +17,6 @@ __all__ = [
     "ParallelTaskType",
     "AssetTypes",
     "InputOutputModes",
-    "GitProperties",
     "DistributionType",
     "TimeZone",
     "BatchDeploymentOutputAction",
