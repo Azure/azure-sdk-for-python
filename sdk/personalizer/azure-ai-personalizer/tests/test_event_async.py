@@ -1,8 +1,9 @@
 import personalizer_helpers
 import pytest
 from devtools_testutils import AzureTestCase
+import personalizer_helpers_async
 
-from tests import personalizer_helpers_async
+import personalizer_helpers
 
 
 class TestEventAsync(AzureTestCase):

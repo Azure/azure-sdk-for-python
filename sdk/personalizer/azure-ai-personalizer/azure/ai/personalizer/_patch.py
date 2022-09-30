@@ -6,7 +6,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
 from typing import Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
@@ -68,10 +67,6 @@ class PersonalizerClient(PersonalizerClientGenerated):
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        try:
-            endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

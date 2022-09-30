@@ -11,7 +11,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
 from ._client import PersonalizerClient as PersonalizerClientGenerated
-from typing import List
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
@@ -72,10 +71,6 @@ class PersonalizerClient(PersonalizerClientGenerated):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
-        try:
-            endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

@@ -3,8 +3,7 @@ from devtools_testutils import AzureTestCase
 import personalizer_helpers_async
 import asyncio
 
-from tests import personalizer_helpers
-
+import personalizer_helpers
 
 def configuration_equals(actual, expected):
     assert actual.get('modelExportFrequency') == expected.get('modelExportFrequency')

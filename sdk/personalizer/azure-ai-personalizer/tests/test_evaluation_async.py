@@ -6,7 +6,7 @@ import asyncio
 from datetime import date
 import uuid
 
-from tests import personalizer_helpers
+import personalizer_helpers
 
 
 class TestEvaluationsAsync(AzureTestCase):
