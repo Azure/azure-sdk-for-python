@@ -1,6 +1,6 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides [Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/en-us/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations which can be used to construct Azure SDK clients which support Azure AD token authentication.
+The Azure Identity library provides [Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations which can be used to construct Azure SDK clients which support Azure AD token authentication.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
@@ -63,7 +63,7 @@ this library's credential classes.
 
 ### DefaultAzureCredential
 
-`DefaultAzureCredential` is appropriate for most applications which will run in the Azure Cloud because it combines common production credentials with development credentials. `DefaultAzureCredential` attempts to authenticate via the following mechanisms in this order, stopping when one succeeds:
+`DefaultAzureCredential` is appropriate for most applications which will run in Azure because it combines common production credentials with development credentials. `DefaultAzureCredential` attempts to authenticate via the following mechanisms, in this order, stopping when one succeeds:
 
 >Note: `DefaultAzureCredential` is intended to simplify getting started with the library by handling common
 >scenarios with reasonable default behaviors. Developers who want more control or whose scenario
@@ -280,7 +280,7 @@ argument but defaults to the authority matching VS Code's "Azure: Cloud" setting
 |-|-|-
 |[`AzureCliCredential`][cli_cred_ref]| Authenticates in a development environment with the Azure CLI. | [Azure CLI authentication](https://learn.microsoft.com/cli/azure/authenticate-azure-cli)
 |[`PowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
-|[`VisualStudioCodeCredential`][vscode_cred_ref]| Authenticates as the user signed in to the Visual Studio Code Azure Account extension. | [VS Code Azure extension](https://code.visualstudio.com/docs/azure/extensions)
+|[`VisualStudioCodeCredential`][vscode_cred_ref]| Authenticates as the user signed in to the Visual Studio Code Azure Account extension. | [VS Code Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
 
 ## Environment variables
 
@@ -331,8 +331,7 @@ describes why authentication failed. When raised by
 `DefaultAzureCredential` or `ChainedTokenCredential`,
 the message collects error messages from each credential in the chain.
 
-For more details on handling specific Azure AD errors, see the Azure AD
-[error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
+For more details on handling specific Azure AD errors, see the Azure AD [error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
 
 ### Logging
 
