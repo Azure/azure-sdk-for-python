@@ -67,6 +67,7 @@ setup(
         "uamqp>=1.6.3,<2.0.0",
         'azure-common~=1.1',
         'azure-core<2.0.0,>=1.14.0',
+        'msrest>=0.6.17,<2.0.0',
         "isodate>=0.6.0",
         "six>=1.11.0",
         "typing-extensions>=3.7.4.3",
