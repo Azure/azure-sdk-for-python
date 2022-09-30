@@ -123,20 +123,6 @@ class TestPipelineJobValidate:
         del job_dict["jobs"]["hello_world_component_inline_with_schema"]["component"]["environment"]
         errors = pipeline_job._schema_for_validation.validate(job_dict)
         type_sensitive_union_field = pipeline_job._schema_for_validation.dump_fields["jobs"].value_field
-        print(errors)
-        print({
-            "jobs": {
-                "hello_world_component_inline": {
-                    "value": {
-                        "type": f"Value {unsupported_node_type!r} passed is "
-                        f"not in set {type_sensitive_union_field.allowed_types}",
-                    }
-                },
-                "hello_world_component_inline_with_schema": {
-                    "value": {"component": {"environment": ["Missing data for required field."]}}
-                },
-            }
-        })
         assert errors == {
             "jobs": {
                 "hello_world_component_inline": {
