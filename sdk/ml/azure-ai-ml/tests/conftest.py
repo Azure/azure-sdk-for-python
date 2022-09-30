@@ -231,7 +231,6 @@ def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) 
         credential=auth,
         subscription_id=e2e_ws_scope.subscription_id,
         resource_group_name=e2e_ws_scope.resource_group_name,
-        workspace_name=e2e_ws_scope.workspace_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
     )
@@ -242,8 +241,6 @@ def only_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
     """return a machine learning client using default e2e testing workspace"""
     return MLClient(
         credential=auth,
-        subscription_id=e2e_ws_scope.subscription_id,
-        resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
     )
