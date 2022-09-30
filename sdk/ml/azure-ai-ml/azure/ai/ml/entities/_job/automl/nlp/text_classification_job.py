@@ -107,8 +107,8 @@ class TextClassificationJob(AutoMLNLPJob):
         return result
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: JobBase) -> "TextClassificationJob":
-        properties: RestAutoMLJob = job_rest_object.properties
+    def _from_rest_object(cls, obj: JobBase) -> "TextClassificationJob":
+        properties: RestAutoMLJob = obj.properties
         task_details: RestTextClassification = properties.task_details
         assert isinstance(task_details, RestTextClassification)
         limits = (
@@ -122,16 +122,16 @@ class TextClassificationJob(AutoMLNLPJob):
 
         text_classification_job = cls(
             # ----- job specific params
-            id=job_rest_object.id,
-            name=job_rest_object.name,
+            id=obj.id,
+            name=obj.name,
             description=properties.description,
             tags=properties.tags,
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(job_rest_object.system_data)
-            if job_rest_object.system_data
+            creation_context=SystemData._from_rest_object(obj.system_data)
+            if obj.system_data
             else None,
             display_name=properties.display_name,
             compute=properties.compute_id,
@@ -152,16 +152,16 @@ class TextClassificationJob(AutoMLNLPJob):
 
         return text_classification_job
 
-    def _to_component(self, **kwargs):
+    def _to_component(self, context: Dict = None, **kwargs) -> "Component":
         raise NotImplementedError()
 
     @classmethod
     def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, inside_pipeline=False, **kwargs
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
     ) -> "TextClassificationJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationNode
 
             loaded_data = load_from_dict(
@@ -181,7 +181,7 @@ class TextClassificationJob(AutoMLNLPJob):
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextClassificationJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationNode
 

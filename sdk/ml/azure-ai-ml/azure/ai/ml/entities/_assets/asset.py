@@ -72,7 +72,6 @@ class Asset(Resource):
     @abstractmethod
     def _to_dict(self) -> Dict:
         """Dump the artifact content into a pure dict object."""
-        pass
 
     @property
     def version(self) -> str:

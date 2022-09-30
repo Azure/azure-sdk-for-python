@@ -108,10 +108,9 @@ def convert_rest_acr(rest_obj: RestAcrDetails) -> "Union[str, SystemCreatedAcrAc
             acr_account_sku=rest_obj.system_created_acr_account.acr_account_sku,
             arm_resource_id=rest_obj.system_created_acr_account.arm_resource_id,
         )
-    elif rest_obj.user_created_acr_account:
+    if rest_obj.user_created_acr_account:
         return rest_obj.user_created_acr_account
-    else:
-        return None  # TODO should this throw an error instead?
+    return None  # TODO should this throw an error instead?
 
 
 def convert_rest_storage(rest_obj: RestStorageAccountDetails) -> "Union[str, SystemCreatedStorageAccount]":
@@ -126,7 +125,6 @@ def convert_rest_storage(rest_obj: RestStorageAccountDetails) -> "Union[str, Sys
             ),  # TODO validate storage account type?
             arm_resource_id=rest_obj.system_created_storage_account.arm_resource_id,
         )
-    elif rest_obj.user_created_storage_account:
+    if rest_obj.user_created_storage_account:
         return rest_obj.user_created_storage_account
-    else:
-        return None  # TODO should this throw an error instead?
+    return None  # TODO should this throw an error instead?

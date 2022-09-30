@@ -136,7 +136,13 @@ class DoWhileJobLimits(JobLimits):
     :type max_iteration_count: int
     """
 
-    def __init__(self, *, max_iteration_count: int = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        max_iteration_count: int = None,
+        **kwargs, # pylint: disable=unused-argument
+    ):
+        super().__init__()
         self._max_iteration_count = max_iteration_count
 
     @property

@@ -54,7 +54,8 @@ class CommandComponent(Component, ParameterizedCommand):
     :type instance_count: int
     :param is_deterministic: Whether the command component is deterministic.
     :type is_deterministic: bool
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(
