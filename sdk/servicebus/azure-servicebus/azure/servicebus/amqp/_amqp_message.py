@@ -11,8 +11,8 @@ from datetime import datetime
 import warnings
 from typing import Optional, Any, cast, Mapping, Union, Dict, List, Tuple
 
-from azure.core.serialization import TZ_UTC
 import uamqp
+from azure.core.serialization import TZ_UTC
 
 from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
 from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME

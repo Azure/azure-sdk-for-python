@@ -24,7 +24,6 @@ from typing import (
     cast
 )
 from contextlib import contextmanager
-from azure.core.serialization import TZ_UTC
 
 try:
     from urlparse import urlparse
@@ -33,6 +32,7 @@ except ImportError:
 
 from uamqp import authentication, types
 
+from azure.core.serialization import TZ_UTC
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
