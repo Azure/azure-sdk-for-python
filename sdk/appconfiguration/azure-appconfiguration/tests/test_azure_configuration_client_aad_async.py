@@ -29,6 +29,8 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
+from async_preparers import app_config_aad_decorator_async
+from devtools_testutils.aio import recorded_by_proxy_async
 import pytest
 import copy
 import datetime
@@ -36,16 +38,11 @@ import json
 import re
 import copy
 
-from async_preparers import app_config_aad_decorator_async
 
-
-class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
-    def __init__(self, method_name):
-        super(AppConfigurationClientAADAsyncTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-
+class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):
     # method: add_configuration_setting
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_add_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         kv = ConfigurationSetting(
@@ -70,6 +67,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_add_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         test_config_setting = self.create_config_setting()
@@ -85,6 +83,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
 
     # method: set_configuration_setting
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_set_existing_configuration_setting_label_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
@@ -102,6 +101,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
@@ -112,6 +112,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
             await client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_set_configuration_setting_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         kv = ConfigurationSetting(
@@ -126,6 +127,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
             await client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_set_configuration_setting_no_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = ConfigurationSetting(
@@ -148,6 +150,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
 
     # method: get_configuration_setting
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting_no_label()
@@ -163,6 +166,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_get_configuration_setting_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
@@ -180,6 +184,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_get_non_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
@@ -190,6 +195,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
 
     # method: delete_configuration_setting
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_with_key_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -200,6 +206,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
             await client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_with_key_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting()
@@ -210,12 +217,14 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
             await client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_not_existing(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         deleted_kv = await client.delete_configuration_setting("not_exist_" + KEY)
         assert deleted_kv is None
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -226,6 +235,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
             await client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_wrong_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -237,6 +247,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
 
     # method: list_configuration_settings
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
@@ -245,6 +256,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL))
@@ -253,6 +265,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY))
@@ -261,6 +274,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(
@@ -271,6 +285,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         resered_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
@@ -283,6 +298,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
 
     # NOTE: Label filter does not support wildcard at beginning on filters. https://docs.microsoft.com/en-us/azure/azure-app-configuration/rest-api-key-value#supported-filters
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
@@ -291,6 +307,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
@@ -304,6 +321,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(to_list_kv.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
@@ -335,6 +353,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
             pass
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_configuration_settings_null_label(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_configuration_settings(label_filter="\0"))
@@ -342,17 +361,23 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
-    async def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string):
+    @recorded_by_proxy_async
+    async def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string, **kwargs):
+        recorded_variables = kwargs.pop("variables", {})
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         exclude_today = await self.convert_to_list(self.client.list_configuration_settings(
-            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=recorded_variables.setdefault(
+                "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
+            )
         ))
         all_inclusive = await self.convert_to_list(self.client.list_configuration_settings())
         assert len(all_inclusive) > len(exclude_today)
         await self.tear_down()
+        return recorded_variables
 
     # method: list_revisions
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_revisions_key_label(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         to_list = self.create_config_setting()
@@ -364,6 +389,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_revisions_only_label(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_revisions(label_filter=LABEL))
@@ -372,6 +398,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_revisions(key_filter=KEY))
@@ -380,6 +407,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_revisions_fields(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = await self.convert_to_list(self.client.list_revisions(
@@ -389,6 +417,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         to_list_kv = self.create_config_setting()
@@ -401,6 +430,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.tear_down()
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         kv = self.create_config_setting_no_label()
@@ -412,6 +442,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(kv.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_delete_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -425,6 +456,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
             await client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_set_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting_no_label()
@@ -452,6 +484,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(to_set_kv.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_sync_tokens_with_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
@@ -489,6 +522,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(new.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string, is_aad=True)
         new = FeatureFlagConfigurationSetting(
@@ -557,6 +591,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await self.client.delete_configuration_setting(new.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
@@ -587,6 +622,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(changed_flag.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_config_setting_secret_reference(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         secret_reference = SecretReferenceConfigurationSetting(
@@ -614,6 +650,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(secret_reference.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_feature_filter_targeting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
@@ -674,6 +711,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(updated_sent_config.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_feature_filter_time_window(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
@@ -700,6 +738,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(new_sent.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_feature_filter_custom(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
@@ -726,6 +765,7 @@ class AppConfigurationClientAADAsyncTest(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(new_sent.key)
 
     @app_config_aad_decorator_async
+    @recorded_by_proxy_async
     async def test_feature_filter_multiple(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
