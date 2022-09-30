@@ -18,31 +18,6 @@ class WorkspaceConnectionCredentials(RestTranslatableMixin):
         self.type = None
 
 
-class PatTokenCredentials(WorkspaceConnectionCredentials):
-    """Personal access token credentials.
-
-    :param pat: personal access token
-    :type pat: str
-    """
-
-    def __init__(self, *, pat: str):
-        super().__init__()
-        self.type = ConnectionAuthType.PAT
-        self.pat = pat
-
-    def _to_rest_object(self) -> PersonalAccessToken:
-        return PersonalAccessToken(pat=self.pat)
-
-    @classmethod
-    def _from_rest_object(cls, obj: PersonalAccessToken) -> "PatTokenCredentials":
-        return cls(pat=obj.pat if obj.pat else None)
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, PatTokenCredentials):
-            return NotImplemented
-        return self.pat == other.pat
-
-
 class SasTokenCredentials(WorkspaceConnectionCredentials):
     """Shared Access Signatures Token Credentials.
 

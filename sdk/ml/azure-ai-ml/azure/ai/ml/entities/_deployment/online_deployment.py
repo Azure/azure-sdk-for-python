@@ -511,12 +511,13 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type instance_type: str
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
-    :param data_collector: Allows model data collector for deployment.
-    :type data_collector: DataCollector, optional
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
     :type scoring_script: Union[str, PathLike], optional
+    :param egress_public_network_access: Wether to restrict communication between a deployment 
+    and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
+    :param egress_public_network_access: str
     """
 
     def __init__(
@@ -538,16 +539,15 @@ class ManagedOnlineDeployment(OnlineDeployment):
         environment_variables: Dict[str, str] = None,
         instance_type: str = None,
         instance_count: int = None,
-        data_collector: DataCollector = None,
         code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
         scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
+        egress_public_network_access = None,
         **kwargs,
     ):
 
         kwargs["type"] = EndpointComputeType.MANAGED.value
-
         self.private_network_connection = kwargs.pop("private_network_connection", None)
-        self.egress_public_network_access = kwargs.pop("egress_public_network_access", None)
+        self.data_collector = kwargs.pop("data_collector", None)
 
         super(ManagedOnlineDeployment, self).__init__(
             name=name,
@@ -571,8 +571,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
             **kwargs,
         )
 
-        self.data_collector = data_collector
         self.readiness_probe = readiness_probe
+        self.egress_public_network_access = egress_public_network_access
 
     def _to_dict(self) -> Dict:
         return ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
