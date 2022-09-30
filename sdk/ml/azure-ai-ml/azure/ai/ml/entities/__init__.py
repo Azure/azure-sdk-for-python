@@ -181,7 +181,6 @@ __all__ = [
     "ResourceSettings",
     "AssignedUserConfiguration",
     "ComputeInstanceSshSettings",
-    "UserAssignedIdentity",
     "VmSize",
     "Usage",
     "UsageName",
