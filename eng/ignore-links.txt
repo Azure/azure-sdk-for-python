@@ -5,3 +5,4 @@ https://docs.microsoft.com/azure/digital-twins/how-to-query-graph#query-limitati
 https://docs.microsoft.com/samples/azure-samples/azure-samples-python-management/{{package_doc_id}}
 https://pypi.org/project/azure-messaging-webpubsubservice/
 https://github.com/Azure/azure-rest-api-specs-pr
+https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms/samples
