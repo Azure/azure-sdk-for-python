@@ -57,7 +57,8 @@ class OnlineEndpoint(Endpoint):
     :type provisioning_state: str, optional
     :param identity: defaults to SystemAssigned
     :type identity: IdentityConfiguration, optional
-    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
+    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints,
+        defaults to None.
     :type kind: str, optional
     """
 
