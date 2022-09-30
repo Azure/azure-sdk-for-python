@@ -25,21 +25,21 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._export_jobs_operation_result_operations import build_get_request
+from ...operations._operation_status_backup_vault_context_operations import build_get_request
 from .._vendor import MixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ExportJobsOperationResultOperations:
+class OperationStatusBackupVaultContextOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.dataprotection.aio.DataProtectionClient`'s
-        :attr:`export_jobs_operation_result` attribute.
+        :attr:`operation_status_backup_vault_context` attribute.
     """
 
     models = _models
@@ -54,21 +54,21 @@ class ExportJobsOperationResultOperations:
     @distributed_trace_async
     async def get(
         self, resource_group_name: str, vault_name: str, operation_id: str, **kwargs: Any
-    ) -> Optional[_models.ExportJobsResult]:
-        """Gets the operation result of operation triggered by Export Jobs API. If the operation is
-        successful, then it also contains URL of a Blob and a SAS key to access the same. The blob
-        contains exported jobs in JSON serialized format.
+    ) -> _models.OperationResource:
+        """Gets the operation status for an operation over a BackupVault's context.
+
+        Gets the operation status for an operation over a BackupVault's context.
 
         :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param operation_id: OperationID which represents the export job. Required.
+        :param operation_id: Required.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExportJobsResult or None or the result of cls(response)
-        :rtype: ~azure.mgmt.dataprotection.models.ExportJobsResult or None
+        :return: OperationResource or the result of cls(response)
+        :rtype: ~azure.mgmt.dataprotection.models.OperationResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -83,7 +83,7 @@ class ExportJobsOperationResultOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.ExportJobsResult]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationResource]
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -104,17 +104,15 @@ class ExportJobsOperationResultOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("ExportJobsResult", pipeline_response)
+        deserialized = self._deserialize("OperationResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupJobs/operations/{operationId}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/operationStatus/{operationId}"}  # type: ignore

@@ -9,31 +9,47 @@
 from ._backup_vaults_operations import BackupVaultsOperations
 from ._operation_result_operations import OperationResultOperations
 from ._operation_status_operations import OperationStatusOperations
+from ._operation_status_backup_vault_context_operations import OperationStatusBackupVaultContextOperations
+from ._operation_status_resource_group_context_operations import OperationStatusResourceGroupContextOperations
 from ._backup_vault_operation_results_operations import BackupVaultOperationResultsOperations
 from ._data_protection_operations import DataProtectionOperations
 from ._data_protection_operations_operations import DataProtectionOperationsOperations
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._backup_instances_operations import BackupInstancesOperations
+from ._backup_instances_extension_routing_operations import BackupInstancesExtensionRoutingOperations
 from ._recovery_points_operations import RecoveryPointsOperations
 from ._jobs_operations import JobsOperations
 from ._restorable_time_ranges_operations import RestorableTimeRangesOperations
 from ._export_jobs_operations import ExportJobsOperations
 from ._export_jobs_operation_result_operations import ExportJobsOperationResultOperations
+from ._deleted_backup_instances_operations import DeletedBackupInstancesOperations
 from ._resource_guards_operations import ResourceGuardsOperations
+from ._data_protection_client_operations import DataProtectionClientOperationsMixin
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'BackupVaultsOperations',
-    'OperationResultOperations',
-    'OperationStatusOperations',
-    'BackupVaultOperationResultsOperations',
-    'DataProtectionOperations',
-    'DataProtectionOperationsOperations',
-    'BackupPoliciesOperations',
-    'BackupInstancesOperations',
-    'RecoveryPointsOperations',
-    'JobsOperations',
-    'RestorableTimeRangesOperations',
-    'ExportJobsOperations',
-    'ExportJobsOperationResultOperations',
-    'ResourceGuardsOperations',
+    "BackupVaultsOperations",
+    "OperationResultOperations",
+    "OperationStatusOperations",
+    "OperationStatusBackupVaultContextOperations",
+    "OperationStatusResourceGroupContextOperations",
+    "BackupVaultOperationResultsOperations",
+    "DataProtectionOperations",
+    "DataProtectionOperationsOperations",
+    "BackupPoliciesOperations",
+    "BackupInstancesOperations",
+    "BackupInstancesExtensionRoutingOperations",
+    "RecoveryPointsOperations",
+    "JobsOperations",
+    "RestorableTimeRangesOperations",
+    "ExportJobsOperations",
+    "ExportJobsOperationResultOperations",
+    "DeletedBackupInstancesOperations",
+    "ResourceGuardsOperations",
+    "DataProtectionClientOperationsMixin",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

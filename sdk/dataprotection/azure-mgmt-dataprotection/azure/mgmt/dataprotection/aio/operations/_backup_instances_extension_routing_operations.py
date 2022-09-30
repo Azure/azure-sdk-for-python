@@ -22,27 +22,26 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._jobs_operations import build_get_request, build_list_request
+from ...operations._backup_instances_extension_routing_operations import build_list_request
 from .._vendor import MixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class JobsOperations:
+class BackupInstancesExtensionRoutingOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.dataprotection.aio.DataProtectionClient`'s
-        :attr:`jobs` attribute.
+        :attr:`backup_instances_extension_routing` attribute.
     """
 
     models = _models
@@ -55,28 +54,24 @@ class JobsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(
-        self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AzureBackupJobResource"]:
-        """Returns list of jobs belonging to a backup vault.
+    def list(self, resource_id: str, **kwargs: Any) -> AsyncIterable["_models.BackupInstanceResource"]:
+        """Gets a list backup instances associated with a tracked resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_id: ARM path of the resource to be protected using Microsoft.DataProtection.
          Required.
-        :type resource_group_name: str
-        :param vault_name: The name of the backup vault. Required.
-        :type vault_name: str
+        :type resource_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AzureBackupJobResource or the result of
+        :return: An iterator like instance of either BackupInstanceResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.dataprotection.models.AzureBackupJobResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.dataprotection.models.BackupInstanceResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AzureBackupJobResourceList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BackupInstanceResourceList]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -90,9 +85,7 @@ class JobsOperations:
             if not next_link:
 
                 request = build_list_request(
-                    resource_group_name=resource_group_name,
-                    vault_name=vault_name,
-                    subscription_id=self._config.subscription_id,
+                    resource_id=resource_id,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -113,7 +106,7 @@ class JobsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AzureBackupJobResourceList", pipeline_response)
+            deserialized = self._deserialize("BackupInstanceResourceList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -135,69 +128,4 @@ class JobsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupJobs"}  # type: ignore
-
-    @distributed_trace_async
-    async def get(
-        self, resource_group_name: str, vault_name: str, job_id: str, **kwargs: Any
-    ) -> _models.AzureBackupJobResource:
-        """Gets a job with id in a backup vault.
-
-        :param resource_group_name: The name of the resource group where the backup vault is present.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The name of the backup vault. Required.
-        :type vault_name: str
-        :param job_id: The Job ID. This is a GUID-formatted string (e.g.
-         00000000-0000-0000-0000-000000000000). Required.
-        :type job_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AzureBackupJobResource or the result of cls(response)
-        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupJobResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AzureBackupJobResource]
-
-        request = build_get_request(
-            resource_group_name=resource_group_name,
-            vault_name=vault_name,
-            job_id=job_id,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("AzureBackupJobResource", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupJobs/{jobId}"}  # type: ignore
+    list.metadata = {"url": "/{resourceId}/providers/Microsoft.DataProtection/backupInstances"}  # type: ignore

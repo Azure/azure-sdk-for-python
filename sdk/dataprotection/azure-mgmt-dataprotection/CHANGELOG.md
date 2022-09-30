@@ -1,5 +1,32 @@
 # Release History
 
+## 1.0.0b2 (2022-09-30)
+
+### Features Added
+
+  - Added operation BackupInstancesOperations.begin_resume_backups
+  - Added operation BackupInstancesOperations.begin_resume_protection
+  - Added operation BackupInstancesOperations.begin_stop_protection
+  - Added operation BackupInstancesOperations.begin_suspend_backups
+  - Added operation BackupInstancesOperations.begin_sync_backup_instance
+  - Added operation BackupInstancesOperations.get_backup_instance_operation_result
+  - Added operation group BackupInstancesExtensionRoutingOperations
+  - Added operation group DataProtectionClientOperationsMixin
+  - Added operation group DeletedBackupInstancesOperations
+  - Added operation group OperationStatusBackupVaultContextOperations
+  - Added operation group OperationStatusResourceGroupContextOperations
+  - Model AzureBackupRecoveryPointBasedRestoreRequest has a new parameter source_resource_id
+  - Model AzureBackupRecoveryTimeBasedRestoreRequest has a new parameter source_resource_id
+  - Model AzureBackupRestoreRequest has a new parameter source_resource_id
+  - Model AzureBackupRestoreWithRehydrationRequest has a new parameter source_resource_id
+  - Model BackupInstance has a new parameter validation_type
+  - Model BackupInstanceResource has a new parameter tags
+  - Model BackupVault has a new parameter is_vault_protected_by_resource_guard
+  - Model BackupVault has a new parameter monitoring_settings
+  - Model BackupVault has a new parameter security_settings
+  - Model PatchResourceRequestInput has a new parameter properties
+  - Model SecretStoreResource has a new parameter value
+
 ## 1.0.0b1 (2021-10-19)
 
 * Initial Release
