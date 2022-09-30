@@ -134,7 +134,7 @@ def build_get_request(
     host_group_name: str,
     subscription_id: str,
     *,
-    expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
+    expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -581,7 +581,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
         **kwargs: Any
     ) -> _models.DedicatedHostGroup:
         """Retrieves information about a dedicated host group.
