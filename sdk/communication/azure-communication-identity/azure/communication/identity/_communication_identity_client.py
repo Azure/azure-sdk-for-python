@@ -28,7 +28,7 @@ class CommunicationIdentityClient(object):
         The endpoint url for Azure Communication Service resource.
     :param TokenCredential credential:
         The TokenCredential we use to authenticate against the service.
-    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
+    :keyword api_version: Azure Communication Identity API version. Default value is "2022-06-01". Note that overriding this
         default value may result in unsupported behavior.
     :paramtype api_version: str
 
