@@ -1,6 +1,6 @@
 # Release History
 
-## 0.1.0 (Unreleased)
+## 0.1.0b8 (In Progress)
 
 ### Features Added
  - Support passing JobService as argument to Command()
