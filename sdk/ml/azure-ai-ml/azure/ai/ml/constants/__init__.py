@@ -15,7 +15,7 @@ from ._job import (
     ImportSourceType,
     JobType,
 )
-from ._registry import ManagedServiceIdentityType as RegistryManagedServiceIdentityType, StorageAccountType, AcrAccountSku
+from ._registry import StorageAccountType, AcrAccountSku
 from ._workspace import ManagedServiceIdentityType
 
 __all__ = [
@@ -33,5 +33,6 @@ __all__ = [
     "ImageClassificationModelNames",
     "ImageObjectDetectionModelNames",
     "ImageInstanceSegmentationModelNames",
-    "RegistryManagedServiceIdentityType",
+    "StorageAccountType",
+    "AcrAccountSku",
 ]
