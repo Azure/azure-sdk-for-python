@@ -8,7 +8,6 @@ from marshmallow import fields
 from marshmallow.decorators import post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
-from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._vendor.azure_resources.models._resource_management_client_enums import ResourceIdentityType
 
@@ -27,7 +26,7 @@ class ComputeSchema(PathAwareSchema):
     resource_id = fields.Str()
 
 
-class NetworkSettingsSchema(metaclass=PatchedSchemaMeta):
+class NetworkSettingsSchema(PathAwareSchema):
     vnet_name = fields.Str()
     subnet = fields.Str()
     public_ip_address = fields.Str(dump_only=True)
@@ -40,10 +39,11 @@ class NetworkSettingsSchema(metaclass=PatchedSchemaMeta):
         return NetworkSettings(**data)
 
 
-class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):
+class UserAssignedIdentitySchema(PathAwareSchema):
     resource_id = fields.Str()
-    principal_id = fields.Str()
-    client_id = fields.Str()
+    principal_id = fields.Str(dump_only=True)
+    client_id = fields.Str(dump_only=True)
+    tenant_id = fields.Str(dump_only=True)
 
     @post_load
     def make(self, data, **kwargs):
@@ -52,7 +52,7 @@ class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):
         return UserAssignedIdentity(**data)
 
 
-class IdentitySchema(metaclass=PatchedSchemaMeta):
+class IdentitySchema(PathAwareSchema):
     type = StringTransformedEnum(
         allowed_values=[
             ResourceIdentityType.SYSTEM_ASSIGNED,
@@ -64,7 +64,8 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
         metadata={"description": "resource identity type."},
     )
     user_assigned_identities = fields.List(NestedField(UserAssignedIdentitySchema))
-    principal_id = fields.Str()
+    principal_id = fields.Str(dump_only=True)
+    tenant_id = fields.Str(dump_only=True)
 
     @post_load
     def make(self, data, **kwargs):

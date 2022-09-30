@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,redefined-builtin
+
+from abc import ABC
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.v2022_05_01.models import (
@@ -20,15 +22,16 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-class DatastoreCredentials(RestTranslatableMixin):
-    def __init__(self, type: str = None):
-        self.type = type
+class DatastoreCredentials(RestTranslatableMixin, ABC):
+    def __init__(self):
+        self.type = None
 
 
 class NoneCredentials(DatastoreCredentials):
     def __init__(
         self,
     ):
+        super().__init__()
         self.type = CredentialsType.NONE
 
     def _to_rest_object(self) -> NoneDatastoreCredentials:
@@ -53,6 +56,7 @@ class AccountKeyCredentials(DatastoreCredentials):
         *,
         account_key: str,
     ):
+        super().__init__()
         self.type = CredentialsType.ACCOUNT_KEY
         self.account_key = account_key
 
@@ -79,6 +83,7 @@ class SasTokenCredentials(DatastoreCredentials):
         *,
         sas_token: str,
     ):
+        super().__init__()
         self.type = CredentialsType.SAS
         self.sas_token = sas_token
 
@@ -107,6 +112,7 @@ class BaseTenantCredentials(DatastoreCredentials):
         tenant_id: str = None,
         client_id: str = None,
     ):
+        super().__init__()
         self.authority_url = authority_url
         self.resource_url = resource_url
         self.tenant_id = tenant_id
@@ -128,7 +134,7 @@ class ServicePrincipalCredentials(BaseTenantCredentials):
         secrets = ServicePrincipalDatastoreSecrets(client_secret=self.client_secret)
         return ServicePrincipalDatastoreCredentials(
             authority_url=self.authority_url,
-            resource_uri=self.resource_url,
+            resource_url=self.resource_url,
             tenant_id=self.tenant_id,
             client_id=self.client_id,
             secrets=secrets,
@@ -175,7 +181,7 @@ class CertificateCredentials(BaseTenantCredentials):
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)
         return CertificateDatastoreCredentials(
             authority_url=self.authority_url,
-            resource_uri=self.resource_url,
+            resource_url=self.resource_url,
             tenant_id=self.tenant_id,
             client_id=self.client_id,
             thumbprint=self.thumbprint,
@@ -186,7 +192,7 @@ class CertificateCredentials(BaseTenantCredentials):
     def _from_rest_object(cls, obj: CertificateDatastoreCredentials) -> "CertificateCredentials":
         return cls(
             authority_url=obj.authority_url,
-            resource_url=obj.resource_uri,
+            resource_url=obj.resource_url,
             tenant_id=obj.tenant_id,
             client_id=obj.client_id,
             thumbprint=obj.thumbprint,

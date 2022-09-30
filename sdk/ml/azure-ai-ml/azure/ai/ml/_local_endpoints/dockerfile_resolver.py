@@ -7,7 +7,7 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 
-from azure.ai.ml.constants import LocalEndpointConstants
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 from .dockerfile_instructions import Cmd, Copy, From, Run, Workdir
 
@@ -104,7 +104,10 @@ class DockerfileResolver(object):
                         self._docker_azureml_app_path,
                     ),
                     Run(
-                        f"conda env create -n {LocalEndpointConstants.CONDA_ENV_NAME} --file {self._docker_conda_file_name}"
+                        (
+                            f"conda env create -n {LocalEndpointConstants.CONDA_ENV_NAME} "
+                            f"--file {self._docker_conda_file_name}"
+                        )
                     ),
                 ]
             )

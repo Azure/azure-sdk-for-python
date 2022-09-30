@@ -13,7 +13,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot DefaultAzureCredential Authentication Issues](#troubleshoot-defaultazurecredential-authentication-issues)
 - [Troubleshoot EnvironmentCredential Authentication Issues](#troubleshoot-environmentcredential-authentication-issues)
 - [Troubleshoot ClientSecretCredential Authentication Issues](#troubleshoot-clientsecretcredential-authentication-issues)
-- [Troubleshoot ClientCertificateCredential Authentication Issues](#troubleshooting-clientcertificatecredential-authentication-issues)
+- [Troubleshoot ClientCertificateCredential Authentication Issues](#troubleshoot-clientcertificatecredential-authentication-issues)
 - [Troubleshoot UsernamePasswordCredential Authentication Issues](#troubleshoot-usernamepasswordcredential-authentication-issues)
 - [Troubleshoot ManagedIdentityCredential Authentication Issues](#troubleshoot-managedidentitycredential-authentication-issues)
   - [Azure Virtual Machine Managed Identity](#azure-virtual-machine-managed-identity)
@@ -138,7 +138,7 @@ The `ManagedIdentityCredential` is designed to work on a variety of Azure hosts 
 
 #### __Verify IMDS is available on the VM__
 
-If you have access to the VM, you can verify the manged identity endpoint is available via the command line using curl.
+If you have access to the VM, you can verify the managed identity endpoint is available via the command line using curl.
 
 ```bash
 curl 'http://169.254.169.254/metadata/identity/oauth2/token?resource=https://management.core.windows.net&api-version=2018-02-01' -H "Metadata: true"

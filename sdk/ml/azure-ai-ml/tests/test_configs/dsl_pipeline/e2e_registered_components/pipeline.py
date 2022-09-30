@@ -1,7 +1,8 @@
-from azure.ai.ml import dsl, MLClient, Input, load_component
-from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities import Component as ComponentEntity
 from pathlib import Path
+
+from azure.ai.ml import Input, MLClient, dsl, load_component
+from azure.ai.ml.entities import Component as ComponentEntity
+from azure.ai.ml.entities import PipelineJob
 
 parent_dir = str(Path(__file__).parent)
 

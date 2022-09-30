@@ -2,28 +2,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-member
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    ClassificationMultilabelPrimaryMetrics,
-    JobBaseData,
-    TaskType,
-)
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
+from azure.ai.ml.entities._job.identity import Identity
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -52,11 +50,6 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         :param log_verbosity: Log verbosity level
         :param kwargs: Job-specific arguments
         """
-        data = kwargs.pop("data", None)
-        if data is not None:
-            target_column_name = data.target_column_name
-            training_data = data.training_data.data  # type: Input
-            validation_data = data.validation_data.data  # type: Input
         super().__init__(
             task_type=TaskType.TEXT_CLASSIFICATION_MULTILABEL,
             primary_metric=primary_metric or TextClassificationMultilabelJob._DEFAULT_PRIMARY_METRIC,
@@ -79,16 +72,18 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             else ClassificationMultilabelPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    def _to_rest_object(self) -> JobBaseData:
-        self._resolve_data_inputs()
-
-        text_classification = RestTextClassificationMultilabel(
-            data_settings=self._data,
+    def _to_rest_object(self) -> JobBase:
+        text_classification_multilabel = RestTextClassificationMultilabel(
+            target_column_name=self.target_column_name,
+            training_data=self.training_data,
+            validation_data=self.validation_data,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
         )
+        # resolve data inputs in rest object
+        self._resolve_data_inputs(text_classification_multilabel)
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
@@ -102,20 +97,19 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             services=self.services,
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
-            task_details=text_classification,
-            identity=self.identity,
+            task_details=text_classification_multilabel,
+            identity=self.identity._to_rest_object() if self.identity else None,
         )
 
-        result = JobBaseData(properties=properties)
+        result = JobBase(properties=properties)
         result.name = self.name
         return result
 
     @classmethod
-    def _from_rest_object(cls, obj: JobBaseData) -> "TextClassificationMultilabelJob":
+    def _from_rest_object(cls, obj: JobBase) -> "TextClassificationMultilabelJob":
         properties: RestAutoMLJob = obj.properties
         task_details: RestTextClassificationMultilabel = properties.task_details
         assert isinstance(task_details, RestTextClassificationMultilabel)
-        data_settings = task_details.data_settings
         limits = (
             NlpLimitSettings._from_rest_object(task_details.limit_settings) if task_details.limit_settings else None
         )
@@ -135,7 +129,9 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data)
+            if obj.system_data
+            else None,
             display_name=properties.display_name,
             compute=properties.compute_id,
             outputs=from_rest_data_outputs(properties.outputs),
@@ -143,28 +139,30 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             # ----- task specific params
             primary_metric=task_details.primary_metric,
             log_verbosity=task_details.log_verbosity,
-            data=data_settings,
+            target_column_name=task_details.target_column_name,
+            training_data=task_details.training_data,
+            validation_data=task_details.validation_data,
             limits=limits,
             featurization=featurization,
-            identity=properties.identity,
+            identity=Identity._from_rest_object(properties.identity) if properties.identity else None,
         )
 
         text_classification_multilabel_job._restore_data_inputs()
 
         return text_classification_multilabel_job
 
-    def _to_component(self, **kwargs):
+    def _to_component(self, context: Dict = None, **kwargs) -> "Component":
         raise NotImplementedError()
 
     @classmethod
     def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, inside_pipeline=False, **kwargs
-    ) -> "AutoMLJob":
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+    ) -> "TextClassificationMultilabelJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
 
             loaded_data = load_from_dict(
@@ -190,7 +188,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextClassificationMultilabelJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )
@@ -198,8 +196,8 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
         if inside_pipeline:
             return AutoMLTextClassificationMultilabelNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
-        else:
-            return TextClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+
+        return TextClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def __eq__(self, other):
         if not isinstance(other, TextClassificationMultilabelJob):

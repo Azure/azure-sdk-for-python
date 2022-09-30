@@ -1,6 +1,7 @@
 type: pipeline
 
-compute: azureml:cpu-cluster
+settings:
+  default_compute: azureml:cpu-cluster
 
 inputs:
   pipeline_job_data_path:
@@ -47,6 +48,7 @@ jobs:
     mini_batch_size: "1"
     mini_batch_error_threshold: 1
     max_concurrency_per_instance: 1
+    logging_level: "DEBUG"
 
   convert_data_node:
     type: command
@@ -70,6 +72,7 @@ jobs:
     mini_batch_size: "1"
     mini_batch_error_threshold: 1
     max_concurrency_per_instance: 1
+    logging_level: "DEBUG"
 
   tabular_batch_inference_node:
     type: parallel

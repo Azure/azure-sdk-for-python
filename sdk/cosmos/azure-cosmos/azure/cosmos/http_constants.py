@@ -166,6 +166,7 @@ class HttpHeaders(object):
     # Offer type.
     OfferType = "x-ms-offer-type"
     OfferThroughput = "x-ms-offer-throughput"
+    AutoscaleSettings = "x-ms-cosmos-offer-autopilot-settings"
 
     # Custom RUs/minute headers
     DisableRUPerMinuteUsage = "x-ms-documentdb-disable-ru-per-minute-usage"

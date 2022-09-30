@@ -5,13 +5,13 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
 from azure.ai.ml._schema._endpoint import BatchEndpointSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
-from azure.ai.ml.constants import AAD_TOKEN_YAML, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import AAD_TOKEN_YAML, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -41,8 +41,8 @@ class BatchEndpoint(Endpoint):
     :type default_deployment_name: str, optional
     :param scoring_uri: URI to use to perform a prediction, readonly.
     :type scoring_uri: str, optional
-    :param swagger_uri: URI to check the swagger definition of the endpoint.
-    :type swagger_uri: str, optional
+    :param openapi_uri: URI to check the open API definition of the endpoint.
+    :type openapi_uri: str, optional
     """
 
     def __init__(
@@ -57,7 +57,7 @@ class BatchEndpoint(Endpoint):
         defaults: Dict[str, str] = None,
         default_deployment_name: str = None,
         scoring_uri: str = None,
-        swagger_uri: str = None,
+        openapi_uri: str = None,
         **kwargs,
     ) -> None:
         super(BatchEndpoint, self).__init__(
@@ -68,7 +68,7 @@ class BatchEndpoint(Endpoint):
             description=description,
             location=location,
             scoring_uri=scoring_uri,
-            swagger_uri=swagger_uri,
+            openapi_uri=openapi_uri,
             **kwargs,
         )
 
@@ -89,7 +89,7 @@ class BatchEndpoint(Endpoint):
         return BatchEndpointData(location=location, tags=self.tags, properties=batch_endpoint)
 
     @classmethod
-    def _from_rest_object(cls, endpoint: BatchEndpointData):
+    def _from_rest_object(cls, endpoint: BatchEndpointData):  # pylint: disable=arguments-renamed
         return BatchEndpoint(
             id=endpoint.id,
             name=endpoint.name,
@@ -101,21 +101,26 @@ class BatchEndpoint(Endpoint):
             defaults=endpoint.properties.defaults,
             provisioning_state=endpoint.properties.provisioning_state,
             scoring_uri=endpoint.properties.scoring_uri,
-            swagger_uri=endpoint.properties.swagger_uri,
+            openapi_uri=endpoint.properties.swagger_uri,
         )
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(
+        self,
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return BatchEndpointSchema(context=context).dump(self)  # type: ignore
+        return BatchEndpointSchema(context=context).dump(self)  # type: ignore # pylint: disable=no-member
 
     @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "BatchEndpoint":
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
@@ -124,4 +129,4 @@ class BatchEndpoint(Endpoint):
         return load_from_dict(BatchEndpointSchema, data, context)
 
     def _to_dict(self) -> Dict:
-        return BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return BatchEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member

@@ -16,6 +16,7 @@ class TestPurviewCatalogSmoke(PurviewCatalogTest):
     def test_basic_smoke_test(self, purviewcatalog_endpoint):
         client = self.create_client(endpoint=purviewcatalog_endpoint)
         response = client.types.get_all_type_definitions()
+        # cspell: disable-next-line
         assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs'])
 
     @recorded_by_proxy

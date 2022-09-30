@@ -15,23 +15,23 @@ class TestMixedRealityTokenCredential:
         access_token = AccessToken("My access token", 0)
         credential = StaticAccessTokenCredential(access_token)
 
-        actualCredential = get_mixedreality_credential(
+        actual_credential = get_mixedreality_credential(
             account_id="account_id",
             account_domain="account_domain",
             endpoint_url="http://my.endpoint.url",
             credential=credential)
 
-        assert credential == actualCredential
+        assert credential == actual_credential
 
     def test_get_mixedreality_credential_other_credential(self):
         keyCredential = AzureKeyCredential("my_account_key")
         credential = MixedRealityAccountKeyCredential("account_id", keyCredential)
 
-        actualCredential = get_mixedreality_credential(
+        actual_credential = get_mixedreality_credential(
             account_id="account_id",
             account_domain="account_domain",
             endpoint_url="http://my.endpoint.url",
             credential=credential)
 
-        assert credential != actualCredential
-        assert isinstance(actualCredential, MixedRealityTokenCredential)
+        assert credential != actual_credential
+        assert isinstance(actual_credential, MixedRealityTokenCredential)

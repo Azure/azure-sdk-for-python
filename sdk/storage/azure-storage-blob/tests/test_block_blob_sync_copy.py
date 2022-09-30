@@ -1,27 +1,25 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-
 from datetime import datetime, timedelta
+
+import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
+    BlobClient,
+    BlobSasPermissions,
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    StorageErrorCode,
-    BlobSasPermissions,
-    generate_blob_sas
+    generate_blob_sas,
+    StorageErrorCode
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-
 from azure.storage.blob._shared.policies import StorageContentValidation
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -29,7 +27,7 @@ SOURCE_BLOB_SIZE = 8 * 1024
 
 # ------------------------------------------------------------------------------
 
-class StorageBlockBlobTest(StorageTestCase):
+class TestStorageBlockBlob(StorageRecordedTestCase):
 
     def _setup(self, storage_account_name, key, container_prefix='utcontainer'):
         account_url = self.account_url(storage_account_name, "blob")
@@ -60,7 +58,8 @@ class StorageBlockBlobTest(StorageTestCase):
             blob_with_special_chars.upload_blob(self.source_blob_with_special_chars_data)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = generate_blob_sas(
+        sas_token = self.generate_sas(
+            generate_blob_sas,
             blob.account_name,
             blob.container_name,
             blob.blob_name,
@@ -70,7 +69,8 @@ class StorageBlockBlobTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         # generate a SAS so that it is accessible with a URL
-        sas_token_for_special_chars = generate_blob_sas(
+        sas_token_for_special_chars = self.generate_sas(
+            generate_blob_sas,
             blob_with_special_chars.account_name,
             blob_with_special_chars.container_name,
             blob_with_special_chars.blob_name,
@@ -85,7 +85,11 @@ class StorageBlockBlobTest(StorageTestCase):
             blob_with_special_chars.url, credential=sas_token_for_special_chars).url
 
     @BlobPreparer()
-    def test_put_block_from_url_with_oauth(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_block_from_url_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         self._setup(storage_account_name, storage_account_key, container_prefix="container1")
         split = 4 * 1024
@@ -94,7 +98,7 @@ class StorageBlockBlobTest(StorageTestCase):
         token = "Bearer {}".format(self.generate_oauth_token().get_token("https://storage.azure.com/.default").token)
 
         # Assert this operation fails without a credential
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             destination_blob_client.stage_block_from_url(
                 block_id=1,
                 source_url=self.source_blob_url_without_sas,
@@ -115,20 +119,24 @@ class StorageBlockBlobTest(StorageTestCase):
             source_authorization=token)
 
         committed, uncommitted = destination_blob_client.get_block_list('all')
-        self.assertEqual(len(uncommitted), 2)
-        self.assertEqual(len(committed), 0)
+        assert len(uncommitted) == 2
+        assert len(committed) == 0
 
         # Act part 2: commit the blocks
         destination_blob_client.commit_block_list(['1', '2'])
 
         # Assert destination blob has right content
         destination_blob_data = destination_blob_client.download_blob().readall()
-        self.assertEqual(len(destination_blob_data), 8 * 1024)
-        self.assertEqual(destination_blob_data, self.source_blob_data)
-        self.assertEqual(self.source_blob_data, destination_blob_data)
+        assert len(destination_blob_data) == (8 * 1024)
+        assert destination_blob_data == self.source_blob_data
+        assert self.source_blob_data == destination_blob_data
 
     @BlobPreparer()
-    def test_put_block_from_url_and_commit(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_block_from_url_and_commit(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
@@ -148,16 +156,16 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert blocks
         committed, uncommitted = dest_blob.get_block_list('all')
-        self.assertEqual(len(uncommitted), 2)
-        self.assertEqual(len(committed), 0)
+        assert len(uncommitted) == 2
+        assert len(committed) == 0
 
         # Act part 2: commit the blocks
         dest_blob.commit_block_list(['1', '2'])
 
         # Assert destination blob has right content
         content = dest_blob.download_blob().readall()
-        self.assertEqual(len(content), 8 * 1024)
-        self.assertEqual(content, self.source_blob_data)
+        assert len(content) == (8 * 1024)
+        assert content == self.source_blob_data
 
         dest_blob.stage_block_from_url(
             block_id=3,
@@ -172,19 +180,23 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert blocks
         committed, uncommitted = dest_blob.get_block_list('all')
-        self.assertEqual(len(uncommitted), 2)
-        self.assertEqual(len(committed), 2)
+        assert len(uncommitted) == 2
+        assert len(committed) == 2
 
         # Act part 2: commit the blocks
         dest_blob.commit_block_list(['3', '4'])
 
         # Assert destination blob has right content
         content = dest_blob.download_blob().readall()
-        self.assertEqual(len(content), 8 * 1024)
-        self.assertEqual(content, self.source_blob_with_special_chars_data)
+        assert len(content) == (8 * 1024)
+        assert content == self.source_blob_with_special_chars_data
 
     @BlobPreparer()
-    def test_put_block_from_url_and_validate_content_md5(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_block_from_url_and_validate_content_md5(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
@@ -200,27 +212,31 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert block was staged
         committed, uncommitted = dest_blob.get_block_list('all')
-        self.assertEqual(len(uncommitted), 1)
-        self.assertEqual(len(committed), 0)
+        assert len(uncommitted) == 1
+        assert len(committed) == 0
 
         # Act part 2: put block from url with wrong md5
         fake_md5 = StorageContentValidation.get_content_md5(b"POTATO")
-        with self.assertRaises(HttpResponseError) as error:
+        with pytest.raises(HttpResponseError) as error:
             dest_blob.stage_block_from_url(
                 block_id=2,
                 source_url=self.source_blob_url,
                 source_content_md5=fake_md5,
                 source_offset=0,
                 source_length=8 * 1024)
-        self.assertEqual(error.exception.error_code, StorageErrorCode.md5_mismatch)
+        assert error.value.error_code == StorageErrorCode.md5_mismatch
 
         # Assert block was not staged
         committed, uncommitted = dest_blob.get_block_list('all')
-        self.assertEqual(len(uncommitted), 1)
-        self.assertEqual(len(committed), 0)
+        assert len(uncommitted) == 1
+        assert len(committed) == 0
 
     @BlobPreparer()
-    def test_copy_blob_sync(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_copy_blob_sync(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
@@ -229,28 +245,31 @@ class StorageBlockBlobTest(StorageTestCase):
         copy_props = dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
 
         # Assert
-        self.assertIsNotNone(copy_props)
-        self.assertIsNotNone(copy_props['copy_id'])
-        self.assertEqual('success', copy_props['copy_status'])
+        assert copy_props is not None
+        assert (copy_props['copy_id']) is not None
+        assert 'success' == copy_props['copy_status']
 
         # Verify content
         content = dest_blob.download_blob().readall()
-        self.assertEqual(self.source_blob_data, content)
+        assert self.source_blob_data == content
 
         copy_props_with_special_chars = dest_blob.start_copy_from_url(self.source_blob_url_with_special_chars, requires_sync=True)
 
         # Assert
-        self.assertIsNotNone(copy_props_with_special_chars)
-        self.assertIsNotNone(copy_props_with_special_chars['copy_id'])
-        self.assertEqual('success', copy_props_with_special_chars['copy_status'])
+        assert copy_props_with_special_chars is not None
+        assert copy_props_with_special_chars['copy_id'] is not None
+        assert 'success' == copy_props_with_special_chars['copy_status']
 
         # Verify content
         content = dest_blob.download_blob().readall()
-        self.assertEqual(self.source_blob_with_special_chars_data, content)
+        assert self.source_blob_with_special_chars_data == content
 
-    @pytest.mark.playback_test_only
     @BlobPreparer()
-    def test_sync_copy_blob_returns_vid(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_sync_copy_blob_returns_vid(self, **kwargs):
+        storage_account_name = kwargs.pop("versioned_storage_account_name")
+        storage_account_key = kwargs.pop("versioned_storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
@@ -259,11 +278,11 @@ class StorageBlockBlobTest(StorageTestCase):
         copy_props = dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
 
         # Assert
-        self.assertIsNotNone(copy_props['version_id'])
-        self.assertIsNotNone(copy_props)
-        self.assertIsNotNone(copy_props['copy_id'])
-        self.assertEqual('success', copy_props['copy_status'])
+        assert copy_props['version_id'] is not None
+        assert copy_props is not None
+        assert copy_props['copy_id'] is not None
+        assert 'success' == copy_props['copy_status']
 
         # Verify content
         content = dest_blob.download_blob().readall()
-        self.assertEqual(self.source_blob_data, content)
+        assert self.source_blob_data == content

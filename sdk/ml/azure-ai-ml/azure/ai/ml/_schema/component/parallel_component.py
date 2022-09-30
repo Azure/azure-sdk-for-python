@@ -2,21 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=protected-access
 
 from copy import deepcopy
 
 import yaml
 from marshmallow import INCLUDE, fields, post_load
 
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._schema.component.resource import ComponentResourceSchema
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.core.fields import FileRefField
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, ComponentSource, LoggingLevel, NodeType
+from azure.ai.ml._schema.core.fields import FileRefField, NestedField, StringTransformedEnum
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LoggingLevel
+from azure.ai.ml.constants._component import ComponentSource, NodeType
 
 
 class ParallelComponentSchema(ComponentSchema):
@@ -24,10 +24,11 @@ class ParallelComponentSchema(ComponentSchema):
     resources = NestedField(ComponentResourceSchema, unknown=INCLUDE)
     logging_level = StringTransformedEnum(
         allowed_values=[LoggingLevel.DEBUG, LoggingLevel.INFO, LoggingLevel.WARN],
-        casing_transform=lambda *args: None,
+        casing_transform=lambda x: x,
         dump_default=LoggingLevel.INFO,
         metadata={
-            "description": "A string of the logging level name, which is defined in 'logging'. Possible values are 'WARNING', 'INFO', and 'DEBUG'."
+            "description": "A string of the logging level name, which is defined in 'logging'. \
+            Possible values are 'WARNING', 'INFO', and 'DEBUG'."
         },
     )
     task = NestedField(ComponentParallelTaskSchema, unknown=INCLUDE)
@@ -43,13 +44,20 @@ class ParallelComponentSchema(ComponentSchema):
     error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
-            "description": "The number of item processing failures should be ignored. If the error_threshold is reached, the job terminates. For a list of files as inputs, one item means one file reference. This setting doesn't apply to command parallelization."
+            "description": "The number of item processing failures should be ignored. \
+            If the error_threshold is reached, the job terminates. \
+            For a list of files as inputs, one item means one file reference. \
+            This setting doesn't apply to command parallelization."
         },
     )
     mini_batch_error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
-            "description": "The number of mini batch processing failures should be ignored. If the mini_batch_error_threshold is reached, the job terminates. For a list of files as inputs, one item means one file reference. This setting can be used by either command or python function parallelization. Only one error_threshold setting can be used in one job."
+            "description": "The number of mini batch processing failures should be ignored. \
+            If the mini_batch_error_threshold is reached, the job terminates. \
+            For a list of files as inputs, one item means one file reference. \
+            This setting can be used by either command or python function parallelization. \
+            Only one error_threshold setting can be used in one job."
         },
     )
 
@@ -91,6 +99,7 @@ class ParallelComponentFileRefField(FileRefField):
         # Update base_path to parent path of component file.
         component_schema_context = deepcopy(self.context)
         component_schema_context[BASE_PATH_CONTEXT_KEY] = source_path.parent
+        # pylint: disable=no-member
         component = AnonymousParallelComponentSchema(context=component_schema_context).load(
             component_dict, unknown=INCLUDE
         )

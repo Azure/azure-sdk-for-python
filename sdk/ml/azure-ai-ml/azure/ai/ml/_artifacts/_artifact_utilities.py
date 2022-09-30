@@ -14,7 +14,6 @@ from typing import Dict, Optional, Tuple, TypeVar, Union
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
@@ -37,11 +36,12 @@ from azure.ai.ml._utils._storage_utils import (
     get_storage_client,
 )
 from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
-from azure.ai.ml.constants import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
+from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
@@ -54,7 +54,7 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
     try:
         datastore_name = get_resource_name_from_arm_id(datastore_name)
     except (ValueError, AttributeError, ValidationException):
-        module_logger.debug(f"datastore_name {datastore_name} is not a full arm id. Proceed with a shortened name.\n")
+        module_logger.debug("datastore_name %s is not a full arm id. Proceed with a shortened name.\n", datastore_name)
     datastore_name = remove_aml_prefix(datastore_name)
     if is_ARM_id_for_resource(datastore_name):
         datastore_name = get_resource_name_from_arm_id(datastore_name)
@@ -81,7 +81,7 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
     else:
         try:
             datastore_info["credential"] = credentials.sas_token
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             if not hasattr(credentials, "sas_token"):
                 datastore_info["credential"] = operations._credential
             else:
@@ -91,11 +91,11 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
         datastore_info["container_name"] = str(datastore.container_name)
     elif datastore.type == DatastoreType.AZURE_DATA_LAKE_GEN2:
         datastore_info["container_name"] = str(datastore.filesystem)
-    elif datastore.type == DatastoreType.AZURE_FILE:
-        datastore_info["container_name"] = str(datastore.file_share_name)
     else:
-        datastore_info["container_name"] = ""
-        module_logger.warning(f"Warning: datastore type {datastore.type} may not be supported for uploads.")
+        raise Exception(
+            f"Datastore type {datastore.type} is not supported for uploads. "
+            f"Supported types are {DatastoreType.AZURE_BLOB} and {DatastoreType.AZURE_DATA_LAKE_GEN2}."
+        )
 
     return datastore_info
 
@@ -138,7 +138,7 @@ def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_fold
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
         elif isinstance(storage_client, Gen2StorageClient):
-            token = generate_file_sas(
+            token = generate_file_sas( # pylint: disable=no-value-for-parameter
                 account_name=ds_info["storage_account"],
                 file_system_name=ds_info["container_name"],
                 file_name=item_name,
@@ -280,6 +280,7 @@ def _upload_to_datastore(
     operation_scope: OperationScope,
     datastore_operation: DatastoreOperations,
     path: Union[str, Path, os.PathLike],
+    artifact_type: str,
     datastore_name: str = None,
     show_progress: bool = True,
     asset_name: str = None,
@@ -288,7 +289,7 @@ def _upload_to_datastore(
     ignore_file: IgnoreFile = None,
     sas_uri: str = None,  # contains regstry sas url
 ) -> ArtifactStorageInfo:
-    _validate_path(path)
+    _validate_path(path, _type=artifact_type)
     if not ignore_file:
         ignore_file = get_ignore_file(path)
     if not asset_hash:
@@ -312,7 +313,9 @@ def _upload_and_generate_remote_uri(
     operation_scope: OperationScope,
     datastore_operation: DatastoreOperations,
     path: Union[str, Path, os.PathLike],
-    datastore_name: str = None,
+    artifact_type: str = ErrorTarget.ARTIFACT,
+    datastore_name: str = WORKSPACE_BLOB_STORE,
+    show_progress: bool = True,
 ) -> str:
 
     # Asset name is required for uploading to a datastore
@@ -323,6 +326,8 @@ def _upload_and_generate_remote_uri(
         path=path,
         datastore_name=datastore_name,
         asset_name=asset_name,
+        artifact_type=artifact_type,
+        show_progress=show_progress,
     )
 
     path = artifact_info.relative_path
@@ -358,8 +363,10 @@ T = TypeVar("T", bound=Artifact)
 def _check_and_upload_path(
     artifact: T,
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
+    artifact_type: str,
     datastore_name: str = None,
     sas_uri: str = None,
+    show_progress: bool = True,
 ) -> Tuple[T, str]:
     """Checks whether `artifact` is a path or a uri and uploads it to the
     datastore if necessary.
@@ -371,6 +378,7 @@ def _check_and_upload_path(
     param str sas_uri: the sas uri to use for uploading
     """
 
+    datastore_name = artifact.datastore
     indicator_file = None
     if (
         hasattr(artifact, "local_path")
@@ -397,6 +405,8 @@ def _check_and_upload_path(
             asset_version=str(artifact.version),
             asset_hash=artifact._upload_hash if hasattr(artifact, "_upload_hash") else None,
             sas_uri=sas_uri,
+            artifact_type=artifact_type,
+            show_progress=show_progress,
         )
         indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
         if artifact._is_anonymous:
@@ -410,7 +420,10 @@ def _check_and_upload_path(
 
 
 def _check_and_upload_env_build_context(
-    environment: Environment, operations: "EnvironmentOperations", sas_uri=None
+    environment: Environment,
+    operations: "EnvironmentOperations",
+    sas_uri=None,
+    show_progress: bool = True,
 ) -> Environment:
     if environment.path:
         uploaded_artifact = _upload_to_datastore(
@@ -421,6 +434,9 @@ def _check_and_upload_env_build_context(
             asset_version=str(environment.version),
             asset_hash=environment._upload_hash,
             sas_uri=sas_uri,
+            artifact_type=ErrorTarget.ENVIRONMENT,
+            datastore_name=environment.datastore,
+            show_progress=show_progress,
         )
         # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
         environment.build.path = uploaded_artifact.full_storage_path + "/"

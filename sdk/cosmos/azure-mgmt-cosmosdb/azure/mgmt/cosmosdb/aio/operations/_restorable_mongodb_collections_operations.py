@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -53,13 +54,7 @@ class RestorableMongodbCollectionsOperations:
 
     @distributed_trace
     def list(
-        self,
-        location: str,
-        instance_id: str,
-        restorable_mongodb_database_rid: Optional[str] = None,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
-        **kwargs: Any
+        self, location: str, instance_id: str, restorable_mongodb_database_rid: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.RestorableMongodbCollectionGetResult"]:
         """Show the event feed of all mutations done on all the Azure Cosmos DB MongoDB collections under
         a specific database.  This helps in scenario where container was accidentally deleted.  This
@@ -73,10 +68,6 @@ class RestorableMongodbCollectionsOperations:
         :param restorable_mongodb_database_rid: The resource ID of the MongoDB database. Default value
          is None.
         :type restorable_mongodb_database_rid: str
-        :param start_time: Restorable MongoDB collections event feed start time. Default value is None.
-        :type start_time: str
-        :param end_time: Restorable MongoDB collections event feed end time. Default value is None.
-        :type end_time: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RestorableMongodbCollectionGetResult or the result
          of cls(response)
@@ -90,7 +81,12 @@ class RestorableMongodbCollectionsOperations:
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableMongodbCollectionsListResult]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -101,8 +97,6 @@ class RestorableMongodbCollectionsOperations:
                     instance_id=instance_id,
                     subscription_id=self._config.subscription_id,
                     restorable_mongodb_database_rid=restorable_mongodb_database_rid,
-                    start_time=start_time,
-                    end_time=end_time,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,

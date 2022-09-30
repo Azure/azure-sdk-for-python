@@ -52,6 +52,7 @@ test_subscriptions = [
     "b17253fa-f327-42d6-9686-f3e553e2452",
     "74eccef0-4b8d-4f83-b5f9-fa100d155b22",
     "4faaaf21-663f-4391-96fd-47197c630979",
+    "00000000-0000-0000-0000-000000000",
 ]
 
 
@@ -60,7 +61,13 @@ def is_telemetry_collection_disabled():
     return telemetry_disabled and (telemetry_disabled.lower() == "true" or telemetry_disabled == "1")
 
 
-def get_appinsights_log_handler(user_agent, instrumentation_key=None, component_name=None, *args, **kwargs):
+def get_appinsights_log_handler(
+    user_agent,
+    *args, # pylint: disable=unused-argument
+    instrumentation_key=None,
+    component_name=None,
+    **kwargs
+):
     """Enable the Application Insights logging handler for specified logger and
     instrumentation key.
 
@@ -105,7 +112,7 @@ def get_appinsights_log_handler(user_agent, instrumentation_key=None, component_
         handler = AppInsightsLoggingHandler(instrumentation_key, current_logger, telemetry_context=context)
 
         return handler
-    except Exception:
+    except Exception: # pylint: disable=broad-except
         # ignore exceptions, telemetry should not block
         return logging.NullHandler()
 
@@ -127,7 +134,7 @@ class AppInsightsLoggingHandler(logging.Handler):
     :type kwargs: dict
     """
 
-    def __init__(self, instrumentation_key, logger, sender=None, *args, **kwargs):
+    def __init__(self, instrumentation_key, logger, *args, sender=None, **kwargs):
         """Initialize a new instance of the class.
 
         :param instrumentation_key: The instrumentation key to use while sending telemetry to the Application
@@ -204,7 +211,7 @@ class AppInsightsLoggingHandler(logging.Handler):
                 return
             # otherwise, send the trace
             self._default_client.track_trace(formatted_message, severity=record.levelname, properties=properties)
-        except Exception:
+        except Exception: # pylint: disable=broad-except
             # ignore exceptions, telemetry should not block because of trimming
             return
 
@@ -265,8 +272,7 @@ class _RetrySynchronousSender(SynchronousSender):
         if status is SUCCESS:
             self.consecutive_failures = 0
             return
-        else:
-            self.consecutive_failures = self.consecutive_failures + 1
+        self.consecutive_failures = self.consecutive_failures + 1
 
         if self.consecutive_failures <= self.retry:
             for data in data_to_send:
@@ -295,8 +301,7 @@ class _RetryAsynchronousSender(AsynchronousSender):
         if status is SUCCESS:
             self.consecutive_failures = 0
             return
-        else:
-            self.consecutive_failures = self.consecutive_failures + 1
+        self.consecutive_failures = self.consecutive_failures + 1
 
         if self.consecutive_failures <= self.retry:
             for data in data_to_send:
@@ -335,7 +340,7 @@ def _http_send(logger, data_to_send, service_endpoint_uri, send_timeout=10):
         },
     )
     try:
-        response = http_client_t.urlopen(request, timeout=send_timeout)
+        response = http_client_t.urlopen(request, timeout=send_timeout) # nosec
         logger.info("Sending %d bytes", len(content))
         status_code = response.getcode()
         if 200 <= status_code < 300:

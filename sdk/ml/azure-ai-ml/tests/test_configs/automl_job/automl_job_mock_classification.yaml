@@ -17,6 +17,7 @@ limits:
 
 # data:
 target_column_name: safedriver
+positive_label: label
 n_cross_validations: 2
 cv_split_column_names:
   - Quantity
