@@ -242,7 +242,7 @@ def _validate_args(func, args, kwargs):
 
     def _is_supported_data_type(_data):
         return (
-            isinstance(_data, SUPPORTED_INPUT_TYPES + (PipelineExpression))
+            isinstance(_data, SUPPORTED_INPUT_TYPES + (PipelineExpression,))
             or is_parameter_group(_data)
         )
 
