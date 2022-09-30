@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2022-09-30)
+## 28.0.1 (2022-09-30)
 
+### Bugs Fixed
 
+  - Fix paging problem about `api_version`
 
 ## 28.0.0 (2022-09-20)
 
