@@ -1,5 +1,5 @@
 from typing import Callable
-from unittest.mock import DEFAULT, Mock, call, patch
+from unittest.mock import DEFAULT, MagicMock, Mock, call, patch
 
 import pytest
 from azure.ai.ml import load_registry
@@ -52,9 +52,24 @@ class TestRegistryOperation:
             source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
         )
         # valid creation of new registry
+        mock_registry_operation._operation.get = MagicMock(return_value=None)
         mock_registry_operation.begin_create(registry=reg)
+        mock_registry_operation._operation.get.assert_called_once()
         mock_registry_operation._operation.begin_create_or_update.assert_called_once()
 
-        # create existing registry - calls GET
-        # mock_registry_operation.begin_create(registry=reg)
-        # mock_registry_operation._operation.begin_create_or_update.assert_not_called()
+
+    def test_create_on_existing(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
+        reg_name = f"unittest{randstr('reg_name')}"
+        params_override = [
+            {
+                "name": reg_name
+            }
+        ]
+        reg = load_registry(
+            source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
+        )
+        # Any non-None return value from the pre-emptive 'get' call short-circuits the function
+        # and prevents begin_create_or_update from being called
+        mock_registry_operation._operation.get = MagicMock(return_value=1)
+        mock_registry_operation.begin_create(registry=reg)
+        mock_registry_operation._operation.get.assert_called_once()
