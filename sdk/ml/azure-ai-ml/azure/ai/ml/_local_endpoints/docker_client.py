@@ -520,7 +520,11 @@ def _get_container_name(endpoint_name: str, deployment_name: str = None) -> str:
     return f"{endpoint_name}.{deployment_name}" if deployment_name else endpoint_name
 
 
-def _validate_container_state(endpoint_name: str, deployment_name: str, container: "docker.models.containers.Container"):
+def _validate_container_state(
+    endpoint_name: str,
+    deployment_name: str,
+    container: "docker.models.containers.Container",
+):
     """Returns a container name.
 
     :param endpoint_name: name of local endpoint

@@ -159,7 +159,10 @@ class _LocalEndpointHelper(object):
             raise LocalEndpointNotFoundError(endpoint_name=name)
 
 
-def _convert_container_to_endpoint(container: "docker.models.containers.Container", endpoint_json: dict = None) -> OnlineEndpoint:
+def _convert_container_to_endpoint(
+    container: "docker.models.containers.Container",
+    endpoint_json: dict = None,
+) -> OnlineEndpoint:
     """Converts provided Container for local deployment to OnlineEndpoint
     entity.
 
