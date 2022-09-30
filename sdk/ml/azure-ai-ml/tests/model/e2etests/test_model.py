@@ -201,6 +201,10 @@ class TestModel(AzureRecordedTestCase):
         model_list = [m.name for m in model_list if m is not None]
         assert model.name in model_list
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Registry uploads do not record well. Investigate later"
+    )
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")

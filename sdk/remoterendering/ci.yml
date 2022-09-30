@@ -29,6 +29,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: remoterendering
+    TestProxy: true
     Artifacts:
     - name: azure-mixedreality-remoterendering
       safeName: azuremixedrealityremoterendering
