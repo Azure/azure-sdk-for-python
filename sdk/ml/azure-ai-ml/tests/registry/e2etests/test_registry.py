@@ -6,7 +6,7 @@ from typing import Callable
 import pytest
 from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
-from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentityType
+from azure.ai.ml.constants._registry import ManagedServiceIdentityType
 from azure.core.paging import ItemPaged
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 

@@ -17,7 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryPropertie
 from azure.ai.ml._schema.registry.registry import RegistrySchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.entities._registry.identity import ManagedServiceIdentity
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._experimental import experimental
@@ -35,7 +35,7 @@ class Registry(Resource):
         *,
         name: str,
         location: str,
-        identity: ManagedServiceIdentity = None,
+        identity: IdentityConfiguration = None,
         description: str = None,
         tags: Dict[str, str] = None,
         public_network_access: str = None,
@@ -154,7 +154,7 @@ class Registry(Resource):
             ]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
-            identity = ManagedServiceIdentity._from_rest_object(rest_obj.identity)
+            identity = IdentityConfiguration._from_rest_object(rest_obj.identity)
         return Registry(
             name=rest_obj.name,
             description=real_registry.description,
