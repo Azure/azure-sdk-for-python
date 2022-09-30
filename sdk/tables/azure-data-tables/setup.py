@@ -66,6 +66,6 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",
         "msrest>=0.7.1",
-        "yarl"
+        "yarl<2.0,>=1.0"
     ],
 )
