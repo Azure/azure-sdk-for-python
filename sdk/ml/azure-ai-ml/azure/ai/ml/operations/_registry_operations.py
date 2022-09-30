@@ -108,7 +108,7 @@ class RegistryOperations:
         self,
         registry: Registry,
         **kwargs: Dict,
-    ) -> LROPoller["_models.Registry"]:
+    ) -> LROPoller[Registry]:
         """Create a new Azure Machine Learning Registry.
 
         Returns the registry if already exists.
@@ -118,14 +118,6 @@ class RegistryOperations:
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """
-        existing_registry = None
-        try:
-            existing_registry = self.get(name=registry.name)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        if existing_registry:
-            # for now return existing registries until UPDATE is implemented
-            return existing_registry
         registry_data = registry._to_rest_object()
         poller = self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
