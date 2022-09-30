@@ -15,7 +15,7 @@ from ._job import (
     ImportSourceType,
     JobType,
 )
-from ._registry import ManagedServiceIdentityType as RegistryManagedServiceIdentityType
+from ._registry import ManagedServiceIdentityType as RegistryManagedServiceIdentityType, StorageAccountType, AcrAccountSku
 from ._workspace import ManagedServiceIdentityType
 
 __all__ = [
