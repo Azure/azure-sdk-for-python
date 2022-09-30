@@ -15,7 +15,7 @@ class ManagedServiceIdentity:
     def __init__(
         self,
         *,
-        type: Union[str, "ManagedServiceIdentityType"],
+        type: Union[str, ManagedServiceIdentityType], # pylint: disable=redefined-builtin
         principal_id: str = None,
         tenant_id: str = None,
         user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
@@ -30,7 +30,7 @@ class ManagedServiceIdentity:
         if self.user_assigned_identities:
             user_assigned_identities = {}
             for k, v in self.user_assigned_identities.items():
-                user_assigned_identities[k] = v._to_rest_object() if v else None
+                user_assigned_identities[k] = v._to_rest_object() if v else None # pylint: disable=protected-access
 
         return RestManagedServiceIdentity(
             type=self.type,
@@ -47,7 +47,7 @@ class ManagedServiceIdentity:
             for k, v in obj.user_assigned_identities.items():
                 metadata = None
                 if v and isinstance(v, RestUserAssignedIdentity):
-                    metadata = UserAssignedIdentity._from_rest_object(v)
+                    metadata = UserAssignedIdentity._from_rest_object(v) # pylint: disable=protected-access
                 user_assigned_identities[k] = metadata
         return cls(
             type=obj.type,

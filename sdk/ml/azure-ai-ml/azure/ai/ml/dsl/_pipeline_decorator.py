@@ -107,7 +107,7 @@ def pipeline(
     """
 
     def pipeline_decorator(func: _TFunc) -> _TFunc:
-        if not isinstance(func, Callable):
+        if not isinstance(func, Callable): # pylint: disable=isinstance-second-argument-not-valid-type
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none

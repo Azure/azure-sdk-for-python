@@ -12,12 +12,6 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._workspace.connections.credentials import (
-    ManagedIdentityCredentials,
-    SasTokenCredentials,
-    ServicePrincipalCredentials,
-    UsernamePasswordCredentials,
-)
 from azure.ai.ml.entities._credentials import PatTokenConfiguration, SasTokenConfiguration, \
     UsernamePasswordConfiguration, ManagedIdentityConfiguration, ServicePrincipalConfiguration
 

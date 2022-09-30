@@ -88,6 +88,7 @@ class MLClient(object):
     models and so on.
     """
 
+    # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,
         credential: TokenCredential,

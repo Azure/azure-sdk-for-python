@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
+from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -21,7 +21,6 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import (
-    AML_INTERNAL_LOGGER_NAMESPACE,
     ActivityType,
     monitor_with_activity,
     monitor_with_telemetry_mixin,
@@ -163,7 +162,8 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: Optional[str]
         :param label: Label of the component. (mutually exclusive with version)
         :type label: Optional[str]
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully identified and retrieved. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully
+            identified and retrieved. Details will be provided in the error message.
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
         """
@@ -265,10 +265,15 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param skip_validation: whether to skip validation before creating/updating the component
         :type skip_validation: bool
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ComponentException: Raised if Component type is unsupported. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Component model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ComponentException: Raised if Component type is unsupported.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Component model cannot be successfully validated.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The specified component object.
         :rtype: ~azure.ai.ml.entities.Component
@@ -480,7 +485,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
-        from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._builders import BaseNode
         from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict

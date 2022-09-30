@@ -89,9 +89,9 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
     ) -> "AutoMLJob":
+        inside_pipeline = kwargs.get("inside_pipeline", False)
         task_type = data.get(AutoMLConstants.TASK_TYPE_YAML)
         class_type = cls._get_task_mapping().get(task_type, None)
         if class_type:
@@ -150,7 +150,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             camel_to_snake(TaskType.TEXT_CLASSIFICATION_MULTILABEL): TextClassificationMultilabelJob,
         }
 
-    def _resolve_data_inputs(self, rest_job):
+    def _resolve_data_inputs(self, rest_job): # pylint: disable=no-self-use
         """Resolve JobInputs to MLTableJobInputs within data_settings."""
         if isinstance(rest_job.training_data, Input):
             rest_job.training_data = MLTableJobInput(uri=rest_job.training_data.path)
@@ -162,8 +162,8 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     def _restore_data_inputs(self):
         """Restore MLTableJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, MLTableJobInput):
-            self.training_data = Input(type=AssetTypes.MLTABLE, path=self.training_data.uri)
+            self.training_data = Input(type=AssetTypes.MLTABLE, path=self.training_data.uri) # pylint: disable=no-member
         if isinstance(self.validation_data, MLTableJobInput):
-            self.validation_data = Input(type=AssetTypes.MLTABLE, path=self.validation_data.uri)
+            self.validation_data = Input(type=AssetTypes.MLTABLE, path=self.validation_data.uri) # pylint: disable=no-member
         if hasattr(self, "test_data") and isinstance(self.test_data, MLTableJobInput):
-            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)
+            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri) # pylint: disable=no-member

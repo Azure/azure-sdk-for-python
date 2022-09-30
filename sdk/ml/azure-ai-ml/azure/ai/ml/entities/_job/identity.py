@@ -30,15 +30,15 @@ class Identity(ABC, RestTranslatableMixin):
 
         identity_class = mapping.get(obj.identity_type, None)
         if identity_class:
+            # pylint: disable=protected-access
             return identity_class._from_rest_object(obj)
-        else:
-            msg = f"Unknown identity type: {obj.identity_type}"
-            raise JobException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.IDENTITY,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+        msg = f"Unknown identity type: {obj.identity_type}"
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.IDENTITY,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Identity):
@@ -50,6 +50,7 @@ class AmlToken(Identity):
     """AML Token identity configuration."""
 
     def __init__(self):
+        super().__init__()
         self.type = camel_to_snake(IdentityConfigurationType.AML_TOKEN)
 
     def _to_rest_object(self) -> RestAmlToken:
@@ -82,6 +83,7 @@ class ManagedIdentity(Identity, DictMixin):
         object_id: str = None,
         msi_resource_id: str = None,
     ):
+        super().__init__()
         self.type = camel_to_snake(IdentityConfigurationType.MANAGED)
         self.client_id = client_id
         self.object_id = object_id
@@ -107,6 +109,7 @@ class UserIdentity(Identity):
     """User identity configuration."""
 
     def __init__(self):
+        super().__init__()
         self.type = camel_to_snake(IdentityConfigurationType.USER_IDENTITY)
 
     def _to_rest_object(self) -> RestUserIdentity:

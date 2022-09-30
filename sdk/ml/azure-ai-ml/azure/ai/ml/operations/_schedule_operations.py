@@ -18,7 +18,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from .._restclient.v2022_10_01_preview.models import ListViewType, ScheduleListViewType
+from .._restclient.v2022_10_01_preview.models import ScheduleListViewType
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import AzureMLResourceType, LROConfigurations
 from . import JobOperations
@@ -74,11 +74,12 @@ class ScheduleOperations(_ScopeDependentOperations):
     def list(
         self,
         *,
-        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,
+        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY, # pylint: disable=unused-argument
     ) -> Iterable[JobSchedule]:
         """List schedules in specified workspace.
 
-        :param list_view_type: View type for including/excluding (for example) archived schedules. Default: ENABLED_ONLY.
+        :param list_view_type: View type for including/excluding (for example)
+            archived schedules. Default: ENABLED_ONLY.
         :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list JobSchedule.
         :rtype: Iterable[JobSchedule]

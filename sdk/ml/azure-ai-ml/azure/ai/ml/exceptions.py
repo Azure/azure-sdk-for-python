@@ -77,6 +77,7 @@ class ErrorTarget:
     ARM_RESOURCE = "ArmResource"
     ARTIFACT = "Artifact"
     SCHEDULE = "Schedule"
+    REGISTRY = "Registry"
     UNKNOWN = "Unknown"
 
 

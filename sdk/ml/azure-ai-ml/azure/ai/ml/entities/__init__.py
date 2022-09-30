@@ -147,7 +147,7 @@ __all__ = [
     "WorkspaceKeys",
     "WorkspaceConnection",
     "ManagedServiceIdentity",
-    "WorkspaceUserAssignedIdentity",
+    "WorkspaceUserAssignedIdentity", # pylint: disable=naming-mismatch
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",

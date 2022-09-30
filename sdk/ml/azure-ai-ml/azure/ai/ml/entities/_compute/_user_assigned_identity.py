@@ -26,7 +26,7 @@ class UserAssignedIdentity(RestTranslatableMixin):
         return RestUserAssignedIdentity()
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestUserAssignedIdentity, **kwargs) -> "UserAssignedIdentity":
+    def _from_rest_object(cls, obj: RestUserAssignedIdentity, **kwargs) -> "UserAssignedIdentity":
         result = cls(resource_id=kwargs["resource_id"])
-        result.__dict__.update(rest_obj.as_dict())
+        result.__dict__.update(obj.as_dict())
         return result
