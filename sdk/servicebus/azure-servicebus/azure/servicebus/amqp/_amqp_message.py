@@ -9,7 +9,7 @@ import time
 import uuid
 from datetime import datetime
 import warnings
-from typing import Optional, Any, cast, Mapping, Union, Dict, List, Tuple
+from typing import Optional, Any, Tuple, cast, Mapping, Union, Dict, List
 
 from msrest.serialization import TZ_UTC
 import uamqp
@@ -19,10 +19,10 @@ from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
 
 
 class DictMixin(object):
-    def __setitem__(self, key: str, item: Optional[Union[str, bytes, int, bool, uuid.UUID]]) -> None:
+    def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
-    def __getitem__(self, key: str) -> Optional[Union[str, bytes, int, bool, uuid.UUID]]:
+    def __getitem__(self, key: str) -> Any:
         return self.__dict__[key]
 
     def __repr__(self) -> str:
@@ -56,10 +56,10 @@ class DictMixin(object):
     def keys(self) -> List[str]:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self) -> List[Optional[Union[str, bytes, int, bool, uuid.UUID]]]:
+    def values(self) -> List:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self) -> List[Tuple[str, Optional[Union[str, bytes, int, bool, uuid.UUID]]]]:
+    def items(self) -> List[Tuple[str, Any]]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key: str, default: Optional[Any] = None) -> Any:
