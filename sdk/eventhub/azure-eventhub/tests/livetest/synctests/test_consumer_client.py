@@ -9,11 +9,16 @@ from azure.eventhub._constants import ALL_PARTITIONS
 
 
 @pytest.mark.liveTest
-def test_receive_no_partition(connstr_senders):
+def test_receive_no_partition(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
     senders[1].send(EventData("Test EventData"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', receive_timeout=1)
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str,
+        consumer_group='$default',
+        receive_timeout=1,
+        uamqp_transport=uamqp_transport
+    )
 
     def on_event(partition_context, event):
         on_event.received += 1
@@ -46,10 +51,12 @@ def test_receive_no_partition(connstr_senders):
 
 
 @pytest.mark.liveTest
-def test_receive_partition(connstr_senders):
+def test_receive_partition(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
 
     def on_event(partition_context, event):
         on_event.received += 1
@@ -74,16 +81,18 @@ def test_receive_partition(connstr_senders):
 
 
 @pytest.mark.liveTest
-def test_receive_load_balancing(connstr_senders):
+def test_receive_load_balancing(connstr_senders, uamqp_transport):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - test code using multiple threads. Sometimes OSX aborts python process")
 
     connection_str, senders = connstr_senders
     cs = InMemoryCheckpointStore()
     client1 = EventHubConsumerClient.from_connection_string(
-        connection_str, consumer_group='$default', checkpoint_store=cs, load_balancing_interval=1)
+        connection_str, consumer_group='$default', checkpoint_store=cs, load_balancing_interval=1, uamqp_transport=uamqp_transport
+    )
     client2 = EventHubConsumerClient.from_connection_string(
-        connection_str, consumer_group='$default', checkpoint_store=cs, load_balancing_interval=1)
+        connection_str, consumer_group='$default', checkpoint_store=cs, load_balancing_interval=1, uamqp_transport=uamqp_transport
+    )
 
     def on_event(partition_context, event):
         pass
@@ -105,13 +114,15 @@ def test_receive_load_balancing(connstr_senders):
         assert len(client2._event_processors[("$default", ALL_PARTITIONS)]._consumers) == 1
 
 
-def test_receive_batch_no_max_wait_time(connstr_senders):
+def test_receive_batch_no_max_wait_time(connstr_senders, uamqp_transport):
     '''Test whether callback is called when max_wait_time is None and max_batch_size has reached
     '''
     connection_str, senders = connstr_senders
     senders[0].send(EventData("Test EventData"))
     senders[1].send(EventData("Test EventData"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
 
     def on_event_batch(partition_context, event_batch):
         on_event_batch.received += len(event_batch)
@@ -146,14 +157,14 @@ def test_receive_batch_no_max_wait_time(connstr_senders):
     worker.join()
 
 
+
 @pytest.mark.parametrize("max_wait_time, sleep_time, expected_result",
                          [(3, 10, []),
-                          (3, 2, None),
-                          ])
-def test_receive_batch_empty_with_max_wait_time(connection_str, max_wait_time, sleep_time, expected_result):
+                          (3, 2, None)])
+def test_receive_batch_empty_with_max_wait_time(uamqp_transport, connection_str, max_wait_time, sleep_time, expected_result):
     '''Test whether event handler is called when max_wait_time > 0 and no event is received
     '''
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
     def on_event_batch(partition_context, event_batch):
         on_event_batch.event_batch = event_batch
 
@@ -168,13 +179,15 @@ def test_receive_batch_empty_with_max_wait_time(connection_str, max_wait_time, s
     worker.join()
 
 
-def test_receive_batch_early_callback(connstr_senders):
+def test_receive_batch_early_callback(connstr_senders, uamqp_transport):
     ''' Test whether the callback is called once max_batch_size reaches and before max_wait_time reaches.
     '''
     connection_str, senders = connstr_senders
     for _ in range(10):
         senders[0].send(EventData("Test EventData"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
 
     def on_event_batch(partition_context, event_batch):
         on_event_batch.received += len(event_batch)

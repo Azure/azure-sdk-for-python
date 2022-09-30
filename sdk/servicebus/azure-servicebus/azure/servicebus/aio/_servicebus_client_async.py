@@ -6,10 +6,11 @@ from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
+import certifi
 
-import uamqp
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
+from .._pyamqp.aio import Connection
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import (
     ServiceBusSharedKeyCredential,
@@ -73,7 +74,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-     If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
@@ -123,6 +124,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
+        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
+        self._connection_verify = kwargs.get("connection_verify")
 
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
@@ -137,10 +140,14 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
     async def _create_uamqp_connection(self):
         auth = await create_authentication(self)
-        self._connection = uamqp.ConnectionAsync(
-            hostname=self.fully_qualified_namespace,
-            sasl=auth,
-            debug=self._config.logging_enable,
+        self._connection = self._connection = Connection(
+            endpoint=self.fully_qualified_namespace,
+            sasl_credential=auth.sasl,
+            network_trace=self._config.logging_enable,
+            custom_endpoint_address=self._custom_endpoint_address,
+            ssl_opts={'ca_certs':self._connection_verify or certifi.where()},
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
         )
 
     @classmethod
@@ -233,7 +240,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._handlers.clear()
 
         if self._connection_sharing and self._connection:
-            await self._connection.destroy_async()
+            await self._connection.close()
 
     def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
