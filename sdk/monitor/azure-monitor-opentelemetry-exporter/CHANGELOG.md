@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add validation logic to ApplicationInsightsSampler
+    ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
+
 ### Breaking Changes
 
 ### Bugs Fixed
