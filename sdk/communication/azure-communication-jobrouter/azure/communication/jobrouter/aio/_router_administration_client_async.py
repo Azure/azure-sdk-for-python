@@ -70,8 +70,9 @@ class RouterAdministrationClient(object):  # pylint:disable=too-many-public-meth
     :param ~azure.core.credentials.AzureKeyCredential credential:
         The credentials with which to authenticate
 
-    :keyword api_version: Azure Communication Job Router API version. Default value is "2022-07-18-preview". Note that overriding this
-        default value may result in unsupported behavior.
+    :keyword api_version: Azure Communication Job Router API version.
+        Default value is "2022-07-18-preview".
+        Note that overriding this default value may result in unsupported behavior.
     """
 
     def __init__(

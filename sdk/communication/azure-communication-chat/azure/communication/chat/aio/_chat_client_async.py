@@ -49,8 +49,8 @@ class ChatClient(object):
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
 
-    :keyword api_version: Azure Communication Chat API version. Default value is "2021-09-07". Note that overriding this
-        default value may result in unsupported behavior.
+    :keyword api_version: Azure Communication Chat API version.
+        Default value is "2021-09-07". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
 
     .. admonition:: Example:

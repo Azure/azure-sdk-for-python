@@ -60,8 +60,8 @@ class ChatThreadClient(object):
     :param str thread_id:
         The unique thread id.
 
-    :keyword api_version: Azure Communication Chat API version. Default value is "2021-09-07". Note that overriding this
-        default value may result in unsupported behavior.
+    :keyword api_version: Azure Communication Chat API version.
+        Default value is "2021-09-07". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
 
     .. admonition:: Example:

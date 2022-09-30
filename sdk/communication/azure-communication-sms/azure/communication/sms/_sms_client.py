@@ -27,8 +27,8 @@ class SmsClient(object):
         The endpoint url for Azure Communication Service resource.
     :param TokenCredential credential:
         The TokenCredential we use to authenticate against the service.
-    :keyword api_version: Azure Communication SMS API version. The default value is "2021-03-07". Note that
-        overriding this default value may result in unsupported behavior.
+    :keyword api_version: Azure Communication SMS API version.
+        The default value is "2021-03-07". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
     def __init__(

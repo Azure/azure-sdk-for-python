@@ -34,8 +34,8 @@ class RoomsClient(object):
         The endpoint url for Azure Communication Service resource.
     :param ~azure.core.credentials.AzureKeyCredential credential:
         The access key we use to authenticate against the service.
-    :keyword api_version: Azure Communication Rooms API version. Default value is "2022-02-01". Note that overriding this
-        default value may result in unsupported behavior.
+    :keyword api_version: Azure Communication Rooms API version.
+        Default value is "2022-02-01". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
     def __init__(

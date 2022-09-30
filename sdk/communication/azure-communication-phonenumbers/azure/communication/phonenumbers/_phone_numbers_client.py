@@ -29,8 +29,9 @@ class PhoneNumbersClient(object):
         The endpoint url for Azure Communication Service resource.
     :param TokenCredential credential:
         The credentials with which to authenticate.
-    :keyword api_version: Azure Communication Phone Number API version. The default value is "2022-01-11-preview2". Note that
-        overriding this default value may result in unsupported behavior.
+    :keyword api_version: Azure Communication Phone Number API version.
+        The default value is "2022-01-11-preview2".
+        Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
     def __init__(
