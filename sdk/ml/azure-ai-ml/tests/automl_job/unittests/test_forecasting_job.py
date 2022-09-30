@@ -5,8 +5,8 @@
 import pytest
 
 from azure.ai.ml import UserIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import (
     ForecastingModels,
     ForecastingPrimaryMetrics,

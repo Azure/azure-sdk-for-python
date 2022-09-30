@@ -5,7 +5,7 @@
 import logging
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService as RestJobService20220601Preview
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService20220601Preview
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 

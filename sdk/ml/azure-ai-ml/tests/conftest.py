@@ -71,8 +71,12 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_regex_sanitizer(value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1")
-    add_general_regex_sanitizer(value="00000000000000000000000000000000", regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1")
+    add_general_regex_sanitizer(
+        value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1"
+    )
+    add_general_regex_sanitizer(
+        value="00000000000000000000000000000000", regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1"
+    )
 
 
 def pytest_addoption(parser):
@@ -95,9 +99,11 @@ def mock_workspace_scope() -> OperationScope:
         subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
     )
 
+
 @pytest.fixture
 def mock_operation_config() -> OperationConfig:
     yield OperationConfig(True)
+
 
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
@@ -156,7 +162,7 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
 
 
 @pytest.fixture
@@ -220,7 +226,7 @@ def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClie
         resource_group_name=e2e_ws_scope.resource_group_name,
         workspace_name=e2e_ws_scope.workspace_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
-        cloud="AzureCloud"
+        cloud="AzureCloud",
     )
 
 
@@ -366,14 +372,16 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 @pytest.fixture
 def mock_code_hash(request, mocker: MockFixture) -> None:
-
     def generate_hash():
         return str(uuid.uuid4())
 
     if is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="00000000000000000000000000000000")
+        mocker.patch(
+            "azure.ai.ml._artifacts._artifact_utilities.get_object_hash",
+            return_value="00000000000000000000000000000000",
+        )
 
 
 @pytest.fixture

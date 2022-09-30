@@ -13,7 +13,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType06
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType06
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -165,7 +165,7 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
 
 def get_md5_string(text):
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest() # nosec
+        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
     except Exception as ex:
         raise ex
 

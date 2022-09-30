@@ -8,7 +8,7 @@ import logging
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfigurationType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity

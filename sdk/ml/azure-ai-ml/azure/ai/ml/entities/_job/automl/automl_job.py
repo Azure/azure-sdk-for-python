@@ -8,7 +8,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import TYPE, AssetTypes
@@ -148,7 +148,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             camel_to_snake(TaskType.TEXT_CLASSIFICATION_MULTILABEL): TextClassificationMultilabelJob,
         }
 
-    def _resolve_data_inputs(self, rest_job): # pylint: disable=no-self-use
+    def _resolve_data_inputs(self, rest_job):  # pylint: disable=no-self-use
         """Resolve JobInputs to MLTableJobInputs within data_settings."""
         if isinstance(rest_job.training_data, Input):
             rest_job.training_data = MLTableJobInput(uri=rest_job.training_data.path)
@@ -160,8 +160,12 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     def _restore_data_inputs(self):
         """Restore MLTableJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, MLTableJobInput):
-            self.training_data = Input(type=AssetTypes.MLTABLE, path=self.training_data.uri) # pylint: disable=no-member
+            self.training_data = Input(
+                type=AssetTypes.MLTABLE, path=self.training_data.uri
+            )  # pylint: disable=no-member
         if isinstance(self.validation_data, MLTableJobInput):
-            self.validation_data = Input(type=AssetTypes.MLTABLE, path=self.validation_data.uri) # pylint: disable=no-member
+            self.validation_data = Input(
+                type=AssetTypes.MLTABLE, path=self.validation_data.uri
+            )  # pylint: disable=no-member
         if hasattr(self, "test_data") and isinstance(self.test_data, MLTableJobInput):
-            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri) # pylint: disable=no-member
+            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)  # pylint: disable=no-member
