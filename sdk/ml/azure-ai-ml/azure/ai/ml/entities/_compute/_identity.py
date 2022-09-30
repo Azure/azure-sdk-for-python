@@ -14,7 +14,12 @@ from ._user_assigned_identity import UserAssignedIdentity
 class IdentityConfiguration(RestTranslatableMixin):
     """Managed identity specification."""
 
-    def __init__(self, *, type: str, user_assigned_identities: List[UserAssignedIdentity] = None):
+    def __init__(
+        self,
+        *,
+        type: str, # pylint: disable=redefined-builtin
+        user_assigned_identities: List[UserAssignedIdentity] = None
+    ):
         """Managed identity specification.
 
         :param type: Managed identity type, defaults to None
@@ -30,6 +35,7 @@ class IdentityConfiguration(RestTranslatableMixin):
 
     def _to_rest_object(self) -> RestIdentity:
         rest_user_assigned_identities = (
+            # pylint: disable=protected-access
             {uai.resource_id: uai._to_rest_object() for uai in self.user_assigned_identities}
             if self.user_assigned_identities
             else None
@@ -37,19 +43,20 @@ class IdentityConfiguration(RestTranslatableMixin):
         return RestIdentity(type=snake_to_pascal(self.type), user_assigned_identities=rest_user_assigned_identities)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestIdentity) -> "IdentityConfiguration":
+    def _from_rest_object(cls, obj: RestIdentity) -> "IdentityConfiguration":
         from_rest_user_assigned_identities = (
             [
+                # pylint: disable=protected-access
                 UserAssignedIdentity._from_rest_object(uai, resource_id=resource_id)
-                for (resource_id, uai) in rest_obj.user_assigned_identities.items()
+                for (resource_id, uai) in obj.user_assigned_identities.items()
             ]
-            if rest_obj.user_assigned_identities
+            if obj.user_assigned_identities
             else None
         )
         result = cls(
-            type=camel_to_snake(rest_obj.type),
+            type=camel_to_snake(obj.type),
             user_assigned_identities=from_rest_user_assigned_identities,
         )
-        result.principal_id = rest_obj.principal_id
-        result.tenant_id = rest_obj.tenant_id
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
         return result

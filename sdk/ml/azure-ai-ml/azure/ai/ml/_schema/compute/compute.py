@@ -8,7 +8,6 @@ from marshmallow import fields
 from marshmallow.decorators import post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
-from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._vendor.azure_resources.models._resource_management_client_enums import ResourceIdentityType
 

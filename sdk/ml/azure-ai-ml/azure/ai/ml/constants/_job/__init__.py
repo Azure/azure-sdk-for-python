@@ -15,7 +15,7 @@ __all__ = [
     "JobType",
     "PipelineConstants",
     "AutoMLConstants",
-    "AutoMLTransformerParameterKeys"
+    "AutoMLTransformerParameterKeys",
     "DistributionType",
     "SearchSpace",
     "ImageClassificationModelNames",

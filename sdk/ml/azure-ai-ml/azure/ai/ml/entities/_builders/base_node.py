@@ -57,6 +57,7 @@ def pipeline_node_decorator(func):
     return wrapper
 
 
+# pylint: disable=too-many-instance-attributes
 class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
     """Base class for node in pipeline, used for component version consumption.
     Can't be instantiated directly.

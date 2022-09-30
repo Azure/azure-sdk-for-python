@@ -9,7 +9,7 @@ from typing import Dict, Iterable
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -60,12 +60,13 @@ class RegistryOperations:
         return self._operation.list_by_subscription(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs])
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str = None, **kwargs: Dict) -> Registry:
+    def get(self, name: str = None) -> Registry:
         """Get a registry by name.
 
         :param name: Name of the registry.
         :type name: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Registry name cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Registry name cannot be
+            successfully validated. Details will be provided in the error message.
         :return: The registry with the provided name.
         :rtype: ~azure.ai.ml.entities.Registry
         """

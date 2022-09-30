@@ -31,7 +31,6 @@ from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
-from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from azure.ai.ml.entities._deployment.scale_settings import (
@@ -515,8 +514,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
     :type scoring_script: Union[str, PathLike], optional
-    :param egress_public_network_access: Wether to restrict communication between a deployment 
-    and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
+    :param egress_public_network_access: Whether to restrict communication between a deployment
+        and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
     :param egress_public_network_access: str
     """
 

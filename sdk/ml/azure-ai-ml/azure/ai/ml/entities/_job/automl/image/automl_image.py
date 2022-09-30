@@ -135,7 +135,7 @@ class AutoMLImage(AutoMLVertical, ABC):
             self._sweep.sampling_algorithm = sampling_algorithm
         else:
             self._sweep = ImageSweepSettings(sampling_algorithm=sampling_algorithm)
-            
+
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
     def __eq__(self, other) -> bool:

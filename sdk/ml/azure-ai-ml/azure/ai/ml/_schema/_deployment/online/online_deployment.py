@@ -63,7 +63,9 @@ class KubernetesOnlineDeploymentSchema(OnlineDeploymentSchema):
 
 class ManagedOnlineDeploymentSchema(OnlineDeploymentSchema):
     instance_type = fields.Str(required=True)
-    egress_public_network_access = StringTransformedEnum(allowed_values=[PublicNetworkAccess.ENABLED, PublicNetworkAccess.DISABLED])
+    egress_public_network_access = StringTransformedEnum(
+        allowed_values=[PublicNetworkAccess.ENABLED, PublicNetworkAccess.DISABLED]
+    )
     data_collector = ExperimentalField(NestedField(DataCollectorSchema))
     private_network_connection = ExperimentalField(fields.Bool())
 

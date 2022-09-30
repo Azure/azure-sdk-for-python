@@ -379,8 +379,8 @@ class DockerClient(object):
         build_directory: str,
         image_name: str,
         dockerfile_path: str,
-        conda_source_path: str,
-        conda_yaml_contents: str,
+        conda_source_path: str, # pylint: disable=unused-argument
+        conda_yaml_contents: str, # pylint: disable=unused-argument
     ) -> None:
 
         try:
@@ -399,11 +399,7 @@ class DockerClient(object):
                     first_line = False
                 if "stream" in status:
                     if "An unexpected error has occurred. Conda has prepared the above report." in status["stream"]:
-                        raise LocalEndpointImageBuildError(
-                            status["stream"],
-                            conda_file_path=conda_source_path,
-                            conda_yaml_contents=conda_yaml_contents,
-                        )
+                        raise LocalEndpointImageBuildError(status["stream"])
                     module_logger.info(status["stream"])
 
                 if "error" in status:

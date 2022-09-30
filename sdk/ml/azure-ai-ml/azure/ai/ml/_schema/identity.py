@@ -41,11 +41,11 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
     def predump(self, data, **kwargs):
         if data.user_assigned_identities:
             ids = []
-            for id in data.user_assigned_identities:
+            for _id in data.user_assigned_identities:
                 item = {}
-                item["resource_id"] = id
-                item["principal_id"] = data.user_assigned_identities[id].principal_id
-                item["client_id"] = data.user_assigned_identities[id].client_id
+                item["resource_id"] = _id
+                item["principal_id"] = data.user_assigned_identities[_id].principal_id
+                item["client_id"] = data.user_assigned_identities[_id].client_id
                 ids.append(item)
             data.user_assigned_identities = ids
         return data

@@ -122,20 +122,20 @@ class ClassificationJob(AutoMLTabular):
         return result
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: JobBase) -> "ClassificationJob":
-        properties: RestAutoMLJob = job_rest_object.properties
+    def _from_rest_object(cls, obj: JobBase) -> "ClassificationJob":
+        properties: RestAutoMLJob = obj.properties
         task_details: RestClassification = properties.task_details
 
         job_args_dict = {
-            "id": job_rest_object.id,
-            "name": job_rest_object.name,
+            "id": obj.id,
+            "name": obj.name,
             "description": properties.description,
             "tags": properties.tags,
             "properties": properties.properties,
             "experiment_name": properties.experiment_name,
             "services": properties.services,
             "status": properties.status,
-            "creation_context": job_rest_object.system_data,
+            "creation_context": obj.system_data,
             "display_name": properties.display_name,
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
@@ -179,13 +179,12 @@ class ClassificationJob(AutoMLTabular):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
     ) -> "ClassificationJob":
         from azure.ai.ml._schema.automl.table_vertical.classification import AutoMLClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             loaded_data = load_from_dict(
                 AutoMLClassificationNodeSchema,
                 data,
@@ -216,7 +215,7 @@ class ClassificationJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.classification import AutoMLClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
 
