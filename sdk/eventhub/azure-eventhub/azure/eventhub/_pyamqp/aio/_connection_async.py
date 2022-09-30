@@ -478,8 +478,8 @@ class Connection(object): # pylint:disable=too-many-instance-attributes
         """
         try:
             await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
-            self.incoming_endpoints.pop(channel)
-            self.outgoing_endpoints.pop(channel)
+            self._incoming_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(channel)
         except KeyError:
             end_error = AMQPError(condition=ErrorCondition.InvalidField, description=f"Invalid channel {channel}", info=None)
             _LOGGER.error(f"Invalid channel {channel} ")
