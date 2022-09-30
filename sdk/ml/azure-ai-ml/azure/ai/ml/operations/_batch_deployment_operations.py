@@ -65,20 +65,33 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, deployment: BatchDeployment, *, skip_script_validation: bool = False) -> LROPoller[BatchDeployment]:
+    def begin_create_or_update(
+        self,
+        deployment: BatchDeployment,
+        *,
+        skip_script_validation: bool = False,
+    ) -> LROPoller[BatchDeployment]:
         """Create or update a batch deployment.
 
         :param deployment: The deployment entity.
         :type deployment: ~azure.ai.ml.entities.BatchDeployment
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be
+            successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model
+            cannot be successfully validated. Details will be provided in the error message.
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchDeployment]
         """
 
-        
-        if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
+
+        if (
+            not skip_script_validation
+            and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
+            and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+        ):
             validate_scoring_script(deployment)
         module_logger.debug("Checking endpoint %s exists", deployment.endpoint_name)
         self._batch_endpoint_operations.get(

@@ -80,6 +80,7 @@ from azure.core.polling import LROPoller
 module_logger = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-public-methods
 class MLClient(object):
     """A client class to interact with Azure ML services.
 
@@ -87,14 +88,15 @@ class MLClient(object):
     models and so on.
     """
 
+    # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,
-        credential: TokenCredential,  # type: TokenCredential
-        subscription_id: str = None,  # type: str
-        resource_group_name: str = None,  # type: str
-        workspace_name: str = None,  # type: str
-        registry_name: str = None,  # type: str
-        **kwargs: Any,  # type: Any
+        credential: TokenCredential,
+        subscription_id: str = None,
+        resource_group_name: str = None,
+        workspace_name: str = None,
+        registry_name: str = None,
+        **kwargs: Any,
     ):
         """Initiate Azure ML client.
 
@@ -110,7 +112,8 @@ class MLClient(object):
         :param registry_name: Registry to use in the client, optional for non registry dependent operations only.
             Defaults to None
         :type registry_name: str, optional
-        :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider to set this to False if not using this SDK in an interactive setup. Defaults to True.
+        :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider
+            to set this to False if not using this SDK in an interactive setup. Defaults to True.
         :type show_progress: bool, optional
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
@@ -465,7 +468,8 @@ class MLClient(object):
         :param kwargs: A dictionary of additional configuration parameters.
             For e.g. kwargs = {"cloud": "AzureUSGovernment"}
         :type kwargs: dict
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if config.json cannot be found in directory.
+            Details will be provided in the error message.
         :return: The workspace object for an existing Azure ML Workspace.
         :rtype: ~azure.ai.ml.MLClient
         """

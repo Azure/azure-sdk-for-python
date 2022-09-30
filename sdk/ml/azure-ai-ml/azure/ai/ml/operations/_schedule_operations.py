@@ -74,11 +74,12 @@ class ScheduleOperations(_ScopeDependentOperations):
     def list(
         self,
         *,
-        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,
+        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY, # pylint: disable=unused-argument
     ) -> Iterable[JobSchedule]:
         """List schedules in specified workspace.
 
-        :param list_view_type: View type for including/excluding (for example) archived schedules. Default: ENABLED_ONLY.
+        :param list_view_type: View type for including/excluding (for example)
+            archived schedules. Default: ENABLED_ONLY.
         :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list JobSchedule.
         :rtype: Iterable[JobSchedule]

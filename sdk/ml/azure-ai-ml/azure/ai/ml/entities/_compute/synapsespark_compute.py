@@ -8,11 +8,9 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     AutoScaleProperties,
     ComputeResource,
     SynapseSpark,
-    SynapseSparkProperties,
 )
 from azure.ai.ml._schema.compute.synapsespark_compute import SynapseSparkComputeSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import Compute
@@ -126,12 +124,14 @@ class SynapseSparkCompute(Compute):
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "SynapseSparkCompute":
         prop = rest_obj.properties
         scale_settings = (
+            # pylint: disable=protected-access
             AutoScaleSettings._from_auto_scale_settings(prop.properties.auto_scale_properties)
             if prop.properties.auto_scale_properties
             else None
         )
 
         auto_pause_settings = (
+            # pylint: disable=protected-access
             AutoPauseSettings._from_auto_pause_settings(prop.properties.auto_pause_properties)
             if prop.properties.auto_pause_properties
             else None
@@ -148,6 +148,7 @@ class SynapseSparkCompute(Compute):
             node_family=prop.properties.node_size_family if prop.properties else None,
             node_size=prop.properties.node_size if prop.properties else None,
             spark_version=prop.properties.spark_version if prop.properties else None,
+            # pylint: disable=protected-access
             identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
             scale_settings=scale_settings,
             auto_pause_settings=auto_pause_settings,
@@ -158,6 +159,7 @@ class SynapseSparkCompute(Compute):
         )
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return SynapseSparkComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -176,5 +178,6 @@ class SynapseSparkCompute(Compute):
             location=self.location,
             properties=synapsespark_comp,
             name=self.name,
+            # pylint: disable=protected-access
             identity=(self.identity._to_rest_object() if self.identity else None),
         )

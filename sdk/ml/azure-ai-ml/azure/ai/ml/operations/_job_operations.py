@@ -454,12 +454,18 @@ class JobOperations(_ScopeDependentOperations):
         :param skip_validation: whether to skip validation before creating/updating the job. Note that dependent
             resources like anonymous component won't skip their validation in creating.
         :type skip_validation: bool
-        :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if Job cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Job model cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job object or attributes correctly formatted. Details will be provided in the error message.
+        :raises [~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised if
+            Job cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Job model cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job object or attributes correctly formatted.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
-        :raises ~azure.ai.ml.exceptions.DockerEngineNotAvailableError: Raised if Docker Engine is not available for local job.
+        :raises ~azure.ai.ml.exceptions.DockerEngineNotAvailableError: Raised if Docker Engine
+            is not available for local job.
         :return: Created or updated job.
         :rtype: ~azure.ai.ml.entities.Job
         """
@@ -517,7 +523,12 @@ class JobOperations(_ScopeDependentOperations):
                 ws_base_url = self._all_operations.all_operations[
                     AzureMLResourceType.WORKSPACE
                 ]._operation._client._base_url
-                snapshot_id = start_run_if_local(result, self._credential, ws_base_url)
+                snapshot_id = start_run_if_local(
+                    result,
+                    self._credential,
+                    ws_base_url,
+                    self._requests_pipeline,
+                )
                 # in case of local run, the first create/update call to MFE returns the
                 # request for submitting to ES. Once we request to ES and start the run, we
                 # need to put the same body to MFE to append user tags etc.
@@ -626,8 +637,10 @@ class JobOperations(_ScopeDependentOperations):
         :type output_name: str
         :param all: Whether to download logs and all named outputs, defaults to False.
         :type all: bool
-        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
+            Details will be provided in the error message.
         """
         job_details = self.get(name)
         # job is reused, get reused job to download

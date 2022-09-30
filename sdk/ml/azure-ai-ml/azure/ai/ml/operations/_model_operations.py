@@ -93,8 +93,10 @@ class ModelOperations(_ScopeDependentOperations):
 
         :param model: Model asset object.
         :type model: ~azure.ai.ml.entities.Model
-        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Model artifact path is already linked to another asset
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Model artifact path is
+            already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
@@ -258,7 +260,8 @@ class ModelOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the model. (mutually exclusive with version)
         :type label: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
+            Details will be provided in the error message.
         :return: Model asset object.
         :rtype: ~azure.ai.ml.entities.Model
         """

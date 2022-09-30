@@ -333,7 +333,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        expand: Optional[Union[str, "_models.ReplicationStatusTypes"]] = None,
+        expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
         **kwargs: Any
     ) -> _models.GalleryApplicationVersion:
         """Retrieves information about a gallery Application Version.

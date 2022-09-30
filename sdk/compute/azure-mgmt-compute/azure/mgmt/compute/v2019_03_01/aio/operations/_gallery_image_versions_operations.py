@@ -331,7 +331,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        expand: Optional[Union[str, "_models.ReplicationStatusTypes"]] = None,
+        expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
         **kwargs: Any
     ) -> _models.GalleryImageVersion:
         """Retrieves information about a gallery Image Version.

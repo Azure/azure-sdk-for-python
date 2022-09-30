@@ -233,7 +233,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         if self._identity is None:
             if self.compute is not None:
                 return ManagedIdentity()
-            elif self.resources is not None:
+            if self.resources is not None:
                 return UserIdentity()
         return self._identity
 

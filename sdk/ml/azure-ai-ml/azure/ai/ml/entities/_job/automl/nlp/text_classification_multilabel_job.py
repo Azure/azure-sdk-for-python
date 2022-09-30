@@ -106,8 +106,8 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         return result
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: JobBase) -> "TextClassificationMultilabelJob":
-        properties: RestAutoMLJob = job_rest_object.properties
+    def _from_rest_object(cls, obj: JobBase) -> "TextClassificationMultilabelJob":
+        properties: RestAutoMLJob = obj.properties
         task_details: RestTextClassificationMultilabel = properties.task_details
         assert isinstance(task_details, RestTextClassificationMultilabel)
         limits = (
@@ -121,16 +121,16 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
         text_classification_multilabel_job = cls(
             # ----- job specific params
-            id=job_rest_object.id,
-            name=job_rest_object.name,
+            id=obj.id,
+            name=obj.name,
             description=properties.description,
             tags=properties.tags,
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(job_rest_object.system_data)
-            if job_rest_object.system_data
+            creation_context=SystemData._from_rest_object(obj.system_data)
+            if obj.system_data
             else None,
             display_name=properties.display_name,
             compute=properties.compute_id,
@@ -151,18 +151,18 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
 
         return text_classification_multilabel_job
 
-    def _to_component(self, **kwargs):
+    def _to_component(self, context: Dict = None, **kwargs) -> "Component":
         raise NotImplementedError()
 
     @classmethod
     def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, inside_pipeline=False, **kwargs
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs
     ) -> "TextClassificationMultilabelJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
 
             loaded_data = load_from_dict(
@@ -188,7 +188,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextClassificationMultilabelJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )

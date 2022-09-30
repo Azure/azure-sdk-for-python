@@ -111,20 +111,20 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         return result
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: JobBase) -> "ImageObjectDetectionJob":
-        properties: RestAutoMLJob = job_rest_object.properties
+    def _from_rest_object(cls, obj: JobBase) -> "ImageObjectDetectionJob":
+        properties: RestAutoMLJob = obj.properties
         task_details: RestImageObjectDetection = properties.task_details
 
         job_args_dict = {
-            "id": job_rest_object.id,
-            "name": job_rest_object.name,
+            "id": obj.id,
+            "name": obj.name,
             "description": properties.description,
             "tags": properties.tags,
             "properties": properties.properties,
             "experiment_name": properties.experiment_name,
             "services": properties.services,
             "status": properties.status,
-            "creation_context": job_rest_object.system_data,
+            "creation_context": obj.system_data,
             "display_name": properties.display_name,
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
@@ -164,13 +164,12 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
     ) -> "ImageObjectDetectionJob":
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageObjectDetectionSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             if context.get("inside_pipeline", None) is None:
                 context["inside_pipeline"] = True
             loaded_data = load_from_dict(
@@ -198,7 +197,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageObjectDetectionSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
 

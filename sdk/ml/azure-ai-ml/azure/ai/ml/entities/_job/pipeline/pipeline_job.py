@@ -44,7 +44,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.entities._job.pipeline._io import InputsAttrDict, OutputsAttrDict, PipelineInput, PipelineIOMixin
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
@@ -291,12 +291,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             if job.settings.on_init:
                 validation_result.append_error(
                     yaml_path=f"jobs.{job_name}.settings.on_init",
-                    message="On_init is not supported for subgraph.",
+                    message="On_init is not supported for pipeline component.",
                 )
             if job.settings.on_finalize:
                 validation_result.append_error(
                     yaml_path=f"jobs.{job_name}.settings.on_finalize",
-                    message="On_finalize is not supported for subgraph",
+                    message="On_finalize is not supported for pipeline component.",
                 )
 
         # quick return if neither on_init nor on_finalize is set

@@ -95,7 +95,7 @@ class Data(Artifact):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         path: Optional[str] = None,  # if type is mltable, the path has to be a folder.
-        type: str = AssetTypes.URI_FOLDER,  # type: ignore
+        type: str = AssetTypes.URI_FOLDER,  # pylint: disable=redefined-builtin
         **kwargs,
     ):
         self._skip_validation = kwargs.pop("skip_validation", False)
@@ -147,6 +147,7 @@ class Data(Artifact):
         return Data(**load_from_dict(DataSchema, yaml_data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_container_rest_object(self) -> DataContainerData:
