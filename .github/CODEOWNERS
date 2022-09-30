@@ -45,7 +45,7 @@
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
-# PRLabel: %Monitor - LogAnalytics  TODO?
+# PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/azure-loganalytics/                                @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
 # PRLabel: %Attestation
@@ -57,8 +57,20 @@
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico
 
+# PRLabel: %Communication - Chat
+/sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
+
+# PRLabel: %Communication - Email
+/sdk/communication/azure-communication-email/                        @yogeshmo
+
+# PRLabel: %Communication - Job Router
+/sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi 
+
 # PRLabel: %Communication - Phone Numbers
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+
+# PRLabel: %Communication - Rooms
+/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
 
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
@@ -81,8 +93,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
 
-# PRLabel: %TODO
-/sdk/loadtestservice/azure-developer-loadtesting                     TODO
+/sdk/loadtestservice/azure-developer-loadtesting                     @msyyc @iscai-msft
 
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
@@ -144,11 +155,11 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/maps/                                                           @alextts627
 
 # PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication                  @crtreasu TODO
-/sdk/remoterendering/                                                TODO
+/sdk/mixedreality/azure-mixedreality-authentication                  @crtreasu
+/sdk/remoterendering/                                                @rikogeln
 
 # PRLabel: %Purview
-/sdk/purview/                                                        TODO
+/sdk/purview/                                                        @iscai-msft @msyyc 
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
@@ -193,7 +204,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
 
 # PRLabel: %Graph
-sdk/graphrbac/                                                       TODO
+sdk/graphrbac/                                                       @msyyc @Wzb123456789
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
