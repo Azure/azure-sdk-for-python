@@ -114,7 +114,7 @@
 /sdk/machinelearningcompute/                                         @shutchings
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @azureml-github @Azure/azure-ml-sdk
+/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
