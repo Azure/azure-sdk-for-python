@@ -9,8 +9,9 @@ from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml.constants._registry import AcrAccountSku
 from .arm_resource_id import ArmResourceIdSchema
 from .util import convert_arm_resource_id
+from azure.ai.ml._utils._experimental import experimental
 
-
+@experimental
 class SystemCreatedAcrAccountSchema(metaclass=PatchedSchemaMeta):
     arm_resource_id = NestedField(ArmResourceIdSchema, dump_only=True)
     acr_account_sku = StringTransformedEnum(

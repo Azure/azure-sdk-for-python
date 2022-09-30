@@ -12,10 +12,12 @@ from azure.ai.ml.entities._registry.registry_support_classes import SystemCreate
 from .system_created_acr_account import SystemCreatedAcrAccountSchema
 from .system_created_storage_account import SystemCreatedStorageAccountSchema
 from .util import storage_account_validator
+from azure.ai.ml._utils._experimental import experimental
 
 
 # Differs from the swagger def in that the acr_details can only be supplied as a
 # single registry-wide instance, rather than a per-region list.
+@experimental
 class RegistryRegionArmDetailsSchema(metaclass=PatchedSchemaMeta):
     # Commenting this out for the time being.
     # We do not want to surface the acr_config as a per-region configurable

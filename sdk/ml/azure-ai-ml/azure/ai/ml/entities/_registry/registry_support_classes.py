@@ -18,10 +18,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     UserCreatedStorageAccount as RestUserCreatedStorageAccount,
 )
 from azure.ai.ml.constants._registry import StorageAccountType
+from azure.ai.ml._utils._experimental import experimental
 
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
+@experimental
 class SystemCreatedAcrAccount:
     def __init__(
         self,
@@ -77,7 +79,7 @@ class SystemCreatedAcrAccount:
         else:
             return None  # TODO should this throw an error instead?
 
-
+@experimental
 class SystemCreatedStorageAccount:
     def __init__(
         self,
@@ -143,6 +145,7 @@ class SystemCreatedStorageAccount:
 
 
 # Per-region information for registries.
+@experimental
 class RegistryRegionArmDetails:
     def __init__(
         self,

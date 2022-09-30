@@ -20,6 +20,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 from azure.ai.ml.entities._registry.identity import ManagedServiceIdentity
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._experimental import experimental
 
 from .registry_support_classes import RegistryRegionArmDetails, SystemCreatedStorageAccount
 
@@ -27,7 +28,7 @@ YAML_REGION_DETAILS = "replication_locations"
 YAML_SINGLE_ACR_DETAIL = "container_registry"
 CLASS_REGION_DETAILS = "region_details"
 
-
+@experimental
 class Registry(Resource):
     def __init__(
         self,

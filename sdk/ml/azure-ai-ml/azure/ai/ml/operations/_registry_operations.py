@@ -20,11 +20,12 @@ from azure.core.polling import LROPoller
 
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations
+from azure.ai.ml._utils._experimental import experimental
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
-
+@experimental
 class RegistryOperations:
     """RegistryOperations.
 

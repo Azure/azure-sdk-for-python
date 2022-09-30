@@ -10,6 +10,7 @@ from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml.constants._registry import AcrAccountSku
 from azure.ai.ml.entities._registry.registry_support_classes import SystemCreatedAcrAccount
+from azure.ai.ml._utils._experimental import experimental
 
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from .registry_region_arm_details import RegistryRegionArmDetailsSchema
@@ -18,6 +19,7 @@ from .util import acr_format_validator
 
 
 # Based on 10-01-preview api
+@experimental
 class RegistrySchema(ResourceSchema):
     # Inherits name, id, tags, and description fields from ResourceSchema
 
