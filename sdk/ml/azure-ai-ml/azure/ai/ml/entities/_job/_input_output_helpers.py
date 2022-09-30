@@ -10,10 +10,10 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomModelJobInp
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutputType as JobOutputType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import LiteralJobInput as LiteralJobInput
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutputType
+from azure.ai.ml._restclient.v2022_06_01_preview.models import LiteralJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput as RestMLTableJobInput
@@ -106,7 +106,7 @@ def build_input_output(
     item: Union[InputOutputEntry, Input, Output, str, bool, int, float],
     inputs: bool = True,
 ) -> Union[InputOutputEntry, Input, Output, str, bool, int, float]:
-    if isinstance(item, InputOutputEntry) or isinstance(item, Input) or isinstance(item, Output):
+    if isinstance(item, (Input, InputOutputEntry, Output)):
         # return objects constructed at yaml load or specified in sdk
         return item
     # parse dictionary into supported class

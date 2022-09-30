@@ -77,13 +77,15 @@ class ErrorTarget:
     ARM_RESOURCE = "ArmResource"
     ARTIFACT = "Artifact"
     SCHEDULE = "Schedule"
+    REGISTRY = "Registry"
     UNKNOWN = "Unknown"
 
 
 class MlException(AzureError):
     """
-    The base class for all exceptions raised in AzureML SDK code base. If there is a need to define a custom exception type,
-    that custom exception type should extend from this class.
+    The base class for all exceptions raised in AzureML SDK code base.
+    If there is a need to define a custom exception type, that custom exception type
+    should extend from this class.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -101,9 +103,9 @@ class MlException(AzureError):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         self._error_category = error_category
@@ -170,9 +172,9 @@ class DeploymentException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(DeploymentException, self).__init__(
@@ -204,9 +206,9 @@ class ComponentException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(ComponentException, self).__init__(
@@ -238,9 +240,9 @@ class JobException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(JobException, self).__init__(
@@ -272,9 +274,9 @@ class ModelException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(ModelException, self).__init__(
@@ -306,9 +308,9 @@ class AssetException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(AssetException, self).__init__(
@@ -360,10 +362,10 @@ class ValidationException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         error_type: ValidationErrorType = ValidationErrorType.GENERIC,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.USER_ERROR,
-        *args,
         **kwargs,
     ):
         """
@@ -413,7 +415,8 @@ class ValidationException(MlException):
 
 class AssetPathException(MlException):
     """
-    Class for the exception raised when an attempt is made to update the path of an existing asset. Asset paths are immutable.
+    Class for the exception raised when an attempt is made to update the path of an existing asset.
+    Asset paths are immutable.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -430,9 +433,9 @@ class AssetPathException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(AssetPathException, self).__init__(
@@ -631,7 +634,8 @@ class DockerEngineNotAvailableError(MlException):
 
 
 class MultipleLocalDeploymentsFoundError(MlException):
-    """Exception raised when no deployment name is specified for local endpoint even though multiple deployments exist."""
+    """Exception raised when no deployment name is specified for local endpoint
+    even though multiple deployments exist."""
 
     def __init__(self, endpoint_name: str, error_category=ErrorCategory.UNKNOWN):
         super().__init__(
@@ -692,7 +696,7 @@ class CloudArtifactsNotSupportedError(MlException):
             else f"local endpoint ({endpoint_name})"
         )
         err = (
-            "Local endpoints only support local artifacts. '%s' in '%s' " "referenced cloud artifacts.",
+            "Local endpoints only support local artifacts. '%s' in '%s' referenced cloud artifacts.",
             invalid_artifact,
             resource_name,
         )
@@ -739,7 +743,8 @@ class RequiredLocalArtifactsNotFoundError(MlException):
 
 
 class InvalidVSCodeRequestError(MlException):
-    """Exception raised when VS Code Debug is invoked with a remote endpoint. VSCode debug is only supported for local endpoints."""
+    """Exception raised when VS Code Debug is invoked with a remote endpoint.
+    VSCode debug is only supported for local endpoints."""
 
     def __init__(self, error_category=ErrorCategory.USER_ERROR, msg=None):
         super().__init__(

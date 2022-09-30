@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._util import camel_to_snake
+from azure.ai.ml._utils.utils import camel_to_snake
 
 
 class EarlyTerminationPolicy(ABC, RestTranslatableMixin):

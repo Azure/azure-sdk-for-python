@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     CertificateDatastoreCredentials,
     CertificateDatastoreSecrets,
     CredentialsType,
-    NoneDatastoreCredentials,
     SasDatastoreCredentials as RestSasDatastoreCredentials,
     SasDatastoreSecrets as RestSasDatastoreSecrets,
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
@@ -33,7 +32,6 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 )
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
-    IdentityConfiguration,
     IdentityConfigurationType,
     ManagedIdentity as RestJobManagedIdentity,
     UserIdentity as RestUserIdentity,
@@ -94,9 +92,11 @@ class SasTokenConfiguration(RestTranslatableMixin, ABC):
         return RestWorkspaceConnectionSharedAccessSignature(sas=self.sas_token)
 
     @classmethod
-    def _from_workspace_connection_rest_object(cls,
-                                               obj: RestWorkspaceConnectionSharedAccessSignature) -> "SasTokenConfiguration":
-        return cls(sas=obj.sas if obj.sas else None)
+    def _from_workspace_connection_rest_object(
+        cls,
+        obj: RestWorkspaceConnectionSharedAccessSignature
+    ) -> "SasTokenConfiguration":
+        return cls(sas_token=obj.sas if obj.sas else None)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SasTokenConfiguration):
@@ -336,7 +336,7 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         return RestJobManagedIdentity(
             client_id=self.client_id,
             object_id=self.object_id,
-            resource_id=self.msi_resource_id,
+            resource_id=self.resource_id,
         )
 
     @classmethod
@@ -344,9 +344,10 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         return cls(
             client_id=obj.client_id,
             object_id=obj.client_id,
-            msi_resource_id=obj.resource_id,
+            resource_id=obj.resource_id,
         )
 
+    # pylint: disable=no-self-use
     def _to_identity_configuration_rest_object(self) -> RestUserAssignedIdentity:
         return RestUserAssignedIdentity()
 
@@ -369,6 +370,7 @@ class UserIdentityConfiguration(ABC, RestTranslatableMixin):
     def __init__(self):
         self.type = camel_to_snake(IdentityConfigurationType.USER_IDENTITY)
 
+    # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestUserIdentity:
         return RestUserIdentity()
 
@@ -384,6 +386,7 @@ class AmlTokenConfiguration(ABC, RestTranslatableMixin):
     def __init__(self):
         self.type = camel_to_snake(IdentityConfigurationType.AML_TOKEN)
 
+    # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestAmlToken:
         return RestAmlToken()
 
@@ -421,19 +424,19 @@ class IdentityConfiguration(RestTranslatableMixin):
                                          user_assigned_identities=rest_user_assigned_identities)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestIdentityConfiguration) -> "IdentityConfiguration":
+    def _from_rest_object(cls, obj: RestIdentityConfiguration) -> "IdentityConfiguration":
         from_rest_user_assigned_identities = (
             [
                 ManagedIdentityConfiguration._from_identity_configuration_rest_object(uai, resource_id=resource_id)
-                for (resource_id, uai) in rest_obj.user_assigned_identities.items()
+                for (resource_id, uai) in obj.user_assigned_identities.items()
             ]
-            if rest_obj.user_assigned_identities
+            if obj.user_assigned_identities
             else None
         )
         result = cls(
-            type=camel_to_snake(rest_obj.type),
+            type=camel_to_snake(obj.type),
             user_assigned_identities=from_rest_user_assigned_identities,
         )
-        result.principal_id = rest_obj.principal_id
-        result.tenant_id = rest_obj.tenant_id
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
         return result
