@@ -34,7 +34,7 @@ class JobService(RestTranslatableMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard"]] = None,
+        job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard", "VSCode"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
