@@ -27,7 +27,7 @@ def mock_registry_operation(
 
 
 @pytest.mark.unittest
-class TestRegistryOperation:
+class TestRegistryOperations:
     def test_list(self, mock_registry_operation: RegistryOperations) -> None:
         mock_registry_operation.list()
         mock_registry_operation._operation.list.assert_called_once()

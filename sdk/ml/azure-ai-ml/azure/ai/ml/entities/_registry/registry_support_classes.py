@@ -50,9 +50,14 @@ class SystemCreatedAcrAccount:
     @classmethod
     def _to_rest_object(cls, acr) -> RestAcrDetails:
         if hasattr(acr, "acr_account_sku") and acr.acr_account_sku is not None:
-            # SKU enum requires input to be a capitalized word.
-            # Format input to be acceptable as long as spelling is correct.
+            # SKU enum requires input to be a capitalized word,
+            # so we format the input to be acceptable as long as spelling is 
+            # correct.
             acr_account_sku = acr.acr_account_sku.capitalize()
+            # We DO NOT want to set the arm_resource_id. The backend provides very 
+            # unhelpful errors if you provide an empty/null/invalid reosource ID,
+            # and ignores the value otherwise. It's better to avoid setting it in
+            # the conversion in this direction at all.
             return RestAcrDetails(
                 system_created_acr_account=RestSystemCreatedAcrAccount(
                     acr_account_sku=acr_account_sku, 
@@ -70,12 +75,15 @@ class SystemCreatedAcrAccount:
             return None
         # TODO should we even bother check if both values are set and throw an error? This shouldn't be possible.
         if hasattr(rest_obj, "system_created_acr_account") and rest_obj.system_created_acr_account is not None:
+            resource_id = None
+            if rest_obj.system_created_acr_account.arm_resource_id:
+                resource_id = rest_obj.system_created_acr_account.arm_resource_id.resource_id
             return SystemCreatedAcrAccount(
                 acr_account_sku=rest_obj.system_created_acr_account.acr_account_sku,
-                arm_resource_id=rest_obj.system_created_acr_account.arm_resource_id,
+                arm_resource_id=resource_id,
             )
         elif hasattr(rest_obj, "user_created_acr_account") and rest_obj.user_created_acr_account is not None:
-            return rest_obj.user_created_acr_account
+            return rest_obj.user_created_acr_account.arm_resource_id.resource_id
         else:
             return None  # TODO should this throw an error instead?
 
@@ -111,11 +119,16 @@ class SystemCreatedStorageAccount:
     @classmethod
     def _to_rest_object(cls, storage) -> RestStorageAccountDetails:
         if hasattr(storage, "storage_account_type") and storage.storage_account_type is not None:
-            storage_account_type = StorageAccountType(
-                storage.storage_account_type.lower())
+            
+            # We DO NOT want to set the arm_resource_id. The backend provides very 
+            # unhelpful errors if you provide an empty/null/invalid reosource ID,
+            # and ignores the value otherwise. It's better to avoid setting it in
+            # the conversion in this direction at all.
+            # We don't bother processing storage_account_type because the
+            # rest version is case insensitive.
             account = RestSystemCreatedStorageAccount(
                 storage_account_hns_enabled=storage.storage_account_hns,
-                storage_account_type=storage_account_type,
+                storage_account_type=storage.storage_account_type,
             )
             return RestStorageAccountDetails(system_created_storage_account=account)
         else:
@@ -131,22 +144,25 @@ class SystemCreatedStorageAccount:
             return None
         # TODO should we even bother check if both values are set and throw an error? This shouldn't be possible.
         if rest_obj.system_created_storage_account:
+            resource_id = None
+            if rest_obj.system_created_storage_account.arm_resource_id:
+                resource_id = rest_obj.system_created_storage_account.arm_resource_id.resource_id
             return SystemCreatedStorageAccount(
                 storage_account_hns=rest_obj.system_created_storage_account.storage_account_hns_enabled,
                 storage_account_type=StorageAccountType(
                     rest_obj.system_created_storage_account.storage_account_type.lower()
                 ),  # TODO validate storage account type?
-                arm_resource_id=rest_obj.system_created_storage_account.arm_resource_id,
+                arm_resource_id=resource_id,
             )
         elif rest_obj.user_created_storage_account:
-            return rest_obj.user_created_storage_account
+            return rest_obj.user_created_storage_account.arm_resource_id.resource_id
         else:
             return None  # TODO should this throw an error instead?
 
 
 # Per-region information for registries.
 @experimental
-class RegistryRegionArmDetails:
+class RegistryRegionDetails:
     def __init__(
         self,
         *,
@@ -157,7 +173,7 @@ class RegistryRegionArmDetails:
         """
         Details for each region a registry is in.
 
-        :param acr_details: List of ACR details. Each value can either be a
+        :param acr_details: List of ACR account details. Each value can either be a
             single string representing the arm_resource_id of a user-created
             acr_details object, or a entire SystemCreatedAcrAccount object.
         :type acr_details: List[Union[str, SystemCreatedAcrAccount]]
@@ -174,7 +190,7 @@ class RegistryRegionArmDetails:
         self.storage_config = storage_config
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestRegistryRegionArmDetails) -> "RegistryRegionArmDetails":
+    def _from_rest_object(cls, rest_obj: RestRegistryRegionArmDetails) -> "RegistryRegionDetails":
         if not rest_obj:
             return None
         converted_acr_details = []
@@ -183,7 +199,7 @@ class RegistryRegionArmDetails:
         storages = []
         if rest_obj.storage_account_details:
             storages = [SystemCreatedStorageAccount._from_rest_object(storages) for storages in rest_obj.storage_account_details]
-        return RegistryRegionArmDetails(
+        return RegistryRegionDetails(
             acr_config=converted_acr_details, location=rest_obj.location, storage_config=storages
         )
 

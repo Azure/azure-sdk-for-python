@@ -13,7 +13,7 @@ from azure.ai.ml.entities._registry.registry_support_classes import SystemCreate
 from azure.ai.ml._utils._experimental import experimental
 
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
-from .registry_region_arm_details import RegistryRegionArmDetailsSchema
+from .registry_region_arm_details import RegistryRegionDetailsSchema
 from .system_created_acr_account import SystemCreatedAcrAccountSchema
 from .util import acr_format_validator
 
@@ -31,7 +31,7 @@ class RegistrySchema(ResourceSchema):
         allowed_values=[PublicNetworkAccess.DISABLED, PublicNetworkAccess.ENABLED],
         casing_transform=snake_to_pascal,
     )
-    replication_locations = fields.List(NestedField(RegistryRegionArmDetailsSchema))
+    replication_locations = fields.List(NestedField(RegistryRegionDetailsSchema))
     intellectual_property_publisher = fields.Str()
     # This is an acr account which will be applied to every registryRegionArmDetail defined
     # in replication_locations. This is different from the internal swagger

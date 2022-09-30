@@ -74,7 +74,7 @@ from ._job.sweep.search_space import (
 )
 from ._registry.registry import Registry
 from ._registry.registry_support_classes import (
-    RegistryRegionArmDetails,
+    RegistryRegionDetails,
     SystemCreatedAcrAccount,
     SystemCreatedStorageAccount,
 )
@@ -202,7 +202,7 @@ __all__ = [
     "SystemCreatedAcrAccount",
     "SystemCreatedStorageAccount",
     "ValidationResult",
-    "RegistryRegionArmDetails",
+    "RegistryRegionDetails",
     "Registry",
     "SynapseSparkCompute",
     "AutoScaleSettings",

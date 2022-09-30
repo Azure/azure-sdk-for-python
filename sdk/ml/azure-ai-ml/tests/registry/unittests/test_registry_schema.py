@@ -7,7 +7,7 @@ from marshmallow.exceptions import ValidationError
 from azure.ai.ml._schema.registry import RegistrySchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PublicNetworkAccess
 from azure.ai.ml.constants._registry import AcrAccountSku, StorageAccountType
-from azure.ai.ml.entities import RegistryRegionArmDetails, SystemCreatedAcrAccount, SystemCreatedStorageAccount
+from azure.ai.ml.entities import RegistryRegionDetails, SystemCreatedAcrAccount, SystemCreatedStorageAccount
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -34,7 +34,7 @@ class TestRegistrySchema:
             assert len(registry["replication_locations"]) == 1
 
             detail = registry["replication_locations"][0]
-            assert isinstance(detail, RegistryRegionArmDetails)
+            assert isinstance(detail, RegistryRegionDetails)
             assert detail.location == "EastUS"
             storages = detail.storage_config
 

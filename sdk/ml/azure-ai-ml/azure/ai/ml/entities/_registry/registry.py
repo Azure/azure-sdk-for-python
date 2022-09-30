@@ -22,11 +22,10 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._experimental import experimental
 
-from .registry_support_classes import RegistryRegionArmDetails, SystemCreatedStorageAccount
+from .registry_support_classes import RegistryRegionDetails, SystemCreatedStorageAccount
 
-YAML_REGION_DETAILS = "replication_locations"
-YAML_SINGLE_ACR_DETAIL = "container_registry"
-CLASS_REGION_DETAILS = "region_details"
+CONTAINER_REGISTRY = "container_registry"
+REPLICATION_LOCATIONS = "replication_locations"
 
 @experimental
 class Registry(Resource):
@@ -43,7 +42,7 @@ class Registry(Resource):
         intellectual_property_publisher: str = None,
         managed_resource_group: str = None,
         mlflow_registry_uri: str = None,
-        region_details: List[RegistryRegionArmDetails],
+        replication_locations: List[RegistryRegionDetails],
         **kwargs,
     ):
         """Azure ML registry.
@@ -62,8 +61,8 @@ class Registry(Resource):
         :type intellectual_property_publisher: str
         :param managed_resource_group: Managed resource group created for the registry.
         :type managed_resource_group: str
-        :param region_details: Details of each region the registry is in.
-        :type region_details: List[RegistryRegionArmDetails]
+        :param replication_locations: Details of each region the registry is replication in.
+        :type replication_locations: List[RegistryRegionArmDetails]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -73,7 +72,7 @@ class Registry(Resource):
         # self.display_name = name # Do we need a top-level visible name value?
         self.location = location
         self.identity = identity
-        self.region_details = region_details
+        self.replication_locations = replication_locations
         self.public_network_access = public_network_access
         self.intellectual_property_publisher = intellectual_property_publisher
         self.managed_resource_group = managed_resource_group
@@ -93,21 +92,28 @@ class Registry(Resource):
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
+    # The internal structure of the registry object is closer to how it's 
+    # represented by the registry API, which differs from how registries
+    # are represented in YAML. This function converts those differences.
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-
-        # Change name of region_details to user-shown name 'replication_locations'
-        self.replication_locations = self.region_details
         
         # Grab the first acr account of the first region and set that
         # as the system-wide container registry.
+        # Although support for multiple ACRs per region, as well as
+        # different ACRs per region technically exist according to the
+        # API schema, we do not want to surface that as an option,
+        # since the use cases for variable/multiple ACRs are extremely 
+        # limited, and would probably just confuse most users. 
         if self.replication_locations and len(self.replication_locations) > 0:
             if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
                 self.container_registry = self.replication_locations[0].acr_config[0]
 
         # Change single-list managed storage accounts to not be lists.
-        # (Since users enter managed storage accounts as non-list singletons)
+        # Although storage accounts are storage in a list to match the 
+        # underlying API, users should only enter in one managed storage
+        # in YAML.
         for region_detail in self.replication_locations:
             if region_detail.storage_config and isinstance(
                 region_detail.storage_config[0], SystemCreatedStorageAccount
@@ -131,8 +137,6 @@ class Registry(Resource):
         }
         loaded_schema = load_from_dict(RegistrySchema, data, context, **kwargs)
         cls._convert_yaml_dict_to_entity_input(loaded_schema)
-        # https://dev.azure.com/msdata/Vienna/_workitems/edit/1971490/
-        # TODO - ensure that top-level location, if set, exists among managed locations, throw error otherwise.
         return Registry(**loaded_schema)
 
     @classmethod
@@ -141,10 +145,11 @@ class Registry(Resource):
             return None
         real_registry = rest_obj.properties
 
-        region_details = []
+        # Convert from api name region_details to user-shown name "replication locations"
+        replication_locations = []
         if real_registry.region_details:
-            region_details = [
-                RegistryRegionArmDetails._from_rest_object(details) for details in real_registry.region_details # pylint: disable=protected-access
+            replication_locations = [
+                RegistryRegionDetails._from_rest_object(details) for details in real_registry.region_details # pylint: disable=protected-access
             ]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
@@ -161,7 +166,7 @@ class Registry(Resource):
             intellectual_property_publisher=real_registry.intellectual_property_publisher,
             managed_resource_group=real_registry.managed_resource_group,
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
-            region_details=region_details,
+            replication_locations=replication_locations,
         )
 
     # There are differences between what our registry validation schema
@@ -169,25 +174,23 @@ class Registry(Resource):
     # This is mostly due to the compromise required to balance
     # the actual shape of registries as they're defined by
     # autorest with how the spec wanted users to be able to
-    # configure them.
+    # configure them. This function should eventually be 
     @classmethod
     def _convert_yaml_dict_to_entity_input(
         cls,
         input: Dict, # pylint: disable=redefined-builtin
     ):
-        # change replication_locations to region_details
+        # pop container_registry value.
         global_acr_exists = False
-        if YAML_REGION_DETAILS in input:
-            input[CLASS_REGION_DETAILS] = input.pop(YAML_REGION_DETAILS)
-        if YAML_SINGLE_ACR_DETAIL in input:
-            acr_input = input.pop(YAML_SINGLE_ACR_DETAIL)
+        if CONTAINER_REGISTRY in input:
+            acr_input = input.pop(CONTAINER_REGISTRY)
             global_acr_exists = True
-        for region_detail in input[CLASS_REGION_DETAILS]:
+        for region_detail in input[REPLICATION_LOCATIONS]:
             # Apply container_registry as acr_config of each region detail
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
-            # Return single, non-list managed storage into a 1-element list.
+            # Convert single, non-list managed storage into a 1-element list.
             if hasattr(region_detail, "storage_config") and isinstance(region_detail.storage_config, SystemCreatedStorageAccount):
                 region_detail.storage_config = [region_detail.storage_config]
 
@@ -198,9 +201,9 @@ class Registry(Resource):
         :return: Rest registry.
         """
         identity = RestManagedServiceIdentity(type=RestManagedServiceIdentityType.SYSTEM_ASSIGNED)
-        region_details = []
-        if self.region_details:
-            region_details = [details._to_rest_object() for details in self.region_details]
+        replication_locations = []
+        if self.replication_locations:
+            replication_locations = [details._to_rest_object() for details in self.replication_locations]
         return RestRegistry(
             name=self.name,
             location=self.location,
@@ -215,6 +218,6 @@ class Registry(Resource):
                 intellectual_property_publisher=self.intellectual_property_publisher,
                 managed_resource_group=self.managed_resource_group,
                 ml_flow_registry_uri=self.mlflow_registry_uri,
-                region_details=region_details,
+                region_details=replication_locations,
             ),
         )

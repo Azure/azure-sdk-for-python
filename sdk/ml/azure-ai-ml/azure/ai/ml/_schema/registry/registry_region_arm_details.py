@@ -20,7 +20,7 @@ from azure.ai.ml._utils._experimental import experimental
 # Differs from the swagger def in that the acr_details can only be supplied as a
 # single registry-wide instance, rather than a per-region list.
 @experimental
-class RegistryRegionArmDetailsSchema(metaclass=PatchedSchemaMeta):
+class RegistryRegionDetailsSchema(metaclass=PatchedSchemaMeta):
     # Commenting this out for the time being.
     # We do not want to surface the acr_config as a per-region configurable
     # field. Instead we want to simplify the UX and surface it as a non-list,
@@ -48,15 +48,15 @@ class RegistryRegionArmDetailsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import RegistryRegionArmDetails
+        from azure.ai.ml.entities import RegistryRegionDetails
 
         data.pop("type", None)
-        return RegistryRegionArmDetails(**data)
+        return RegistryRegionDetails(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
-        from azure.ai.ml.entities import RegistryRegionArmDetails
+        from azure.ai.ml.entities import RegistryRegionDetails
 
-        if not isinstance(data, RegistryRegionArmDetails):
-            raise ValidationError("Cannot dump non-RegistryRegionArmDetails object into RegistryRegionArmDetailsSchema")
+        if not isinstance(data, RegistryRegionDetails):
+            raise ValidationError("Cannot dump non-RegistryRegionDetails object into RegistryRegionDetailsSchema")
         return data
