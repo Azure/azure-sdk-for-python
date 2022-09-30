@@ -7,7 +7,7 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity, \
+from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, \
     ManagedIdentityConfiguration
 from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential

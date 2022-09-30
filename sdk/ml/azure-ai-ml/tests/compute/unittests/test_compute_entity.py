@@ -13,8 +13,8 @@ from azure.ai.ml.entities import (
     ComputeInstance,
     KubernetesCompute,
     SynapseSparkCompute,
-    UserAssignedIdentity,
     VirtualMachineCompute,
+    ManagedIdentityConfiguration,
 )
 
 
@@ -103,7 +103,7 @@ class TestComputeEntity:
         compute._to_dict()
         assert compute.type == "kubernetes"
 
-    def _uai_list_to_dict(self, value: List[UserAssignedIdentity]) -> Union[str, UserAssignedIdentity]:
+    def _uai_list_to_dict(self, value: List[ManagedIdentityConfiguration]) -> Union[str, ManagedIdentityConfiguration]:
         uai_dict = {}
 
         for item in value:
