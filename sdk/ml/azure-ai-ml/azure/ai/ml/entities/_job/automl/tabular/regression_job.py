@@ -170,7 +170,7 @@ class RegressionJob(AutoMLTabular):
         from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLRegressionNodeSchema
 
-        if kwargs.get("inside_pipeline", False):
+        if kwargs.pop("inside_pipeline", False):
             loaded_data = load_from_dict(AutoMLRegressionNodeSchema, data, context, additional_message, **kwargs)
         else:
             loaded_data = load_from_dict(AutoMLRegressionSchema, data, context, additional_message, **kwargs)

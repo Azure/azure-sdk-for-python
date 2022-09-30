@@ -91,7 +91,6 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         additional_message: str,
         **kwargs,
     ) -> "AutoMLJob":
-        inside_pipeline = kwargs.get("inside_pipeline", False)
         task_type = data.get(AutoMLConstants.TASK_TYPE_YAML)
         class_type = cls._get_task_mapping().get(task_type, None)
         if class_type:
@@ -99,7 +98,6 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
                 data,
                 context,
                 additional_message,
-                inside_pipeline=inside_pipeline,
                 **kwargs,
             )
         msg = f"Unsupported task type: {task_type}"

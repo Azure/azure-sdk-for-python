@@ -162,7 +162,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             TextClassificationMultilabelSchema,
         )
 
-        if kwargs.get("inside_pipeline", False):
+        if kwargs.pop("inside_pipeline", False):
             from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationMultilabelNode
 
             loaded_data = load_from_dict(

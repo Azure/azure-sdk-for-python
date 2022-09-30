@@ -184,7 +184,7 @@ class ClassificationJob(AutoMLTabular):
         from azure.ai.ml._schema.automl.table_vertical.classification import AutoMLClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
 
-        if kwargs.get("inside_pipeline", False):
+        if kwargs.pop("inside_pipeline", False):
             loaded_data = load_from_dict(
                 AutoMLClassificationNodeSchema,
                 data,

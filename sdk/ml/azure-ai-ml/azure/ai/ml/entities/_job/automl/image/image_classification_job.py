@@ -170,7 +170,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
         from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMulticlassNodeSchema
 
-        inside_pipeline = kwargs.get("inside_pipeline", False)
+        inside_pipeline = kwargs.pop("inside_pipeline", False)
         if inside_pipeline:
             if context.get("inside_pipeline", None) is None:
                 context["inside_pipeline"] = True

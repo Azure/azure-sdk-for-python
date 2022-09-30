@@ -161,7 +161,7 @@ class TextClassificationJob(AutoMLNLPJob):
     ) -> "TextClassificationJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
 
-        if kwargs.get("inside_pipeline", False):
+        if kwargs.pop("inside_pipeline", False):
             from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationNode
 
             loaded_data = load_from_dict(

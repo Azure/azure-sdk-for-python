@@ -157,7 +157,7 @@ class TextNerJob(AutoMLNLPJob):
     ) -> "TextNerJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_ner import TextNerSchema
 
-        if kwargs.get("inside_pipeline", False):
+        if kwargs.pop("inside_pipeline", False):
             from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextNerNode
 
             loaded_data = load_from_dict(AutoMLTextNerNode, data, context, additional_message, **kwargs)

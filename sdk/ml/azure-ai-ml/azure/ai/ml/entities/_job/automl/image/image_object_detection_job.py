@@ -169,7 +169,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageObjectDetectionSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
 
-        if kwargs.get("inside_pipeline", False):
+        if kwargs.pop("inside_pipeline", False):
             if context.get("inside_pipeline", None) is None:
                 context["inside_pipeline"] = True
             loaded_data = load_from_dict(

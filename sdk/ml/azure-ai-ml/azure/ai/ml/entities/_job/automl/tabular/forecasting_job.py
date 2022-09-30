@@ -472,7 +472,7 @@ class ForecastingJob(AutoMLTabular):
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
-        if kwargs.get("inside_pipeline", False):
+        if kwargs.pop("inside_pipeline", False):
             loaded_data = load_from_dict(AutoMLForecastingNodeSchema, data, context, additional_message, **kwargs)
         else:
             loaded_data = load_from_dict(AutoMLForecastingSchema, data, context, additional_message, **kwargs)
