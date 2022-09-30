@@ -7,7 +7,7 @@ stages:
       ServiceDirectory: ml
       MatrixReplace:
         - TestSamples=.*/true
-      TestTimeoutInMinutes: 360
+      TestTimeoutInMinutes: 270
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(python-ml-subscription-scope-configuration)
