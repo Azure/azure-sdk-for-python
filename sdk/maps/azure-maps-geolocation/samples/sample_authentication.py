@@ -27,11 +27,11 @@ import os
 def authentication_maps_service_client_with_subscription_key_credential():
     # [START create_maps_geolocation_service_client_with_key]
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.geolocation import MapsGeolocationClient
+    from azure.maps.geolocation import GeolocationClient
 
     subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
-    maps_geolocation_client = MapsGeolocationClient(credential=AzureKeyCredential(subscription_key))
+    maps_geolocation_client = GeolocationClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_geolocation_service_client_with_key]
 
     result = maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
@@ -45,12 +45,12 @@ def authentication_maps_service_client_with_aad_credential():
     """
     # [START create_maps_geolocation_service_client_with_aad]
     from azure.identity import DefaultAzureCredential
-    from azure.maps.geolocation import MapsGeolocationClient
+    from azure.maps.geolocation import GeolocationClient
 
     credential = DefaultAzureCredential()
     maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
-    maps_geolocation_client = MapsGeolocationClient(client_id=maps_client_id, credential=credential)
+    maps_geolocation_client = GeolocationClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_geolocation_service_client_with_aad]
 
     result = maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")

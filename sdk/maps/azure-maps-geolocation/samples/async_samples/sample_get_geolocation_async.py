@@ -24,9 +24,9 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 async def get_geolocation_async():
     # [START get_geolocation_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.geolocation.aio import MapsGeolocationClient
+    from azure.maps.geolocation.aio import GeolocationClient
 
-    maps_geolocation_client = MapsGeolocationClient(credential=AzureKeyCredential(subscription_key))
+    maps_geolocation_client = GeolocationClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_geolocation_client:
         result = await maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")

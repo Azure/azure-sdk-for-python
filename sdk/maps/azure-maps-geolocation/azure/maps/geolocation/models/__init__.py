@@ -1,9 +1,9 @@
 
 from ._models import (
-    IpAddressToLocation
+    Geolocation
 )
 
 
 __all__ = [
-    'IpAddressToLocation'
+    'Geolocation'
 ]

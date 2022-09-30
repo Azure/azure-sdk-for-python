@@ -29,11 +29,11 @@ import sys
 async def authentication_maps_service_client_with_subscription_key_credential_async():
     # [START create_maps_geolocation_service_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.geolocation.aio import MapsGeolocationClient
+    from azure.maps.geolocation.aio import GeolocationClient
 
     subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
-    maps_geolocation_client = MapsGeolocationClient(credential=AzureKeyCredential(subscription_key))
+    maps_geolocation_client = GeolocationClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_geolocation_service_client_with_key_async]
 
     async with maps_geolocation_client:
@@ -47,12 +47,12 @@ async def authentication_maps_service_client_with_aad_credential_async():
     """
     # [START create_maps_geolocation_service_client_with_aad_async]
     from azure.identity.aio import DefaultAzureCredential
-    from azure.maps.geolocation.aio import MapsGeolocationClient
+    from azure.maps.geolocation.aio import GeolocationClient
 
     credential = DefaultAzureCredential()
     maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
-    maps_geolocation_client = MapsGeolocationClient(client_id=maps_client_id, credential=credential)
+    maps_geolocation_client = GeolocationClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_geolocation_service_client_with_aad_async]
 
     async with maps_geolocation_client:

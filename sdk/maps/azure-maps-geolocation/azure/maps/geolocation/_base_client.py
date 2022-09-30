@@ -6,7 +6,7 @@
 from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from ._generated import GeolocationClient as _MapsGeolocationClient
+from ._generated import GeolocationClient as _GeolocationClient
 from ._version import VERSION
 
 # To check the credential is either AzureKeyCredential or TokenCredential
@@ -25,13 +25,13 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class MapsGeolocationClientBase:
+class GeolocationClientBase:
     def __init__(
         self,
         credential: Union[AzureKeyCredential, TokenCredential],
         **kwargs: Any
     ) -> None:
-        self._maps_client = _MapsGeolocationClient(
+        self._maps_client = _GeolocationClient(
             credential=credential,  # type: ignore
             api_version=kwargs.pop("api_version", VERSION),
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),

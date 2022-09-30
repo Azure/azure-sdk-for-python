@@ -10,13 +10,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._base_client_async import AsyncMapsGeolocationClientBase
+from ._base_client_async import AsyncGeolocationClientBase
 from ..models import (
-    IpAddressToLocation
+    Geolocation
 )
 
 # By default, use the latest supported API version
-class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
+class GeolocationClient(AsyncGeolocationClientBase):
     """Azure Maps Geolocation REST APIs.
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -36,13 +36,13 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
             :end-before: [END create_maps_geolocation_service_client_with_key_async]
             :language: python
             :dedent: 4
-            :caption: Creating the MapsGeolocationClient with an subscription key.
+            :caption: Creating the GeolocationClient with an subscription key.
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_maps_geolocation_service_client_with_aad_async]
             :end-before: [END create_maps_geolocation_service_client_with_aad_async]
             :language: python
             :dedent: 4
-            :caption: Creating the MapsGeolocationClient with a token credential.
+            :caption: Creating the GeolocationClient with a token credential.
     """
     def __init__(
         self,
@@ -59,7 +59,7 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
         self,
         ip_address: str,
         **kwargs: Any
-    ) -> IpAddressToLocation:
+    ) -> Geolocation:
         """
         This service will return the ISO country code for the provided IP address. Developers can use
         this information  to block or alter certain content based on geographical locations where the
@@ -69,9 +69,9 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
             The IP address. Both IPv4 and IPv6 are allowed. Required.
         :type ip_address: str
         :return:
-            IpAddressToLocation
+            Geolocation
         :rtype:
-            ~azure.maps.geolocation.models.IpAddressToLocation
+            ~azure.maps.geolocation.models.Geolocation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -90,7 +90,7 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
             **kwargs
         )
 
-        return IpAddressToLocation(
+        return Geolocation(
             ip_address=geolocation_result.ip_address,
             iso_code=geolocation_result.country_region.iso_code
         )

@@ -8,14 +8,14 @@ from typing import Union, Any
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
-from ._base_client import MapsGeolocationClientBase
+from ._base_client import GeolocationClientBase
 from .models import (
-    IpAddressToLocation
+    Geolocation
 )
 
 
 # By default, use the latest supported API version
-class MapsGeolocationClient(MapsGeolocationClientBase):
+class GeolocationClient(GeolocationClientBase):
     """Azure Maps Geolocation REST APIs.
 
     :param credential:
@@ -37,13 +37,13 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
             :end-before: [END create_maps_geolocation_service_client_with_key]
             :language: python
             :dedent: 4
-            :caption: Creating the MapsGeolocationClient with an subscription key.
+            :caption: Creating the GeolocationClient with an subscription key.
         .. literalinclude:: ../samples/sample_authentication.py
             :start-after: [START create_maps_geolocation_service_client_with_aad]
             :end-before: [END create_maps_geolocation_service_client_with_aad]
             :language: python
             :dedent: 4
-            :caption: Creating the MapsGeolocationClient with a token credential.
+            :caption: Creating the GeolocationClient with a token credential.
     """
 
     def __init__(
@@ -61,7 +61,7 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
         self,
         ip_address: str,
         **kwargs: Any
-    ) -> IpAddressToLocation:
+    ) -> Geolocation:
         """
         This service will return the ISO country code for the provided IP address. Developers can use
         this information  to block or alter certain content based on geographical locations where the
@@ -72,9 +72,9 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
         :type ip_address:
             str
         :return:
-            IpAddressToLocation
+            Geolocation
         :rtype:
-            ~azure.maps.geolocation.models.IpAddressToLocation
+            ~azure.maps.geolocation.models.Geolocation
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -93,7 +93,7 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
             **kwargs
         )
 
-        return IpAddressToLocation(
+        return Geolocation(
             ip_address=geolocation_result.ip_address,
             iso_code=geolocation_result.country_region.iso_code
         )
