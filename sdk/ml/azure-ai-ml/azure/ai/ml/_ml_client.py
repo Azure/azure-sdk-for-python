@@ -82,7 +82,7 @@ module_logger = logging.getLogger(__name__)
 
 # pylint: disable=too-many-public-methods
 class MLClient(object):
-    """A client clasqs to interact with Azure ML services.
+    """A client class to interact with Azure ML services.
 
     Use this client to manage Azure ML resources, e.g. workspaces, jobs,
     models and so on.
