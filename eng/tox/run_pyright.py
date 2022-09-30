@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# This script is used to execute mypy within a tox environment. Packages can opt in to fail CI job if pyright fails.
+# This script is used to execute pyright within a tox environment.
 
 from subprocess import check_call, CalledProcessError
 import argparse
