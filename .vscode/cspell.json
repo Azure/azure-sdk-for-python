@@ -148,6 +148,7 @@
     "docfx",
     "dont",
     "dotenv",
+    "dowhile",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -231,6 +232,7 @@
     "myacr",
     "mydirectory",
     "myfile",
+    "myvault",
     "nazsdk",
     "nbytes",
     "noarch",
@@ -393,7 +395,8 @@
         "myasynctable",
         "mytableasync",
         "mytable",
-        "edmtypes"
+        "edmtypes",
+        "specifed"
       ]
     },
     {
@@ -462,12 +465,16 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": ["qnas", "qnamaker"],
+      "words": ["qnas", "qnamaker", "ADTO"],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
       "words": ["groovin", "Olufsen"]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
+      "words": ["ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize"]
     },
     {
       "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
@@ -651,6 +658,12 @@
       ]
     },
     {
+      "filename": "sdk/ml/tests.yml",
+      "words": [
+        "euap"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -764,7 +777,13 @@
         "reprlib",
         "gzrs",
         "ragzrs",
-        "wsid"
+        "wsid",
+        "azml",
+        "uncompiled",
+        "segs",
+        "fnmatch",
+        "posixpath",
+        "SEPS"
       ]
     },
     {

@@ -245,4 +245,5 @@ class ImportJob(Job, JobIOMixin):
             outputs={"output": self.output},
             description=self.description,
             display_name=self.display_name,
+            properties=self.properties,
         )

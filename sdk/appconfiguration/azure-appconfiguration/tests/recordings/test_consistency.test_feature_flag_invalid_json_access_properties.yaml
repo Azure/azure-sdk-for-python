@@ -19,13 +19,13 @@ interactions:
       x-ms-content-sha256:
       - urM6Dh9pMGq2hExCeZuik6DvGMZc7PUzo01IOjdHNnM=
       x-ms-date:
-      - Aug, 16 2022 23:29:00.465599 GMT
+      - Sep, 15 2022 23:57:22.689009 GMT
     method: PUT
     uri: https://fake_app_config.azconfig-test.io/kv/.appconfig.featureflag%2Fkey76191ae0?api-version=1.0
   response:
     body:
-      string: '{"etag":"oHbrwGOXQea35NDpiak1l53Vr_xpdVxaaRRtq0H6m1c","key":".appconfig.featureflag/key76191ae0","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
-        true, \"conditions\": {\"client_filters\": []}}","tags":{},"locked":false,"last_modified":"2022-08-16T23:28:59+00:00"}'
+      string: '{"etag":"tG6SeCo7KzATzUdWql5cc29GYtI82i1PZDG0HHNIk-8","key":".appconfig.featureflag/key76191ae0","label":null,"content_type":"application/vnd.microsoft.appconfig.ff+json;charset=utf-8","value":"{\"enabled\":
+        true, \"conditions\": {\"client_filters\": []}}","tags":{},"locked":false,"last_modified":"2022-09-15T23:57:22+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -43,17 +43,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:28:59 GMT
+      - Thu, 15 Sep 2022 23:57:22 GMT
       etag:
-      - '"oHbrwGOXQea35NDpiak1l53Vr_xpdVxaaRRtq0H6m1c"'
+      - '"tG6SeCo7KzATzUdWql5cc29GYtI82i1PZDG0HHNIk-8"'
       last-modified:
-      - Tue, 16 Aug 2022 23:28:59 GMT
+      - Thu, 15 Sep 2022 23:57:22 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=NTo1IzExMzM4OTYw;sn=11338960
+      - zAJw6V16=Nzo1IzEwNDk4NjU=;sn=1049865
       transfer-encoding:
       - chunked
     status:
@@ -71,13 +71,13 @@ interactions:
       Content-Length:
       - '0'
       Sync-Token:
-      - zAJw6V16=NTo1IzExMzM4OTYw
+      - zAJw6V16=Nzo1IzEwNDk4NjU=
       User-Agent:
       - azsdk-python-appconfiguration/1.4.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 16 2022 23:29:00.602664 GMT
+      - Sep, 15 2022 23:57:22.820761 GMT
     method: DELETE
     uri: https://fake_app_config.azconfig-test.io/kv/%7B%22enabled%22%3A%20true%2C%20%22conditions%22%3A%20%7B%22client_filters%22%3A%20%5B%5D%7D%7D?api-version=1.0
   response:
@@ -100,7 +100,7 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 16 Aug 2022 23:29:00 GMT
+      - Thu, 15 Sep 2022 23:57:22 GMT
       server:
       - openresty/1.17.8.2
       strict-transport-security:

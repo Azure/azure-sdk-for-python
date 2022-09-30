@@ -9,7 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthMode,
     IdentityConfiguration,
@@ -27,6 +26,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -73,7 +73,7 @@ class OnlineEndpoint(Endpoint):
         mirror_traffic: Dict[str, int] = None,
         identity: IdentityConfiguration = None,
         scoring_uri: str = None,
-        swagger_uri: str = None,
+        openapi_uri: str = None,
         provisioning_state: str = None,
         kind: str = None,
         **kwargs,
@@ -88,7 +88,7 @@ class OnlineEndpoint(Endpoint):
             description=description,
             location=location,
             scoring_uri=scoring_uri,
-            swagger_uri=swagger_uri,
+            openapi_uri=openapi_uri,
             provisioning_state=provisioning_state,
             **kwargs,
         )
@@ -186,7 +186,7 @@ class OnlineEndpoint(Endpoint):
                 traffic=resource.properties.traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
+                openapi_uri=resource.properties.swagger_uri,
                 identity=resource.identity,
                 kind=resource.kind,
             )
@@ -203,7 +203,7 @@ class OnlineEndpoint(Endpoint):
                 mirror_traffic=resource.properties.mirror_traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
+                openapi_uri=resource.properties.swagger_uri,
                 identity=resource.identity,
                 kind=resource.kind,
                 public_network_access=resource.properties.public_network_access,
@@ -363,7 +363,10 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :param identity: defaults to SystemAssigned
     :type identity: IdentityConfiguration, optional
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str, optional
+    :type kind: str, optional,
+    :param public_network_access: Whether to allow public endpoint connectivity
+        Allowed values are: "enabled", "disabled"
+    :type public_network_access: str
     """
 
     def __init__(
@@ -379,9 +382,10 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         mirror_traffic: Dict[str, int] = None,
         identity: IdentityConfiguration = None,
         kind: str = None,
+        public_network_access = None,
         **kwargs,
     ):
-        self.public_network_access = kwargs.pop("public_network_access", None)
+        self.public_network_access = public_network_access
 
         super(ManagedOnlineEndpoint, self).__init__(
             name=name,

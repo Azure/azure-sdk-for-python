@@ -6,12 +6,16 @@ from azure.ai.ml import Input, MLClient, Output, load_job, spark
 from azure.ai.ml.entities._job.identity import ManagedIdentity
 from azure.ai.ml.entities._job.spark_job import SparkJob
 
+from devtools_testutils import AzureRecordedTestCase
+
 
 @pytest.mark.timeout(600)
-class TestSparkJob:
+@pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_code_hash")
+@pytest.mark.skip(reason="user assigned identity not attached to test workspace")
+class TestSparkJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_spark_job(self, randstr: Callable[[], str], client: MLClient) -> None:
-        job_name = randstr()
+        job_name = randstr("job_name")
         print(f"Creating spark job {job_name}")
 
         try:
@@ -107,7 +111,7 @@ class TestSparkJob:
         # https://msdata.visualstudio.com/Vienna/_workitems/edit/1940993
         params_override = [{"name": randstr()}]
         job = load_job(
-            path="./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml",
+            "./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml",
             params_override=params_override,
         )
         spark_job = client.jobs.create_or_update(job=job)

@@ -14,23 +14,23 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
-from azure.ai.ml._ml_exceptions import (
+from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
+)
+from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.exceptions import (
     AssetPathException,
     ErrorCategory,
     ErrorTarget,
     ValidationErrorType,
     ValidationException,
-    log_and_raise_error,
 )
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
-from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError
 
@@ -48,11 +48,12 @@ class CodeOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient062022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-        super(CodeOperations, self).__init__(operation_scope)
+        super(CodeOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._service_client = service_client
         self._version_operation = service_client.code_versions
@@ -68,6 +69,11 @@ class CodeOperations(_ScopeDependentOperations):
 
         :param code: Code asset object.
         :type code: Code
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Code artifact path is already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: Code asset object.
+        :rtype: ~azure.ai.ml.entities.Code
         """
         try:
             name = code.name
@@ -140,6 +146,9 @@ class CodeOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of the code asset.
         :type version: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated. Details will be provided in the error message.
+        :return: Code asset object.
+        :rtype: ~azure.ai.ml.entities.Code
         """
         if not version:
             msg = "Code asset version must be specified as part of name parameter, in format 'name:version'."

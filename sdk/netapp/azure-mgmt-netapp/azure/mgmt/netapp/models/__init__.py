@@ -25,9 +25,12 @@ from ._models_py3 import CheckAvailabilityResponse
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import DailySchedule
 from ._models_py3 import Dimension
+from ._models_py3 import EncryptionIdentity
 from ._models_py3 import ExportPolicyRule
 from ._models_py3 import FilePathAvailabilityRequest
 from ._models_py3 import HourlySchedule
+from ._models_py3 import Identity
+from ._models_py3 import KeyVaultProperties
 from ._models_py3 import LdapSearchScopeOpt
 from ._models_py3 import ListReplications
 from ._models_py3 import LogSpecification
@@ -46,6 +49,9 @@ from ._models_py3 import PoolChangeRequest
 from ._models_py3 import ProxyResource
 from ._models_py3 import QuotaAvailabilityRequest
 from ._models_py3 import ReestablishReplicationRequest
+from ._models_py3 import RegionInfo
+from ._models_py3 import RegionInfoAvailabilityZoneMappingsItem
+from ._models_py3 import RelocateVolumeRequest
 from ._models_py3 import Replication
 from ._models_py3 import ReplicationObject
 from ._models_py3 import ReplicationStatus
@@ -70,6 +76,7 @@ from ._models_py3 import SubvolumePatchRequest
 from ._models_py3 import SubvolumesList
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import Vault
 from ._models_py3 import VaultList
 from ._models_py3 import Volume
@@ -94,148 +101,165 @@ from ._models_py3 import VolumeRevert
 from ._models_py3 import VolumeSnapshotProperties
 from ._models_py3 import WeeklySchedule
 
-
-from ._net_app_management_client_enums import (
-    ActiveDirectoryStatus,
-    ApplicationType,
-    AvsDataStore,
-    BackupType,
-    CheckNameResourceTypes,
-    CheckQuotaNameResourceTypes,
-    ChownMode,
-    CreatedByType,
-    EnableSubvolumes,
-    EncryptionKeySource,
-    EncryptionType,
-    EndpointType,
-    InAvailabilityReasonType,
-    MetricAggregationType,
-    MirrorState,
-    NetworkFeatures,
-    ProvisioningState,
-    QosType,
-    RelationshipStatus,
-    ReplicationSchedule,
-    SecurityStyle,
-    ServiceLevel,
-    Type,
-    VolumeStorageToNetworkProximity,
-)
+from ._net_app_management_client_enums import ActiveDirectoryStatus
+from ._net_app_management_client_enums import ApplicationType
+from ._net_app_management_client_enums import AvsDataStore
+from ._net_app_management_client_enums import BackupType
+from ._net_app_management_client_enums import CheckNameResourceTypes
+from ._net_app_management_client_enums import CheckQuotaNameResourceTypes
+from ._net_app_management_client_enums import ChownMode
+from ._net_app_management_client_enums import CreatedByType
+from ._net_app_management_client_enums import EnableSubvolumes
+from ._net_app_management_client_enums import EncryptionKeySource
+from ._net_app_management_client_enums import EncryptionType
+from ._net_app_management_client_enums import EndpointType
+from ._net_app_management_client_enums import IdentityType
+from ._net_app_management_client_enums import InAvailabilityReasonType
+from ._net_app_management_client_enums import KeySource
+from ._net_app_management_client_enums import KeyVaultStatus
+from ._net_app_management_client_enums import MetricAggregationType
+from ._net_app_management_client_enums import MirrorState
+from ._net_app_management_client_enums import NetworkFeatures
+from ._net_app_management_client_enums import ProvisioningState
+from ._net_app_management_client_enums import QosType
+from ._net_app_management_client_enums import RegionStorageToNetworkProximity
+from ._net_app_management_client_enums import RelationshipStatus
+from ._net_app_management_client_enums import ReplicationSchedule
+from ._net_app_management_client_enums import SecurityStyle
+from ._net_app_management_client_enums import ServiceLevel
+from ._net_app_management_client_enums import SmbAccessBasedEnumeration
+from ._net_app_management_client_enums import SmbNonBrowsable
+from ._net_app_management_client_enums import Type
+from ._net_app_management_client_enums import VolumeStorageToNetworkProximity
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccountEncryption',
-    'ActiveDirectory',
-    'AuthorizeRequest',
-    'Backup',
-    'BackupPatch',
-    'BackupPoliciesList',
-    'BackupPolicy',
-    'BackupPolicyDetails',
-    'BackupPolicyPatch',
-    'BackupStatus',
-    'BackupsList',
-    'BreakReplicationRequest',
-    'CapacityPool',
-    'CapacityPoolList',
-    'CapacityPoolPatch',
-    'CheckAvailabilityResponse',
-    'CloudErrorBody',
-    'DailySchedule',
-    'Dimension',
-    'ExportPolicyRule',
-    'FilePathAvailabilityRequest',
-    'HourlySchedule',
-    'LdapSearchScopeOpt',
-    'ListReplications',
-    'LogSpecification',
-    'MetricSpecification',
-    'MonthlySchedule',
-    'MountTarget',
-    'MountTargetProperties',
-    'NetAppAccount',
-    'NetAppAccountList',
-    'NetAppAccountPatch',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PlacementKeyValuePairs',
-    'PoolChangeRequest',
-    'ProxyResource',
-    'QuotaAvailabilityRequest',
-    'ReestablishReplicationRequest',
-    'Replication',
-    'ReplicationObject',
-    'ReplicationStatus',
-    'Resource',
-    'ResourceIdentity',
-    'ResourceNameAvailabilityRequest',
-    'RestoreStatus',
-    'ServiceSpecification',
-    'Snapshot',
-    'SnapshotPoliciesList',
-    'SnapshotPolicy',
-    'SnapshotPolicyDetails',
-    'SnapshotPolicyPatch',
-    'SnapshotPolicyVolumeList',
-    'SnapshotRestoreFiles',
-    'SnapshotsList',
-    'SubscriptionQuotaItem',
-    'SubscriptionQuotaItemList',
-    'SubvolumeInfo',
-    'SubvolumeModel',
-    'SubvolumePatchRequest',
-    'SubvolumesList',
-    'SystemData',
-    'TrackedResource',
-    'Vault',
-    'VaultList',
-    'Volume',
-    'VolumeBackupProperties',
-    'VolumeBackups',
-    'VolumeGroup',
-    'VolumeGroupDetails',
-    'VolumeGroupList',
-    'VolumeGroupMetaData',
-    'VolumeGroupVolumeProperties',
-    'VolumeList',
-    'VolumePatch',
-    'VolumePatchPropertiesDataProtection',
-    'VolumePatchPropertiesExportPolicy',
-    'VolumePropertiesDataProtection',
-    'VolumePropertiesExportPolicy',
-    'VolumeQuotaRule',
-    'VolumeQuotaRulePatch',
-    'VolumeQuotaRulesList',
-    'VolumeRelocationProperties',
-    'VolumeRevert',
-    'VolumeSnapshotProperties',
-    'WeeklySchedule',
-    'ActiveDirectoryStatus',
-    'ApplicationType',
-    'AvsDataStore',
-    'BackupType',
-    'CheckNameResourceTypes',
-    'CheckQuotaNameResourceTypes',
-    'ChownMode',
-    'CreatedByType',
-    'EnableSubvolumes',
-    'EncryptionKeySource',
-    'EncryptionType',
-    'EndpointType',
-    'InAvailabilityReasonType',
-    'MetricAggregationType',
-    'MirrorState',
-    'NetworkFeatures',
-    'ProvisioningState',
-    'QosType',
-    'RelationshipStatus',
-    'ReplicationSchedule',
-    'SecurityStyle',
-    'ServiceLevel',
-    'Type',
-    'VolumeStorageToNetworkProximity',
+    "AccountEncryption",
+    "ActiveDirectory",
+    "AuthorizeRequest",
+    "Backup",
+    "BackupPatch",
+    "BackupPoliciesList",
+    "BackupPolicy",
+    "BackupPolicyDetails",
+    "BackupPolicyPatch",
+    "BackupStatus",
+    "BackupsList",
+    "BreakReplicationRequest",
+    "CapacityPool",
+    "CapacityPoolList",
+    "CapacityPoolPatch",
+    "CheckAvailabilityResponse",
+    "CloudErrorBody",
+    "DailySchedule",
+    "Dimension",
+    "EncryptionIdentity",
+    "ExportPolicyRule",
+    "FilePathAvailabilityRequest",
+    "HourlySchedule",
+    "Identity",
+    "KeyVaultProperties",
+    "LdapSearchScopeOpt",
+    "ListReplications",
+    "LogSpecification",
+    "MetricSpecification",
+    "MonthlySchedule",
+    "MountTarget",
+    "MountTargetProperties",
+    "NetAppAccount",
+    "NetAppAccountList",
+    "NetAppAccountPatch",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PlacementKeyValuePairs",
+    "PoolChangeRequest",
+    "ProxyResource",
+    "QuotaAvailabilityRequest",
+    "ReestablishReplicationRequest",
+    "RegionInfo",
+    "RegionInfoAvailabilityZoneMappingsItem",
+    "RelocateVolumeRequest",
+    "Replication",
+    "ReplicationObject",
+    "ReplicationStatus",
+    "Resource",
+    "ResourceIdentity",
+    "ResourceNameAvailabilityRequest",
+    "RestoreStatus",
+    "ServiceSpecification",
+    "Snapshot",
+    "SnapshotPoliciesList",
+    "SnapshotPolicy",
+    "SnapshotPolicyDetails",
+    "SnapshotPolicyPatch",
+    "SnapshotPolicyVolumeList",
+    "SnapshotRestoreFiles",
+    "SnapshotsList",
+    "SubscriptionQuotaItem",
+    "SubscriptionQuotaItemList",
+    "SubvolumeInfo",
+    "SubvolumeModel",
+    "SubvolumePatchRequest",
+    "SubvolumesList",
+    "SystemData",
+    "TrackedResource",
+    "UserAssignedIdentity",
+    "Vault",
+    "VaultList",
+    "Volume",
+    "VolumeBackupProperties",
+    "VolumeBackups",
+    "VolumeGroup",
+    "VolumeGroupDetails",
+    "VolumeGroupList",
+    "VolumeGroupMetaData",
+    "VolumeGroupVolumeProperties",
+    "VolumeList",
+    "VolumePatch",
+    "VolumePatchPropertiesDataProtection",
+    "VolumePatchPropertiesExportPolicy",
+    "VolumePropertiesDataProtection",
+    "VolumePropertiesExportPolicy",
+    "VolumeQuotaRule",
+    "VolumeQuotaRulePatch",
+    "VolumeQuotaRulesList",
+    "VolumeRelocationProperties",
+    "VolumeRevert",
+    "VolumeSnapshotProperties",
+    "WeeklySchedule",
+    "ActiveDirectoryStatus",
+    "ApplicationType",
+    "AvsDataStore",
+    "BackupType",
+    "CheckNameResourceTypes",
+    "CheckQuotaNameResourceTypes",
+    "ChownMode",
+    "CreatedByType",
+    "EnableSubvolumes",
+    "EncryptionKeySource",
+    "EncryptionType",
+    "EndpointType",
+    "IdentityType",
+    "InAvailabilityReasonType",
+    "KeySource",
+    "KeyVaultStatus",
+    "MetricAggregationType",
+    "MirrorState",
+    "NetworkFeatures",
+    "ProvisioningState",
+    "QosType",
+    "RegionStorageToNetworkProximity",
+    "RelationshipStatus",
+    "ReplicationSchedule",
+    "SecurityStyle",
+    "ServiceLevel",
+    "SmbAccessBasedEnumeration",
+    "SmbNonBrowsable",
+    "Type",
+    "VolumeStorageToNetworkProximity",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -57,9 +57,7 @@ class KubernetesOnlineEndpointSchema(OnlineEndpointSchema):
 
 class ManagedOnlineEndpointSchema(OnlineEndpointSchema):
     provisioning_state = fields.Str()
-    public_network_access = ExperimentalField(
-        StringTransformedEnum(allowed_values=[PublicNetworkAccess.ENABLED, PublicNetworkAccess.DISABLED])
-    )
+    public_network_access = StringTransformedEnum(allowed_values=[PublicNetworkAccess.ENABLED, PublicNetworkAccess.DISABLED])
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:

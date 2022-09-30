@@ -16,6 +16,11 @@ class StorageAccountType(str, Enum):
     PREMIUM_ZRS = "Premium_ZRS".lower()
 
 
+# When will other values be allowed?
+class AcrAccountSku(str, Enum):
+    PREMIUM = "Premium".lower()
+
+
 # based on /subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/
 # # ...providers/Microsoft.Storage/storageAccounts/{StorageAccountName}
 STORAGE_ACCOUNT_FORMAT = re.compile(

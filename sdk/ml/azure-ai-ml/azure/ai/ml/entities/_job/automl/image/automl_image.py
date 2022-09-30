@@ -5,7 +5,6 @@
 from abc import ABC
 from typing import Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -13,6 +12,7 @@ from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
 from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class AutoMLImage(AutoMLVertical, ABC):
@@ -121,8 +121,6 @@ class AutoMLImage(AutoMLVertical, ABC):
         self,
         *,
         sampling_algorithm: Union[str, SamplingAlgorithmType],
-        max_concurrent_trials: int = None,
-        max_trials: int = None,
         early_termination: EarlyTerminationPolicy = None,
     ) -> None:
         """Sweep settings for all AutoML Image Verticals.
@@ -130,10 +128,6 @@ class AutoMLImage(AutoMLVertical, ABC):
         :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
          algorithms. Possible values include: "Grid", "Random", "Bayesian".
         :type sampling_algorithm: str or ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType
-        :param max_concurrent_trials: Maximum Concurrent iterations.
-        :type max_concurrent_trials: int
-        :param max_trials: Number of iterations.
-        :type max_trials: int
         :param early_termination: Type of early termination policy.
         :type early_termination: ~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy
         """
@@ -141,11 +135,7 @@ class AutoMLImage(AutoMLVertical, ABC):
             self._sweep.sampling_algorithm = sampling_algorithm
         else:
             self._sweep = ImageSweepSettings(sampling_algorithm=sampling_algorithm)
-
-        self._sweep.max_concurrent_trials = (
-            max_concurrent_trials if max_concurrent_trials is not None else self._sweep.max_concurrent_trials
-        )
-        self._sweep.max_trials = max_trials if max_trials is not None else self._sweep.max_trials
+            
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
     def __eq__(self, other) -> bool:

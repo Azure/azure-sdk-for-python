@@ -9,20 +9,19 @@ from typing import Dict, List, Union
 import pydash
 from marshmallow import EXCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.entities._job.pipeline._io import PipelineInputBase
+from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy, EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
 from ..._schema import PathAwareSchema
@@ -106,7 +105,20 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     @property
     def trial(self):
+        """Id or instance of the command component/job to be run for the step."""
         return self._component
+
+    @classmethod
+    def _get_supported_inputs_types(cls):
+        supported_types = super()._get_supported_inputs_types() or ()
+        return (
+            SweepDistribution,
+            *supported_types,
+        )
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Sweep":
+        raise NotImplementedError("Sweep._load_from_dict is not supported")
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
@@ -152,7 +164,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        support_data_binding_expression_for_fields(schema, ["type"])
+        support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])
 
         base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)  # pylint: disable=no-member
         for key, value in base_sweep.items():
@@ -215,7 +227,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         return SweepSchema(context=context)
 
     @classmethod
-    def _get_origin_inputs_and_search_space(cls, built_inputs: Dict[str, PipelineInputBase]):
+    def _get_origin_inputs_and_search_space(cls, built_inputs: Dict[str, NodeInput]):
         """Separate mixed true inputs & search space definition from inputs of
         this node and return them.
 
@@ -225,7 +237,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         inputs: Dict[str, Union[Input, str, bool, int, float]] = {}
         if built_inputs is not None:
             for input_name, input_obj in built_inputs.items():
-                if isinstance(input_obj, PipelineInputBase):
+                if isinstance(input_obj, NodeInput):
                     if isinstance(input_obj._data, SweepDistribution):
                         search_space[input_name] = input_obj._data
                     else:

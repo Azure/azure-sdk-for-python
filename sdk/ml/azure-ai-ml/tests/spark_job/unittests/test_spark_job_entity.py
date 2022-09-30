@@ -1,7 +1,6 @@
 import pytest
 
 from azure.ai.ml import Input, Output
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, JobBase
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJobPythonEntry
@@ -9,6 +8,7 @@ from azure.ai.ml.entities import SparkJob
 from azure.ai.ml.entities._builders.spark_func import spark
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.unittest
@@ -52,6 +52,66 @@ class TestSparkJobEntity:
             "spark.dynamicAllocation.maxExecutors": 3,
         }
         assert node._to_job()._to_rest_object().properties.conf == expected_conf
+
+    def test_attached_compute_default_managed_identity_if_empty_identity_input(self):
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            compute="synapsecompute",
+        )
+        assert node._to_job()._to_rest_object().properties.identity.identity_type == "Managed"
+
+    def test_hobo_default_user_identity_if_empty_identity_input(self):
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            resources={
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.1.0",
+            },
+        )
+        assert node._to_job()._to_rest_object().properties.identity.identity_type == "UserIdentity"
+
+    def test_attached_compute_obey_user_identity_input(self):
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            compute="synapsecompute",
+            identity={"type": "user_identity"},
+        )
+        assert node._to_job()._to_rest_object().properties.identity.identity_type == "UserIdentity"
+
+    def test_hobo_obey_user_identity_input(self):
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            resources={
+                "instance_type": "Standard_E8S_V3",
+                "runtime_version": "3.1.0",
+            },
+            identity={"type": "managed"},
+        )
+        assert node._to_job()._to_rest_object().properties.identity.identity_type == "Managed"
 
     def test_promoted_conf_with_additional_conf_serialization(self) -> None:
         node = spark(
@@ -98,6 +158,62 @@ class TestSparkJobEntity:
                 entry={"file": "./main.py"},
             )
             node._to_job()._to_rest_object()
+
+    def test_resources_instance_type(self):
+        with pytest.raises(ValidationException) as ve:
+            node = spark(
+                code="./tests/test_configs/spark_job/basic_spark_job/src",
+                entry={"file": "./main.py"},
+                resources=SparkResourceConfiguration(instance_type="Standard_E128S_V3", runtime_version="3.1.0"),
+                driver_cores=1,
+                driver_memory="2g",
+                executor_cores=2,
+                executor_memory="2g",
+            )
+            node._to_job()._to_rest_object()
+            assert ve.message == "Instance type must be specified for the list of standard_e4s_v3,standard_e8s_v3,standard_e16s_v3,standard_e32s_v3,standard_e64s_v3"
+
+    def test_resources_33_runtime_version(self):
+        with pytest.raises(ValidationException) as ve:
+            node = spark(
+                code="./tests/test_configs/spark_job/basic_spark_job/src",
+                entry={"file": "./main.py"},
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.3.0"),
+                driver_cores=1,
+                driver_memory="2g",
+                executor_cores=2,
+                executor_memory="2g",
+            )
+            node._to_job()._to_rest_object()
+            assert ve.message == "runtime version should be either 3.1 or 3.2"
+
+    def test_resources_3_runtime_version(self):
+        with pytest.raises(ValidationException) as ve:
+            node = spark(
+                    code="./tests/test_configs/spark_job/basic_spark_job/src",
+                    entry={"file": "./main.py"},
+                    resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3"),
+                    driver_cores=1,
+                    driver_memory="2g",
+                    executor_cores=2,
+                    executor_memory="2g",
+                )
+            node._to_job()._to_rest_object()
+            assert ve.message == "runtime version should be either 3.1 or 3.2"
+
+    def test_resources_runtime_version_with_char(self):
+        with pytest.raises(ValueError) as ve:
+            node = spark(
+                        code="./tests/test_configs/spark_job/basic_spark_job/src",
+                        entry={"file": "./main.py"},
+                        resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.abc"),
+                        driver_cores=1,
+                        driver_memory="2g",
+                        executor_cores=2,
+                        executor_memory="2g",
+                    )
+            node._to_job()._to_rest_object()
+            assert ve.message == "runtime_version should only contain numbers"
 
     def test_missing_entry_with_dict_resources_raises(self):
         with pytest.raises(ValidationException):

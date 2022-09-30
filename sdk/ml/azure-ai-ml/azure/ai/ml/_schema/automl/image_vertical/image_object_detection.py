@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     TaskType,
 )
 from azure.ai.ml._schema.automl.image_vertical.image_model_distribution_settings import (
+    ImageModelDistributionSettingsInstanceSegmentationSchema,
     ImageModelDistributionSettingsObjectDetectionSchema,
 )
 from azure.ai.ml._schema.automl.image_vertical.image_model_settings import (
@@ -23,14 +24,10 @@ from azure.ai.ml._schema.automl.image_vertical.image_model_settings import (
 from azure.ai.ml._schema.automl.image_vertical.image_vertical import ImageVerticalSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
-class ImageObjectDetectionBaseSchema(ImageVerticalSchema):
-    search_space = fields.List(NestedField(ImageModelDistributionSettingsObjectDetectionSchema()))
-
-
-class ImageObjectDetectionSchema(ImageObjectDetectionBaseSchema):
+class ImageObjectDetectionSchema(ImageVerticalSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.IMAGE_OBJECT_DETECTION,
         casing_transform=camel_to_snake,
@@ -43,6 +40,7 @@ class ImageObjectDetectionSchema(ImageObjectDetectionBaseSchema):
         load_default=camel_to_snake(ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION),
     )
     training_parameters = NestedField(ImageModelSettingsObjectDetectionSchema())
+    search_space = fields.List(NestedField(ImageModelDistributionSettingsObjectDetectionSchema()))
 
     @post_load
     def make(self, data, **kwargs) -> Dict[str, Any]:
@@ -50,7 +48,7 @@ class ImageObjectDetectionSchema(ImageObjectDetectionBaseSchema):
         return data
 
 
-class ImageInstanceSegmentationSchema(ImageObjectDetectionBaseSchema):
+class ImageInstanceSegmentationSchema(ImageVerticalSchema):
     task_type = StringTransformedEnum(
         allowed_values=TaskType.IMAGE_INSTANCE_SEGMENTATION,
         casing_transform=camel_to_snake,
@@ -63,6 +61,7 @@ class ImageInstanceSegmentationSchema(ImageObjectDetectionBaseSchema):
         load_default=camel_to_snake(InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION),
     )
     training_parameters = NestedField(ImageModelSettingsInstanceSegmentationSchema())
+    search_space = fields.List(NestedField(ImageModelDistributionSettingsInstanceSegmentationSchema()))
 
     @post_load
     def make(self, data, **kwargs) -> Dict[str, Any]:
