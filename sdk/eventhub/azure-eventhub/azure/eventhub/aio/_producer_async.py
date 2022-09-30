@@ -6,7 +6,7 @@ from __future__ import annotations
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING
+from typing import Iterable, Union, Optional, Any, AnyStr, List, TYPE_CHECKING, cast
 
 from azure.core.tracing import AbstractSpan
 
@@ -171,7 +171,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                     event_data = EventDataBatch._from_batch(
                         event_data._internal_events,
                         amqp_transport=self._amqp_transport,
-                        partition_key=event_data._partition_key,
+                        partition_key=cast(AnyStr, event_data._partition_key),
                         partition_id=event_data._partition_id,
                         max_size_in_bytes=event_data.max_size_in_bytes,
                     )

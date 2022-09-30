@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Optional, Union, Any, Tuple
+from typing import Optional, Union, Any, Tuple, cast
 
 from .._pyamqp import (
     error as errors,
@@ -288,11 +288,11 @@ class PyamqpTransport(AmqpTransport):
             if annotations is None:
                 annotations = {}
             try:
-                partition_key = partition_key.decode(encoding)
+                partition_key = cast(bytes, partition_key).decode(encoding)
             except AttributeError:
                 pass
             annotations[PROP_PARTITION_KEY] = partition_key  # pylint:disable=protected-access
-            header = Header(durable=True)
+            header = Header(durable=True)   # type: ignore
             return message._replace(message_annotations=annotations, header=header)
         return message
 

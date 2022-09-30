@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Tuple, Union, TYPE_CHECKING
+from typing import Literal, Tuple, Union, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
@@ -20,12 +20,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     CONNECTION_CLOSING_STATES: Tuple
 
     # define symbols
-    PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    FRAMEWORK_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["product"]]
+    VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["version"]]
+    FRAMEWORK_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["framework"]]
+    PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["platform"]]
+    USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["user-agent"]]
+    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal[b'x-opt-partition-key']]
 
 
     @staticmethod

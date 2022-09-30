@@ -25,11 +25,10 @@ from azure.core.credentials import (
 from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.pipeline.policies import RetryMode
 
-
 try:
     from ._transport._uamqp_transport import UamqpTransport
 except ImportError:
-    UamqpTransport = None
+    UamqpTransport = None   # type: ignore
 from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration

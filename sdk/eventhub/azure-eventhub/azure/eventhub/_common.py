@@ -131,8 +131,8 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self._uamqp_message = None
-        self._message = None
+        self._uamqp_message: Optional[Union[LegacyMessage, uamqp_Message]] = None
+        self._message: Message = None   # type: ignore
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -557,7 +557,7 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(
         cls,
-        batch_data: Iterable[EventData],
+        batch_data: Iterable[Union[AmqpAnnotatedMessage, EventData]],
         amqp_transport: AmqpTransport,
         partition_key: Optional[AnyStr] = None,
         *,
