@@ -103,7 +103,8 @@ class Command(BaseNode):
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     :param services: Interactive services for the node.
     :type services: Dict[str, JobService]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     # pylint: disable=too-many-instance-attributes

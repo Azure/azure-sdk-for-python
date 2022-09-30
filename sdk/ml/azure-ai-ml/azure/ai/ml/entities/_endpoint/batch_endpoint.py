@@ -106,9 +106,7 @@ class BatchEndpoint(Endpoint):
 
     def dump(
         self,
-        *args,  # pylint: disable=unused-argument
         dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
-        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}

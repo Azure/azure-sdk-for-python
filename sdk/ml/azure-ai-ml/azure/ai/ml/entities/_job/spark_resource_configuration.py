@@ -12,6 +12,14 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
+    instance_type_list = [
+        "standard_e4s_v3",
+        "standard_e8s_v3",
+        "standard_e16s_v3",
+        "standard_e32s_v3",
+        "standard_e64s_v3"
+    ]
+
     def __init__(self, *, instance_type: str = None, runtime_version: str = None):
         self.instance_type = instance_type
         self.runtime_version = runtime_version
@@ -31,7 +39,59 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
+                target=ErrorTarget.SPARK_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        if self.instance_type.lower() not in self.instance_type_list:
+            msg = "Instance type must be specified for the list of {}".format(",".join(self.instance_type_list))
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.SPARK_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+        # runtime_version type is either float or str
+        if isinstance(self.runtime_version, float):
+            if self.runtime_version < 3.1 or self.runtime_version >= 3.3:
+                msg = "runtime version should be either 3.1 or 3.2"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.SPARK_JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+        elif isinstance(self.runtime_version, str):
+            runtime_arr = self.runtime_version.split('.')
+            try:
+                for runtime in runtime_arr:
+                    int(runtime)
+            except ValueError:
+                raise ValueError("runtime_version should only contain numbers")
+            if len(runtime_arr) <= 1:
+                msg = "runtime version should be either 3.1 or 3.2"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.SPARK_JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+            first_number = int(runtime_arr[0])
+            second_number = int(runtime_arr[1])
+            if first_number != 3 or second_number not in (1, 2):
+                msg = "runtime version should be either 3.1 or 3.2"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.SPARK_JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+        else:
+            msg = "runtime version should be either float or str type"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
 

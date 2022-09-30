@@ -80,7 +80,11 @@ class Registry(Resource):
         self.discovery_url = discovery_url
         self.mlflow_registry_uri = mlflow_registry_uri
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]]) -> None:
+    def dump(
+        self,
+        dest: Union[str, PathLike, IO[AnyStr]],
+        **kwargs, # pylint: disable=unused-argument
+    ) -> None:
         """Dump the registry spec into a file in yaml format.
 
         :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
@@ -140,7 +144,7 @@ class Registry(Resource):
         region_details = []
         if real_registry.region_details:
             region_details = [
-                RegistryRegionArmDetails._from_rest_object(details) for details in real_registry.region_details
+                RegistryRegionArmDetails._from_rest_object(details) for details in real_registry.region_details # pylint: disable=protected-access
             ]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
@@ -167,7 +171,10 @@ class Registry(Resource):
     # autorest with how the spec wanted users to be able to
     # configure them.
     @classmethod
-    def _convert_yaml_dict_to_entity_input(cls, input: Dict):
+    def _convert_yaml_dict_to_entity_input(
+        cls,
+        input: Dict, # pylint: disable=redefined-builtin
+    ):
         # change replication_locations to region_details
         global_acr_exists = False
         if YAML_REGION_DETAILS in input:

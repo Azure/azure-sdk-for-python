@@ -21,7 +21,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -73,7 +73,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         :param environment: Environment object
         :type environment: Environment
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Created or updated Environment object
         :rtype: ~azure.ai.ml.entities.Environment
@@ -149,7 +150,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             if not env_rest_obj and self._registry_name:
                 env_rest_obj = self._get(name=environment.name, version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
-        except Exception as ex:
+        except Exception as ex: # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -200,7 +201,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the environment. (mutually exclusive with version)
         :type label: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
+            Details will be provided in the error message.
         :return: Environment object
         :rtype: ~azure.ai.ml.entities.Environment
         """

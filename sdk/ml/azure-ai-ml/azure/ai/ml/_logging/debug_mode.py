@@ -46,6 +46,7 @@ def connection_info(gc_objects: list) -> List[ConnectionInfo]:
     return [ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None)) for c in connections]
 
 
+# pylint: disable=client-incorrect-naming-convention
 class diagnostic_log(object):
     """Directs debug logs to a specified file.
 
@@ -124,7 +125,7 @@ class diagnostic_log(object):
     def __enter__(self) -> None:
         self.start_capture()
 
-    def __exit__(self) -> None:
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
         self.stop_capture()
 
 
@@ -132,7 +133,7 @@ _debugging_enabled = False
 
 
 def debug_sdk() -> None:
-    global _debugging_enabled
+    global _debugging_enabled # pylint: disable=global-statement
     if _debugging_enabled:
         module_logger.warning("Debug logs are already enabled at %s", LOG_FILE)
         return

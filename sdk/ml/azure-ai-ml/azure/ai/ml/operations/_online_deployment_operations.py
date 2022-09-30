@@ -92,16 +92,25 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type local: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.DeploymentException: Raised if OnlineDeployment type is unsupported. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
+            be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be
+            successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.DeploymentException: Raised if OnlineDeployment type is unsupported.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :raises ~azure.ai.ml.exceptions.LocalEndpointInFailedStateError: Raised if local endpoint is in a failed state.
-        :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if Docker image cannot be found for local deployment.
-        :raises ~azure.ai.ml.exceptions.LocalEndpointImageBuildError: Raised if Docker image cannot be successfully built for local deployment.
-        :raises ~azure.ai.ml.exceptions.RequiredLocalArtifactsNotFoundError: Raised if  local artifacts cannot be found for local deployment.
-        :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint. VSCode debug is only supported for local endpoints.
+        :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if Docker image cannot be
+            found for local deployment.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointImageBuildError: Raised if Docker image cannot be
+            successfully built for local deployment.
+        :raises ~azure.ai.ml.exceptions.RequiredLocalArtifactsNotFoundError: Raised if local artifacts cannot be
+            found for local deployment.
+        :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint.
+            VSCode debug is only supported for local endpoints.
         :raises ~azure.ai.ml.exceptions.VSCodeCommandNotFound: Raised if VSCode instance cannot be instantiated.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
@@ -116,7 +125,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                 )
-            if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
+            if (
+                not skip_script_validation
+                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
+                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+            ):
                 validate_scoring_script(deployment)
 
             path_format_arguments = {

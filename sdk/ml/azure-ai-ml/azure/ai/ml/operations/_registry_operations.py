@@ -66,12 +66,13 @@ class RegistryOperations:
         return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], resource_group_name=self._resource_group_name)
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str = None, **kwargs: Dict) -> Registry:
+    def get(self, name: str = None) -> Registry:
         """Get a registry by name.
 
         :param name: Name of the registry.
         :type name: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Registry name cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Registry name cannot be
+            successfully validated. Details will be provided in the error message.
         :return: The registry with the provided name.
         :rtype: ~azure.ai.ml.entities.Registry
         """

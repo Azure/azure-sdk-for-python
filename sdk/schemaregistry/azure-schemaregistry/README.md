@@ -146,7 +146,7 @@ version = int("<your schema version>")
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema = schema_registry_client.get_schema_by_version(group_name, name, version)
+    schema = schema_registry_client.get_schema(group_name=group_name, name=name, version=version)
     definition = schema.definition
     properties = schema.properties
 ```

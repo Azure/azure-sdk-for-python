@@ -134,7 +134,7 @@ class ServicePrincipalCredentials(BaseTenantCredentials):
         secrets = ServicePrincipalDatastoreSecrets(client_secret=self.client_secret)
         return ServicePrincipalDatastoreCredentials(
             authority_url=self.authority_url,
-            resource_uri=self.resource_url,
+            resource_url=self.resource_url,
             tenant_id=self.tenant_id,
             client_id=self.client_id,
             secrets=secrets,
@@ -181,7 +181,7 @@ class CertificateCredentials(BaseTenantCredentials):
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)
         return CertificateDatastoreCredentials(
             authority_url=self.authority_url,
-            resource_uri=self.resource_url,
+            resource_url=self.resource_url,
             tenant_id=self.tenant_id,
             client_id=self.client_id,
             thumbprint=self.thumbprint,
@@ -192,7 +192,7 @@ class CertificateCredentials(BaseTenantCredentials):
     def _from_rest_object(cls, obj: CertificateDatastoreCredentials) -> "CertificateCredentials":
         return cls(
             authority_url=obj.authority_url,
-            resource_url=obj.resource_uri,
+            resource_url=obj.resource_url,
             tenant_id=obj.tenant_id,
             client_id=obj.client_id,
             thumbprint=obj.thumbprint,

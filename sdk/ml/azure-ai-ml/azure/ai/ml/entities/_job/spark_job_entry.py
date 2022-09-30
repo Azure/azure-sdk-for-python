@@ -28,15 +28,15 @@ class SparkJobEntry(RestTranslatableMixin):
         self.entry = entry
 
     @classmethod
-    def _from_rest_object(cls, data: Union[SparkJobPythonEntry, SparkJobScalaEntry]) -> Optional["SparkJobEntry"]:
-        if data is None:
+    def _from_rest_object(cls, obj: Union[SparkJobPythonEntry, SparkJobScalaEntry]) -> Optional["SparkJobEntry"]:
+        if obj is None:
             return
-        if data.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
+        if obj.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
             return SparkJobEntry(
-                entry=data.__dict__.get("file", None),
+                entry=obj.__dict__.get("file", None),
                 type=SparkJobEntryType.SPARK_JOB_FILE_ENTRY,
             )
-        return SparkJobEntry(entry=data.class_name, type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY)
+        return SparkJobEntry(entry=obj.class_name, type=SparkJobEntryType.SPARK_JOB_CLASS_ENTRY)
 
     def _to_rest_object(self) -> Union[SparkJobPythonEntry, SparkJobScalaEntry]:
         if self.entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:

@@ -204,9 +204,13 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :type endpoint: ~azure.ai.ml.entities.OnlineEndpoint
         :param local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
         :type local: bool
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineEndpoint cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineEndpoint assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineEndpoint model cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineEndpoint cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineEndpoint assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineEndpoint model cannot be successfully validated.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status if remote, else returns None if local.
@@ -315,7 +319,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :param local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
         :type local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
-        :raises ~azure.ai.ml.exceptions.MultipleLocalDeploymentsFoundError: Raised if there are multiple deployments and no deployment_name is specified.
+        :raises ~azure.ai.ml.exceptions.MultipleLocalDeploymentsFoundError: Raised if there are multiple deployments
+            and no deployment_name is specified.
         :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if local endpoint is None.
         :return: Prediction output for online endpoint.
         :rtype: str
