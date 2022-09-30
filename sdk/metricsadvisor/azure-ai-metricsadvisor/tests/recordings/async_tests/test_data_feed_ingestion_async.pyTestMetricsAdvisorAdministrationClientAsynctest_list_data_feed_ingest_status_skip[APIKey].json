@@ -8,20 +8,22 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "80",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "14e61295-5e0d-11ec-af7b-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022startTime\u0022: \u00222021-08-09T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-16T00:00:00.000Z\u0022}",
+      "RequestBody": {
+        "startTime": "2021-08-09T00:00:00.000Z",
+        "endTime": "2021-09-16T00:00:00.000Z"
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "739d8c98-02b6-4130-a003-f56a328fd76e",
-        "Content-Length": "2878",
+        "apim-request-id": "c4eccba6-9ab5-492a-b97d-36e98f6b11fa",
+        "Content-Length": "2709",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:11:21 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:06 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "226",
-        "X-Request-ID": "739d8c98-02b6-4130-a003-f56a328fd76e"
+        "x-envoy-upstream-service-time": "215",
+        "X-Request-ID": "c4eccba6-9ab5-492a-b97d-36e98f6b11fa"
       },
       "ResponseBody": {
         "value": [
@@ -37,8 +39,8 @@
           },
           {
             "timestamp": "2021-09-13T00:00:00Z",
-            "status": "Error",
-            "message": "Duplicate metric values are found on the same dimension combination within one metric interval. Please use aggregation function to aggregate your metrics by its dimensions. "
+            "status": "Succeeded",
+            "message": ""
           },
           {
             "timestamp": "2021-09-12T00:00:00Z",
@@ -226,20 +228,22 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "80",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "150f4160-5e0d-11ec-8888-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022startTime\u0022: \u00222021-08-09T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-16T00:00:00.000Z\u0022}",
+      "RequestBody": {
+        "startTime": "2021-08-09T00:00:00.000Z",
+        "endTime": "2021-09-16T00:00:00.000Z"
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "8281ee01-bf59-4840-b01c-293f0be37a0e",
+        "apim-request-id": "e517c9bf-c90d-48ec-ae79-35eede389d9f",
         "Content-Length": "2354",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:11:21 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:06 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "201",
-        "X-Request-ID": "8281ee01-bf59-4840-b01c-293f0be37a0e"
+        "x-envoy-upstream-service-time": "212",
+        "X-Request-ID": "e517c9bf-c90d-48ec-ae79-35eede389d9f"
       },
       "ResponseBody": {
         "value": [
