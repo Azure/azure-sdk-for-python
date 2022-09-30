@@ -65,7 +65,6 @@ setup(
     install_requires=[
         "uamqp>=1.5.1,<2.0.0",
         'azure-common~=1.1',
-        'msrest>=0.6.17,<2.0.0',
         'azure-core<2.0.0,>=1.14.0',
         "isodate>=0.6.0",
         "six>=1.11.0",

@@ -24,7 +24,7 @@ from typing import (
     cast
 )
 from contextlib import contextmanager
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 
 try:
     from urlparse import urlparse
