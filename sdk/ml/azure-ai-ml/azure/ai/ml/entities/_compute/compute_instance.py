@@ -22,8 +22,8 @@ from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 
-from ._identity import IdentityConfiguration
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
 
@@ -241,7 +241,7 @@ class ComputeInstance(Compute):
         return ComputeResource(
             location=self.location,
             properties=compute_instance,
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
         )
 
     def _to_dict(self) -> Dict:
@@ -323,7 +323,7 @@ class ComputeInstance(Compute):
             schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
             if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
             else None,
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
