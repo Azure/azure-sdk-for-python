@@ -47,7 +47,7 @@ def build_list_request(
     aggregation: Optional[str] = None,
     sensitivities: Optional[str] = None,
     filter: Optional[str] = None,
-    result_type: Optional[Union[str, "_models.ResultType"]] = None,
+    result_type: Optional[Union[str, _models.ResultType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -119,7 +119,7 @@ class BaselinesOperations:
         aggregation: Optional[str] = None,
         sensitivities: Optional[str] = None,
         filter: Optional[str] = None,
-        result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        result_type: Optional[Union[str, _models.ResultType]] = None,
         **kwargs: Any
     ) -> Iterable["_models.SingleMetricBaseline"]:
         """**Lists the metric baseline values for a resource**.
