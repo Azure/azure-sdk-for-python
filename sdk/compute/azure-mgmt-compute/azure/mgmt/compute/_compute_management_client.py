@@ -309,6 +309,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import AvailabilitySetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'availability_sets'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -334,6 +335,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import CapacityReservationGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'capacity_reservation_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -359,6 +361,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import CapacityReservationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'capacity_reservations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -375,6 +378,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_04_04.operations import CloudServiceOperatingSystemsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'cloud_service_operating_systems'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -394,6 +398,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_04_04.operations import CloudServiceRoleInstancesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'cloud_service_role_instances'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -413,6 +418,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_04_04.operations import CloudServiceRolesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'cloud_service_roles'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -432,6 +438,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_04_04.operations import CloudServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'cloud_services'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -451,6 +458,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_04_04.operations import CloudServicesUpdateDomainOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'cloud_services_update_domain'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -467,6 +475,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import CommunityGalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'community_galleries'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -483,6 +492,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import CommunityGalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'community_gallery_image_versions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -499,6 +509,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import CommunityGalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'community_gallery_images'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -542,6 +553,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import DedicatedHostGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dedicated_host_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -585,6 +597,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import DedicatedHostsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dedicated_hosts'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -619,6 +632,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DiskAccessesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_accesses'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -659,6 +673,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DiskEncryptionSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_encryption_sets'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -687,6 +702,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DiskRestorePointOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disk_restore_point'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -745,6 +761,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import DisksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'disks'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -779,6 +796,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import GalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'galleries'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -810,6 +828,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import GalleryApplicationVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_application_versions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -841,6 +860,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import GalleryApplicationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_applications'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -875,6 +895,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import GalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_image_versions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -909,6 +930,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import GalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_images'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -931,6 +953,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import GallerySharingProfileOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'gallery_sharing_profile'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -992,6 +1015,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import ImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'images'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1047,6 +1071,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import LogAnalyticsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'log_analytics'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1102,6 +1127,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1154,6 +1180,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import ProximityPlacementGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'proximity_placement_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1176,6 +1203,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_07_01.operations import ResourceSkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_skus'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1204,6 +1232,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import RestorePointCollectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'restore_point_collections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1232,6 +1261,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import RestorePointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'restore_points'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1251,6 +1281,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import SharedGalleriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_galleries'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1270,6 +1301,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import SharedGalleryImageVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_gallery_image_versions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1289,6 +1321,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_01_03.operations import SharedGalleryImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'shared_gallery_images'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1347,6 +1380,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_03_02.operations import SnapshotsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'snapshots'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1384,6 +1418,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import SshPublicKeysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ssh_public_keys'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1451,6 +1486,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import UsageOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'usage'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1518,6 +1554,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineExtensionImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_extension_images'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1585,6 +1622,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineExtensionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_extensions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1652,6 +1690,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineImagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_images'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1683,6 +1722,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineImagesEdgeZoneOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_images_edge_zone'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1741,6 +1781,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineRunCommandsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_run_commands'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1799,6 +1840,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineScaleSetExtensionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_extensions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1857,6 +1899,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineScaleSetRollingUpgradesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_rolling_upgrades'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1897,6 +1940,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineScaleSetVMExtensionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vm_extensions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1931,6 +1975,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineScaleSetVMRunCommandsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vm_run_commands'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1998,6 +2043,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineScaleSetVMsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_set_vms'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2065,6 +2111,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineScaleSetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_scale_sets'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2132,6 +2179,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachineSizesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_sizes'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2199,6 +2247,7 @@ class ComputeManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_08_01.operations import VirtualMachinesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machines'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):
