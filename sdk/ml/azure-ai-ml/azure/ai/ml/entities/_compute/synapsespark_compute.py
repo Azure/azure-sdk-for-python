@@ -147,6 +147,7 @@ class SynapseSparkCompute(Compute):
             node_family=prop.properties.node_size_family if prop.properties else None,
             node_size=prop.properties.node_size if prop.properties else None,
             spark_version=prop.properties.spark_version if prop.properties else None,
+            # pylint: disable=protected-access
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             scale_settings=scale_settings,
             auto_pause_settings=auto_pause_settings,
@@ -176,5 +177,8 @@ class SynapseSparkCompute(Compute):
             location=self.location,
             properties=synapsespark_comp,
             name=self.name,
-            identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            identity=(
+                # pylint: disable=protected-access
+                self.identity._to_compute_rest_object() if self.identity else None
+            ),
         )
