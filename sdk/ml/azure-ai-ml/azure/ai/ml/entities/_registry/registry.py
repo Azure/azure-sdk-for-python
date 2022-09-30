@@ -50,18 +50,24 @@ class Registry(Resource):
 
         :param name: Name of the registry. Must be globally unique and is immutable.
         :type name: str
-        :param tags: Tags of the registry.
-        :type tags: dict
         :param location: The location this registry resource is located in.
         :type location: str
+        :param identity: registry's System Managed Identity
+        :type identity: ManagedServiceIdentity
         :param description: Description of the registry.
         :type description: str
+        :param tags: Tags of the registry.
+        :type tags: dict
         :param public_network_access: Whether to allow public endpoint connectivity.
         :type public_network_access: str
+        :param discovery_url: Backend service base url for the registry.
+        :type discovery_url: str
         :param intellectual_property_publisher: Intellectual property publisher.
         :type intellectual_property_publisher: str
         :param managed_resource_group: Managed resource group created for the registry.
         :type managed_resource_group: str
+        :param mlflow_registry_uri: Ml flow tracking uri for the registry.
+        :type mlflow_registry_uri: str
         :param region_details: Details of each region the registry is in.
         :type region_details: List[RegistryRegionArmDetails]
         :param kwargs: A dictionary of additional configuration parameters.

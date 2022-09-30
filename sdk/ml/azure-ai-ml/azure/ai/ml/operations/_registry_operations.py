@@ -55,10 +55,8 @@ class RegistryOperations:
     @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
     def list(self) -> Iterable[Registry]:
         """List all registries that the user has access to in the current
-        resource group or subscription.
+        resource group.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
@@ -66,7 +64,7 @@ class RegistryOperations:
         return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], resource_group_name=self._resource_group_name)
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str = None) -> Registry:
+    def get(self, name: str) -> Registry:
         """Get a registry by name.
 
         :param name: Name of the registry.
@@ -117,7 +115,6 @@ class RegistryOperations:
 
         :param registry: Registry definition.
         :type registry: Registry
-        :type update_dependent_resources: boolean
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """
