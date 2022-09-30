@@ -38,19 +38,7 @@ Build model errors usually occur when trying to build a custom model. The most c
 
 #### Invalid training data set
 This error indicates that the provided data set does not match the training data requirements.
-Learn more about building a training data set, [here](https://aka.ms/customModelV3)
-The error looks like this:
-
-```json
-{
-"code": "InvalidRequest",
-"message": "Invalid request.",
-"innererror": {
-  "code": "ModelBuildError",
-  "message": "Could not build the model: OCR file 'Form_1.jpg.ocr.json' has an invalid schema."
-  }
-}
-```
+Learn more about building a training data set, [here](https://aka.ms/customModelV3).
 
 Example error output:
 ```text
