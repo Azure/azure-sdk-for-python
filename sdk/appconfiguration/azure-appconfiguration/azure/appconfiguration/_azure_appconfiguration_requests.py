@@ -75,7 +75,6 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         }
 
         request.http_request.headers.update(signature_header)
-        request.http_request.headers['Authorization'] = str(request.http_request.headers['Authorization'])
 
         return request
 
