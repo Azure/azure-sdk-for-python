@@ -47,6 +47,7 @@ class ServiceInstance(RestTranslatableMixin):
         self.properties = properties
 
     @classmethod
+    # pylint: disable=arguments-differ
     def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":
         return cls(
             type=obj.type,

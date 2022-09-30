@@ -178,7 +178,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             return {}
         data_conf = {}
         for conf_key, conf_val in self.conf.items():
-            if not (conf_key in CONF_KEY_MAP):
+            if not conf_key in CONF_KEY_MAP:
                 data_conf[conf_key] = conf_val
         return data_conf
 

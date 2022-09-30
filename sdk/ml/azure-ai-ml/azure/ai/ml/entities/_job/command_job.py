@@ -52,7 +52,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type display_name: str
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, default will be set to current directory name.
+    :param experiment_name:  Name of the experiment the job will be created under.
+        If None is provided, default will be set to current directory name.
     :type experiment_name: str
     :param services: Information on services associated with the job, readonly.
     :type services: dict[str, JobService]
@@ -69,7 +70,10 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :param code: A local path or http:, https:, azureml: url pointing to a remote location.
     :type code: str
     :param distribution: Distribution configuration for distributed training.
-    :type distribution: Union[azure.ai.ml.PyTorchDistribution, azure.ai.ml.MpiDistribution, azure.ai.ml.TensorFlowDistribution]
+    :type distribution: Union[
+        azure.ai.ml.PyTorchDistribution,
+        azure.ai.ml.MpiDistribution,
+        azure.ai.ml.TensorFlowDistribution]
     :param environment: Environment that training job will run in.
     :type environment: Union[azure.ai.ml.entities.Environment, str]
     :param identity: Identity that training job will use while running on compute.
@@ -111,6 +115,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         return self._parameters
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return CommandJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_rest_object(self) -> JobBase:

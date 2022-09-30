@@ -20,7 +20,7 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -117,7 +117,8 @@ class DataOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the data asset. (mutually exclusive with version)
         :type label: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully identified and retrieved. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully
+            identified and retrieved. Details will be provided in the error message.
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
@@ -161,8 +162,10 @@ class DataOperations(_ScopeDependentOperations):
 
         :param data: Data asset object.
         :type data: azure.ai.ml.entities.Data
-        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Data artifact path is already linked to another asset
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Data artifact path is
+            already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data

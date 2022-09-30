@@ -50,8 +50,8 @@ class DistributionConfiguration(RestTranslatableMixin):
             data = obj.as_dict()
 
         type_str = data.pop("distribution_type", None) or data.pop("type", None)
-        cls = DISTRIBUTION_TYPE_MAP[type_str.lower()]
-        return cls(**data)
+        klass = DISTRIBUTION_TYPE_MAP[type_str.lower()]
+        return klass(**data)
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, DistributionConfiguration):

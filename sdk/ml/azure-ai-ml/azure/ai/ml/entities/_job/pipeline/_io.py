@@ -338,7 +338,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
         # Allow inline output binding with string, eg: "component_out_path_1": "${{parents.outputs.job_out_data_1}}"
         if data and not isinstance(data, (Output, str)):

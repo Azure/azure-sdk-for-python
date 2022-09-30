@@ -223,13 +223,15 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
 
     :param file_path: The relative or absolute path to the local file.
     :type file_path: str
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be successfully loaded. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be successfully loaded.
+        Details will be provided in the error message.
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
     if source is None:
         return {}
 
+    # pylint: disable=redefined-builtin
     input = None  # type: IOBase
     must_open_file = False
     try:  # check source type by duck-typing it as an IOBase
@@ -300,7 +302,7 @@ def dump_yaml_to_file(
     dest: Optional[Union[AnyStr, PathLike, IO]],
     data_dict: Union[OrderedDict, Dict],
     default_flow_style=False,
-    args=None,  # deprecated* input
+    args=None,  # pylint: disable=unused-argument
     **kwargs,
 ) -> None:
     """Dump dictionary to a local YAML file.
@@ -309,13 +311,15 @@ def dump_yaml_to_file(
     :type dest: Optional[Union[AnyStr, PathLike, IO]]
     :param data_dict: Dictionary representing a YAML object
     :type data_dict: Union[OrderedDict, Dict]
-    :param default_flow_style: Use flow style for formatting nested YAML collections instead of block style. Defaults to False.
+    :param default_flow_style: Use flow style for formatting nested YAML collections
+        instead of block style. Defaults to False.
     :type default_flow_style: bool
     :param path: Deprecated. Use 'dest' param instead.
     :type path: Optional[Union[AnyStr, PathLike]]
     :param args: Deprecated.
     :type: Any
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped.
+        Details will be provided in the error message.
     """
     # Check for deprecated path input, either named or as first unnamed input
     path = kwargs.pop("path", None)
@@ -815,6 +819,17 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
         return True
+
+
+class DockerProxy:
+    def __getattribute__(self, name: str) -> Any:
+        try:
+            import docker # pylint: disable=import-error
+            return getattr(docker, name)
+        except ModuleNotFoundError:
+            raise Exception(
+                "Please install docker in the current python environment with `pip install docker` and try again."
+            )
 
 
 def get_all_enum_values_iter(enum_type):

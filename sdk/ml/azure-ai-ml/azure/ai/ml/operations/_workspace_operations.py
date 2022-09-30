@@ -13,11 +13,10 @@ from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces a
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DiagnoseRequestProperties,
     DiagnoseWorkspaceParameters,
-    ListWorkspaceKeysResult,
     WorkspaceUpdateParameters,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling, polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
@@ -389,7 +388,7 @@ class WorkspaceOperations:
         module_logger.info("Diagnose request initiated for workspace:%s`\n", name)
         return poller
 
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements,too-many-branches
     def _populate_arm_paramaters(self, workspace: Workspace) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
