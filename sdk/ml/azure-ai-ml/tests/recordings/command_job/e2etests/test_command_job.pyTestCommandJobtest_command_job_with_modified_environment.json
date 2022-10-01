@@ -194,7 +194,7 @@
           "isArchived": false,
           "jobType": "Command",
           "command": "pip freeze",
-          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
           "environmentVariables": {},
           "inputs": {
             "hello_input": {
@@ -275,7 +275,7 @@
           },
           "codeId": null,
           "command": "pip freeze",
-          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
           "inputs": {
             "hello_input": {
               "description": null,
@@ -342,7 +342,7 @@
             }
           },
           "command": "pip freeze",
-          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
           "environmentVariables": {},
           "inputs": {
             "hello_input": {
@@ -435,7 +435,7 @@
           },
           "codeId": null,
           "command": "pip freeze",
-          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
           "inputs": {
             "hello_input": {
               "description": null,
@@ -548,7 +548,7 @@
           },
           "codeId": null,
           "command": "pip freeze",
-          "environmentId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
           "inputs": {
             "hello_input": {
               "description": null,
