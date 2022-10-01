@@ -17,7 +17,7 @@ from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.exceptions import ValidationException
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class DatastoreOperations(_ScopeDependentOperations):

@@ -34,7 +34,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceOperations:

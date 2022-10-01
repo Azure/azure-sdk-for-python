@@ -31,7 +31,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):

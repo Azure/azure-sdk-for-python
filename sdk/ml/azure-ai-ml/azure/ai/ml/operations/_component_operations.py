@@ -45,7 +45,7 @@ from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):

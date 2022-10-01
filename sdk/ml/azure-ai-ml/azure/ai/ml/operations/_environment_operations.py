@@ -34,7 +34,7 @@ from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
