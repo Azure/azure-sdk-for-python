@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Union
 
 from azure.core.exceptions import AzureError
-from azure.ai._job._studio_url_from_job_id import studio_url_from_job_id
+from azure.ai.ml.entities._job._studio_url_from_job_id import studio_url_from_job_id
 
 module_logger = logging.getLogger(__name__)
 
