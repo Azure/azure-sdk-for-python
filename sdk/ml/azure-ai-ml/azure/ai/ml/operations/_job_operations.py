@@ -73,7 +73,6 @@ from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
-from azure.ai.ml.entities.job_errors import JobParsingError, PipelineChildJobError
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.service_instance import ServiceInstance
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
@@ -86,6 +85,8 @@ from azure.ai.ml.exceptions import (
     MlException,
     ValidationErrorType,
     ValidationException,
+    JobParsingError,
+    PipelineChildJobError,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
