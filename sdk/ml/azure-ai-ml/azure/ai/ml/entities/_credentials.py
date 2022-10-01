@@ -414,9 +414,9 @@ class IdentityConfiguration(RestTranslatableMixin):
         self.principal_id = None
         self.tenant_id = None
 
-    def _to_rest_object(self) -> RestIdentityConfiguration:
+    def _to_compute_rest_object(self) -> RestIdentityConfiguration:
         rest_user_assigned_identities = (
-            {uai.resource_id: uai._to_rest_object() for uai in self.user_assigned_identities}
+            {uai.resource_id: uai._to_identity_configuration_rest_object() for uai in self.user_assigned_identities}
             if self.user_assigned_identities
             else None
         )
@@ -424,7 +424,7 @@ class IdentityConfiguration(RestTranslatableMixin):
                                          user_assigned_identities=rest_user_assigned_identities)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestIdentityConfiguration) -> "IdentityConfiguration":
+    def _from_compute_rest_object(cls, obj: RestIdentityConfiguration) -> "IdentityConfiguration":
         from_rest_user_assigned_identities = (
             [
                 ManagedIdentityConfiguration._from_identity_configuration_rest_object(uai, resource_id=resource_id)

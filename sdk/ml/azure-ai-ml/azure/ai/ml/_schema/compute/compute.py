@@ -47,9 +47,9 @@ class UserAssignedIdentitySchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import UserAssignedIdentity
+        from azure.ai.ml.entities import ManagedIdentityConfiguration
 
-        return UserAssignedIdentity(**data)
+        return ManagedIdentityConfiguration(**data)
 
 
 class IdentitySchema(PathAwareSchema):
