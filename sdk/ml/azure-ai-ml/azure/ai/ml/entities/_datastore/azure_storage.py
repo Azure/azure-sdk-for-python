@@ -79,7 +79,7 @@ class AzureFileDatastore(Datastore):
         file_ds = RestAzureFileDatastore(
             account_name=self.account_name,
             file_share_name=self.file_share_name,
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             endpoint=self.endpoint,
             protocol=self.protocol,
             description=self.description,
@@ -176,7 +176,7 @@ class AzureBlobDatastore(Datastore):
         blob_ds = RestAzureBlobDatastore(
             account_name=self.account_name,
             container_name=self.container_name,
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             endpoint=self.endpoint,
             protocol=self.protocol,
             tags=self.tags,
@@ -273,7 +273,7 @@ class AzureDataLakeGen2Datastore(Datastore):
         gen2_ds = RestAzureDataLakeGen2Datastore(
             account_name=self.account_name,
             filesystem=self.filesystem,
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             endpoint=self.endpoint,
             protocol=self.protocol,
             description=self.description,

@@ -57,7 +57,7 @@ class AzureDataLakeGen1Datastore(Datastore):
 
     def _to_rest_object(self) -> DatastoreData:
         gen1_ds = RestAzureDatalakeGen1Datastore(
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             store_name=self.store_name,
             description=self.description,
             tags=self.tags,
