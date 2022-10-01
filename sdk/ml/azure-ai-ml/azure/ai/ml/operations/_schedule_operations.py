@@ -18,7 +18,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from .._restclient.v2022_10_01.models import ListViewType, ScheduleListViewType
+from .._restclient.v2022_10_01.models import ScheduleListViewType
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import AzureMLResourceType, LROConfigurations
 from . import JobOperations
