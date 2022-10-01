@@ -141,7 +141,6 @@ yarl<2.0,>=1.0
 #override azure-cosmos azure-core<2.0.0,>=1.23.0
 #override azure-data-tables azure-core<2.0.0,>=1.24.0
 #override azure-data-tables msrest>=0.7.1
-#override azure-data-tables yarl<2.0,>=1.0
 #override azure-digitaltwins-core azure-core<2.0.0,>=1.20.0
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-eventhub typing-extensions>=4.0.1
