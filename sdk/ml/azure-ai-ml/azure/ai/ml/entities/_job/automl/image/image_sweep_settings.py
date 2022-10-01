@@ -34,7 +34,6 @@ class ImageSweepSettings(RestTranslatableMixin):
 
     def _to_rest_object(self) -> RestImageSweepSettings:
         return RestImageSweepSettings(
-            limits=ImageSweepLimitSettings(),
             sampling_algorithm=self.sampling_algorithm,
             early_termination=self.early_termination._to_rest_object(),
         )
