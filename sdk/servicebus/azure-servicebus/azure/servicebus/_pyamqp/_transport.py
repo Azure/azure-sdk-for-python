@@ -343,7 +343,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         #  0.2 second is enough for perf analysis
         self.sock.settimeout(read_timeout)  # set socket back to non-blocking mode
 
-    def _get_tcp_socket_defaults(self, sock):
+    def _get_tcp_socket_defaults(self, sock):   # pylint: disable=no-self-use
         tcp_opts = {}
         for opt in KNOWN_TCP_OPTS:
             enum = None
@@ -700,7 +700,7 @@ class WebSocketTransport(_AbstractTransport):
                 "Please install websocket-client library to use websocket transport."
             )
 
-    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-arguments
+    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
         from websocket import WebSocketTimeoutException
 

@@ -2344,7 +2344,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
-            original_settlement = client.ReceiveClientSync.settle_messages
+            original_settlement = client.ReceiveClient.settle_messages
             try:
                 with sender, receiver:
                     # negative settlement via receiver link

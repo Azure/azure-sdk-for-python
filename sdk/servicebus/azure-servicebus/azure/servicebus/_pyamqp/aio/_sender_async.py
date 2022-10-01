@@ -163,7 +163,7 @@ class SenderLink(Link):
     async def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()
         if self.state != LinkState.ATTACHED:
-            raise AMQPLinkError(  
+            raise AMQPLinkError(
                 condition=ErrorCondition.ClientError,
                 description="Link is not attached."
             )

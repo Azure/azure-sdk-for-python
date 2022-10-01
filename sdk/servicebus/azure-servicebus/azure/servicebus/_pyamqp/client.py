@@ -4,6 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=client-accepts-api-version-keyword
+# pylint: disable=missing-client-constructor-parameter-credential
+# pylint: disable=client-method-missing-type-annotations
 # pylint: disable=too-many-lines
 # TODO: Check types of kwargs (issue exists for this)
 import logging
@@ -53,7 +56,9 @@ Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
 _logger = logging.getLogger(__name__)
 
 
-class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
+class AMQPClient(
+    object
+):  # pylint: disable=too-many-instance-attributes
     """An AMQP client.
     :param hostname: The AMQP endpoint to connect to.
     :type hostname: str
@@ -418,10 +423,10 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
 
 
 class SendClient(AMQPClient):
-    """ 
+    """
     An AMQP client for sending messages.
-    :param target: The target AMQP service endpoint. This can either be the URI as	
-     a string or a ~pyamqp.endpoint.Target object.	
+    :param target: The target AMQP service endpoint. This can either be the URI as
+     a string or a ~pyamqp.endpoint.Target object.
     :type target: str, bytes or ~pyamqp.endpoint.Target
     :keyword auth: Authentication for the connection. This should be one of the following:
         - pyamqp.authentication.SASLAnonymous
