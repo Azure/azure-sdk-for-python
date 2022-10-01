@@ -64,7 +64,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: BatchDeployment,
@@ -125,7 +125,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchDeployment.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str) -> BatchDeployment:
         """Get a deployment resource.
 
@@ -150,7 +150,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchDeployment.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchDeployment.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str) -> LROPoller[None]:
         """Delete a batch deployment.
 
@@ -183,7 +183,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchDeployment.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str) -> ItemPaged[BatchDeployment]:
         """List a deployment resource.
 
@@ -201,7 +201,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str, *, name: str = None) -> List[BatchJobResource]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.

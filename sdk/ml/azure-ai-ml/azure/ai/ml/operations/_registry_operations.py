@@ -46,7 +46,7 @@ class RegistryOperations:
         self.containerRegistry = "none"
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
     def list(self) -> Iterable[Registry]:
         """List all registries that the user has access to in the current
         resource group or subscription.
@@ -59,7 +59,7 @@ class RegistryOperations:
 
         return self._operation.list_by_subscription(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs])
 
-    @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: str = None) -> Registry:
         """Get a registry by name.
 
@@ -88,7 +88,7 @@ class RegistryOperations:
             )
         return registry_name
 
-    @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         registry: Registry,

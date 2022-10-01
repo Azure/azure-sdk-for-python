@@ -61,7 +61,7 @@ class CodeOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, code: Code) -> Code:
         """Returns created or updated code asset.
 
@@ -140,7 +140,7 @@ class CodeOperations(_ScopeDependentOperations):
                     )
             raise ex
 
-    @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:
         """Returns information about the specified code asset.
 

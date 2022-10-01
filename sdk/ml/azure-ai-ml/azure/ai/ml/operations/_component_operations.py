@@ -98,7 +98,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
-    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,

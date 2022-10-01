@@ -64,7 +64,7 @@ class WorkspaceOperations:
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
-    @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = "resource_group") -> Iterable[Workspace]:
         """List all workspaces that the user has access to in the current
         resource group or subscription.
@@ -84,7 +84,7 @@ class WorkspaceOperations:
             cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
         )
 
-    @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     def get(self, name: str = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
 
@@ -99,7 +99,7 @@ class WorkspaceOperations:
         obj = self._operation.get(resource_group, workspace_name)
         return Workspace._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str = None) -> WorkspaceKeys:
         """Get keys for the workspace.
 
@@ -112,7 +112,7 @@ class WorkspaceOperations:
         obj = self._operation.list_keys(self._resource_group_name, workspace_name)
         return WorkspaceKeys._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     def begin_sync_keys(self, name: str = None, **kwargs: Dict) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
         any resource in the workspace are changed, it can take around an hour
@@ -133,7 +133,7 @@ class WorkspaceOperations:
             return poller
         polling_wait(poller, message="Waiting for the workspace keys sync.")
 
-    @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
         self,
         workspace: Workspace,
@@ -201,7 +201,7 @@ class WorkspaceOperations:
 
         return poller if no_wait else self.get(workspace.name, resource_group=resource_group)
 
-    @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(
         self,
         workspace: Workspace,
@@ -293,7 +293,7 @@ class WorkspaceOperations:
         )
         return poller
 
-    @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
         """Delete a workspace.
 
@@ -365,7 +365,7 @@ class WorkspaceOperations:
         except Exception as response_exception:
             raise response_exception
 
-    @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
     def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller:
         """Diagnose workspace setup problems.
 

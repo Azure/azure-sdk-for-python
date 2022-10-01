@@ -92,7 +92,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
     def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
 
@@ -107,7 +107,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -130,7 +130,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return endpoint_data
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str) -> LROPoller[None]:
         """Delete a batch Endpoint.
 
@@ -160,7 +160,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
@@ -188,7 +188,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
@@ -287,7 +287,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return BatchJobResource.deserialize(batch_job)
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str) -> List[BatchJobResource]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.

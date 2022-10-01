@@ -70,7 +70,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -115,7 +115,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
         name,
@@ -188,7 +188,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
         name,
@@ -205,7 +205,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(schedule)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
         name,
