@@ -264,6 +264,28 @@ class AsyncTransport(AsyncTransportMixin):
             try:
                 entries = await self.loop.getaddrinfo(host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP)
                 entries_num = len(entries)
+                # now that we have address(es) for the hostname, connect to broker
+                for i, res in enumerate(entries):
+                    af, socktype, proto, _, sa = res
+                    try:
+                        self.sock = socket.socket(af, socktype, proto)
+                        try:
+                            set_cloexec(self.sock, True)
+                        except NotImplementedError:
+                            pass
+                        self.sock.settimeout(timeout)
+                        await self.loop.sock_connect(self.sock, sa)
+                    except socket.error as ex:
+                        e = ex
+                        if self.sock is not None:
+                            self.sock.close()
+                            self.sock = None
+                        # we may have depleted all our options
+                        if i + 1 >= entries_num and n + 1 >= addr_types_num:
+                            raise
+                    else:
+                        # hurray, we established connection
+                        return
             except socket.gaierror:
                 # we may have depleted all our options
                 if n + 1 >= addr_types_num:
@@ -272,28 +294,7 @@ class AsyncTransport(AsyncTransportMixin):
                     # relevant to users
                     raise (e if e is not None else socket.error("failed to resolve broker hostname"))
 
-            # now that we have address(es) for the hostname, connect to broker
-            for i, res in enumerate(entries):
-                af, socktype, proto, _, sa = res
-                try:
-                    self.sock = socket.socket(af, socktype, proto)
-                    try:
-                        set_cloexec(self.sock, True)
-                    except NotImplementedError:
-                        pass
-                    self.sock.settimeout(timeout)
-                    await self.loop.sock_connect(self.sock, sa)
-                except socket.error as ex:
-                    e = ex
-                    if self.sock is not None:
-                        self.sock.close()
-                        self.sock = None
-                    # we may have depleted all our options
-                    if i + 1 >= entries_num and n + 1 >= addr_types_num:
-                        raise
-                else:
-                    # hurray, we established connection
-                    return
+            
 
     def _init_socket(self, socket_settings, read_timeout, write_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode

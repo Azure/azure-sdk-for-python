@@ -470,8 +470,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
-            self.incoming_endpoints.pop(channel)
-            self.outgoing_endpoints.pop(channel)
+            self._incoming_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(channel)
         except KeyError:
             #close the connection
             await self.close(
@@ -480,8 +480,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     description="Invalid channel number received"
                 ))
             return
-        self._incoming_endpoints.pop(channel)
-        self._outgoing_endpoints.pop(channel)
 
     async def _process_incoming_frame(self, channel, frame):  # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool

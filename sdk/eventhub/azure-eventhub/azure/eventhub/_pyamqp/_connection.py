@@ -506,8 +506,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     description="Invalid channel number received"
                 ))
             return
-        self._incoming_endpoints.pop(channel)
-        self._outgoing_endpoints.pop(channel)
 
     def _process_incoming_frame(self, channel, frame):  # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool
