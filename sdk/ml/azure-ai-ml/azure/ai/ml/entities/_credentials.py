@@ -452,7 +452,7 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
         return RestNoneDatastoreCredentials()
 
     @classmethod
-    def _from_datastore_rest_object(cls, obj: RestNoneDatastoreCredentials) -> "NoneCredentials":
+    def _from_datastore_rest_object(cls, obj: RestNoneDatastoreCredentials) -> "NoneCredentialConfiguration":
         return cls()
 
     def __eq__(self, other: object) -> bool:
