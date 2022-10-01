@@ -448,10 +448,12 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
     def __init__(self):
         self.type = CredentialsType.NONE
 
+    # pylint: disable=no-self-use
     def _to_datastore_rest_object(self) -> RestNoneDatastoreCredentials:
         return RestNoneDatastoreCredentials()
 
     @classmethod
+    # pylint: disable=unused-argument
     def _from_datastore_rest_object(cls, obj: RestNoneDatastoreCredentials) -> "NoneCredentialConfiguration":
         return cls()
 

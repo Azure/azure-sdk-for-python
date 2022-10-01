@@ -14,11 +14,8 @@
 - Deprecated parameter path has been removed from load and dump methods.
 - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
 - Workspace.list_keys renamed to Workspace.get_keys.
-<<<<<<< HEAD
 - Datastore credentials are switched to use unified credential configuration classes.
-=======
 - UserAssignedIdentity is replaced by ManagedIdentityConfiguration
->>>>>>> ca384a3b6bb385623271a0c643d3b9feb66e7db2
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
