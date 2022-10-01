@@ -197,7 +197,7 @@ class MLClient(object):
         kwargs.pop("base_url", None)
         _add_user_agent(kwargs)
 
-        user_agent = None
+        # user_agent = None
         properties = {
             "subscription_id": subscription_id,
             "resource_group_name": resource_group_name,
@@ -206,8 +206,8 @@ class MLClient(object):
             properties.update({"workspace_name": workspace_name})
         if registry_name:
             properties.update({"registry_name": registry_name})
-        if "user_agent" in kwargs:
-            user_agent = kwargs.get("user_agent")
+        # if "user_agent" in kwargs:
+        #     user_agent = kwargs.get("user_agent")
         # app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
         # app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
         app_insights_handler_kwargs = {}
