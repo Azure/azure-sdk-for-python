@@ -7,29 +7,38 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "134",
+        "Content-Length": "124",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "bd7d7643-5e0c-11ec-aba2-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022startTime\u0022: \u00222021-01-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022, \u0022series\u0022: [{\u0022dimension\u0022: {\u0022region\u0022: \u0022Los Angeles\u0022}}]}",
+      "RequestBody": {
+        "startTime": "2022-02-28T00:00:00.000Z",
+        "endTime": "2022-09-29T00:00:00.000Z",
+        "series": [
+          {
+            "dimension": {
+              "Dim1": "USD"
+            }
+          }
+        ]
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c361227a-9580-4392-a1d5-3376dd29b615",
-        "Content-Length": "199",
+        "apim-request-id": "64d764f4-9d25-4479-8f83-d4f2a9cb3175",
+        "Content-Length": "189",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:08:55 GMT",
+        "Date": "Thu, 29 Sep 2022 23:23:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "249",
-        "X-Request-ID": "c361227a-9580-4392-a1d5-3376dd29b615"
+        "x-envoy-upstream-service-time": "215",
+        "X-Request-ID": "64d764f4-9d25-4479-8f83-d4f2a9cb3175"
       },
       "ResponseBody": {
         "value": [
           {
             "series": {
               "dimension": {
-                "region": "Los Angeles"
+                "Dim1": "USD"
               }
             },
             "timestampList": [],
