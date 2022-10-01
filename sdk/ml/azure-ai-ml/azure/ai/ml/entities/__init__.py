@@ -85,6 +85,13 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
+from ._workspace.diagnose import (
+    DiagnoseRequestProperties,
+    DiagnoseResponseResult,
+    DiagnoseResponseResultValue,
+    DiagnoseResult,
+    DiagnoseWorkspaceParameters,
+)
 from ._workspace.identity import ManagedServiceIdentity
 from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedIdentity
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
@@ -148,6 +155,11 @@ __all__ = [
     "WorkspaceConnection",
     "ManagedServiceIdentity",
     "WorkspaceUserAssignedIdentity", # pylint: disable=naming-mismatch
+    "DiagnoseRequestProperties",
+    "DiagnoseResult",
+    "DiagnoseResponseResult",
+    "DiagnoseResponseResultValue",
+    "DiagnoseWorkspaceParameters",
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",

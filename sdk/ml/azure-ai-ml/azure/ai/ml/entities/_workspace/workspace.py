@@ -207,3 +207,21 @@ class Workspace(Resource):
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
         )
+
+    def _to_rest_object(self) -> RestWorkspace:
+        return RestWorkspace(
+            identity=self.identity._to_rest_object() if self.identity else None,
+            location=self.location,
+            tags=self.tags,
+            description=self.description,
+            friendly_name=self.display_name,
+            key_vault=self.key_vault,
+            application_insights=self.application_insights,
+            container_registry=self.container_registry,
+            storage_account=self.storage_account,
+            discovery_url=self.discovery_url,
+            hbi_workspace=self.hbi_workspace,
+            image_build_compute=self.image_build_compute,
+            public_network_access=self.public_network_access,
+            primary_user_assigned_identity=self.primary_user_assigned_identity,
+        )
