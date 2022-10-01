@@ -67,6 +67,9 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
 @pytest.mark.e2etest
 class TestDSLPipelineSamples(AzureRecordedTestCase):
     @pytest.mark.e2etest
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_e2e_local_components(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.e2e_local_components.pipeline import generate_dsl_pipeline as e2e_local_components
 
