@@ -130,6 +130,9 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job_2.compute == "testCompute"
         check_tid_in_url(client, command_job_2)
 
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     @pytest.mark.e2etest
     def test_command_job_builder(self, data_with_2_versions: str, client: MLClient) -> None:
 
