@@ -20,7 +20,6 @@ from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
 from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
 from ._compute._usage import Usage, UsageName
-from ._compute._user_assigned_identity import UserAssignedIdentity
 from ._compute._vm_size import VmSize
 from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
 from ._compute.compute import Compute, NetworkSettings
@@ -182,7 +181,6 @@ __all__ = [
     "ResourceSettings",
     "AssignedUserConfiguration",
     "ComputeInstanceSshSettings",
-    "UserAssignedIdentity",
     "VmSize",
     "Usage",
     "UsageName",
