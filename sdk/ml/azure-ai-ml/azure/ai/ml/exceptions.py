@@ -7,7 +7,6 @@ from enum import Enum
 from typing import Union
 
 from azure.core.exceptions import AzureError
-from azure.ai.ml.entities._job._studio_url_from_job_id import studio_url_from_job_id
 
 module_logger = logging.getLogger(__name__)
 
@@ -762,6 +761,8 @@ class PipelineChildJobError(MlException):
     PROMPT_PARENT_MESSAGE = "please use this command on pipeline parent job"
 
     def __init__(self, job_id: str, command: str = "parse", prompt_studio_ui: bool = False):
+        from azure.ai.ml.entities._job._studio_url_from_job_id import studio_url_from_job_id
+
         if prompt_studio_ui:
             url = studio_url_from_job_id(job_id)
             if url:
