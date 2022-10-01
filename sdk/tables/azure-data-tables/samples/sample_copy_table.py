@@ -27,11 +27,11 @@ USAGE:
 import copy
 import json
 import os
+import platform
 from azure.storage.blob import BlobServiceClient
 from azure.data.tables import TableServiceClient
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
-from random import randrange
 from uuid import uuid4, UUID
 
 
@@ -44,8 +44,8 @@ class CopyTableSamples(object):
         self.table_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
-        self.copy_to_blob_table_name = "copytoblobtablename"
-        self.copy_to_table_table_name = "copytotabletablename"
+        self.copy_to_blob_table_name = "copytoblobtablename" + platform.system().lower()
+        self.copy_to_table_table_name = "copytotabletablename" + platform.system().lower()
         self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = "DefDefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
