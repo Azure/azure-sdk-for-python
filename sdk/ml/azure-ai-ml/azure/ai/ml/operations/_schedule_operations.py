@@ -11,7 +11,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule
 from azure.core.credentials import TokenCredential
@@ -135,7 +134,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name,
@@ -156,7 +155,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         schedule,

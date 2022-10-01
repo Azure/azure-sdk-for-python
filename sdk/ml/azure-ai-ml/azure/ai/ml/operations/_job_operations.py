@@ -36,7 +36,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -260,7 +259,7 @@ class JobOperations(_ScopeDependentOperations):
             pass
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Get a job resource.
 
@@ -283,7 +282,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return job
 
-    @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.INTERNALCALL)
+    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.INTERNALCALL)
     def _show_services(self, name: str, node_index: int):
         """Get services associated with a job's node.
 
@@ -360,7 +359,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
         """Validate a job. Anonymous assets may be created if there are inline
         defined entities, e.g. Component, Environment & Code. Only pipeline job
@@ -375,7 +374,7 @@ class JobOperations(_ScopeDependentOperations):
         """
         return self._validate(job, raise_on_failure=raise_on_failure, **kwargs)
 
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
+    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self, job: Job, *, raise_on_failure: bool = False, **kwargs  # pylint:disable=unused-argument
     ) -> ValidationResult:
@@ -426,7 +425,7 @@ class JobOperations(_ScopeDependentOperations):
         return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
         job: Job,
@@ -573,7 +572,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -585,7 +584,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=True)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Archive a job or restore an archived job.
 

@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     WorkspaceUpdateParameters,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling, polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (

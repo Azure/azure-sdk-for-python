@@ -20,7 +20,6 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
