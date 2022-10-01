@@ -4,7 +4,7 @@
 
 from typing import List
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Identity as RestIdentity
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
