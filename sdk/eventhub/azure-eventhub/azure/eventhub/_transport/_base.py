@@ -163,10 +163,10 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def add_batch(batch_message, outgoing_event_data, event_data):
+    def add_batch(event_data_batch, outgoing_event_data, event_data):
         """
         Add EventData to the data body of the BatchMessage.
-        :param batch_message: BatchMessage to add data to.
+        :param event_data_batch: BatchMessage to add data to.
         :param outgoing_event_data: Transformed EventData for sending.
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None

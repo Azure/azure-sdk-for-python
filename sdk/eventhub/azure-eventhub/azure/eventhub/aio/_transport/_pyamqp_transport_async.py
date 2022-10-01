@@ -21,9 +21,10 @@ from ...exceptions import (
     EventDataSendError,
 )
 from ..._common import EventData
+from .._client_base_async import ConsumerProducerMixin
 
 if TYPE_CHECKING:
-    from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
+    from .._client_base_async import ClientBaseAsync
     from ..._pyamqp.message import Message
 
 _LOGGER = logging.getLogger(__name__)
@@ -58,7 +59,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         return ConnectionAsync(endpoint, network_trace=network_trace, **kwargs)
 
     @staticmethod
-    async def close_connection(connection):
+    async def close_connection_async(connection):
         """
         Closes existing connection.
         :param connection: pyamqp Connection.

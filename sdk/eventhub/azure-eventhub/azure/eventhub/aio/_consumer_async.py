@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from typing import Deque
 
     try:
-        from uamqp import (
+        from uamqp import (  # pylint: disable=unused-import
             ReceiveClientAsync as uamqp_ReceiveClientAsync,
             Message as uamqp_Message,
         )
@@ -164,8 +164,8 @@ class EventHubConsumer(
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             properties=create_properties(
-                self._client._config.user_agent,
-                amqp_transport=self._amqp_transport,  # pylint:disable=protected-access
+                self._client._config.user_agent,  # pylint:disable=protected-access
+                amqp_transport=self._amqp_transport,
             ),
             desired_capabilities=desired_capabilities,
             streaming_receive=True,

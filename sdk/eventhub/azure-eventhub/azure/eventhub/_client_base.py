@@ -11,7 +11,7 @@ import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
 try:
-    from typing import TypeAlias
+    from typing import TypeAlias    # type: ignore
 except ImportError:
     from typing_extensions import TypeAlias
 from datetime import timedelta

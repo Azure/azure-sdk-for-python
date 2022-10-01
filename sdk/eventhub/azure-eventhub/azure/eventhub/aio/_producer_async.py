@@ -25,7 +25,10 @@ from ._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
     try:
-        from uamqp import constants, SendClientAsync as uamqp_SendClientAsync
+        from uamqp import (  # pylint: disable=unused-import
+            constants,
+            SendClientAsync as uamqp_SendClientAsync,
+        )
         from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
     except ImportError:
@@ -40,7 +43,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-instance-attributes
+class EventHubProducer(
+    ConsumerProducerMixin
+):  # pylint: disable=too-many-instance-attributes
     """A producer responsible for transmitting batches of EventData to a specific Event Hub.
 
     Depending on the options specified at creation, the producer may
@@ -83,9 +88,15 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
         self._timeout = send_timeout
-        self._idle_timeout = (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
+        self._idle_timeout = (
+            (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR)
+            if idle_timeout
+            else None
+        )
 
-        self._retry_policy = self._amqp_transport.create_retry_policy(config=self._client._config)
+        self._retry_policy = self._amqp_transport.create_retry_policy(
+            config=self._client._config
+        )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
         self._unsent_events = []  # type: List[Any]
@@ -101,7 +112,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             {TIMEOUT_SYMBOL: int(self._timeout * self._amqp_transport.TIMEOUT_FACTOR)}
         )
 
-    def _create_handler(self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]) -> None:
+    def _create_handler(
+        self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]
+    ) -> None:
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
             target=self._target,
@@ -120,7 +133,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         )
 
     async def _open_with_retry(self) -> Any:
-        return await self._do_retryable_operation(self._open, operation_need_param=False)
+        return await self._do_retryable_operation(
+            self._open, operation_need_param=False
+        )
 
     async def _send_event_data(
         self,
@@ -128,12 +143,18 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         last_exception: Optional[Exception] = None,
     ) -> None:
         if self._unsent_events:
-            await self._amqp_transport.send_messages_async(self, timeout_time, last_exception, _LOGGER)
+            await self._amqp_transport.send_messages_async(
+                self, timeout_time, last_exception, _LOGGER
+            )
 
-    async def _send_event_data_with_retry(self, timeout: Optional[float] = None) -> None:
+    async def _send_event_data_with_retry(
+        self, timeout: Optional[float] = None
+    ) -> None:
         await self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
-    def _on_outcome(self, outcome: uamqp_MessageSendResult, condition: Optional[Exception]) -> None:
+    def _on_outcome(
+        self, outcome: uamqp_MessageSendResult, condition: Optional[Exception]
+    ) -> None:
         """
         ONLY USED FOR uamqp_transport=True. Called when the outcome is received for a delivery.
 
@@ -147,7 +168,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
 
     def _wrap_eventdata(
         self,
-        event_data: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         span: Optional[AbstractSpan],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
@@ -157,16 +180,22 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             )
             if partition_key:
                 self._amqp_transport.set_message_partition_key(
-                    outgoing_event_data._message, partition_key  # pylint: disable=protected-access
+                    outgoing_event_data._message,  # pylint: disable=protected-access
+                    partition_key,
                 )
             wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
-            if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
+            if isinstance(
+                event_data, EventDataBatch
+            ):  # The partition_key in the param will be omitted.
                 if not event_data:
                     return event_data
                 # If AmqpTransports are not the same, create batch with correct BatchMessage.
-                if self._amqp_transport.TIMEOUT_FACTOR != event_data._amqp_transport.TIMEOUT_FACTOR: # pylint: disable=protected-access
+                if (
+                    self._amqp_transport.TIMEOUT_FACTOR
+                    != event_data._amqp_transport.TIMEOUT_FACTOR  # pylint: disable=protected-access
+                ):
                     # pylint: disable=protected-access
                     event_data = EventDataBatch._from_batch(
                         event_data._internal_events,
@@ -175,14 +204,22 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                         partition_id=event_data._partition_id,
                         max_size_in_bytes=event_data.max_size_in_bytes,
                     )
-                if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
-                    raise ValueError("The partition_key does not match the one of the EventDataBatch")
-                for event in event_data._message.data:  # pylint: disable=protected-access
+                if (
+                    partition_key and partition_key != event_data._partition_key  # pylint: disable=protected-access
+                ):
+                    raise ValueError(
+                        "The partition_key does not match the one of the EventDataBatch"
+                    )
+                for (
+                    event
+                ) in event_data._message.data:  # pylint: disable=protected-access
                     trace_message(event, span)
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key, self._amqp_transport)
+                    event_data = _set_partition_key(
+                        event_data, partition_key, self._amqp_transport
+                    )
                 event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
                     event_data, self._amqp_transport, partition_key
@@ -191,7 +228,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
 
     async def send(
         self,
-        event_data: Union[EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]],
+        event_data: Union[
+            EventData, AmqpAnnotatedMessage, EventDataBatch, Iterable[EventData]
+        ],
         *,
         partition_key: Optional[AnyStr] = None,
         timeout: Optional[float] = None,
@@ -223,17 +262,25 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         async with self._lock:
             with send_context_manager() as child:
                 self._check_closed()
-                wrapper_event_data = self._wrap_eventdata(event_data, child, partition_key)
+                wrapper_event_data = self._wrap_eventdata(
+                    event_data, child, partition_key
+                )
 
                 if not wrapper_event_data:
                     return
 
-                self._unsent_events = [wrapper_event_data._message]  # pylint: disable=protected-access
+                self._unsent_events = [
+                    wrapper_event_data._message  # pylint: disable=protected-access
+                ]
 
                 if child:
-                    self._client._add_span_request_attributes(child)  # pylint: disable=protected-access
+                    self._client._add_span_request_attributes(  # pylint: disable=protected-access
+                        child
+                    )
 
-                await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg
+                await self._send_event_data_with_retry(
+                    timeout=timeout
+                )  # pylint:disable=unexpected-keyword-arg
 
     async def close(self) -> None:
         """

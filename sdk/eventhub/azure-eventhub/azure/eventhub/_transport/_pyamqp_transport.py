@@ -38,14 +38,16 @@ from ..exceptions import (
 _LOGGER = logging.getLogger(__name__)
 
 
-class PyamqpTransport(AmqpTransport):
+class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-methods
     """
     Class which defines uamqp-based methods used by the producer and consumer.
     """
 
     # define constants
     MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
-    MAX_MESSAGE_LENGTH_BYTES = constants.MAX_FRAME_SIZE_BYTES  # TODO: define actual value in pyamqp
+    MAX_MESSAGE_LENGTH_BYTES = (
+        constants.MAX_FRAME_SIZE_BYTES
+    )  # TODO: define actual value in pyamqp
     TIMEOUT_FACTOR = 1
     CONNECTION_CLOSING_STATES: Tuple = _CLOSING_STATES
 
@@ -104,7 +106,9 @@ class PyamqpTransport(AmqpTransport):
                 creation_time=int(annotated_message.properties.creation_time)
                 if annotated_message.properties.creation_time
                 else None,
-                absolute_expiry_time=int(annotated_message.properties.absolute_expiry_time)
+                absolute_expiry_time=int(
+                    annotated_message.properties.absolute_expiry_time
+                )
                 if annotated_message.properties.absolute_expiry_time
                 else None,
                 group_id=annotated_message.properties.group_id,
@@ -175,7 +179,10 @@ class PyamqpTransport(AmqpTransport):
         :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
         :rtype: dict
         """
-        return {symbol: utils.amqp_long_value(value) for (symbol, value) in link_properties.items()}
+        return {
+            symbol: utils.amqp_long_value(value)
+            for (symbol, value) in link_properties.items()
+        }
 
     @staticmethod
     def create_connection(**kwargs):
@@ -234,8 +241,10 @@ class PyamqpTransport(AmqpTransport):
         """
 
         target = kwargs.pop("target")
-        # TODO: extra passed in to pyamqp, but not used. should be used?
-        msg_timeout = kwargs.pop("msg_timeout")  # pylint: disable=unused-variable  # TODO: not used by pyamqp?
+        # TODO: not used by pyamqp?
+        msg_timeout = kwargs.pop(  # pylint: disable=unused-variable
+            "msg_timeout"
+        )
 
         return SendClient(
             config.hostname,
@@ -291,13 +300,17 @@ class PyamqpTransport(AmqpTransport):
                 partition_key = cast(bytes, partition_key).decode(encoding)
             except AttributeError:
                 pass
-            annotations[PROP_PARTITION_KEY] = partition_key  # pylint:disable=protected-access
-            header = Header(durable=True)   # type: ignore
+            annotations[
+                PROP_PARTITION_KEY
+            ] = partition_key  # pylint:disable=protected-access
+            header = Header(durable=True)  # type: ignore
             return message._replace(message_annotations=annotations, header=header)
         return message
 
     @staticmethod
-    def add_batch(event_data_batch, outgoing_event_data, event_data):  # pylint: disable=unused-argument
+    def add_batch(
+        event_data_batch, outgoing_event_data, event_data
+    ):  # pylint: disable=unused-argument
         """
         Add EventData to the data body of the BatchMessage.
         :param event_data_batch: EventDataBatch to add data to.
@@ -305,8 +318,13 @@ class PyamqpTransport(AmqpTransport):
         :param event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
-        event_data_batch._internal_events.append(event_data)  # pylint: disable=protected-access
-        utils.add_batch(event_data_batch._message, outgoing_event_data._message)  # pylint: disable=protected-access
+        event_data_batch._internal_events.append(  # pylint: disable=protected-access
+            event_data
+        )
+        # pylint: disable=protected-access
+        utils.add_batch(
+            event_data_batch._message, outgoing_event_data._message
+        )
 
     @staticmethod
     def create_source(source, offset, selector):
@@ -369,7 +387,11 @@ class PyamqpTransport(AmqpTransport):
         :rtype: bool
         """
         # pylint:disable=protected-access
-        handler.open(connection=client._conn_manager.get_connection(client._address.hostname, auth))
+        handler.open(
+            connection=client._conn_manager.get_connection(
+                client._address.hostname, auth
+            )
+        )
 
     @staticmethod
     def check_link_stolen(consumer, exception):
@@ -379,8 +401,13 @@ class PyamqpTransport(AmqpTransport):
         :param exception: Exception to check.
         """
 
-        if isinstance(exception, errors.AMQPLinkError) and exception.condition == errors.ErrorCondition.LinkStolen:
-            raise consumer._handle_exception(exception)  # pylint: disable=protected-access
+        if (
+            isinstance(exception, errors.AMQPLinkError)
+            and exception.condition == errors.ErrorCondition.LinkStolen
+        ):
+            raise consumer._handle_exception(  # pylint: disable=protected-access
+                exception
+            )
 
     @staticmethod
     def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
@@ -414,7 +441,9 @@ class PyamqpTransport(AmqpTransport):
         #    token_auth.update_token()  # TODO: why don't we need to update in pyamqp?
 
     @staticmethod
-    def create_mgmt_client(address, mgmt_auth, config):  # pylint: disable=unused-argument
+    def create_mgmt_client(
+        address, mgmt_auth, config
+    ):  # pylint: disable=unused-argument
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
@@ -454,7 +483,10 @@ class PyamqpTransport(AmqpTransport):
         operation_type = kwargs.pop("operation_type")
         operation = kwargs.pop("operation")
         return mgmt_client.mgmt_request(
-            mgmt_msg, operation=operation.decode(), operation_type=operation_type.decode(), **kwargs
+            mgmt_msg,
+            operation=operation.decode(),
+            operation_type=operation_type.decode(),
+            **kwargs,
         )
 
     @staticmethod
@@ -468,7 +500,8 @@ class PyamqpTransport(AmqpTransport):
         if status_code in [401]:
             return errors.AuthenticationException(
                 errors.ErrorCondition.UnauthorizedAccess,
-                description=f"Management authentication failed. Status code: {status_code}, Description: {description!r}",
+                description=f"""Management authentication failed. Status code: {status_code}, """
+                    """Description: {description!r}""",
             )
         if status_code in [404]:
             return errors.AMQPConnectionError(
@@ -489,7 +522,8 @@ class PyamqpTransport(AmqpTransport):
         """
         if not base.running and isinstance(exception, TimeoutError):
             exception = errors.AuthenticationException(
-                errors.ErrorCondition.InternalError, description="Authorization timeout."
+                errors.ErrorCondition.InternalError,
+                description="Authorization timeout.",
             )
         return exception
 
@@ -512,7 +546,9 @@ class PyamqpTransport(AmqpTransport):
         return error
 
     @staticmethod
-    def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
+    def _handle_exception(
+        exception, closable
+    ):  # pylint:disable=too-many-branches, too-many-statements
         try:  # closable is a producer/consumer object
             name = closable._name  # pylint: disable=protected-access
         except AttributeError:  # closable is an client object
