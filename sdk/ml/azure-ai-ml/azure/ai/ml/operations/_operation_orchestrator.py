@@ -23,7 +23,6 @@ from azure.ai.ml._utils._arm_id_utils import (
 )
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
-from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
