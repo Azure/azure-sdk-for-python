@@ -1525,6 +1525,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
@@ -1955,6 +1958,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.jobs.get(child.name)
             client.jobs.get(child.name)._repr_html_()
 
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_dsl_pipeline_without_setting_binding_node(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import pipeline_without_setting_binding_node
 
@@ -2005,6 +2011,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_pipeline_level,
@@ -2057,6 +2066,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient) -> None:
         # Todo: checkout run priority when backend is ready
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import pipeline_with_only_setting_binding_node
@@ -2118,6 +2130,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_dsl_pipeline_with_setting_binding_node_and_pipeline_level(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_setting_binding_node_and_pipeline_level,
