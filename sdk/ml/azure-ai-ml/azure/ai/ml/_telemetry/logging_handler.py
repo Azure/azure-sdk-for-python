@@ -14,15 +14,15 @@ import urllib.request as http_client_t
 from os import getenv
 from urllib.error import HTTPError
 
-from applicationinsights import TelemetryClient
-from applicationinsights.channel import (
-    AsynchronousQueue,
-    AsynchronousSender,
-    SynchronousQueue,
-    SynchronousSender,
-    TelemetryChannel,
-    TelemetryContext,
-)
+# from applicationinsights import TelemetryClient
+# from applicationinsights.channel import (
+#     AsynchronousQueue,
+#     AsynchronousSender,
+#     SynchronousQueue,
+#     SynchronousSender,
+#     TelemetryChannel,
+#     TelemetryContext,
+# )
 
 from .._user_agent import USER_AGENT
 from ._customtraceback import format_exc
