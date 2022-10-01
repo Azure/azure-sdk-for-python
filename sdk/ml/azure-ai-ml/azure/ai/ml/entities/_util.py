@@ -13,7 +13,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType06
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -355,19 +355,19 @@ def resolve_pipeline_parameter(data):
 
 def normalize_job_input_output_type(input_output_value):
     """
-    We have change api to v2022_06_01_preview version and there are some api interface changes, which will result in
-    pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block az ml job list/show.
-    So we convert the input/output type of camel to snake to be compatible with the Jun api.
+    We have changed the api starting v2022_06_01_preview version and there are some api interface changes, which will
+    result in pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block
+    az ml job list/show. So we convert the input/output type of camel to snake to be compatible with the Jun/Oct api.
     """
 
     FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {
-        JobInputType02.CUSTOM_MODEL: JobInputType06.CUSTOM_MODEL,
-        JobInputType02.LITERAL: JobInputType06.LITERAL,
-        JobInputType02.ML_FLOW_MODEL: JobInputType06.MLFLOW_MODEL,
-        JobInputType02.ML_TABLE: JobInputType06.MLTABLE,
-        JobInputType02.TRITON_MODEL: JobInputType06.TRITON_MODEL,
-        JobInputType02.URI_FILE: JobInputType06.URI_FILE,
-        JobInputType02.URI_FOLDER: JobInputType06.URI_FOLDER,
+        JobInputType02.CUSTOM_MODEL: JobInputType10.CUSTOM_MODEL,
+        JobInputType02.LITERAL: JobInputType10.LITERAL,
+        JobInputType02.ML_FLOW_MODEL: JobInputType10.MLFLOW_MODEL,
+        JobInputType02.ML_TABLE: JobInputType10.MLTABLE,
+        JobInputType02.TRITON_MODEL: JobInputType10.TRITON_MODEL,
+        JobInputType02.URI_FILE: JobInputType10.URI_FILE,
+        JobInputType02.URI_FOLDER: JobInputType10.URI_FOLDER,
     }
     if (
         hasattr(input_output_value, "job_input_type")

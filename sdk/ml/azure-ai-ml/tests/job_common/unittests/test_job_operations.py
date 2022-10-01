@@ -42,7 +42,10 @@ def mock_datastore_operation(
 
 @pytest.fixture
 def mock_code_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock, mock_datastore_operation: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_05_01: Mock,
+    mock_datastore_operation: Mock,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
@@ -54,7 +57,10 @@ def mock_code_operation(
 
 @pytest.fixture
 def mock_environment_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_machinelearning_client: Mock, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_machinelearning_client: Mock,
+    mock_aml_services_2022_05_01: Mock,
 ) -> EnvironmentOperations:
     yield EnvironmentOperations(
         operation_scope=mock_workspace_scope,
@@ -78,15 +84,21 @@ def mock_workspace_operation(
 
 
 @pytest.fixture
-def mock_runs_operation(mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock) -> RunOperations:
-    yield RunOperations(operation_scope=mock_workspace_scope, operation_config=mock_operation_config, service_client=mock_aml_services_2021_10_01)
+def mock_runs_operation(
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock
+) -> RunOperations:
+    yield RunOperations(
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+        service_client=mock_aml_services_2021_10_01,
+    )
 
 
 @pytest.fixture
 def mock_job_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_06_01_preview: Mock,
+    mock_aml_services_2022_10_01_preview: Mock,
     mock_aml_services_run_history: Mock,
     mock_machinelearning_client: Mock,
     mock_code_operation: Mock,
@@ -103,7 +115,7 @@ def mock_job_operation(
     yield JobOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_06_2022_preview=mock_aml_services_2022_06_01_preview,
+        service_client_10_2022_preview=mock_aml_services_2022_10_01_preview,
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),
@@ -132,9 +144,7 @@ class TestJobOperations:
 
     @patch.object(Job, "_from_rest_object")
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
-    def test_get_private_preview_flag_returns_latest(
-        self, mock_method, mock_job_operation: JobOperations
-    ) -> None:
+    def test_get_private_preview_flag_returns_latest(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("random_name")
         mock_job_operation._operation_2022_06_preview.get.assert_called_once()
@@ -204,9 +214,7 @@ class TestJobOperations:
             Job._from_rest_object(resource)
 
     @patch.object(Job, "_from_rest_object")
-    def test_job_create_skip_validation(
-        self, mock_method, mock_job_operation: JobOperations
-    ) -> None:
+    def test_job_create_skip_validation(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         job = load_job("./tests/test_configs/command_job/simple_train_test.yml")
         with patch.object(JobOperations, "_validate") as mock_thing, patch.object(

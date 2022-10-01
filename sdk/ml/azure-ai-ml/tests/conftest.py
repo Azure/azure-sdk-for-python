@@ -162,6 +162,11 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
 
 
