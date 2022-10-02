@@ -33,7 +33,7 @@ class TestRegistry(AzureRecordedTestCase):
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
         assert registry.name == reg_name
-        assert registry.identity.type == ManagedServiceIdentityType.SYSTEM_ASSIGNED
+        assert registry.identity.type == "SystemAssigned"
 
         registry_list = crud_registry_client.registries.list()
         assert isinstance(registry_list, ItemPaged)

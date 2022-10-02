@@ -18,9 +18,10 @@ from azure.ai.ml.exceptions import (ErrorCategory, ErrorTarget,
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
+from azure.ai.ml._utils._experimental import experimental
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations
-from azure.ai.ml._utils._experimental import experimental
+
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.logger, ops_logger.module_logger
@@ -61,7 +62,8 @@ class RegistryOperations:
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
 
-        return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], resource_group_name=self._resource_group_name)
+        return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], \
+            resource_group_name=self._resource_group_name)
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Registry:
@@ -107,7 +109,6 @@ class RegistryOperations:
     def begin_create(
         self,
         registry: Registry,
-        **kwargs: Dict,
     ) -> LROPoller[Registry]:
         """Create a new Azure Machine Learning Registry.
 

@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from typing import List, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
@@ -33,7 +35,7 @@ class SystemCreatedAcrAccount:
         :param acr_account_sku: The storage account service tier. Currently
             only Premium is a valid option for registries.
         :type acr_account_sku: str
-        :param arm_resource_id: Resource ID of the ACR account. 
+        :param arm_resource_id: Resource ID of the ACR account.
         :type arm_resource_id: str. Default value is None.
         """
         self.acr_account_sku = acr_account_sku
@@ -47,11 +49,11 @@ class SystemCreatedAcrAccount:
     def _to_rest_object(cls, acr) -> RestAcrDetails:
         if hasattr(acr, "acr_account_sku") and acr.acr_account_sku is not None:
             # SKU enum requires input to be a capitalized word,
-            # so we format the input to be acceptable as long as spelling is 
+            # so we format the input to be acceptable as long as spelling is
             # correct.
             acr_account_sku = acr.acr_account_sku.capitalize()
-            # We DO NOT want to set the arm_resource_id. The backend provides very 
-            # unhelpful errors if you provide an empty/null/invalid reosource ID,
+            # We DO NOT want to set the arm_resource_id. The backend provides very
+            # unhelpful errors if you provide an empty/null/invalid resource ID,
             # and ignores the value otherwise. It's better to avoid setting it in
             # the conversion in this direction at all.
             return RestAcrDetails(
@@ -116,9 +118,9 @@ class SystemCreatedStorageAccount:
     @classmethod
     def _to_rest_object(cls, storage) -> RestStorageAccountDetails:
         if hasattr(storage, "storage_account_type") and storage.storage_account_type is not None:
-            
-            # We DO NOT want to set the arm_resource_id. The backend provides very 
-            # unhelpful errors if you provide an empty/null/invalid reosource ID,
+
+            # We DO NOT want to set the arm_resource_id. The backend provides very
+            # unhelpful errors if you provide an empty/null/invalid resource ID,
             # and ignores the value otherwise. It's better to avoid setting it in
             # the conversion in this direction at all.
             # We don't bother processing storage_account_type because the

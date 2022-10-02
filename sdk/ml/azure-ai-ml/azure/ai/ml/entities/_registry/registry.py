@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=protected-access
 
 from os import PathLike
 from pathlib import Path
@@ -84,6 +85,7 @@ class Registry(Resource):
         self.managed_resource_group = managed_resource_group
         self.discovery_url = discovery_url
         self.mlflow_registry_uri = mlflow_registry_uri
+        self.container_registry = None
 
     def dump(
         self,
@@ -98,26 +100,26 @@ class Registry(Resource):
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
-    # The internal structure of the registry object is closer to how it's 
+    # The internal structure of the registry object is closer to how it's
     # represented by the registry API, which differs from how registries
     # are represented in YAML. This function converts those differences.
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        
+
         # Grab the first acr account of the first region and set that
         # as the system-wide container registry.
         # Although support for multiple ACRs per region, as well as
         # different ACRs per region technically exist according to the
         # API schema, we do not want to surface that as an option,
-        # since the use cases for variable/multiple ACRs are extremely 
-        # limited, and would probably just confuse most users. 
+        # since the use cases for variable/multiple ACRs are extremely
+        # limited, and would probably just confuse most users.
         if self.replication_locations and len(self.replication_locations) > 0:
             if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
                 self.container_registry = self.replication_locations[0].acr_config[0]
 
         # Change single-list managed storage accounts to not be lists.
-        # Although storage accounts are storage in a list to match the 
+        # Although storage accounts are storage in a list to match the
         # underlying API, users should only enter in one managed storage
         # in YAML.
         for region_detail in self.replication_locations:
@@ -180,7 +182,7 @@ class Registry(Resource):
     # This is mostly due to the compromise required to balance
     # the actual shape of registries as they're defined by
     # autorest with how the spec wanted users to be able to
-    # configure them. This function should eventually be 
+    # configure them. This function should eventually be
     @classmethod
     def _convert_yaml_dict_to_entity_input(
         cls,
@@ -197,7 +199,8 @@ class Registry(Resource):
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
             # Convert single, non-list managed storage into a 1-element list.
-            if hasattr(region_detail, "storage_config") and isinstance(region_detail.storage_config, SystemCreatedStorageAccount):
+            if hasattr(region_detail, "storage_config") and isinstance(region_detail.storage_config, \
+                                                                        SystemCreatedStorageAccount):
                 region_detail.storage_config = [region_detail.storage_config]
 
 
@@ -217,7 +220,7 @@ class Registry(Resource):
             tags=self.tags,
             description=self.description,
             properties=RegistryProperties(
-                #tags=self.tags, interior tags exist due to swagger inheritance 
+                #tags=self.tags, interior tags exist due to swagger inheritance
                 # issues, don't actually use them.
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,

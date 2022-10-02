@@ -19,14 +19,14 @@ class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(data):
         from azure.ai.ml.entities import SystemCreatedStorageAccount
 
         data.pop("type", None)
         return SystemCreatedStorageAccount(**data)
 
     @pre_dump
-    def predump(self, data, **kwargs):
+    def predump(data):
         from azure.ai.ml.entities import SystemCreatedStorageAccount
 
         if not isinstance(data, SystemCreatedStorageAccount):
@@ -34,4 +34,3 @@ class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
                 "Cannot dump non-SystemCreatedStorageAccount object into SystemCreatedStorageAccountSchema"
             )
         return data
-

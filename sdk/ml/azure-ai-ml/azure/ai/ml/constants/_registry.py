@@ -1,17 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
 import re
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
-
-
-class ManagedServiceIdentityType(str, Enum):
-    """Type of managed service identity"""
-    NONE = "None"
-    SYSTEM_ASSIGNED = "SystemAssigned"
-
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_LRS = "Standard_LRS".lower()

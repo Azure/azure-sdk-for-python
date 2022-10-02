@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-else-return
+
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
 
@@ -18,14 +20,14 @@ class SystemCreatedAcrAccountSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(data):
         from azure.ai.ml.entities import SystemCreatedAcrAccount
 
         data.pop("type", None)
         return SystemCreatedAcrAccount(**data)
 
     @pre_dump
-    def predump(self, data, **kwargs):
+    def predump(data):
         from azure.ai.ml.entities import SystemCreatedAcrAccount
 
         if not isinstance(data, SystemCreatedAcrAccount):

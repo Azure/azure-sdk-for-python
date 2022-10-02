@@ -444,7 +444,7 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.principal_id = obj.principal_id
         result.tenant_id = obj.tenant_id
         return result
-    
+
     def _to_rest_object(self) -> RestRegistryManagedIdentity:
         return RestRegistryManagedIdentity(
             type=self.type,
@@ -454,10 +454,10 @@ class IdentityConfiguration(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestRegistryManagedIdentity) -> "IdentityConfiguration":
-        return cls(
+        result = cls(
             type=obj.type,
             user_assigned_identities=None,
         )
         result.principal_id = obj.principal_id
         result.tenant_id = obj.tenant_id
-
+        return result
