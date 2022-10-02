@@ -20,14 +20,14 @@ class SystemCreatedAcrAccountSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(self, data):
+    def make(self, data, **kwargs):
         from azure.ai.ml.entities import SystemCreatedAcrAccount
 
         data.pop("type", None)
         return SystemCreatedAcrAccount(**data)
 
     @pre_dump
-    def predump(self, data):
+    def predump(self, data, **kwargs):
         from azure.ai.ml.entities import SystemCreatedAcrAccount
 
         if not isinstance(data, SystemCreatedAcrAccount):

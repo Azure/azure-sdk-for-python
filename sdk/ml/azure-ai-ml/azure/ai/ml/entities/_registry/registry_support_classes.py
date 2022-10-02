@@ -1,9 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-# pylint:disable=protected-access
-# pylint:no-else-return
+# pylint:disable=protected-access,no-else-return
 
 from typing import List, Union
 
