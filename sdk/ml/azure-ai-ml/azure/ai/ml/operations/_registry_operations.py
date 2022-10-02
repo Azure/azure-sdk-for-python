@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,unused-argument
 
 from typing import Dict, Iterable
 
@@ -21,7 +21,6 @@ from azure.core.polling import LROPoller
 from azure.ai.ml._utils._experimental import experimental
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations
-
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.logger, ops_logger.module_logger
@@ -109,6 +108,7 @@ class RegistryOperations:
     def begin_create(
         self,
         registry: Registry,
+        **kwargs: Dict,
     ) -> LROPoller[Registry]:
         """Create a new Azure Machine Learning Registry.
 
