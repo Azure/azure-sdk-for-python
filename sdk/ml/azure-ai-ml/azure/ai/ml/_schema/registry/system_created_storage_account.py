@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-self-use,unused-argument
+
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
 
@@ -19,14 +21,14 @@ class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(data):
+    def make(self, data, **kwargs):
         from azure.ai.ml.entities import SystemCreatedStorageAccount
 
         data.pop("type", None)
         return SystemCreatedStorageAccount(**data)
 
     @pre_dump
-    def predump(data):
+    def predump(self, data, **kwargs):
         from azure.ai.ml.entities import SystemCreatedStorageAccount
 
         if not isinstance(data, SystemCreatedStorageAccount):
