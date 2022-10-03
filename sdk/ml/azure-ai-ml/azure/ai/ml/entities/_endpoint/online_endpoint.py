@@ -109,7 +109,7 @@ class OnlineEndpoint(Endpoint):
         return self._provisioning_state
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
-        identity = self.identity._to_online_endpoint_rest_object()
+        identity = self.identity._to_online_endpoint_rest_object() if self.identity else None
         validate_endpoint_or_deployment_name(self.name)
         validate_identity_type_defined(self.identity)
         properties = RestOnlineEndpoint(
@@ -174,7 +174,8 @@ class OnlineEndpoint(Endpoint):
     def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
 
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
-        identity = IdentityConfiguration._from_online_endpoint_rest_object(resource.identity)
+        identity = IdentityConfiguration._from_online_endpoint_rest_object(
+            resource.identity) if resource.identity else None
         if resource.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=resource.id,
