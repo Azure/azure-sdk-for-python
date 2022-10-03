@@ -29,6 +29,13 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
+from azure.ai.ml._schema.core.fields import (
+    DumpableIntegerField,
+    DumpableStringField,
+    NestedField,
+    UnionField,
+)
+from marshmallow import fields
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -158,13 +165,43 @@ def _convert_sweep_dist_dict_to_str_dict(sweep_distribution: dict) -> dict:
     return sweep_distribution
 
 
+class ChoicePlusSchema(ChoiceSchema):
+    """ Choice schema that allows boolean values also"""
+    values = fields.List(
+        UnionField(
+            [
+                DumpableIntegerField(strict=True),
+                DumpableStringField(),
+                fields.Float(),
+                fields.Boolean(),
+                fields.Dict(
+                    keys=fields.Str(),
+                    values=UnionField(
+                        [
+                            NestedField("ChoiceSchema"),
+                            NestedField(NormalSchema()),
+                            NestedField(QNormalSchema()),
+                            NestedField(RandintSchema()),
+                            NestedField(UniformSchema()),
+                            NestedField(QUniformSchema()),
+                            DumpableIntegerField(strict=True),
+                            fields.Float(),
+                            fields.Str(),
+                            fields.Boolean(),
+                        ]
+                    ),
+                ),
+            ]
+        )
+    )
+
 def _convert_sweep_dist_dict_item_to_str(sweep_distribution: Union[bool, int, float, str, dict]) -> str:
     # Convert a Sweep Distribution dict to Sweep Distribution string
     # Eg. {type: 'choice', values: ['vitb16r224','vits16r224']} => "Choice('vitb16r224','vits16r224')"
     if isinstance(sweep_distribution, dict):
         sweep_dist_type = sweep_distribution["type"]
         if sweep_dist_type == SearchSpace.CHOICE:
-            sweep_dist_obj = ChoiceSchema().load(sweep_distribution) # pylint: disable=no-member
+            sweep_dist_obj = ChoicePlusSchema().load(sweep_distribution) # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.UNIFORM_LOGUNIFORM:
             sweep_dist_obj = UniformSchema().load(sweep_distribution) # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.NORMAL_LOGNORMAL:
@@ -205,7 +242,7 @@ def _convert_sweep_dist_str_item_to_dict(
     sweep_dist_obj = _convert_from_rest_object(sweep_distribution_str)
     if isinstance(sweep_dist_obj, SweepDistribution):
         if isinstance(sweep_dist_obj, Choice):
-            sweep_dist = ChoiceSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+            sweep_dist = ChoicePlusSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (Uniform, LogUniform)):
             sweep_dist = UniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (Normal, LogNormal)):

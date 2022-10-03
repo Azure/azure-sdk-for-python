@@ -54,3 +54,10 @@ class QUniformSchema(metaclass=PatchedSchemaMeta):
         if not isinstance(data, (QUniform, QLogUniform)):
             raise ValidationError("Cannot dump non-QUniform or non-QLogUniform object into UniformSchema")
         return data
+
+
+class IntegerQUniformSchema(QUniformSchema):
+    min_value = DumpableIntegerField(strict=True, required=True)
+    max_value = DumpableIntegerField(strict=True, required=True)
+    q = DumpableIntegerField(strict=True, required=True)
+
