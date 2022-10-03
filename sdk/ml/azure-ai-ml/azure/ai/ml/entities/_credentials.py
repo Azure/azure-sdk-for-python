@@ -477,14 +477,15 @@ class IdentityConfiguration(RestTranslatableMixin):
         )
 
     def _to_workspace_rest_object(self) -> RestWorkspaceIdentityConfiguration:
-        user_assigned_identities = None
-        if self.user_assigned_identities:
-            user_assigned_identities = {}
-            for k, v in self.user_assigned_identities.items():
-                user_assigned_identities[k] = v._to_workspace_rest_object() if v else None # pylint: disable=protected-access
+
+        user_assigned_identities = (
+            {uai.resource_id: uai._to_workspace_rest_object() for uai in self.user_assigned_identities}
+            if self.user_assigned_identities
+            else None
+        )
 
         return RestWorkspaceIdentityConfiguration(
-            type=self.type,
+            type=snake_to_pascal(self.type),
             principal_id=self.principal_id,
             tenant_id=self.tenant_id,
             user_assigned_identities=user_assigned_identities,

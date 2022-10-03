@@ -228,7 +228,7 @@ class WorkspaceOperations:
         """
         identity = kwargs.get("identity", workspace.identity)
         if identity:
-            identity = identity._to_rest_object()
+            identity = identity._to_workspace_rest_object()
         update_param = WorkspaceUpdateParameters(
             tags=workspace.tags,
             description=kwargs.get("description", workspace.description),
