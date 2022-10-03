@@ -418,7 +418,7 @@ class AmlTokenConfiguration(ABC, RestTranslatableMixin):
 class IdentityConfiguration(RestTranslatableMixin):
     """Managed identity specification."""
 
-    def __init__(self, *, type: str, user_assigned_identities: List[ManagedIdentityConfiguration] = None):
+    def __init__(self, *, type: str, user_assigned_identities: List[ManagedIdentityConfiguration] = None, **kwargs):
         """Managed identity specification.
 
         :param type: Managed identity type, defaults to None
@@ -429,8 +429,8 @@ class IdentityConfiguration(RestTranslatableMixin):
 
         self.type = type
         self.user_assigned_identities = user_assigned_identities
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id = kwargs.pop("principal_id", None)
+        self.tenant_id = kwargs.pop("tenant_id", None)
 
     def _to_compute_rest_object(self) -> RestIdentityConfiguration:
         rest_user_assigned_identities = (
