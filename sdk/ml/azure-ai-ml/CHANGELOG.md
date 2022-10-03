@@ -14,6 +14,7 @@
 - Deprecated parameter path has been removed from load and dump methods.
 - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
 - Workspace.list_keys renamed to Workspace.get_keys.
+- UserAssignedIdentity is replaced by ManagedIdentityConfiguration
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code

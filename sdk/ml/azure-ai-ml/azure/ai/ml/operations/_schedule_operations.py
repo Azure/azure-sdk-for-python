@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 from typing import Any, Iterable
 
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -17,7 +17,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from .._restclient.v2022_10_01_preview.models import ScheduleListViewType
+from .._restclient.v2022_10_01.models import ScheduleListViewType
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import AzureMLResourceType, LROConfigurations
 from . import JobOperations
@@ -41,14 +41,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_10_2022_preview: ServiceClient102022Preview,
+        service_client_10_2022: ServiceClient102022,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
-        self.service_client = service_client_10_2022_preview.schedules
+        self.service_client = service_client_10_2022.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -96,7 +96,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.service_client.list(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            # list_view_type=list_view_type,
+            list_view_type=list_view_type,
             cls=safe_from_rest_object,
             **self._kwargs,
         )

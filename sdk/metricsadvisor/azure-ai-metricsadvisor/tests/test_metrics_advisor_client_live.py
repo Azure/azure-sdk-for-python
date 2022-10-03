@@ -23,51 +23,51 @@ MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, Metrics
 
 class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_anomalies_for_detection_configuration(self, client):
         results = list(client.list_anomalies(
             detection_configuration_id=self.anomaly_detection_configuration_id,
-            start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            start_time=datetime.datetime(2022, 2, 28),
+            end_time=datetime.datetime(2022, 9, 29),
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_anomaly_dimension_values(self, client):
         results = list(client.list_anomaly_dimension_values(
             detection_configuration_id=self.anomaly_detection_configuration_id,
-            dimension_name="region",
-            start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            dimension_name="Dim1",
+            start_time=datetime.datetime(2022, 2, 28),
+            end_time=datetime.datetime(2022, 9, 29),
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_incidents_for_detection_configuration(self, client):
         results = list(client.list_incidents(
             detection_configuration_id=self.anomaly_detection_configuration_id,
-            start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            start_time=datetime.datetime(2022, 2, 28),
+            end_time=datetime.datetime(2022, 9, 29),
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_dimension_values(self, client):
         results = list(client.list_metric_dimension_values(
             metric_id=self.metric_id,
-            dimension_name="region",
+            dimension_name="Dim1",
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_incident_root_cause(self, client):
@@ -77,63 +77,64 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_enriched_series_data(self, client):
-        series_identity = {"region": "Los Angeles"}
+        series_identity = {"Dim1": "USD"}
         results = list(client.list_metric_enriched_series_data(
             detection_configuration_id=self.anomaly_detection_configuration_id,
-            start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            start_time=datetime.datetime(2022, 2, 28),
+            end_time=datetime.datetime(2022, 9, 29),
             series=[series_identity]
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_enrichment_status(self, client):
         results = list(client.list_metric_enrichment_status(
             metric_id=self.metric_id,
-            start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            start_time=datetime.datetime(2022, 2, 28),
+            end_time=datetime.datetime(2022, 9, 29),
         ))
         assert len(results) > 0
 
+    @pytest.mark.skip()
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_alerts(self, client):
         results = list(client.list_alerts(
             alert_configuration_id=self.anomaly_alert_configuration_id,
-            start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            start_time=datetime.datetime(2022, 2, 28),
+            end_time=datetime.datetime(2022, 9, 29),
             time_mode="AnomalyTime",
         ))
         assert len(list(results)) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metrics_series_data(self, client):
         results = list(client.list_metric_series_data(
             metric_id=self.metric_id,
-            start_time=datetime.datetime(2021, 1, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            start_time=datetime.datetime(2022, 2, 28),
+            end_time=datetime.datetime(2022, 9, 29),
             series_keys=[
-                {"region": "Los Angeles", "category": "Homemade"}
+                {"Dim1": "USD", "Dim2": "US"}
             ]
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_metric_series_definitions(self, client):
         results = list(client.list_metric_series_definitions(
             metric_id=self.metric_id,
-            active_since=datetime.datetime(2021, 1, 1),
+            active_since=datetime.datetime(2022, 3, 1),
         ))
         assert len(results) > 0
 
@@ -142,9 +143,9 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @recorded_by_proxy
     def test_add_anomaly_feedback(self, client):
         anomaly_feedback = AnomalyFeedback(metric_id=self.metric_id,
-                                           dimension_key={"category": "Shoes Handbags & Sunglasses"},
-                                           start_time=datetime.datetime(2021, 8, 5),
-                                           end_time=datetime.datetime(2021, 9, 9),
+                                           dimension_key={"Dim1": "USD"},
+                                           start_time=datetime.datetime(2022, 3, 1),
+                                           end_time=datetime.datetime(2022, 9, 29),
                                            value="NotAnomaly")
         client.add_feedback(anomaly_feedback)
 
@@ -153,9 +154,9 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @recorded_by_proxy
     def test_add_change_point_feedback(self, client):
         change_point_feedback = ChangePointFeedback(metric_id=self.metric_id,
-                                                    dimension_key={"category": "Shoes Handbags & Sunglasses"},
-                                                    start_time=datetime.datetime(2021, 8, 5),
-                                                    end_time=datetime.datetime(2021, 9, 9),
+                                                    dimension_key={"Dim1": "USD"},
+                                                    start_time=datetime.datetime(2022, 3, 1),
+                                                    end_time=datetime.datetime(2022, 9, 29),
                                                     value="NotChangePoint")
         client.add_feedback(change_point_feedback)
 
@@ -164,9 +165,9 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @recorded_by_proxy
     def test_add_comment_feedback(self, client):
         comment_feedback = CommentFeedback(metric_id=self.metric_id,
-                                           dimension_key={"category": "Shoes Handbags & Sunglasses"},
-                                           start_time=datetime.datetime(2021, 8, 5),
-                                           end_time=datetime.datetime(2021, 9, 9),
+                                           dimension_key={"Dim1": "USD"},
+                                           start_time=datetime.datetime(2022, 3, 1),
+                                           end_time=datetime.datetime(2022, 9, 29),
                                            value="comment")
         client.add_feedback(comment_feedback)
 
@@ -175,32 +176,33 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
     @recorded_by_proxy
     def test_add_period_feedback(self, client):
         period_feedback = PeriodFeedback(metric_id=self.metric_id,
-                                         dimension_key={"category": "Shoes Handbags & Sunglasses"},
-                                         start_time=datetime.datetime(2021, 8, 5),
-                                         end_time=datetime.datetime(2021, 9, 9),
+                                         dimension_key={"Dim1": "USD"},
+                                         start_time=datetime.datetime(2022, 3, 1),
+                                         end_time=datetime.datetime(2022, 9, 29),
                                          period_type="AssignValue",
                                          value=2)
         client.add_feedback(period_feedback)
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_feedback(self, client):
         results = list(client.list_feedback(
             metric_id=self.metric_id,
-            start_time=datetime.datetime(2021, 9, 1),
-            end_time=datetime.datetime(2021, 9, 9),
+            start_time=datetime.datetime(2022, 3, 1),
+            end_time=datetime.datetime(2022, 9, 29),
             time_mode="FeedbackCreatedTime"
         ))
         assert len(results) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_get_feedback(self, client):
         result = client.get_feedback(feedback_id=self.feedback_id)
         assert result
 
+    @pytest.mark.skip()
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
@@ -211,6 +213,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         ))
         assert len(result) > 0
 
+    @pytest.mark.skip()
     @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
