@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, Optional, Type, Union,
+    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING)
 
 try:

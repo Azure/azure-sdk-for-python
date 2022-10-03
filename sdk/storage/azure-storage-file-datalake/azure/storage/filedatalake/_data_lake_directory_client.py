@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (
-    Any, Dict, Optional, Type, Union,
+    Any, Dict, Optional, Union,
     TYPE_CHECKING
 )
 
