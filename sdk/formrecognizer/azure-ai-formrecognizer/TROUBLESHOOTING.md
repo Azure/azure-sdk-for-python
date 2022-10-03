@@ -51,7 +51,7 @@ Exception Details:      (ModelBuildError) Could not build the model: Can't find 
 ```
 
 #### Invalid SAS URL
-This error points to missing permissions on the blob storage SAS URL for the Form Recognizer service to access the training dataset resource.
+This error points to missing permissions on the blob storage SAS URL for the Form Recognizer service to access the training dataset resource. For more information about SAS tokens for Form Recognizer, see [here](https://learn.microsoft.com/azure/applied-ai-services/form-recognizer/create-sas-tokens).
 
 Example error output:
 ```text
@@ -65,7 +65,7 @@ Inner error: {
 ```
 
 ### Generic Error
-Seeing a "Generic error" returned from the SDK is most often caused by heavy load on the service and throttling of the service. Retrying after backoff time should help mitigate this issue.
+Seeing a "Generic error" returned from the SDK is most often caused by heavy load on the service. For troubleshooting issues related to service limits, see related information [here](https://learn.microsoft.com/azure/applied-ai-services/form-recognizer/service-limits?tabs=v30).
 
 Example error output:
 ```text
@@ -79,19 +79,7 @@ It is common to have a longer completion time than what is expected when buildin
 For simpler use-cases, you can use `template` build mode which uses a different model building algorithm that takes less time (typically a few seconds to build). See more about `template` custom models [here](https://aka.ms/custom-template-models). To see more information about `neural` custom models (these models use deep learning to train and build), see documentation [here](https://aka.ms/custom-neural-models).
 
 ### Enable HTTP request/response logging
-Reviewing the HTTP request sent or response received over the wire to/from the Azure Form Recognizer service can be useful when troubleshooting issues. To enable logging the HTTP request and response payload, see the example below:
-
-```python
-import logging
-
-# ...
-
-# Acquire the logger
-logger = logging.getLogger('azure.ai.formrecognizer')
-
-# Set the desired logging level
-logger.setLevel(logging.DEBUG)
-```
+Reviewing the HTTP request sent or response received over the wire to/from the Azure Form Recognizer service can be useful when troubleshooting issues.
 
 For more information about logging with Python Azure SDKs, see [here](https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging).
 
