@@ -71,7 +71,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
-        **kwargs: Dict,
+        **kwargs: Dict, # pylint: disable=unused-argument
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
