@@ -307,6 +307,7 @@ def decode_empty_frame(header):
         return 0, header.tobytes()
     if header[5] == 0:
         return 1, b"EMPTY"
+    _LOGGER.error("VALUE ERROR HERE FOR DECODE")
     raise ValueError("Received unrecognized empty frame")
 
 
