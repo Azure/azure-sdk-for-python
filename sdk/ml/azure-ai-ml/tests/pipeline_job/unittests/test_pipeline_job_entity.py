@@ -502,6 +502,7 @@ class TestPipelineJobEntity:
             },
             "search_space": [
                 {
+                    "ams_gradient": "False",
                     "learning_rate": "uniform(0.005,0.05)",
                     "model_name": "choice('vitb16r224')",
                     "optimizer": "choice('sgd','adam','adamw')",
@@ -583,6 +584,7 @@ class TestPipelineJobEntity:
                     "model_name": "choice('vitb16r224')",
                     "optimizer": "choice('sgd','adam','adamw')",
                     "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
+                    "ams_gradient": "choice(True,False)"
                 }
             ],
         }
