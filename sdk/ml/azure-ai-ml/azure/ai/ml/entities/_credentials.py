@@ -13,13 +13,14 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
-    CertificateDatastoreCredentials,
+    CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
     CertificateDatastoreSecrets,
     CredentialsType,
     SasDatastoreCredentials as RestSasDatastoreCredentials,
     SasDatastoreSecrets as RestSasDatastoreSecrets,
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
+    NoneDatastoreCredentials as RestNoneDatastoreCredentials,
 )
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
@@ -43,6 +44,10 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration
 )
 
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ManagedServiceIdentity as RestRegistryManagedIdentity
+)
+
 
 class AccountKeyConfiguration(RestTranslatableMixin, ABC):
     def __init__(
@@ -53,12 +58,12 @@ class AccountKeyConfiguration(RestTranslatableMixin, ABC):
         self.type = camel_to_snake(CredentialsType.ACCOUNT_KEY)
         self.account_key = account_key
 
-    def _to_rest_object(self) -> RestAccountKeyDatastoreCredentials:
+    def _to_datastore_rest_object(self) -> RestAccountKeyDatastoreCredentials:
         secrets = RestAccountKeyDatastoreSecrets(key=self.account_key)
         return RestAccountKeyDatastoreCredentials(secrets=secrets)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestAccountKeyDatastoreCredentials) -> "AccountKeyConfiguration":
+    def _from_datastore_rest_object(cls, obj: RestAccountKeyDatastoreCredentials) -> "AccountKeyConfiguration":
         return cls(account_key=obj.secrets.key if obj.secrets else None)
 
     def __eq__(self, other: object) -> bool:
@@ -80,7 +85,7 @@ class SasTokenConfiguration(RestTranslatableMixin, ABC):
         self.type = camel_to_snake(CredentialsType.SAS)
         self.sas_token = sas_token
 
-    def _to_rest_datastore_object(self) -> RestSasDatastoreCredentials:
+    def _to_datastore_rest_object(self) -> RestSasDatastoreCredentials:
         secrets = RestSasDatastoreSecrets(sas_token=self.sas_token)
         return RestSasDatastoreCredentials(secrets=secrets)
 
@@ -261,9 +266,9 @@ class CertificateConfiguration(BaseTenantCredentials):
         self.certificate = certificate
         self.thumbprint = thumbprint
 
-    def _to_rest_object(self) -> CertificateDatastoreCredentials:
+    def _to_datastore_rest_object(self) -> RestCertificateDatastoreCredentials:
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)
-        return CertificateDatastoreCredentials(
+        return RestCertificateDatastoreCredentials(
             authority_url=self.authority_url,
             resource_uri=self.resource_url,
             tenant_id=self.tenant_id,
@@ -273,7 +278,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: CertificateDatastoreCredentials) -> "CertificateConfiguration":
+    def _from_datastore_rest_object(cls, obj: RestCertificateDatastoreCredentials) -> "CertificateConfiguration":
         return cls(
             authority_url=obj.authority_url,
             resource_url=obj.resource_uri,
@@ -396,7 +401,7 @@ class AmlTokenConfiguration(ABC, RestTranslatableMixin):
         return cls()
 
 
-# This class will be used to represent Identity property on compute and endpoint
+# This class will be used to represent Identity property on compute, endpoint, and registry
 class IdentityConfiguration(RestTranslatableMixin):
     """Managed identity specification."""
 
@@ -440,3 +445,42 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.principal_id = obj.principal_id
         result.tenant_id = obj.tenant_id
         return result
+
+    def _to_rest_object(self) -> RestRegistryManagedIdentity:
+        return RestRegistryManagedIdentity(
+            type=self.type,
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestRegistryManagedIdentity) -> "IdentityConfiguration":
+        result = cls(
+            type=obj.type,
+            user_assigned_identities=None,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
+class NoneCredentialConfiguration(RestTranslatableMixin):
+    """None Credential Configuration."""
+
+    def __init__(self):
+        self.type = CredentialsType.NONE
+
+    # pylint: disable=no-self-use
+    def _to_datastore_rest_object(self) -> RestNoneDatastoreCredentials:
+        return RestNoneDatastoreCredentials()
+
+    @classmethod
+    # pylint: disable=unused-argument
+    def _from_datastore_rest_object(cls, obj: RestNoneDatastoreCredentials) -> "NoneCredentialConfiguration":
+        return cls()
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, NoneCredentialConfiguration):
+            return True
+        return False
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)

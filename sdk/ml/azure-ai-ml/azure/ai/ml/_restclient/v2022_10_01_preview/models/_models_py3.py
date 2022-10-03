@@ -404,7 +404,6 @@ class AKS(Compute, AKSSchema):
         super(AKS, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'AKS'  # type: str
-        self.compute_type = 'AKS'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -547,7 +546,6 @@ class AksComputeSecrets(ComputeSecrets, AksComputeSecretsProperties):
         self.user_kube_config = user_kube_config
         self.admin_kube_config = admin_kube_config
         self.image_pull_secret_name = image_pull_secret_name
-        self.compute_type = 'AKS'  # type: str
         self.compute_type = 'AKS'  # type: str
 
 
@@ -873,7 +871,6 @@ class AmlCompute(Compute, AmlComputeSchema):
         """
         super(AmlCompute, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
-        self.compute_type = 'AmlCompute'  # type: str
         self.compute_type = 'AmlCompute'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -2657,13 +2654,7 @@ class AzureBlobDatastore(DatastoreProperties, AzureDatastore):
         self.properties = properties
         self.tags = tags
         self.credentials = credentials
-        self.datastore_type = 'AzureBlob'  # type: str
         self.is_default = None
-        self.account_name = account_name
-        self.container_name = container_name
-        self.endpoint = endpoint
-        self.protocol = protocol
-        self.service_data_access_auth_identity = service_data_access_auth_identity
 
 
 class AzureDataLakeGen1Datastore(DatastoreProperties, AzureDatastore):
@@ -2765,10 +2756,7 @@ class AzureDataLakeGen1Datastore(DatastoreProperties, AzureDatastore):
         self.properties = properties
         self.tags = tags
         self.credentials = credentials
-        self.datastore_type = 'AzureDataLakeGen1'  # type: str
         self.is_default = None
-        self.service_data_access_auth_identity = service_data_access_auth_identity
-        self.store_name = store_name
 
 
 class AzureDataLakeGen2Datastore(DatastoreProperties, AzureDatastore):
@@ -2892,13 +2880,7 @@ class AzureDataLakeGen2Datastore(DatastoreProperties, AzureDatastore):
         self.properties = properties
         self.tags = tags
         self.credentials = credentials
-        self.datastore_type = 'AzureDataLakeGen2'  # type: str
         self.is_default = None
-        self.account_name = account_name
-        self.endpoint = endpoint
-        self.filesystem = filesystem
-        self.protocol = protocol
-        self.service_data_access_auth_identity = service_data_access_auth_identity
 
 
 class AzureFileDatastore(DatastoreProperties, AzureDatastore):
@@ -3024,13 +3006,7 @@ class AzureFileDatastore(DatastoreProperties, AzureDatastore):
         self.properties = properties
         self.tags = tags
         self.credentials = credentials
-        self.datastore_type = 'AzureFile'  # type: str
         self.is_default = None
-        self.account_name = account_name
-        self.endpoint = endpoint
-        self.file_share_name = file_share_name
-        self.protocol = protocol
-        self.service_data_access_auth_identity = service_data_access_auth_identity
 
 
 class EarlyTerminationPolicy(msrest.serialization.Model):
@@ -4510,11 +4486,7 @@ class Classification(AutoMLVertical, TableVertical):
         self.training_settings = training_settings
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'Classification'  # type: str
         self.training_data = training_data
-        self.positive_label = positive_label
-        self.primary_metric = primary_metric
-        self.training_settings = training_settings
 
 
 class TrainingSettings(msrest.serialization.Model):
@@ -5887,7 +5859,6 @@ class ComputeInstance(Compute, ComputeInstanceSchema):
         super(ComputeInstance, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'ComputeInstance'  # type: str
-        self.compute_type = 'ComputeInstance'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -6652,10 +6623,6 @@ class ComputeResource(Resource, ComputeResourceSchema):
         self.name = None
         self.type = None
         self.system_data = None
-        self.identity = identity
-        self.location = location
-        self.tags = tags
-        self.sku = sku
 
 
 class ComputeSchedules(msrest.serialization.Model):
@@ -7167,7 +7134,6 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'custom_model'  # type: str
         self.description = description
-        self.job_input_type = 'custom_model'  # type: str
 
 
 class JobOutput(msrest.serialization.Model):
@@ -7265,7 +7231,6 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'custom_model'  # type: str
         self.description = description
-        self.job_output_type = 'custom_model'  # type: str
 
 
 class CustomNCrossValidations(NCrossValidations):
@@ -7597,7 +7562,6 @@ class Databricks(Compute, DatabricksSchema):
         super(Databricks, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'Databricks'  # type: str
-        self.compute_type = 'Databricks'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -7668,7 +7632,6 @@ class DatabricksComputeSecrets(ComputeSecrets, DatabricksComputeSecretsPropertie
         """
         super(DatabricksComputeSecrets, self).__init__(databricks_access_token=databricks_access_token, **kwargs)
         self.databricks_access_token = databricks_access_token
-        self.compute_type = 'Databricks'  # type: str
         self.compute_type = 'Databricks'  # type: str
 
 
@@ -8050,7 +8013,6 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
         """
         super(DataLakeAnalytics, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
-        self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -10234,11 +10196,7 @@ class Forecasting(AutoMLVertical, TableVertical):
         self.training_settings = training_settings
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'Forecasting'  # type: str
         self.training_data = training_data
-        self.forecasting_settings = forecasting_settings
-        self.primary_metric = primary_metric
-        self.training_settings = training_settings
 
 
 class ForecastingSettings(msrest.serialization.Model):
@@ -10823,7 +10781,6 @@ class HDInsight(Compute, HDInsightSchema):
         super(HDInsight, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'HDInsight'  # type: str
-        self.compute_type = 'HDInsight'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -11266,9 +11223,7 @@ from a set of classes - e.g. each image is classified as either an image of a 'c
         self.primary_metric = primary_metric
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'ImageClassification'  # type: str
         self.training_data = training_data
-        self.primary_metric = primary_metric
 
 
 class ImageClassificationMultilabel(AutoMLVertical, ImageClassificationBase):
@@ -11394,9 +11349,7 @@ from a set of labels - e.g. an image could be labeled with both 'cat' and 'dog'.
         self.primary_metric = primary_metric
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'ImageClassificationMultilabel'  # type: str
         self.training_data = training_data
-        self.primary_metric = primary_metric
 
 
 class ImageObjectDetectionBase(ImageVertical):
@@ -11594,9 +11547,7 @@ drawing a polygon around each object in the image.
         self.primary_metric = primary_metric
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'ImageInstanceSegmentation'  # type: str
         self.training_data = training_data
-        self.primary_metric = primary_metric
 
 
 class ImageLimitSettings(msrest.serialization.Model):
@@ -13706,9 +13657,7 @@ bounding box e.g. locate all dogs and cats in an image and draw a bounding box a
         self.primary_metric = primary_metric
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'ImageObjectDetection'  # type: str
         self.training_data = training_data
-        self.primary_metric = primary_metric
 
 
 class ImageSweepSettings(msrest.serialization.Model):
@@ -14224,8 +14173,6 @@ class KerberosKeytabCredentials(DatastoreCredentials, KerberosCredentials):
         self.kerberos_realm = kerberos_realm
         self.credentials_type = 'KerberosKeytab'  # type: str
         self.secrets = secrets
-        self.credentials_type = 'KerberosKeytab'  # type: str
-        self.secrets = secrets
 
 
 class KerberosKeytabSecrets(DatastoreSecrets):
@@ -14325,8 +14272,6 @@ class KerberosPasswordCredentials(DatastoreCredentials, KerberosCredentials):
         self.kerberos_kdc_address = kerberos_kdc_address
         self.kerberos_principal = kerberos_principal
         self.kerberos_realm = kerberos_realm
-        self.credentials_type = 'KerberosPassword'  # type: str
-        self.secrets = secrets
         self.credentials_type = 'KerberosPassword'  # type: str
         self.secrets = secrets
 
@@ -14477,7 +14422,6 @@ class Kubernetes(Compute, KubernetesSchema):
         """
         super(Kubernetes, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
-        self.compute_type = 'Kubernetes'  # type: str
         self.compute_type = 'Kubernetes'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -16220,7 +16164,6 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'mlflow_model'  # type: str
         self.description = description
-        self.job_input_type = 'mlflow_model'  # type: str
 
 
 class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
@@ -16274,7 +16217,6 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'mlflow_model'  # type: str
         self.description = description
-        self.job_output_type = 'mlflow_model'  # type: str
 
 
 class MLTableData(DataVersionBaseProperties):
@@ -16404,7 +16346,6 @@ class MLTableJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'mltable'  # type: str
         self.description = description
-        self.job_input_type = 'mltable'  # type: str
 
 
 class MLTableJobOutput(JobOutput, AssetJobOutput):
@@ -16458,7 +16399,6 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'mltable'  # type: str
         self.description = description
-        self.job_output_type = 'mltable'  # type: str
 
 
 class ModelContainer(Resource):
@@ -19766,10 +19706,7 @@ class Regression(AutoMLVertical, TableVertical):
         self.training_settings = training_settings
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'Regression'  # type: str
         self.training_data = training_data
-        self.primary_metric = primary_metric
-        self.training_settings = training_settings
 
 
 class RegressionTrainingSettings(TrainingSettings):
@@ -22828,9 +22765,7 @@ NLP - Natural Language Processing.
         self.primary_metric = primary_metric
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'TextClassification'  # type: str
         self.training_data = training_data
-        self.primary_metric = primary_metric
 
 
 class TextClassificationMultilabel(AutoMLVertical, NlpVertical):
@@ -22947,9 +22882,7 @@ NLP - Natural Language Processing.
         self.primary_metric = None
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'TextClassificationMultilabel'  # type: str
         self.training_data = training_data
-        self.primary_metric = None
 
 
 class TextNer(AutoMLVertical, NlpVertical):
@@ -23067,9 +23000,7 @@ NLP - Natural Language Processing.
         self.primary_metric = None
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
-        self.task_type = 'TextNER'  # type: str
         self.training_data = training_data
-        self.primary_metric = None
 
 
 class TmpfsOptions(msrest.serialization.Model):
@@ -23222,7 +23153,6 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'triton_model'  # type: str
         self.description = description
-        self.job_input_type = 'triton_model'  # type: str
 
 
 class TritonModelJobOutput(JobOutput, AssetJobOutput):
@@ -23276,7 +23206,6 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'triton_model'  # type: str
         self.description = description
-        self.job_output_type = 'triton_model'  # type: str
 
 
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
@@ -23539,7 +23468,6 @@ class UriFileJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'uri_file'  # type: str
         self.description = description
-        self.job_input_type = 'uri_file'  # type: str
 
 
 class UriFileJobOutput(JobOutput, AssetJobOutput):
@@ -23593,7 +23521,6 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'uri_file'  # type: str
         self.description = description
-        self.job_output_type = 'uri_file'  # type: str
 
 
 class UriFolderDataVersion(DataVersionBaseProperties):
@@ -23716,7 +23643,6 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'uri_folder'  # type: str
         self.description = description
-        self.job_input_type = 'uri_folder'  # type: str
 
 
 class UriFolderJobOutput(JobOutput, AssetJobOutput):
@@ -23770,7 +23696,6 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'uri_folder'  # type: str
         self.description = description
-        self.job_output_type = 'uri_folder'  # type: str
 
 
 class Usage(msrest.serialization.Model):
@@ -24197,7 +24122,6 @@ class VirtualMachine(Compute, VirtualMachineSchema):
         super(VirtualMachine, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'VirtualMachine'  # type: str
-        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -24367,7 +24291,6 @@ class VirtualMachineSecrets(ComputeSecrets, VirtualMachineSecretsSchema):
         """
         super(VirtualMachineSecrets, self).__init__(administrator_account=administrator_account, **kwargs)
         self.administrator_account = administrator_account
-        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_type = 'VirtualMachine'  # type: str
 
 
