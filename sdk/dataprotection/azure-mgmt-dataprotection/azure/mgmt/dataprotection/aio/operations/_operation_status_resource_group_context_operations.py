@@ -25,20 +25,20 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operation_status_operations import build_get_request
+from ...operations._operation_status_resource_group_context_operations import build_get_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class OperationStatusOperations:
+class OperationStatusResourceGroupContextOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.dataprotection.aio.DataProtectionClient`'s
-        :attr:`operation_status` attribute.
+        :attr:`operation_status_resource_group_context` attribute.
     """
 
     models = _models
@@ -51,13 +51,14 @@ class OperationStatusOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationResource:
-        """Gets the operation status for a resource.
+    async def get(self, resource_group_name: str, operation_id: str, **kwargs: Any) -> _models.OperationResource:
+        """Gets the operation status for an operation over a ResourceGroup's context.
 
-        Gets the operation status for a resource.
+        Gets the operation status for an operation over a ResourceGroup's context.
 
-        :param location: Required.
-        :type location: str
+        :param resource_group_name: The name of the resource group where the backup vault is present.
+         Required.
+        :type resource_group_name: str
         :param operation_id: Required.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -80,7 +81,7 @@ class OperationStatusOperations:
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationResource]
 
         request = build_get_request(
-            location=location,
+            resource_group_name=resource_group_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -108,4 +109,4 @@ class OperationStatusOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/operationStatus/{operationId}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/operationStatus/{operationId}"}  # type: ignore
