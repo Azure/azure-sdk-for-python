@@ -136,7 +136,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._operation_2022_06_preview = service_client_06_2022_preview.jobs
         self._service_client = service_client_06_2022_preview
         self._all_operations = all_operations
@@ -667,7 +667,7 @@ class JobOperations(_ScopeDependentOperations):
         output_directory_name = "named-outputs"
 
         def log_missing_uri(what: str):
-            logger.debug(
+            module_logger.debug(
                 'Could not download %s for job "%s" (job status: %s)', what, job_details.name, job_details.status
             )
 

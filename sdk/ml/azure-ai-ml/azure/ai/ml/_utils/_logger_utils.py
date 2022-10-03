@@ -25,6 +25,6 @@ class OpsLogger:
         self.module_logger = logging.getLogger(name)
         self.custom_dimensions = {}
 
-    def update_info(self, data: dict) -> None:
-        if "app_insights_handler" in data:
-            self.logger.addHandler(data.pop("app_insights_handler"))
+    # def update_info(self, data: dict) -> None:
+    #     if "app_insights_handler" in data:
+    #         self.logger.addHandler(data.pop("app_insights_handler"))

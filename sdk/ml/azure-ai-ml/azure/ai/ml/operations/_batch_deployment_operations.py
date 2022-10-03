@@ -52,7 +52,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints

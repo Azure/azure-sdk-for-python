@@ -65,8 +65,8 @@ class ComponentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        # if "app_insights_handler" in kwargs:
+        #     logger.addHandler(kwargs.pop("app_insights_handler"))
         self._version_operation = service_client.component_versions
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations

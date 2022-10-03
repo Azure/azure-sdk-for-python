@@ -64,7 +64,7 @@ class DataOperations(_ScopeDependentOperations):
     ):
 
         super(DataOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
@@ -241,7 +241,7 @@ class DataOperations(_ScopeDependentOperations):
                     metadata_yaml_path = None
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
-                    logger.info(
+                    module_logger.info(
                         "Unable to access MLTable metadata at path %s",
                         asset_path,
                         exc_info=1,
@@ -275,7 +275,7 @@ class DataOperations(_ScopeDependentOperations):
         try:
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
-            logger.info(
+            module_logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
                 mltable_schema_url,
                 exc_info=1,
