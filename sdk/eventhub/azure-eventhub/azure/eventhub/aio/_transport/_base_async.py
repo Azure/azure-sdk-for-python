@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Literal, Tuple, Union, TYPE_CHECKING
+from typing import Tuple, Union, TYPE_CHECKING
+from typing_extensions import Literal
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
