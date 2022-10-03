@@ -9,7 +9,6 @@ from typing import Dict, Iterable
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Registry
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -17,7 +16,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class RegistryOperations:
@@ -36,7 +35,7 @@ class RegistryOperations:
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_registry_name = operation_scope.registry_name
@@ -46,7 +45,7 @@ class RegistryOperations:
         self.containerRegistry = "none"
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
     def list(self) -> Iterable[Registry]:
         """List all registries that the user has access to in the current
         resource group or subscription.
@@ -59,7 +58,7 @@ class RegistryOperations:
 
         return self._operation.list_by_subscription(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs])
 
-    @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: str = None) -> Registry:
         """Get a registry by name.
 
@@ -88,7 +87,7 @@ class RegistryOperations:
             )
         return registry_name
 
-    @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         registry: Registry,
