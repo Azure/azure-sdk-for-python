@@ -22,7 +22,7 @@ from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.core.exceptions import ResourceNotFoundError
@@ -498,7 +498,7 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
     except ResourceNotFoundError:
         ds = AzureBlobDatastore(name=ds_name, account_name=storage_account_name, container_name=container_name)
         credentialless_ds = client.datastores.create_or_update(ds)
-        assert isinstance(credentialless_ds.credentials, NoneCredentials)
+        assert isinstance(credentialless_ds.credentials, NoneCredentialConfiguration)
 
     return credentialless_ds.name
 
