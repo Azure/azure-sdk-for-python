@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
