@@ -499,7 +499,9 @@ class WorkspaceOperations:
         if workspace.identity:
             identity = workspace.identity._to_workspace_rest_object()
         else:
-            identity = IdentityConfiguration(type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
+            # pylint: disable=protected-access
+            identity = IdentityConfiguration(
+                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:
