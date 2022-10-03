@@ -44,6 +44,10 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration
 )
 
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ManagedServiceIdentity as RestRegistryManagedIdentity
+)
+
 
 class AccountKeyConfiguration(RestTranslatableMixin, ABC):
     def __init__(
@@ -397,7 +401,7 @@ class AmlTokenConfiguration(ABC, RestTranslatableMixin):
         return cls()
 
 
-# This class will be used to represent Identity property on compute and endpoint
+# This class will be used to represent Identity property on compute, endpoint, and registry
 class IdentityConfiguration(RestTranslatableMixin):
     """Managed identity specification."""
 
@@ -442,6 +446,22 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.tenant_id = obj.tenant_id
         return result
 
+    def _to_rest_object(self) -> RestRegistryManagedIdentity:
+        return RestRegistryManagedIdentity(
+            type=self.type,
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestRegistryManagedIdentity) -> "IdentityConfiguration":
+        result = cls(
+            type=obj.type,
+            user_assigned_identities=None,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
 class NoneCredentialConfiguration(RestTranslatableMixin):
     """None Credential Configuration."""
 
