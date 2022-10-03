@@ -292,7 +292,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         return Model._from_rest_object(model_version_resource)
 
-    @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
