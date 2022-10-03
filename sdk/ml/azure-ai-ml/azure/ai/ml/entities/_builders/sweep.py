@@ -7,6 +7,8 @@ import logging
 from typing import Dict, List, Union
 
 import pydash
+from marshmallow import EXCLUDE, Schema
+
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.command_component import CommandComponent
