@@ -13,7 +13,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
-    CertificateDatastoreCredentials,
+    CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
     CertificateDatastoreSecrets,
     CredentialsType,
     SasDatastoreCredentials as RestSasDatastoreCredentials,
@@ -262,9 +262,9 @@ class CertificateConfiguration(BaseTenantCredentials):
         self.certificate = certificate
         self.thumbprint = thumbprint
 
-    def _to_datastore_rest_object(self) -> CertificateDatastoreCredentials:
+    def _to_datastore_rest_object(self) -> RestCertificateDatastoreCredentials:
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)
-        return CertificateDatastoreCredentials(
+        return RestCertificateDatastoreCredentials(
             authority_url=self.authority_url,
             resource_uri=self.resource_url,
             tenant_id=self.tenant_id,
@@ -274,7 +274,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         )
 
     @classmethod
-    def _from_datastore_rest_object(cls, obj: CertificateDatastoreCredentials) -> "CertificateConfiguration":
+    def _from_datastore_rest_object(cls, obj: RestCertificateDatastoreCredentials) -> "CertificateConfiguration":
         return cls(
             authority_url=obj.authority_url,
             resource_url=obj.resource_uri,
