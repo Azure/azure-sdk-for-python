@@ -251,7 +251,7 @@ argument but defaults to the authority matching VS Code's "Azure: Cloud" setting
 
 |Credential|Usage
 |-|-
-|[`DefaultAzureCredential`][default_cred_ref]| Provides a simplified authentication experience to quickly start developing applications run in the Azure cloud.
+|[`DefaultAzureCredential`][default_cred_ref]| Provides a simplified authentication experience to quickly start developing applications run in Azure.
 |[`ChainedTokenCredential`][chain_cred_ref]| Allows users to define custom authentication flows composing multiple credentials.
 |[`EnvironmentCredential`][environment_cred_ref]| Authenticates a service principal or user via credential information specified in environment variables.
 |[`ManagedIdentityCredential`][managed_id_cred_ref]| Authenticates the managed identity of an Azure resource.
