@@ -9,7 +9,12 @@ from typing import Union
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepLimitSettings
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepSettings as RestImageSweepSettings
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SamplingAlgorithmType
-from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
+from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+    BanditPolicy,
+    EarlyTerminationPolicy,
+    MedianStoppingPolicy,
+    TruncationSelectionPolicy,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -18,16 +23,22 @@ class ImageSweepSettings(RestTranslatableMixin):
 
     :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
         algorithms. Possible values include: "Grid", "Random", "Bayesian".
-    :type sampling_algorithm: str or ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType
+    :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
+    ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
+    ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM]
     :param early_termination: Type of early termination policy.
-    :type early_termination: ~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy
+    :type early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     """
 
     def __init__(
         self,
         *,
-        sampling_algorithm: Union[str, SamplingAlgorithmType],
-        early_termination: EarlyTerminationPolicy = None,
+        sampling_algorithm: Union[
+            str, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN, SamplingAlgorithmType.RANDOM
+        ],
+        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination

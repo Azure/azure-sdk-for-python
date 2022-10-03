@@ -35,10 +35,27 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from ..job_limits import SweepJobLimits
 from ..parameterized_command import ParameterizedCommand
-from .early_termination_policy import EarlyTerminationPolicy
+from .early_termination_policy import (
+    BanditPolicy,
+    EarlyTerminationPolicy,
+    MedianStoppingPolicy,
+    TruncationSelectionPolicy,
+)
 from .objective import Objective
 from .parameterized_sweep import ParameterizedSweep
-from .search_space import SweepDistribution
+from .search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    SweepDistribution,
+    Uniform,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -80,7 +97,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type trial: Union[azure.ai.ml.entities.CommandJob, azure.ai.ml.entities.CommandComponent]
     :param early_termination: The early termination policy to use.A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
-    :type early_termination: EarlyTerminationPolicy
+    :type early_termination:  Union[~azure.mgmt.machinelearningservices.models.BanditPolicy, ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy, ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     :param limits: Limits for the sweep job.
     :type limits: ~azure.ai.ml.entities.SweepJobLimits
     :param kwargs: A dictionary of additional configuration parameters.
@@ -101,10 +118,13 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         compute: str = None,
         limits: SweepJobLimits = None,
         sampling_algorithm: Union[str, SamplingAlgorithm] = None,
-        search_space: Dict[str, SweepDistribution] = None,
+        search_space: Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ] = None,
         objective: Objective = None,
         trial: Union[CommandJob, CommandComponent] = None,
-        early_termination: EarlyTerminationPolicy = None,
+        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
         **kwargs: Any,
     ):
         kwargs[TYPE] = JobType.SWEEP
