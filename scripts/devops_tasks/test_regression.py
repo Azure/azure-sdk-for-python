@@ -195,7 +195,12 @@ class RegressionTest:
 
             self._execute_test(dep_pkg_path)
         finally:
+            self._print_test_proxy_logs(dep_pkg_path)
             self.context.deinitialize(dep_pkg_path)
+    
+    def _print_test_proxy_logs(self, dep_pkg_path):
+        commands = ["docker", "logs", "ambitious_azsdk_test_proxy"]
+        run_check_call(commands, dep_pkg_path)
 
     def _execute_test(self, dep_pkg_path):
         #  Ensure correct version of package is installed
