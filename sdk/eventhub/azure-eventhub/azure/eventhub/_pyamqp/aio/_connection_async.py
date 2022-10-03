@@ -546,19 +546,17 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            await self._incoming_endpoints[channel]._incoming_end(  # pylint:disable=protected-access
-                frame
-            )
+            await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
             self._incoming_endpoints.pop(channel)
             self._outgoing_endpoints.pop(channel)
         except KeyError:
-            end_error = AMQPError(
-                condition=ErrorCondition.InvalidField,
-                description=f"Invalid channel {channel}",
-                info=None,
-            )
-            _LOGGER.error("Received END frame with invalid channel %s", channel)
-            await self.close(error=end_error)
+            #close the connection
+            await self.close(
+                error=AMQPError(
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="Invalid channel number received"
+                ))
+            return
 
     async def _process_incoming_frame(
         self, channel, frame
