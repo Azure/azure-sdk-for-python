@@ -15,6 +15,8 @@
 - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
 - Workspace.list_keys renamed to Workspace.get_keys.
 - OnlineDeploymentOperations.delete has been renamed to begin_attach.
+- UserAssignedIdentity is replaced by ManagedIdentityConfiguration
+
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
 
