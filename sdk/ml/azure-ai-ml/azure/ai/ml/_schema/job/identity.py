@@ -6,6 +6,7 @@
 
 import logging
 
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType
 from marshmallow import fields, post_load
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfigurationType
@@ -25,7 +26,7 @@ module_logger = logging.getLogger(__name__)
 class ManagedIdentitySchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         required=True,
-        allowed_values=IdentityConfigurationType.MANAGED,
+        allowed_values=[IdentityConfigurationType.MANAGED, ConnectionAuthType.MANAGED_IDENTITY],
         casing_transform=camel_to_snake,
     )
     client_id = fields.Str()

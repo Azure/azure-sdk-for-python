@@ -181,7 +181,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             tags=self.tags,
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name

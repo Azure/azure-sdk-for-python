@@ -413,6 +413,11 @@ class UserIdentityConfiguration(ABC, RestTranslatableMixin):
     def _from_job_rest_object(cls, obj: RestUserIdentity) -> "UserIdentity":
         return cls()
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, UserIdentityConfiguration):
+            return NotImplemented
+        return self._to_job_rest_object() == other._to_job_rest_object()
+
 
 class AmlTokenConfiguration(ABC, RestTranslatableMixin):
     """AML Token identity configuration."""
@@ -491,6 +496,8 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.principal_id = obj.principal_id
         result.tenant_id = obj.tenant_id
         return result
+
+
 class NoneCredentialConfiguration(RestTranslatableMixin):
     """None Credential Configuration."""
 

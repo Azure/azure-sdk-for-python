@@ -400,7 +400,7 @@ class ForecastingJob(AutoMLTabular):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=forecasting_task,
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
         result = JobBase(properties=properties)
