@@ -43,6 +43,11 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration
 )
 
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ManagedServiceIdentity as RestOnlineEndpointIdentityConfiguration,
+    UserIdentity as RestOnlineEndpointManagedIdentityConfiguration
+)
+
 
 class AccountKeyConfiguration(RestTranslatableMixin, ABC):
     def __init__(
@@ -358,6 +363,9 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         result.__dict__.update(rest_obj.as_dict())
         return result
 
+    def _to_online_endpoint_rest_object(self) -> RestOnlineEndpointManagedIdentityConfiguration:
+        return RestOnlineEndpointManagedIdentityConfiguration()
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ManagedIdentityConfiguration):
             return NotImplemented
@@ -440,3 +448,21 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.principal_id = obj.principal_id
         result.tenant_id = obj.tenant_id
         return result
+
+    def _to_online_endpoint_rest_object(self) -> RestOnlineEndpointIdentityConfiguration:
+        rest_user_assigned_identities = (
+            {uai.resource_id: uai._to_online_endpoint_rest_object() for uai in self.user_assigned_identities}
+            if self.user_assigned_identities
+            else None
+        )
+
+        return RestOnlineEndpointIdentityConfiguration(
+            type=snake_to_pascal(self.type),
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+            user_assigned_identities=None,
+        )
+
+    @classmethod
+    def _from_online_endpoint_rest_object(cls, obj: RestOnlineEndpointIdentityConfiguration) -> "IdentityConfiguration":
+
