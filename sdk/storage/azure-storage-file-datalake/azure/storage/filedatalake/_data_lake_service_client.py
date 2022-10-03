@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional, Dict, Any, TypeVar
+from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 
 try:
     from urllib.parse import urlparse
@@ -23,7 +23,8 @@ from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._generated import AzureDataLakeStorageRESTAPI
 
-ClassType = TypeVar("ClassType")
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
@@ -76,11 +77,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -128,11 +128,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> "DataLakeServiceClient":
         """
         Create DataLakeServiceClient from a Connection String.
 

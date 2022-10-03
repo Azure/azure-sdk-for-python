@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import ( # pylint: disable=unused-import
-    Any, Dict, Optional, Type, TypeVar, Union,
-    TYPE_CHECKING)
+from typing import (
+    Any, Dict, Optional, Type, Union,
+    TYPE_CHECKING
+)
 
 try:
     from urllib.parse import quote, unquote
@@ -19,9 +20,8 @@ from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-
-ClassType = TypeVar("ClassType")
 
 
 class DataLakeDirectoryClient(PathClient):
@@ -67,25 +67,23 @@ class DataLakeDirectoryClient(PathClient):
             :caption: Creating the DataLakeServiceClient from connection string.
     """
     def __init__(
-        self, account_url,  # type: str
-        file_system_name,  # type: str
-        directory_name,  # type: str
-        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self, account_url: str,
+        file_system_name: str,
+        directory_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, path_name=directory_name,
                                                       credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            file_system_name,  # type: str
-            directory_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            file_system_name: str,
+            directory_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> "DataLakeDirectoryClient":
         """
         Create DataLakeDirectoryClient from a Connection String.
 

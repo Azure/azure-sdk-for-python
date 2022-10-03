@@ -8,7 +8,7 @@
 from functools import partial
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Type, TypeVar, Union,
+    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
@@ -66,6 +66,7 @@ from ._upload_helpers import (
 )
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from ._generated.models import BlockList
     from ._models import (
@@ -79,8 +80,6 @@ if TYPE_CHECKING:
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
-
-ClassType = TypeVar("ClassType")
 
 
 class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
@@ -149,14 +148,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            blob_name,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            container_name: str,
+            blob_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -213,12 +211,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @classmethod
     def from_blob_url(
-            cls,  # type: Type[ClassType]
-            blob_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, blob_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            **kwargs: Any
+        ) -> "BlobClient":
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -295,14 +292,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            container_name,  # type: str
-            blob_name,  # type: str
-            snapshot=None,  # type: Optional[str]
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            container_name: str,
+            blob_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> "BlobClient":
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
