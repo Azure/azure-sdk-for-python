@@ -7,7 +7,7 @@ from typing import Dict, Optional, Union
 from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService as RestJobService20220601Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService, AllNodes
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -36,7 +36,7 @@ class JobService(RestTranslatableMixin):
         *,
         endpoint: Optional[str] = None,
         job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard", "VSCode"]] = None,
-        nodes: Optional[Literal["All"]] = None,
+        nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -54,15 +54,15 @@ class JobService(RestTranslatableMixin):
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=self.job_service_type,
-            nodes=self.nodes,
+            nodes=AllNodes() if self.nodes else None,
             status=self.status,
             port=self.port,
             properties=self.properties,
         )
 
     def _validate_nodes(self):
-        if not self.nodes in ["All", None]:
-            msg = f"nodes should be either 'All' or None, but received '{self.nodes}'."
+        if not self.nodes in ["all", None]:
+            msg = f"nodes should be either 'all' or None, but received '{self.nodes}'."
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
@@ -89,7 +89,7 @@ class JobService(RestTranslatableMixin):
         return cls(
             endpoint=obj.endpoint,
             job_service_type=obj.job_service_type,
-            nodes=obj.nodes,
+            nodes="all" if isinstance(obj.nodes, AllNodes) else None,
             status=obj.status,
             port=obj.port,
             properties=obj.properties,
