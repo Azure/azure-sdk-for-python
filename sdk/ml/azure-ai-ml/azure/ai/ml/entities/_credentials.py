@@ -498,6 +498,10 @@ class IdentityConfiguration(RestTranslatableMixin):
         result = cls(
             type=camel_to_snake(obj.type),
             user_assigned_identities=from_rest_user_assigned_identities,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
 
     @classmethod
     def _from_workspace_rest_object(cls, obj: RestWorkspaceIdentityConfiguration) -> "IdentityConfiguration":
