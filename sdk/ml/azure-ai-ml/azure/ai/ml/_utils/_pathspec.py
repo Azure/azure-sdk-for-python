@@ -1,6 +1,3 @@
-# ---------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# ---------------------------------------------------------
 """
 This file code has been vendored from pathspec repo.
 Please do not edit it, unless really necessary
