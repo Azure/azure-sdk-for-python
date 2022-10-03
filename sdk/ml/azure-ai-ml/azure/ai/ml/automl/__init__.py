@@ -12,7 +12,6 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageInstanceSegmentationJob,
     ImageSweepSettings,
 )
-
 from azure.ai.ml.entities._job.automl.nlp import (
     NlpFeaturizationSettings,
     NlpLimitSettings,
@@ -20,7 +19,6 @@ from azure.ai.ml.entities._job.automl.nlp import (
     TextClassificationMultilabelJob,
     TextNerJob,
 )
-
 from azure.ai.ml.entities._job.automl.tabular import (
     ClassificationJob,
     ColumnTransformer,
@@ -31,7 +29,6 @@ from azure.ai.ml.entities._job.automl.tabular import (
     TabularLimitSettings
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-
 from .._restclient.v2022_06_01_preview.models import (
     BlockedTransformers,
     ClassificationModels,
