@@ -26,6 +26,7 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
