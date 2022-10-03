@@ -514,4 +514,3 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
-
