@@ -60,3 +60,6 @@ jobs:
         optimizer:
           type: choice
           values: ['sgd', 'adam', 'adamw']
+        ams_gradient:
+          type: choice
+          values: [true, false]
