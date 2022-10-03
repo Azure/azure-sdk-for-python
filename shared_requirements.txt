@@ -510,3 +510,4 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-redis azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph msrest>=0.7.1
+#override azure-core-experimental azure-core<2.0.0,>=1.25.0

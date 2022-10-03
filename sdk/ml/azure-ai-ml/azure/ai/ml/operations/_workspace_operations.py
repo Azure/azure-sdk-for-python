@@ -25,10 +25,12 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.entities import ManagedServiceIdentity, Workspace, WorkspaceKeys
+from azure.ai.ml.entities import Workspace, WorkspaceKeys
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -226,7 +228,7 @@ class WorkspaceOperations:
         """
         identity = kwargs.get("identity", workspace.identity)
         if identity:
-            identity = identity._to_rest_object()
+            identity = identity._to_workspace_rest_object()
         update_param = WorkspaceUpdateParameters(
             tags=workspace.tags,
             description=kwargs.get("description", workspace.description),
@@ -494,9 +496,11 @@ class WorkspaceOperations:
 
         identity = None
         if workspace.identity:
-            identity = workspace.identity._to_rest_object()
+            identity = workspace.identity._to_workspace_rest_object()
         else:
-            identity = ManagedServiceIdentity(type=ManagedServiceIdentityType.SYSTEM_ASSIGNED)._to_rest_object()
+            # pylint: disable=protected-access
+            identity = IdentityConfiguration(
+                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:
