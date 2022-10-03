@@ -93,6 +93,7 @@ class OnlineDeployment(Deployment):
     def __init__(
         self,
         name: str,
+        *,
         endpoint_name: str = None,
         tags: Dict[str, Any] = None,
         properties: Dict[str, Any] = None,

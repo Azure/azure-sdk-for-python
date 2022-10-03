@@ -84,11 +84,9 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
-from ._workspace.identity import ManagedServiceIdentity
-from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedIdentity
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
-from ._workspace.workspace_keys import WorkspaceKeys
+from ._workspace.workspace_keys import WorkspaceKeys, NotebookAccessKeys, ContainerRegistryCredential
 from ._credentials import (
     PatTokenConfiguration, SasTokenConfiguration, ManagedIdentityConfiguration,
     AccountKeyConfiguration, UsernamePasswordConfiguration, ServicePrincipalConfiguration,
@@ -145,8 +143,6 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
-    "ManagedServiceIdentity",
-    "WorkspaceUserAssignedIdentity", # pylint: disable=naming-mismatch
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",
@@ -221,4 +217,6 @@ __all__ = [
     "UserIdentityConfiguration",
     "AmlTokenConfiguration",
     "IdentityConfiguration",
+    "NotebookAccessKeys",
+    "ContainerRegistryCredential"
 ]
