@@ -9,10 +9,13 @@ from typing import Dict, Iterable, Tuple, Union
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     DiagnoseRequestProperties,
     DiagnoseWorkspaceParameters,
+    EncryptionKeyVaultUpdateProperties,
+    EncryptionUpdateProperties,
+    ListWorkspaceKeysResult,
     WorkspaceUpdateParameters,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
@@ -48,7 +51,7 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient052022,
+        service_client: ServiceClient102022,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
@@ -279,6 +282,17 @@ class WorkspaceOperations:
             )
         update_param.container_registry = container_registry
         update_param.application_insights = application_insights
+        
+        # Only the key uri property of customer_managed_key can be updated.
+        # Check if user is updating CMK key uri, if so, add to update_param
+        if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
+            customer_managed_key_uri = kwargs.get("customer_managed_key_uri", workspace.customer_managed_key.key_uri)
+            update_param.encryption = EncryptionUpdateProperties(
+                key_vault_properties=EncryptionKeyVaultUpdateProperties(
+                    key_identifier=customer_managed_key_uri,
+                )
+            )
+            
         no_wait = kwargs.get("no_wait", False)
 
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
