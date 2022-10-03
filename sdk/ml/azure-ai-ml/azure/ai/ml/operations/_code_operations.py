@@ -20,7 +20,6 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
 from azure.ai.ml.entities._assets import Code
@@ -35,7 +34,7 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class CodeOperations(_ScopeDependentOperations):
@@ -54,14 +53,14 @@ class CodeOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(CodeOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._service_client = service_client
         self._version_operation = service_client.code_versions
         self._container_operation = service_client.code_containers
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, code: Code) -> Code:
         """Returns created or updated code asset.
 
@@ -140,7 +139,7 @@ class CodeOperations(_ScopeDependentOperations):
                     )
             raise ex
 
-    @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:
         """Returns information about the specified code asset.
 
