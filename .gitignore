@@ -133,4 +133,3 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # local SSL certificate folder
 .certificate
-sdk-github/**/*
