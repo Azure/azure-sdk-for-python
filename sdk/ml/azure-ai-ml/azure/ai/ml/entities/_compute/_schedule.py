@@ -79,7 +79,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestComputeStartStopSchedule) -> "ComputeStartStopSchedule":
         schedule = ComputeStartStopSchedule(
             action=obj.action,
-            state=obj.status,
+            state=obj.provisioning_status,
             schedule_id=obj.id,
             provisioning_state=obj.provisioning_status,
         )
