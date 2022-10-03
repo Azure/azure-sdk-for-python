@@ -15,8 +15,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import Compute
 from azure.ai.ml.entities._util import load_from_dict
-
-from ._identity import IdentityConfiguration
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 
 class AutoScaleSettings:
@@ -149,7 +148,7 @@ class SynapseSparkCompute(Compute):
             node_size=prop.properties.node_size if prop.properties else None,
             spark_version=prop.properties.spark_version if prop.properties else None,
             # pylint: disable=protected-access
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             scale_settings=scale_settings,
             auto_pause_settings=auto_pause_settings,
             provisioning_state=prop.provisioning_state,
@@ -178,6 +177,8 @@ class SynapseSparkCompute(Compute):
             location=self.location,
             properties=synapsespark_comp,
             name=self.name,
-            # pylint: disable=protected-access
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(
+                # pylint: disable=protected-access
+                self.identity._to_compute_rest_object() if self.identity else None
+            ),
         )
