@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 import calendar
 import struct
 import uuid
@@ -745,7 +746,8 @@ def describe_performative(performative):
     # type: (Performative) -> Dict[str, Sequence[Collection[str]]]
     body: List[Dict[str, Any]] = []
     for index, value in enumerate(performative):
-        field = performative._definition[index]  # pylint: disable=protected-access
+        # TODO: fix mypy
+        field = performative._definition[index] # type: ignore  # pylint: disable=protected-access
         if value is None:
             body.append({TYPE: AMQPTypes.null, VALUE: None})
         elif field is None:
@@ -776,7 +778,7 @@ def describe_performative(performative):
     return {
         TYPE: AMQPTypes.described,
         VALUE: (
-            {TYPE: AMQPTypes.ulong, VALUE: performative._code},  # pylint: disable=protected-access
+            {TYPE: AMQPTypes.ulong, VALUE: performative._code}, # type: ignore  # pylint: disable=protected-access
             {TYPE: AMQPTypes.list, VALUE: body},
         ),
     }

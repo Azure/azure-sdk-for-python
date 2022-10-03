@@ -2350,16 +2350,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     # negative settlement via receiver link
                     sender.send_messages(ServiceBusMessage("body"), timeout=10)
                     message = receiver.receive_messages()[0]
-                    client.ReceiveClientSync.settle_messages = types.MethodType(_hack_amqp_message_complete, receiver._handler)
+                    client.ReceiveClient.settle_messages = types.MethodType(_hack_amqp_message_complete, receiver._handler)
                     receiver.complete_message(message)  # settle via mgmt link
 
-                    origin_amqp_client_mgmt_request_method = client.AMQPClientSync.mgmt_request
+                    origin_amqp_client_mgmt_request_method = client.AMQPClient.mgmt_request
                     try:
-                        client.AMQPClientSync.mgmt_request = _hack_amqp_mgmt_request
+                        client.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
                         with pytest.raises(ServiceBusConnectionError):
                             receiver.peek_messages()
                     finally:
-                        client.AMQPClientSync.mgmt_request = origin_amqp_client_mgmt_request_method
+                        client.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
 
                     sender.send_messages(ServiceBusMessage("body"), timeout=10)
 
@@ -2374,7 +2374,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message = receiver.receive_messages(max_wait_time=6)[0]
                     receiver.complete_message(message)
             finally:
-                client.ReceiveClientSync.settle_messages = original_settlement
+                client.ReceiveClient.settle_messages = original_settlement
 
     @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest

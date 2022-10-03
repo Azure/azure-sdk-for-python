@@ -443,7 +443,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        self.host = host
+        self.host = f"{host}:{port}"
         self.ws = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
