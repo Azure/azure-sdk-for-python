@@ -17,6 +17,7 @@
 - OnlineDeploymentOperations.delete has been renamed to begin_attach.
 - Datastore credentials are switched to use unified credential configuration classes.
 - UserAssignedIdentity is replaced by ManagedIdentityConfiguration
+- Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
