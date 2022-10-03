@@ -321,8 +321,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     )
                 continue  # pragma: no cover
 
-            
-
     def _init_socket(self, socket_settings, read_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)

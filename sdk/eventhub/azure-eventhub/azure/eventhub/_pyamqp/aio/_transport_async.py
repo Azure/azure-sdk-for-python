@@ -298,8 +298,6 @@ class AsyncTransport(
                     )
                 continue  # pragma: no cover
 
-            
-
     def _init_socket(self, socket_settings):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
