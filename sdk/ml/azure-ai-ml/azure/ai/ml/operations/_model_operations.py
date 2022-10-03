@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from os import PathLike, getcwd, path
+from os import PathLike, path
 from typing import Dict, Iterable, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
