@@ -15,6 +15,7 @@
 - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
 - Workspace.list_keys renamed to Workspace.get_keys.
 - UserAssignedIdentity is replaced by ManagedIdentityConfiguration
+- Endpoint uses unified identity classes.
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
