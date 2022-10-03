@@ -63,7 +63,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     def __init__(
         self,
         *,
-        blocked_transformers: List[str] = None,
+        blocked_transformers: List[Union[BlockedTransformers, str]] = None,
         column_name_and_types: Dict[str, str] = None,
         dataset_language: str = None,
         transformer_params: Dict[str, List[ColumnTransformer]] = None,
@@ -72,7 +72,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     ):
         """
         :param blocked_transformers: A list of transformers to ignore when featurizing.
-        :type blocked_transformers: List[str]
+        :type blocked_transformers: List[Union[BlockedTransformers, str]]
         :param column_name_and_types: A dictionary of column names and feature types used to update column purpose.
         :type column_name_and_types: Dict[str, str]
         :param dataset_language: The language of the dataset.
@@ -103,16 +103,16 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     def transformer_params(self, value: Dict[str, List[ColumnTransformer]]) -> None:
         self._transformer_params = (
             None if not value
-            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value) : v for k, v in value.items()}
+            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value): v for k, v in value.items()}
         )
 
     @property
-    def blocked_transformers(self) -> List[BlockedTransformers]:
+    def blocked_transformers(self) -> List[Union[BlockedTransformers, str]]:
         """ A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter
-    def blocked_transformers(self, blocked_transformers_list):
+    def blocked_transformers(self, blocked_transformers_list: List[Union[BlockedTransformers, str]]):
         self._blocked_transformers = (
             None
             if blocked_transformers_list is None

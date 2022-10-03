@@ -9,6 +9,7 @@ from typing import Dict, List, Union
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     AutoNCrossValidations,
+    BlockedTransformers,
     CustomNCrossValidations,
     LogVerbosity,
     StackEnsembleSettings,
@@ -306,7 +307,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_featurization(
         self,
         *,
-        blocked_transformers: List[str] = None,
+        blocked_transformers: List[Union[BlockedTransformers, str]] = None,
         column_name_and_types: Dict[str, str] = None,
         dataset_language: str = None,
         transformer_params: Dict[str, List[ColumnTransformer]] = None,
@@ -316,7 +317,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         """Define feature engineering configuration.
 
         :param blocked_transformers: A list of transformer names to be blocked during featurization
-        :type blocked_transformers: List[str], optional
+        :type blocked_transformers: List[Union[BlockedTransformers, str]], optional
         :param column_name_and_types: A dictionary of column names and feature types used to update column purpose
         :type column_name_and_types: Dict[str, str], optional
         :param dataset_language: three character ISO 639-3 code for the language(s) contained in the dataset.

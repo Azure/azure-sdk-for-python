@@ -3,21 +3,37 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml.entities._job.automl.image import (
+    ImageClassificationJob,
+    ImageClassificationMultilabelJob,
     ImageClassificationSearchSpace,
     ImageLimitSettings,
+    ImageObjectDetectionJob,
     ImageObjectDetectionSearchSpace,
+    ImageInstanceSegmentationJob,
     ImageSweepSettings,
 )
-from azure.ai.ml.entities._job.automl.nlp import NlpFeaturizationSettings, NlpLimitSettings
-from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
-    ColumnTransformer,
-    TabularFeaturizationSettings,
+
+from azure.ai.ml.entities._job.automl.nlp import (
+    NlpFeaturizationSettings,
+    NlpLimitSettings,
+    TextClassificationJob,
+    TextClassificationMultilabelJob,
+    TextNerJob,
 )
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
-from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
+
+from azure.ai.ml.entities._job.automl.tabular import (
+    ClassificationJob,
+    ColumnTransformer,
+    ForecastingJob,
+    ForecastingSettings,
+    RegressionJob,
+    TabularFeaturizationSettings,
+    TabularLimitSettings
+)
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 
 from .._restclient.v2022_06_01_preview.models import (
+    BlockedTransformers,
     ClassificationModels,
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
