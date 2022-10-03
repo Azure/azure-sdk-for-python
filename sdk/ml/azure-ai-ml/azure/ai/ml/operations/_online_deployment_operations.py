@@ -212,7 +212,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
+    def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment
