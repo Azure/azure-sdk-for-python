@@ -6,7 +6,6 @@
 
 from marshmallow import ValidationError, fields, post_load, pre_dump, validates
 
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
