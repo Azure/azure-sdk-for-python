@@ -65,13 +65,14 @@ class ModelOperations(_ScopeDependentOperations):
     attaches it as an attribute.
     """
 
+    # pylint: disable=unused-argument
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
-        **kwargs: Dict, # pylint: disable=unused-argument
+        **kwargs: Dict,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
