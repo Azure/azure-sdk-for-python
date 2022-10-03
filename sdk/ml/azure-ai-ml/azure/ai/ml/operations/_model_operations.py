@@ -42,7 +42,7 @@ from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_s
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, WorkspaceModelReference
-from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
     ErrorCategory,
@@ -322,7 +322,7 @@ class ModelOperations(_ScopeDependentOperations):
             ds = self._datastore_operation.get(ds_name, include_secrets=True)
             acc_name = ds.account_name
 
-            if isinstance(ds.credentials, AccountKeyCredentials):
+            if isinstance(ds.credentials, AccountKeyConfiguration):
                 credential = ds.credentials.account_key
             else:
                 try:
