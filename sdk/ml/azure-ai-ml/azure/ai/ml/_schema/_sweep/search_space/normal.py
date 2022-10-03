@@ -52,3 +52,9 @@ class QNormalSchema(metaclass=PatchedSchemaMeta):
         if not isinstance(data, (QNormal, QLogNormal)):
             raise ValidationError("Cannot dump non-QNormal or non-QLogNormal object into QNormalSchema")
         return data
+
+
+class IntegerQNormalSchema(QNormalSchema):
+    min_value = DumpableIntegerField(strict=True, required=True)
+    max_value = DumpableIntegerField(strict=True, required=True)
+    q = DumpableIntegerField(strict=True, required=True)
