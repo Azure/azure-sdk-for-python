@@ -9,7 +9,14 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +27,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._elastic_pool_activities_operations import build_list_by_elastic_pool_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ElasticPoolActivitiesOperations:
     """
@@ -42,54 +51,49 @@ class ElasticPoolActivitiesOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_by_elastic_pool(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        elastic_pool_name: str,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.ElasticPoolActivityListResult]:
+        self, resource_group_name: str, server_name: str, elastic_pool_name: str, **kwargs: Any
+    ) -> AsyncIterable["_models.ElasticPoolActivity"]:
         """Returns elastic pool activities.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
         :param elastic_pool_name: The name of the elastic pool for which to get the current activity.
+         Required.
         :type elastic_pool_name: str
-        :keyword api_version: Api Version. Default value is "2014-04-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ElasticPoolActivityListResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ElasticPoolActivityListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either ElasticPoolActivity or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.ElasticPoolActivity]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2014-04-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ElasticPoolActivityListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ElasticPoolActivityListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_elastic_pool_request(
-                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     elastic_pool_name=elastic_pool_name,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_elastic_pool.metadata['url'],
+                    template_url=self.list_by_elastic_pool.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -97,17 +101,7 @@ class ElasticPoolActivitiesOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_by_elastic_pool_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    server_name=server_name,
-                    elastic_pool_name=elastic_pool_name,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -123,10 +117,8 @@ class ElasticPoolActivitiesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -136,8 +128,6 @@ class ElasticPoolActivitiesOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_elastic_pool.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/elasticPoolActivity"}  # type: ignore
+    list_by_elastic_pool.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/elasticPools/{elasticPoolName}/elasticPoolActivity"}  # type: ignore
