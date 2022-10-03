@@ -21,9 +21,9 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from ._pyamqp import types
-    from ._pyamqp.client import ReceiveClient
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
+    from ._pyamqp.client import ReceiveClient
 
     try:
         from uamqp import ReceiveClient as uamqp_ReceiveClient, Message as uamqp_Message
@@ -196,7 +196,7 @@ class EventHubConsumer(
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
                 host=self._client._address.hostname, auth=auth
             )
-            self._handler = cast(ReceiveClient, self._handler)
+            self._handler = cast("ReceiveClient", self._handler)
             self._handler.open(connection=conn)
             while not self._handler.client_ready():
                 time.sleep(0.05)
