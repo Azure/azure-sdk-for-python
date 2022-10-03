@@ -11,7 +11,11 @@ from marshmallow import fields, post_load
 from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration
+)
 
 from ..core.schema import PatchedSchemaMeta
 
@@ -31,7 +35,7 @@ class ManagedIdentitySchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         data.pop("type")
-        return ManagedIdentity(**data)
+        return ManagedIdentityConfiguration(**data)
 
 
 class AMLTokenIdentitySchema(metaclass=PatchedSchemaMeta):
@@ -44,7 +48,7 @@ class AMLTokenIdentitySchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         data.pop("type")
-        return AmlToken(**data)
+        return AmlTokenConfiguration(**data)
 
 
 class UserIdentitySchema(metaclass=PatchedSchemaMeta):
@@ -57,4 +61,4 @@ class UserIdentitySchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         data.pop("type")
-        return UserIdentity(**data)
+        return UserIdentityConfiguration(**data)

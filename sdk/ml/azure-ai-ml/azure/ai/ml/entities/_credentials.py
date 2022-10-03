@@ -43,6 +43,10 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration
 )
 
+from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+
+from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, JobException
+
 
 class AccountKeyConfiguration(RestTranslatableMixin, ABC):
     def __init__(
@@ -297,6 +301,32 @@ class CertificateConfiguration(BaseTenantCredentials):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+
+class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin):
+
+    def __init__(self):
+        self.type = None
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestJobIdentityConfiguration) -> "Identity":
+        mapping = {
+            IdentityConfigurationType.AML_TOKEN: AmlTokenConfiguration,
+            IdentityConfigurationType.MANAGED: ManagedIdentityConfiguration,
+            IdentityConfigurationType.USER_IDENTITY: UserIdentityConfiguration,
+        }
+
+        identity_class = mapping.get(obj.identity_type, None)
+        if identity_class:
+            # pylint: disable=protected-access
+            return identity_class._from_job_rest_object(obj)
+        msg = f"Unknown identity type: {obj.identity_type}"
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.IDENTITY,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
 
 class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
