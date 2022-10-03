@@ -43,6 +43,9 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration
 )
 
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestWorkspaceIdentityConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestWorkspaceUserAssignedIdentity
+
 
 class AccountKeyConfiguration(RestTranslatableMixin, ABC):
     def __init__(
@@ -314,12 +317,14 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
             client_id: str = None,
             resource_id: str = None,
             object_id: str = None,
+            principal_id: str = None
     ):
         self.type = camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
         self.client_id = client_id
         # TODO: Check if both client_id and resource_id are required
         self.resource_id = resource_id
         self.object_id = object_id
+        self.principal_id = principal_id
 
     def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionManagedIdentity:
         return RestWorkspaceConnectionManagedIdentity(client_id=self.client_id, resource_id=self.resource_id)
@@ -357,6 +362,19 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         result = cls(resource_id=kwargs["resource_id"])
         result.__dict__.update(rest_obj.as_dict())
         return result
+
+    def _to_workspace_rest_object(self) -> RestWorkspaceUserAssignedIdentity:
+        return RestWorkspaceUserAssignedIdentity(
+            principal_id=self.principal_id,
+            client_id=self.client_id,
+        )
+
+    @classmethod
+    def _from_workspace_rest_object(cls, obj: RestWorkspaceUserAssignedIdentity) -> "ManagedIdentityConfiguration":
+        return cls(
+            principal_id=obj.principal_id,
+            client_id=obj.client_id,
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ManagedIdentityConfiguration):
@@ -440,3 +458,34 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.principal_id = obj.principal_id
         result.tenant_id = obj.tenant_id
         return result
+
+    @classmethod
+    def _from_workspace_rest_object(cls, obj: RestWorkspaceIdentityConfiguration) -> "IdentityConfiguration":
+        user_assigned_identities = None
+        if obj.user_assigned_identities:
+            user_assigned_identities = {}
+            for k, v in obj.user_assigned_identities.items():
+                metadata = None
+                if v and isinstance(v, RestUserAssignedIdentity):
+                    metadata = ManagedIdentityConfiguration._from_workspace_rest_object(v)  # pylint: disable=protected-access
+                user_assigned_identities[k] = metadata
+        return cls(
+            type=obj.type,
+            principal_id=obj.principal_id,
+            tenant_id=obj.tenant_id,
+            user_assigned_identities=user_assigned_identities,
+        )
+
+    def _to_workspace_rest_object(self) -> RestWorkspaceIdentityConfiguration:
+        user_assigned_identities = None
+        if self.user_assigned_identities:
+            user_assigned_identities = {}
+            for k, v in self.user_assigned_identities.items():
+                user_assigned_identities[k] = v._to_workspace_rest_object() if v else None # pylint: disable=protected-access
+
+        return RestWorkspaceIdentityConfiguration(
+            type=self.type,
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+            user_assigned_identities=user_assigned_identities,
+        )
