@@ -144,7 +144,8 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             validation_data=task_details.validation_data,
             limits=limits,
             featurization=featurization,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         )
 
         text_classification_multilabel_job._restore_data_inputs()

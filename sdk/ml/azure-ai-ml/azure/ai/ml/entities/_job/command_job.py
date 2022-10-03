@@ -192,7 +192,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
             # pylint: disable=protected-access
-            identity=_BaseJobIdentityConfiguration._from_job_rest_object(rest_command_job.identity) if rest_command_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_command_job.identity) if rest_command_job.identity else None,
             environment_variables=rest_command_job.environment_variables,
             resources=JobResourceConfiguration._from_rest_object(rest_command_job.resources),
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),

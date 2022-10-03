@@ -140,7 +140,8 @@ class ClassificationJob(AutoMLTabular):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity) if properties.identity else None,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         }
 
         classification_job = cls(

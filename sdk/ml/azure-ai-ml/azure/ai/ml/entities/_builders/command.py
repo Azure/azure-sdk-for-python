@@ -10,8 +10,6 @@ import os
 from enum import Enum
 from os import PathLike
 from typing import Dict, List, Optional, Union
-
-from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
@@ -47,6 +45,7 @@ from azure.ai.ml.entities._credentials import (
     ManagedIdentityConfiguration,
     AmlTokenConfiguration,
     UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
 )
 
 from ..._schema import PathAwareSchema
@@ -539,7 +538,8 @@ class Command(BaseNode):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity) if rest_command_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_command_job.identity) if rest_command_job.identity else None,
             environment_variables=rest_command_job.environment_variables,
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),

@@ -8,17 +8,15 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, JobBase, ManagedIdentity
+from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
 from azure.ai.ml.entities._credentials import (
     ManagedIdentityConfiguration,
     AmlTokenConfiguration,
     UserIdentityConfiguration
 )
 from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
@@ -34,6 +32,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 
 from ..._schema import NestedField, UnionField
 from .job import Job

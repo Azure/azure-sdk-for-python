@@ -21,7 +21,7 @@ from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
     AML_TOKEN_YAML,
     BASE_PATH_CONTEXT_KEY,
-    KEY,
+    KEY,entities/_job/automl/tabular/regression_job.py
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields

@@ -9,7 +9,6 @@ from enum import Enum
 from os import PathLike
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration
@@ -37,7 +36,8 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     UserIdentityConfiguration,
-    ManagedIdentityConfiguration
+    ManagedIdentityConfiguration,
+    _BaseJobIdentityConfiguration
 )
 from azure.ai.ml.entities._job.spark_job import SparkJob
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
@@ -356,7 +356,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity) if rest_spark_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_spark_job.identity) if rest_spark_job.identity else None,
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(

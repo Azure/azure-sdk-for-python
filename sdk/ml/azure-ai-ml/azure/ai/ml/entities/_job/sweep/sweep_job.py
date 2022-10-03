@@ -34,7 +34,8 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 from azure.ai.ml.entities._credentials import (
     ManagedIdentityConfiguration,
     AmlTokenConfiguration,
-    UserIdentityConfiguration, _BaseJobIdentityConfiguration
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
 )
 
 # from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
@@ -238,7 +239,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=properties.objective,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
-            identity=_BaseJobIdentityConfiguration._from_job_rest_object(properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         )
 
     def _override_missing_properties_from_trial(self):
