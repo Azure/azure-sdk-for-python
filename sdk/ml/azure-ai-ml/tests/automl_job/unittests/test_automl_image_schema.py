@@ -163,7 +163,7 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
             learning_rate="uniform(0.005,0.05)",
             model_name="choice('vitb16r224','vits16r224')",
             number_of_epochs="choice(15,30)",
-            ams_gradient="choice('True', 'False')"
+            ams_gradient="choice(True,False)"
 
         ),
         RestImageClassificationSearchSpace(
