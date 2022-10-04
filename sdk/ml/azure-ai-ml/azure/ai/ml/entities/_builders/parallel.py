@@ -86,7 +86,6 @@ class Parallel(BaseNode):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
                 NodeOutput,
                 Input,
                 str,

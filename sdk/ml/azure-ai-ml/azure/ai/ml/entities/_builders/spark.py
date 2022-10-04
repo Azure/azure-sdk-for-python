@@ -121,7 +121,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
                 NodeOutput,
                 Input,
                 str,
