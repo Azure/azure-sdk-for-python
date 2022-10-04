@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
 from azure.ai.ml._utils.utils import dict_eq
 from azure.ai.ml.constants._common import (
@@ -116,7 +117,8 @@ class OnlineEndpoint(Endpoint):
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
         # pylint: disable=protected-access
-        identity = self.identity._to_online_endpoint_rest_object() if self.identity else None
+        identity = self.identity._to_online_endpoint_rest_object() \
+            if self.identity else RestManagedServiceIdentityConfiguration(type="SystemAssigned")
         validate_endpoint_or_deployment_name(self.name)
         validate_identity_type_defined(self.identity)
         properties = RestOnlineEndpoint(
