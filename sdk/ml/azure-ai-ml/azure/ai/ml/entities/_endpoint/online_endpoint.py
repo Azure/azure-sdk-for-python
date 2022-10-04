@@ -11,12 +11,11 @@ from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthMode,
-    IdentityConfiguration,
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
-from azure.ai.ml._utils.utils import convert_identity_dict, dict_eq
+from azure.ai.ml._utils.utils import dict_eq
 from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
     AML_TOKEN_YAML,
@@ -28,6 +27,7 @@ from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthKeys as RestEndpointAuthKeys,
     EndpointAuthToken as RestEndpointAuthToken
@@ -115,7 +115,8 @@ class OnlineEndpoint(Endpoint):
         return self._provisioning_state
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
-        self.identity = convert_identity_dict(self.identity)
+        # pylint: disable=protected-access
+        identity = self.identity._to_online_endpoint_rest_object() if self.identity else None
         validate_endpoint_or_deployment_name(self.name)
         validate_identity_type_defined(self.identity)
         properties = RestOnlineEndpoint(
@@ -131,7 +132,7 @@ class OnlineEndpoint(Endpoint):
         return OnlineEndpointData(
             location=location,
             properties=properties,
-            identity=self.identity,
+            identity=identity,
             tags=self.tags,
         )
 
@@ -178,8 +179,10 @@ class OnlineEndpoint(Endpoint):
 
     @classmethod
     def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
-
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
+        # pylint: disable=protected-access
+        identity = IdentityConfiguration._from_online_endpoint_rest_object(
+            resource.identity) if resource.identity else None
         if resource.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=resource.id,
@@ -194,7 +197,7 @@ class OnlineEndpoint(Endpoint):
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
                 openapi_uri=resource.properties.swagger_uri,
-                identity=resource.identity,
+                identity=identity,
                 kind=resource.kind,
             )
         else:
@@ -211,7 +214,7 @@ class OnlineEndpoint(Endpoint):
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
                 openapi_uri=resource.properties.swagger_uri,
-                identity=resource.identity,
+                identity=identity,
                 kind=resource.kind,
                 public_network_access=resource.properties.public_network_access,
             )
