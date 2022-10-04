@@ -544,7 +544,8 @@
         "dmac",
         "ierr",
         "mymodel",
-        "heif"
+        "heif",
+        "racwd"
       ]
     },
     {
