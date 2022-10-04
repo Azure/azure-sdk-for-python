@@ -126,6 +126,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 )
             if (
                 not skip_script_validation
+                and deployment
+                and deployment.code_configuration
                 and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
                 and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
             ):
@@ -212,7 +214,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
+    def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment

@@ -35,7 +35,6 @@ from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
 )
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
@@ -176,6 +175,10 @@ def load_file(file_path: str) -> str:
     :return: A string representation of the local file's contents.
     :rtype: str
     """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     try:
         with open(file_path, "r") as f:
             cfg = f.read()
@@ -200,6 +203,10 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     try:
         with open(file_path, "r") as f:
             cfg = json.load(f)
@@ -228,6 +235,10 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     if source is None:
         return {}
 
@@ -321,6 +332,10 @@ def dump_yaml_to_file(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped.
         Details will be provided in the error message.
     """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     # Check for deprecated path input, either named or as first unnamed input
     path = kwargs.pop("path", None)
     if dest is None:
@@ -416,6 +431,10 @@ def is_url(value: Union[PathLike, str]) -> bool:
 
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
 def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
+    from azure.ai.ml.exceptions import ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     try:
         # Check if the URL is an azureml URL
         if urlparse(str(value)).scheme == "azureml":
@@ -446,6 +465,10 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
 
 
 def validate_ml_flow_folder(path: str, model_type: string) -> None:
+    from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     if not isinstance(path, str):
         path = path.as_posix()
     path_array = path.split("/")
@@ -842,6 +865,10 @@ def get_all_enum_values_iter(enum_type):
 def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     msg = "Both subscription id and resource group are required for this operation, missing {}"
     sub_msg = None
     if not subscription_id and not resource_group:
