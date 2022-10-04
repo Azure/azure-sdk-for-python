@@ -24,6 +24,8 @@ from preparers import tables_decorator
 class RetryRequestTransport(RequestsTransport):
     """Transport to test retry"""
     def __init__(self, *args, **kwargs):
+        assert 'connection_timout' in kwargs
+        assert 'read_timeout' in kwargs
         super(RetryRequestTransport, self).__init__(*args, **kwargs)
         self.count = 0
 
@@ -115,7 +117,10 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             transport=retry_transport,
             default_table=False,
             retry_mode=RetryMode.Fixed,
-            retry_backoff_factor=1)
+            retry_backoff_factor=1,
+            connection_timeout=11,
+            read_timeout=0.000000000001
+        )
 
         with pytest.raises(AzureError) as error:
             self.ts.get_service_properties(connection_timeout=11, read_timeout=0.000000000001)
