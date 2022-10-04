@@ -5,7 +5,7 @@
 from abc import ABC
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import LogVerbosity, SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
@@ -135,7 +135,7 @@ class AutoMLImage(AutoMLVertical, ABC):
             self._sweep.sampling_algorithm = sampling_algorithm
         else:
             self._sweep = ImageSweepSettings(sampling_algorithm=sampling_algorithm)
-            
+
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
     def __eq__(self, other) -> bool:

@@ -8,11 +8,11 @@ from datetime import datetime
 from typing import List, Union
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Cron, Recurrence, RecurrenceSchedule
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CronTrigger as RestCronTrigger
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RecurrenceSchedule as RestRecurrencePattern
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RecurrenceTrigger as RestRecurrenceTrigger
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerBase as RestTriggerBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType as RestTriggerType
+from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
+from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
+from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
+from azure.ai.ml._restclient.v2022_10_01.models import TriggerBase as RestTriggerBase
+from azure.ai.ml._restclient.v2022_10_01.models import TriggerType as RestTriggerType
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -147,7 +147,7 @@ class CronTrigger(TriggerBase):
         )
         self.expression = expression
 
-    def _to_rest_object(self) -> RestCronTrigger:  # v2022_10_01_preview.models.CronTrigger
+    def _to_rest_object(self) -> RestCronTrigger:  # v2022_10_01.models.CronTrigger
         return RestCronTrigger(
             trigger_type=self.type,
             expression=self.expression,
@@ -217,7 +217,7 @@ class RecurrenceTrigger(TriggerBase):
         self.frequency = frequency
         self.interval = interval
 
-    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_10_01_preview.models.RecurrenceTrigger
+    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_10_01.models.RecurrenceTrigger
         return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,

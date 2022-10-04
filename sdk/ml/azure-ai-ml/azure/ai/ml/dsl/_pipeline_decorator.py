@@ -6,7 +6,6 @@
 
 import inspect
 import logging
-import os.path
 from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
@@ -108,7 +107,7 @@ def pipeline(
     """
 
     def pipeline_decorator(func: _TFunc) -> _TFunc:
-        if not isinstance(func, Callable):
+        if not isinstance(func, Callable): # pylint: disable=isinstance-second-argument-not-valid-type
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
@@ -243,9 +242,8 @@ def _validate_args(func, args, kwargs):
 
     def _is_supported_data_type(_data):
         return (
-            isinstance(_data, SUPPORTED_INPUT_TYPES)
+            isinstance(_data, SUPPORTED_INPUT_TYPES + (PipelineExpression,))
             or is_parameter_group(_data)
-            or isinstance(_data, PipelineExpression)
         )
 
     for pipeline_input_name in provided_args:

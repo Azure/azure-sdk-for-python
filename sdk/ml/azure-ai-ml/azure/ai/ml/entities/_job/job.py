@@ -14,19 +14,26 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.job import JobServices, JobType
-from azure.ai.ml.entities.job_errors import JobParsingError, PipelineChildJobError
 from azure.ai.ml.entities._mixins import TelemetryMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import(
+    ErrorCategory,
+    ErrorTarget,
+    JobException,
+    ValidationErrorType,
+    ValidationException,
+    JobParsingError,
+    PipelineChildJobError,
+)
 
 from ._studio_url_from_job_id import studio_url_from_job_id
 from .pipeline._component_translatable import ComponentTranslatableMixin

@@ -7,9 +7,9 @@
 import logging
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import BlockedTransformers
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BlockedTransformers
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -102,13 +102,14 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     @transformer_params.setter
     def transformer_params(self, value: Dict[str, List[ColumnTransformer]]) -> None:
         self._transformer_params = (
-            None if not value
-            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value) : v for k, v in value.items()}
+            None
+            if not value
+            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value): v for k, v in value.items()}
         )
 
     @property
     def blocked_transformers(self) -> List[BlockedTransformers]:
-        """ A list of transformers to ignore when featurizing."""
+        """A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter

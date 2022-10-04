@@ -12,6 +12,7 @@
 - Python 2.7 is no longer supported. Please use Python version 3.7 or later.
 - Bumped mininum dependency on `azure-core` to `>=1.24.0`.
 - Changed the default async transport from `AsyncioRequestsTransport` to the one used in current `azure-core` (`AioHttpTransport`). ([#26427](https://github.com/Azure/azure-sdk-for-python/issues/26427))
+- Dropped `msrest` requirement.
 
 ## 1.3.0 (2021-11-10)
 

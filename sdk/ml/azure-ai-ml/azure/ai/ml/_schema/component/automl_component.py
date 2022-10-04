@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TaskType
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake

@@ -270,7 +270,7 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
         actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
     if os.path.isdir(actual_path):
         return _get_file_list_content_hash(_get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
-    elif os.path.isfile(actual_path):
+    if os.path.isfile(actual_path):
         return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
     return None
 
