@@ -18,8 +18,7 @@
 - OnlineDeploymentOperations.delete has been renamed to begin_attach.
 - Datastore credentials are switched to use unified credential configuration classes.
 - UserAssignedIdentity is replaced by ManagedIdentityConfiguration
-- Endpoint and Job uses unified identity classes.
-- Endpoint uses unified identity classes.
+- Endpoint and Job use unified identity classes.
 - Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
 ### Bugs Fixed
