@@ -26,17 +26,16 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062022Preview
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -73,7 +72,6 @@ from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
-from azure.ai.ml.entities.job_errors import JobParsingError, PipelineChildJobError
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.service_instance import ServiceInstance
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
@@ -86,6 +84,8 @@ from azure.ai.ml.exceptions import (
     MlException,
     ValidationErrorType,
     ValidationException,
+    JobParsingError,
+    PipelineChildJobError,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
@@ -116,7 +116,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class JobOperations(_ScopeDependentOperations):
@@ -131,15 +131,15 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_06_2022_preview: ServiceClient062022Preview,
+        service_client_10_2022_preview: ServiceClient102022Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
-        self._operation_2022_06_preview = service_client_06_2022_preview.jobs
-        self._service_client = service_client_06_2022_preview
+        # ops_logger.update_info(kwargs)
+        self._operation_2022_10_preview = service_client_10_2022_preview.jobs
+        self._service_client = service_client_10_2022_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -217,7 +217,7 @@ class JobOperations(_ScopeDependentOperations):
         return self._api_base_url
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -242,7 +242,7 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name)
 
-        return self._operation_2022_06_preview.list(
+        return self._operation_2022_10_preview.list(
             self._operation_scope.resource_group_name,
             self._workspace_name,
             cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -260,7 +260,7 @@ class JobOperations(_ScopeDependentOperations):
             pass
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Get a job resource.
 
@@ -283,7 +283,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return job
 
-    @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.INTERNALCALL)
+    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.INTERNALCALL)
     def _show_services(self, name: str, node_index: int):
         """Get services associated with a job's node.
 
@@ -304,7 +304,7 @@ class JobOperations(_ScopeDependentOperations):
         }
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
     def begin_cancel(self, name: str) -> LROPoller[None]:
         """Cancel job resource.
 
@@ -315,14 +315,14 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        return self._operation_2022_06_preview.begin_cancel(
+        return self._operation_2022_10_preview.begin_cancel(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._kwargs,
         )
 
-    def try_get_compute_arm_id(self, compute: Union[Compute, str]):
+    def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
         if str(compute) == ComputeType.ADF:
@@ -360,7 +360,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
         """Validate a job. Anonymous assets may be created if there are inline
         defined entities, e.g. Component, Environment & Code. Only pipeline job
@@ -375,7 +375,7 @@ class JobOperations(_ScopeDependentOperations):
         """
         return self._validate(job, raise_on_failure=raise_on_failure, **kwargs)
 
-    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
+    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self, job: Job, *, raise_on_failure: bool = False, **kwargs  # pylint:disable=unused-argument
     ) -> ValidationResult:
@@ -411,14 +411,14 @@ class JobOperations(_ScopeDependentOperations):
         # TODO: use remote call to validate the entire job after MFE API is ready
         if validation_result.passed and isinstance(job, PipelineJob):
             try:
-                job.compute = self.try_get_compute_arm_id(job.compute)
+                job.compute = self._try_get_compute_arm_id(job.compute)
             except Exception as e:  # pylint: disable=broad-except
                 validation_result.append_error(yaml_path="compute", message=str(e))
 
             for node_name, node in job.jobs.items():
                 try:
                     if not isinstance(node, DoWhile):
-                        node.compute = self.try_get_compute_arm_id(node.compute)
+                        node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 
@@ -426,7 +426,7 @@ class JobOperations(_ScopeDependentOperations):
         return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
         job: Job,
@@ -511,7 +511,7 @@ class JobOperations(_ScopeDependentOperations):
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
-            result = self._operation_2022_06_preview.create_or_update(
+            result = self._operation_2022_10_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -545,7 +545,7 @@ class JobOperations(_ScopeDependentOperations):
                 if snapshot_id is not None:
                     job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-                result = self._operation_2022_06_preview.create_or_update(
+                result = self._operation_2022_10_preview.create_or_update(
                     id=rest_job_resource.name,  # type: ignore
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
@@ -565,7 +565,7 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self._operation_2022_06_preview.create_or_update(
+        self._operation_2022_10_preview.create_or_update(
             id=job_object.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -573,7 +573,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -585,7 +585,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=True)
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -597,7 +597,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=False)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
     def stream(self, name: str) -> None:
         """Stream logs of a job.
 
@@ -614,7 +614,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
     def download(
         self,
         name: str,
@@ -668,7 +668,7 @@ class JobOperations(_ScopeDependentOperations):
         output_directory_name = "named-outputs"
 
         def log_missing_uri(what: str):
-            logger.debug(
+            module_logger.debug(
                 'Could not download %s for job "%s" (job status: %s)', what, job_details.name, job_details.status
             )
 
@@ -804,7 +804,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self._operation_2022_06_preview.get(
+        return self._operation_2022_10_preview.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,

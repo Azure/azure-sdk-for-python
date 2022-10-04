@@ -6,9 +6,8 @@
 
 from typing import Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepLimitSettings
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2022_06_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -45,7 +44,6 @@ class ImageSweepSettings(RestTranslatableMixin):
 
     def _to_rest_object(self) -> RestImageSweepSettings:
         return RestImageSweepSettings(
-            limits=ImageSweepLimitSettings(),
             sampling_algorithm=self.sampling_algorithm,
             early_termination=self.early_termination._to_rest_object(),
         )
@@ -64,10 +62,7 @@ class ImageSweepSettings(RestTranslatableMixin):
         if not isinstance(other, ImageSweepSettings):
             return NotImplemented
 
-        return (
-            self.sampling_algorithm == other.sampling_algorithm
-            and self.early_termination == other.early_termination
-        )
+        return self.sampling_algorithm == other.sampling_algorithm and self.early_termination == other.early_termination
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

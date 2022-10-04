@@ -2,7 +2,7 @@ import pydash
 import pytest
 
 from azure.ai.ml import load_component
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedIdentity
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._component.spark_component import SparkComponent
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput

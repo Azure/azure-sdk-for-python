@@ -6,22 +6,22 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, TaskType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TextNer as RestTextNER
-from azure.ai.ml._restclient.v2022_06_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TextNer as RestTextNER
+from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
-from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -95,7 +95,7 @@ class TextNerJob(AutoMLNLPJob):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=text_ner,
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
         result = JobBase(properties=properties)
@@ -126,9 +126,7 @@ class TextNerJob(AutoMLNLPJob):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(obj.system_data)
-            if obj.system_data
-            else None,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             display_name=properties.display_name,
             compute=properties.compute_id,
             outputs=from_rest_data_outputs(properties.outputs),
@@ -141,7 +139,8 @@ class TextNerJob(AutoMLNLPJob):
             validation_data=task_details.validation_data,
             limits=limits,
             featurization=featurization,
-            identity=Identity._from_rest_object(properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         )
 
         text_ner_job._restore_data_inputs()
@@ -152,9 +151,7 @@ class TextNerJob(AutoMLNLPJob):
         raise NotImplementedError()
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "TextNerJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "TextNerJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_ner import TextNerSchema
 
         if kwargs.pop("inside_pipeline", False):
@@ -171,7 +168,7 @@ class TextNerJob(AutoMLNLPJob):
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextNerJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_ner import TextNerSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextNerNode
 

@@ -336,6 +336,7 @@ class YAMLRefDocLinks:
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
+    REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
