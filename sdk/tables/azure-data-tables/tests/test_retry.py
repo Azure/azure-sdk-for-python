@@ -29,8 +29,10 @@ class RetryRequestTransport(RequestsTransport):
 
     def send(self, request, **kwargs):
         self.count += 1
-        response = super(RetryRequestTransport, self).send(request, **kwargs)
-        return response
+        assert 'connection_timout' in request.context
+        assert 'read_timeout' in request.context
+        timeout_error = ReadTimeout("Read timed out", request=request)
+        raise ServiceResponseError(timeout_error, error=timeout_error)
 
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
@@ -106,7 +108,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.live_test_only
     @tables_decorator
     def test_retry_on_socket_timeout(self, tables_storage_account_name, tables_primary_storage_account_key):
-        retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
+        retry_transport = RetryRequestTransport()
         self._set_up(
             tables_storage_account_name,
             tables_primary_storage_account_key,
@@ -116,7 +118,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             retry_backoff_factor=1)
 
         with pytest.raises(AzureError) as error:
-            self.ts.get_service_properties()
+            self.ts.get_service_properties(connection_timeout=11, read_timeout=0.000000000001)
 
         # 3 retries + 1 original == 4
         assert retry_transport.count == 4
