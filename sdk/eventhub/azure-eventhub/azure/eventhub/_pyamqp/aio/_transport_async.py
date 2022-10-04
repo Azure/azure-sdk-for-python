@@ -442,7 +442,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        self.host = f"{host}:{port}"
+        self.host, self.port = to_host_port(host, port)
         self.ws = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
@@ -463,6 +463,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
         try:
             from aiohttp import ClientSession
+            from urllib.parse import urlsplit
 
             if username or password:
                 from aiohttp import BasicAuth
@@ -470,8 +471,15 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 http_proxy_auth = BasicAuth(login=username, password=password)
 
             self.session = ClientSession()
+            if self._custom_endpoint:
+                url = f"wss://{self._custom_endpoint}"
+            else:
+                url = f"wss://{self.host}"
+                parsed_url = urlsplit(url)
+                url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
+
             self.ws = await self.session.ws_connect(
-                url="wss://{}".format(self._custom_endpoint or self.host),
+                url=url,
                 timeout=self._connect_timeout,
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
