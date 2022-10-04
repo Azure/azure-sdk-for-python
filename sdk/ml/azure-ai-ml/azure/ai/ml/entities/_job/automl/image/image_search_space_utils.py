@@ -6,6 +6,7 @@
 
 import re
 from typing import Union
+from marshmallow import fields
 
 from azure.ai.ml._schema._sweep.search_space import (
     ChoiceSchema,
@@ -35,7 +36,6 @@ from azure.ai.ml._schema.core.fields import (
     NestedField,
     UnionField,
 )
-from marshmallow import fields
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 

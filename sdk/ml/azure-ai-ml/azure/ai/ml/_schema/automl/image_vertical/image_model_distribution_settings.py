@@ -46,9 +46,9 @@ def get_choice_schema_of_type(cls, **kwargs):
 
 
 def get_choice_and_single_value_schema_of_type(cls, **kwargs):
-    #Reshuffling the order of fields for allowing choice of booleans. 
+    #Reshuffling the order of fields for allowing choice of booleans.
     #The reason is, while dumping [Bool, Choice[Bool]] is parsing even dict as True.
-    #Since all unionFields are parsed sequentially, to avoid this, we are giving the "type" field at the end. 
+    #Since all unionFields are parsed sequentially, to avoid this, we are giving the "type" field at the end.
     return UnionField([NestedField(get_choice_schema_of_type(cls, **kwargs)), cls(**kwargs)])
 
 

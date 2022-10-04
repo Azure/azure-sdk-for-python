@@ -60,4 +60,3 @@ class IntegerQUniformSchema(QUniformSchema):
     min_value = DumpableIntegerField(strict=True, required=True)
     max_value = DumpableIntegerField(strict=True, required=True)
     q = DumpableIntegerField(strict=True, required=True)
-
