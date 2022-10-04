@@ -63,6 +63,7 @@ class ErrorTarget:
     ONLINE_DEPLOYMENT = "OnlineDeployment"
     ONLINE_ENDPOINT = "OnlineEndpoint"
     ASSET = "Asset"
+    DATASTORE = "Datastore"
     BLOB_DATASTORE = "BlobDatastore"
     FILE_DATASTORE = "FileDatastore"
     GEN1_DATASTORE = "Gen1Datastore"

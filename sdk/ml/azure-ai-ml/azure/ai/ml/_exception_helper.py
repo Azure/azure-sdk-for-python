@@ -208,7 +208,7 @@ def format_create_validation_error(
             schema_type = "CommandJobSchema"
         elif entity_type == ErrorTarget.SWEEP_JOB:
             schema_type = "SweepJobSchema"
-        elif entity_type == ErrorTarget.BLOB_DATASTORE:
+        elif entity_type in [ErrorTarget.BLOB_DATASTORE, ErrorTarget.DATASTORE]:
             schema_type = "AzureBlobSchema"
         elif entity_type == ErrorTarget.GEN1_DATASTORE:
             schema_type = "AzureDataLakeGen1Schema"
