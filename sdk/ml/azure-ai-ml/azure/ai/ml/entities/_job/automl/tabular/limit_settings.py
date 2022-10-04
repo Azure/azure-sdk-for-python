@@ -10,7 +10,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class TabularLimitSettings(RestTranslatableMixin):
     """Limit settings for a AutoML Table Verticals.
 
-    :param enable_early_termination: Whether to enable early termination if the score is not improving in 
+    :param enable_early_termination: Whether to enable early termination if the score is not improving in
         the short term. The default is True.
     :type enable_early_termination: bool, optional
     :param exit_score: Target score for experiment. The experiment terminates after this score is reached.
@@ -26,6 +26,7 @@ class TabularLimitSettings(RestTranslatableMixin):
     :param trial_timeout_minutes: AutoML job timeout.
     :type trial_timeout_minutes: int, optional
     """
+
     def __init__(
         self,
         *,

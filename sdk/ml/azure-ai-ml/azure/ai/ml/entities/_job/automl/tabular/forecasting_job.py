@@ -41,6 +41,15 @@ class ForecastingJob(AutoMLTabular):
         forecasting_settings: ForecastingSettings = None,
         **kwargs,
     ) -> None:
+        """Initialize a new AutoML Forecasting task.
+
+        :param primary_metric: The primary metric to use for optimization
+        :type primary_metric: str, optional
+        :param forecasting_settings: The settings for the forecasting task
+        :type forecasting_settings: ForecastingSettings, optional
+        :param kwargs: Job-specific arguments
+        :type kwargs: dict
+        """
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
         limits = kwargs.pop("limits", None)
