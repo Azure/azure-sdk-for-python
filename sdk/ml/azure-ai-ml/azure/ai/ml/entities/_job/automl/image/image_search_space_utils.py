@@ -173,12 +173,11 @@ class ChoicePlusSchema(ChoiceSchema):
                 DumpableIntegerField(strict=True),
                 DumpableStringField(),
                 fields.Float(),
-                fields.Boolean(),
                 fields.Dict(
                     keys=fields.Str(),
                     values=UnionField(
                         [
-                            NestedField("ChoiceSchema"),
+                            NestedField("ChoicePlusSchema"),
                             NestedField(NormalSchema()),
                             NestedField(QNormalSchema()),
                             NestedField(RandintSchema()),
@@ -191,6 +190,7 @@ class ChoicePlusSchema(ChoiceSchema):
                         ]
                     ),
                 ),
+                fields.Boolean(),
             ]
         )
     )
@@ -243,14 +243,14 @@ def _convert_sweep_dist_str_item_to_dict(
     if isinstance(sweep_dist_obj, SweepDistribution):
         if isinstance(sweep_dist_obj, Choice):
             sweep_dist = ChoicePlusSchema().dump(sweep_dist_obj) # pylint: disable=no-member
-        elif isinstance(sweep_dist_obj, (Uniform, LogUniform)):
-            sweep_dist = UniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
-        elif isinstance(sweep_dist_obj, (Normal, LogNormal)):
-            sweep_dist = NormalSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (QNormal, QLogNormal)):
             sweep_dist = QNormalSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, (QUniform, QLogUniform)):
             sweep_dist = QUniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+        elif isinstance(sweep_dist_obj, (Uniform, LogUniform)):
+            sweep_dist = UniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+        elif isinstance(sweep_dist_obj, (Normal, LogNormal)):
+            sweep_dist = NormalSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, Randint):
             sweep_dist = RandintSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         else:

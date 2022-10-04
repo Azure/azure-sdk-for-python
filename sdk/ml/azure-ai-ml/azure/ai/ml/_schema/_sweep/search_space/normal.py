@@ -55,6 +55,6 @@ class QNormalSchema(metaclass=PatchedSchemaMeta):
 
 
 class IntegerQNormalSchema(QNormalSchema):
-    min_value = DumpableIntegerField(strict=True, required=True)
-    max_value = DumpableIntegerField(strict=True, required=True)
+    mu = DumpableIntegerField(strict=True, required=True)
+    sigma = DumpableIntegerField(strict=True, required=True)
     q = DumpableIntegerField(strict=True, required=True)
