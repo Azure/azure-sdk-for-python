@@ -121,7 +121,7 @@ def build_get_request(
     restore_point_name: str,
     subscription_id: str,
     *,
-    expand: Optional[Union[str, "_models.RestorePointExpandOptions"]] = None,
+    expand: Optional[Union[str, _models.RestorePointExpandOptions]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -521,7 +521,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         restore_point_name: str,
-        expand: Optional[Union[str, "_models.RestorePointExpandOptions"]] = None,
+        expand: Optional[Union[str, _models.RestorePointExpandOptions]] = None,
         **kwargs: Any
     ) -> _models.RestorePoint:
         """The operation to get the restore point.

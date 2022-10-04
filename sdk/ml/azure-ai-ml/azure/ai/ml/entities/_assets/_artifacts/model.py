@@ -123,6 +123,7 @@ class Model(Artifact):
             tags=rest_model_version.tags,
             flavors=flavors,
             properties=rest_model_version.properties,
+            # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
@@ -135,6 +136,7 @@ class Model(Artifact):
             name=model_container_rest_object.name,
             version="1",
             id=model_container_rest_object.id,
+            # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(model_container_rest_object.system_data),
         )
         model.latest_version = model_container_rest_object.properties.latest_version

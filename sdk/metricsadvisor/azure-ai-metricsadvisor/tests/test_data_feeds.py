@@ -33,7 +33,7 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids, API_KEY
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
@@ -739,11 +739,11 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         feeds = client.list_data_feeds()
         assert len(list(feeds)) > 0
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. AAD doesn't find any data feeds
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_data_feed_name(self, client):
-        feeds = client.list_data_feeds(data_feed_name="azureSqlDatafeed")
+        feeds = client.list_data_feeds(data_feed_name="azBlobDataFeed")
         feed_list = list(feeds)
         assert len(feed_list) == 1
 
@@ -757,7 +757,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
         skipped_feeds_list = list(skipped_feeds)
         assert len(all_feeds_list) > len(skipped_feeds_list)
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. AAD doesn't find any data feeds
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_data_feeds_with_status(self, client):

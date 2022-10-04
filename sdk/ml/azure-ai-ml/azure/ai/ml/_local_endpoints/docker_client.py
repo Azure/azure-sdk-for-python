@@ -8,9 +8,6 @@ import json
 import logging
 import time
 
-import docker
-from docker.errors import BuildError, DockerException, ImageNotFound, NotFound
-from docker.models.containers import Container
 
 from azure.ai.ml._local_endpoints.local_endpoint_mode import LocalEndpointMode
 from azure.ai.ml._local_endpoints.vscode_debug.vscode_client import VSCodeClient
@@ -24,8 +21,9 @@ from azure.ai.ml.exceptions import (
     LocalEndpointNotFoundError,
     MultipleLocalDeploymentsFoundError,
 )
+from azure.ai.ml._utils.utils import DockerProxy
 
-
+docker = DockerProxy()
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
 
@@ -43,16 +41,17 @@ class DockerClient(object):
     """Client for interacting with User's Docker environment for local
     endpoints."""
     # pylint: disable=client-method-missing-type-annotations
+
     def __init__(
         self,
-        client: docker.DockerClient = None,
+        client: "docker.DockerClient" = None,
         vscode_client: VSCodeClient = None,
     ):
         self._lazy_client = client
         self._vscode_client = vscode_client if vscode_client else VSCodeClient()
 
     @property
-    def _client(self) -> docker.DockerClient:
+    def _client(self) -> "docker.DockerClient":
         """Lazy initializer for docker-py client.
 
         :return: docker.client.DockerClient
@@ -61,7 +60,7 @@ class DockerClient(object):
         if self._lazy_client is None:
             try:
                 self._lazy_client = docker.from_env()
-            except DockerException as e:
+            except docker.errors.DockerException as e:
                 if "Error while fetching server API version" in str(e):
                     raise DockerEngineNotAvailableError()
                 raise
@@ -77,7 +76,7 @@ class DockerClient(object):
     ) -> None:
         try:
             self._client.images.build(path=build_directory, tag=image_name, dockerfile=dockerfile_path)
-        except BuildError:
+        except docker.errors.BuildError:
             pass
         self.delete(endpoint_name=endpoint_name, verify_exists=False)
 
@@ -94,6 +93,7 @@ class DockerClient(object):
             publish_all_ports=True,
         )
     # pylint: disable=client-method-has-more-than-5-positional-arguments
+
     def create_deployment(
         self,
         endpoint_name: str,
@@ -157,11 +157,11 @@ class DockerClient(object):
             image_name = prebuilt_image_name
             try:
                 self._client.images.get(image_name)
-            except ImageNotFound:
+            except docker.errors.ImageNotFound:
                 module_logger.info("\nDid not find image '%s' locally. Pulling from registry.\n", image_name)
                 try:
                     self._client.images.pull(image_name)
-                except NotFound:
+                except docker.errors.NotFound:
                     raise InvalidLocalEndpointError(
                         message=(
                             f"Could not find image '{image_name}' locally or in registry. "
@@ -350,7 +350,7 @@ class DockerClient(object):
         deployment_name: str = None,
         verify_single_deployment: bool = False,
         include_stopped: bool = True,
-    ) -> Container:
+    ) -> "docker.models.containers.Container":
         """Builds and runs an image from provided image context.
 
         :param endpoint_name: name of local endpoint
@@ -379,8 +379,8 @@ class DockerClient(object):
         build_directory: str,
         image_name: str,
         dockerfile_path: str,
-        conda_source_path: str,
-        conda_yaml_contents: str,
+        conda_source_path: str, # pylint: disable=unused-argument
+        conda_yaml_contents: str, # pylint: disable=unused-argument
     ) -> None:
 
         try:
@@ -399,11 +399,7 @@ class DockerClient(object):
                     first_line = False
                 if "stream" in status:
                     if "An unexpected error has occurred. Conda has prepared the above report." in status["stream"]:
-                        raise LocalEndpointImageBuildError(
-                            status["stream"],
-                            conda_file_path=conda_source_path,
-                            conda_yaml_contents=conda_yaml_contents,
-                        )
+                        raise LocalEndpointImageBuildError(status["stream"])
                     module_logger.info(status["stream"])
 
                 if "error" in status:
@@ -437,6 +433,7 @@ class DockerClient(object):
         """
         return list(volumes_dict.keys())
 
+
 def get_container_labels(
     endpoint_name: str,
     deployment_name: str,
@@ -452,19 +449,22 @@ def get_container_labels(
     labels[LocalEndpointConstants.LABEL_KEY_AZUREML_PORT] = str(azureml_port)
     return labels
 
-def get_endpoint_json_from_container(container: Container) -> dict:
+
+def get_endpoint_json_from_container(container: "docker.models.containers.Container") -> dict:
     if container:
         data = container.labels[LocalEndpointConstants.LABEL_KEY_ENDPOINT_JSON]
         return json.loads(data)
     return
 
-def get_deployment_json_from_container(container: Container) -> dict:
+
+def get_deployment_json_from_container(container: "docker.models.containers.Container") -> dict:
     if container:
         data = container.labels[LocalEndpointConstants.LABEL_KEY_DEPLOYMENT_JSON]
         return json.loads(data)
     return
 
-def get_status_from_container(container: Container) -> str:
+
+def get_status_from_container(container: "docker.models.containers.Container") -> str:
     """Returns status of container.
 
     :param container: container of local Deployment
@@ -473,7 +473,8 @@ def get_status_from_container(container: Container) -> str:
     """
     return container.status
 
-def get_scoring_uri_from_container(container: Container) -> str:
+
+def get_scoring_uri_from_container(container: "docker.models.containers.Container") -> str:
     """Returns scoring_uri of container.
 
     :param container: container of local Deployment
@@ -494,6 +495,7 @@ def get_scoring_uri_from_container(container: Container) -> str:
     # TODO: resolve scoring path correctly
     return f"http://localhost:{port}/score"
 
+
 def _get_image_name(endpoint_name: str, deployment_name: str) -> str:
     """Returns an image name.
 
@@ -504,6 +506,7 @@ def _get_image_name(endpoint_name: str, deployment_name: str) -> str:
     :return str: image name
     """
     return f"{endpoint_name}:{deployment_name}"
+
 
 def _get_container_name(endpoint_name: str, deployment_name: str = None) -> str:
     """Returns a container name.
@@ -516,7 +519,12 @@ def _get_container_name(endpoint_name: str, deployment_name: str = None) -> str:
     """
     return f"{endpoint_name}.{deployment_name}" if deployment_name else endpoint_name
 
-def _validate_container_state(endpoint_name: str, deployment_name: str, container: Container):
+
+def _validate_container_state(
+    endpoint_name: str,
+    deployment_name: str,
+    container: "docker.models.containers.Container",
+):
     """Returns a container name.
 
     :param endpoint_name: name of local endpoint

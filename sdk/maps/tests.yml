@@ -13,9 +13,6 @@ stages:
             - $(sub-config-azure-cloud-test-resources)
       Clouds: Public
       EnvVars:
-        AZURE_CLIENT_ID: $(MAPS_CLIENT_ID)
-        AZURE_CLIENT_SECRET: $(MAPS_CLIENT_SECRET)
-        AZURE_SUBSCRIPTION_KEY: $(MAPS_SUBSCRIPTION_ID)
-        AZURE_TENANT_ID: $(MAPS_TENANT_ID)
         TEST_MODE: "RunLiveNoRecord"
+        AZURE_SKIP_LIVE_RECORDING: "true"
         AZURE_TEST_RUN_LIVE: "true"

@@ -12,8 +12,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._util import load_from_dict
-
-from ._identity import IdentityConfiguration
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 
 class KubernetesCompute(Compute):
@@ -71,7 +70,7 @@ class KubernetesCompute(Compute):
             created_on=prop.additional_properties.get("createdOn", None),
             properties=prop.properties.as_dict() if prop.properties else None,
             namespace=prop.properties.namespace,
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
         )
 
     def _to_dict(self) -> Dict:
@@ -101,5 +100,5 @@ class KubernetesCompute(Compute):
             location=self.location,
             properties=kubernetes_comp,
             name=self.name,
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
         )

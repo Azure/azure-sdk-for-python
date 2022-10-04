@@ -23,10 +23,10 @@ from azure.data.tables import (
     generate_account_sas,
     ResourceTypes
 )
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import ResourceExistsError, HttpResponseError
+from azure.core.credentials import AzureSasCredential
+from azure.core.exceptions import ResourceExistsError
 
-from _shared.testcase import TableTestCase, TEST_TABLE_PREFIX
+from _shared.testcase import TableTestCase
 from preparers import tables_decorator, tables_decorator
 
 # ------------------------------------------------------------------------------
@@ -459,9 +459,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
     
     @tables_decorator
     @recorded_by_proxy
-    def test_unicode_create_table_unicode_name(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
+    def test_unicode_create_table_unicode_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
-        tsc = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
+        tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
         invalid_table_name = u'啊齄丂狛狜'
 
         with pytest.raises(ValueError) as excinfo:
@@ -471,9 +471,9 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
     
     @tables_decorator
     @recorded_by_proxy
-    def test_create_table_invalid_name(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
+    def test_create_table_invalid_name(self, tables_storage_account_name, tables_primary_storage_account_key):
         account_url = self.account_url(tables_storage_account_name, "table")
-        tsc = TableServiceClient(credential=tables_primary_storage_account_key, endpoint=account_url)
+        tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
