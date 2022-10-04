@@ -28,7 +28,6 @@ import asyncio
 import copy
 import json
 import os
-import platform
 from azure.storage.blob.aio import BlobServiceClient
 from azure.data.tables.aio import TableServiceClient
 from datetime import datetime
@@ -45,8 +44,8 @@ class CopyTableSamples(object):
         self.table_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
-        self.copy_to_blob_table_name = "copytoblobtablenameasync" + platform.system().lower()
-        self.copy_to_table_table_name = "copytotabletablenameasync" + platform.system().lower()
+        self.copy_to_blob_table_name = "copytoblobtablenameasync" + str(uuid4()).replace("-", "")
+        self.copy_to_table_table_name = "copytotabletablenameasync" + str(uuid4()).replace("-", "")
         self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = "DefDefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
@@ -66,6 +65,7 @@ class CopyTableSamples(object):
 
     async def copy_table_from_table_to_blob(self):
         print("Start to copy table from Tables table to Storage blob.")
+        print("Table name: " + self.copy_to_blob_table_name)
         await self._setup_table()
         try:
             self.container_client = await self.blob_service_client.create_container(self.copy_to_blob_table_name)
@@ -84,6 +84,7 @@ class CopyTableSamples(object):
 
     async def copy_table_from_blob_to_table(self):
         print("Start to copy table from Storage blob to Tables table.")
+        print("Table name: " + self.copy_to_blob_table_name)
         await self._setup_blob()
         try:
             # Download entities from blob to memory
