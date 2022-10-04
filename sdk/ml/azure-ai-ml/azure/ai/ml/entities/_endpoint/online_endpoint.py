@@ -440,7 +440,6 @@ class EndpointAuthKeys(RestTranslatableMixin):
         :keyword secondary_key: The secondary key.
         :paramtype secondary_key: str
         """
-        super(EndpointAuthKeys, self).__init__(**kwargs)
         self.primary_key = kwargs.get('primary_key', None)
         self.secondary_key = kwargs.get('secondary_key', None)
 
@@ -485,7 +484,6 @@ class EndpointAuthToken(RestTranslatableMixin):
         :keyword token_type: Access token type.
         :paramtype token_type: str
         """
-        super(EndpointAuthToken, self).__init__(**kwargs)
         self.access_token = kwargs.get('access_token', None)
         self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
         self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)
