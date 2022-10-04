@@ -8,8 +8,24 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class TabularLimitSettings(RestTranslatableMixin):
-    """Limit settings for a AutoML Table Verticals."""
+    """Limit settings for a AutoML Table Verticals.
 
+    :param enable_early_termination: Whether to enable early termination if the score is not improving in 
+        the short term. The default is True.
+    :type enable_early_termination: bool, optional
+    :param exit_score: Target score for experiment. The experiment terminates after this score is reached.
+    :type exit_score: float, optional
+    :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
+    :type max_concurrent_trials: int, optional
+    :param max_cores_per_trial: The maximum number of threads to use for a given training iteration.
+    :type max_cores_per_trial: int, optional
+    :param max_trials: Maximum number of AutoML iterations.
+    :type max_trials: int, optional
+    :param timeout_minutes: AutoML job timeout.
+    :type timeout_minutes: int, optional
+    :param trial_timeout_minutes: AutoML job timeout.
+    :type trial_timeout_minutes: int, optional
+    """
     def __init__(
         self,
         *,

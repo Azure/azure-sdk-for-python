@@ -11,11 +11,11 @@ class ImageLimitSettings(RestTranslatableMixin):
     """Limit settings for all AutoML Image Verticals.
 
     :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
-    :type max_concurrent_trials: int
+    :type max_concurrent_trials: int, optional
     :param max_trials: Maximum number of AutoML iterations.
-    :type max_trials: int
-    :param timeout: AutoML job timeout.
-    :type timeout: ~datetime.timedelta
+    :type max_trials: int, optional
+    :param timeout_minutes: AutoML job timeout.
+    :type timeout_minutes: int, optional
     """
 
     def __init__(
