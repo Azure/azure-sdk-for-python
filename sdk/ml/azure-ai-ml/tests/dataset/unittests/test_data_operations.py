@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2021_10_01.models._models_py3 import (
     DatasetVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes, YAMLRefDocLinks
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget
@@ -170,12 +170,16 @@ class TestDataOperations:
         Expect to raise ValidationException for missing path
         """
         name = "random_name"
-        data = Data(name=name, version="1", description="this is an mltable dataset", type=AssetTypes.MLTABLE)
+        data1 = Data(name=name, version="1", description="this is an mltable dataset", type=AssetTypes.MLTABLE)
 
         with pytest.raises(Exception) as ex:
-            mock_data_operations.create_or_update(data)
+            mock_data_operations.create_or_update(data1)
         assert "At least one required parameter is missing" in str(ex.value)
         mock_data_operations._operation.create_or_update.assert_not_called()
+
+        with pytest.raises(Exception) as ex:
+            load_data("tests/test_configs/dataset/data_missing_path_test.yml")
+        assert f"For a more detailed breakdown of the Data schema, please see: {YAMLRefDocLinks.DATA}."
 
     @patch("azure.ai.ml.operations._data_operations.read_local_mltable_metadata_contents")
     @patch("azure.ai.ml.operations._data_operations.read_remote_mltable_metadata_contents")
