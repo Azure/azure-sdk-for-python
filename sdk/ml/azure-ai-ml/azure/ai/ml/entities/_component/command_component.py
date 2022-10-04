@@ -10,7 +10,7 @@ from marshmallow import Schema
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.entities._assets import Environment, Code
 from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
@@ -39,7 +39,7 @@ class CommandComponent(Component, ParameterizedCommand):
     :param command: Command to be executed in component.
     :type command: str
     :param code: Code file or folder that will be uploaded to the cloud for component execution.
-    :type code: str
+    :type code: Union[str,Code]
     :param environment: Environment that component will run in.
     :type environment: Union[Environment, str]
     :param distribution: Distribution configuration for distributed training.
@@ -65,7 +65,7 @@ class CommandComponent(Component, ParameterizedCommand):
         tags: Dict = None,
         display_name: str = None,
         command: str = None,
-        code: str = None,
+        code: Union[str,Code] = None,
         environment: Union[str, Environment] = None,
         distribution: Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution] = None,
         resources: JobResourceConfiguration = None,
@@ -143,7 +143,7 @@ class CommandComponent(Component, ParameterizedCommand):
             "environment": (str, Environment),
             "environment_variables": dict,
             "resources": (dict, JobResourceConfiguration),
-            "code": (str, os.PathLike),
+            "code": (str, Code),
         }
 
     def _to_dict(self) -> Dict:
@@ -156,6 +156,13 @@ class CommandComponent(Component, ParameterizedCommand):
         if isinstance(self.environment, Environment):
             return self.environment.id
         return self.environment
+
+    def _get_code_path(self)-> Union[str,None]:
+        # Return path of code
+        # handle case when code is defined inline
+        if isinstance(self.code, Code):
+            return self.code.path
+        return self.code
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:

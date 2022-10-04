@@ -38,6 +38,7 @@ class InputPortSchema(metaclass=PatchedSchemaMeta):
     mode = DumpableEnumField(
         allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
     )
+    is_intellectual_property = fields.Bool()
 
 
 class OutputPortSchema(metaclass=PatchedSchemaMeta):
@@ -49,7 +50,7 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
     mode = DumpableEnumField(
         allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
     )
-
+    is_intellectual_property = fields.Bool()
 
 class PrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
     type = DumpableEnumField(
