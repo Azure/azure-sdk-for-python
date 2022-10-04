@@ -53,7 +53,9 @@ class ConditionNode(ControlFlowNode):
             )
 
         # Check if output is a control output.
+        # pylint: disable=protected-access
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
+            # pylint: disable=protected-access
             output_definition = self.condition._meta
             if output_definition and not output_definition.is_control:
                 validation_result.append_error(

@@ -9,8 +9,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentJobConstants, IOConstants
@@ -338,7 +338,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
         # Allow inline output binding with string, eg: "component_out_path_1": "${{parents.outputs.job_out_data_1}}"
         if data and not isinstance(data, (Output, str)):

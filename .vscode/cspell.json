@@ -81,6 +81,8 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/ml/azure-ai-ml/swagger/**",
+    "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
@@ -235,6 +237,7 @@
     "myvault",
     "nazsdk",
     "nbytes",
+    "nbsp",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -264,8 +267,10 @@
     "prevsnapshot",
     "pschema",
     "PSECRET",
+    "pyfetch",
     "pyfuncitem",
     "pygobject",
+    "pyodide",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -539,7 +544,8 @@
         "dmac",
         "ierr",
         "mymodel",
-        "heif"
+        "heif",
+        "racwd"
       ]
     },
     {
@@ -655,6 +661,12 @@
         "euap",
         "automl",
         "azureml"
+      ]
+    },
+    {
+      "filename": "sdk/ml/tests.yml",
+      "words": [
+        "euap"
       ]
     },
     {

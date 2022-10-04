@@ -11,7 +11,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 def cast_to_specific_search_space(
-    input: Union[Dict, SearchSpace],
+    input: Union[Dict, SearchSpace], # pylint: disable=redefined-builtin
     class_name: Union[ImageClassificationSearchSpace, ImageObjectDetectionSearchSpace],
     task_type: str,
 ) -> Union[ImageClassificationSearchSpace, ImageObjectDetectionSearchSpace]:
@@ -32,6 +32,6 @@ def cast_to_specific_search_space(
         specific_search_space = class_name(**input)
     else:
         validate_searchspace_args(input.__dict__)
-        specific_search_space = class_name._from_search_space_object(input)
+        specific_search_space = class_name._from_search_space_object(input) # pylint: disable=protected-access
 
     return specific_search_space

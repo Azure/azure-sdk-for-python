@@ -78,6 +78,17 @@ title: QuestionAnsweringAuthoringClient
 
 ### General customizations
 
+#### Add docs to authoring operations
+
+```yaml
+directive:
+- from: questionanswering-authoring.json
+  where: $.paths.*.*
+  transform: |
+    var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+    $.description = "See https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/" + operationId + " for more information.";
+```
+
 ```yaml
 # Define HTTP 200 responses for LROs to document result model.
 directive:

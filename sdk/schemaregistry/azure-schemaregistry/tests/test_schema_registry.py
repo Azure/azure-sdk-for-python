@@ -58,7 +58,11 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert returned_schema.properties.name == name
         assert returned_schema.definition == schema_str
 
-        returned_version_schema = client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
+        returned_version_schema = client.get_schema(group_name=schemaregistry_group, name=name, version=schema_properties.version, logging_enable=True)
+
+        with pytest.raises(TypeError) as exc:
+            client.get_schema(group_name=schemaregistry_group, name=name, logging_enable=True)
+        assert "Missing" in str(exc)
 
         assert returned_version_schema.properties.id == schema_properties.id
         assert returned_version_schema.properties.format == "Avro"
@@ -105,7 +109,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert new_schema.properties.group_name == schemaregistry_group
         assert new_schema.properties.name == name
 
-        old_schema = client.get_schema_by_version(schemaregistry_group, name, schema_properties.version, logging_enable=True)
+        old_schema = client.get_schema(group_name=schemaregistry_group, name=name, version=schema_properties.version, logging_enable=True)
 
         assert old_schema.properties.id != new_schema_properties.id
         assert old_schema.properties.id == schema_properties.id
@@ -182,7 +186,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
         version = schema_properties.version + 1
         with pytest.raises(HttpResponseError):
-            client.get_schema_by_version(schemaregistry_group, name, version)
+            client.get_schema(group_name=schemaregistry_group, name=name, version=version)
 
 
     @SchemaRegistryEnvironmentVariableLoader()

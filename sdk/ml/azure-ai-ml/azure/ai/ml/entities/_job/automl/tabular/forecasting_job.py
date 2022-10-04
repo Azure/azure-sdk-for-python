@@ -6,9 +6,9 @@
 
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ForecastingPrimaryMetrics,
     JobBase,
     StackEnsembleSettings,
@@ -16,15 +16,15 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants._job.automl  import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
-from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -409,7 +409,7 @@ class ForecastingJob(AutoMLTabular):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=forecasting_task,
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
         result = JobBase(properties=properties)
@@ -417,25 +417,26 @@ class ForecastingJob(AutoMLTabular):
         return result
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: JobBase) -> "ForecastingJob":
-        properties: RestAutoMLJob = job_rest_object.properties
+    def _from_rest_object(cls, obj: JobBase) -> "ForecastingJob":
+        properties: RestAutoMLJob = obj.properties
         task_details: RestForecasting = properties.task_details
 
         job_args_dict = {
-            "id": job_rest_object.id,
-            "name": job_rest_object.name,
+            "id": obj.id,
+            "name": obj.name,
             "description": properties.description,
             "tags": properties.tags,
             "properties": properties.properties,
             "experiment_name": properties.experiment_name,
             "services": properties.services,
             "status": properties.status,
-            "creation_context": job_rest_object.system_data,
+            "creation_context": obj.system_data,
             "display_name": properties.display_name,
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": Identity._from_rest_object(properties.identity) if properties.identity else None,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         }
 
         forecasting_job = cls(
@@ -476,13 +477,12 @@ class ForecastingJob(AutoMLTabular):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
     ) -> "ForecastingJob":
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             loaded_data = load_from_dict(AutoMLForecastingNodeSchema, data, context, additional_message, **kwargs)
         else:
             loaded_data = load_from_dict(AutoMLForecastingSchema, data, context, additional_message, **kwargs)
@@ -507,7 +507,7 @@ class ForecastingJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 

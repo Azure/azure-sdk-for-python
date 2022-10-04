@@ -12,7 +12,7 @@ from .sweep import SearchSpace
 
 __all__ = [
     "AutoMLConstants",
-    "AutoMLTransformerParameterKeys"
+    "AutoMLTransformerParameterKeys",
     "DistributionType",
     "ImageClassificationModelNames",
     "ImageObjectDetectionModelNames",

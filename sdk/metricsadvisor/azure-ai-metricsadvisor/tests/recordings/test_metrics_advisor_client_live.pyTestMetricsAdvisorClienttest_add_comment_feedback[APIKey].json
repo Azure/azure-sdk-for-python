@@ -7,22 +7,34 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "265",
+        "Content-Length": "237",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "c48c8e18-5e0c-11ec-b1c6-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022feedbackType\u0022: \u0022Comment\u0022, \u0022metricId\u0022: \u0022metrics_advisor_metric_id\u0022, \u0022dimensionFilter\u0022: {\u0022dimension\u0022: {\u0022category\u0022: \u0022Shoes Handbags \u0026 Sunglasses\u0022}}, \u0022startTime\u0022: \u00222021-08-05T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022, \u0022value\u0022: {\u0022commentValue\u0022: \u0022comment\u0022}}",
+      "RequestBody": {
+        "feedbackType": "Comment",
+        "metricId": "metrics_advisor_metric_id",
+        "dimensionFilter": {
+          "dimension": {
+            "Dim1": "USD"
+          }
+        },
+        "startTime": "2022-03-01T00:00:00.000Z",
+        "endTime": "2022-09-29T00:00:00.000Z",
+        "value": {
+          "commentValue": "comment"
+        }
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "279de06c-ad35-43b6-a74a-81ee57bb0f23",
+        "apim-request-id": "570d698a-5afa-4cad-b831-4beb0d66adb0",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:09:06 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/bf46c698-8932-4c05-b6ac-76d90ef5bbf4",
+        "Date": "Thu, 29 Sep 2022 23:23:26 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/feedback/metric/7da6b683-c379-4d30-b417-1b182fca619c",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "376",
-        "X-Request-ID": "279de06c-ad35-43b6-a74a-81ee57bb0f23"
+        "x-envoy-upstream-service-time": "388",
+        "X-Request-ID": "570d698a-5afa-4cad-b831-4beb0d66adb0"
       },
       "ResponseBody": null
     }

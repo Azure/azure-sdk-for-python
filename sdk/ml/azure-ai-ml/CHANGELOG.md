@@ -14,6 +14,12 @@
 - Deprecated parameter path has been removed from load and dump methods.
 - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
 - Workspace.list_keys renamed to Workspace.get_keys.
+- OnlineDeploymentOperations.delete has been renamed to begin_attach.
+- Datastore credentials are switched to use unified credential configuration classes.
+- UserAssignedIdentity is replaced by ManagedIdentityConfiguration
+- Job using unified identity classes.
+- Endpoint uses unified identity classes.
+- Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
@@ -35,6 +41,7 @@
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
  - Added Idle Shutdown support for Compute Instances, allowing instances to shutdown after a set period of inactivity.
+ - Online Deployment Data Collection for eventhub and data storage will be supported. 
  - Syntax validation on scoring scripts of Batch Deployment and Online Deployment will prevent the user from submitting bad deployments.
 
 ### Breaking Changes
