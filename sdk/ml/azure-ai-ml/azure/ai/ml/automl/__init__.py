@@ -30,6 +30,7 @@ from azure.ai.ml.entities._job.automl.tabular import (
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from .._restclient.v2022_10_01_preview.models import (
+    BlockedTransformers,
     ClassificationModels,
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
