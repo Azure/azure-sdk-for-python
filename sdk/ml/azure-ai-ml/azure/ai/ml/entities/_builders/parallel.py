@@ -25,7 +25,7 @@ from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
 from ..._schema import PathAwareSchema
 from .._job.distribution import DistributionConfiguration
-from .._job.pipeline._io import NodeOutput, PipelineInput
+from .._job.pipeline._io import NodeOutput
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
 
@@ -86,7 +86,6 @@ class Parallel(BaseNode):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
                 NodeOutput,
                 Input,
                 str,
