@@ -131,7 +131,7 @@ def _get_answers_from_text_prepare_options(
 
 
 class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
-    @overload  # type: ignore
+    @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
     def get_answers(
         self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:

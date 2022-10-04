@@ -24,7 +24,7 @@ from ..._operations._patch import _get_answers_from_text_prepare_options, _get_a
 
 
 class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
-    @overload  # type: ignore
+    @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
     async def get_answers(
         self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:
