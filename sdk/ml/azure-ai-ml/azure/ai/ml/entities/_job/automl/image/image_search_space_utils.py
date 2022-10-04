@@ -164,17 +164,17 @@ def _convert_sweep_dist_dict_item_to_str(sweep_distribution: Union[bool, int, fl
     if isinstance(sweep_distribution, dict):
         sweep_dist_type = sweep_distribution["type"]
         if sweep_dist_type == SearchSpace.CHOICE:
-            sweep_dist_obj = ChoiceSchema().load(sweep_distribution)
+            sweep_dist_obj = ChoiceSchema().load(sweep_distribution) # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.UNIFORM_LOGUNIFORM:
-            sweep_dist_obj = UniformSchema().load(sweep_distribution)
+            sweep_dist_obj = UniformSchema().load(sweep_distribution) # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.NORMAL_LOGNORMAL:
-            sweep_dist_obj = NormalSchema().load(sweep_distribution)
+            sweep_dist_obj = NormalSchema().load(sweep_distribution) # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.QUNIFORM_QLOGUNIFORM:
-            sweep_dist_obj = QUniformSchema().load(sweep_distribution)
+            sweep_dist_obj = QUniformSchema().load(sweep_distribution) # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.QNORMAL_QLOGNORMAL:
-            sweep_dist_obj = QNormalSchema().load(sweep_distribution)
+            sweep_dist_obj = QNormalSchema().load(sweep_distribution) # pylint: disable=no-member
         elif sweep_dist_type in SearchSpace.RANDINT:
-            sweep_dist_obj = RandintSchema().load(sweep_distribution)
+            sweep_dist_obj = RandintSchema().load(sweep_distribution) # pylint: disable=no-member
         else:
             msg = f"Unsupported sweep distribution type {sweep_dist_type}"
             raise ValidationException(
@@ -205,21 +205,21 @@ def _convert_sweep_dist_str_item_to_dict(
     sweep_dist_obj = _convert_from_rest_object(sweep_distribution_str)
     if isinstance(sweep_dist_obj, SweepDistribution):
         if isinstance(sweep_dist_obj, Choice):
-            sweep_dist = ChoiceSchema().dump(sweep_dist_obj)
-        elif isinstance(sweep_dist_obj, Uniform) or isinstance(sweep_dist_obj, LogUniform):
-            sweep_dist = UniformSchema().dump(sweep_dist_obj)
-        elif isinstance(sweep_dist_obj, Normal) or isinstance(sweep_dist_obj, LogNormal):
-            sweep_dist = NormalSchema().dump(sweep_dist_obj)
-        elif isinstance(sweep_dist_obj, QNormal) or isinstance(sweep_dist_obj, QLogNormal):
-            sweep_dist = QNormalSchema().dump(sweep_dist_obj)
-        elif isinstance(sweep_dist_obj, QUniform) or isinstance(sweep_dist_obj, QLogUniform):
-            sweep_dist = QUniformSchema().dump(sweep_dist_obj)
+            sweep_dist = ChoiceSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+        elif isinstance(sweep_dist_obj, (Uniform, LogUniform)):
+            sweep_dist = UniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+        elif isinstance(sweep_dist_obj, (Normal, LogNormal)):
+            sweep_dist = NormalSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+        elif isinstance(sweep_dist_obj, (QNormal, QLogNormal)):
+            sweep_dist = QNormalSchema().dump(sweep_dist_obj) # pylint: disable=no-member
+        elif isinstance(sweep_dist_obj, (QUniform, QLogUniform)):
+            sweep_dist = QUniformSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         elif isinstance(sweep_dist_obj, Randint):
-            sweep_dist = RandintSchema().dump(sweep_dist_obj)
+            sweep_dist = RandintSchema().dump(sweep_dist_obj) # pylint: disable=no-member
         else:
-            msg = f"Invalid sweep distribution {sweep_distribution_str}"
+            msg = "Invalid sweep distribution {}"
             raise ValidationException(
-                message=msg,
+                message=msg.format(sweep_distribution_str),
                 no_personal_data_message=msg,
                 target=ErrorTarget.AUTOML,
                 error_category=ErrorCategory.USER_ERROR,

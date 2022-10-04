@@ -143,7 +143,7 @@ class ValidationResult(object):
             return self
 
         if self._warnings:
-            module_logger.info("Warnings: {}".format(self._warnings))
+            module_logger.info("Warnings: {}".format(self._warnings)) # pylint: disable=logging-format-interpolation
 
         if not self.passed:
             message = (
@@ -451,7 +451,10 @@ class YamlLocationResolver:
 
     def _resolve_recursively(self, attrs: List[str], source_path: Path):
         with open(source_path, encoding="utf-8") as f:
-            loaded_yaml = strictyaml.load(f.read())
+            try:
+                loaded_yaml = strictyaml.load(f.read())
+            except strictyaml.exceptions.StrictYAMLError as e:
+                return "can't resolve location:\n{}".format(e).split("\n"), None
 
         while attrs:
             attr = attrs[-1]

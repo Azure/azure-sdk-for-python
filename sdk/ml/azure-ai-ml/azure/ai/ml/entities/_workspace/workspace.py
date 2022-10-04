@@ -13,9 +13,9 @@ from azure.ai.ml._restclient.v2022_05_01.models import Workspace as RestWorkspac
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentity
 
 from .customer_managed_key import CustomerManagedKey
 
@@ -38,7 +38,7 @@ class Workspace(Resource):
         customer_managed_key: CustomerManagedKey = None,
         image_build_compute: str = None,
         public_network_access: str = None,
-        identity: ManagedServiceIdentity = None,
+        identity: IdentityConfiguration = None,
         primary_user_assigned_identity: str = None,
         **kwargs,
     ):
@@ -83,7 +83,7 @@ class Workspace(Resource):
             when a workspace is private link enabled.
         :type public_network_access: str
         :param identity: workspace's Managed Identity (user assigned, or system assigned)
-        :type identity: ManagedServiceIdentity
+        :type identity: IdentityConfiguration
         :param primary_user_assigned_identity: The workspace's primary user assigned identity
         :type primary_user_assigned_identity: str
         :param kwargs: A dictionary of additional configuration parameters.
@@ -125,9 +125,7 @@ class Workspace(Resource):
         """
         return self._mlflow_tracking_uri
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the workspace spec into a file in yaml format.
 
         :param dest: The destination to receive this workspace's spec.
@@ -137,15 +135,10 @@ class Workspace(Resource):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
@@ -192,7 +185,7 @@ class Workspace(Resource):
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
-            identity = ManagedServiceIdentity._from_rest_object(rest_obj.identity)
+            identity = IdentityConfiguration._from_workspace_rest_object(rest_obj.identity) # pylint: disable=protected-access
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,

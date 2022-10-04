@@ -6,7 +6,6 @@
 
 import inspect
 import logging
-import os.path
 from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
@@ -16,7 +15,7 @@ from typing import Any, Callable, Dict, TypeVar
 from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
-from azure.ai.ml.entities._job.pipeline._exceptions import (
+from azure.ai.ml.exceptions import (
     MissingPositionalArgsError,
     MultipleValueError,
     TooManyPositionalArgsError,
@@ -108,7 +107,7 @@ def pipeline(
     """
 
     def pipeline_decorator(func: _TFunc) -> _TFunc:
-        if not isinstance(func, Callable):
+        if not isinstance(func, Callable): # pylint: disable=isinstance-second-argument-not-valid-type
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
@@ -182,6 +181,9 @@ def pipeline(
                 "tags": tags,
             }
             if _is_inside_dsl_pipeline_func():
+                # on_init/on_finalize is not supported for pipeline component
+                if job_settings.get("on_init") is not None or job_settings.get("on_finalize") is not None:
+                    raise UserErrorException("On_init/on_finalize is not supported for pipeline component.")
                 # Build pipeline node instead of pipeline job if inside dsl.
                 built_pipeline = Pipeline(_from_component_func=True, **common_init_args)
                 if job_settings:
@@ -240,9 +242,8 @@ def _validate_args(func, args, kwargs):
 
     def _is_supported_data_type(_data):
         return (
-            isinstance(_data, SUPPORTED_INPUT_TYPES)
+            isinstance(_data, SUPPORTED_INPUT_TYPES + (PipelineExpression,))
             or is_parameter_group(_data)
-            or isinstance(_data, PipelineExpression)
         )
 
     for pipeline_input_name in provided_args:

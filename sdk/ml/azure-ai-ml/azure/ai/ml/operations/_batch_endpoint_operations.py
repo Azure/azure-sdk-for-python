@@ -21,7 +21,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
@@ -55,7 +54,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class BatchEndpointOperations(_ScopeDependentOperations):
@@ -77,7 +76,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     ):
 
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
         self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
@@ -92,7 +91,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
     def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
 
@@ -107,7 +106,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -130,7 +129,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return endpoint_data
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str) -> LROPoller[None]:
         """Delete a batch Endpoint.
 
@@ -160,7 +159,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
@@ -188,7 +187,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
@@ -200,14 +199,25 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     ) -> BatchJobResource:
         """Invokes the batch endpoint with the provided payload.
 
-        :param str endpoint_name: the endpoint name
-        :param (str, optional) deployment_name: Name of a specific deployment to invoke. This is optional.
+        :param endpoint_name: The endpoint name.
+        :type endpoint_name: str
+        :param deployment_name: The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
-        :param (Input, optional) input: To use a existing data asset, public uri file,
-            or folder pass in a Input object, for batch endpoints only.
-        :param (List, optional) params_override: Used to overwrite deployment configurations, for batch endpoints only.
-        Returns:
-            Union[str, BatchJobResource]: Prediction output for online endpoints or details of batch prediction job.
+        :type deployment_name: Optional[str]
+        :param input: An existing data asset, public uri file or folder to use with the deployment
+        :type input: Optional[Input]
+        :param params_override: Parameters to overwrite deployment configurations, for batch endpoints only.
+        :type params_override: Dict
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if BatchEndpoint model cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: The invoked batch deployment job.
+        :rtype: BatchJobResource
         """
         params_override = params_override or []
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
@@ -276,7 +286,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return BatchJobResource.deserialize(batch_job)
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str) -> List[BatchJobResource]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.

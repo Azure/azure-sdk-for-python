@@ -49,7 +49,9 @@ class TestChallengeAuth(KeyVaultTestCase):
 
         # we set up a client for this method so it gets awaited, but we actually want to create a new client
         # this new client should use a credential with an initially fake tenant ID and still succeed with a real request
-        credential = ClientSecretCredential(tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret)
+        credential = ClientSecretCredential(
+            tenant_id=str(uuid4()), client_id=client_id, client_secret=client_secret, additionally_allowed_tenants="*"
+        )
         managed_hsm_url = kwargs.pop("managed_hsm_url", None)
         keyvault_url = kwargs.pop("vault_url", None)
         vault_url = managed_hsm_url if is_hsm else keyvault_url

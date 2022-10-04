@@ -81,6 +81,8 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/ml/azure-ai-ml/swagger/**",
+    "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
@@ -148,6 +150,7 @@
     "docfx",
     "dont",
     "dotenv",
+    "dowhile",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -234,6 +237,7 @@
     "myvault",
     "nazsdk",
     "nbytes",
+    "nbsp",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -263,8 +267,10 @@
     "prevsnapshot",
     "pschema",
     "PSECRET",
+    "pyfetch",
     "pyfuncitem",
     "pygobject",
+    "pyodide",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -394,7 +400,8 @@
         "myasynctable",
         "mytableasync",
         "mytable",
-        "edmtypes"
+        "edmtypes",
+        "specifed"
       ]
     },
     {
@@ -463,7 +470,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": ["qnas", "qnamaker"],
+      "words": ["qnas", "qnamaker", "ADTO"],
       "caseSensitive": false
     },
     {
@@ -537,7 +544,8 @@
         "dmac",
         "ierr",
         "mymodel",
-        "heif"
+        "heif",
+        "racwd"
       ]
     },
     {
@@ -656,6 +664,12 @@
       ]
     },
     {
+      "filename": "sdk/ml/tests.yml",
+      "words": [
+        "euap"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -770,7 +784,12 @@
         "gzrs",
         "ragzrs",
         "wsid",
-        "azml"
+        "azml",
+        "uncompiled",
+        "segs",
+        "fnmatch",
+        "posixpath",
+        "SEPS"
       ]
     },
     {

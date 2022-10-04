@@ -6,7 +6,7 @@
 
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ImageModelSettingsObjectDetection,
     LearningRateScheduler,
     ModelSize,
@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ValidationMetricType,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image.automl_image import AutoMLImage
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings

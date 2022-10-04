@@ -13,16 +13,19 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    UserIdentityConfiguration,
+    ManagedIdentityConfiguration
+)
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy, EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
 from ..._schema import PathAwareSchema
@@ -59,7 +62,10 @@ class Sweep(ParameterizedSweep, BaseNode):
     :param outputs: Mapping of output data bindings used in the job.
     :type outputs: Dict[str, Union[str, Output]]
     :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
+    :type identity: Union[
+        ManagedIdentityConfiguration,
+        AmlTokenConfiguration,
+        UserIdentityConfiguration]
     """
 
     def __init__(
@@ -74,7 +80,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         search_space: Dict[str, SweepDistribution] = None,
         inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
         outputs: Dict[str, Union[str, Output]] = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -165,7 +174,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
-        support_data_binding_expression_for_fields(schema, ["type"])
+        support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])
 
         base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)  # pylint: disable=no-member
         for key, value in base_sweep.items():

@@ -12,8 +12,13 @@ from typing import Dict, Union, overload
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .base import _InputOutputBase
 from .utils import _get_param_with_standard_annotation, _remove_empty_values
@@ -45,6 +50,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :type optional: bool
     :param description: Description of the input
     :type description: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     _EMPTY = Parameter.empty
@@ -79,6 +86,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type description: str
         :param datastore: The datastore to upload local files to.
         :type datastore: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -107,6 +116,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -135,6 +146,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -157,6 +170,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
@@ -179,6 +194,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Input cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     def __init__(

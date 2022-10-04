@@ -9,8 +9,8 @@ synapse_compute_name = "spark31"
 
 
 def generate_dsl_pipeline_from_yaml() -> PipelineJob:
-    add_greeting_column_func = load_component(path=parent_dir + "/add_greeting_column_component.yml")
-    count_by_row_func = load_component(path=parent_dir + "/count_by_row_component.yml")
+    add_greeting_column_func = load_component(parent_dir + "/add_greeting_column_component.yml")
+    count_by_row_func = load_component(parent_dir + "/count_by_row_component.yml")
 
     @dsl.pipeline(description="submit a pipeline with spark job")
     def spark_pipeline_from_yaml(iris_data):

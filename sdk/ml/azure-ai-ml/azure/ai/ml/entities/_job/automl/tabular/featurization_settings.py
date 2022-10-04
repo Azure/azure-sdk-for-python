@@ -7,14 +7,14 @@
 import logging
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import BlockedTransformers
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BlockedTransformers
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLTransformerParameterKeys
-from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings
+from azure.ai.ml.constants._job.automl import AutoMLTransformerParameterKeys
+from azure.ai.ml.entities._job.automl.featurization_settings import FeaturizationSettings, FeaturizationSettingsType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
@@ -83,6 +83,8 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         :type mode: str
         :param enable_dnn_featurization: Whether to enable DNN featurization.
         :type enable_dnn_featurization: bool
+        :ivar type: Specifies the type of FeaturizationSettings. Set automatically to "Tabular" for this class.
+        :vartype type: str
         """
         super().__init__(dataset_language=dataset_language)
         self.blocked_transformers = blocked_transformers
@@ -90,6 +92,7 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         self.transformer_params = transformer_params
         self.mode = mode
         self.enable_dnn_featurization = enable_dnn_featurization
+        self.type = FeaturizationSettingsType.TABULAR
 
     @property
     def transformer_params(self) -> Dict[str, List[ColumnTransformer]]:
@@ -99,13 +102,14 @@ class TabularFeaturizationSettings(FeaturizationSettings):
     @transformer_params.setter
     def transformer_params(self, value: Dict[str, List[ColumnTransformer]]) -> None:
         self._transformer_params = (
-            None if not value
-            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value) : v for k, v in value.items()}
+            None
+            if not value
+            else {(AutoMLTransformerParameterKeys[camel_to_snake(k).upper()].value): v for k, v in value.items()}
         )
 
     @property
     def blocked_transformers(self) -> List[BlockedTransformers]:
-        """ A list of transformers to ignore when featurizing."""
+        """A list of transformers to ignore when featurizing."""
         return self._blocked_transformers
 
     @blocked_transformers.setter

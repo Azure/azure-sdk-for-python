@@ -12,10 +12,12 @@ from inspect import Parameter, signature
 from typing import Callable, Union
 
 from azure.ai.ml._utils.utils import (
+    get_all_enum_values_iter,
     is_private_preview_enabled,
     is_valid_node_name,
     parse_args_description_from_docstring,
 )
+from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import PipelineJob
@@ -24,12 +26,11 @@ from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, _get_param_with_standard_annotation
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
+from azure.ai.ml.exceptions import UserErrorException
 
 _BUILDER_STACK_MAX_DEPTH = 100
 
@@ -244,11 +245,24 @@ class PipelineComponentBuilder:
             if not isinstance(key, str) or not isinstance(value, NodeOutput) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
             meta = value._meta or value
+
+            # hack: map component output type to valid pipeline output type
+            def _map_type(_meta):
+                if type(_meta).__name__ != "InternalOutput":
+                    return _meta.type
+                if _meta.type in list(get_all_enum_values_iter(AssetTypes)):
+                    return _meta.type
+                if _meta.type in ["AnyFile"]:
+                    return AssetTypes.URI_FILE
+                return AssetTypes.URI_FOLDER
+
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             pipeline_output = PipelineOutput(
                 name=key,
                 data=None,
-                meta=Output(type=meta.type, description=meta.description, mode=meta.mode, is_control=meta.is_control),
+                meta=Output(
+                    type=_map_type(meta), description=meta.description, mode=meta.mode, is_control=meta.is_control
+                ),
                 owner="pipeline",
                 description=self._args_description.get(key, None),
             )

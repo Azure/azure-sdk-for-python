@@ -9,46 +9,43 @@ import pytest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageClassification as RestImageClassification,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageClassificationMultilabel as RestImageClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import ImageLimitSettings as RestImageLimitSettings
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ImageLimitSettings as RestImageLimitSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelDistributionSettingsClassification as RestImageClassificationSearchSpace,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelDistributionSettingsObjectDetection as RestImageObjectDetectionSearchSpace,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelSettingsClassification,
     ImageModelSettingsObjectDetection,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageObjectDetection as RestImageObjectDetection,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
-    ImageSweepLimitSettings as RestImageSweepLimitSettings,
-)
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     InstanceSegmentationPrimaryMetrics,
     JobBase,
     LogVerbosity,
@@ -87,10 +84,18 @@ def compute_binding_expected(mock_workspace_scope: OperationScope) -> str:
 
 @pytest.fixture
 def expected_image_limits(run_type: str) -> RestImageLimitSettings:
+    maxTrials = 1
+    maxConcurrentTrials = 1
+    if run_type == "sweep":
+        maxTrials = 20
+        maxConcurrentTrials = 4
+    elif run_type == "automode":
+        maxTrials = 2
+
     return RestImageLimitSettings(
         timeout=to_iso_duration_format_mins(60),
-        max_concurrent_trials=1,
-        max_trials=2 if run_type == "automode" else 1,
+        max_concurrent_trials=maxConcurrentTrials,
+        max_trials=maxTrials,
     )
 
 
@@ -116,10 +121,6 @@ def expected_image_target_column_name() -> str:
 @pytest.fixture
 def expected_image_sweep_settings() -> RestImageSweepSettings:
     return RestImageSweepSettings(
-        limits=RestImageSweepLimitSettings(
-            max_concurrent_trials=4,
-            max_trials=20,
-        ),
         sampling_algorithm="grid",
         early_termination=RestBanditPolicy(
             slack_factor=0.2,
@@ -343,6 +344,10 @@ def loaded_image_classification_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -367,6 +372,10 @@ def loaded_image_classification_multilabel_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -389,6 +398,10 @@ def loaded_image_object_detection_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]
@@ -411,6 +424,10 @@ def loaded_image_instance_segmentation_job(
     test_config = load_yaml(test_schema_path)
     if run_type == "automode":
         test_config["limits"]["max_trials"] = 2
+        test_config["limits"]["max_concurrent_trials"] = 1
+    elif run_type == "single":
+        test_config["limits"]["max_trials"] = 1
+        test_config["limits"]["max_concurrent_trials"] = 1
     if run_type != "sweep":
         # Remove search_space and sweep sections from the yaml
         del test_config["search_space"]

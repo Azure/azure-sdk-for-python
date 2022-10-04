@@ -123,12 +123,10 @@ def _validate_compute_or_resources(compute, resources):
 def _validate_input_output_mode(inputs, outputs):
     for input_name, input_value in inputs.items():
         if isinstance(input_value, Input) and input_value.mode != InputOutputModes.DIRECT:
-            msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job".format(
-                input_name, input_value.mode, InputOutputModes.DIRECT
-            )
+            msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
+                message=msg.format(input_name, input_value.mode, InputOutputModes.DIRECT),
+                no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", "direct"),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
@@ -138,12 +136,10 @@ def _validate_input_output_mode(inputs, outputs):
             and output_name != "default"
             and output_value.mode != InputOutputModes.DIRECT
         ):
-            msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job".format(
-                output_name, output_value.mode, InputOutputModes.DIRECT
-            )
+            msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
+                message=msg.format(output_name, output_value.mode, InputOutputModes.DIRECT),
+                no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", "direct"),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )

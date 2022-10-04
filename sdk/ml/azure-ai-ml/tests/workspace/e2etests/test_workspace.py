@@ -8,7 +8,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml.constants._common import PublicNetworkAccess
-from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentityType
+from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.core.paging import ItemPaged
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
 
@@ -162,7 +162,7 @@ class TestWorkspace(AzureRecordedTestCase):
             },
             {"primary_user_assigned_identity": user_assigned_identity.id},
         ]
-        wps = load_workspace(path="./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+        wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
         workspace = client.workspaces.begin_create(workspace=wps)
         assert workspace.name == wps_name
         assert workspace.location == location
