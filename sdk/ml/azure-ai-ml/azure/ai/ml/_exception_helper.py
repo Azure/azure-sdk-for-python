@@ -191,10 +191,38 @@ def format_create_validation_error(
     """
     Formats a detailed error message for validation errors.
     """
+    from azure.ai.ml.entities._util import REF_DOC_ERROR_MESSAGE_MAP
+
     entity_type, details = get_entity_type(error)
     error_types, details = format_details_section(error, details, entity_type)
     errors, resolutions = format_errors_and_resolutions_sections(entity_type, error_types)
-    description = YAML_CREATION_ERROR_DESCRIPTION.format(entity_type=entity_type) if yaml_operation else ""
+
+    if yaml_operation:
+        description = YAML_CREATION_ERROR_DESCRIPTION.format(entity_type=entity_type)
+
+        if entity_type == ErrorTarget.MODEL:
+            schema_type = "ModelSchema"
+        elif entity_type == ErrorTarget.DATA:
+            schema_type = "DataSchema"
+        elif entity_type == ErrorTarget.COMMAND_JOB:
+            schema_type = "CommandJobSchema"
+        elif entity_type == ErrorTarget.SWEEP_JOB:
+            schema_type = "SweepJobSchema"
+        elif entity_type == ErrorTarget.BLOB_DATASTORE:
+            schema_type = "AzureBlobSchema"
+        elif entity_type == ErrorTarget.GEN1_DATASTORE:
+            schema_type = "AzureDataLakeGen1Schema"
+        elif entity_type == ErrorTarget.GEN2_DATASTORE:
+            schema_type = "AzureDataLakeGen2Schema"
+        elif entity_type == ErrorTarget.FILE_DATASTORE:
+            schema_type = "AzureFileSchema"
+        elif entity_type == ErrorTarget.ENVIRONMENT:
+            schema_type = "EnvironmentSchema"
+
+        resolutions += REF_DOC_ERROR_MESSAGE_MAP.get(schema_type, "")
+    else:
+        description = ""
+
     formatted_error = SCHEMA_VALIDATION_ERROR_TEMPLATE.format(
         description=description,
         error_msg=errors,
