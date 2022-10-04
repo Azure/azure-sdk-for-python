@@ -11,12 +11,11 @@ from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthMode,
-    IdentityConfiguration,
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
-from azure.ai.ml._utils.utils import convert_identity_dict, dict_eq
+from azure.ai.ml._utils.utils import dict_eq
 from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
     AML_TOKEN_YAML,
@@ -25,8 +24,14 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    EndpointAuthKeys as RestEndpointAuthKeys,
+    EndpointAuthToken as RestEndpointAuthToken
+)
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -64,6 +69,7 @@ class OnlineEndpoint(Endpoint):
 
     def __init__(
         self,
+        *,
         name: str = None,
         tags: Dict[str, Any] = None,
         properties: Dict[str, Any] = None,
@@ -109,7 +115,8 @@ class OnlineEndpoint(Endpoint):
         return self._provisioning_state
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
-        self.identity = convert_identity_dict(self.identity)
+        # pylint: disable=protected-access
+        identity = self.identity._to_online_endpoint_rest_object() if self.identity else None
         validate_endpoint_or_deployment_name(self.name)
         validate_identity_type_defined(self.identity)
         properties = RestOnlineEndpoint(
@@ -125,7 +132,7 @@ class OnlineEndpoint(Endpoint):
         return OnlineEndpointData(
             location=location,
             properties=properties,
-            identity=self.identity,
+            identity=identity,
             tags=self.tags,
         )
 
@@ -172,8 +179,10 @@ class OnlineEndpoint(Endpoint):
 
     @classmethod
     def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
-
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
+        # pylint: disable=protected-access
+        identity = IdentityConfiguration._from_online_endpoint_rest_object(
+            resource.identity) if resource.identity else None
         if resource.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=resource.id,
@@ -188,7 +197,7 @@ class OnlineEndpoint(Endpoint):
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
                 openapi_uri=resource.properties.swagger_uri,
-                identity=resource.identity,
+                identity=identity,
                 kind=resource.kind,
             )
         else:
@@ -205,7 +214,7 @@ class OnlineEndpoint(Endpoint):
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
                 openapi_uri=resource.properties.swagger_uri,
-                identity=resource.identity,
+                identity=identity,
                 kind=resource.kind,
                 public_network_access=resource.properties.public_network_access,
             )
@@ -410,3 +419,91 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
 
     def _to_dict(self) -> Dict:
         return ManagedOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+
+
+class EndpointAuthKeys(RestTranslatableMixin):
+    """Keys for endpoint authentication.
+
+    :ivar primary_key: The primary key.
+    :vartype primary_key: str
+    :ivar secondary_key: The secondary key.
+    :vartype secondary_key: str
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword primary_key: The primary key.
+        :paramtype primary_key: str
+        :keyword secondary_key: The secondary key.
+        :paramtype secondary_key: str
+        """
+        super(EndpointAuthKeys, self).__init__(**kwargs)
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestEndpointAuthKeys) -> "EndpointAuthKeys":
+        return cls(
+            primary_key=obj.primary_key,
+            secondary_key=obj.secondary_key
+        )
+
+    def _to_rest_object(self) -> RestEndpointAuthKeys:
+        return RestEndpointAuthKeys(
+            primary_key=self.primary_key,
+            secondary_key=self.secondary_key
+        )
+
+
+class EndpointAuthToken(RestTranslatableMixin):
+    """Endpoint authentication token.
+
+    :ivar access_token: Access token for endpoint authentication.
+    :vartype access_token: str
+    :ivar expiry_time_utc: Access token expiry time (UTC).
+    :vartype expiry_time_utc: long
+    :ivar refresh_after_time_utc: Refresh access token after time (UTC).
+    :vartype refresh_after_time_utc: long
+    :ivar token_type: Access token type.
+    :vartype token_type: str
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword access_token: Access token for endpoint authentication.
+        :paramtype access_token: str
+        :keyword expiry_time_utc: Access token expiry time (UTC).
+        :paramtype expiry_time_utc: long
+        :keyword refresh_after_time_utc: Refresh access token after time (UTC).
+        :paramtype refresh_after_time_utc: long
+        :keyword token_type: Access token type.
+        :paramtype token_type: str
+        """
+        super(EndpointAuthToken, self).__init__(**kwargs)
+        self.access_token = kwargs.get('access_token', None)
+        self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
+        self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)
+        self.token_type = kwargs.get('token_type', None)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestEndpointAuthToken) -> "EndpointAuthToken":
+        return cls(
+            access_token=obj.access_token,
+            expiry_time_utc=obj.expiry_time_utc,
+            refresh_after_time_utc=obj.refresh_after_time_utc,
+            token_type=obj.token_type,
+        )
+
+    def _to_rest_object(self) -> RestEndpointAuthToken:
+        return RestEndpointAuthToken(
+            access_token=self.access_token,
+            expiry_time_utc=self.expiry_time_utc,
+            refresh_after_time_utc=self.refresh_after_time_utc,
+            token_type=self.token_type,
+        )

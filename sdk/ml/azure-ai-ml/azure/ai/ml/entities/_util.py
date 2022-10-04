@@ -227,6 +227,7 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
     """
+    # pylint: disable=too-many-return-statements
     if target_obj is None:
         return None
     if isinstance(target_obj, dict):
@@ -247,6 +248,9 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
         # pylint: disable=protected-access
+        from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
+        if isinstance(target_obj, _BaseIdentityConfiguration):
+            return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
         return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
 
     if isinstance(target_obj, msrest.serialization.Model):

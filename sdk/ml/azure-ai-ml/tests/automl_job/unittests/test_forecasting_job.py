@@ -4,7 +4,7 @@
 
 import pytest
 
-from azure.ai.ml import UserIdentity
+from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import (
@@ -22,7 +22,7 @@ from azure.ai.ml.entities._job.automl.tabular import ForecastingJob
 class TestAutoMLForecasting:
     def test_forecasting_task(self):
         # Create AutoML Forecasting Task
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         forecasting_job = forecasting(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",

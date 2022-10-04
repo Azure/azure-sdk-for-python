@@ -4,7 +4,7 @@
 
 import pytest
 
-from azure.ai.ml import UserIdentity
+from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ImageModelSettingsObjectDetection,
     InstanceSegmentationPrimaryMetrics,
@@ -29,7 +29,7 @@ class TestAutoMLImageInstanceSegmentation:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_image_instance_segmentation_task(self, run_type):
         # Create AutoML Image Object Detection task
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         image_instance_segmentation_job = image_instance_segmentation(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="label",
