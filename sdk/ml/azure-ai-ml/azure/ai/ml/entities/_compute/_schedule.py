@@ -9,6 +9,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeSchedules 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ScheduleStatus as ScheduleState
 from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 from .._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase

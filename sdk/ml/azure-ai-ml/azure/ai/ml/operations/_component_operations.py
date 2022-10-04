@@ -42,6 +42,7 @@ from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
+from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
@@ -203,6 +204,7 @@ class ComponentOperations(_ScopeDependentOperations):
         component = Component._from_rest_object(result)
         return component
 
+    @experimental
     @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
     # pylint: disable=no-self-use
     def validate(

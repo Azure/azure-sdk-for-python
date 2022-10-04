@@ -11,6 +11,7 @@ from typing import Dict, Union
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DatastoreData, DatastoreType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import HdfsDatastore as RestHdfsDatastore
 from azure.ai.ml._schema._datastore._on_prem import HdfsSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import _from_rest_datastore_credentials_preview
@@ -20,6 +21,7 @@ from ._constants import HTTP
 from ._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
 
 
+@experimental
 class HdfsDatastore(Datastore):
     """HDFS datastore that is linked to an Azure ML workspace.
 

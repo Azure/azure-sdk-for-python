@@ -11,6 +11,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     SynapseSparkProperties,
 )
 from azure.ai.ml._schema.compute.synapsespark_compute import SynapseSparkComputeSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
@@ -81,6 +82,7 @@ class AutoPauseSettings:
         )
 
 
+@experimental
 class SynapseSparkCompute(Compute):
     """SynapseSpark Compute resource
 

@@ -5,10 +5,12 @@
 from base64 import b64encode
 
 from azure.ai.ml._restclient.v2022_02_01_preview import models as model_preview
+from azure.ai.ml._utils._experimental import experimental
 
 from .credentials import DatastoreCredentials
 
 
+@experimental
 class BaseKerberosCredentials(DatastoreCredentials):
     def __init__(self, kerberos_realm: str, kerberos_kdc_address: str, kerberos_principal: str):
         super().__init__()
@@ -17,6 +19,7 @@ class BaseKerberosCredentials(DatastoreCredentials):
         self.kerberos_principal = kerberos_principal
 
 
+@experimental
 class KerberosKeytabCredentials(BaseKerberosCredentials):
     def __init__(
         self,
@@ -72,6 +75,7 @@ class KerberosKeytabCredentials(BaseKerberosCredentials):
         return not self.__eq__(other)
 
 
+@experimental
 class KerberosPasswordCredentials(BaseKerberosCredentials):
     def __init__(
         self,
