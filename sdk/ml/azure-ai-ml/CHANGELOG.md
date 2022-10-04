@@ -15,7 +15,7 @@
 ### Features Added
 
 ### Breaking Changes
-- OnlineDeploymentOperations.delete has been renamed to begin_attach.
+- OnlineDeploymentOperations.delete has been renamed to begin_delete.
 - Datastore credentials are switched to use unified credential configuration classes.
 - UserAssignedIdentity is replaced by ManagedIdentityConfiguration
 - Endpoint and Job use unified identity classes.
