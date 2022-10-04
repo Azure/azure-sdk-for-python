@@ -214,7 +214,24 @@ class CodeModel:
         return ogs
 
     def serialize(self):
-        return self.serializer.serialize()
+        # return self.serializer.serialize()
+        retval = {}
+
+        for operation_group in self.operation_groups:
+            if operation_group.added_on:
+                retval[operation_group.name] = {"added_on": operation_group.added_on}
+            for operation in operation_group.operations:
+                if operation.added_on:
+                    retval.setdefault(operation_group.name, {}).setdefault("operations", {}).setdefault(
+                        operation.name, {}
+                    )["addedOn"] = operation.added_on
+                for parameter in operation.parameters:
+                    if parameter.added_on:
+                        retval.setdefault(operation_group.name, {}).setdefault("operations", {}).setdefault(
+                            operation.name, {}
+                        ).setdefault("parameters", {}).setdefault(parameter.name, {})["addedOn"] = parameter.added_on
+        with open("output.json", "w") as fd:
+            fd.write(json.dumps(retval))
 
 
 def get_args() -> argparse.Namespace:
