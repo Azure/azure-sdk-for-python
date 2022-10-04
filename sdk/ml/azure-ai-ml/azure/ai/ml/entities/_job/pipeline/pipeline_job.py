@@ -12,8 +12,8 @@ from typing import Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe

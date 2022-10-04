@@ -12,7 +12,7 @@ from typing import Dict, List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component

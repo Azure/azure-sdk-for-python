@@ -6,13 +6,13 @@
 
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Regression as RestRegression
-from azure.ai.ml._restclient.v2022_06_01_preview.models import RegressionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Regression as RestRegression
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RegressionPrimaryMetrics, TaskType
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants._job.automl  import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
@@ -196,7 +196,7 @@ class RegressionJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLRegressionNodeSchema
 
