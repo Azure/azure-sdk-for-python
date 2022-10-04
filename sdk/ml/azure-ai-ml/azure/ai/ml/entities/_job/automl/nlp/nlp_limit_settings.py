@@ -8,7 +8,15 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NlpLimitSettings(RestTranslatableMixin):
-    """Limit settings for all AutoML NLP Verticals."""
+    """Limit settings for all AutoML NLP Verticals.
+
+    :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
+    :type max_concurrent_trials: int, optional
+    :param max_trials: Maximum number of AutoML iterations.
+    :type max_trials: int, optional
+    :param timeout_minutes: AutoML job timeout.
+    :type timeout_minutes: int, optional
+    """
 
     def __init__(
         self,

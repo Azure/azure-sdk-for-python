@@ -31,6 +31,13 @@ class RegressionJob(AutoMLTabular):
         primary_metric: str = None,
         **kwargs,
     ) -> None:
+        """Initialize a new AutoML Regression task.
+
+        :param primary_metric: The primary metric to use for optimization
+        :type primary_metric: str, optional
+        :param kwargs: Job-specific arguments
+        :type kwargs: dict
+        """
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
         limits = kwargs.pop("limits", None)
