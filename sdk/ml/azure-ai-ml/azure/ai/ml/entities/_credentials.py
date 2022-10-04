@@ -360,6 +360,7 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
             object_id: str = None,
             principal_id: str = None
     ):
+        super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
         self.client_id = client_id
         # TODO: Check if both client_id and resource_id are required
@@ -430,6 +431,7 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     """User identity configuration."""
 
     def __init__(self):
+        super().__init__()
         self.type = camel_to_snake(IdentityConfigurationType.USER_IDENTITY)
 
     # pylint: disable=no-self-use
@@ -451,6 +453,7 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
     """AML Token identity configuration."""
 
     def __init__(self):
+        super().__init__()
         self.type = camel_to_snake(IdentityConfigurationType.AML_TOKEN)
 
     # pylint: disable=no-self-use
