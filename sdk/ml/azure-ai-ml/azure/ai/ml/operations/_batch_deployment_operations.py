@@ -7,7 +7,8 @@
 from typing import Dict, List
 import re
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource as RestBatchJobResource
+from azure.ai.ml.entities._deployment.batch_job_resource import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -229,7 +230,13 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             )
 
             # This is necessary as the paged result need to be resolved inside the context manager
-            return list(result)
+
+            job_resources = []
+
+            for resource in list(result):
+                job_resources.append(BatchJobResource._from_rest_object(resource))
+
+            return job_resources
 
     def _get_workspace_location(self) -> str:
         """Get the workspace location TODO[TASK 1260265]: can we cache this
