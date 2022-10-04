@@ -20,11 +20,27 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
-from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy, EarlyTerminationPolicy
+from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+    BanditPolicy,
+    MedianStoppingPolicy,
+    TruncationSelectionPolicy,
+)
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._job.sweep.search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    SweepDistribution,
+    Uniform,
+)
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
@@ -54,9 +70,21 @@ class Sweep(ParameterizedSweep, BaseNode):
     :param objective: the objective used to pick target run with the local optimal hyperparameter in search space.
     :type objective: Objective
     :param early_termination_policy: early termination policy of the sweep node.
-    :type early_termination_policy: EarlyTerminationPolicy
+    :type early_termination_policy: Union[
+    ~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     :param search_space: hyperparameter search space to run trials.
-    :type search_space: Dict[str, SweepDistribution]
+    :type search_space: Dict[str, Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]]
     :param inputs: Inputs to the command.
     :type inputs: Dict[str, Union[Input, str, bool, int, float]]
     :param outputs: Mapping of output data bindings used in the job.
@@ -76,8 +104,11 @@ class Sweep(ParameterizedSweep, BaseNode):
         limits: SweepJobLimits = None,
         sampling_algorithm: Union[str, SamplingAlgorithm] = None,
         objective: Objective = None,
-        early_termination: EarlyTerminationPolicy = None,
-        search_space: Dict[str, SweepDistribution] = None,
+        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        search_space: Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ] = None,
         inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
         outputs: Dict[str, Union[str, Output]] = None,
         identity: Union[
@@ -243,7 +274,10 @@ class Sweep(ParameterizedSweep, BaseNode):
 
         Input will be restored to Input/LiteralInput before returned.
         """
-        search_space: Dict[str, SweepDistribution] = {}
+        search_space: Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ] = {}
         inputs: Dict[str, Union[Input, str, bool, int, float]] = {}
         if built_inputs is not None:
             for input_name, input_obj in built_inputs.items():
