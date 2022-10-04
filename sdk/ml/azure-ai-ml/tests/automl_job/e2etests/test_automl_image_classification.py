@@ -128,7 +128,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
         # the limits object directly.
         image_classification_job_automode.properties["enable_automode"] = True
         image_classification_job_automode.limits.max_trials = 2
-        image_classification_job_automode.limits.max_concurrent_trials = 2
+        image_classification_job_automode.limits.max_concurrent_trials = 1
 
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_job_sweep)
