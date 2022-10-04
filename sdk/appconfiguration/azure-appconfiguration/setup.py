@@ -73,6 +73,6 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",
-        "isodate",
+        "isodate>=0.6.0",
     ],
 )
