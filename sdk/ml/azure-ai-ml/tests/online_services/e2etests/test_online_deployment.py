@@ -50,7 +50,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=endpoint.name)
 
-    @pytest.skip(reason="Known failure")
+    @pytest.mark.skip(reason="Known failure")
     def test_online_deployment_skip_script_validation(self, client: MLClient,variable_recorder) -> None:
         online_endpoint_name = variable_recorder.get_or_record("online_endpoint_name", "online-endp" + uuid.uuid4().hex[:15])
         online_deployment_name = variable_recorder.get_or_record("online_deployment_name", "online-dpm" + uuid.uuid4().hex[:15])
