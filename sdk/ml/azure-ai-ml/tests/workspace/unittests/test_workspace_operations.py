@@ -2,11 +2,13 @@ from typing import Callable
 from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
+from azure.ai.ml._utils.utils import camel_to_snake
 from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.entities import CustomerManagedKey, ManagedServiceIdentity, Workspace, WorkspaceUserAssignedIdentity
+from azure.ai.ml.entities import CustomerManagedKey, Workspace, \
+    IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.polling import LROPoller
 
@@ -119,12 +121,12 @@ class TestWorkspaceOperation:
             public_network_access="Enabled",
             container_registry="foo_conntainer_registry",
             application_insights="foo_application_insights",
-            identity=ManagedServiceIdentity(
-                type=ManagedServiceIdentityType.USER_ASSIGNED,
-                user_assigned_identities={
-                    "resource1": WorkspaceUserAssignedIdentity(),
-                    "resource2": WorkspaceUserAssignedIdentity(),
-                },
+            identity=IdentityConfiguration(
+                type=camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED),
+                user_assigned_identities=[
+                    ManagedIdentityConfiguration(resource_id="resource1"),
+                    ManagedIdentityConfiguration(resource_id="resource2")
+                ],
             ),
             primary_user_assigned_identity="resource2",
         )
