@@ -10,7 +10,6 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as Rest
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationPrimaryMetrics
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageClassification as RestImageClassification
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, TaskType
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
