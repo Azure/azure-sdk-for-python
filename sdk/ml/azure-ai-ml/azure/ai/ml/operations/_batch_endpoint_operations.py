@@ -193,9 +193,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         endpoint_name: str,
         *,
         deployment_name: str = None,
-        input: Input = None,  # pylint: disable=redefined-builtin
-        params_override=None,
-        **kwargs,  # pylint: disable=unused-argument
+        inputs: Dict[str, Input] = None,
+        **kwargs,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
 
@@ -204,10 +203,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :param deployment_name: The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
         :type deployment_name: Optional[str]
-        :param input: An existing data asset, public uri file or folder to use with the deployment
-        :type input: Optional[Input]
-        :param params_override: Parameters to overwrite deployment configurations, for batch endpoints only.
-        :type params_override: Dict
+        :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder to use with the deployment
+        :type inputs: Dict[str, Input]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets
@@ -219,20 +216,29 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :return: The invoked batch deployment job.
         :rtype: BatchJob
         """
-        params_override = params_override or []
+        params_override = kwargs.get("params_override", None) or []
+        input = kwargs.get("input", None) # pylint: disable=redefined-builtin
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
         if deployment_name:
             self._validate_deployment_name(endpoint_name, deployment_name)
 
-        if isinstance(input, Input):
+        if input and isinstance(input, Input):
             if HTTP_PREFIX not in input.path:
                 self._resolve_input(input, os.getcwd())
             # MFE expects a dictionary as input_data that's why we are using
-            # "input_data" as key before parsing it to JobInput
-            params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"input_data": input}})
+            # "UriFolder" or "UriFile" as keys depending on the input type
+            if input.type == "uri_folder":
+                params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFolder": input}})
+            elif input.type == "uri_file":
+                params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFile": input}})
+        elif inputs:
+            for key, input_data in inputs.items():
+                if isinstance(input_data, Input) and HTTP_PREFIX not in input_data.path:
+                    self._resolve_input(input_data, os.getcwd())
+            params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
         else:
             msg = (
-                "Unsupported input please use either a path on the datastore, public URI, "
+                "Unsupported input type please use a dictionary of either a path on the datastore, public URI, "
                 "a registered data asset, or a local folder path."
             )
             raise ValidationException(
@@ -277,9 +283,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
         response = self._requests_pipeline.post(
-            endpoint.properties.scoring_uri,
-            json=BatchJobResource(properties=batch_job).serialize(),
-            headers=headers,
+           endpoint.properties.scoring_uri,
+           json=BatchJobResource(properties=batch_job).serialize(),
+           headers=headers,
         )
         validate_response(response)
         batch_job = json.loads(response.text())
