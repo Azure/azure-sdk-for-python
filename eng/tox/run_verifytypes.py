@@ -40,7 +40,7 @@ if __name__ == "__main__":
                 "-m",
                 "pyright",
                 "--verifytypes",
-                args.target_package.replace("-", "."),
+                package_name.replace("-", "."),
                 "--ignoreexternal",
                 "--verbose",
             ]
