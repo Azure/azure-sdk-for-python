@@ -34,3 +34,16 @@ steps:
         --disablecov
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
+
+  - task: PythonScript@0
+    displayName: 'Run Pyright verifytypes'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "$(TargetingString)"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="verifytypes"
+        --disablecov
+    env: ${{ parameters.EnvVars }}
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
