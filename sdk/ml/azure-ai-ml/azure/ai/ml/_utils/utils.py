@@ -175,8 +175,8 @@ def load_file(file_path: str) -> str:
     :return: A string representation of the local file's contents.
     :rtype: str
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException  
-    # These imports can't be placed in at top file level because it will cause a circular import in 
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
     try:
@@ -203,8 +203,8 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException  
-    # These imports can't be placed in at top file level because it will cause a circular import in 
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
     try:
@@ -235,8 +235,8 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     :return: A dictionary representation of the local file's contents.
     :rtype: Dict
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException  
-    # These imports can't be placed in at top file level because it will cause a circular import in 
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
     if source is None:
@@ -332,8 +332,8 @@ def dump_yaml_to_file(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped.
         Details will be provided in the error message.
     """
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException  
-    # These imports can't be placed in at top file level because it will cause a circular import in 
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
     # Check for deprecated path input, either named or as first unnamed input
@@ -431,8 +431,8 @@ def is_url(value: Union[PathLike, str]) -> bool:
 
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
 def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException  
-    # These imports can't be placed in at top file level because it will cause a circular import in 
+    from azure.ai.ml.exceptions import ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
     try:
@@ -465,8 +465,8 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
 
 
 def validate_ml_flow_folder(path: str, model_type: string) -> None:
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException  
-    # These imports can't be placed in at top file level because it will cause a circular import in 
+    from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
     if not isinstance(path, str):
@@ -865,8 +865,8 @@ def get_all_enum_values_iter(enum_type):
 def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException  
-    # These imports can't be placed in at top file level because it will cause a circular import in 
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+    # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
     msg = "Both subscription id and resource group are required for this operation, missing {}"
