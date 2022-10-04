@@ -85,6 +85,13 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
+from ._workspace.diagnose import (
+    DiagnoseRequestProperties,
+    DiagnoseResponseResult,
+    DiagnoseResponseResultValue,
+    DiagnoseResult,
+    DiagnoseWorkspaceParameters,
+)
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import WorkspaceKeys, NotebookAccessKeys, ContainerRegistryCredential
@@ -144,6 +151,11 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "DiagnoseRequestProperties",
+    "DiagnoseResult",
+    "DiagnoseResponseResult",
+    "DiagnoseResponseResultValue",
+    "DiagnoseWorkspaceParameters",
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",
