@@ -152,7 +152,7 @@ def start_test_proxy():
 
                 _LOGGER.info("{} is calculated repo root".format(root))
                 proc = subprocess.Popen(
-                    shlex.split('test-proxy --storage-location="{}" --urls "{}"'.format(root, PROXY_URL)),
+                    shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
                     stderr=log,
                 )
