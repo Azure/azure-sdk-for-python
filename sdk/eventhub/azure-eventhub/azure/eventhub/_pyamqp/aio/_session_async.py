@@ -9,7 +9,7 @@ import uuid
 import logging
 import time
 import asyncio
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 from ..constants import ConnectionState, SessionState, SessionTransferState, Role
 from ._sender_async import SenderLink
@@ -94,7 +94,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             new_state,
             extra=self.network_trace_params,
         )
-        futures = []
         await asyncio.gather(
             *[
                 asyncio.ensure_future(
@@ -103,7 +102,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 for link in self.links.values()
             ]
         )
-        await asyncio.gather(*futures)
 
     async def _on_connection_state_change(self):
         if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
@@ -200,9 +198,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[1]] = self.links[
                 frame[0].decode("utf-8")
             ]  # name and handle
-            await self._input_handles[
+            await self._input_handles[  # pylint: disable=protected-access
                 frame[1]
-            ]._incoming_attach(  # pylint: disable=protected-access
+            ]._incoming_attach(
                 frame
             )
         except KeyError:
@@ -264,9 +262,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         )  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
         if frame[4] is not None:  # handle
-            await self._input_handles[
+            await self._input_handles[  # pylint: disable=protected-access
                 frame[4]
-            ]._incoming_flow(  # pylint: disable=protected-access
+            ]._incoming_flow(
                 frame
             )
         else:
@@ -300,9 +298,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             # available size for payload per frame is calculated as following:
             # remote max frame size - transfer overhead (calculated) - header (8 bytes)
             available_frame_size = (
-                self._connection._remote_max_frame_size
+                self._connection._remote_max_frame_size  # pylint: disable=protected-access
                 - transfer_overhead_size
-                - 8  # pylint: disable=protected-access
+                - 8
             )
 
             start_idx = 0
@@ -358,9 +356,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
-            await self._input_handles[
+            await self._input_handles[  # pylint: disable=protected-access
                 frame[0]
-            ]._incoming_transfer(  # pylint: disable=protected-access
+            ]._incoming_transfer(
                 frame
             )
         except KeyError:

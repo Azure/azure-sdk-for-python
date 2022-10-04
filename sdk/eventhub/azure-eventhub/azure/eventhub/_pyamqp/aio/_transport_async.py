@@ -427,12 +427,14 @@ class AsyncTransport(
             )
 
 
-class WebSocketTransportAsync(AsyncTransportMixin):
+class WebSocketTransportAsync(
+    AsyncTransportMixin
+): # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         host,
         *,
-        port=WEBSOCKET_PORT,  # pylint: disable=unused-argument
+        port=WEBSOCKET_PORT,
         connect_timeout=None,
         ssl_opts=None,
         **kwargs
