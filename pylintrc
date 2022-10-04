@@ -55,3 +55,6 @@ function-name-hint=lower_case_with_underscores
 argument-name-hint=lower_case_with_underscores
 variable-name-hint=lower_case_with_underscores
 inlinevar-name-hint=lower_case_with_underscores (short is OK)
+
+[TYPECHECK]
+generated-members=js.*

@@ -12,8 +12,6 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthKeys,
-    EndpointAuthToken,
     KeyType,
     RegenerateEndpointKeysRequest,
 )
@@ -23,7 +21,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -34,6 +31,7 @@ from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys, EndpointAuthToken
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -42,7 +40,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
@@ -68,7 +66,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._online_operation = service_client_02_2022_preview.online_endpoints
         self._online_deployment_operation = service_client_02_2022_preview.online_deployments
         self._all_operations = all_operations
@@ -79,7 +77,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
     def list(self, *, local: bool = False) -> ItemPaged[OnlineEndpoint]:
         """List endpoints of the workspace.
 
@@ -99,7 +97,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
         """Get the auth credentials.
 
@@ -107,12 +105,12 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if cannot get online credentials
         :return: Depending on the auth mode in the endpoint, returns either keys or token
-        :rtype: Union[EndpointAuthKeys, EndpointAuthToken]
+        :rtype: Union[~azure.ai.ml.entities.EndpointAuthKeys, ~azure.ai.ml.entities.EndpointAuthToken]
         """
         return self._get_online_credentials(name=name)
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -160,7 +158,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return converted_endpoint
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str = None, *, local: bool = False) -> LROPoller[None]:
         """Delete an Online Endpoint.
 
@@ -196,7 +194,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, *, local: bool = False) -> LROPoller[OnlineEndpoint]:
         """Create or update an endpoint.
 
@@ -258,7 +256,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self,
         name: str,
@@ -293,7 +291,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
@@ -376,6 +374,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
                 endpoint_name=name,
+                # pylint: disable=protected-access
+                cls=lambda x, response, z: EndpointAuthKeys._from_rest_object(response),
                 **self._init_kwargs,
             )
 
@@ -383,6 +383,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             endpoint_name=name,
+            # pylint: disable=protected-access
+            cls=lambda x, response, z: EndpointAuthToken._from_rest_object(response),
             **self._init_kwargs,
         )
 
