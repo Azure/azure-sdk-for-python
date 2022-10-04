@@ -92,7 +92,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         # the limits object directly.
         image_instance_segmentation_job_automode.properties["enable_automode"] = True
         image_instance_segmentation_job_automode.limits.max_trials = 2
-        image_instance_segmentation_job_automode.limits.max_concurrent_trials = 1
+        image_instance_segmentation_job_automode.limits.max_concurrent_trials = 2
 
         # Trigger regular sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_instance_segmentation_job_sweep)
