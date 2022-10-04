@@ -2,7 +2,7 @@ from lib2to3.pytree import convert
 
 import pytest
 
-from azure.ai.ml import UserIdentity
+from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     JobBase,
@@ -106,7 +106,7 @@ class TestAutoMLTextClassificationMultilabelJob:
         timeout = 30
         dataset_language = "eng"
 
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         job = text_classification_multilabel(
             primary_metric=primary_metric,
             log_verbosity=log_verbosity,
@@ -154,7 +154,7 @@ class TestAutoMLTextClassificationMultilabelJob:
         timeout = 30
         dataset_language = "eng"
 
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         expected_job = text_classification_multilabel(
             target_column_name=label_column,
             training_data=Input(type=AssetTypes.MLTABLE, path=training_data_uri),
@@ -180,7 +180,7 @@ class TestAutoMLTextClassificationMultilabelJob:
             ),
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
         )
-        job_data = JobBase(properties=RestAutoMLJob(task_details=task_details, identity=identity._to_rest_object()))
+        job_data = JobBase(properties=RestAutoMLJob(task_details=task_details, identity=identity._to_job_rest_object()))
         # Test converting REST object to Job
         converted_to_job = TextClassificationMultilabelJob._from_rest_object(job_data)
         assert converted_to_job.identity == identity

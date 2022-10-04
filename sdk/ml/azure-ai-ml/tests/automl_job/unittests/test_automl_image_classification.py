@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 
 import pytest
+from azure.ai.ml import UserIdentityConfiguration
 
-from azure.ai.ml import UserIdentity
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     ClassificationPrimaryMetrics,
     ImageModelSettingsClassification,
@@ -26,7 +26,7 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 class TestAutoMLImageClassification:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_image_classification_task(self, run_type):
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         # Create AutoML Image Classification task
         image_classification_job = image_classification(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
