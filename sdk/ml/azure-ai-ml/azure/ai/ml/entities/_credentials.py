@@ -57,7 +57,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 
 
-class AccountKeyConfiguration(RestTranslatableMixin, ABC):
+class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
+    def __init__(self):
+        self.type = None
+
+
+class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
             self,
             *,
@@ -83,7 +88,7 @@ class AccountKeyConfiguration(RestTranslatableMixin, ABC):
         return not self.__eq__(other)
 
 
-class SasTokenConfiguration(RestTranslatableMixin, ABC):
+class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
             self,
             *,
@@ -146,7 +151,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
         return self.pat == other.pat
 
 
-class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
+class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     """Username Password Credentials.
 
     :param username: username
@@ -183,7 +188,7 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
         return self.username == other.username and self.password == other.password
 
 
-class BaseTenantCredentials(RestTranslatableMixin, ABC):
+class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
     def __init__(
             self,
             authority_url: str = _get_active_directory_url_from_metadata(),
@@ -312,7 +317,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         return not self.__eq__(other)
 
 
-class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin):
+class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin):
 
     def __init__(self):
         self.type = None
@@ -338,7 +343,7 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin):
         )
 
 
-class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
+class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """Managed Identity Credentials.
 
     :param client_id: client id, should be guid
@@ -418,7 +423,7 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         return self.client_id == other.client_id and self.resource_id == other.resource_id
 
 
-class UserIdentityConfiguration(ABC, RestTranslatableMixin):
+class UserIdentityConfiguration(_BaseIdentityConfiguration):
     """User identity configuration."""
 
     def __init__(self):
@@ -439,7 +444,7 @@ class UserIdentityConfiguration(ABC, RestTranslatableMixin):
         return self._to_job_rest_object() == other._to_job_rest_object()
 
 
-class AmlTokenConfiguration(ABC, RestTranslatableMixin):
+class AmlTokenConfiguration(_BaseIdentityConfiguration):
     """AML Token identity configuration."""
 
     def __init__(self):
