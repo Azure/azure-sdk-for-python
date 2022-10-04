@@ -39,7 +39,6 @@ from azure.ai.ml.entities._job.sweep.search_space import (
 )
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
-from marshmallow import EXCLUDE, Schema
 
 from ..._schema import PathAwareSchema
 from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
@@ -67,7 +66,10 @@ class Sweep(ParameterizedSweep, BaseNode):
     :param objective: the objective used to pick target run with the local optimal hyperparameter in search space.
     :type objective: Objective
     :param early_termination_policy: early termination policy of the sweep node.
-    :type early_termination_policy: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy, ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy, ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+    :type early_termination_policy: Union[
+    ~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     :param search_space: hyperparameter search space to run trials.
     :type search_space: Dict[str, Union[~azure.ai.ml.entities.Choice,
     ~azure.ai.ml.entities.LogNormal,

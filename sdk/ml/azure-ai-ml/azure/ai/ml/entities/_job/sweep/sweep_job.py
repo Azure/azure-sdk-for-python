@@ -97,7 +97,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :type trial: Union[azure.ai.ml.entities.CommandJob, azure.ai.ml.entities.CommandComponent]
     :param early_termination: The early termination policy to use.A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
-    :type early_termination:  Union[~azure.mgmt.machinelearningservices.models.BanditPolicy, ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy, ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+    :type early_termination:  Union[
+    ~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     :param limits: Limits for the sweep job.
     :type limits: ~azure.ai.ml.entities.SweepJobLimits
     :param kwargs: A dictionary of additional configuration parameters.

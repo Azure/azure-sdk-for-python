@@ -137,7 +137,10 @@ class AutoMLImage(AutoMLVertical, ABC):
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
         :param early_termination: Type of early termination policy.
-        :type early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy, ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy, ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        :type early_termination: Union[
+        ~azure.mgmt.machinelearningservices.models.BanditPolicy,
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm
