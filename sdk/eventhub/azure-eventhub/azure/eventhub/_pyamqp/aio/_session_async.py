@@ -95,10 +95,14 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             extra=self.network_trace_params,
         )
         futures = []
-        for link in self.links.values():
-            futures.append(
-                asyncio.ensure_future(link._on_session_state_change())  # pylint: disable=protected-access
-            )
+        await asyncio.gather(
+            *[
+                asyncio.ensure_future(
+                    link._on_session_state_change()  # pylint: disable=protected-access
+                )
+                for link in self.links.values()
+            ]
+        )
         await asyncio.gather(*futures)
 
     async def _on_connection_state_change(self):
@@ -196,7 +200,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[1]] = self.links[
                 frame[0].decode("utf-8")
             ]  # name and handle
-            await self._input_handles[frame[1]]._incoming_attach(  # pylint: disable=protected-access
+            await self._input_handles[
+                frame[1]
+            ]._incoming_attach(  # pylint: disable=protected-access
                 frame
             )
         except KeyError:
@@ -258,14 +264,17 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         )  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
         if frame[4] is not None:  # handle
-            await self._input_handles[frame[4]]._incoming_flow(  # pylint: disable=protected-access
+            await self._input_handles[
+                frame[4]
+            ]._incoming_flow(  # pylint: disable=protected-access
                 frame
             )
         else:
             futures = []
             for link in self._output_handles.values():
                 if (
-                    self.remote_incoming_window > 0 and not link._is_closed  # pylint: disable=protected-access
+                    self.remote_incoming_window > 0
+                    and not link._is_closed  # pylint: disable=protected-access
                 ):
                     futures.append(
                         link._incoming_flow(frame)  # pylint: disable=protected-access
@@ -291,7 +300,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             # available size for payload per frame is calculated as following:
             # remote max frame size - transfer overhead (calculated) - header (8 bytes)
             available_frame_size = (
-                self._connection._remote_max_frame_size - transfer_overhead_size - 8  # pylint: disable=protected-access
+                self._connection._remote_max_frame_size
+                - transfer_overhead_size
+                - 8  # pylint: disable=protected-access
             )
 
             start_idx = 0
@@ -347,7 +358,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
-            await self._input_handles[frame[0]]._incoming_transfer(  # pylint: disable=protected-access
+            await self._input_handles[
+                frame[0]
+            ]._incoming_transfer(  # pylint: disable=protected-access
                 frame
             )
         except KeyError:
@@ -356,7 +369,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 error=AMQPError(
                     condition=ErrorCondition.SessionUnattachedHandle,
                     description="""Invalid handle reference in received frame: """
-                        """Handle is not currently associated with an attached link""",
+                    """Handle is not currently associated with an attached link""",
                 )
             )
         if self.incoming_window == 0:
@@ -399,7 +412,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 error=AMQPError(
                     condition=ErrorCondition.SessionUnattachedHandle,
                     description="""Invalid handle reference in received frame: """
-                        """Handle is not currently associated with an attached link""",
+                    """Handle is not currently associated with an attached link""",
                 )
             )
 
