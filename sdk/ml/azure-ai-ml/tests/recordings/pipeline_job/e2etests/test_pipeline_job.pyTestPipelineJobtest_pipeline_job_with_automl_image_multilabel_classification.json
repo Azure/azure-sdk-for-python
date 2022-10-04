@@ -485,7 +485,6 @@
                 {
                   "learning_rate": "uniform(0.005,0.05)",
                   "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
-                  "ams_gradient": "choice(True,False)",
                   "optimizer": "choice(\u0027sgd\u0027,\u0027adam\u0027,\u0027adamw\u0027)",
                   "model_name": "choice(\u0027vitb16r224\u0027)"
                 }
