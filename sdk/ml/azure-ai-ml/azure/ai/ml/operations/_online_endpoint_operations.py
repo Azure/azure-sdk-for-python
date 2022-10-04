@@ -12,8 +12,6 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthKeys,
-    EndpointAuthToken,
     KeyType,
     RegenerateEndpointKeysRequest,
 )
@@ -33,6 +31,7 @@ from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys, EndpointAuthToken
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -106,7 +105,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if cannot get online credentials
         :return: Depending on the auth mode in the endpoint, returns either keys or token
-        :rtype: Union[EndpointAuthKeys, EndpointAuthToken]
+        :rtype: Union[~azure.ai.ml.entities.EndpointAuthKeys, ~azure.ai.ml.entities.EndpointAuthToken]
         """
         return self._get_online_credentials(name=name)
 
@@ -375,6 +374,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
                 endpoint_name=name,
+                # pylint: disable=protected-access
+                cls=lambda x, response, z: EndpointAuthKeys._from_rest_object(response),
                 **self._init_kwargs,
             )
 
@@ -382,6 +383,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             endpoint_name=name,
+            # pylint: disable=protected-access
+            cls=lambda x, response, z: EndpointAuthToken._from_rest_object(response),
             **self._init_kwargs,
         )
 
