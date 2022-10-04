@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 28 Sep 2022 22:46:36 GMT",
+        "x-ms-date": "Tue, 04 Oct 2022 21:06:31 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 28 Sep 2022 22:46:34 GMT",
-        "ETag": "\u00220x8DAA1A34BAD9249\u0022",
-        "Last-Modified": "Wed, 28 Sep 2022 22:46:34 GMT",
+        "Date": "Tue, 04 Oct 2022 21:06:31 GMT",
+        "ETag": "\u00220x8DAA64C5042F4B6\u0022",
+        "Last-Modified": "Tue, 04 Oct 2022 21:06:32 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"

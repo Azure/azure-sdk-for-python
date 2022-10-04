@@ -5,33 +5,34 @@
 # --------------------------------------------------------------------------
 import base64
 import os
+import requests
+import uuid
 from datetime import datetime, timedelta
 
 import pytest
-import requests
-import uuid
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient
 from azure.storage.fileshare import (
+    AccessPolicy,
+    AccountSasPermissions,
+    ContentSettings,
+    FileSasPermissions,
     generate_account_sas,
     generate_file_sas,
     generate_share_sas,
-    ShareFileClient,
-    ShareServiceClient,
-    ContentSettings,
-    FileSasPermissions,
-    ShareSasPermissions,
-    AccessPolicy,
+    NTFSAttributes,
     ResourceTypes,
-    AccountSasPermissions,
-    StorageErrorCode,
-    NTFSAttributes)
-from devtools_testutils import recorded_by_proxy
+    ShareFileClient,
+    ShareSasPermissions,
+    ShareServiceClient,
+    StorageErrorCode
+)
 
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
 from test_helpers import ProgressTracker
 
 # ------------------------------------------------------------------------------
@@ -128,7 +129,7 @@ class TestStorageTest(StorageRecordedTestCase):
 
     def _create_remote_file(self, file_data=None):
         if not file_data:
-            file_data = b'12345678' * 1024 * 1024
+            file_data = b'12345678' * 1024
         source_file_name = self._get_file_reference()
         remote_share = self.fsc2.get_share_client(self.remote_share_name)
         remote_file = remote_share.get_file_client(source_file_name)
@@ -343,7 +344,7 @@ class TestStorageTest(StorageRecordedTestCase):
 
         lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         old_lease_id = lease.id
-        lease.change(str(uuid.uuid4()))
+        lease.change('44444444-3333-2222-1111-000000000000')
 
         # use the old lease id to create file will throw exception.
         with pytest.raises(HttpResponseError):
@@ -637,7 +638,7 @@ class TestStorageTest(StorageRecordedTestCase):
 
         # Act
         with pytest.raises(HttpResponseError):
-            file_client.get_file_properties(lease=str(uuid.uuid4()))
+            file_client.get_file_properties(lease='44444444-3333-2222-1111-000000000000')
 
         # get properties on a leased file will succeed
         properties = file_client.get_file_properties()
@@ -961,7 +962,8 @@ class TestStorageTest(StorageRecordedTestCase):
         destination_file_client = self._create_file(destination_file_name)
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -991,7 +993,8 @@ class TestStorageTest(StorageRecordedTestCase):
         destination_file_client = self._create_empty_file(file_name=destination_file_name)
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -1262,11 +1265,11 @@ class TestStorageTest(StorageRecordedTestCase):
             credential=storage_account_key)
         file_client.create_file(1024)
 
-        file_client.acquire_lease()
+        file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         with pytest.raises(HttpResponseError):
-            file_client.get_ranges(lease=str(uuid.uuid4()))
+            file_client.get_ranges(lease='44444444-3333-2222-1111-000000000000')
 
         # Get ranges on a leased file will succeed without provide the lease
         ranges = file_client.get_ranges()
@@ -1367,7 +1370,7 @@ class TestStorageTest(StorageRecordedTestCase):
             file_path=file_name,
             credential=storage_account_key)
         file_client.create_file(1024)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -1403,7 +1406,7 @@ class TestStorageTest(StorageRecordedTestCase):
         data = b'abcdefghijklmnop' * 32
         resp1 = file_client.upload_range(data, offset=0, length=512)
         resp2 = file_client.upload_range(data, offset=1024, length=512)
-        
+
         share_client = self.fsc.get_share_client(self.share_name)
         snapshot = share_client.create_snapshot()
         snapshot_client = ShareFileClient(
@@ -1595,9 +1598,11 @@ class TestStorageTest(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_copy_file_async_private_file(self, secondary_storage_account_name, secondary_storage_account_key, **kwargs):
+    def test_copy_file_async_private_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
+        secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
         self._create_remote_share()
@@ -1614,18 +1619,21 @@ class TestStorageTest(StorageRecordedTestCase):
             file_client.start_copy_from_url(source_file.url)
 
         # Assert
-        assert e.exception.error_code == StorageErrorCode.cannot_verify_copy_source
+        assert e.value.error_code == StorageErrorCode.cannot_verify_copy_source
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_copy_file_async_private_file_with_sas(self, secondary_storage_account_name, secondary_storage_account_key, **kwargs):
+    def test_copy_file_async_private_file_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
+        secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
-        data = b'12345678' * 1024 * 1024
+        data = b'12345678' * 1024
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
-        sas_token = generate_file_sas(
+        sas_token = self.generate_sas(
+            generate_file_sas,
             source_file.account_name,
             source_file.share_name,
             source_file.file_path,
@@ -1653,15 +1661,18 @@ class TestStorageTest(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_abort_copy_file(self, secondary_storage_account_name, secondary_storage_account_key, **kwargs):
+    def test_abort_copy_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
+        secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
-        data = b'12345678' * 1024 * 1024
+        data = b'12345678' * 1024
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
-        sas_token = generate_file_sas(
+        sas_token = self.generate_sas(
+            generate_file_sas,
             source_file.account_name,
             source_file.share_name,
             source_file.file_path,
@@ -1755,7 +1766,7 @@ class TestStorageTest(StorageRecordedTestCase):
         # Act
         # download the file with a wrong lease id will fail
         with pytest.raises(HttpResponseError):
-            file_client.upload_file(b'hello world', lease=str(uuid.uuid4()))
+            file_client.upload_file(b'hello world', lease='44444444-3333-2222-1111-000000000000')
 
         content = file_client.download_file(lease=lease).readall()
 
@@ -2375,7 +2386,7 @@ class TestStorageTest(StorageRecordedTestCase):
 
         return variables
 
-    pytest.mark.live_test_only
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_account_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")

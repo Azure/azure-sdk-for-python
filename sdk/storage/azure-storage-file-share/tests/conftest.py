@@ -17,11 +17,6 @@ from devtools_testutils import (
     test_proxy
 )
 
-# Ignore async tests for PyPy
-collect_ignore_glob = []
-if platform.python_implementation() == "PyPy":
-    collect_ignore_glob.append("tests/*_async.py")
-
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
@@ -32,6 +27,7 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_oauth_response_sanitizer()
 
+    add_header_regex_sanitizer(key="x-ms-copy-source-authorization", value="Sanitized")
     add_header_regex_sanitizer(key="x-ms-encryption-key", value="Sanitized")
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
