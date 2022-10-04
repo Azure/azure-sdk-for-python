@@ -119,6 +119,17 @@ def expected_image_target_column_name() -> str:
 
 
 @pytest.fixture
+def expected_image_sweep_settings() -> RestImageSweepSettings:
+    return RestImageSweepSettings(
+        sampling_algorithm="grid",
+        early_termination=RestBanditPolicy(
+            slack_factor=0.2,
+            evaluation_interval=10,
+        ),
+    )
+
+
+@pytest.fixture
 def expected_image_model_settings_classification() -> ImageModelSettingsClassification:
     return ImageModelSettingsClassification(
         checkpoint_frequency=1,
@@ -198,6 +209,7 @@ def expected_image_classification_job(
     expected_image_training_data: MLTableJobInput,
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
+    expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_classification: ImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
@@ -208,6 +220,7 @@ def expected_image_classification_job(
             training_data=expected_image_training_data,
             validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_classification,
             search_space=expected_image_search_space_settings if run_type == "sweep" else None,
             primary_metric=ClassificationPrimaryMetrics.ACCURACY,
@@ -226,6 +239,7 @@ def expected_image_classification_multilabel_job(
     expected_image_training_data: MLTableJobInput,
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
+    expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_classification: ImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
@@ -236,6 +250,7 @@ def expected_image_classification_multilabel_job(
             training_data=expected_image_training_data,
             validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_classification,
             search_space=expected_image_search_space_settings if run_type == "sweep" else None,
             primary_metric=ClassificationMultilabelPrimaryMetrics.IOU,
@@ -254,6 +269,7 @@ def expected_image_object_detection_job(
     expected_image_training_data: MLTableJobInput,
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
+    expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
     expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
@@ -264,6 +280,7 @@ def expected_image_object_detection_job(
             training_data=expected_image_training_data,
             validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_object_detection,
             search_space=expected_image_object_detection_search_space_settings if run_type == "sweep" else None,
             primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION,
@@ -282,6 +299,7 @@ def expected_image_instance_segmentation_job(
     expected_image_training_data: MLTableJobInput,
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
+    expected_image_sweep_settings: RestImageSweepSettings,
     expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
     expected_image_instance_segmentation_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
@@ -292,6 +310,7 @@ def expected_image_instance_segmentation_job(
             training_data=expected_image_training_data,
             validation_data=expected_image_validation_data,
             limit_settings=expected_image_limits,
+            sweep_settings=expected_image_sweep_settings if run_type == "sweep" else None,
             model_settings=expected_image_model_settings_object_detection,
             search_space=expected_image_instance_segmentation_search_space_settings if run_type == "sweep" else None,
             primary_metric=InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION,
