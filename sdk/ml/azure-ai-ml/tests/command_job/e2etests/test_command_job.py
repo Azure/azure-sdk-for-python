@@ -3,11 +3,12 @@ from pathlib import Path
 from time import sleep
 from typing import Callable
 
+from azure.ai.ml.entities import AmlTokenConfiguration
 from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 import jwt
 import pytest
 
-from azure.ai.ml import AmlToken, Input, MLClient, command, load_environment, load_job
+from azure.ai.ml import Input, MLClient, command, load_environment, load_job
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -153,7 +154,7 @@ class TestCommandJob(AzureRecordedTestCase):
             display_name="builder_command_job",
             compute="testCompute",
             experiment_name="mfe-test1-dataset",
-            identity=AmlToken(),
+            identity=AmlTokenConfiguration(),
             distribution=MpiDistribution(process_count_per_instance=2),
         )
 
@@ -161,7 +162,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert node.display_name == "builder_command_job"
         assert node.compute == "testCompute"
         assert node.experiment_name == "mfe-test1-dataset"
-        assert node.identity == AmlToken()
+        assert node.identity == AmlTokenConfiguration()
 
         node.description = "new-description"
         node.display_name = "new_builder_command_job"
@@ -176,7 +177,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert result.display_name == "new_builder_command_job"
         assert result.compute == "testCompute"
         assert result.experiment_name == "mfe-test1-dataset"
-        assert result.identity == AmlToken()
+        assert result.identity == AmlTokenConfiguration()
         assert isinstance(result.distribution, MpiDistribution)
         assert result.distribution.process_count_per_instance == 2
 

@@ -31,8 +31,14 @@ from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
+from azure.ai.ml.entities._credentials import (
+    ManagedIdentityConfiguration,
+    AmlTokenConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 
-from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
+# from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from ..job_limits import SweepJobLimits
 from ..parameterized_command import ParameterizedCommand
 from .early_termination_policy import EarlyTerminationPolicy
@@ -60,7 +66,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         job will be created under experiment 'Default'.
     :type experiment_name: str
     :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[azure.ai.ml.ManagedIdentity, azure.ai.ml.AmlToken, azure.ai.ml.UserIdentity]
+    :type identity: Union[
+        azure.ai.ml.ManagedIdentityConfiguration,
+        azure.ai.ml.AmlTokenConfiguration,
+        azure.ai.ml.UserIdentityConfiguration]
     :param inputs: Inputs to the command.
     :type inputs: dict
     :param outputs: Mapping of output data bindings used in the job.
@@ -95,7 +104,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         tags: Dict = None,
         display_name: str = None,
         experiment_name: str = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
         inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
         outputs: Dict[str, Output] = None,
         compute: str = None,
@@ -169,7 +181,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             tags=self.tags,
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
@@ -227,7 +239,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=properties.objective,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
-            identity=Identity._from_rest_object(properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         )
 
     def _override_missing_properties_from_trial(self):

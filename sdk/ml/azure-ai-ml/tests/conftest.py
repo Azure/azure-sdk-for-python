@@ -10,36 +10,37 @@ from typing import Callable, Tuple, Union
 from unittest.mock import Mock
 
 import pytest
-from pytest_mock import MockFixture
-from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
-
 from azure.ai.ml import MLClient, load_component, load_job
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig
+from azure.ai.ml._restclient.registry_discovery import \
+    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._scope_dependent_operations import (OperationConfig,
+                                                     OperationScope)
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict
 from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities._component.parallel_component import \
+    ParallelComponent
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.core.exceptions import ResourceNotFoundError
-from azure.identity import ClientSecretCredential, DefaultAzureCredential, AzureCliCredential
-
-from devtools_testutils import (
-    test_proxy,
-    is_live,
-    add_general_string_sanitizer,
-    add_body_key_sanitizer,
-    add_remove_header_sanitizer,
-    set_custom_default_matcher,
-    add_general_regex_sanitizer,
-)
-from devtools_testutils.proxy_fixtures import VariableRecorder, variable_recorder
+from azure.identity import (AzureCliCredential, ClientSecretCredential,
+                            DefaultAzureCredential)
+from devtools_testutils import (add_body_key_sanitizer,
+                                add_general_regex_sanitizer,
+                                add_general_string_sanitizer,
+                                add_remove_header_sanitizer, is_live,
+                                set_custom_default_matcher, test_proxy)
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
+from devtools_testutils.proxy_fixtures import (VariableRecorder,
+                                               variable_recorder)
+from pytest_mock import MockFixture
+
+from test_utilities.constants import (Test_Registry_Name, Test_Resource_Group,
+                                      Test_Subscription, Test_Workspace_Name)
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
@@ -60,19 +61,30 @@ def fake_datastore_key() -> str:
 @pytest.fixture(autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL")
-    set_custom_default_matcher(excluded_headers="x-ms-meta-name,x-ms-meta-version")
+    set_custom_default_matcher(
+        excluded_headers="x-ms-meta-name,x-ms-meta-version")
     add_body_key_sanitizer(json_path="$.key", value=fake_datastore_key)
     add_body_key_sanitizer(json_path="$....key", value=fake_datastore_key)
-    add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.repoURL']", value="fake_git_url")
-    add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.branch']", value="fake_git_branch")
-    add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.commit']", value="fake_git_commit")
-    add_body_key_sanitizer(json_path="$.properties.properties.hash_sha256", value="0000000000000")
-    add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
-    add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
-    add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_regex_sanitizer(value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1")
-    add_general_regex_sanitizer(value="00000000000000000000000000000000", regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1")
+    add_body_key_sanitizer(
+        json_path="$.properties.properties.['mlflow.source.git.repoURL']", value="fake_git_url")
+    add_body_key_sanitizer(
+        json_path="$.properties.properties.['mlflow.source.git.branch']", value="fake_git_branch")
+    add_body_key_sanitizer(
+        json_path="$.properties.properties.['mlflow.source.git.commit']", value="fake_git_commit")
+    add_body_key_sanitizer(
+        json_path="$.properties.properties.hash_sha256", value="0000000000000")
+    add_body_key_sanitizer(
+        json_path="$.properties.properties.hash_version", value="0000000000000")
+    add_body_key_sanitizer(
+        json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
+    add_general_regex_sanitizer(
+        value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
+    add_general_string_sanitizer(
+        value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
+    add_general_regex_sanitizer(value="00000000000000000000000000000000",
+                                regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1")
+    add_general_regex_sanitizer(value="00000000000000000000000000000000",
+                                regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1")
 
 
 def pytest_addoption(parser):
@@ -95,9 +107,11 @@ def mock_workspace_scope() -> OperationScope:
         subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
     )
 
+
 @pytest.fixture
 def mock_operation_config() -> OperationConfig:
     yield OperationConfig(True)
+
 
 @pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
@@ -125,7 +139,8 @@ def mock_registry_scope() -> OperationScope:
 @pytest.fixture
 def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
     # TODO(1628638): remove when 2022_02 api is available in ARM
-    mocker.patch("azure.ai.ml.operations.JobOperations._get_workspace_url", return_value="xxx")
+    mocker.patch(
+        "azure.ai.ml.operations.JobOperations._get_workspace_url", return_value="xxx")
     yield MLClient(
         credential=Mock(spec_set=DefaultAzureCredential),
         subscription_id=Test_Subscription,
@@ -250,10 +265,10 @@ def only_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
 
 
 @pytest.fixture
-def crud_registry_client(e2e_ws_scope: OperationScope) -> MLClient:
+def crud_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
     """return a machine learning client using default e2e testing workspace"""
     return MLClient(
-        credential=get_auth(),
+        credential=auth,
         subscription_id=e2e_ws_scope.subscription_id,
         resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
@@ -290,7 +305,8 @@ def data_with_2_versions(client: MLClient) -> str:
 @pytest.fixture
 def batch_endpoint_model(client: MLClient) -> Model:
     name = "sklearn_regression_model"
-    model = Model(name=name, version="1", path="tests/test_configs/batch_setup/batch_endpoint_model")
+    model = Model(name=name, version="1",
+                  path="tests/test_configs/batch_setup/batch_endpoint_model")
 
     try:
         model = client.models.get(name, "1")
@@ -316,7 +332,8 @@ def light_gbm_model(client: MLClient) -> Model:
         job = client.jobs.create_or_update(job)
         job_status = job.status
         while job_status not in RunHistoryConstants.TERMINAL_STATUSES:
-            print(f"Job status is {job_status}, waiting for 30 seconds for the job to finish.")
+            print(
+                f"Job status is {job_status}, waiting for 30 seconds for the job to finish.")
             time.sleep(30)
             job_status = client.jobs.get(job_name).status
 
@@ -346,21 +363,24 @@ def batch_inference(client: MLClient) -> ParallelComponent:
 @pytest.fixture
 def pipeline_samples_e2e_registered_train_components(client: MLClient) -> Component:
     return _load_or_create_component(
-        client, path=test_folder / "./test_configs/dsl_pipeline/e2e_registered_components/train.yml"
+        client, path=test_folder /
+        "./test_configs/dsl_pipeline/e2e_registered_components/train.yml"
     )
 
 
 @pytest.fixture
 def pipeline_samples_e2e_registered_score_components(client: MLClient) -> Component:
     return _load_or_create_component(
-        client, path=test_folder / "./test_configs/dsl_pipeline/e2e_registered_components/score.yml"
+        client, path=test_folder /
+        "./test_configs/dsl_pipeline/e2e_registered_components/score.yml"
     )
 
 
 @pytest.fixture
 def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Component:
     return _load_or_create_component(
-        client, path=test_folder / "./test_configs/dsl_pipeline/e2e_registered_components/eval.yml"
+        client, path=test_folder /
+        "./test_configs/dsl_pipeline/e2e_registered_components/eval.yml"
     )
 
 
@@ -371,9 +391,11 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
         return str(uuid.uuid4())
 
     if is_live_and_not_recording():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
+        mocker.patch(
+            "azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="00000000000000000000000000000000")
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash",
+                     return_value="00000000000000000000000000000000")
 
 
 @pytest.fixture
@@ -386,9 +408,11 @@ def mock_asset_name(mocker: MockFixture):
         return real_uuid
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", side_effect=generate_uuid)
+        mocker.patch(
+            "azure.ai.ml.entities._assets.asset._get_random_name", side_effect=generate_uuid)
     else:
-        mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
+        mocker.patch(
+            "azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
 
 
 @pytest.fixture
@@ -397,13 +421,16 @@ def mock_component_hash(mocker: MockFixture):
 
     def generate_compononent_hash(*args, **kwargs):
         dict_hash = hash_dict(*args, **kwargs)
-        add_general_string_sanitizer(value=fake_component_hash, target=dict_hash)
+        add_general_string_sanitizer(
+            value=fake_component_hash, target=dict_hash)
         return dict_hash
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", side_effect=generate_compononent_hash)
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict",
+                     side_effect=generate_compononent_hash)
     else:
-        mocker.patch("azure.ai.ml.entities._component.component.hash_dict", return_value=fake_component_hash)
+        mocker.patch("azure.ai.ml.entities._component.component.hash_dict",
+                     return_value=fake_component_hash)
 
 
 @pytest.fixture
@@ -421,7 +448,8 @@ def mock_workspace_arm_template_deployment_name(mocker: MockFixture, variable_re
 @pytest.fixture
 def mock_workspace_dependent_resource_name_generator(mocker: MockFixture, variable_recorder: VariableRecorder):
     def generate_mock_workspace_dependent_resource_name(workspace_name: str, resource_type: str):
-        deployment_name = get_name_for_dependent_resource(workspace_name, resource_type)
+        deployment_name = get_name_for_dependent_resource(
+            workspace_name, resource_type)
         return variable_recorder.get_or_record(f"{resource_type}_name", deployment_name)
 
     mocker.patch(
@@ -444,7 +472,8 @@ def mock_job_name_generator(mocker: MockFixture):
             "azure.ai.ml.entities._job.to_rest_functions.generate_job_name", side_effect=generate_and_sanitize_job_name
         )
     else:
-        mocker.patch("azure.ai.ml.entities._job.to_rest_functions.generate_job_name", return_value=fake_job_name)
+        mocker.patch("azure.ai.ml.entities._job.to_rest_functions.generate_job_name",
+                     return_value=fake_job_name)
 
 
 def _load_or_create_component(client: MLClient, path: str) -> Component:
@@ -496,9 +525,10 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
     try:
         credentialless_ds = client.datastores.get(name=ds_name)
     except ResourceNotFoundError:
-        ds = AzureBlobDatastore(name=ds_name, account_name=storage_account_name, container_name=container_name)
+        ds = AzureBlobDatastore(
+            name=ds_name, account_name=storage_account_name, container_name=container_name)
         credentialless_ds = client.datastores.create_or_update(ds)
-        assert isinstance(credentialless_ds.credentials, NoneCredentials)
+        assert isinstance(credentialless_ds.credentials, NoneCredentialConfiguration)
 
     return credentialless_ds.name
 
@@ -513,24 +543,29 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 
 @pytest.fixture()
 def enable_pipeline_private_preview_features(mocker: MockFixture):
-    mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
-    mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
+    mocker.patch(
+        "azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
+    mocker.patch(
+        "azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()
 def enable_environment_id_arm_expansion(mocker: MockFixture):
-    mocker.patch("azure.ai.ml.operations._operation_orchestrator.is_private_preview_enabled", return_value=False)
+    mocker.patch(
+        "azure.ai.ml.operations._operation_orchestrator.is_private_preview_enabled", return_value=False)
 
 
 @pytest.fixture(autouse=True)
 def remove_git_props(mocker: MockFixture):
-    mocker.patch("azure.ai.ml.operations._job_operations.get_git_properties", return_value={})
+    mocker.patch(
+        "azure.ai.ml.operations._job_operations.get_git_properties", return_value={})
 
 
 @pytest.fixture()
 def enable_internal_components():
     from azure.ai.ml._utils.utils import try_enable_internal_components
-    from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
+    from azure.ai.ml.constants._common import \
+        AZUREML_INTERNAL_COMPONENTS_ENV_VAR
     from azure.ai.ml.dsl._utils import environment_variable_overwrite
 
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):

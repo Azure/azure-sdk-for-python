@@ -28,8 +28,11 @@ from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._credentials import (
+    ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration
+)
 
-from .identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from .job import Job
 from .job_io_mixin import JobIOMixin
 from .job_limits import CommandJobLimits
@@ -77,7 +80,10 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :param environment: Environment that training job will run in.
     :type environment: Union[azure.ai.ml.entities.Environment, str]
     :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[azure.ai.ml.ManagedIdentity, azure.ai.ml.AmlToken, azure.ai.ml.UserIdentity]
+    :type identity: Union[
+        azure.ai.ml.ManagedIdentityConfiguration,
+        azure.ai.ml.AmlTokenConfiguration,
+        azure.ai.ml.UserIdentityConfiguration]
     :param limits: Command Job limit.
     :type limits: ~azure.ai.ml.entities.CommandJobLimits
     :param kwargs: A dictionary of additional configuration parameters.
@@ -90,7 +96,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
         outputs: Dict[str, Union[Output]] = None,
         limits: CommandJobLimits = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
         services: Dict[str, JobService] = None,
         **kwargs,
     ):
@@ -149,7 +156,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             environment_id=self.environment,
             distribution=self.distribution._to_rest_object() if self.distribution else None,
             tags=self.tags,
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
             environment_variables=self.environment_variables,
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
@@ -184,7 +191,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=Identity._from_rest_object(rest_command_job.identity) if rest_command_job.identity else None,
+            # pylint: disable=protected-access
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_command_job.identity) if rest_command_job.identity else None,
             environment_variables=rest_command_job.environment_variables,
             resources=JobResourceConfiguration._from_rest_object(rest_command_job.resources),
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),
