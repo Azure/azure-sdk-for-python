@@ -1161,7 +1161,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "model_name": "choice('vitb16r224')",
                     "optimizer": "choice('sgd','adam','adamw')",
                     "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
-                    "ams_gradient": "False"
                 }
             ],
         }
@@ -1213,7 +1212,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "model_name": "choice('vitb16r224')",
                     "optimizer": "choice('sgd','adam','adamw')",
                     "warmup_cosine_lr_warmup_epochs": "choice(0,3)",
-                    "ams_gradient": "choice(True,False)"
                 }
             ],
         }
