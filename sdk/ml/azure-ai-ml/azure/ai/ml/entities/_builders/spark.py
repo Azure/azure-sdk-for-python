@@ -39,7 +39,7 @@ from azure.ai.ml.entities._job.spark_resource_configuration import SparkResource
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
-from .._job.pipeline._io import NodeOutput, PipelineInput
+from .._job.pipeline._io import NodeOutput
 from .._job.spark_helpers import (
     _validate_compute_or_resources,
     _validate_input_output_mode,
