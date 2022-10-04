@@ -44,6 +44,10 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration
 )
 
+from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+
+from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, JobException
+
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
     UserAssignedIdentity as RestUserAssignedIdentityConfiguration
@@ -53,7 +57,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 
 
-class AccountKeyConfiguration(RestTranslatableMixin, ABC):
+class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
+    def __init__(self):
+        self.type = None
+
+
+class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
             self,
             *,
@@ -79,7 +88,7 @@ class AccountKeyConfiguration(RestTranslatableMixin, ABC):
         return not self.__eq__(other)
 
 
-class SasTokenConfiguration(RestTranslatableMixin, ABC):
+class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
             self,
             *,
@@ -142,7 +151,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
         return self.pat == other.pat
 
 
-class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
+class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     """Username Password Credentials.
 
     :param username: username
@@ -179,7 +188,7 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
         return self.username == other.username and self.password == other.password
 
 
-class BaseTenantCredentials(RestTranslatableMixin, ABC):
+class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
     def __init__(
             self,
             authority_url: str = _get_active_directory_url_from_metadata(),
@@ -308,7 +317,33 @@ class CertificateConfiguration(BaseTenantCredentials):
         return not self.__eq__(other)
 
 
-class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
+class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin):
+
+    def __init__(self):
+        self.type = None
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestJobIdentityConfiguration) -> "Identity":
+        mapping = {
+            IdentityConfigurationType.AML_TOKEN: AmlTokenConfiguration,
+            IdentityConfigurationType.MANAGED: ManagedIdentityConfiguration,
+            IdentityConfigurationType.USER_IDENTITY: UserIdentityConfiguration,
+        }
+
+        identity_class = mapping.get(obj.identity_type, None)
+        if identity_class:
+            # pylint: disable=protected-access
+            return identity_class._from_job_rest_object(obj)
+        msg = f"Unknown identity type: {obj.identity_type}"
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.IDENTITY,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
+
+
+class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """Managed Identity Credentials.
 
     :param client_id: client id, should be guid
@@ -325,6 +360,7 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
             object_id: str = None,
             principal_id: str = None
     ):
+        super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
         self.client_id = client_id
         # TODO: Check if both client_id and resource_id are required
@@ -391,10 +427,11 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         return self.client_id == other.client_id and self.resource_id == other.resource_id
 
 
-class UserIdentityConfiguration(ABC, RestTranslatableMixin):
+class UserIdentityConfiguration(_BaseIdentityConfiguration):
     """User identity configuration."""
 
     def __init__(self):
+        super().__init__()
         self.type = camel_to_snake(IdentityConfigurationType.USER_IDENTITY)
 
     # pylint: disable=no-self-use
@@ -406,11 +443,17 @@ class UserIdentityConfiguration(ABC, RestTranslatableMixin):
     def _from_job_rest_object(cls, obj: RestUserIdentity) -> "UserIdentity":
         return cls()
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, UserIdentityConfiguration):
+            return NotImplemented
+        return self._to_job_rest_object() == other._to_job_rest_object()
 
-class AmlTokenConfiguration(ABC, RestTranslatableMixin):
+
+class AmlTokenConfiguration(_BaseIdentityConfiguration):
     """AML Token identity configuration."""
 
     def __init__(self):
+        super().__init__()
         self.type = camel_to_snake(IdentityConfigurationType.AML_TOKEN)
 
     # pylint: disable=no-self-use
