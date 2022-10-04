@@ -44,14 +44,14 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration
 )
 
-
 from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 
 from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, JobException
 
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestWorkspaceIdentityConfiguration
-from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestWorkspaceUserAssignedIdentity
-
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
+    UserAssignedIdentity as RestUserAssignedIdentityConfiguration
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ManagedServiceIdentity as RestRegistryManagedIdentity
 )
@@ -404,14 +404,17 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         result.__dict__.update(rest_obj.as_dict())
         return result
 
-    def _to_workspace_rest_object(self) -> RestWorkspaceUserAssignedIdentity:
-        return RestWorkspaceUserAssignedIdentity(
+    def _to_online_endpoint_rest_object(self) -> RestUserAssignedIdentityConfiguration:
+        return RestUserAssignedIdentityConfiguration()
+
+    def _to_workspace_rest_object(self) -> RestUserAssignedIdentityConfiguration:
+        return RestUserAssignedIdentityConfiguration(
             principal_id=self.principal_id,
             client_id=self.client_id,
         )
 
     @classmethod
-    def _from_workspace_rest_object(cls, obj: RestWorkspaceUserAssignedIdentity) -> "ManagedIdentityConfiguration":
+    def _from_workspace_rest_object(cls, obj: RestUserAssignedIdentityConfiguration) -> "ManagedIdentityConfiguration":
         return cls(
             principal_id=obj.principal_id,
             client_id=obj.client_id,
@@ -505,8 +508,40 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.tenant_id = obj.tenant_id
         return result
 
+    def _to_online_endpoint_rest_object(self) -> RestManagedServiceIdentityConfiguration:
+        rest_user_assigned_identities = (
+            {uai.resource_id: uai._to_online_endpoint_rest_object() for uai in self.user_assigned_identities}
+            if self.user_assigned_identities
+            else None
+        )
+
+        return RestManagedServiceIdentityConfiguration(
+            type=snake_to_pascal(self.type),
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+            user_assigned_identities=rest_user_assigned_identities,
+        )
+
     @classmethod
-    def _from_workspace_rest_object(cls, obj: RestWorkspaceIdentityConfiguration) -> "IdentityConfiguration":
+    def _from_online_endpoint_rest_object(cls, obj: RestManagedServiceIdentityConfiguration) -> "IdentityConfiguration":
+        from_rest_user_assigned_identities = (
+            [
+                ManagedIdentityConfiguration._from_identity_configuration_rest_object(uai, resource_id=resource_id)
+                for (resource_id, uai) in obj.user_assigned_identities.items()
+            ]
+            if obj.user_assigned_identities
+            else None
+        )
+        result = cls(
+            type=camel_to_snake(obj.type),
+            user_assigned_identities=from_rest_user_assigned_identities,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
+
+    @classmethod
+    def _from_workspace_rest_object(cls, obj: RestManagedServiceIdentityConfiguration) -> "IdentityConfiguration":
         user_assigned_identities = None
         if obj.user_assigned_identities:
             user_assigned_identities = {}
@@ -522,7 +557,7 @@ class IdentityConfiguration(RestTranslatableMixin):
             user_assigned_identities=user_assigned_identities,
         )
 
-    def _to_workspace_rest_object(self) -> RestWorkspaceIdentityConfiguration:
+    def _to_workspace_rest_object(self) -> RestManagedServiceIdentityConfiguration:
 
         user_assigned_identities = (
             {uai.resource_id: uai._to_workspace_rest_object() for uai in self.user_assigned_identities}
@@ -530,7 +565,7 @@ class IdentityConfiguration(RestTranslatableMixin):
             else None
         )
 
-        return RestWorkspaceIdentityConfiguration(
+        return RestManagedServiceIdentityConfiguration(
             type=snake_to_pascal(self.type),
             principal_id=self.principal_id,
             tenant_id=self.tenant_id,
