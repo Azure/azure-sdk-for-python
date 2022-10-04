@@ -12,7 +12,6 @@ from azure.ai.ml._arm_deployments.arm_helper import get_template
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import WorkspaceUpdateParameters
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling, polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
     delete_resource_by_arm_id,
@@ -34,7 +33,6 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.entities import Workspace, WorkspaceKeys
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -123,7 +121,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_sync_keys(self, name: str = None, **kwargs: Dict) -> LROPoller:
+    def begin_sync_keys(self, name: str = None) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
         any resource in the workspace are changed, it can take around an hour
         for them to automatically be updated. This function enables keys to be
@@ -297,6 +295,7 @@ class WorkspaceOperations:
 
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
 
+        # pylint: disable=unused-argument
         def callback(_, deserialized, args):
             return Workspace._from_rest_object(deserialized)
 
@@ -370,6 +369,7 @@ class WorkspaceOperations:
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())._to_rest_object()
 
+        # pylint: disable=unused-argument
         def callback(_, deserialized, args):
             diagnose_response_result = DiagnoseResponseResult._from_rest_object(deserialized)
             res = None

@@ -210,6 +210,7 @@ class Workspace(Resource):
 
     def _to_rest_object(self) -> RestWorkspace:
         return RestWorkspace(
+            # pylint: disable=protected-access
             identity=self.identity._to_workspace_rest_object() if self.identity else None,
             location=self.location,
             tags=self.tags,

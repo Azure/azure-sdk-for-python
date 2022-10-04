@@ -78,6 +78,7 @@ class DiagnoseResponseResult:
     def _from_rest_object(cls, rest_obj: RestDiagnoseResponseResult) -> "DiagnoseResponseResult":
         val = None
         if rest_obj and rest_obj.value and isinstance(rest_obj.value, RestDiagnoseResponseResultValue):
+            # pylint: disable=protected-access
             val = DiagnoseResponseResultValue._from_rest_object(rest_obj.value)
         return cls(value=val)
 
@@ -183,11 +184,13 @@ class DiagnoseWorkspaceParameters:
     def _from_rest_object(cls, rest_obj: RestDiagnoseWorkspaceParameters) -> "DiagnoseWorkspaceParameters":
         val = None
         if rest_obj.value and isinstance(rest_obj.value, DiagnoseRequestProperties):
+            # pylint: disable=protected-access
             val = rest_obj.value._from_rest_object()
-        return cls(Value=val)
+        return cls(value=val)
 
     def _to_rest_object(self) -> RestDiagnoseWorkspaceParameters:
         val = None
         if self.value and isinstance(self.value, DiagnoseRequestProperties):
+            # pylint: disable=protected-access
             val = self.value._to_rest_object()
         return RestDiagnoseWorkspaceParameters(value=val)
