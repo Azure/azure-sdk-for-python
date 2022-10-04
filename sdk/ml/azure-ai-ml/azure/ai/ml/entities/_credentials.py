@@ -44,17 +44,15 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     Identity as RestIdentityConfiguration,
 )
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 
 from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, JobException
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
-    UserAssignedIdentity as RestUserAssignedIdentityConfiguration
+    UserAssignedIdentity as RestUserAssignedIdentityConfiguration,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ManagedServiceIdentity as RestRegistryManagedIdentity
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
@@ -321,7 +319,6 @@ class CertificateConfiguration(BaseTenantCredentials):
 
 
 class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin):
-
     def __init__(self):
         self.type = None
 
@@ -356,12 +353,7 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """
 
     def __init__(
-        self,
-        *,
-        client_id: str = None,
-        resource_id: str = None,
-        object_id: str = None,
-        principal_id: str = None
+        self, *, client_id: str = None, resource_id: str = None, object_id: str = None, principal_id: str = None
     ):
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
@@ -557,7 +549,9 @@ class IdentityConfiguration(RestTranslatableMixin):
             for k, v in obj.user_assigned_identities.items():
                 metadata = None
                 if v and isinstance(v, RestUserAssignedIdentity):
-                    metadata = ManagedIdentityConfiguration._from_workspace_rest_object(v)  # pylint: disable=protected-access
+                    metadata = ManagedIdentityConfiguration._from_workspace_rest_object(
+                        v
+                    )  # pylint: disable=protected-access
                 user_assigned_identities[k] = metadata
         return cls(
             type=obj.type,
