@@ -6,9 +6,9 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )
 from azure.ai.ml._utils._experimental import experimental
@@ -129,9 +129,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(obj.system_data)
-            if obj.system_data
-            else None,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             display_name=properties.display_name,
             compute=properties.compute_id,
             outputs=from_rest_data_outputs(properties.outputs),
@@ -189,7 +187,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextClassificationMultilabelJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import (
             TextClassificationMultilabelSchema,
         )

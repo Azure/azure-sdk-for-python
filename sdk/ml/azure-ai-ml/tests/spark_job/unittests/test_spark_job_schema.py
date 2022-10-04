@@ -4,7 +4,7 @@ import pytest
 import yaml
 
 from azure.ai.ml import Input, load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
 from azure.ai.ml._schema import SparkJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import SparkJob
@@ -48,7 +48,10 @@ class TestSparkJobSchema:
             internal_representation: SparkJob = SparkJob(**schema.load(cfg))
             with pytest.raises(ValidationException) as ve:
                 source = internal_representation._to_rest_object()
-                assert ve.message == "Instance type must be specified for the list of standard_e4s_v3,standard_e8s_v3,standard_e16s_v3,standard_e32s_v3,standard_e64s_v3"
+                assert (
+                    ve.message
+                    == "Instance type must be specified for the list of standard_e4s_v3,standard_e8s_v3,standard_e16s_v3,standard_e32s_v3,standard_e64s_v3"
+                )
 
     def test_deserialize_inputs(self):
         test_path = "./tests/test_configs/spark_job/spark_job_inputs_outputs_test.yml"

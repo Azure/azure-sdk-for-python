@@ -6,11 +6,11 @@
 
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import InstanceSegmentationPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InstanceSegmentationPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._job.automl import AutoMLConstants
@@ -206,7 +206,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageInstanceSegmentationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageInstanceSegmentationNodeSchema
 
