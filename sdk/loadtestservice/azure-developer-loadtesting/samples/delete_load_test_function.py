@@ -17,6 +17,7 @@ USAGE:
     1)  AZURE_CLIENT_ID - client id
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
+    4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
 # main library import
 from azure.developer.loadtesting import LoadTestingClient

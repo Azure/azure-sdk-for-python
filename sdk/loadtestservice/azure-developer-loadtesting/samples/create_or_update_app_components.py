@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: create_or_update_test.py
+FILE: create_or_update_app_component.py
 
 DESCRIPTION:
     This sample shows how to create or update app component
@@ -18,10 +18,12 @@ USAGE:
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  SUBSCRIPTION_ID - in which resource to connect is/are present
+    5)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
 from azure.developer.loadtesting import LoadTestingClient
 
-# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer-loadtesting/README.md
+# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
+# -loadtesting/README.md
 from azure.identity import DefaultAzureCredential
 
 import os

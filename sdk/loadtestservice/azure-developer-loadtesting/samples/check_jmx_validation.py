@@ -18,6 +18,7 @@ USAGE:
     1)  AZURE_CLIENT_ID - client id
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
+    4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
 from azure.developer.loadtesting import LoadTestingClient
 
@@ -38,7 +39,7 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 # Build a client through AAD and resource endpoint
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-TEST_ID = "my-new-sdk-test-id"
+TEST_ID = "my-new-sdk-test-id-abcdefghi"
 
 # checking if jmx file is validated
 print(client.load_test_administration.check_validation_status(TEST_ID))

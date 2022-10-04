@@ -16,12 +16,14 @@ USAGE:
     1)  AZURE_CLIENT_ID - client id
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
+    4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 
     Please ensure that correct jmx file and path is used
 """
 from azure.developer.loadtesting import LoadTestingClient
 
-# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer-loadtesting/README.md
+# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
+# -loadtesting/README.md
 from azure.identity import DefaultAzureCredential
 
 import os
