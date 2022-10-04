@@ -10,7 +10,7 @@
         "Content-Length": "166",
         "Content-Type": "application/json; serialization=Avro",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "88514859-9ff5-11ec-8723-9c2976df0bde"
+        "x-ms-client-request-id": "4fe25d4c-4409-11ed-b63d-e72abe7db0c1"
       },
       "RequestBody": {
         "namespace": "thrownaway",
