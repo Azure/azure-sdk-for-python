@@ -13,7 +13,11 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    UserIdentityConfiguration,
+    ManagedIdentityConfiguration
+)
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy, EarlyTerminationPolicy
@@ -58,7 +62,10 @@ class Sweep(ParameterizedSweep, BaseNode):
     :param outputs: Mapping of output data bindings used in the job.
     :type outputs: Dict[str, Union[str, Output]]
     :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
+    :type identity: Union[
+        ManagedIdentityConfiguration,
+        AmlTokenConfiguration,
+        UserIdentityConfiguration]
     """
 
     def __init__(
@@ -73,7 +80,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         search_space: Dict[str, SweepDistribution] = None,
         inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
         outputs: Dict[str, Union[str, Output]] = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
