@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument,no-self-use
 from marshmallow import fields
-from marshmallow.decorators import post_load, pre_dump
+from marshmallow.decorators import post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -47,8 +47,6 @@ class UserAssignedIdentitySchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import ManagedIdentityConfiguration
-
         return ManagedIdentityConfiguration(**data)
 
 
@@ -80,6 +78,4 @@ class IdentitySchema(PathAwareSchema):
                     object_id=identity.get("object_id", None)
                 ))
             data["user_assigned_identities"] = user_assigned_identities_list
-        return IdentityConfiguration(**data)
-
         return IdentityConfiguration(**data)
