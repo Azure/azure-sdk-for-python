@@ -289,7 +289,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 #/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
 
 # ServiceLabel: %Attestation %Service Attention
-#/<NotInRepo>/          @anilba06 @Azure/azure-sdk-write-attestation @gkostal @larryo
+/sdk/attestation/          @anilba06 @Azure/azure-sdk-write-attestation @gkostal @larryo
 
 # ServiceLabel: %Authorization %Service Attention
 #/<NotInRepo>/          @darshanhs90 @AshishGargMicrosoft
