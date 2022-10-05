@@ -6,8 +6,10 @@ import logging
 from typing import Dict, Optional
 from typing_extensions import Literal
 
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -22,6 +24,8 @@ class JobService(RestTranslatableMixin):
     :param job_service_type: Endpoint type.
     :type job_service_type: str
     :param port: Port for endpoint.
+    :type nodes: str
+    :param nodes: Indicates whether the service has to run in all nodes.
     :type port: int
     :param properties: Additional properties to set on the endpoint.
     :type properties: dict[str, str]
@@ -34,6 +38,7 @@ class JobService(RestTranslatableMixin):
         *,
         endpoint: Optional[str] = None,
         job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard", "VSCode"]] = None,
+        nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -41,17 +46,32 @@ class JobService(RestTranslatableMixin):
     ):
         self.endpoint = endpoint
         self.job_service_type = job_service_type
+        self.nodes = nodes
         self.status = status
         self.port = port
         self.properties = properties
+        self._validate_nodes()
 
     def _to_rest_object(self) -> RestJobService:
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=self.job_service_type,
+            nodes=AllNodes() if self.nodes else None,
+            status=self.status,
             port=self.port,
             properties=self.properties,
         )
+
+    def _validate_nodes(self):
+        if not self.nodes in ["all", None]:
+            msg = f"nodes should be either 'all' or None, but received '{self.nodes}'."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
 
     @classmethod
     def _to_rest_job_services(cls, services: Dict[str, "JobService"]) -> Dict[str, RestJobService]:
@@ -66,6 +86,8 @@ class JobService(RestTranslatableMixin):
         return cls(
             endpoint=obj.endpoint,
             job_service_type=obj.job_service_type,
+            # nodes="all" if isinstance(obj.nodes, AllNodes) else None,
+            nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
             properties=obj.properties,
