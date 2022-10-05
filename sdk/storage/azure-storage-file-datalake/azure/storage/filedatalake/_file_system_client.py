@@ -6,6 +6,7 @@
 # pylint: disable=too-many-lines
 import functools
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from typing_extensions import Self
 
 try:
     from urllib.parse import urlparse, quote, unquote
@@ -150,7 +151,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             file_system_name: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> "FileSystemClient":
+        ) -> Self:
         """
         Create FileSystemClient from a Connection String.
 

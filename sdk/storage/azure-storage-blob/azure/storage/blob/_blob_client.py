@@ -11,6 +11,7 @@ from typing import (
     Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 from urllib.parse import urlparse, quote, unquote
 import warnings
 
@@ -215,7 +216,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             **kwargs: Any
-        ) -> "BlobClient":
+        ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
 
         :param str blob_url:
@@ -298,7 +299,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> "BlobClient":
+        ) -> Self:
         """Create BlobClient from a Connection String.
 
         :param str conn_str:

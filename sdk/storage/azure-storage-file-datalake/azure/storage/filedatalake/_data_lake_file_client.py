@@ -6,7 +6,9 @@
 from io import BytesIO
 from typing import (
     Any, AnyStr, Dict, IO, Iterable, Optional, Union,
-    TYPE_CHECKING)
+    TYPE_CHECKING
+)
+from typing_extensions import Self
 
 try:
     from urllib.parse import quote, unquote
@@ -92,7 +94,7 @@ class DataLakeFileClient(PathClient):
             file_path: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> "DataLakeFileClient":
+        ) -> Self:
         """
         Create DataLakeFileClient from a Connection String.
 

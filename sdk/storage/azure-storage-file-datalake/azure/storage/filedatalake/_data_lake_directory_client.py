@@ -7,6 +7,7 @@ from typing import (
     Any, Dict, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 try:
     from urllib.parse import quote, unquote
@@ -83,7 +84,7 @@ class DataLakeDirectoryClient(PathClient):
             directory_name: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> "DataLakeDirectoryClient":
+        ) -> Self:
         """
         Create DataLakeDirectoryClient from a Connection String.
 

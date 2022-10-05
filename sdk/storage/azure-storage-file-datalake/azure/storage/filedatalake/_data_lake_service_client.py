@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from typing_extensions import Self
 
 try:
     from urllib.parse import urlparse
@@ -131,7 +132,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             cls, conn_str: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> "DataLakeServiceClient":
+        ) -> Self:
         """
         Create DataLakeServiceClient from a Connection String.
 

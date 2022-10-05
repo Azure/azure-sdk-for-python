@@ -10,6 +10,7 @@ from typing import (
     Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 from urllib.parse import urlparse, quote, unquote
 
 import six
@@ -182,7 +183,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             cls, container_url: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> "ContainerClient":
+        ) -> Self:
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -231,7 +232,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             container_name: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> "ContainerClient":
+        ) -> Self:
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
