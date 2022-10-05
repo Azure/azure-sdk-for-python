@@ -21,6 +21,7 @@ from azure.core.exceptions import (
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
+from enum import Enum
 
 from ._operations import AppComponentOperations as AppComponentOperationsGenerated
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
@@ -32,10 +33,10 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_upload_test_file_request(
-    test_id: str,
-    file_id: str,
-    file: BinaryIO,
-    **kwargs,
+        test_id: str,
+        file_id: str,
+        file: BinaryIO,
+        **kwargs,
 ) -> HttpRequest:
     """
     Core logic for uploading a file
@@ -133,7 +134,14 @@ class TestOperations(TestOperationsGenerated):
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
 
-    def check_validation_status(self, test_id: str, refresh_time: int = 10, time_out: int = 600):
+    class ValidationStatus(Enum):
+        """Enum to store validation status
+        """
+        VALIDATION_INITIATED = 1
+        VALIDATION_SUCCESS = 2
+        VALIDATION_FAILED = 3
+
+    def check_validation_status(self, test_id: str, *, refresh_time: int = 10, time_out: int = 600) -> ValidationStatus:
         """Check if the JMX file is validated to run test
 
         :param test_id: Unique id for the test [required]
@@ -145,22 +153,26 @@ class TestOperations(TestOperationsGenerated):
         :param time_out: time to stop polling for the validation status (in secs) [default = 600 sec]
         :type time_out: int
         """
+
         start_time = time.time()
 
-        while time.time() - start_time < time_out:
+        while True:
             result = self.get_load_test(test_id)
 
             try:
-                if result["inputArtifacts"]["testScriptUrl"]["validationStatus"] == "VALIDATION_SUCCESS":
-                    return "VALIDATION_SUCCESS"
+                status = result["inputArtifacts"]["testScriptUrl"]["validationStatus"]
 
-            # if JMX file is not found then result will not have the key, "inputArtificats"
             except TypeError:
-                raise azure.core.exceptions.ResourceNotFoundError(f"No JMX file found to validate with TestID {test_id}")
+                raise azure.core.exceptions.ResourceNotFoundError(
+                    f"No JMX file found to validate with TestID: {test_id}")
+
+            if status != "VALIDATION_INITIATED":
+                return self.ValidationStatus[status]
+
+            if time.time() - start_time + refresh_time > time_out:
+                return self.ValidationStatus["TIMEOUT"]
 
             time.sleep(refresh_time)
-
-        return "TIMEOUT"
 
 
 class AppComponentOperations:
@@ -168,12 +180,12 @@ class AppComponentOperations:
         self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
 
     def get_app_components(
-        self,
-        *,
-        test_run_id: Optional[str] = None,
-        test_id: Optional[str] = None,
-        name: Optional[str] = None,
-        **kwargs: Any,
+            self,
+            *,
+            test_run_id: Optional[str] = None,
+            test_id: Optional[str] = None,
+            name: Optional[str] = None,
+            **kwargs: Any,
     ) -> JSON:
         """Get App Components for a test or a test run by its name.
 
@@ -230,7 +242,7 @@ class AppComponentOperations:
 
     @overload
     def create_or_update_app_components(
-        self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+            self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -306,7 +318,7 @@ class AppComponentOperations:
 
     @overload
     def create_or_update_app_components(
-        self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+            self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -405,7 +417,7 @@ class AppComponentOperations:
 
     @distributed_trace
     def delete_app_components(  # pylint: disable=inconsistent-return-statements
-        self, name: str, **kwargs: Any
+            self, name: str, **kwargs: Any
     ) -> None:
         """Delete an App Component.
 

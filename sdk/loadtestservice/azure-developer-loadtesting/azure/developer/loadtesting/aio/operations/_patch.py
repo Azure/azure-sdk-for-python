@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio
 import time
 from typing import Any, IO, Optional, Union, cast, overload, List, MutableMapping, Coroutine, BinaryIO, Awaitable
-
+from enum import Enum
 import azure.core.exceptions
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -92,6 +92,13 @@ class TestOperations(TestOperationsGenerated):
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
 
+    class ValidationStatus(Enum):
+        """Enum to store validation status
+        """
+        VALIDATION_INITIATED = 1
+        VALIDATION_SUCCESS = 2
+        VALIDATION_FAILED = 3
+
     async def check_validation_status(self, test_id: str, refresh_time: int = 10, time_out: int = 600):
         """Check if the JMX file is validated to run test
 
@@ -106,19 +113,23 @@ class TestOperations(TestOperationsGenerated):
         """
         start_time = time.time()
 
-        while time.time() - start_time < time_out:
+        while True:
             result = await self.get_load_test(test_id)
 
             try:
-                if result["inputArtifacts"]["testScriptUrl"]["validationStatus"] == "VALIDATION_SUCCESS":
-                    return "VALIDATION_SUCCESS"
+                status = result["inputArtifacts"]["testScriptUrl"]["validationStatus"]
+
             except TypeError:
-                raise azure.core.exceptions.ResourceNotFoundError(f"No JMX file found to validate with TestID {test_id}")
+                raise azure.core.exceptions.ResourceNotFoundError(
+                    f"No JMX file found to validate with TestID: {test_id}")
+
+            if status != "VALIDATION_INITIATED":
+                return self.ValidationStatus[status]
+
+            if time.time() - start_time + refresh_time > time_out:
+                return self.ValidationStatus["TIMEOUT"]
 
             await asyncio.sleep(refresh_time)
-
-        return "TIMEOUT"
-
 
 class AppComponentOperations:
     def __init__(self, *args, **kwargs):
