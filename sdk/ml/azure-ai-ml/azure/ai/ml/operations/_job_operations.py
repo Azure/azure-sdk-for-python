@@ -63,7 +63,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import Compute, Job, PipelineJob
+from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -73,7 +73,6 @@ from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
-from azure.ai.ml.entities._job.service_instance import ServiceInstance
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.entities._validation import SchemaValidatableMixin
 from azure.ai.ml.exceptions import (
@@ -283,8 +282,9 @@ class JobOperations(_ScopeDependentOperations):
 
         return job
 
-    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.INTERNALCALL)
-    def _show_services(self, name: str, node_index: int):
+    @distributed_trace
+    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
+    def show_services(self, name: str, node_index: int = 0):
         """Get services associated with a job's node.
 
         :param str name: Name of the job.

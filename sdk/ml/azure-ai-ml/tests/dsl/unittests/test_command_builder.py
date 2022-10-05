@@ -16,6 +16,7 @@ from azure.ai.ml import (
     spark,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes, Nodes
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService as JobService
@@ -837,6 +838,41 @@ class TestCommandFunction:
             "spark.jars.excludes": "slf4j",
         }
         assert node._to_rest_object()["conf"] == expected_conf
+
+    def test_command_services_nodes(self) -> None:
+        services = {
+            "my_jupyter": {"job_service_type": "JupyterLab", "nodes": "all"},
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+        }
+        command_obj = command(
+            name="interactive-command-job",
+            description="description",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            command="ls",
+            compute="testCompute",
+            services=services,
+        )
+
+        rest_obj = command_obj._to_rest_object()
+        assert rest_obj["services"]["JupyterLab"].get("nodes") == {"nodes_value_type": "All"}
+        assert rest_obj["services"]["my_tensorboard"].get("nodes") == None
+
+        services_invalid_nodes = {"my_service": {"nodes": "All"}}
+        with pytest.raises(ValidationException, match="nodes should be either 'all' or None"):
+            command_obj = command(
+                name="interactive-command-job",
+                description="description",
+                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                command="ls",
+                compute="testCompute",
+                services=services_invalid_nodes,
+            )
+            assert command_obj
 
     def test_command_services(self) -> None:
         services = {
