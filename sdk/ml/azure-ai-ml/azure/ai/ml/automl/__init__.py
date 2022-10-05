@@ -15,6 +15,8 @@ from azure.ai.ml.entities._job.automl.image import (
 from azure.ai.ml.entities._job.automl.nlp import (
     NlpFeaturizationSettings,
     NlpLimitSettings,
+    NlpSearchSpace,
+    NlpSweepSettings,
     TextClassificationJob,
     TextClassificationMultilabelJob,
     TextNerJob,
@@ -86,6 +88,8 @@ __all__ = [
     "TabularLimitSettings",
     "NlpFeaturizationSettings",
     "NlpLimitSettings",
+    "NlpSweepSettings",
+    "NlpSearchSpace",
     "ImageLimitSettings",
     "ImageSweepSettings",
     "ImageObjectDetectionSearchSpace",
