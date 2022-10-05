@@ -2,13 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NlpLimitSettings(RestTranslatableMixin):
-    """Limit settings for all AutoML NLP Verticals."""
+    """Limit settings for all AutoML NLP Verticals.
+
+    :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
+    :type max_concurrent_trials: int, optional
+    :param max_trials: Maximum number of AutoML iterations.
+    :type max_trials: int, optional
+    :param timeout_minutes: AutoML job timeout.
+    :type timeout_minutes: int, optional
+    """
 
     def __init__(
         self,
