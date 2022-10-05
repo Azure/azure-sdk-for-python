@@ -3,9 +3,9 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
+from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService as RestJobService20220601Preview
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -33,11 +33,11 @@ class JobService(RestTranslatableMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[str] = None,
+        job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard", "VSCode"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         self.endpoint = endpoint
         self.job_service_type = job_service_type
@@ -62,12 +62,7 @@ class JobService(RestTranslatableMixin):
         return {name: service._to_rest_object() for name, service in services.items()}
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[RestJobService, RestJobService20220601Preview]) -> "JobService":
-        """RestJobService20220601Preview is supported for backward compatibility
-        with v2022_06_01 version of JobService used in tests.
-        In pytest the services in yaml (e.g test_job_command_job_create_skip_validation.yaml) is getting deserialized
-        to v2022_06_01_preview version of JobService instead of v2022_10_01_preview.
-        """
+    def _from_rest_object(cls, obj: RestJobService) -> "JobService":
         return cls(
             endpoint=obj.endpoint,
             job_service_type=obj.job_service_type,
@@ -77,9 +72,7 @@ class JobService(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_job_services(
-        cls, services: Dict[str, Union[RestJobService, RestJobService20220601Preview]]
-    ) -> Dict[str, "JobService"]:
+    def _from_rest_job_services(cls, services: Dict[str, RestJobService]) -> Dict[str, "JobService"]:
         """Resolve Dict[str, RestJobService] to Dict[str, JobService]"""
         if services is None:
             return None

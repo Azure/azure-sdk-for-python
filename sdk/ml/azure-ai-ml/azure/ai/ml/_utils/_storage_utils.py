@@ -40,7 +40,8 @@ class AzureMLDatastorePathUri:
 
     :param uri: The AzureML datastore path URI.
     :type uri: str
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore path URI is incorrectly formatted.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the AzureML datastore
+        path URI is incorrectly formatted.
     '"""
 
     def __init__(self, uri: str):

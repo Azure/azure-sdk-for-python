@@ -11,14 +11,14 @@ from .pipeline import PipelineConstants
 from .sweep import SearchSpace
 
 __all__ = [
-    "ImportSourceType",
-    "JobType",
-    "PipelineConstants",
     "AutoMLConstants",
-    "AutoMLTransformerParameterKeys"
+    "AutoMLTransformerParameterKeys",
     "DistributionType",
-    "SearchSpace",
     "ImageClassificationModelNames",
     "ImageObjectDetectionModelNames",
     "ImageInstanceSegmentationModelNames",
+    "JobType",
+    "ImportSourceType",
+    "PipelineConstants",
+    "SearchSpace",
 ]

@@ -41,8 +41,7 @@ class ArtifactStorageInfo:
         if self.is_file:
             path = PurePosixPath(self.relative_path).parent
             return urljoin(self.storage_account_url, f"{self.container_name}/{path}")
-        else:
-            return self.full_storage_path
+        return self.full_storage_path
 
 
 class Artifact(Asset):
@@ -105,7 +104,7 @@ class Artifact(Asset):
 
     def __eq__(self, other) -> bool:
         return (
-            type(self) == type(other)
+            type(self) == type(other) # pylint: disable = unidiomatic-typecheck
             and self.name == other.name
             and self.id == other.id
             and self.version == other.version
@@ -122,4 +121,3 @@ class Artifact(Asset):
     @abstractmethod
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         """Updates an an artifact with the remote path of a local upload."""
-        pass

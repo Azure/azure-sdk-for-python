@@ -1,15 +1,11 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides [Azure Active Directory (AAD)](https://docs.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication through a set of convenient TokenCredential implementations. It enables Azure SDK clients to authenticate with AAD, while also allowing other Python apps to authenticate with AAD work and school accounts, Microsoft personal accounts (MSA), and other Identity providers like [AAD B2C](https://docs.microsoft.com/azure/active-directory-b2c/overview) service.
+The Azure Identity library provides [Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations which can be used to construct Azure SDK clients which support Azure AD token authentication.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
 | [API reference documentation][ref_docs]
-| [Azure Active Directory documentation](https://docs.microsoft.com/azure/active-directory/)
-
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+| [Azure AD documentation](https://learn.microsoft.com/azure/active-directory/)
 
 ## Getting started
 
@@ -61,14 +57,17 @@ service client to authenticate requests. Service clients across the Azure SDK
 accept a credential instance when they are constructed, and use that credential
 to authenticate requests.
 
-The Azure Identity library focuses on OAuth authentication with Azure Active
-Directory (AAD). It offers a variety of credential classes capable of acquiring
-an AAD access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of
+The Azure Identity library focuses on OAuth authentication with Azure AD. It offers a variety of credential classes capable of acquiring
+an Azure AD access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of
 this library's credential classes.
 
 ### DefaultAzureCredential
 
-`DefaultAzureCredential` is appropriate for most applications which will run in the Azure Cloud because it combines common production credentials with development credentials. `DefaultAzureCredential` attempts to authenticate via the following mechanisms in this order, stopping when one succeeds:
+`DefaultAzureCredential` is appropriate for most applications which will run in Azure because it combines common production credentials with development credentials. `DefaultAzureCredential` attempts to authenticate via the following mechanisms, in this order, stopping when one succeeds:
+
+>Note: `DefaultAzureCredential` is intended to simplify getting started with the library by handling common
+>scenarios with reasonable default behaviors. Developers who want more control or whose scenario
+>isn't served by the default settings should use other credential types.
 
 ![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/mermaidjs/DefaultAzureCredentialAuthFlow.svg)
 
@@ -78,20 +77,9 @@ this library's credential classes.
 1. **Azure PowerShell** - If a user has signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate as that user.
 1. **Interactive browser** - If enabled, `DefaultAzureCredential` will interactively authenticate a user via the default browser. This is disabled by default.
 
->`DefaultAzureCredential` is intended to simplify getting started with the SDK by handling common
->scenarios with reasonable default behaviors. Developers who want more control or whose scenario
->isn't served by the default settings should use other credential types.
+#### Note about `VisualStudioCodeCredential`
 
-### Managed Identity
-`DefaultAzureCredential` and `ManagedIdentityCredential` support
-[managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview)
-in any hosting environment which supports managed identities, such as (this list is not exhaustive):
-* [Azure Virtual Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
-* [Azure App Service](https://docs.microsoft.com/azure/app-service/overview-managed-identity?tabs=dotnet)
-* [Azure Kubernetes Service](https://docs.microsoft.com/azure/aks/use-managed-identity)
-* [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
-* [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
-* [Azure Service Fabric](https://docs.microsoft.com/azure/service-fabric/concepts-managed-identity)
+Due to a [known issue](https://github.com/Azure/azure-sdk-for-python/issues/23249), `VisualStudioCodeCredential` has been removed from the `DefaultAzureCredential` token chain. When the issue is resolved in a future release, this change will be reverted.
 
 ## Examples
 
@@ -207,8 +195,42 @@ default_credential = DefaultAzureCredential()
 client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 ```
 
+## Managed identity support
+
+[Managed identity authentication](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via either the `DefaultAzureCredential` or the `ManagedIdentityCredential` directly for the following Azure services:
+
+* [Azure App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=python)
+* [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
+* [Azure Cloud Shell](https://learn.microsoft.com/azure/cloud-shell/msi-authorization)
+* [Azure Kubernetes Service](https://learn.microsoft.com/azure/aks/use-managed-identity)
+* [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
+* [Azure Virtual Machines](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
+* [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
+
+### Examples
+
+#### Authenticate with a user-assigned managed identity
+
+```py
+from azure.identity import ManagedIdentityCredential
+from azure.keyvault.secrets import SecretClient
+
+credential = ManagedIdentityCredential(client_id=managed_identity_client_id)
+client = SecretClient("https://my-vault.vault.azure.net", credential)
+```
+
+#### Authenticate with a system-assigned managed identity
+
+```py
+from azure.identity import ManagedIdentityCredential
+from azure.keyvault.secrets import SecretClient
+
+credential = ManagedIdentityCredential()
+client = SecretClient("https://my-vault.vault.azure.net", credential)
+```
+
 ## Cloud configuration
-Credentials default to authenticating to the Azure Active Directory endpoint for
+Credentials default to authenticating to the Azure AD endpoint for
 Azure Public Cloud. To access resources in other clouds, such as Azure Government
 or a private cloud, configure credentials with the `authority` argument.
 [AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts)
@@ -229,34 +251,36 @@ argument but defaults to the authority matching VS Code's "Azure: Cloud" setting
 
 |Credential|Usage
 |-|-
-|[DefaultAzureCredential][default_cred_ref]|simplified authentication to get started developing applications for the Azure cloud
-|[ChainedTokenCredential][chain_cred_ref]|define custom authentication flows composing multiple credentials
-|[EnvironmentCredential][environment_cred_ref]|authenticate a service principal or user configured by environment variables
-|[ManagedIdentityCredential][managed_id_cred_ref]|authenticate the managed identity of an Azure resource
+|[`DefaultAzureCredential`][default_cred_ref]| Provides a simplified authentication experience to quickly start developing applications run in Azure.
+|[`ChainedTokenCredential`][chain_cred_ref]| Allows users to define custom authentication flows composing multiple credentials.
+|[`EnvironmentCredential`][environment_cred_ref]| Authenticates a service principal or user via credential information specified in environment variables.
+|[`ManagedIdentityCredential`][managed_id_cred_ref]| Authenticates the managed identity of an Azure resource.
 
 ### Authenticate service principals
 
-|Credential|Usage
-|-|-
-|[CertificateCredential][cert_cred_ref]| authenticate a service principal using a certificate
-|[ClientAssertionCredential][client_assertion_cred_ref]|authenticate a service principal using a signed client assertion
-|[ClientSecretCredential][client_secret_cred_ref]| authenticate a service principal using a secret
+|Credential|Usage|Reference
+|-|-|-
+|[`CertificateCredential`][cert_cred_ref]| Authenticates a service principal using a certificate. | [Service principal authentication](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals)
+|[`ClientAssertionCredential`][client_assertion_cred_ref]| Authenticates a service principal using a signed client assertion. |
+|[`ClientSecretCredential`][client_secret_cred_ref]| Authenticates a service principal using a secret. | [Service principal authentication](https://learn.microsoft.com/azure/active-directory/develop/app-objects-and-service-principals)
 
 ### Authenticate users
 
-|Credential|Usage
-|-|-
-|[DeviceCodeCredential][device_code_cred_ref]| interactively authenticate a user on a device with limited UI
-|[InteractiveBrowserCredential][interactive_cred_ref]|interactively authenticate a user with the default web browser
-|[OnBehalfOfCredential][obo_cred_ref]|propagates the delegated user identity and permissions through the request chain
-|[UsernamePasswordCredential][userpass_cred_ref]| authenticate a user with a username and password (does not support multi-factor authentication)
+|Credential|Usage|Reference
+|-|-|-
+|[`AuthorizationCodeCredential`][auth_code_cred_ref]| Authenticates a user with a previously obtained authorization code. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+|[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-device-code)
+|[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+|[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow)
+|[`UsernamePasswordCredential`][userpass_cred_ref]| Authenticates a user with a username and password (does not support multi-factor authentication). |  [Username + password authentication](https://learn.microsoft.com/azure/active-directory/develop/v2-oauth-ropc)
 
 ### Authenticate via development tools
 
-|Credential|Usage
-|-|-
-|[AzureCliCredential][cli_cred_ref]|authenticate as the user signed in to the Azure CLI
-|[VisualStudioCodeCredential][vscode_cred_ref]|authenticate as the user signed in to the Visual Studio Code Azure Account extension
+|Credential|Usage|Reference
+|-|-|-
+|[`AzureCliCredential`][cli_cred_ref]| Authenticates in a development environment with the Azure CLI. | [Azure CLI authentication](https://learn.microsoft.com/cli/azure/authenticate-azure-cli)
+|[`PowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
+|[`VisualStudioCodeCredential`][vscode_cred_ref]| Authenticates as the user signed in to the Visual Studio Code Azure Account extension. | [VS Code Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
 
 ## Environment variables
 
@@ -266,24 +290,24 @@ environment variables. Each type of authentication requires values for specific
 variables:
 
 #### Service principal with secret
-|variable name|value
+|Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
-|`AZURE_TENANT_ID`|id of the application's Azure Active Directory tenant
+|`AZURE_CLIENT_ID`|ID of an Azure AD application
+|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
 |`AZURE_CLIENT_SECRET`|one of the application's client secrets
 
 #### Service principal with certificate
-|variable name|value
+|Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
-|`AZURE_TENANT_ID`|id of the application's Azure Active Directory tenant
+|`AZURE_CLIENT_ID`|ID of an Azure AD application
+|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
 |`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key
 |`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any
 
 #### Username and password
-|variable name|value
+|Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|id of an Azure Active Directory application
+|`AZURE_CLIENT_ID`|ID of an Azure AD application
 |`AZURE_USERNAME`|a username (usually an email address)
 |`AZURE_PASSWORD`|that user's password
 
@@ -307,9 +331,7 @@ describes why authentication failed. When raised by
 `DefaultAzureCredential` or `ChainedTokenCredential`,
 the message collects error messages from each credential in the chain.
 
-For more details on handling specific Azure Active Directory errors please refer to the
-Azure Active Directory
-[error code documentation](https://docs.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
+For more details on handling specific Azure AD errors, see the Azure AD [error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
 
 ### Logging
 
@@ -365,8 +387,9 @@ For more information, see the
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any
 additional questions or comments.
 
+[auth_code_cred_ref]: https://aka.ms/azsdk/python/identity/authorizationcodecredential
 [azure_appconfiguration]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [azure_eventhub]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub
 [azure_keyvault_certificates]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk//keyvault/azure-keyvault-certificates
@@ -374,7 +397,7 @@ additional questions or comments.
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
-[b2c]: https://docs.microsoft.com/azure/active-directory-b2c/overview
+[b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential
@@ -386,6 +409,7 @@ additional questions or comments.
 [interactive_cred_ref]: https://aka.ms/azsdk/python/identity/interactivebrowsercredential
 [managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/managedidentitycredential
 [obo_cred_ref]: https://aka.ms/azsdk/python/identity/onbehalfofcredential
+[powershell_cred_ref]: https://aka.ms/azsdk/python/identity/powershellcredential
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md

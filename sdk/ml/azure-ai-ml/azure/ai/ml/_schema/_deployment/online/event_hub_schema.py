@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 import logging
 from typing import Any
 
@@ -23,7 +25,6 @@ class EventHubSchema(metaclass=PatchedSchemaMeta):
         if len(value.split(".")) != 2:
             raise ValidationError("Namespace must follow format of {namespace}.{name}")
 
-    # pylint: disable=unused-argument,no-self-use
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities._deployment.event_hub import EventHub

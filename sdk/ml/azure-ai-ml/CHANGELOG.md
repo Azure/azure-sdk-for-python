@@ -1,6 +1,33 @@
 # Release History
 
-## 0.1.0 (Unreleased)
+## 0.2.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 0.1.0 (In Progress)
+
+### Features Added
+
+### Breaking Changes
+- OnlineDeploymentOperations.delete has been renamed to begin_delete.
+- Datastore credentials are switched to use unified credential configuration classes.
+- UserAssignedIdentity is replaced by ManagedIdentityConfiguration
+- Endpoint and Job use unified identity classes.
+- Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
+
+### Bugs Fixed
+
+### Other Changes
+ - Switched Compute operations to use Oct preview API version.
+
+
+## 0.1.0b8 (In Progress)
 
 ### Features Added
  - Support passing JobService as argument to Command()
@@ -35,7 +62,7 @@
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
  - Added Idle Shutdown support for Compute Instances, allowing instances to shutdown after a set period of inactivity.
- - Online Deployment Data Collection for eventhub and data storage will be supported. 
+ - Online Deployment Data Collection for eventhub and data storage will be supported.
  - Syntax validation on scoring scripts of Batch Deployment and Online Deployment will prevent the user from submitting bad deployments.
 
 ### Breaking Changes

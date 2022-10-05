@@ -16,7 +16,11 @@ from .spark_job_entry import SparkJobEntry, SparkJobEntryType
 
 class SparkJobEntryMixin:
     CODE_ID_RE_PATTERN = re.compile(
-        r"\/subscriptions\/(?P<subscription>[\w,-]+)\/resourceGroups\/(?P<resource_group>[\w,-]+)\/providers\/Microsoft\.MachineLearningServices\/workspaces\/(?P<workspace>[\w,-]+)\/codes\/(?P<code_id>[\w,-]+)"  # fmt: skip
+        (
+            r"\/subscriptions\/(?P<subscription>[\w,-]+)\/resourceGroups\/(?P<resource_group>[\w,-]+)"
+            r"\/providers\/Microsoft\.MachineLearningServices\/workspaces\/(?P<workspace>[\w,-]+)"
+            r"\/codes\/(?P<code_id>[\w,-]+)"  # fmt: skip
+        )
     )
 
     @property
@@ -56,13 +60,14 @@ class SparkJobEntryMixin:
         # validate whether component entry exists to ensure code path is correct, especially when code is default value
         if self.code is None:
             return
-        if isinstance(self.code, str) and (
+        is_remote_code = (
             self.code.startswith("git+")
             or self.code.startswith(REGISTRY_URI_FORMAT)
             or self.code.startswith(ARM_ID_PREFIX)
             or is_url(self.code)
             or self.CODE_ID_RE_PATTERN.match(self.code)
-        ):
+        )
+        if isinstance(self.code, str) and is_remote_code:
             # skip validate when code is not a local path
             return
 
