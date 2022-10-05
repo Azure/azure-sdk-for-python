@@ -6940,7 +6940,7 @@ class PoolNodeCountsListResult(_serialization.Model):
         self.odata_next_link = odata_next_link
 
 
-class PoolResizeParameters(_serialization.Model):
+class PoolResizeParameterss(_serialization.Model):
     """Options for changing the size of a Pool.
 
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.

@@ -1258,7 +1258,7 @@ class PoolOperations:
     async def resize(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.PoolResizeParameters,
+        parameters: _models.PoolResizeParameterss,
         *,
         timeout: int = 30,
         client_request_id: Optional[str] = None,
@@ -1282,7 +1282,7 @@ class PoolOperations:
         :param pool_id: The ID of the Pool to resize. Required.
         :type pool_id: str
         :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure-batch.models.PoolResizeParameters
+        :type parameters: ~azure-batch.models.PoolResizeParameterss
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. Default value is 30.
         :paramtype timeout: int
@@ -1331,7 +1331,7 @@ class PoolOperations:
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = self._serialize.body(parameters, "PoolResizeParameters")
+        _json = self._serialize.body(parameters, "PoolResizeParameterss")
 
         request = build_resize_request(
             pool_id=pool_id,

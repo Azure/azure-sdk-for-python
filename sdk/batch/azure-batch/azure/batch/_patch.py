@@ -6,13 +6,10 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import typing
-import jwt
-import six
 import base64
 import hmac
 import hashlib
-from datetime import datetime, timedelta, tzinfo
+from datetime import datetime
 from typing import TYPE_CHECKING
 import importlib
 
@@ -55,7 +52,7 @@ except ImportError:
     from urllib.parse import urlparse, parse_qs
 __all__ = [
     "BatchServiceClient",
-    "BatchSharedKeyCredential",
+    "SharedKeyCredentials",
 ]  # Add all objects you want publicly available to users at this package level
 
 if TYPE_CHECKING:
@@ -75,7 +72,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest
 
 
-class BatchSharedKeyCredential:
+class SharedKeyCredentials:
     """Credential type used for authenticating to an Azure Metrics Advisor service.
 
     :param str subscription_key: The subscription key
@@ -121,7 +118,7 @@ class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
         "range",
     ]
 
-    def __init__(self, credential: BatchSharedKeyCredential):
+    def __init__(self, credential: SharedKeyCredentials):
         super(BatchSharedKeyAuthPolicy, self).__init__()
         self._account_name = credential.account_name
         self._key = credential.key
@@ -191,20 +188,59 @@ class BatchServiceClient(GenerateBatchServiceClient):
     :param hub: Target hub name, which should start with alphabetic characters and only contain
      alpha-numeric characters or underscore.
     :type hub: str
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :param credentials: Credential needed for the client to connect to Azure.
+    :type credentials: ~azure.batch.SharedKeyCredentials or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, batch_url: str, credential: str, **kwargs):
+    def __init__(self, batch_url: str, credentials: str, **kwargs):
         super().__init__(
             batch_url=batch_url,
-            credential=credential,
-            authentication_policy=kwargs.pop("authentication_policy", BatchSharedKeyAuthPolicy(credential)),
+            credential=credentials,
+            authentication_policy=kwargs.pop("authentication_policy", BatchSharedKeyAuthPolicy(credentials)),
             **kwargs
         )
+
+
+
+class CreateTasksErrorException(Exception):
+    """ Aggregate Exception containing details for any failures from a task add operation.
+
+    :param str message: Error message describing exit reason
+    :param [~TaskAddParameter] pending_tasks: List of tasks remaining to be submitted.
+    :param [~TaskAddResult] failure_tasks: List of tasks which failed to add
+    :param [~Exception] errors: List of unknown errors forcing early termination
+    """
+    def __init__(self, pending_tasks=None, failure_tasks=None, errors=None):
+        self.pending_tasks = list(pending_tasks)
+        self.failure_tasks = list(failure_tasks)
+        self.errors = list(errors)
+        if failure_tasks and errors:
+            self.message = \
+                "Multiple errors encountered. Check the `failure_tasks` and " \
+                "`errors` properties for additional details."
+        elif errors:
+            if len(errors) > 1:
+                self.message = \
+                    "Multiple errors occurred when submitting add_collection " \
+                    "requests. Check the `errors` property for the inner " \
+                    "exceptions."
+            else:
+                self.message = str(errors[0])
+        elif failure_tasks:
+            if len(failure_tasks) > 1:
+                self.message = \
+                    "Multiple client side errors occurred when adding the " \
+                    "tasks. Check the `failure_tasks` property for details on" \
+                    " these tasks."
+            else:
+                result = failure_tasks[0]
+                self.message = \
+                    "Task with id `%s` failed due to client error - %s::%s" % \
+                    (result.task_id, result.error.code, result.error.message)
+        super(CreateTasksErrorException, self).__init__(self.message)
 
 
 def patch_sdk():

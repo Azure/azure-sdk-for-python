@@ -99,7 +99,7 @@ from ._models import PoolEndpointConfiguration
 from ._models import PoolEvaluateAutoScaleParameters
 from ._models import PoolInformation
 from ._models import PoolNodeCounts
-from ._models import PoolResizeParameters
+from ._models import PoolResizeParameterss
 from ._models import PoolSpecification
 from ._models import PoolStatistics
 from ._models import PoolUpdate
@@ -287,7 +287,7 @@ __all__ = [
     "PoolEvaluateAutoScaleParameters",
     "PoolInformation",
     "PoolNodeCounts",
-    "PoolResizeParameters",
+    "PoolResizeParameterss",
     "PoolSpecification",
     "PoolStatistics",
     "PoolUpdate",

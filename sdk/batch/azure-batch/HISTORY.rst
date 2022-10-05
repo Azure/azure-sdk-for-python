@@ -8,7 +8,7 @@ Release History
 
 - Using REST API version 2019-08-01.10.0.
     * Added ability to specify a collection of public IPs on `NetworkConfiguration` via the new `public_ips` property. This guarantees nodes in the Pool will have an IP from the list user provided IPs.
-    * Added ability to mount remote file-systems on each node of a pool via the `mount_configuration` property on `CloudPool`.
+    * Added ability to mount remote file-systems on each node of a pool via the `mount_configuration` property on `Pool`.
     * Shared Image Gallery images can now be specified on the `virtual_machine_image_id` property of `ImageReference` by referencing the image via its ARM ID.
     * **Breaking** When not specified, the default value for `wait_for_success` on `StartTask` is now `True` (was `False`).
     * **Breaking** When not specified, the default value for `scope` on `AutoUserSpecification` is now always `Pool` (was `Task` on Windows nodes, `Pool` on Linux nodes).
@@ -18,7 +18,7 @@ Release History
 
 - Using REST API version 2019-06-01.9.0.
     * **Breaking** Replaced `AccountOperations.list_node_agent_skus` with `AccountOperations.list_supported_images`. `list_supported_images` contains all of the same information originally available in `list_node_agent_skus` but in a clearer format. New non-verified images are also now returned. Additional information about `capabilities` and `batch_support_end_of_life` is accessible on the `ImageInformation` object returned by `list_supported_images`.
-    * Now support network security rules blocking network access to a `CloudPool` based on the source port of the traffic. This is done via the `source_port_ranges` property on `network_security_group_rules`.
+    * Now support network security rules blocking network access to a `Pool` based on the source port of the traffic. This is done via the `source_port_ranges` property on `network_security_group_rules`.
     * When running a container, Batch now supports executing the task in the container working directory or in the Batch task working directory. This is controlled by the `working_directory` property on `TaskContainerSettings`.
 
 6.0.1 (2019-2-26)
@@ -43,7 +43,7 @@ Release History
         * URLs provided to `ResourceFile` via the `http_url` property can now be any HTTP URL. Previously, these had to be an Azure Blob Storage URL.
         * The blobs under the Azure Blob Storage container can be filtered by `blob_prefix` property.
     * **Breaking** Removed `os_disk` property from `VirtualMachineConfiguration`. This property is no longer supported.
-    * Pools which set the `dynamic_vnet_assignment_scope` on `NetworkConfiguration` to be `DynamicVNetAssignmentScope.job` can now dynamically assign a Virtual Network to each node the job's tasks run on. The specific Virtual Network to join the nodes to is specified in the new `network_configuration` property on `CloudJob` and `JobSpecification`.
+    * Pools which set the `dynamic_vnet_assignment_scope` on `NetworkConfiguration` to be `DynamicVNetAssignmentScope.job` can now dynamically assign a Virtual Network to each node the job's tasks run on. The specific Virtual Network to join the nodes to is specified in the new `network_configuration` property on `BatchJob` and `JobSpecification`.
         - Note: This feature is in public preview. It is disabled for all Batch accounts except for those which have contacted us and requested to be in the pilot.
     * The maximum lifetime of a task is now 180 days (previously it was 7).
     * Added support on Windows pools for creating users with a specific login mode (either `batch` or `interactive`) via `WindowsUserConfiguration.login_mode`.
@@ -139,20 +139,20 @@ Release History
 ++++++++++++++++++
 
 - Added support for the new low-priority node type; `AddPoolParameter` and `PoolSpecification` now have an additional property `target_low_priority_nodes`.
-- `target_dedicated` and `current_dedicated` on `CloudPool`, `AddPoolParameter` and `PoolSpecification` have been renamed to `target_dedicated_nodes` and `current_dedicated_nodes`.
-- `resize_error` on `CloudPool` is now a collection called `resize_errors`.
+- `target_dedicated` and `current_dedicated` on `Pool`, `AddPoolParameter` and `PoolSpecification` have been renamed to `target_dedicated_nodes` and `current_dedicated_nodes`.
+- `resize_error` on `Pool` is now a collection called `resize_errors`.
 - Added a new `is_dedicated` property on `ComputeNode`, which is `false` for low-priority nodes.
 - Added a new `allow_low_priority_node` property to `JobManagerTask`, which if `true` allows the `JobManagerTask` to run on a low-priority compute node.
-- `PoolResizeParameter` now takes two optional parameters, `target_dedicated_nodes` and `target_low_priority_nodes`, instead of one required parameter `target_dedicated`.
+- `PoolResizeParameters` now takes two optional parameters, `target_dedicated_nodes` and `target_low_priority_nodes`, instead of one required parameter `target_dedicated`.
   At least one of these two parameters must be specified.
-- Added support for uploading task output files to persistent storage, via the `OutputFiles` property on `CloudTask` and `JobManagerTask`.
+- Added support for uploading task output files to persistent storage, via the `OutputFiles` property on `BatchTask` and `JobManagerTask`.
 - Added support for specifying actions to take based on a task's output file upload status, via the `file_upload_error` property on `ExitConditions`.
 - Added support for determining if a task was a success or a failure via the new `result` property on all task execution information objects.
 - Renamed `scheduling_error` on all task execution information objects to `failure_information`. `TaskFailureInformation` replaces `TaskSchedulingError` and is returned any
   time there is a task failure. This includes all previous scheduling error cases, as well as nonzero task exit codes, and file upload failures from the new output files feature.
 - Renamed `SchedulingErrorCategory` enum to `ErrorCategory`.
 - Renamed `scheduling_error` on `ExitConditions` to `pre_processing_error` to more clearly clarify when the error took place in the task life-cycle.
-- Added support for provisioning application licenses to your pool, via a new `application_licenses` property on `PoolAddParameter`, `CloudPool` and `PoolSpecification`.
+- Added support for provisioning application licenses to your pool, via a new `application_licenses` property on `Pool`, `Pool` and `PoolSpecification`.
   Please note that this feature is in gated public preview, and you must request access to it via a support ticket.
 - The `ssh_private_key` attribute of a `UserAccount` object has been replaced with an expanded `LinuxUserConfiguration` object with additional settings for a user ID and group ID of the
   user account.
@@ -189,8 +189,8 @@ Release History
 1.0.0 (2016-08-09)
 ++++++++++++++++++
 
-- Added support for joining a CloudPool to a virtual network on using the network_configuration property.
-- Added support for application package references on CloudTask and JobManagerTask.
+- Added support for joining a Pool to a virtual network on using the network_configuration property.
+- Added support for application package references on BatchTask and JobManagerTask.
 - Added support for automatically terminating jobs when all tasks complete or when a task fails, via the on_all_tasks_complete property and
   the CloudTask exit_conditions property.
 
