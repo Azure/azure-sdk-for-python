@@ -16,7 +16,7 @@ autorest --v3 --python
 
 ### Settings
 ``` yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/ed22547af56a5ad6aa6101113c9d83404735103b/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-12-02/file.json
+input-file: https://raw.githubusercontent.com/seanmcc-msft/azure-rest-api-specs/ed22547af56a5ad6aa6101113c9d83404735103b/specification/storage/data-plane/Microsoft.FileStorage/preview/2021-12-02/file.json
 output-folder: ../azure/storage/fileshare/_generated
 namespace: azure.storage.fileshare
 no-namespace-folders: true
