@@ -14,6 +14,8 @@ from ._job import (
     ImageObjectDetectionModelNames,
     ImportSourceType,
     JobType,
+    NlpModels,
+    NlpLearningRateScheduler,
 )
 from ._registry import StorageAccountType, AcrAccountSku
 from ._workspace import ManagedServiceIdentityType
@@ -34,4 +36,6 @@ __all__ = [
     "ImageInstanceSegmentationModelNames",
     "StorageAccountType",
     "AcrAccountSku",
+    "NlpModels",
+    "NlpLearningRateScheduler",
 ]
