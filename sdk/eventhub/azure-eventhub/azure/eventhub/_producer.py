@@ -15,6 +15,7 @@ from typing import (
     AnyStr,
     List,
     TYPE_CHECKING,
+    cast
 )  # pylint: disable=unused-import
 
 from ._common import EventData, EventDataBatch
@@ -216,7 +217,7 @@ class EventHubProducer(
                     event_data = EventDataBatch._from_batch(
                         event_data._internal_events,
                         amqp_transport=self._amqp_transport,
-                        partition_key=event_data._partition_key,
+                        partition_key=cast(AnyStr, event_data._partition_key),
                         partition_id=event_data._partition_id,
                         max_size_in_bytes=event_data.max_size_in_bytes
                     )

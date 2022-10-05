@@ -18,9 +18,9 @@ async def _generate_sas_token_async(auth_uri, sas_name, sas_key, expiry_in=AUTH_
 
 
 class JWTTokenAuthAsync(JWTTokenAuth):
-    """"""
     # TODO:
     #  1. naming decision, suffix with Auth vs Credential
+    ...
 
 
 class SASTokenAuthAsync(SASTokenAuth):

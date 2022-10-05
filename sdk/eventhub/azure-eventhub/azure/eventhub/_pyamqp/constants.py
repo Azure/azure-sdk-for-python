@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+from typing import cast
 from collections import namedtuple
 from enum import Enum
 import struct
@@ -64,7 +65,7 @@ OUTGOING_WINDOW = 64 * 1024
 
 DEFAULT_LINK_CREDIT = 10000
 
-FIELD = namedtuple('field', 'name, type, mandatory, default, multiple')
+FIELD = namedtuple('FIELD', 'name, type, mandatory, default, multiple')
 
 STRING_FILTER = b"apache.org:selector-filter:string"
 
@@ -329,6 +330,7 @@ class TransportType(Enum):
 
     def __eq__(self, __o: object) -> bool:
         try:
+            __o = cast(Enum, __o)
             return self.value == __o.value
         except AttributeError:
             return super().__eq__(__o)
