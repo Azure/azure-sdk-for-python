@@ -76,6 +76,7 @@ def snake_to_pascal(text: Optional[str]) -> str:
 
 
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
+    # aka spinal case
     if text:
         return re.sub("_", "-", text)
 
