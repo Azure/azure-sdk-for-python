@@ -284,13 +284,13 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
-    def show_services(self, name: str, node_index: int = 0):
+    def show_services(self, name: str, node_index: int = 0) -> Dict[str, ServiceInstance]:
         """Get services associated with a job's node.
 
         :param str name: Name of the job.
         :param int node_index: Index of the node.
         :return: The Services associated with the job for the given node.
-        :rtype: ServiceInstance
+        :rtype: Dict[str, ServiceInstance] Map of service names to ServiceInstance.
         """
 
         service_instances_dict = self._runs_operations._operation.get_run_service_instances(
