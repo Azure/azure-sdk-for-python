@@ -4,10 +4,8 @@
 
 from typing import Dict
 
-# from azure.ai.ml._schema._deployment.batch.batch_job_property import BatchJobPropertySchema
-from azure.ai.ml._schema._deployment.batch.batch_deployment_settings import BatchRetrySettings
-from azure.ai.ml.entities._datastore.datastore import Datastore
-from azure.ai.ml.entities._deployment import compute_binding
+from azure.ai.ml._schema._deployment.batch.batch_job_property import BatchJobPropertySchema
+from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._deployment.compute_binding import ComputeBinding
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import SystemData
@@ -66,6 +64,6 @@ class BatchJobProperty:
         )
 
     
-    # def _to_dict(self) -> Dict:
-    #     # pylint: disable=no-member
-    #     return BatchJobPropertySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return BatchJobPropertySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

@@ -19,10 +19,6 @@ from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
-from azure.ai.ml.entities import ComputeConfiguration
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._deployment.data_version import DataVersion
-from azure.ai.ml.entities._deployment.batch_job_property import BatchJobProperty
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 from .compute_binding import ComputeBindingSchema
@@ -34,6 +30,8 @@ class OutputDataSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
+        from azure.ai.ml.entities._deployment.data_version import DataVersion
+
         return DataVersion(**data)
 
 
@@ -51,6 +49,11 @@ class BatchJobPropertySchema(PathAwareSchema):
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
+        from azure.ai.ml.entities._inputs_outputs import Input
+        from azure.ai.ml.entities._deployment.batch_job_property import BatchJobProperty
+        from azure.ai.ml.entities import ComputeConfiguration
+
+
         if data.get(EndpointYamlFields.BATCH_JOB_INPUT_DATA, None):
             input_data = data[EndpointYamlFields.BATCH_JOB_INPUT_DATA]["input_data"]
             if isinstance(input_data, Input):
