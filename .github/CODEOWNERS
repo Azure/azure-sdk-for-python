@@ -233,6 +233,9 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %AAD %Service Attention
 #/<NotInRepo>/          @adamedx
 
+# ServiceLabel: %AgriFood %Service Attention
+/sdk/agrifood/azure-agrifood-farming         @bhargav-kansagara
+
 # ServiceLabel: %AKS %Service Attention
 #/<NotInRepo>/          @Azure/aks-pm
 
@@ -282,7 +285,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 #/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
 
 # ServiceLabel: %Attestation %Service Attention
-#/<NotInRepo>/          @anilba06
+#/<NotInRepo>/          @anilba06 @Azure/azure-sdk-write-attestation @gkostal @larryo
 
 # ServiceLabel: %Authorization %Service Attention
 #/<NotInRepo>/          @darshanhs90 @AshishGargMicrosoft
@@ -386,6 +389,9 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Compute - VMSS %Service Attention
 #/<NotInRepo>/          @Drewm3 @avirishuv
 
+# ServiceLabel: %Confidential Ledger %Service Attention
+sdk/confidentialledger/azure-confidentialledger          @lynshi
+
 # ServiceLabel: %Connected Kubernetes %Service Attention
 #/<NotInRepo>/          @akashkeshari
 
@@ -455,6 +461,9 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Device Provisioning Service %Service Attention
 #/<NotInRepo>/          @nberdy
 
+# ServiceLabel: %Device Update %Service Attention
+/sdk/deviceupdate/       @dpokluda @sedols
+
 # ServiceLabel: %Digital Twins %Service Attention
 #/<NotInRepo>/          @sourabhguha @inesk-vt
 
@@ -515,6 +524,9 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Managed Services %Service Attention
 #/<NotInRepo>/          @Lighthouse-Azure
 
+# ServiceLabel: %Maps %Service Attention
+/sdk/maps/              @alextts627
+
 # ServiceLabel: %MariaDB %Service Attention
 #/<NotInRepo>/          @ambhatna @savjani
 
@@ -526,6 +538,9 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 
 # ServiceLabel: %Migrate %Service Attention
 #/<NotInRepo>/          @shijojoy
+
+# ServiceLabel: %Mixed Reality %Service Attention
+/sdk/mixedreality/azure-mixedreality-authentication                  @crtreasu
 
 # ServiceLabel: %Mobile Engagement %Service Attention
 #/<NotInRepo>/          @kpiteira
@@ -739,6 +754,30 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 
 # ServiceLabel: %Communication %Service Attention
 #/<NotInRepo>/          @acsdevx-msft
+
+# ServiceLabel: %Communication - Chat %Service Attention
+/sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
+
+# ServiceLabel: %Communication - Email %Service Attention
+/sdk/communication/azure-communication-email/                        @yogeshmo
+
+# ServiceLabel: %Communication - Job Router %Service Attention
+/sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi
+
+# ServiceLabel: %Communication - Phone Numbers %Service Attention
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+
+# ServiceLabel: %Communication - Rooms %Service Attention
+/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
+
+# ServiceLabel: %Communication - SMS %Service Attention
+/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
+
+# ServiceLabel: %Communication - Identity %Service Attention
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+
+# ServiceLabel: %Communication - NetworkTraversal %Service Attention
+/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
 
 # ServiceLabel: %ML-AutoML %Service Attention
 #/<NotInRepo>/          @Aniththa
