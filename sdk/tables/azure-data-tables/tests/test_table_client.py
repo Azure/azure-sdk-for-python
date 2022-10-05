@@ -3,24 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from multiprocessing.sharedctypes import Value # cspell:disable-line
 import pytest
 import platform
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables._error import _validate_storage_tablename
-from azure.data.tables import TableServiceClient, TableClient, TableTransactionError
+from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from _shared.testcase import (
     TableTestCase
 )
 
 from preparers import tables_decorator
-
-# ------------------------------------------------------------------------------
 
 SERVICES = {
     TableServiceClient: 'table',
@@ -30,6 +28,7 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
+
 
 class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
@@ -137,6 +136,40 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 client.submit_transaction(batch)
             assert 'Storage table names must be alphanumeric' in str(error.value)
+    
+    @tables_decorator
+    @recorded_by_proxy
+    def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
+        # test table client has the same table name as in url
+        tc = TableClient(invalid_url, table_name, credential=tables_primary_storage_account_key)
+        with pytest.raises(ResourceNotFoundError) as exc:
+            tc.create_table()
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test table client has a different table name as in url
+        table_name2 = self.get_resource_name("mytable2")
+        tc2 = TableClient(invalid_url, table_name2, credential=tables_primary_storage_account_key)
+        with pytest.raises(ResourceNotFoundError) as exc:
+            tc2.create_table()
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        valid_tc = TableClient(url, table_name, credential=tables_primary_storage_account_key)
+        valid_tc.create_table()
+        # test creating a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            tc.create_table()
+        assert ("values are not specified") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test deleting a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            tc.delete_table()
+        assert ("URI does not match number of key properties for the resource") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        valid_tc.delete_table()
 
 
 class TestTableUnitTests(TableTestCase):
@@ -649,3 +682,14 @@ class TestTableUnitTests(TableTestCase):
             _validate_storage_tablename("a aa")
         with pytest.raises(ValueError):
             _validate_storage_tablename("1aaa")
+    
+    def test_use_development_storage(self):
+        tsc = TableServiceClient.from_connection_string("UseDevelopmentStorage=true")
+        assert tsc.account_name == "devstoreaccount1"
+        assert tsc.scheme == "http"
+        assert tsc.credential.named_key.name == "devstoreaccount1"
+        assert tsc.credential.named_key.key == "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        assert tsc.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._primary_endpoint == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert not tsc._cosmos_endpoint

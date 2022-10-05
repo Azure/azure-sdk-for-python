@@ -1,5 +1,39 @@
 # Release History
 
+## 28.0.1 (2022-09-30)
+
+### Bugs Fixed
+
+  - Fix paging problem about `api_version`
+
+## 28.0.0 (2022-09-20)
+
+### Features Added
+
+  - Model CapacityReservation has a new parameter platform_fault_domain_count
+  - Model CapacityReservationUpdate has a new parameter platform_fault_domain_count
+  - Model CapacityReservationUtilization has a new parameter current_capacity
+  - Model LinuxConfiguration has a new parameter enable_vm_agent_platform_updates
+  - Model StorageProfile has a new parameter disk_controller_type
+  - Model VirtualMachineNetworkInterfaceConfiguration has a new parameter disable_tcp_state_tracking
+  - Model VirtualMachineScaleSet has a new parameter priority_mix_policy
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter disable_tcp_state_tracking
+  - Model VirtualMachineScaleSetStorageProfile has a new parameter disk_controller_type
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter disable_tcp_state_tracking
+  - Model VirtualMachineScaleSetUpdateStorageProfile has a new parameter disk_controller_type
+  - Model VirtualMachineScaleSetUpdateVMProfile has a new parameter hardware_profile
+  - Model WindowsConfiguration has a new parameter enable_vm_agent_platform_updates
+
+### Breaking Changes
+
+  - Model PurchasePlan no longer has parameter promotion_code
+  - Operation VirtualMachineRunCommandsOperations.begin_create_or_update no longer has parameter content_type
+  - Operation VirtualMachineRunCommandsOperations.begin_update no longer has parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_create_or_update no longer has parameter content_type
+  - Operation VirtualMachineScaleSetVMRunCommandsOperations.begin_update no longer has parameter content_type
+  - Operation VirtualMachineScaleSetVMsOperations.begin_run_command no longer has parameter content_type
+  - Operation VirtualMachinesOperations.begin_run_command no longer has parameter content_type
+
 ## 27.2.0 (2022-06-29)
 
 **Features**

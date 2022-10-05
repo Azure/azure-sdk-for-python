@@ -10,7 +10,14 @@ from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -21,8 +28,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._trusted_access_roles_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class TrustedAccessRolesOperations:
     """
@@ -43,13 +52,8 @@ class TrustedAccessRolesOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
-    def list(
-        self,
-        location: str,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.TrustedAccessRole"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.TrustedAccessRole"]:
         """List supported trusted access roles.
 
         List supported trusted access roles.
@@ -65,21 +69,25 @@ class TrustedAccessRolesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TrustedAccessRoleListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TrustedAccessRoleListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     location=location,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -108,9 +116,7 @@ class TrustedAccessRolesOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -120,8 +126,6 @@ class TrustedAccessRolesOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/locations/{location}/trustedAccessRoles"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/locations/{location}/trustedAccessRoles"}  # type: ignore

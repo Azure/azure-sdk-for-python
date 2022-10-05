@@ -23,7 +23,6 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 # cSpell:disable
 def search_structured_address():
-    # [START search_structured_address]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
     from azure.maps.search.models import StructuredAddress
@@ -40,7 +39,6 @@ def search_structured_address():
 
     print("Get Search Address Structured:")
     print(result)
-    # [END search_structured_address]
 
 if __name__ == '__main__':
     search_structured_address()

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt6f263323?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt6f263323?api-version=7.2",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -26,7 +26,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt6f263323?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt6f263323?api-version=7.2",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -76,13 +76,13 @@
             "unwrapKey",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt6f263323/42ab1681dd654073935376370c48a13a",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt6f263323/42ab1681dd654073935376370c48a13a",
           "kty": "oct-HSM"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt6f263323/42ab1681dd654073935376370c48a13a/encrypt?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt6f263323/42ab1681dd654073935376370c48a13a/encrypt?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -113,7 +113,7 @@
       "ResponseBody": {
         "alg": "A256CBCPAD",
         "iv": "ibitv7BzReNZiTKgnFF0QQ",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt6f263323/42ab1681dd654073935376370c48a13a",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt6f263323/42ab1681dd654073935376370c48a13a",
         "value": "LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCiqWw_oS3hdD48u_EhIUSvg"
       }
     }

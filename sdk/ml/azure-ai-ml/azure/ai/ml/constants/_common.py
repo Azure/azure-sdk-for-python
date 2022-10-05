@@ -3,6 +3,9 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
+
+
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
 API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
@@ -65,6 +68,7 @@ MAX_AUTOINCREMENT_ATTEMPTS = 3
 REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
+INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
 REGISTRY_VERSION_PATTERN = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
 REGISTRY_ASSET_ID = "azureml://registries/{}/{}/{}/versions/{}"
 SHORT_URI_FORMAT = "azureml://datastores/{}/paths/{}"
@@ -178,6 +182,7 @@ class AzureMLResourceType(object):
     WORKSPACE_CONNECTION = "workspace_connections"
     COMPONENT = "components"
     SCHEDULE = "schedules"
+    REGISTRY = "registries"
 
     NAMED_TYPES = {
         JOB,
@@ -331,6 +336,7 @@ class YAMLRefDocLinks:
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
+    REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -375,7 +381,7 @@ class LoggingLevel:
     DEBUG = "DEBUG"
 
 
-class TimeZone(str, Enum):
+class TimeZone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Time zones that a job or compute instance schedule accepts."""
 
     DATELINE_STANDARD_TIME = "Dateline Standard Time"
@@ -548,3 +554,11 @@ class ModelType:
     CUSTOM = "CustomModel"
     MLFLOW = "MLFlowModel"
     TRITON = "TritonModel"
+
+
+class RollingRate:
+    YEAR = "year"
+    MONTH = "month"
+    DAY = "day"
+    HOUR = "hour"
+    MINUTE = "minute"

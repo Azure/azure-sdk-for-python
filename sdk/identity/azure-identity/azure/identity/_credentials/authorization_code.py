@@ -10,7 +10,7 @@ from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any, Optional, List
     from azure.core.credentials import AccessToken
 
 
@@ -22,14 +22,17 @@ class AuthorizationCodeCredential(GetTokenMixin):
     about the authentication flow.
 
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
-    :param str client_id: the application's client ID
-    :param str authorization_code: the authorization code from the user's log-in
+    :param str client_id: The application's client ID
+    :param str authorization_code: The authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
     def __init__(self, tenant_id, client_id, authorization_code, redirect_uri, **kwargs):

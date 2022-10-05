@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 from marshmallow import ValidationError
 
-from .._ml_exceptions import ValidationException
+from ..exceptions import ValidationException
 from . import Component, Job
 from ._load_functions import _load_common_raising_marshmallow_error, _try_load_yaml_dict
 from ._validation import SchemaValidatableMixin, _ValidationResultBuilder
@@ -24,10 +24,9 @@ def validate_common(cls, path, validate_func, params_override=None):
 
         if validate_func is not None:
             return validate_func(entity)
-        elif isinstance(entity, SchemaValidatableMixin):
+        if isinstance(entity, SchemaValidatableMixin):
             return entity._validate()
-        else:
-            return _ValidationResultBuilder.success()
+        return _ValidationResultBuilder.success()
     except ValidationException as err:
         return _ValidationResultBuilder.from_single_message(err.message)
     except ValidationError as err:
@@ -41,7 +40,8 @@ def validate_component(path, ml_client=None, params_override=None):
     :type path: str
     :param ml_client: The client to use for validation. Will skip remote validation if None.
     :type ml_client: azure.ai.ml.core.AzureMLComputeClient
-    :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :param params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :return: The validation result.
     :rtype: azure.ai.ml.core.ValidationResult
@@ -61,7 +61,8 @@ def validate_job(path, ml_client=None, params_override=None):
     :type path: str
     :param ml_client: The client to use for validation. Will skip remote validation if None.
     :type ml_client: azure.ai.ml.core.AzureMLComputeClient
-    :param params_override: Fields to overwrite on top of the yaml file. Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :param params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :return: The validation result.
     :rtype: azure.ai.ml.core.ValidationResult
