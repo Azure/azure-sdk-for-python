@@ -413,6 +413,7 @@
     {
       "filename": "sdk/tables/azure-data-tables/**/*.py",
       "words": [
+        "aefg",
         "astimezone",
         "myasynctable",
         "mytableasync",
