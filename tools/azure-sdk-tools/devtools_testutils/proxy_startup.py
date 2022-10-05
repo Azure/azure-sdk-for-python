@@ -31,6 +31,7 @@ PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
+discovered_roots = []
 
 def get_image_tag(repo_root: str) -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
@@ -59,6 +60,8 @@ def ascend_to_root(start_dir_or_file: str) -> str:
 
         # we need the git check to prevent ascending out of the repo
         if os.path.exists(possible_root):
+            if current_dir not in discovered_roots:
+                discovered_roots.append(current_dir)
             return current_dir
         else:
             current_dir = os.path.dirname(current_dir)
@@ -137,13 +140,18 @@ def start_test_proxy(request) -> None:
             else:
                 envname = os.getenv("TOX_ENV_NAME", "default")
                 root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
+
+
+
                 log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
+                env = {}
 
                 _LOGGER.info("{} is calculated repo root".format(root))
                 proc = subprocess.Popen(
                     shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
                     stderr=log,
+                    env = {}
                 )
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
