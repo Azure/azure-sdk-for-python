@@ -10,8 +10,6 @@ from marshmallow import fields
 from marshmallow.decorators import post_load
 
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
-    BatchJob,
-    DataVersion,
     UriFileJobInput,
     UriFolderJobInput,
 )
@@ -23,6 +21,8 @@ from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities import ComputeConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._deployment.data_version import DataVersion
+from azure.ai.ml.entities._deployment.batch_job import BatchJob
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 from .compute_binding import ComputeBindingSchema

@@ -2,16 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Union
 
-from azure.ai.ml._schema._deployment.batch.batch_job_resource import BatchJobResourceSchema
+from azure.ai.ml._schema._deployment.batch.compute_binding import ComputeBindingSchema
+from azure.ai.ml._schema.core.fields import ArmStr
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.entities._deployment.batch_job import BatchJob
-from azure.ai.ml.entities import SystemData
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource as RestBatchJobResource
 
 
-class BatchJobResource:
+class ComputeBinding:
     """Batch Job Resource entity
 
     :param id: Fully qualified resource ID for the resource. Ex -
@@ -30,30 +28,19 @@ class BatchJobResource:
 
     def __init__(
         self,
-        id: str = None,
-        name: str = None,
-        type: str = None,
-        properties: BatchJob = None,
-        system_data: SystemData = None,
+        target: Union[str, ArmStr] = None,
+        instance_count: int = None,
+        instance_type: str = None,
+        location: str = None,
+        properties: Dict = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
-        self.id = id
-        self.name = name
-        self.type = type
+        self.target = target
+        self.instance_count = instance_count
+        self.instance_type = instance_type
+        self.location = location
         self.properties = properties
-        self.system_data = system_data
-
-    @classmethod
-    def _from_rest_object(cls, job: RestBatchJobResource):
-        return BatchJobResource(
-            id=job.id,
-            name=job.name,
-            type=job.type,
-            properties=job.properties,
-            system_data=job.system_data
-        )
-
     
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return BatchJobResourceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return ComputeBindingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
