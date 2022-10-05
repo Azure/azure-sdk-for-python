@@ -99,7 +99,7 @@ class TestOperations(TestOperationsGenerated):
         VALIDATION_SUCCESS = 2
         VALIDATION_FAILED = 3
 
-    async def check_validation_status(self, test_id: str, refresh_time: int = 10, time_out: int = 600):
+    async def check_validation_status(self, test_id: str, *, refresh_time: int = 10, time_out: int = 600) -> ValidationStatus:
         """Check if the JMX file is validated to run test
 
         :param test_id: Unique id for the test [required]
