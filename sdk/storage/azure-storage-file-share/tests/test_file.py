@@ -49,7 +49,7 @@ TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S
 # ------------------------------------------------------------------------------
 
 
-class TestStorageTest(StorageRecordedTestCase):
+class TestStorageFile(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key, rmt_account=None, rmt_key=None):
 
         url = self.account_url(storage_account_name, "file")
@@ -1278,7 +1278,6 @@ class TestStorageTest(StorageRecordedTestCase):
         assert ranges is not None
         assert len(ranges) == 0
 
-    # @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_list_ranges_diff(self, **kwargs):
@@ -1668,7 +1667,7 @@ class TestStorageTest(StorageRecordedTestCase):
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
-        data = b'12345678' * 1024
+        data = b'12345678' * 1024 * 256
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
         sas_token = self.generate_sas(
@@ -2043,7 +2042,7 @@ class TestStorageTest(StorageRecordedTestCase):
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            non_seekable_file = TestStorageTest.NonSeekableFile(stream)
+            non_seekable_file = TestStorageFile.NonSeekableFile(stream)
             file_client.upload_file(non_seekable_file, length=file_size, max_concurrency=1)
 
         # Assert

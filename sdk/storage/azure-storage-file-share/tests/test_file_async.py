@@ -5,38 +5,31 @@
 # --------------------------------------------------------------------------
 import base64
 import os
+import requests
+import uuid
 from datetime import datetime, timedelta
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-
-import requests
 import pytest
-import uuid
-from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.fileshare import (
+    AccessPolicy,
+    AccountSasPermissions,
+    ContentSettings,
+    FileSasPermissions,
     generate_account_sas,
     generate_file_sas,
     generate_share_sas,
     NTFSAttributes,
-    ContentSettings,
-    FileSasPermissions,
-    ShareSasPermissions,
-    AccessPolicy,
     ResourceTypes,
-    AccountSasPermissions,
-    StorageErrorCode)
-from azure.storage.fileshare.aio import (
-    ShareFileClient,
-    ShareServiceClient,
+    ShareSasPermissions,
+    StorageErrorCode
 )
-from multidict import CIMultiDict, CIMultiDictProxy
+from azure.storage.fileshare.aio import ShareFileClient, ShareServiceClient
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 from test_helpers_async import ProgressTracker
 
@@ -54,18 +47,7 @@ TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S
 # ------------------------------------------------------------------------------
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class StorageFileAsyncTest(AsyncStorageTestCase):
+class TestStorageFileAsync(AsyncStorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key, rmt_account=None, rmt_key=None):
         url = self.account_url(storage_account_name, "file")
         blob_url = self.account_url(storage_account_name, "blob")
@@ -84,7 +66,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         remote_url = self.account_url(rmt_account, "file")
         remote_credential = rmt_key
         if rmt_account:
-            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential, transport=AiohttpTestTransport())
+            self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
             self.remote_share_name = None
 
     def _teardown(self, FILE_PATH):
@@ -153,7 +135,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
     async def _create_remote_file(self, file_data=None):
         if not file_data:
-            file_data = b'12345678' * 1024 * 1024
+            file_data = b'12345678' * 1024
         source_file_name = self._get_file_reference()
         remote_share = self.fsc2.get_share_client(self.remote_share_name)
         remote_file = remote_share.get_file_client(source_file_name)
@@ -190,6 +172,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
     # --Test cases for files ----------------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_make_file_url(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -203,10 +186,10 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         res = file_client.url
 
         # Assert
-        self.assertEqual(res, 'https://' + storage_account_name
-                         + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
+        assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_make_file_url_no_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -219,10 +202,10 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         res = file_client.url
 
         # Assert
-        self.assertEqual(res, 'https://' + storage_account_name
-                         + '.file.core.windows.net/vhds/my.vhd')
+        assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/my.vhd')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_make_file_url_with_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -237,10 +220,10 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         res = file_client.url
 
         # Assert
-        self.assertEqual(res, 'http://' + storage_account_name
-                         + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
+        assert res == ('http://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_make_file_url_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -258,10 +241,10 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         res = file_client.url
 
         # Assert
-        self.assertEqual(res, 'https://' + storage_account_name +
-                         '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
+        assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -285,6 +268,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             assert props.last_modified == resp['last_modified']
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_with_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -310,6 +294,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             assert props.metadata == metadata
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_when_file_permission_is_too_long(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -321,6 +306,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await file_client.create_file(1024, file_permission=permission)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_with_invalid_file_permission(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -332,6 +318,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await file_name.create_file(1024, file_permission="abcde")
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -340,7 +327,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         file_client = await self._get_file_client(storage_account_name, storage_account_key)
         await file_client.create_file(1024)
 
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         resp = await file_client.create_file(1024, lease=lease)
         assert resp is not None
 
@@ -352,6 +339,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await file_client.delete_file(lease=lease)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_with_changed_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -360,9 +348,9 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         file_client = await self._get_file_client(storage_account_name, storage_account_key)
         await file_client.create_file(1024)
 
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         old_lease_id = lease.id
-        await lease.change(str(uuid.uuid4()))
+        await lease.change('44444444-3333-2222-1111-000000000000')
 
         # use the old lease id to create file will throw exception.
         with pytest.raises(HttpResponseError):
@@ -374,6 +362,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert resp is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_will_set_all_smb_properties(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -393,6 +382,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert file_properties.last_write_time is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_set_smb_properties(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -421,6 +411,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert 'Archive' in file_properties.file_attributes
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_file_exists(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -435,6 +426,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert exists
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_snapshot_exists(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -461,6 +453,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert props
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_file_not_exists(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -478,6 +471,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await file_client.get_file_properties()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_file_exists_with_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -501,6 +495,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert props
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_file_not_exists_with_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -525,6 +520,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await snapshot_client.get_file_properties()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_resize_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -540,13 +536,14 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert props.size == 5
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_resize_file_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         with pytest.raises(HttpResponseError):
@@ -558,6 +555,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert props.size == 5
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_file_properties(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -580,6 +578,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert properties.permission_key is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_file_properties_with_file_permission(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -617,6 +616,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert "Temporary" in properties.file_attributes
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_properties(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -632,17 +632,18 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert properties.size == len(self.short_byte_data)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_properties_with_invalid_lease_fails(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        file_client.acquire_lease()
+        await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         with pytest.raises(HttpResponseError):
-            await file_client.get_file_properties(lease=str(uuid.uuid4()))
+            await file_client.get_file_properties(lease='44444444-3333-2222-1111-000000000000')
 
         # get properties on a leased file will succeed
         properties = await file_client.get_file_properties()
@@ -652,6 +653,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert properties.size == len(self.short_byte_data)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_properties_with_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -683,6 +685,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert metadata == snapshot_props.metadata
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_metadata_with_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -713,6 +716,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert metadata == file_snapshot_metadata.metadata
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_properties_with_non_existing_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -732,6 +736,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             # Assert
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -746,13 +751,12 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert md.metadata is not None
         assert 0 == len(md.metadata)
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_file_metadata_with_upper_case(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # Make this test live test only, for the reason that metadata can only be recorded in lower case.
         self._setup(storage_account_name, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         file_client = await self._create_file(storage_account_name, storage_account_key)
@@ -769,33 +773,32 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert md['UP'] == 'UPval'
         assert not 'up' in md
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_break_lease_with_broken_period_fails(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Assert
         assert lease is not None
         with pytest.raises(TypeError):
             await lease.break_lease(lease_break_period=5)
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_file_metadata_with_broken_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # Make this test live test only, for the reason that metadata can only be recorded in lower case.
         self._setup(storage_account_name, storage_account_key)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         file_client = await self._create_file(storage_account_name, storage_account_key)
 
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         with pytest.raises(HttpResponseError):
             await file_client.set_file_metadata(metadata)
 
@@ -823,6 +826,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert not 'up' in md
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_file_with_existing_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -838,6 +842,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await file_client.get_file_properties()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_file_with_non_existing_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -848,8 +853,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
 
         # Act
         with pytest.raises(ResourceNotFoundError):
@@ -858,6 +862,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             # Assert
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -876,13 +881,14 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert self.short_byte_data[512:] == content[512:]
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         data = b'abcdefghijklmnop' * 32
@@ -897,6 +903,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert self.short_byte_data[512:] == content[512:]
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_with_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -911,6 +918,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_last_written_mode_now(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -928,6 +936,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert current_last_write_time != new_last_write_time
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_last_written_mode_preserve(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -945,6 +954,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert current_last_write_time == new_last_write_time
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -957,7 +967,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         destination_file_client = await self._create_file(storage_account_name, storage_account_key, file_name=destination_file_name)
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -971,6 +982,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await destination_file_client.upload_range_from_url(source_file_url, offset=0, length=2050, source_offset=0)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_from_file_url(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -985,7 +997,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         destination_file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_name=destination_file_name)
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -1008,6 +1021,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert data == file_content
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_from_file_url_with_oauth(
             self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -1026,6 +1040,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             source_blob_client.url, offset=0, length=512, source_offset=0, source_authorization=token)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_from_file_url_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1038,10 +1053,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         destination_file_name = 'filetoupdate'
         destination_file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_name=destination_file_name)
-        lease = await destination_file_client.acquire_lease()
+        lease = await destination_file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -1067,6 +1083,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert data == file_content
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_big_range_from_file_url(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1083,7 +1100,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         destination_file_client = await self._create_empty_file(storage_account_name, storage_account_key, file_name=destination_file_name, file_size=1024 * 1024)
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -1107,6 +1125,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert data == file_content
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_from_file_url_last_written_mode_now(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1123,7 +1142,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         current_last_write_time = (await destination_file_client.get_file_properties()).last_write_time
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -1142,6 +1162,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert current_last_write_time != new_last_write_time
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_range_from_file_url_last_written_mode_preserve(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1158,7 +1179,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         current_last_write_time = (await destination_file_client.get_file_properties()).last_write_time
 
         # generate SAS for the source file
-        sas_token_for_source_file = generate_file_sas(
+        sas_token_for_source_file = self.generate_sas(
+            generate_file_sas,
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
@@ -1177,6 +1199,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert current_last_write_time == new_last_write_time
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_clear_range(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1194,6 +1217,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert self.short_byte_data[512:] == content[512:]
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_update_file_unicode(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1216,6 +1240,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_ranges_none(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1227,8 +1252,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         await file_client.create_file(1024)
 
         # Act
@@ -1239,6 +1263,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert len(ranges) == 0
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_ranges_none_with_invalid_lease_fails(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1250,14 +1275,13 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         await file_client.create_file(1024)
-        await file_client.acquire_lease()
+        await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         with pytest.raises(HttpResponseError):
-            await file_client.get_ranges(lease=str(uuid.uuid4()))
+            await file_client.get_ranges(lease='44444444-3333-2222-1111-000000000000')
 
         # Get ranges on a leased file will succeed without provide the lease
         ranges = await file_client.get_ranges()
@@ -1266,8 +1290,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert ranges is not None
         assert len(ranges) == 0
 
-    @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_ranges_diff(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1315,6 +1339,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert cleared2[0]['end'] == 1023
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_ranges_2(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1326,8 +1351,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         await file_client.create_file(2048)
 
         data = b'abcdefghijklmnop' * 32
@@ -1346,6 +1370,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert ranges[1]['end'] == 1535
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_ranges_none_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1367,8 +1392,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
 
         await file_client.delete_file()
 
@@ -1380,6 +1404,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert len(ranges) == 0
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_ranges_2_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1391,8 +1416,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         await file_client.create_file(2048)
         data = b'abcdefghijklmnop' * 32
         resp1 = await file_client.upload_range(data, offset=0, length=512)
@@ -1405,8 +1429,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
 
         await file_client.delete_file()
 
@@ -1422,6 +1445,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert ranges[1]['end'] == 1535
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_copy_file_with_existing_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1432,8 +1456,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
 
         # Act
         copy = await file_client.start_copy_from_url(source_client.url)
@@ -1448,6 +1471,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == self.short_byte_data
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_copy_existing_file_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1460,7 +1484,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             file_path='file1copy',
             credential=storage_account_key)
         await file_client.create_file(1024)
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         with pytest.raises(HttpResponseError):
@@ -1478,6 +1502,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == self.short_byte_data
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_copy_file_ignore_readonly(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1509,6 +1534,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == self.short_byte_data
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_copy_file_with_specifying_acl_copy_behavior_attributes(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1519,8 +1545,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         source_props = await source_client.get_file_properties()
 
         file_creation_time = source_props.creation_time - timedelta(hours=1)
@@ -1557,6 +1582,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == self.short_byte_data
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_copy_file_with_specifying_acl_and_attributes_from_source(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1568,8 +1594,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path='file1copy',
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
 
         # Act
         copy = await file_client.start_copy_from_url(
@@ -1591,7 +1616,13 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == self.short_byte_data
 
     @FileSharePreparer()
-    async def test_copy_file_async_private_file_async(self, storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_copy_file_async_private_file_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
+        secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
+
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
         await self._setup_share(storage_account_name, storage_account_key)
         await self._create_remote_share()
@@ -1603,22 +1634,28 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         with pytest.raises(HttpResponseError) as e:
             await file_client.start_copy_from_url(source_file.url)
 
         # Assert
-        assert e.exception.error_code == StorageErrorCode.cannot_verify_copy_source
+        assert e.value.error_code == StorageErrorCode.cannot_verify_copy_source
         await self.fsc2.delete_share(self.remote_share_name)
 
     @FileSharePreparer()
-    async def test_copy_file_async_private_file_with_sas_async(self, storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_copy_file_async_private_file_with_sas_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
+        secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
+
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
-        data = b'12345678' * 1024 * 1024
+        data = b'12345678' * 1024
         await self._create_remote_share()
         source_file = await self._create_remote_file(file_data=data)
-        sas_token = generate_file_sas(
+        sas_token = self.generate_sas(
+            generate_file_sas,
             source_file.account_name,
             source_file.share_name,
             source_file.file_path,
@@ -1635,8 +1672,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         copy_resp = await file_client.start_copy_from_url(source_url)
 
         # Assert
@@ -1648,13 +1684,20 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert actual_data == data
 
     @FileSharePreparer()
-    async def test_abort_copy_file_async(self, storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_abort_copy_file_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
+        secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
+
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
-        data = b'12345678' * 1024 * 1024
+        data = b'12345678' * 1024 * 256
         await self._setup_share(storage_account_name, storage_account_key)
         await self._create_remote_share()
         source_file = await self._create_remote_file(file_data=data)
-        sas_token = generate_file_sas(
+        sas_token = self.generate_sas(
+            generate_file_sas,
             source_file.account_name,
             source_file.share_name,
             source_file.file_path,
@@ -1670,8 +1713,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         copy_resp = await file_client.start_copy_from_url(source_url)
         assert copy_resp['copy_status'] == 'pending'
         await file_client.abort_copy(copy_resp)
@@ -1683,6 +1725,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert target_file.properties.copy.status == 'aborted'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_abort_copy_file_with_synchronous_copy_fails(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1696,8 +1739,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         copy_resp = await file_client.start_copy_from_url(source_file.url)
 
         with pytest.raises(HttpResponseError):
@@ -1707,6 +1749,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert copy_resp['copy_status'] == 'success'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_unicode_get_file_unicode_name(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1718,8 +1761,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         await file_client.upload_file(b'hello world')
 
         # Act
@@ -1730,6 +1772,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == b'hello world'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_unicode_get_file_unicode_name_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1741,10 +1784,9 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key,
-            transport=AiohttpTestTransport())
+            credential=storage_account_key)
         await file_client.create_file(1024)
-        lease = await file_client.acquire_lease()
+        lease = await file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         with pytest.raises(HttpResponseError):
             await file_client.upload_file(b'hello world')
@@ -1754,7 +1796,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Act
         # download the file with a wrong lease id will fail
         with pytest.raises(HttpResponseError):
-            await file_client.upload_file(b'hello world', lease=str(uuid.uuid4()))
+            await file_client.upload_file(b'hello world', lease='44444444-3333-2222-1111-000000000000')
 
         content = await file_client.download_file()
         content = await content.readall()
@@ -1763,6 +1805,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == b'hello world'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_file_unicode_data(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1786,6 +1829,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content == data
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_file_unicode_data_and_file_attributes(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1805,6 +1849,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert 'Temporary' in properties.file_attributes
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_unicode_get_file_binary_data(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1829,15 +1874,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         assert content == binary_data
 
-
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_bytes_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         await self._setup_share(storage_account_name, storage_account_key)
@@ -1863,14 +1904,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         await self.assertFileEqual(file_client, data)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_bytes_with_index(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -1893,14 +1931,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         await self.assertFileEqual(file_client, data[1024:])
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_bytes_with_index_and_count(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -1924,14 +1959,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         await self.assertFileEqual(file_client, data[index:index + count])
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -1957,14 +1989,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await self.assertFileEqual(file_client, data)
         self._teardown(INPUT_FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_path_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2001,14 +2030,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             progress, unknown_size=False)
         self._teardown(INPUT_FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_stream(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2035,14 +2061,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await self.assertFileEqual(file_client, data[:file_size])
         self._teardown(INPUT_FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_stream_non_seekable(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2060,21 +2083,18 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageFileAsyncTest.NonSeekableFile(stream)
+            non_seekable_file = TestStorageFileAsync.NonSeekableFile(stream)
             await file_client.upload_file(non_seekable_file, length=file_size, max_concurrency=1)
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
         self._teardown(INPUT_FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_stream_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2109,14 +2129,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             progress, unknown_size=False)
         self._teardown(INPUT_FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_stream_truncated(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2140,14 +2157,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await self.assertFileEqual(file_client, data[:file_size])
         self._teardown(INPUT_FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_stream_with_progress_truncated(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2184,6 +2198,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self._teardown(INPUT_FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_from_text(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2207,6 +2222,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await self.assertFileEqual(file_client, data)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_from_text_with_encoding(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2230,14 +2246,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await self.assertFileEqual(file_client, data)
         self._teardown(file_name)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_from_text_chunked_upload(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2259,6 +2272,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self._teardown(file_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_with_md5_small(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2279,14 +2293,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self._teardown(file_name)
         # Assert
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_file_with_md5_large(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
@@ -2305,6 +2316,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2358,17 +2370,15 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
     # --Test cases for sas & acl ------------------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_sas_access_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
-
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        token = generate_file_sas(
+        token = self.generate_sas(
+            generate_file_sas,
             file_client.account_name,
             file_client.share_name,
             file_client.file_path,
@@ -2390,26 +2400,27 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert self.short_byte_data == content
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_sas_signed_identifier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
+        variables = kwargs.pop("variables")
 
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
         access_policy = AccessPolicy()
-        access_policy.start = datetime.utcnow() - timedelta(hours=1)
-        access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(hours=1))
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        access_policy.start = start_time
+        access_policy.expiry = expiry_time
         access_policy.permission = FileSasPermissions(read=True)
         identifiers = {'testid': access_policy}
         await share_client.set_share_access_policy(identifiers)
 
-        token = generate_file_sas(
+        token = self.generate_sas(
+            generate_file_sas,
             file_client.account_name,
             file_client.share_name,
             file_client.file_path,
@@ -2427,18 +2438,18 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         # Assert
         assert self.short_byte_data == content
 
+        return variables
+
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_account_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
-
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        token = generate_account_sas(
+        token = self.generate_sas(
+            generate_account_sas,
             self.fsc.account_name,
             self.fsc.credential.account_key,
             ResourceTypes(object=True),
@@ -2460,17 +2471,15 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert self.short_byte_data == response.content
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_account_sas_credential(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
-
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        token = generate_account_sas(
+        token = self.generate_sas(
+            generate_account_sas,
             self.fsc.account_name,
             self.fsc.credential.account_key,
             ResourceTypes(object=True),
@@ -2491,6 +2500,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert properties is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_azure_named_key_credential_access(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2513,7 +2523,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert properties is not None
 
     @FileSharePreparer()
-    def test_account_sas_raises_if_sas_already_in_uri(self, **kwargs):
+    @recorded_by_proxy_async
+    async def test_account_sas_raises_if_sas_already_in_uri(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -2524,18 +2535,16 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
                 file_path="foo",
                 credential=AzureSasCredential("?foo=bar"))
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_shared_read_access_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
-
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        token = generate_file_sas(
+        token = self.generate_sas(
+            generate_file_sas,
             file_client.account_name,
             file_client.share_name,
             file_client.file_path,
@@ -2556,18 +2565,16 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert response.ok
         assert self.short_byte_data == response.content
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_shared_read_access_file_with_content_query_params(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
-
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)
-        token = generate_file_sas(
+        token = self.generate_sas(
+            generate_file_sas,
             file_client.account_name,
             file_client.share_name,
             file_client.file_path,
@@ -2597,19 +2604,17 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert response.headers['content-language'] == 'fr'
         assert response.headers['content-type'] == 'text'
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_shared_write_access_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
-
         self._setup(storage_account_name, storage_account_key)
         updated_data = b'updated file data'
         file_client_admin = await self._create_file(storage_account_name, storage_account_key)
-        token = generate_file_sas(
+        token = self.generate_sas(
+            generate_file_sas,
             file_client_admin.account_name,
             file_client_admin.share_name,
             file_client_admin.file_path,
@@ -2633,18 +2638,16 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         file_content = await file_content.readall()
         assert updated_data == file_content[:len(updated_data)]
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_shared_delete_access_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
-
         self._setup(storage_account_name, storage_account_key)
         file_client_admin = await self._create_file(storage_account_name, storage_account_key)
-        token = generate_file_sas(
+        token = self.generate_sas(
+            generate_file_sas,
             file_client_admin.account_name,
             file_client_admin.share_name,
             file_client_admin.file_path,
@@ -2667,6 +2670,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             await file_client_admin.download_file()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2683,6 +2687,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert props is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_different_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2704,6 +2709,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert props is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_ignore_readonly(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2728,6 +2734,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert props is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_file_permission(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2749,6 +2756,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert file_permission_key == props.permission_key
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_preserve_permission(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2772,6 +2780,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert source_permission_key == props.permission_key
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_smb_properties(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2801,6 +2810,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert file_change_time == props.change_time
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_content_type(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2820,6 +2830,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         assert content_type == props.content_settings.content_type
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_with_lease(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2828,8 +2839,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
         source_file = await self._create_file(storage_account_name, storage_account_key, 'file1')
         dest_file = await self._create_file(storage_account_name, storage_account_key, 'file2')
-        source_lease = await source_file.acquire_lease()
-        dest_lease = await dest_file.acquire_lease()
+        source_lease = await source_file.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        dest_lease = await dest_file.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         new_file = await source_file.rename_file(
@@ -2853,7 +2864,8 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         await self._setup_share(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
-        token = generate_share_sas(
+        token = self.generate_sas(
+            generate_share_sas,
             share_client.account_name,
             share_client.share_name,
             share_client.credential.account_key,
