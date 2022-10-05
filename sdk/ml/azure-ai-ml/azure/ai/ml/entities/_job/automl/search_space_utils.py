@@ -37,7 +37,7 @@ def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, Swe
     if isinstance(sweep_distribution, float):
         # Float requires some special handling for small values that get auto-represented with scientific notation.
         return float_to_str(sweep_distribution)
-    elif not isinstance(sweep_distribution, SweepDistribution):
+    if not isinstance(sweep_distribution, SweepDistribution):
         # Convert [bool, float, str] types to str
         return str(sweep_distribution)
 
