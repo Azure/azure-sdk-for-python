@@ -3,21 +3,36 @@
 # ---------------------------------------------------------
 
 from azure.ai.ml.entities._job.automl.image import (
+    ImageClassificationJob,
+    ImageClassificationMultilabelJob,
     ImageClassificationSearchSpace,
     ImageLimitSettings,
+    ImageObjectDetectionJob,
     ImageObjectDetectionSearchSpace,
+    ImageInstanceSegmentationJob,
     ImageSweepSettings,
 )
-from azure.ai.ml.entities._job.automl.nlp import NlpFeaturizationSettings, NlpLimitSettings
-from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
-    ColumnTransformer,
-    TabularFeaturizationSettings,
+from azure.ai.ml.entities._job.automl.nlp import (
+    NlpFeaturizationSettings,
+    NlpLimitSettings,
+    NlpSearchSpace,
+    NlpSweepSettings,
+    TextClassificationJob,
+    TextClassificationMultilabelJob,
+    TextNerJob,
 )
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
-from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
+from azure.ai.ml.entities._job.automl.tabular import (
+    ClassificationJob,
+    ColumnTransformer,
+    ForecastingJob,
+    ForecastingSettings,
+    RegressionJob,
+    TabularFeaturizationSettings,
+    TabularLimitSettings
+)
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-
 from .._restclient.v2022_10_01_preview.models import (
+    BlockedTransformers,
     ClassificationModels,
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
@@ -26,15 +41,19 @@ from .._restclient.v2022_10_01_preview.models import (
     ForecastingModels,
     ForecastingPrimaryMetrics,
     InstanceSegmentationPrimaryMetrics,
+    LearningRateScheduler,
     NCrossValidationsMode,
     ObjectDetectionPrimaryMetrics,
     RegressionModels,
     RegressionPrimaryMetrics,
+    SamplingAlgorithmType,
+    StochasticOptimizer,
     ShortSeriesHandlingConfiguration,
     TargetAggregationFunction,
     TargetLagsMode,
     TargetRollingWindowSizeMode,
     UseStl,
+    ValidationMetricType,
 )
 from ._automl_image import (
     image_classification,
@@ -69,6 +88,8 @@ __all__ = [
     "TabularLimitSettings",
     "NlpFeaturizationSettings",
     "NlpLimitSettings",
+    "NlpSweepSettings",
+    "NlpSearchSpace",
     "ImageLimitSettings",
     "ImageSweepSettings",
     "ImageObjectDetectionSearchSpace",
@@ -84,4 +105,19 @@ __all__ = [
     "regression",
     "forecasting",
     "SearchSpace",
+    "BlockedTransformers",
+    "ClassificationJob",
+    "ForecastingJob",
+    "RegressionJob",
+    "ImageClassificationJob",
+    "ImageClassificationMultilabelJob",
+    "ImageObjectDetectionJob",
+    "ImageInstanceSegmentationJob",
+    "LearningRateScheduler",
+    "SamplingAlgorithmType",
+    "StochasticOptimizer",
+    "TextClassificationJob",
+    "TextClassificationMultilabelJob",
+    "TextNerJob",
+    "ValidationMetricType"
 ]

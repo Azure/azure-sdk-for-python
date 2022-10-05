@@ -1,5 +1,3 @@
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=main)
-
 # Azure Cognitive Language Services Question Answering client library for Python
 
 Question Answering is a cloud-based API service that lets you create a conversational question-and-answer layer over your existing data. Use it to build a knowledge base by extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Answer users’ questions with the best answers from the QnAs in your knowledge base—automatically. Your knowledge base gets smarter, too, as it continually learns from users' behavior.
@@ -23,8 +21,10 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure QuestionAnswering client library for Python with [pip][pip_link]:
 
 ```bash
-pip install azure-ai-language-questionanswering --pre
+pip install azure-ai-language-questionanswering
 ```
+
+> Note: this version of the client library defaults to the service API version `2021-10-01`.
 
 ### Authenticate the client
 

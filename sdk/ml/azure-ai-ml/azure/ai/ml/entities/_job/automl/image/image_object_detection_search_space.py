@@ -3,16 +3,28 @@
 # ---------------------------------------------------------
 
 # pylint: disable=R0902,too-many-locals
+# pylint: disable=C0302,too-many-lines
 
 from typing import Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageModelDistributionSettingsObjectDetection
-from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
+from azure.ai.ml.entities._job.automl.search_space_utils import (
     _convert_from_rest_object,
     _convert_to_rest_object,
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    Uniform,
+)
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -21,177 +33,617 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
     Segmentation tasks.
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
-    :type ams_gradient: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type ams_gradient: bool or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
         range [0, 1].
-    :type beta1: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type beta1: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param beta2: Value of 'beta2' when optimizer is 'adam' or 'adamw'. Must be a float in the
         range [0, 1].
-    :type beta2: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type beta2: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param distributed: Whether to use distributer training.
-    :type distributed: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type distributed: bool or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param early_stopping: Enable early stopping logic during training.
-    :type early_stopping: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type early_stopping: bool or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param early_stopping_delay: Minimum number of epochs or validation evaluations to wait
         before primary metric improvement
         is tracked for early stopping. Must be a positive integer.
-    :type early_stopping_delay: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type early_stopping_delay: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param early_stopping_patience: Minimum number of epochs or validation evaluations with no
         primary metric improvement before
         the run is stopped. Must be a positive integer.
-    :type early_stopping_patience: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type early_stopping_patience: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param enable_onnx_normalization: Enable normalization when exporting ONNX model.
-    :type enable_onnx_normalization: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type enable_onnx_normalization: bool or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param evaluation_frequency: Frequency to evaluate validation dataset to get metric scores.
         Must be a positive integer.
-    :type evaluation_frequency: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type evaluation_frequency: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param gradient_accumulation_step: Gradient accumulation means running a configured number of
         "GradAccumulationStep" steps without
         updating the model weights while accumulating the gradients of those steps, and then using
         the accumulated gradients to compute the weight updates. Must be a positive integer.
-    :type gradient_accumulation_step: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type gradient_accumulation_step: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param layers_to_freeze: Number of layers to freeze for the model. Must be a positive
         integer.
         For instance, passing 2 as value for 'seresnext' means
         freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
         please
         see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.    # pylint: disable=line-too-long
-    :type layers_to_freeze: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type layers_to_freeze: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param learning_rate: Initial learning rate. Must be a float in the range [0, 1].
-    :type learning_rate: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type learning_rate: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
         'step'.
-    :type learning_rate_scheduler: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type learning_rate_scheduler: str or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param model_name: Name of the model to use for training.
         For more information on the available models please visit the official documentation:
         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
-    :type model_name: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type model_name: str or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
         1].
-    :type momentum: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type momentum: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param nesterov: Enable nesterov when optimizer is 'sgd'.
-    :type nesterov: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type nesterov: bool or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param number_of_epochs: Number of training epochs. Must be a positive integer.
-    :type number_of_epochs: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type number_of_epochs: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param number_of_workers: Number of data loader workers. Must be a non-negative integer.
-    :type number_of_workers: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type number_of_workers: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param optimizer: Type of optimizer. Must be either 'sgd', 'adam', or 'adamw'.
-    :type optimizer: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type optimizer: str or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param random_seed: Random seed to be used when using deterministic training.
-    :type random_seed: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type random_seed: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float
         in the range [0, 1].
-    :type step_lr_gamma: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type step_lr_gamma: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param step_lr_step_size: Value of step size when learning rate scheduler is 'step'. Must be
         a positive integer.
-    :type step_lr_step_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type step_lr_step_size: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param training_batch_size: Training batch size. Must be a positive integer.
-    :type training_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type training_batch_size: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param validation_batch_size: Validation batch size. Must be a positive integer.
-    :type validation_batch_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type validation_batch_size: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param warmup_cosine_lr_cycles: Value of cosine cycle when learning rate scheduler is
         'warmup_cosine'. Must be a float in the range [0, 1].
-    :type warmup_cosine_lr_cycles: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type warmup_cosine_lr_cycles: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param warmup_cosine_lr_warmup_epochs: Value of warmup epochs when learning rate scheduler is
         'warmup_cosine'. Must be a positive integer.
-    :type warmup_cosine_lr_warmup_epochs: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type warmup_cosine_lr_warmup_epochs: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param weight_decay: Value of weight decay when optimizer is 'sgd', 'adam', or 'adamw'. Must
         be a float in the range[0, 1].
-    :type weight_decay: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type weight_decay: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param box_detections_per_image: Maximum number of detections per image, for all classes.
         Must be a positive integer.
         Note: This settings is not supported for the 'yolov5' algorithm.
-    :type box_detections_per_image: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type box_detections_per_image: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param box_score_threshold: During inference, only return proposals with a classification
         score greater than
         BoxScoreThreshold. Must be a float in the range[0, 1].
-    :type box_score_threshold: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type box_score_threshold: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param image_size: Image size for train and validation. Must be a positive integer.
         Note: The training run may get into CUDA OOM if the size is too big.
         Note: This settings is only supported for the 'yolov5' algorithm.
-    :type image_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type image_size: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param max_size: Maximum size of the image to be rescaled before feeding it to the backbone.
         Must be a positive integer. Note: training run may get into CUDA OOM if the size is too big.
         Note: This settings is not supported for the 'yolov5' algorithm.
-    :type max_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type max_size: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param min_size: Minimum size of the image to be rescaled before feeding it to the backbone.
         Must be a positive integer. Note: training run may get into CUDA OOM if the size is too big.
         Note: This settings is not supported for the 'yolov5' algorithm.
-    :type min_size: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type min_size: int or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param model_size: Model size. Must be 'small', 'medium', 'large', or 'extra_large'.
         Note: training run may get into CUDA OOM if the model size is too big.
         Note: This settings is only supported for the 'yolov5' algorithm.
-    :type model_size: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type model_size: str or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param multi_scale: Enable multi-scale image by varying image size by +/- 50%.
         Note: training run may get into CUDA OOM if no sufficient GPU memory.
         Note: This settings is only supported for the 'yolov5' algorithm.
-    :type multi_scale: bool or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type multi_scale: bool or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param nms_iou_threshold: IOU threshold used during inference in NMS post processing. Must be
         float in the range [0, 1].
-    :type nms_iou_threshold: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type nms_iou_threshold: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param tile_grid_size: The grid size to use for tiling each image. Note: TileGridSize must
         not be
         None to enable small object detection logic. A string containing two integers in mxn format.
-    :type tile_grid_size: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type tile_grid_size: str or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param tile_overlap_ratio: Overlap ratio between adjacent tiles in each dimension. Must be
         float in the range [0, 1).
-    :type tile_overlap_ratio: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type tile_overlap_ratio: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param tile_predictions_nms_threshold: The IOU threshold to use to perform NMS while merging
         predictions from tiles and image.
         Used in validation/ inference. Must be float in the range [0, 1].
         NMS: Non-maximum suppression.
-    :type tile_predictions_nms_threshold: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type tile_predictions_nms_threshold: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param validation_iou_threshold: IOU threshold to use when computing validation metric. Must
         be float in the range [0, 1].
-    :type validation_iou_threshold: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type validation_iou_threshold: float or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     :param validation_metric_type: Metric computation method to use for validation metrics. Must
         be 'none', 'coco', 'voc', or 'coco_voc'.
-    :type validation_metric_type: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+    :type validation_metric_type: str or Union[~azure.ai.ml.entities.Choice,
+    ~azure.ai.ml.entities.LogNormal,
+    ~azure.ai.ml.entities.LogUniform,
+    ~azure.ai.ml.entities.Normal,
+    ~azure.ai.ml.entities.QLogNormal,
+    ~azure.ai.ml.entities.QLogUniform,
+    ~azure.ai.ml.entities.QNormal,
+    ~azure.ai.ml.entities.QUniform,
+    ~azure.ai.ml.entities.Randint,
+    ~azure.ai.ml.entities.Uniform]
     """
 
     def __init__(
         self,
         *,
-        ams_gradient: Union[bool, SweepDistribution] = None,
-        beta1: Union[float, SweepDistribution] = None,
-        beta2: Union[float, SweepDistribution] = None,
-        distributed: Union[bool, SweepDistribution] = None,
-        early_stopping: Union[bool, SweepDistribution] = None,
-        early_stopping_delay: Union[int, SweepDistribution] = None,
-        early_stopping_patience: Union[int, SweepDistribution] = None,
-        enable_onnx_normalization: Union[bool, SweepDistribution] = None,
-        evaluation_frequency: Union[int, SweepDistribution] = None,
-        gradient_accumulation_step: Union[int, SweepDistribution] = None,
-        layers_to_freeze: Union[int, SweepDistribution] = None,
-        learning_rate: Union[float, SweepDistribution] = None,
-        learning_rate_scheduler: Union[str, SweepDistribution] = None,
-        model_name: Union[str, SweepDistribution] = None,
-        momentum: Union[float, SweepDistribution] = None,
-        nesterov: Union[bool, SweepDistribution] = None,
-        number_of_epochs: Union[int, SweepDistribution] = None,
-        number_of_workers: Union[int, SweepDistribution] = None,
-        optimizer: Union[str, SweepDistribution] = None,
-        random_seed: Union[int, SweepDistribution] = None,
-        step_lr_gamma: Union[float, SweepDistribution] = None,
-        step_lr_step_size: Union[int, SweepDistribution] = None,
-        training_batch_size: Union[int, SweepDistribution] = None,
-        validation_batch_size: Union[int, SweepDistribution] = None,
-        warmup_cosine_lr_cycles: Union[float, SweepDistribution] = None,
-        warmup_cosine_lr_warmup_epochs: Union[int, SweepDistribution] = None,
-        weight_decay: Union[float, SweepDistribution] = None,
-        box_detections_per_image: Union[int, SweepDistribution] = None,
-        box_score_threshold: Union[float, SweepDistribution] = None,
-        image_size: Union[int, SweepDistribution] = None,
-        max_size: Union[int, SweepDistribution] = None,
-        min_size: Union[int, SweepDistribution] = None,
-        model_size: Union[str, SweepDistribution] = None,
-        multi_scale: Union[bool, SweepDistribution] = None,
-        nms_iou_threshold: Union[float, SweepDistribution] = None,
-        tile_grid_size: Union[str, SweepDistribution] = None,
-        tile_overlap_ratio: Union[float, SweepDistribution] = None,
-        tile_predictions_nms_threshold: Union[float, SweepDistribution] = None,
-        validation_iou_threshold: Union[float, SweepDistribution] = None,
-        validation_metric_type: Union[str, SweepDistribution] = None,
+        ams_gradient: Union[
+            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        beta1: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        beta2: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        distributed: Union[
+            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        early_stopping: Union[
+            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        early_stopping_delay: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        early_stopping_patience: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        enable_onnx_normalization: Union[
+            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        evaluation_frequency: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        gradient_accumulation_step: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        layers_to_freeze: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        learning_rate: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        learning_rate_scheduler: Union[
+            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        model_name: Union[
+            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        momentum: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        nesterov: Union[
+            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        number_of_epochs: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        number_of_workers: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        optimizer: Union[
+            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        random_seed: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        step_lr_gamma: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        step_lr_step_size: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        training_batch_size: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        validation_batch_size: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        warmup_cosine_lr_cycles: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        warmup_cosine_lr_warmup_epochs: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        weight_decay: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        box_detections_per_image: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        box_score_threshold: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        image_size: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        max_size: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        min_size: Union[
+            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        model_size: Union[
+            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        multi_scale: Union[
+            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        nms_iou_threshold: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        tile_grid_size: Union[
+            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        tile_overlap_ratio: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        tile_predictions_nms_threshold: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        validation_iou_threshold: Union[
+            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
+        validation_metric_type: Union[
+            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ] = None,
     ) -> None:
         self.ams_gradient = ams_gradient
         self.beta1 = beta1
