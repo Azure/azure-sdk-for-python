@@ -13,9 +13,6 @@ from azure.ai.ml.entities._job.automl.nlp import (
     NlpLimitSettings,
     NlpSearchSpace,
     NlpSweepSettings,
-    TextClassificationJob,
-    TextClassificationMultilabelJob,
-    TextNerJob,
 )
 from azure.ai.ml.entities._job.automl.tabular import (
     ClassificationJob,
