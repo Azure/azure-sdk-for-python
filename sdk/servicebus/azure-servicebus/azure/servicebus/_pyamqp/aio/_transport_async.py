@@ -41,6 +41,7 @@ from ssl import SSLError
 from io import BytesIO
 import logging
 
+
 import certifi
 
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
@@ -66,14 +67,21 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncTransportMixin:
     async def receive_frame(self, timeout=None, **kwargs):
         try:
-            header, channel, payload = await asyncio.wait_for(self.read(**kwargs), timeout=timeout)
+            header, channel, payload = await asyncio.wait_for(
+                self.read(**kwargs), timeout=timeout
+            )
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
             _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
+        except (
+            TimeoutError,
+            socket.timeout,
+            asyncio.IncompleteReadError,
+            asyncio.TimeoutError,
+        ):
             return None, None
 
     async def read(self, verify_frame_type=0):
@@ -81,7 +89,9 @@ class AsyncTransportMixin:
             read_frame_buffer = BytesIO()
             try:
                 frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(await self._read(8, buffer=frame_header, initial=True))
+                read_frame_buffer.write(
+                    await self._read(8, buffer=frame_header, initial=True)
+                )
 
                 channel = struct.unpack(">H", frame_header[6:])[0]
                 size = frame_header[0:4]
@@ -91,17 +101,27 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
-                    raise ValueError(f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}")
+                    raise ValueError(
+                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    )
 
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
                 payload_size = size - len(frame_header)
                 payload = memoryview(bytearray(payload_size))
                 if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(await self._read(SIGNED_INT_MAX, buffer=payload))
-                    read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
+                    read_frame_buffer.write(
+                        await self._read(SIGNED_INT_MAX, buffer=payload)
+                    )
+                    read_frame_buffer.write(
+                        await self._read(
+                            size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]
+                        )
+                    )
                 else:
-                    read_frame_buffer.write(await self._read(payload_size, buffer=payload))
+                    read_frame_buffer.write(
+                        await self._read(payload_size, buffer=payload)
+                    )
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
@@ -128,35 +148,6 @@ class AsyncTransportMixin:
 
         await self.write(data)
         # _LOGGER.info("OCH%d -> %r", channel, frame)
-
-
-class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-attributes
-    """Common superclass for TCP and SSL transports."""
-
-    def __init__(
-        self,
-        host,
-        *,
-        port=AMQP_PORT,
-        connect_timeout=None,
-        ssl_opts=False,
-        socket_settings=None,
-        raise_on_initial_eintr=True,
-        **kwargs    # pylint: disable=unused-argument
-    ):
-        self.connected = False
-        self.sock = None
-        self.reader = None
-        self.writer = None
-        self.raise_on_initial_eintr = raise_on_initial_eintr
-        self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host, port)
-
-        self.connect_timeout = connect_timeout
-        self.socket_settings = socket_settings
-        self.loop = asyncio.get_running_loop()
-        self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl_opts)
 
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
@@ -187,14 +178,49 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
                 return context
             return True
         except TypeError:
-            raise TypeError("SSL configuration must be a dictionary, or the value True.")
+            raise TypeError(
+                "SSL configuration must be a dictionary, or the value True."
+            )
 
-    def _build_ssl_context(self, check_hostname=None, **ctx_options):  # pylint: disable=no-self-use
+    def _build_ssl_context(
+        self, check_hostname=None, **ctx_options
+    ):  # pylint: disable=no-self-use
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
         ctx.check_hostname = check_hostname
         return ctx
+
+
+class AsyncTransport(
+    AsyncTransportMixin
+):  # pylint: disable=too-many-instance-attributes
+    """Common superclass for TCP and SSL transports."""
+
+    def __init__(
+        self,
+        host,
+        *,
+        port=AMQP_PORT,
+        connect_timeout=None,
+        ssl_opts=False,
+        socket_settings=None,
+        raise_on_initial_eintr=True,
+        **kwargs,  # pylint: disable=unused-argument
+    ):
+        self.connected = False
+        self.sock = None
+        self.reader = None
+        self.writer = None
+        self.raise_on_initial_eintr = raise_on_initial_eintr
+        self._read_buffer = BytesIO()
+        self.host, self.port = to_host_port(host, port)
+
+        self.connect_timeout = connect_timeout
+        self.socket_settings = socket_settings
+        self.loop = asyncio.get_running_loop()
+        self.socket_lock = asyncio.Lock()
+        self.sslopts = self._build_ssl_opts(ssl_opts)
 
     async def connect(self):
         try:
@@ -204,7 +230,9 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
             await self._connect(self.host, self.port, self.connect_timeout)
             self._init_socket(self.socket_settings)
             self.reader, self.writer = await asyncio.open_connection(
-                sock=self.sock, ssl=self.sslopts, server_hostname=self.host if self.sslopts else None
+                sock=self.sock,
+                ssl=self.sslopts,
+                server_hostname=self.host if self.sslopts else None,
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -233,7 +261,9 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                entries = await self.loop.getaddrinfo(host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP)
+                entries = await self.loop.getaddrinfo(
+                    host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP
+                )
                 entries_num = len(entries)
             except socket.gaierror:
                 # we may have depleted all our options
@@ -241,7 +271,9 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise e if e is not None else socket.error("failed to resolve broker hostname")
+                    raise e if e is not None else socket.error(
+                        "failed to resolve broker hostname"
+                    )
                 continue  # pragma: no cover
 
             # now that we have address(es) for the hostname, connect to broker
@@ -300,7 +332,13 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         for opt, val in tcp_opts.items():
             self.sock.setsockopt(SOL_TCP, opt, val)
 
-    async def _read(self, toread, initial=False, buffer=None, _errnos=(errno.ENOENT, errno.EAGAIN, errno.EINTR)):
+    async def _read(
+        self,
+        toread,
+        initial=False,
+        buffer=None,
+        _errnos=(errno.ENOENT, errno.EAGAIN, errno.EINTR),
+    ):
         # According to SSL_read(3), it can at most return 16kb of data.
         # Thus, we use an internal read buffer like TCPTransport._read
         # to get the exact number of bytes wanted.
@@ -312,7 +350,9 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         try:
             while toread:
                 try:
-                    view[nbytes : nbytes + toread] = await self.reader.readexactly(toread)
+                    view[nbytes : nbytes + toread] = await self.reader.readexactly(
+                        toread
+                    )
                     nbytes = toread
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)
@@ -344,7 +384,7 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
         """Write a string out to the SSL socket fully."""
         self.writer.write(s)
 
-    def close(self):
+    async def close(self):
         if self.writer is not None:
             if self.sslopts:
                 # see issue: https://github.com/encode/httpx/issues/914
@@ -388,57 +428,77 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
             )
 
 
-class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, host, *, port=WEBSOCKET_PORT, connect_timeout=None, ssl_opts=None, **kwargs):
+class WebSocketTransportAsync(AsyncTransportMixin):
+    def __init__(
+        self,
+        host,
+        *,
+        port=WEBSOCKET_PORT,  # pylint: disable=unused-argument
+        connect_timeout=None,
+        ssl_opts=None,
+        **kwargs
+    ):
         self._read_buffer = BytesIO()
-        self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
+        self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        self.host, self.port = to_host_port(host, port)
+        self.host = host
         self.ws = None
-        self.connected = False
+        self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
+        self.connected = False
 
     async def connect(self):
-        http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
+        username, password = None, None
+        http_proxy_host, http_proxy_port = None, None
+        http_proxy_auth = None
+
         if self._http_proxy:
             http_proxy_host = self._http_proxy["proxy_hostname"]
             http_proxy_port = self._http_proxy["proxy_port"]
+            if http_proxy_host and http_proxy_port:
+                http_proxy_host = f"{http_proxy_host}:{http_proxy_port}"
             username = self._http_proxy.get("username", None)
             password = self._http_proxy.get("password", None)
-            if username or password:
-                http_proxy_auth = (username, password)
+
         try:
-            from websocket import create_connection
+            from aiohttp import ClientSession
 
-            self.ws = create_connection(
+            if username or password:
+                from aiohttp import BasicAuth
+
+                http_proxy_auth = BasicAuth(login=username, password=password)
+
+            self.session = ClientSession()
+            self.ws = await self.session.ws_connect(
                 url="wss://{}".format(self._custom_endpoint or self.host),
-                subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
-                skip_utf8_validation=True,
-                sslopt=self.sslopts,
-                http_proxy_host=http_proxy_host,
-                http_proxy_port=http_proxy_port,
-                http_proxy_auth=http_proxy_auth,
+                protocols=[AMQP_WS_SUBPROTOCOL],
+                autoclose=False,
+                proxy=http_proxy_host,
+                proxy_auth=http_proxy_auth,
+                ssl=self.sslopts,
             )
-        except ImportError:
-            raise ValueError("Please install websocket-client library to use websocket transport.")
+            self.connected = True
 
-    async def _read(self, n, initial=False, buffer=None): # pylint: disable=unused-argument
+        except ImportError:
+            raise ValueError(
+                "Please install aiohttp library to use websocket transport."
+            )
+
+    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-        from websocket import WebSocketTimeoutException
 
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
+
         try:
             while n:
-                data = await self.loop.run_in_executor(None, self.ws.recv)
-
+                data = await self.ws.receive_bytes()
                 if len(data) <= n:
                     view[length : length + len(data)] = data
                     n -= len(data)
@@ -446,20 +506,20 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                     view[length : length + n] = data[0:n]
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
-
             return view
-        except WebSocketTimeoutException:
+        except asyncio.TimeoutError:
             raise TimeoutError()
 
-    def close(self):
+    async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        self.ws.close()
+        await self.ws.close()
+        await self.session.close()
         self.connected = False
 
     async def write(self, s):
-        """Completely write a string to the peer.
+        """Completely write a string (byte array) to the peer.
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.loop.run_in_executor(None, self.ws.send_binary, s)
+        await self.ws.send_bytes(s)

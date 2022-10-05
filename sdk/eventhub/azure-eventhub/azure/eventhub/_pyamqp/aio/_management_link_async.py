@@ -20,6 +20,7 @@ from ..constants import (
     ManagementOpenResult,
     SEND_DISPOSITION_REJECT,
     MessageDeliveryState,
+    LinkDeliverySettleReason
 )
 from ..error import AMQPException, ErrorCondition
 from ..message import Properties, _MessageDelivery
@@ -142,8 +143,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             )
             self._pending_operations.remove(to_remove_operation)
 
-    async def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
-        if SEND_DISPOSITION_REJECT in state:
+    async def _on_send_complete(self, message_delivery, reason, state):
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
             # sample reject state: {'rejected': [[b'amqp:not-allowed', b"Invalid command 'RE1AD'.", None]]}
             to_remove_operation = None
             for operation in self._pending_operations:
@@ -154,7 +155,9 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             # TODO: better error handling
             #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
             #  or should there an error mapping which maps the condition to the error type
-            await to_remove_operation.on_execute_operation_complete(  # The callback is defined in management_operation.py
+
+            # The callback is defined in management_operation.py
+            await to_remove_operation.on_execute_operation_complete(
                 ManagementExecuteOperationResult.ERROR,
                 None,
                 None,

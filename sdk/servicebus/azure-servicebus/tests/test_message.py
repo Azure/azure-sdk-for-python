@@ -521,6 +521,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
 
+    @pytest.mark.skip("unskip after adding PyamqpTransport + pass in _to_outgoing_amqp_message to LegacyMessage")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -557,6 +558,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
 
+    @pytest.mark.skip("unskip after adding PyamqpTransport + pass in _to_outgoing_amqp_message to LegacyMessage")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -598,6 +600,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
 
+    @pytest.mark.skip("unskip after adding PyamqpTransport + pass in _to_outgoing_amqp_message to LegacyMessage")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -634,6 +637,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
 
+    @pytest.mark.skip("unskip after adding PyamqpTransport + pass in _to_outgoing_amqp_message to LegacyMessage")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

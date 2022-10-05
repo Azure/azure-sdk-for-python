@@ -37,7 +37,7 @@ from ._connection_manager_async import get_connection_manager
 try:
     from ._transport._uamqp_transport_async import UamqpTransportAsync
 except ImportError:
-    UamqpTransportAsync = None
+    UamqpTransportAsync = None  # type: ignore
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 
 if TYPE_CHECKING:

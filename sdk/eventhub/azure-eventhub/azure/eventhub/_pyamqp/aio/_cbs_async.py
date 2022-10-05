@@ -6,7 +6,6 @@
 
 import logging
 from datetime import datetime
-import asyncio
 
 from ..utils import utc_now, utc_from_timestamp
 from ._management_link_async import ManagementLink
@@ -22,7 +21,6 @@ from ..constants import (
     CBS_OPERATION,
     ManagementExecuteOperationResult,
     ManagementOpenResult,
-    DEFAULT_AUTH_TIMEOUT,
 )
 from ..cbs import check_put_timeout_status, check_expiration_and_refresh_status
 
@@ -60,9 +58,9 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
 
     async def _put_token(self, token, token_type, audience, expires_on=None):
         # type: (str, str, str, datetime) -> None
-        message = Message(
+        message = Message(  # type: ignore # TODO: missing positional args header, etc.
             value=token,
-            properties=Properties(message_id=self._mgmt_link.next_message_id),
+            properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore
             application_properties={
                 CBS_NAME: audience,
                 CBS_OPERATION: CBS_PUT_TOKEN,
@@ -114,8 +112,12 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             )  # pylint:disable=protected-access
 
     async def _on_execute_operation_complete(
-        self, execute_operation_result, status_code, status_description, message, error_condition=None
-    ):  # TODO: message and error_condition never used
+        self, execute_operation_result, status_code, status_description, _, error_condition=None
+    ):
+        if error_condition:
+            _LOGGER.info("CBS Put token error: %r", error_condition)
+            self.auth_state = CbsAuthState.ERROR
+            return
         _LOGGER.info(
             "CBS Put token result (%r), status code: %s, status_description: %s.",
             execute_operation_result,
@@ -159,8 +161,8 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             return False
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
             raise TokenAuthFailure(
-                condition=ErrorCondition.ClientError,
-                description="CBS authentication link is in broken status, please recreate the cbs link.",
+                status_code=ErrorCondition.ClientError,
+                status_description="CBS authentication link is in broken status, please recreate the cbs link.",
             )
 
     async def open(self):

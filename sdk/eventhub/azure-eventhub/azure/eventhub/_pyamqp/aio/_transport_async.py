@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -37,12 +37,10 @@ import errno
 import socket
 import ssl
 import struct
-from ssl import SSLContext, SSLError
-from contextlib import contextmanager
+from ssl import SSLError
 from io import BytesIO
 import logging
-from threading import Lock
-from typing import Optional
+
 
 import certifi
 
@@ -60,49 +58,40 @@ from .._transport import (
     set_cloexec,
     AMQP_PORT,
     TIMEOUT_INTERVAL,
-    WebSocketTransport,
 )
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def get_running_loop():
-    try:
-        import asyncio  # pylint: disable=import-error
-
-        return asyncio.get_running_loop()
-    except AttributeError:  # 3.6
-        loop = None
-        try:
-            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
-        except AttributeError:
-            _LOGGER.warning("This version of Python is deprecated, please upgrade to >= v3.6")
-        if loop is None:
-            _LOGGER.warning("No running event loop")
-            loop = asyncio.get_event_loop()
-        return loop
-
-
 class AsyncTransportMixin:
-    async def receive_frame(self, timeout=None, *args, **kwargs):
+    async def receive_frame(self, timeout=None, **kwargs):
         try:
-            header, channel, payload = await asyncio.wait_for(self.read(**kwargs), timeout=timeout)
+            header, channel, payload = await asyncio.wait_for(
+                self.read(**kwargs), timeout=timeout
+            )
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
             _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (TimeoutError, socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
+        except (
+            TimeoutError,
+            socket.timeout,
+            asyncio.IncompleteReadError,
+            asyncio.TimeoutError,
+        ):
             return None, None
 
-    async def read(self, verify_frame_type=0, **kwargs):
+    async def read(self, verify_frame_type=0):
         async with self.socket_lock:
             read_frame_buffer = BytesIO()
             try:
                 frame_header = memoryview(bytearray(8))
-                read_frame_buffer.write(await self._read(8, buffer=frame_header, initial=True))
+                read_frame_buffer.write(
+                    await self._read(8, buffer=frame_header, initial=True)
+                )
 
                 channel = struct.unpack(">H", frame_header[6:])[0]
                 size = frame_header[0:4]
@@ -111,16 +100,28 @@ class AsyncTransportMixin:
                 size = struct.unpack(">I", size)[0]
                 offset = frame_header[4]
                 frame_type = frame_header[5]
+                if verify_frame_type is not None and frame_type != verify_frame_type:
+                    raise ValueError(
+                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    )
 
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
                 payload_size = size - len(frame_header)
                 payload = memoryview(bytearray(payload_size))
                 if size > SIGNED_INT_MAX:
-                    read_frame_buffer.write(await self._read(SIGNED_INT_MAX, buffer=payload))
-                    read_frame_buffer.write(await self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]))
+                    read_frame_buffer.write(
+                        await self._read(SIGNED_INT_MAX, buffer=payload)
+                    )
+                    read_frame_buffer.write(
+                        await self._read(
+                            size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:]
+                        )
+                    )
                 else:
-                    read_frame_buffer.write(await self._read(payload_size, buffer=payload))
+                    read_frame_buffer.write(
+                        await self._read(payload_size, buffer=payload)
+                    )
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
@@ -148,13 +149,12 @@ class AsyncTransportMixin:
         await self.write(data)
         # _LOGGER.info("OCH%d -> %r", channel, frame)
 
-
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
             return sslopts
         try:
             if "context" in sslopts:
-                return self._build_ssl_context(sslopts, **sslopts.pop("context"))
+                return self._build_ssl_context(**sslopts.pop("context"))
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
                 ssl_version = ssl.PROTOCOL_TLS
@@ -178,9 +178,13 @@ class AsyncTransportMixin:
                 return context
             return True
         except TypeError:
-            raise TypeError("SSL configuration must be a dictionary, or the value True.")
+            raise TypeError(
+                "SSL configuration must be a dictionary, or the value True."
+            )
 
-    def _build_ssl_context(self, sslopts, check_hostname=None, **ctx_options):
+    def _build_ssl_context(
+        self, check_hostname=None, **ctx_options
+    ):  # pylint: disable=no-self-use
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
@@ -188,20 +192,21 @@ class AsyncTransportMixin:
         return ctx
 
 
-class AsyncTransport(AsyncTransportMixin):
+class AsyncTransport(
+    AsyncTransportMixin
+):  # pylint: disable=too-many-instance-attributes
     """Common superclass for TCP and SSL transports."""
 
     def __init__(
         self,
         host,
+        *,
         port=AMQP_PORT,
         connect_timeout=None,
-        read_timeout=None,
-        write_timeout=None,
-        ssl=False,
+        ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ):
         self.connected = False
         self.sock = None
@@ -212,14 +217,10 @@ class AsyncTransport(AsyncTransportMixin):
         self.host, self.port = to_host_port(host, port)
 
         self.connect_timeout = connect_timeout
-        self.read_timeout = read_timeout
-        self.write_timeout = write_timeout
         self.socket_settings = socket_settings
-        self.loop = get_running_loop()
+        self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl)
-
-    
+        self.sslopts = self._build_ssl_opts(ssl_opts)
 
     async def connect(self):
         try:
@@ -227,13 +228,11 @@ class AsyncTransport(AsyncTransportMixin):
             if self.connected:
                 return
             await self._connect(self.host, self.port, self.connect_timeout)
-            self._init_socket(
-                self.socket_settings,
-                self.read_timeout,
-                self.write_timeout,
-            )
+            self._init_socket(self.socket_settings)
             self.reader, self.writer = await asyncio.open_connection(
-                sock=self.sock, ssl=self.sslopts, server_hostname=self.host if self.sslopts else None
+                sock=self.sock,
+                ssl=self.sslopts,
+                server_hostname=self.host if self.sslopts else None,
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -262,7 +261,9 @@ class AsyncTransport(AsyncTransportMixin):
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                entries = await self.loop.getaddrinfo(host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP)
+                entries = await self.loop.getaddrinfo(
+                    host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP
+                )
                 entries_num = len(entries)
                 # now that we have address(es) for the hostname, connect to broker
                 for i, res in enumerate(entries):
@@ -292,29 +293,18 @@ class AsyncTransport(AsyncTransportMixin):
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise (e if e is not None else socket.error("failed to resolve broker hostname"))
+                    raise e if e is not None else socket.error(
+                        "failed to resolve broker hostname"
+                    )
+                continue  # pragma: no cover
 
-            
-
-    def _init_socket(self, socket_settings, read_timeout, write_timeout):
+    def _init_socket(self, socket_settings):
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
-
-        # set socket timeouts
-        # for timeout, interval in ((socket.SO_SNDTIMEO, write_timeout),
-        #                           (socket.SO_RCVTIMEO, read_timeout)):
-        #     if interval is not None:
-        #         sec = int(interval)
-        #         usec = int((interval - sec) * 1000000)
-        #         self.sock.setsockopt(
-        #             socket.SOL_SOCKET, timeout,
-        #             pack('ll', sec, usec),
-        #         )
-
         self.sock.settimeout(1)  # set socket back to non-blocking mode
 
-    def _get_tcp_socket_defaults(self, sock):
+    def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
         tcp_opts = {}
         for opt in KNOWN_TCP_OPTS:
             enum = None
@@ -341,7 +331,13 @@ class AsyncTransport(AsyncTransportMixin):
         for opt, val in tcp_opts.items():
             self.sock.setsockopt(SOL_TCP, opt, val)
 
-    async def _read(self, toread, initial=False, buffer=None, _errnos=(errno.ENOENT, errno.EAGAIN, errno.EINTR)):
+    async def _read(
+        self,
+        toread,
+        initial=False,
+        buffer=None,
+        _errnos=(errno.ENOENT, errno.EAGAIN, errno.EINTR),
+    ):
         # According to SSL_read(3), it can at most return 16kb of data.
         # Thus, we use an internal read buffer like TCPTransport._read
         # to get the exact number of bytes wanted.
@@ -353,7 +349,9 @@ class AsyncTransport(AsyncTransportMixin):
         try:
             while toread:
                 try:
-                    view[nbytes : nbytes + toread] = await self.reader.readexactly(toread)
+                    view[nbytes : nbytes + toread] = await self.reader.readexactly(
+                        toread
+                    )
                     nbytes = toread
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)
@@ -405,7 +403,7 @@ class AsyncTransport(AsyncTransportMixin):
                 self.connected = False
             raise
 
-    async def receive_frame_with_lock(self, *args, **kwargs):
+    async def receive_frame_with_lock(self, **kwargs):
         try:
             async with self.socket_lock:
                 header, channel, payload = await self.read(**kwargs)
@@ -421,26 +419,37 @@ class AsyncTransport(AsyncTransportMixin):
         if not self.sslopts:
             return
         await self.write(TLS_HEADER_FRAME)
-        channel, returned_header = await self.receive_frame(verify_frame_type=None)
+        _, returned_header = await self.receive_frame(verify_frame_type=None)
         if returned_header[1] == TLS_HEADER_FRAME:
             raise ValueError(
-                "Mismatching TLS header protocol. Excpected: {}, received: {}".format(
-                    TLS_HEADER_FRAME, returned_header[1]
-                )
+                f"""Mismatching TLS header protocol. Expected: {TLS_HEADER_FRAME!r},"""
+                """received: {returned_header[1]!r}"""
             )
 
 
-class WebSocketTransportAsync(AsyncTransportMixin):
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
+class WebSocketTransportAsync(
+    AsyncTransportMixin
+): # pylint: disable=too-many-instance-attributes
+    def __init__(
+        self,
+        host,
+        *,
+        port=WEBSOCKET_PORT,
+        connect_timeout=None,
+        ssl_opts=None,
+        **kwargs
+    ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl) if isinstance(ssl, dict) else None
+        self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        self.host = host
+        self.host, self.port = to_host_port(host, port)
         self.ws = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
+        self.connected = False
+
     async def connect(self):
         username, password = None, None
         http_proxy_host, http_proxy_port = None, None
@@ -456,14 +465,23 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
         try:
             from aiohttp import ClientSession
+            from urllib.parse import urlsplit
 
             if username or password:
                 from aiohttp import BasicAuth
+
                 http_proxy_auth = BasicAuth(login=username, password=password)
-                
+
             self.session = ClientSession()
+            if self._custom_endpoint:
+                url = f"wss://{self._custom_endpoint}"
+            else:
+                url = f"wss://{self.host}"
+                parsed_url = urlsplit(url)
+                url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
+
             self.ws = await self.session.ws_connect(
-                url="wss://{}".format(self._custom_endpoint or self.host),
+                url=url,
                 timeout=self._connect_timeout,
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
@@ -471,11 +489,14 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts,
             )
-           
-        except ImportError:
-            raise ValueError("Please install aiohttp library to use websocket transport.")
+            self.connected = True
 
-    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-arguments
+        except ImportError:
+            raise ValueError(
+                "Please install aiohttp library to use websocket transport."
+            )
+
+    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
 
         length = 0
@@ -483,7 +504,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-        
+
         try:
             while n:
                 data = await self.ws.receive_bytes()
@@ -493,9 +514,9 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 else:
                     view[length : length + n] = data[0:n]
                     self._read_buffer = BytesIO(data[n:])
-                    n = 0 
+                    n = 0
             return view
-        except (asyncio.TimeoutError) as wex:
+        except asyncio.TimeoutError:
             raise TimeoutError()
 
     async def close(self):
@@ -509,5 +530,5 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
-        """       
+        """
         await self.ws.send_bytes(s)

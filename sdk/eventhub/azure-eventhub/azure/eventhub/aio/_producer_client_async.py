@@ -347,7 +347,7 @@ class EventHubProducerClient(
             self._config.send_timeout if send_timeout is None else send_timeout
         )
 
-        handler = EventHubProducer(
+        handler = EventHubProducer( # type: ignore
             self,
             target,
             partition=partition_id,

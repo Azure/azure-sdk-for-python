@@ -13,20 +13,17 @@ from .endpoints import Source, Target
 from .constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
 from .performatives import AttachFrame, DetachFrame
 
-
-from .error import (
-    AMQPError,
-    ErrorCondition,
-    AMQPLinkError,
-    AMQPLinkRedirect,
-    AMQPConnectionError
-)
+from .error import ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Link(object):
-    """ """
+class Link(object):  # pylint: disable=too-many-instance-attributes
+    """An AMQP Link.
+
+    This object should not be used directly - instead use one of directional
+    derivatives: Sender or Receiver.
+    """
 
     def __init__(self, session, handle, name, role, **kwargs):
         self.state = LinkState.DETACHED
@@ -100,8 +97,9 @@ class Link(object):
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
+        # TODO: Assuming we establish all links for now...
         # check link_create_from_endpoint in C lib
-        raise NotImplementedError("Pending")  # TODO: Assuming we establish all links for now...
+        raise NotImplementedError("Pending")
 
     def get_state(self):
         try:
@@ -166,20 +164,11 @@ class Link(object):
         if self.network_trace:
             _LOGGER.info("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
-            raise AMQPLinkError(
-                condition=ErrorCondition.ClientError,
-                description="Received attach frame on a link that is already closed",
-                info=None,
-            )
-        elif not frame[5] or not frame[6]:  
+            raise ValueError("Invalid link")
+        if not frame[5] or not frame[6]:
             _LOGGER.info("Cannot get source or target. Detaching link")
-            self.detach(
-                error=AMQPError(
-                    condition=ErrorCondition.LinkDetachForced,
-                    description="Cannot get source or target from the frame. Detaching link",
-                    info=None,
-                )
-            )
+            self._set_state(LinkState.DETACHED)
+            raise ValueError("Invalid link")
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
         self.offered_capabilities = frame[11]  # offered_capabilities
@@ -198,8 +187,8 @@ class Link(object):
                 if frame[6]:
                     frame[6] = Target(*frame[6])
                 self._on_attach(AttachFrame(*frame))
-            except Exception as e:
-                _LOGGER.warning("Callback for link attach raised error: {}".format(e))
+            except Exception as e:  # pylint: disable=broad-except
+                _LOGGER.warning("Callback for link attach raised error: %r", e)
 
     def _outgoing_flow(self, **kwargs):
         flow_frame = {
@@ -263,7 +252,7 @@ class Link(object):
             elif self.state == LinkState.ATTACHED:
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACH_SENT)
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             _LOGGER.info("An error occurred when detaching the link: %r", exc)
             self._set_state(LinkState.DETACHED)
 

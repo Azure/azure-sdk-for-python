@@ -1,9 +1,12 @@
-# -------------------------------------------------------------------------
+# -------------------------------------------------------------------------  # pylint: disable=client-suffix-needed
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=client-accepts-api-version-keyword
+# pylint: disable=missing-client-constructor-parameter-credential
+# pylint: disable=client-method-missing-type-annotations
 # pylint: disable=too-many-lines
 # TODO: Check types of kwargs (issue exists for this)
 import logging
@@ -11,34 +14,21 @@ import queue
 import time
 import uuid
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload
+from typing import Any, Dict, Optional, Tuple, Union, overload, cast
 import certifi
 from typing_extensions import Literal
 
 from ._connection import Connection
 from .message import _MessageDelivery
-from .session import Session
-from .sender import SenderLink
-from .receiver import ReceiverLink
-from .sasl import SASLAnonymousCredential, SASLTransport
-from .endpoints import Source, Target
 from .error import (
-    AMQPConnectionError,
     AMQPException,
-    ErrorResponse,
     ErrorCondition,
     MessageException,
     MessageSendFailed,
     RetryPolicy,
-    AMQPError
+    AMQPError,
 )
-from .outcomes import(
-    Received,
-    Rejected,
-    Released,
-    Accepted,
-    Modified
-)
+from .outcomes import Received, Rejected, Released, Accepted, Modified
 
 from .constants import (
     MAX_CHANNELS,
@@ -60,11 +50,15 @@ from .constants import (
 from .management_operation import ManagementOperation
 from .cbs import CBSAuthenticator
 
+Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
+
 
 _logger = logging.getLogger(__name__)
 
 
-class AMQPClient(object):
+class AMQPClient(
+    object
+):  # pylint: disable=too-many-instance-attributes
     """An AMQP client.
     :param hostname: The AMQP endpoint to connect to.
     :type hostname: str
@@ -112,7 +106,8 @@ class AMQPClient(object):
     :paramtype handle_max: int
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
+    :paramtype on_attach: func[
+     ~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
     :keyword send_settle_mode: The mode by which to settle message send
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
@@ -126,13 +121,13 @@ class AMQPClient(object):
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
     :paramtype desired_capabilities: list[bytes]
-    :keyword max_message_size: The maximum allowed message size negotiated for the Link.	
-    :paramtype max_message_size: int	
-    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.	
-    :paramtype link_properties: dict[str, any]	
-    :keyword link_credit: The Link credit that determines how many	
-     messages the Link will attempt to handle per connection iteration.	
-     The default is 300.	
+    :keyword max_message_size: The maximum allowed message size negotiated for the Link.
+    :paramtype max_message_size: int
+    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
+    :paramtype link_properties: dict[str, any]
+    :keyword link_credit: The Link credit that determines how many
+     messages the Link will attempt to handle per connection iteration.
+     The default is 300.
     :paramtype link_credit: int
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
@@ -170,30 +165,41 @@ class AMQPClient(object):
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = int(kwargs.get("keep_alive_interval") or 0)
+        self._keep_alive_thread = None
 
         # Connection settings
-        self._max_frame_size = kwargs.pop('max_frame_size', MAX_FRAME_SIZE_BYTES)
-        self._channel_max = kwargs.pop('channel_max', MAX_CHANNELS)
-        self._idle_timeout = kwargs.pop('idle_timeout', None)
-        self._properties = kwargs.pop('properties', None)
+        self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
+        self._channel_max = kwargs.pop("channel_max", MAX_CHANNELS)
+        self._idle_timeout = kwargs.pop("idle_timeout", None)
+        self._properties = kwargs.pop("properties", None)
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.pop(
-        'remote_idle_timeout_empty_frame_send_ratio', None)
+            "remote_idle_timeout_empty_frame_send_ratio", None
+        )
         self._network_trace = kwargs.pop("network_trace", False)
 
         # Session settings
-        self._outgoing_window = kwargs.pop('outgoing_window', OUTGOING_WINDOW)
-        self._incoming_window = kwargs.pop('incoming_window', INCOMING_WINDOW)
-        self._handle_max = kwargs.pop('handle_max', None)
+        self._outgoing_window = kwargs.pop("outgoing_window", OUTGOING_WINDOW)
+        self._incoming_window = kwargs.pop("incoming_window", INCOMING_WINDOW)
+        self._handle_max = kwargs.pop("handle_max", None)
 
         # Link settings
-        self._send_settle_mode = kwargs.pop("send_settle_mode", SenderSettleMode.Unsettled)
-        self._receive_settle_mode = kwargs.pop("receive_settle_mode", ReceiverSettleMode.Second)
+        self._send_settle_mode = kwargs.pop(
+            "send_settle_mode", SenderSettleMode.Unsettled
+        )
+        self._receive_settle_mode = kwargs.pop(
+            "receive_settle_mode", ReceiverSettleMode.Second
+        )
         self._desired_capabilities = kwargs.pop("desired_capabilities", None)
         self._on_attach = kwargs.pop("on_attach", None)
 
         # transport
-        if kwargs.get("transport_type") is TransportType.Amqp and kwargs.get("http_proxy") is not None:
-            raise ValueError("Http proxy settings can't be passed if transport_type is explicitly set to Amqp")
+        if (
+            kwargs.get("transport_type") is TransportType.Amqp
+            and kwargs.get("http_proxy") is not None
+        ):
+            raise ValueError(
+                "Http proxy settings can't be passed if transport_type is explicitly set to Amqp"
+            )
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
         self._http_proxy = kwargs.pop("http_proxy", None)
 
@@ -221,10 +227,10 @@ class AMQPClient(object):
 
     def _client_run(self, **kwargs):
         """Perform a single Connection iteration."""
-        self._connection.listen(wait=self._socket_timeout)
+        self._connection.listen(wait=self._socket_timeout, **kwargs)
 
-    def _close_link(self, **kwargs):
-        if self._link and not self._link._is_closed: # pylint: disable=protected-access
+    def _close_link(self):
+        if self._link and not self._link._is_closed:  # pylint: disable=protected-access
             self._link.detach(close=True)
             self._link = None
 
@@ -248,11 +254,12 @@ class AMQPClient(object):
                     time.sleep(self._retry_policy.get_backoff_time(retry_settings, exc))
                     if exc.condition == ErrorCondition.LinkDetachForced:
                         self._close_link()  # if link level error, close and open a new link
-                    if exc.condition in (ErrorCondition.ConnectionCloseForced, ErrorCondition.SocketError):
+                    if exc.condition in (
+                        ErrorCondition.ConnectionCloseForced,
+                        ErrorCondition.SocketError,
+                    ):
                         # if connection detach or socket error, close and open a new connection
                         self.close()
-            except Exception:
-                raise
             finally:
                 end_time = time.time()
                 if absolute_timeout > 0:
@@ -270,7 +277,6 @@ class AMQPClient(object):
          multiple clients.
         :type connection: ~pyamqp.Connection
         """
-        
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
@@ -282,7 +288,7 @@ class AMQPClient(object):
             self._connection = Connection(
                 "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,
-                ssl={"ca_certs": self._connection_verify or certifi.where()},
+                ssl_opts={"ca_certs": self._connection_verify or certifi.where()},
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
@@ -296,7 +302,8 @@ class AMQPClient(object):
             self._connection.open()
         if not self._session:
             self._session = self._connection.create_session(
-                incoming_window=self._incoming_window, outgoing_window=self._outgoing_window
+                incoming_window=self._incoming_window,
+                outgoing_window=self._outgoing_window,
             )
             self._session.begin()
         if self._auth.auth_type == AUTH_TYPE_CBS:
@@ -321,7 +328,7 @@ class AMQPClient(object):
         self._shutdown = True
         if not self._session:
             return  # already closed.
-        self._close_link(close=True)
+        self._close_link()
         if self._cbs_authenticator:
             self._cbs_authenticator.close()
             self._cbs_authenticator = None
@@ -416,10 +423,10 @@ class AMQPClient(object):
 
 
 class SendClient(AMQPClient):
-    """ 
+    """
     An AMQP client for sending messages.
-    :param target: The target AMQP service endpoint. This can either be the URI as	
-     a string or a ~pyamqp.endpoint.Target object.	
+    :param target: The target AMQP service endpoint. This can either be the URI as
+     a string or a ~pyamqp.endpoint.Target object.
     :type target: str, bytes or ~pyamqp.endpoint.Target
     :keyword auth: Authentication for the connection. This should be one of the following:
         - pyamqp.authentication.SASLAnonymous
@@ -465,7 +472,8 @@ class SendClient(AMQPClient):
     :paramtype handle_max: int
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
+    :paramtype on_attach: func[
+     ~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
     :keyword send_settle_mode: The mode by which to settle message send
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
@@ -479,13 +487,13 @@ class SendClient(AMQPClient):
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
     :paramtype desired_capabilities: list[bytes]
-    :keyword max_message_size: The maximum allowed message size negotiated for the Link.	
-    :paramtype max_message_size: int	
-    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.	
-    :paramtype link_properties: dict[str, any]	
-    :keyword link_credit: The Link credit that determines how many	
-     messages the Link will attempt to handle per connection iteration.	
-     The default is 300.	
+    :keyword max_message_size: The maximum allowed message size negotiated for the Link.
+    :paramtype max_message_size: int
+    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
+    :paramtype link_properties: dict[str, any]
+    :keyword link_credit: The Link credit that determines how many
+     messages the Link will attempt to handle per connection iteration.
+     The default is 300.
     :paramtype link_credit: int
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
@@ -510,9 +518,9 @@ class SendClient(AMQPClient):
     def __init__(self, hostname, target, **kwargs):
         self.target = target
         # Sender and Link settings
-        self._max_message_size = kwargs.pop('max_message_size', MAX_FRAME_SIZE_BYTES)
-        self._link_properties = kwargs.pop('link_properties', None)
-        self._link_credit = kwargs.pop('link_credit', None)
+        self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
+        self._link_properties = kwargs.pop("link_properties", None)
+        self._link_credit = kwargs.pop("link_credit", None)
         super(SendClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -560,7 +568,10 @@ class SendClient(AMQPClient):
         message_delivery.state = MessageDeliveryState.WaitingForSendAck
         on_send_complete = partial(self._on_send_complete, message_delivery)
         delivery = self._link.send_transfer(
-            message_delivery.message, on_send_complete=on_send_complete, timeout=timeout, send_async=True
+            message_delivery.message,
+            on_send_complete=on_send_complete,
+            timeout=timeout,
+            send_async=True,
         )
         return delivery
 
@@ -571,7 +582,9 @@ class SendClient(AMQPClient):
         except ValueError:
             error = MessageException(condition, description=description, info=info)
         else:
-            error = MessageSendFailed(amqp_condition, description=description, info=info)
+            error = MessageSendFailed(
+                amqp_condition, description=description, info=info
+            )
         message_delivery.state = MessageDeliveryState.Error
         message_delivery.error = error
 
@@ -590,7 +603,9 @@ class SendClient(AMQPClient):
                         info=error_info[0][2],
                     )
                 except TypeError:
-                    self._process_send_error(message_delivery, condition=ErrorCondition.UnknownError)
+                    self._process_send_error(
+                        message_delivery, condition=ErrorCondition.UnknownError
+                    )
         elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
         elif reason == LinkDeliverySettleReason.TIMEOUT:
@@ -598,13 +613,17 @@ class SendClient(AMQPClient):
             message_delivery.error = TimeoutError("Sending message timed out.")
         else:
             # NotDelivered and other unknown errors
-            self._process_send_error(message_delivery, condition=ErrorCondition.UnknownError)
+            self._process_send_error(
+                message_delivery, condition=ErrorCondition.UnknownError
+            )
 
     def _send_message_impl(self, message, **kwargs):
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
-        message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
+        message_delivery = _MessageDelivery(
+            message, MessageDeliveryState.WaitingToBeSent, expire_time
+        )
         while not self.client_ready():
             time.sleep(0.05)
 
@@ -618,10 +637,12 @@ class SendClient(AMQPClient):
             MessageDeliveryState.Timeout,
         ):
             try:
-                raise message_delivery.error # pylint: disable=raising-bad-type
+                raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
-                raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.")
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError, description="Send failed."
+                )
 
     def send_message(self, message, **kwargs):
         """
@@ -683,7 +704,8 @@ class ReceiveClient(AMQPClient):
     :paramtype handle_max: int
     :keyword on_attach: A callback function to be run on receipt of an ATTACH frame.
      The function must take 4 arguments: source, target, properties and error.
-    :paramtype on_attach: func[~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
+    :paramtype on_attach: func[
+     ~pyamqp.endpoint.Source, ~pyamqp.endpoint.Target, dict, ~pyamqp.error.AMQPConnectionError]
     :keyword send_settle_mode: The mode by which to settle message send
      operations. If set to `Unsettled`, the client will wait for a confirmation
      from the service that the message was successfully sent. If set to 'Settled',
@@ -697,13 +719,13 @@ class ReceiveClient(AMQPClient):
     :paramtype receive_settle_mode: ~pyamqp.constants.ReceiverSettleMode
     :keyword desired_capabilities: The extension capabilities desired from the peer endpoint.
     :paramtype desired_capabilities: list[bytes]
-    :keyword max_message_size: The maximum allowed message size negotiated for the Link.	
-    :paramtype max_message_size: int	
-    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.	
-    :paramtype link_properties: dict[str, any]	
-    :keyword link_credit: The Link credit that determines how many	
-     messages the Link will attempt to handle per connection iteration.	
-     The default is 300.	
+    :keyword max_message_size: The maximum allowed message size negotiated for the Link.
+    :paramtype max_message_size: int
+    :keyword link_properties: Metadata to be sent in the Link ATTACH frame.
+    :paramtype link_properties: dict[str, any]
+    :keyword link_credit: The Link credit that determines how many
+     messages the Link will attempt to handle per connection iteration.
+     The default is 300.
     :paramtype link_credit: int
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the service. Default is `TransportType.Amqp` in which case port 5671 is used.
@@ -727,14 +749,14 @@ class ReceiveClient(AMQPClient):
 
     def __init__(self, hostname, source, **kwargs):
         self.source = source
-        self._streaming_receive = kwargs.pop("streaming_receive", False) 
+        self._streaming_receive = kwargs.pop("streaming_receive", False)
         self._received_messages = queue.Queue()
-        self._message_received_callback = kwargs.pop("message_received_callback", None) 
+        self._message_received_callback = kwargs.pop("message_received_callback", None)
 
         # Sender and Link settings
-        self._max_message_size = kwargs.pop('max_message_size', MAX_FRAME_SIZE_BYTES)
-        self._link_properties = kwargs.pop('link_properties', None)
-        self._link_credit = kwargs.pop('link_credit', 300)
+        self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
+        self._link_properties = kwargs.pop("link_properties", None)
+        self._link_credit = kwargs.pop("link_credit", 300)
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -794,7 +816,9 @@ class ReceiveClient(AMQPClient):
         if not self._streaming_receive:
             self._received_messages.put((frame, message))
 
-    def _receive_message_batch_impl(self, max_batch_size=None, on_message_received=None, timeout=0):
+    def _receive_message_batch_impl(
+        self, max_batch_size=None, on_message_received=None, timeout=0
+    ):
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
@@ -922,10 +946,12 @@ class ReceiveClient(AMQPClient):
     ):
         ...
 
-    def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+    def settle_messages(
+        self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs
+    ):
         batchable = kwargs.pop("batchable", None)
         if outcome.lower() == "accepted":
-            state = Accepted()
+            state: Outcomes = Accepted()
         elif outcome.lower() == "released":
             state = Released()
         elif outcome.lower() == "rejected":
@@ -937,7 +963,7 @@ class ReceiveClient(AMQPClient):
         else:
             raise ValueError("Unrecognized message output: {}".format(outcome))
         try:
-            first, last = delivery_id
+            first, last = cast(Tuple, delivery_id)
         except TypeError:
             first = delivery_id
             last = None

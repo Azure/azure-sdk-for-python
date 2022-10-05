@@ -10,7 +10,7 @@ import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 #from uamqp.authentication.common import AMQPAuth
-from ._pyamqp.client import SendClientSync
+from ._pyamqp.client import SendClient as SendClientSync
 from ._pyamqp.utils import amqp_long_value, amqp_array_value
 from ._pyamqp.error import MessageException
 

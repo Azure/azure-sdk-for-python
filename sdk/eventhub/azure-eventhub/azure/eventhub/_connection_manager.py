@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from ._pyamqp._connection import Connection
     from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     from uamqp import Connection as uamqp_Connection
+    from ._transport._base import AmqpTransport
 
     try:
         from typing_extensions import Protocol
@@ -60,7 +61,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         self._channel_max = kwargs.get("channel_max")
         self._idle_timeout = kwargs.get("idle_timeout")
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
-        self._amqp_transport = kwargs.get("amqp_transport")
+        self._amqp_transport: AmqpTransport = kwargs.pop("amqp_transport")
 
     def get_connection(
         self,

@@ -58,7 +58,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         return ConnectionAsync(endpoint, network_trace=network_trace, **kwargs)
 
     @staticmethod
-    async def close_connection(connection):
+    async def close_connection_async(connection):
         """
         Closes existing connection.
         :param connection: pyamqp Connection.
@@ -344,7 +344,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 if isinstance(exception, errors.AuthenticationException):
                     await closable._close_connection_async()  # pylint:disable=protected-access
                 elif isinstance(exception, errors.AMQPLinkError):
-                    await closable._close_handler_async()  # pylint:disable=protected-access
+                    await cast("ConsumerProducerMixin", closable)._close_handler_async()  # pylint:disable=protected-access
                 elif isinstance(exception, errors.AMQPConnectionError):
                     await closable._close_connection_async()  # pylint:disable=protected-access
                 # TODO: add MessageHandlerError in amqp?

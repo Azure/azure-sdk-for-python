@@ -127,7 +127,7 @@ class SASLWithWebSocket(WebSocketTransport, SASLTransportMixin):
         host,
         credential,
         *,
-        port=WEBSOCKET_PORT,    # TODO: NOT KWARGS IN EH PYAMQP
+        port=WEBSOCKET_PORT,
         connect_timeout=None,
         ssl_opts=None,
         **kwargs,

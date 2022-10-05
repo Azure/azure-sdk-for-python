@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from typing import Tuple, cast
 import platform
 import re
 import struct
@@ -20,7 +21,7 @@ RE_NUM = re.compile(r'(\d+).+')
 
 def _linux_version_to_tuple(s):
     # type: (str) -> Tuple[int, int, int]
-    return tuple(map(_versionatom, s.split('.')[:3]))
+    return cast(Tuple[int, int, int], tuple(map(_versionatom, s.split('.')[:3])))
 
 
 def _versionatom(s):

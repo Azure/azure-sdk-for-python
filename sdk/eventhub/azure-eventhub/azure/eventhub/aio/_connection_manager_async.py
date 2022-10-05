@@ -13,6 +13,7 @@ from .._constants import TransportType
 if TYPE_CHECKING:
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     from .._pyamqp.aio._connection_async import Connection as ConnectionAsync
+    from ._transport._base_async import AmqpTransportAsync
     from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
     from uamqp.async_ops import ConnectionAsync as uamqp_ConnectionAsync
 
@@ -56,7 +57,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
         self._channel_max = kwargs.get("channel_max")
         self._idle_timeout = kwargs.get("idle_timeout")
         self._remote_idle_timeout_empty_frame_send_ratio = kwargs.get("remote_idle_timeout_empty_frame_send_ratio")
-        self._amqp_transport = kwargs.get("amqp_transport")
+        self._amqp_transport: AmqpTransportAsync = kwargs.pop("amqp_transport")
 
     async def get_connection(
         self,

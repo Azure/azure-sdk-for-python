@@ -60,7 +60,7 @@ class SenderLink(Link):
     async def _incoming_attach(self, frame):
         try:
             await super(SenderLink, self)._incoming_attach(frame)
-        except ValueError:  # TODO: This should NOT be a ValueError
+        except AMQPLinkError:
             await self._remove_pending_deliveries()
             raise
         self.current_link_credit = self.link_credit
@@ -163,9 +163,9 @@ class SenderLink(Link):
     async def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()
         if self.state != LinkState.ATTACHED:
-            raise AMQPLinkError(  # TODO: should we introduce MessageHandler to indicate the handler is in wrong state
-                condition=ErrorCondition.ClientError,  # TODO: should this be a ClientError?
-                description="Link is not attached.",
+            raise AMQPLinkError(
+                condition=ErrorCondition.ClientError,
+                description="Link is not attached."
             )
         settled = self.send_settle_mode == SenderSettleMode.Settled
         if self.send_settle_mode == SenderSettleMode.Mixed:

@@ -83,8 +83,8 @@ def encode_null(output, *args, **kwargs):  # pylint: disable=unused-argument
 
 
 def encode_boolean(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, bool, bool, Any) -> None
     """
     <encoding name="true" code="0x41" category="fixed" width="0" label="the boolean value true"/>
@@ -102,8 +102,8 @@ def encode_boolean(
 
 
 def encode_ubyte(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, Union[int, bytes], bool, Any) -> None
     """
     <encoding code="0x50" category="fixed" width="1" label="8-bit unsigned integer"/>
@@ -121,8 +121,8 @@ def encode_ubyte(
 
 
 def encode_ushort(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, int, bool, Any) -> None
     """
     <encoding code="0x60" category="fixed" width="2" label="16-bit unsigned integer in network byte order"/>
@@ -182,8 +182,8 @@ def encode_ulong(output, value, with_constructor=True, use_smallest=True):
 
 
 def encode_byte(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, int, bool, Any) -> None
     """
     <encoding code="0x51" category="fixed" width="1" label="8-bit two's-complement integer"/>
@@ -197,8 +197,8 @@ def encode_byte(
 
 
 def encode_short(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, int, bool, Any) -> None
     """
     <encoding code="0x61" category="fixed" width="2" label="16-bit two's-complement integer in network byte order"/>
@@ -252,8 +252,8 @@ def encode_long(output, value, with_constructor=True, use_smallest=True):
 
 
 def encode_float(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, float, bool, Any) -> None
     """
     <encoding name="ieee-754" code="0x72" category="fixed" width="4" label="IEEE 754-2008 binary32"/>
@@ -264,8 +264,8 @@ def encode_float(
 
 
 def encode_double(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, float, bool, Any) -> None
     """
     <encoding name="ieee-754" code="0x82" category="fixed" width="8" label="IEEE 754-2008 binary64"/>
@@ -276,8 +276,8 @@ def encode_double(
 
 
 def encode_timestamp(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, Union[int, datetime], bool, Any) -> None
     """
     <encoding name="ms64" code="0x83" category="fixed" width="8"
@@ -295,8 +295,8 @@ def encode_timestamp(
 
 
 def encode_uuid(
-    output, value, with_constructor=True, **kwargs
-):  # pylint: disable=unused-argument
+    output, value, with_constructor=True, **kwargs  # pylint: disable=unused-argument
+):
     # type: (bytearray, Union[uuid.UUID, str, bytes], bool, Any) -> None
     """
     <encoding code="0x98" category="fixed" width="16" label="UUID as defined in section 4.1.2 of RFC-4122"/>
@@ -412,7 +412,6 @@ def encode_list(output, value, with_constructor=True, use_smallest=True):
         except struct.error:
             raise ValueError("List is too large or too long to be encoded.")
     output.extend(encoded_values)
-
 
 def encode_map(output, value, with_constructor=True, use_smallest=True):
     # type: (bytearray, Union[Dict[Any, Any], Iterable[Tuple[Any, Any]]], bool, bool) -> None
