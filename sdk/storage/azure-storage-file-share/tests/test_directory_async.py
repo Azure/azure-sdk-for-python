@@ -551,8 +551,11 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         assert list_dir[5]['size'] == 5
 
     @FileSharePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_list_subdirectories_and_files_encoded_async(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_subdirectories_and_files_encoded_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -567,15 +570,18 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
             list_dir.append(d)
 
         # Assert
-        self.assertEqual(len(list_dir), 2)
-        self.assertEqual(list_dir[0]['name'], 'subdir1\uFFFE')
-        self.assertEqual(list_dir[0]['is_directory'], True)
-        self.assertEqual(list_dir[1]['name'], 'file1\uFFFE')
-        self.assertEqual(list_dir[1]['is_directory'], False)
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == 'subdir1\uFFFE'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'file1\uFFFE'
+        assert list_dir[1]['is_directory'] == False
 
     @FileSharePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_list_subdirectories_and_files_encoded_prefix_async(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_subdirectories_and_files_encoded_prefix_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -590,15 +596,18 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
             list_dir.append(d)
 
         # Assert
-        self.assertEqual(len(list_dir), 2)
-        self.assertEqual(list_dir[0]['name'], '\uFFFFsubdir1')
-        self.assertEqual(list_dir[0]['is_directory'], True)
-        self.assertEqual(list_dir[1]['name'], '\uFFFFfile1')
-        self.assertEqual(list_dir[1]['is_directory'], False)
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == '\uFFFFsubdir1'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == '\uFFFFfile1'
+        assert list_dir[1]['is_directory'] == False
 
     @FileSharePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_list_subdirectories_and_files_include_other_data_async(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_list_subdirectories_and_files_include_other_data_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
