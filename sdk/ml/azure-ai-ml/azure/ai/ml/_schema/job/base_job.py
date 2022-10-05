@@ -32,7 +32,11 @@ class BaseJobSchema(ResourceSchema):
         values=fields.Str(),
         dump_only=True,
         metadata={
-            "description": "The list of log files associated with this run. This section is only populated by the service and will be ignored if contained in a yaml sent to the service (e.g. via `az ml job create` ...)"
+            "description": (
+                "The list of log files associated with this run. This section is only populated "
+                "by the service and will be ignored if contained in a yaml sent to the service "
+                "(e.g. via `az ml job create` ...)"
+            )
         },
     )
     compute = ComputeField(required=True)

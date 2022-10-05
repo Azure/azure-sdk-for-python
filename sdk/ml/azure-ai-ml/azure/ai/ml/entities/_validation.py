@@ -17,11 +17,11 @@ import pydash
 import strictyaml
 from marshmallow import Schema, ValidationError
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
 from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, decorate_validation_error
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class Diagnostic(object):
     def __init__(self, yaml_path: str, message: str, error_code: str):
         """Init Diagnostic.
 
-        :param yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str, e.g.
+        :param yaml_path: A dash path from root to the target element of the diagnostic. jobs.job_a.inputs.input_str
         :type yaml_path: str
         :param message: Error message of diagnostic.
         :type message: str
@@ -106,13 +106,15 @@ class ValidationResult(object):
     def passed(self):
         return not self._errors
 
-    def merge_with(self, other: "ValidationResult", field_name: str = None):
+    def merge_with(self, other: "ValidationResult", field_name: str = None, condition_skip: typing.Callable = None):
         """Merge two validation results.
 
         Will update current validation result.
         """
         for target_attr in ["_errors", "_warnings"]:
             for diagnostic in getattr(other, target_attr):
+                if condition_skip and condition_skip(diagnostic):
+                    continue
                 new_diagnostic = copy.deepcopy(diagnostic)
                 if field_name:
                     if new_diagnostic.yaml_path == "*":
@@ -136,11 +138,12 @@ class ValidationResult(object):
         If the validation is passed or raise_error is False, this method
         will return the validation result.
         """
+        # pylint: disable=logging-not-lazy
         if raise_error is False:
             return self
 
         if self._warnings:
-            module_logger.info("Warnings: {}".format(self._warnings))
+            module_logger.info("Warnings: {}".format(self._warnings)) # pylint: disable=logging-format-interpolation
 
         if not self.passed:
             message = (
@@ -154,14 +157,13 @@ class ValidationResult(object):
             )
             if raise_mashmallow_error:
                 raise ValidationError(message)
-            else:
-                raise ValidationException(
-                    message=message,
-                    no_personal_data_message="validation failed on the following fields: "
-                    + ", ".join(self.invalid_fields),
-                    target=error_target,
-                    error_category=error_category,
-                )
+
+            raise ValidationException(
+                message=message,
+                no_personal_data_message="validation failed on the following fields: " + ", ".join(self.invalid_fields),
+                target=error_target,
+                error_category=error_category,
+            )
         return self
 
     def append_error(
@@ -306,7 +308,7 @@ class SchemaValidatableMixin:
         """
         return self._create_empty_validation_result()
 
-    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:  # pylint: disable=no-self-use
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.
@@ -411,12 +413,12 @@ class _ValidationResultBuilder:
             def msg2str(msg):
                 if isinstance(msg, str):
                     return msg
-                elif isinstance(msg, dict) and len(msg) == 1 and "_schema" in msg and len(msg["_schema"]) == 1:
+                if isinstance(msg, dict) and len(msg) == 1 and "_schema" in msg and len(msg["_schema"]) == 1:
                     return msg["_schema"][0]
-                else:
-                    return str(msg)
 
-            instance.append_error(message="; ".join(map(lambda x: msg2str(x), errors)), yaml_path=cur_path)
+                return str(msg)
+
+            instance.append_error(message="; ".join([msg2str(x) for x in errors]), yaml_path=cur_path)
         # unknown error
         else:
             instance.append_error(message=str(errors), yaml_path=cur_path)
@@ -449,7 +451,10 @@ class YamlLocationResolver:
 
     def _resolve_recursively(self, attrs: List[str], source_path: Path):
         with open(source_path, encoding="utf-8") as f:
-            loaded_yaml = strictyaml.load(f.read())
+            try:
+                loaded_yaml = strictyaml.load(f.read())
+            except strictyaml.exceptions.StrictYAMLError as e:
+                return "can't resolve location:\n{}".format(e).split("\n"), None
 
         while attrs:
             attr = attrs[-1]

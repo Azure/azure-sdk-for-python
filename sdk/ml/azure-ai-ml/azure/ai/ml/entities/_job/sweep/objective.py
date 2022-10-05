@@ -5,7 +5,6 @@ from typing import Optional
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import Objective as RestObjective
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._util import SnakeToPascalDescriptor
 
 
 class Objective(RestTranslatableMixin):
@@ -20,10 +19,8 @@ class Objective(RestTranslatableMixin):
     :type primary_metric: str
     """
 
-    goal = SnakeToPascalDescriptor()
-
     def __init__(self, goal: str = None, primary_metric: str = None):
-        self.goal = goal
+        self.goal = goal.lower()
         self.primary_metric = primary_metric
 
     def _to_rest_object(self) -> RestObjective:

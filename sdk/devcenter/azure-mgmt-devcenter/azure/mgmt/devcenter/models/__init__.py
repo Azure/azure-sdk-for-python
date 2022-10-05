@@ -6,6 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AllowedEnvironmentType
+from ._models_py3 import AllowedEnvironmentTypeListResult
 from ._models_py3 import AttachedNetworkConnection
 from ._models_py3 import AttachedNetworkListResult
 from ._models_py3 import Capability
@@ -106,6 +108,8 @@ from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AllowedEnvironmentType",
+    "AllowedEnvironmentTypeListResult",
     "AttachedNetworkConnection",
     "AttachedNetworkListResult",
     "Capability",

@@ -97,9 +97,7 @@ class Resource(ABC):
         return self._base_path
 
     @abstractmethod
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the object content into a file.
 
         :param dest: The destination to receive this object's data.
@@ -109,16 +107,10 @@ class Resource(ABC):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
-        pass
 
     @classmethod
+    # pylint: disable=unused-argument
     def _resolve_cls_and_type(cls, data, params_override):
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
@@ -151,9 +143,12 @@ class Resource(ABC):
         :return: Resource
         :rtype: Resource
         """
-        pass
 
-    def _get_arm_resource(self, **kwargs):
+    # pylint: disable:unused-argument
+    def _get_arm_resource(
+        self,
+        **kwargs, # pylint: disable=unused-argument
+    ):
         """Get arm resource.
 
         :param kwargs: A dictionary of additional configuration parameters.
@@ -164,7 +159,9 @@ class Resource(ABC):
         """
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
+        # pylint: disable=no-member
         template = get_template(resource_type=self._arm_type)
+        # pylint: disable=no-member
         template["copy"]["name"] = f"{self._arm_type}Deployment"
         return template
 
@@ -178,6 +175,7 @@ class Resource(ABC):
         :rtype: dict
         """
         resource = self._get_arm_resource(**kwargs)
+        # pylint: disable=no-member
         param = self._to_arm_resource_param(**kwargs)
         return [(resource, param)]
 

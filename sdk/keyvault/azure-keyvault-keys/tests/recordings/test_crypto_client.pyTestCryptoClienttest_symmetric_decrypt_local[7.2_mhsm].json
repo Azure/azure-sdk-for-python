@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt338430a6?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt338430a6?api-version=7.2",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -201,7 +201,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt338430a6?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt338430a6?api-version=7.2",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -252,7 +252,7 @@
             "unwrapKey",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt338430a6/17057050c72047a69d6108e5d7200ce0",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt338430a6/17057050c72047a69d6108e5d7200ce0",
           "kty": "oct-HSM"
         }
       }
@@ -432,7 +432,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt338430a6/17057050c72047a69d6108e5d7200ce0/encrypt?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt338430a6/17057050c72047a69d6108e5d7200ce0/encrypt?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -464,7 +464,7 @@
       "ResponseBody": {
         "alg": "A256CBCPAD",
         "iv": "ibitv7BzReNZiTKgnFF0QQ",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt338430a6/17057050c72047a69d6108e5d7200ce0",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt338430a6/17057050c72047a69d6108e5d7200ce0",
         "value": "LMKuK63LOzPyZzk-GMl79Lciw-LNxXt5H9zA7ZTgfpIHvM5_XY9h8q0ils-y85LvB-Bj8jx7KmDAacxkXIXxrdhHz7c5URCoOh0HrwXW7QqBVnWarK4D04X_2KG2otO0DFTFfuVcs3flnFUF2bAEujPb3SA5FHlBLPhDge4elcbWn3XXtJVOzCian2Z3O04xyI_QAZp8Ds4K4XSHtU_P238YWRvcNc399qEYptrlWjHNxxFxxAC4Hc44pAGus3cCiqWw_oS3hdD48u_EhIUSvg"
       }
     }

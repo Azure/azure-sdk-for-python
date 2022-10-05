@@ -7,12 +7,12 @@ from abc import ABC
 from datetime import datetime
 from typing import List, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Cron, Recurrence
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CronTrigger as RestCronTrigger
-from azure.ai.ml._restclient.v2022_06_01_preview.models import RecurrenceSchedule as RestRecurrencePattern
-from azure.ai.ml._restclient.v2022_06_01_preview.models import RecurrenceTrigger as RestRecurrenceTrigger
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TriggerBase as RestTriggerBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TriggerType as RestTriggerType
+from azure.ai.ml._restclient.v2022_01_01_preview.models import Cron, Recurrence, RecurrenceSchedule
+from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
+from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
+from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
+from azure.ai.ml._restclient.v2022_10_01.models import TriggerBase as RestTriggerBase
+from azure.ai.ml._restclient.v2022_10_01.models import TriggerType as RestTriggerType
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -51,9 +51,9 @@ class TriggerBase(RestTranslatableMixin, ABC):
 
     @classmethod
     def _from_rest_object(cls, obj: RestTriggerBase) -> Union["CronTrigger", "RecurrenceTrigger"]:
-        if isinstance(obj, RestRecurrenceTrigger):
+        if obj.trigger_type == RestTriggerType.RECURRENCE:
             return RecurrenceTrigger._from_rest_object(obj)
-        if isinstance(obj, RestCronTrigger):
+        if obj.trigger_type == RestTriggerType.CRON:
             return CronTrigger._from_rest_object(obj)
 
 
@@ -67,6 +67,8 @@ class RecurrencePattern(RestTranslatableMixin):
     :param week_days: List of weekdays for recurrence schedule pattern.
         Possible values include: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
     :type week_days: Union[str, List[str]]
+    :param month_days: List of month days for recurrence schedule pattern.
+    :type month_days: Union[int, List[int]]
     """
 
     def __init__(
@@ -75,13 +77,29 @@ class RecurrencePattern(RestTranslatableMixin):
         hours: Union[int, List[int]],
         minutes: Union[int, List[int]],
         week_days: Union[str, List[str]] = None,
+        month_days: Union[int, List[int]] = None,
     ):
         self.hours = hours
         self.minutes = minutes
         self.week_days = week_days
+        self.month_days = month_days
 
     def _to_rest_object(self) -> RestRecurrencePattern:
         return RestRecurrencePattern(
+            hours=[self.hours] if not isinstance(self.hours, list) else self.hours,
+            minutes=[self.minutes] if not isinstance(self.minutes, list) else self.minutes,
+            week_days=[self.week_days] if self.week_days and not isinstance(self.week_days, list) else self.week_days,
+            month_days=[self.month_days]
+            if self.month_days and not isinstance(self.month_days, list)
+            else self.month_days,
+        )
+
+    def _to_rest_compute_pattern_object(self) -> RecurrenceSchedule:
+        # This function is added because we can't make compute trigger to use same class
+        # with schedule from service side.
+        if self.month_days:
+            module_logger.warning("'month_days' is ignored for not supported on compute recurrence schedule.")
+        return RecurrenceSchedule(
             hours=[self.hours] if not isinstance(self.hours, list) else self.hours,
             minutes=[self.minutes] if not isinstance(self.minutes, list) else self.minutes,
             week_days=[self.week_days] if self.week_days and not isinstance(self.week_days, list) else self.week_days,
@@ -93,6 +111,7 @@ class RecurrencePattern(RestTranslatableMixin):
             hours=obj.hours,
             minutes=obj.minutes,
             week_days=obj.week_days,
+            month_days=obj.month_days if hasattr(obj, "month_days") else None,
         )
 
 
@@ -128,7 +147,7 @@ class CronTrigger(TriggerBase):
         )
         self.expression = expression
 
-    def _to_rest_object(self) -> RestCronTrigger:  # v2022_06_01_preview.models.CronTrigger
+    def _to_rest_object(self) -> RestCronTrigger:  # v2022_10_01.models.CronTrigger
         return RestCronTrigger(
             trigger_type=self.type,
             expression=self.expression,
@@ -198,7 +217,7 @@ class RecurrenceTrigger(TriggerBase):
         self.frequency = frequency
         self.interval = interval
 
-    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_06_01_preview.models.RecurrenceTrigger
+    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_10_01.models.RecurrenceTrigger
         return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
@@ -216,7 +235,7 @@ class RecurrenceTrigger(TriggerBase):
         return Recurrence(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
-            schedule=self.schedule,
+            schedule=self.schedule._to_rest_compute_pattern_object(),
             start_time=self.start_time,
             time_zone=self.time_zone,
         )

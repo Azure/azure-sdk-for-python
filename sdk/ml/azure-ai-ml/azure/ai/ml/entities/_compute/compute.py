@@ -9,7 +9,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
 from azure.ai.ml._schema.compute.compute import ComputeSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -18,6 +17,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class Compute(Resource, RestTranslatableMixin):
@@ -128,9 +128,7 @@ class Compute(Resource, RestTranslatableMixin):
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
         pass
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the compute content into a file in yaml format.
 
         :param dest: The destination to receive this compute's content.
@@ -140,15 +138,10 @@ class Compute(Resource, RestTranslatableMixin):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.'.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
