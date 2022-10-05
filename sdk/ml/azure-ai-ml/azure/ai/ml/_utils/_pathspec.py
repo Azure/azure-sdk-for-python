@@ -1,5 +1,7 @@
 # ---------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) 2013-2022 Caleb P. Burns credits dahlia <https://github.com/dahlia>
+# Licensed under the MPLv2 License. See License.txt in the project root for
+# license information.
 # ---------------------------------------------------------
 """
 This file code has been vendored from pathspec repo.
@@ -18,14 +20,9 @@ from typing import Tuple, Union
 
 NORMALIZE_PATH_SEPS = [sep for sep in [os.sep, os.altsep] if sep and sep != posixpath.sep]
 
+# The encoding to use when parsing a byte string pattern.
+# This provides the base definition for patterns.
 _BYTES_ENCODING = "latin1"
-"""
-The encoding to use when parsing a byte string pattern.
-"""
-
-"""
-This provides the base definition for patterns.
-"""
 
 
 class Pattern(object):
@@ -154,8 +151,7 @@ class RegexPattern(Pattern):
         """
         if isinstance(other, RegexPattern):
             return self.include == other.include and self.regex == other.regex
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def match_file(self, file: str) -> Optional["RegexMatchResult"]:
         """
@@ -210,8 +206,6 @@ class GitWildMatchPatternError(ValueError):
     pattern.
     """
 
-    pass
-
 
 class GitWildMatchPattern(RegexPattern):
     """
@@ -223,6 +217,7 @@ class GitWildMatchPattern(RegexPattern):
     __slots__ = ()
 
     @classmethod
+    # pylint: disable=too-many-branches,too-many-statements
     def pattern_to_regex(
         cls,
         pattern: AnyStr,
@@ -541,8 +536,7 @@ class GitWildMatchPattern(RegexPattern):
 
         if return_type is bytes:
             return out_string.encode(_BYTES_ENCODING)
-        else:
-            return out_string
+        return out_string
 
 
 def normalize_file(file, separators=None):

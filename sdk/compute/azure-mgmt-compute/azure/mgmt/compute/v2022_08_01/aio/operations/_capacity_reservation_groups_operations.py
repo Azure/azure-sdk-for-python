@@ -411,7 +411,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        expand: Optional[Union[str, "_models.CapacityReservationGroupInstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.CapacityReservationGroupInstanceViewTypes]] = None,
         **kwargs: Any
     ) -> _models.CapacityReservationGroup:
         """The operation that retrieves information about a capacity reservation group.
@@ -482,7 +482,7 @@ class CapacityReservationGroupsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        expand: Optional[Union[str, "_models.ExpandTypesForGetCapacityReservationGroups"]] = None,
+        expand: Optional[Union[str, _models.ExpandTypesForGetCapacityReservationGroups]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.CapacityReservationGroup"]:
         """Lists all of the capacity reservation groups in the specified resource group. Use the nextLink
@@ -570,7 +570,7 @@ class CapacityReservationGroupsOperations:
 
     @distributed_trace
     def list_by_subscription(
-        self, expand: Optional[Union[str, "_models.ExpandTypesForGetCapacityReservationGroups"]] = None, **kwargs: Any
+        self, expand: Optional[Union[str, _models.ExpandTypesForGetCapacityReservationGroups]] = None, **kwargs: Any
     ) -> AsyncIterable["_models.CapacityReservationGroup"]:
         """Lists all of the capacity reservation groups in the subscription. Use the nextLink property in
         the response to get the next page of capacity reservation groups.

@@ -184,7 +184,6 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub-checkpointstoretable azure-core<2.0.0,>=1.14.0
 #override azure-eventhub uamqp>=1.6.0,<2.0.0
-#override azure-appconfiguration msrest>=0.6.10
 #override azure-appconfiguration azure-core<2.0.0,>=1.24.0
 #override azure-servicebus uamqp>=1.5.1,<2.0.0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
@@ -251,6 +250,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-eventgrid msrest>=0.7.1
 #override azure-ai-language-conversations isodate<1.0.0,>=0.6.1
+#override azure-ai-language-questionanswering isodate<1.0.0,>=0.6.1
 #override azure-mgmt-loadtestservice azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-loadtestservice msrest>=0.6.21
 #override azure-mgmt-deviceupdate msrest>=0.7.1
@@ -339,8 +339,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storagecache azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-monitor azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-labservices azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-mgmt-securityinsight msrest>=0.6.21
-#override azure-mgmt-securityinsight azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-securityinsight msrest>=0.7.1
+#override azure-mgmt-securityinsight azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-msi msrest>=0.6.21
 #override azure-mgmt-msi azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-applicationinsights azure-mgmt-core>=1.3.0,<2.0.0
@@ -511,3 +511,4 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-redis azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph msrest>=0.7.1
+#override azure-core-experimental azure-core<2.0.0,>=1.25.0

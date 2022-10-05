@@ -27,7 +27,11 @@ class OnlineScaleSettings(RestTranslatableMixin):
     :type type: str
     """
 
-    def __init__(self, type: str, **kwargs):  # pylint: disable=unused-argument
+    def __init__(
+        self,
+        type: str, # pylint: disable=redefined-builtin
+        **kwargs, # pylint: disable=unused-argument
+    ):
         self.type = camel_to_snake(type)
 
     @abstractmethod

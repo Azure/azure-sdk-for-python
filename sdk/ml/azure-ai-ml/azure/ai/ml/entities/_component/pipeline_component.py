@@ -55,7 +55,8 @@ class PipelineComponent(Component):
     :type outputs: Component outputs
     :param jobs: Id to components dict inside pipeline definition.
     :type jobs: OrderedDict[str, Component]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(
@@ -122,8 +123,8 @@ class PipelineComponent(Component):
         validation_result = super(PipelineComponent, self)._customized_validate()
 
         # Validate inputs
-        for input_name, input in self.inputs.items():
-            if input.type is None:
+        for input_name, input_value in self.inputs.items():
+            if input_value.type is None:
                 validation_result.append_error(
                     yaml_path="inputs.{}".format(input_name),
                     message="Parameter type unknown, please add type annotation or specify input default value.",
@@ -383,7 +384,7 @@ class PipelineComponent(Component):
         """Check ignored keys and return rest object."""
         ignored_keys = self._check_ignored_keys(self)
         if ignored_keys:
-            module_logger.warning("%s ignored on pipeline component %r." % (ignored_keys, self.name))
+            module_logger.warning("%s ignored on pipeline component %r.", ignored_keys, self.name)
         component = self._to_dict()
         # add source type to component rest object
         component["_source"] = self._source

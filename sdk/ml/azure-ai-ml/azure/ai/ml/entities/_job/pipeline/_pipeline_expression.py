@@ -10,7 +10,6 @@ import tempfile
 from collections import namedtuple
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
-from ast import literal_eval
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
 from azure.ai.ml.constants import AssetTypes

@@ -4,8 +4,8 @@
 
 import pytest
 
-from azure.ai.ml import UserIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml import UserIdentityConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
     ImageModelSettingsClassification,
     LearningRateScheduler,
@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     SamplingAlgorithmType,
     StochasticOptimizer,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import image_classification_multilabel
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -27,7 +27,7 @@ class TestAutoMLImageClassificationMultilabel:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_image_classification_multilabel_task(self, run_type):
         # Create AutoML Image Classification Multilabel task
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         image_classification_multilabel_job = image_classification_multilabel(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="label",

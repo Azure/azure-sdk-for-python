@@ -88,7 +88,7 @@ def build_get_request(
     gallery_application_version_name: str,
     subscription_id: str,
     *,
-    expand: Optional[Union[str, "_models.ReplicationStatusTypes"]] = None,
+    expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -489,7 +489,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        expand: Optional[Union[str, "_models.ReplicationStatusTypes"]] = None,
+        expand: Optional[Union[str, _models.ReplicationStatusTypes]] = None,
         **kwargs: Any
     ) -> _models.GalleryApplicationVersion:
         """Retrieves information about a gallery Application Version.

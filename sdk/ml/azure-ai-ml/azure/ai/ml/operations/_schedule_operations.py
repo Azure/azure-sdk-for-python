@@ -4,21 +4,20 @@
 # pylint: disable=protected-access
 from typing import Any, Iterable
 
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from .._restclient.v2022_10_01_preview.models import ListViewType, ScheduleListViewType
+from .._restclient.v2022_10_01.models import ScheduleListViewType
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import AzureMLResourceType, LROConfigurations
 from . import JobOperations
@@ -26,7 +25,7 @@ from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class ScheduleOperations(_ScopeDependentOperations):
@@ -42,14 +41,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_10_2022_preview: ServiceClient102022Preview,
+        service_client_10_2022: ServiceClient102022,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
-        self.service_client = service_client_10_2022_preview.schedules
+        # ops_logger.update_info(kwargs)
+        self.service_client = service_client_10_2022.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -70,15 +69,16 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
-        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY,
+        list_view_type: ScheduleListViewType = ScheduleListViewType.ENABLED_ONLY, # pylint: disable=unused-argument
     ) -> Iterable[JobSchedule]:
         """List schedules in specified workspace.
 
-        :param list_view_type: View type for including/excluding (for example) archived schedules. Default: ENABLED_ONLY.
+        :param list_view_type: View type for including/excluding (for example)
+            archived schedules. Default: ENABLED_ONLY.
         :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list JobSchedule.
         :rtype: Iterable[JobSchedule]
@@ -96,7 +96,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.service_client.list(
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            # list_view_type=list_view_type,
+            list_view_type=list_view_type,
             cls=safe_from_rest_object,
             **self._kwargs,
         )
@@ -114,7 +114,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
         name,
@@ -134,7 +134,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name,
@@ -155,7 +155,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         schedule,
@@ -187,7 +187,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
         name,
@@ -204,7 +204,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(schedule)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
         name,

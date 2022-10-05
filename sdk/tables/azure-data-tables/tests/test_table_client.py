@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from multiprocessing.sharedctypes import Value # cspell:disable-line
 import pytest
 import platform
 
@@ -13,14 +12,13 @@ from azure.data.tables._error import _validate_storage_tablename
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from _shared.testcase import (
     TableTestCase
 )
 
 from preparers import tables_decorator
-
-# ------------------------------------------------------------------------------
 
 SERVICES = {
     TableServiceClient: 'table',
@@ -30,6 +28,7 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
+
 
 class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
@@ -137,6 +136,40 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 client.submit_transaction(batch)
             assert 'Storage table names must be alphanumeric' in str(error.value)
+    
+    @tables_decorator
+    @recorded_by_proxy
+    def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
+        # test table client has the same table name as in url
+        tc = TableClient(invalid_url, table_name, credential=tables_primary_storage_account_key)
+        with pytest.raises(ResourceNotFoundError) as exc:
+            tc.create_table()
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test table client has a different table name as in url
+        table_name2 = self.get_resource_name("mytable2")
+        tc2 = TableClient(invalid_url, table_name2, credential=tables_primary_storage_account_key)
+        with pytest.raises(ResourceNotFoundError) as exc:
+            tc2.create_table()
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        valid_tc = TableClient(url, table_name, credential=tables_primary_storage_account_key)
+        valid_tc.create_table()
+        # test creating a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            tc.create_table()
+        assert ("values are not specified") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test deleting a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            tc.delete_table()
+        assert ("URI does not match number of key properties for the resource") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        valid_tc.delete_table()
 
 
 class TestTableUnitTests(TableTestCase):

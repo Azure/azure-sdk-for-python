@@ -10,7 +10,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData as FebRestJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
@@ -362,7 +362,7 @@ class TestPipelineJobEntity:
 
         assert actual_dict == {
             "featurization": {"dataset_language": "eng"},
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -397,7 +397,7 @@ class TestPipelineJobEntity:
         )
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -426,7 +426,7 @@ class TestPipelineJobEntity:
         actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["automl_text_ner"], omit_fields)
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
