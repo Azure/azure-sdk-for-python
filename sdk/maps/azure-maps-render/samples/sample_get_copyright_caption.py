@@ -32,7 +32,7 @@ def get_copyright_caption():
     result = maps_render_client.get_copyright_caption()
 
     print("Get copyright caption result:")
-    print(result)
+    print(result.copyrights_caption)
     # [END get_copyright_caption]
 
 if __name__ == '__main__':

@@ -29,9 +29,6 @@ async def get_map_static_image_async():
 
     async with maps_render_client:
         result = await maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
-
-    print("Get map tile result:")
-    print(result)
     # [END get_map_static_image_async]
 
 if __name__ == '__main__':

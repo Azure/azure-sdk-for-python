@@ -32,10 +32,10 @@ async def get_copyright_for_tile_async():
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_render_client:
-        result = await maps_render_client.get_copyright_for_tile(tile_index_z=6, tile_index_x=9, tile_index_y=22)
+        result = await maps_render_client.get_copyright_for_tile(z=6, x=9, y=22)
 
     print("Get copyright for tile result:")
-    print(result)
+    print(result.general_copyrights[0])
     # [END get_copyright_for_tile_async]
 
 if __name__ == '__main__':

@@ -31,10 +31,10 @@ def get_copyright_for_tile():
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
-    result = maps_render_client.get_copyright_for_tile(tile_index_z=6, tile_index_x=9, tile_index_y=22)
+    result = maps_render_client.get_copyright_for_tile(z=6, x=9, y=22)
 
     print("Get copyright for tile result:")
-    print(result)
+    print(result.general_copyrights[0])
     # [END get_copyright_for_tile]
 
 if __name__ == '__main__':

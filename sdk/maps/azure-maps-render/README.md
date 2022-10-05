@@ -13,7 +13,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 - An [Azure subscription][azure_subscription] and an [Azure Maps account](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
 - A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 
@@ -140,9 +140,9 @@ from azure.maps.render import MapsRenderClient
 
 result = maps_render_client.get_map_tile(
     tileset_id=TilesetID.MICROSOFT_BASE,
-    tile_index_z=6,
-    tile_index_x=9,
-    tile_index_y=22,
+    z=6,
+    x=9,
+    y=22,
     tile_size="512"
 )
 ```

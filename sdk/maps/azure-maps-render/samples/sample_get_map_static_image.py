@@ -29,10 +29,9 @@ def get_map_static_image():
 
     result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064, 5.84228))
 
-    print("Get map tile result:")
-    print(result)
+    print("Get map tile result to png:")
     # Save result to file as png
-    file = open('result.png', 'wb')
+    file = open('map_static_image', 'wb')
     file.write(next(result))
     file.close()
     # [END get_map_static_image]

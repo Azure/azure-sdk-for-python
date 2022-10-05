@@ -41,7 +41,7 @@ def get_map_attribution():
     )
 
     print("Get map attribution result:")
-    print(result)
+    print(result[0])
     # [END get_map_attribution]
 
 if __name__ == '__main__':

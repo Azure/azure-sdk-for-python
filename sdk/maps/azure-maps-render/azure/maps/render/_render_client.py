@@ -4,7 +4,7 @@
 # ------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import TYPE_CHECKING, overload, Union, Any, List, Optional, Iterator
+from typing import TYPE_CHECKING, overload, Union, Any, List, Optional, Iterator, Tuple
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -17,7 +17,6 @@ from .models import (
     TilesetID,
     Copyright,
     MapTileset,
-    MapAttribution,
     CopyrightCaption,
     RasterTileFormat
 )
@@ -60,9 +59,9 @@ class MapsRenderClient(MapsRenderClientBase):
     def get_map_tile(
         self,
         tileset_id: Union[str, TilesetID],
-        tile_index_z: int,
-        tile_index_x: int,
-        tile_index_y: int,
+        x: int,
+        y: int,
+        z: int,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """The Get Map Tiles API allows users to request map tiles in vector or raster formats typically
@@ -76,15 +75,15 @@ class MapsRenderClient(MapsRenderClientBase):
             when making requests.
         :type tileset_id:
             str or ~azure.maps.render.models.TilesetID
-        :param tile_index_z:
+        :param z:
             Zoom level for the desired tile.
-        :type tile_index_z: int
-        :param tile_index_x:
+        :type z: int
+        :param x:
             X coordinate of the tile on zoom grid.
-        :type tile_index_x: int
-        :param tile_index_y:
+        :type x: int
+        :param y:
             Y coordinate of the tile on zoom grid.
-        :type tile_index_y: int
+        :type y: int
         :keyword time_stamp:
             The desired date and time of the requested tile.
         :paramtype time_stamp: ~datetime.datetime
@@ -116,9 +115,9 @@ class MapsRenderClient(MapsRenderClientBase):
 
         return self._render_client.get_map_tile(
             tileset_id=tileset_id,
-            z=tile_index_z,
-            x=tile_index_x,
-            y=tile_index_y,
+            z=z,
+            x=x,
+            y=y,
             **kwargs
         )
 
@@ -150,11 +149,28 @@ class MapsRenderClient(MapsRenderClientBase):
                 :dedent: 4
                 :caption: Return metadata for a tileset.
         """
-        return self._render_client.get_map_tileset(
+        result = self._render_client.get_map_tileset(
             tileset_id=tileset_id,
             **kwargs
         )
 
+        return MapTileset(
+            name = result.name,
+            description = result.description,
+            version = result.version,
+            template = result.template,
+            legend = result.legend,
+            scheme = result.scheme,
+            min_zoom = result.min_zoom,
+            max_zoom = result.max_zoom,
+            bounds = result.bounds,
+            center = result.center,
+            map_attribution=result.attribution,
+            tilejson_version=result.tilejson,
+            tiles_endpoints=result.tiles,
+            grid_endpoints=result.grids,
+            data_files=result.data
+        )
 
     @distributed_trace
     def get_map_attribution(
@@ -163,7 +179,7 @@ class MapsRenderClient(MapsRenderClientBase):
         zoom: int,
         bounds: BoundingBox,
         **kwargs: Any
-    ) -> MapAttribution:
+    ) -> List[str]:
         """The Get Map Attribution API allows users to request map copyright attribution information for a
         section of a tileset.
 
@@ -180,8 +196,8 @@ class MapsRenderClient(MapsRenderClientBase):
             position of the bounding box as float.
             E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :type bounds: BoundingBox
-        :return: MapAttribution
-        :rtype: ~azure.maps.render.models.MapAttribution
+        :return: List[str]
+        :rtype: List[str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -205,29 +221,29 @@ class MapsRenderClient(MapsRenderClientBase):
             zoom=zoom,
             bounds=bounds,
             **kwargs
-        )
+        ).copyrights
 
     @distributed_trace
     def get_map_state_tile(
         self,
         stateset_id: str,
-        tile_index_z: int,
-        tile_index_x: int,
-        tile_index_y: int,
+        x: int,
+        y: int,
+        z: int,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Fetches state tiles in vector format typically to be integrated into indoor maps module of map
         control or SDK.
 
-        :param tile_index_z:
+        :param z:
             Zoom level for the desired tile.
-        :type tile_index_z: int
-        :param tile_index_x:
+        :type z: int
+        :param x:
             X coordinate of the tile on zoom grid.
-        :type tile_index_x: int
-        :param tile_index_y:
+        :type x: int
+        :param y:
             Y coordinate of the tile on zoom grid.
-        :type tile_index_y: int
+        :type y: int
         :param stateset_id:
             The stateset id.
         :type stateset_id: str
@@ -238,9 +254,9 @@ class MapsRenderClient(MapsRenderClientBase):
 
         return self._render_client.get_map_state_tile(
             stateset_id=stateset_id,
-            z=tile_index_z,
-            x=tile_index_x,
-            y=tile_index_y,
+            z=z,
+            x=x,
+            y=y,
             **kwargs
         )
 
@@ -304,7 +320,7 @@ class MapsRenderClient(MapsRenderClientBase):
         :paramtype zoom: int
         :keyword center:
             Coordinates of the center point.
-        :paramtype center: LatLon
+        :paramtype center: LatLon or Tuple
         :keyword BoundingBox bounding_box_private:
             north(top), west(left), south(bottom), east(right)
             position of the bounding box as float.
@@ -404,9 +420,9 @@ class MapsRenderClient(MapsRenderClientBase):
     @distributed_trace
     def get_copyright_for_tile(
         self,
-        tile_index_z: int,
-        tile_index_x: int,
-        tile_index_y: int,
+        x: int,
+        y: int,
+        z: int,
         **kwargs: Any
     ) -> Copyright:
         """Copyrights API is designed to serve copyright information for Render Tile  service. In addition
@@ -416,15 +432,15 @@ class MapsRenderClient(MapsRenderClientBase):
         particular tile, the request should specify the tile's zoom level and x and y coordinates (see:
         Zoom Levels and Tile Grid).
 
-        :param tile_index_z:
+        :param z:
             Zoom level for the desired tile.
-        :type tile_index_z: int
-        :param tile_index_x:
+        :type z: int
+        :param x:
             X coordinate of the tile on zoom grid.
-        :type tile_index_x: int
-        :param tile_index_y:
+        :type x: int
+        :param y:
             Y coordinate of the tile on zoom grid.
-        :type tile_index_y: int
+        :type y: int
         :keyword include_text:
             True or False to exclude textual data from response. Only images and
             country names will be in response.
@@ -446,9 +462,9 @@ class MapsRenderClient(MapsRenderClientBase):
         _include_text=kwargs.pop("include_text", True)
 
         return self._render_client.get_copyright_for_tile(
-            z=tile_index_z,
-            x=tile_index_x,
-            y=tile_index_y,
+            z=z,
+            x=x,
+            y=y,
             include_text= "yes" if _include_text else "no",
             **kwargs
         )

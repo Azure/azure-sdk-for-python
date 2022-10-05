@@ -3,19 +3,19 @@ from .._generated.models import (
     TilesetID,
     MapTileSize,
     LocalizedMapView,
-    MapTileset,
     MapAttribution,
     CopyrightCaption,
     StaticMapLayer,
-    Copyright,
     RasterTileFormat,
-    RegionCopyrights,
-    RegionCopyrightsCountry
 )
 
 from ._models import (
     LatLon,
-    BoundingBox
+    MapTileset,
+    BoundingBox,
+    Copyright,
+    RegionalCopyrights,
+    RegionCopyrightsCountry
 )
 
 
@@ -31,6 +31,6 @@ __all__ = [
     'StaticMapLayer',
     'Copyright',
     'RasterTileFormat',
-    'RegionCopyrights',
+    'RegionalCopyrights',
     'RegionCopyrightsCountry',
 ]

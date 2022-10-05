@@ -33,14 +33,17 @@ def get_map_tile():
 
     result = maps_render_client.get_map_tile(
         tileset_id=TilesetID.MICROSOFT_BASE,
-        tile_index_z=6,
-        tile_index_x=9,
-        tile_index_y=22,
+        z=6,
+        x=9,
+        y=22,
         tile_size="512"
     )
 
     print("Get map tile result:")
-    print(result)
+    # print(result)
+    file = open('map_tile.png', 'wb')
+    file.write(next(result))
+    file.close()
     # [END get_map_tile]
 
 if __name__ == '__main__':

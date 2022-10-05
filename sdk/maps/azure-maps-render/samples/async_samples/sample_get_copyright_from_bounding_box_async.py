@@ -41,7 +41,9 @@ async def get_copyright_from_bounding_box_async():
         )
 
     print("Get copyright from bounding box result:")
-    print(result)
+    print(result.general_copyrights[0])
+    print("Result country code:")
+    print(result.regions[0].country.iso3)
     # [END get_copyright_from_bounding_box]
 
 if __name__ == '__main__':

@@ -36,7 +36,7 @@ async def get_copyright_for_world_async():
         result = await maps_render_client.get_copyright_for_world()
 
     print("Get copyright for the world result:")
-    print(result)
+    print(result.general_copyrights[0])
     # [END get_copyright_for_world_async]
 
 if __name__ == '__main__':

@@ -22,9 +22,9 @@ class TestMapsRenderClient(AzureRecordedTestCase):
     def test_get_map_tile(self):
         result = self.client.get_map_tile(
             tileset_id=TilesetID.MICROSOFT_BASE,
-            tile_index_z=6,
-            tile_index_x=9,
-            tile_index_y=22,
+            z=6,
+            x=9,
+            y=22,
             tile_size="512"
         )
 
@@ -47,7 +47,7 @@ class TestMapsRenderClient(AzureRecordedTestCase):
             zoom=6,
             bounds=BoundingBox(south=42.982261, west=24.980233, north=56.526017, east=1.355233)
         )
-        assert len(result.copyrights) > 0
+        assert len(result) > 0
 
     @MapsRenderPreparer()
     @recorded_by_proxy
@@ -63,7 +63,7 @@ class TestMapsRenderClient(AzureRecordedTestCase):
     @MapsRenderPreparer()
     @recorded_by_proxy
     def test_get_copyright_for_tile(self):
-        result = self.client.get_copyright_for_tile(tile_index_z=6, tile_index_x=9, tile_index_y=22)
+        result = self.client.get_copyright_for_tile(z=6, x=9, y=22)
         assert len(result.general_copyrights) > 0
         copyrights = result.general_copyrights[0]
         assert "TomTom" in copyrights

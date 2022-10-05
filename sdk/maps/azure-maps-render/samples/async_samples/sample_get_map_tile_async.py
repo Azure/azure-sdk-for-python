@@ -33,10 +33,8 @@ async def get_map_tile_async():
 
 
     async with maps_render_client:
-        result = await maps_render_client.get_map_tile(tileset_id=TilesetID.MICROSOFT_BASE, tile_index_z=6, tile_index_x=9, tile_index_y=22, tile_size="512")
+        result = await maps_render_client.get_map_tile(tileset_id=TilesetID.MICROSOFT_BASE, z=6, x=9, y=22, tile_size="512")
 
-    print("Get map tile result:")
-    print(result)
     # [END get_map_tile_async]
 
 if __name__ == '__main__':
