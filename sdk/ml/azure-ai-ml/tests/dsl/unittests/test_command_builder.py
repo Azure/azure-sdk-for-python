@@ -15,8 +15,6 @@ from azure.ai.ml import (
     load_job,
     spark,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes, Nodes
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService as JobService
