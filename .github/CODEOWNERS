@@ -64,7 +64,7 @@
 /sdk/communication/azure-communication-email/                        @yogeshmo
 
 # PRLabel: %Communication - Job Router
-/sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi 
+/sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi
 
 # PRLabel: %Communication - Phone Numbers
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
@@ -154,6 +154,10 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
+# PRLabel: %Job
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job                          @DouglasXiaoMS @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job                        @DouglasXiaoMS @TonyJ1 @wangchao1230
+
 # PRLabel: %Maps
 /sdk/maps/                                                           @alextts627
 
@@ -162,7 +166,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/remoterendering/                                                @rikogeln
 
 # PRLabel: %Purview
-/sdk/purview/                                                        @iscai-msft @msyyc 
+/sdk/purview/                                                        @iscai-msft @msyyc
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
