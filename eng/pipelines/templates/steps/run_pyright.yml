@@ -36,7 +36,7 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
 
   - task: PythonScript@0
-    displayName: 'Run Pyright verifytypes'
+    displayName: 'Run verifytypes'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-

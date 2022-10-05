@@ -34,14 +34,18 @@ if __name__ == "__main__":
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
     if package_name not in TYPE_CHECKING_OPT_OUT:
-        check_call(
-            [
-                sys.executable,
-                "-m",
-                "pyright",
-                "--verifytypes",
-                package_name.replace("-", "."),
-                "--ignoreexternal",
-                "--verbose",
-            ]
-        )
+        try:
+            check_call(
+                [
+                    sys.executable,
+                    "-m",
+                    "pyright",
+                    "--verifytypes",
+                    package_name.replace("-", "."),
+                    "--ignoreexternal",
+                    "--verbose",
+                ]
+            )
+        except CalledProcessError as e:
+            # we don't fail on verifytypes, this is for showing typing coverage
+            exit(0)
