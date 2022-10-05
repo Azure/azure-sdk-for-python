@@ -35,6 +35,7 @@
  - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
  - Support `month_days` in `RecurrencePattern` when using `RecurrenceSchedule`.
  - Support `ml_client.schedules.list` with `list_view_type`, default to `ENABLED_ONLY`.
+ - Add support for model sweeping and hyperparameter tuning in AutoML NLP jobs.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
