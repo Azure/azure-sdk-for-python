@@ -30,8 +30,9 @@ class RetryRequestTransport(RequestsTransport):
         self.count = 0
 
     def send(self, request, **kwargs):
-        assert 'connection_timout' in request.context
-        assert 'read_timeout' in request.context
+        self.count += 1
+        assert 'connection_timeout' in kwargs.keys()
+        assert 'read_timeout' in kwargs.keys()
         timeout_error = ReadTimeout("Read timed out", request=request)
         raise ServiceResponseError(timeout_error, error=timeout_error)
 
@@ -124,7 +125,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # 3 retries + 1 original == 4
         assert retry_transport.count == 4
         # This call should succeed on the server side, but fail on the client side due to socket timeout
-        assert 'read timeout' in str(error.value), 'Expected socket timeout but got different exception.'
+        assert 'Read timed out' in str(error.value)
 
     @tables_decorator
     @recorded_by_proxy
