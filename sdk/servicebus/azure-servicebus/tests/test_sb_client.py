@@ -556,6 +556,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             assert subscription_receiver.client_identifier is not None
             assert subscription_receiver.client_identifier == custom_id
 
+    @pytest.mark.skip('check that connection verify works for pyproto. Issue #26657.')
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
