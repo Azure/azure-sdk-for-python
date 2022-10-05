@@ -38,6 +38,7 @@
  - Support `month_days` in `RecurrencePattern` when using `RecurrenceSchedule`.
  - Support `ml_client.schedules.list` with `list_view_type`, default to `ENABLED_ONLY`.
  - Add support for model sweeping and hyperparameter tuning in AutoML NLP jobs.
+ - Added `ml_client.jobs.show_services()` operation.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
