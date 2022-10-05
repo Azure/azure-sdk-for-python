@@ -38,7 +38,7 @@ import re
 import uuid
 from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional, AnyStr)
-from six.moves import urllib
+import urllib
 
 from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (

@@ -1,39 +1,38 @@
 import json
-import yaml
-from azure.ai.ml.constants import InputOutputModes, BASE_PATH_CONTEXT_KEY, AssetTypes
-from azure.ai.ml.entities import Job, CommandJob
-from azure.ai.ml.entities._inputs_outputs import Input
 from pathlib import Path
 from typing import Any
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    InputDeliveryMode,
-    JobInputType,
-    JobOutputType,
-    OutputDeliveryMode,
-    UriFolderJobOutput as RestUriFolderJobOutput,
-    AmlToken,
-    UserIdentity,
-    ManagedIdentity,
-)
+
 import pytest
+import yaml
+
+from azure.ai.ml import load_job
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedIdentity as RestManagedIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._schema import SweepJobSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
+from azure.ai.ml.entities import CommandJob, Job, UserIdentityConfiguration, ManagedIdentityConfiguration, \
+    AmlTokenConfiguration
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.sweep import (
     Choice,
     LogNormal,
+    LogUniform,
     Normal,
     QLogNormal,
-    QNormal,
-    Randint,
-    Uniform,
-    QUniform,
-    LogUniform,
     QLogUniform,
-    SweepJob,
+    QNormal,
+    QUniform,
+    Randint,
     SamplingAlgorithm,
+    SweepJob,
+    Uniform,
 )
-from azure.ai.ml._schema import SweepJobSchema
-from azure.ai.ml import load_job
-from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 
 
 @pytest.mark.unittest
@@ -311,22 +310,22 @@ class TestSweepJobSchema:
         [
             (
                 "./tests/test_configs/sweep_job/object_sampling_algorithm/sweep_job_random_sampling_algorithm_object.yml",
-                "Random",
+                "random",
             ),
             (
                 "./tests/test_configs/sweep_job/object_sampling_algorithm/sweep_job_grid_sampling_algorithm_object.yml",
-                "Grid",
+                "grid",
             ),
             (
                 "./tests/test_configs/sweep_job/object_sampling_algorithm/sweep_job_bayesian_sampling_algorithm_object.yml",
-                "Bayesian",
+                "bayesian",
             ),
         ],
     )
     def test_sampling_algorithm_object_preservation(self, yaml_path: str, expected_sampling_algorithm: str):
         sweep_entity = load_job(Path(yaml_path))
         assert isinstance(sweep_entity.sampling_algorithm, SamplingAlgorithm)
-        assert sweep_entity.sampling_algorithm.sampling_algorithm_type == expected_sampling_algorithm
+        assert sweep_entity.sampling_algorithm.type == expected_sampling_algorithm
 
     @pytest.mark.parametrize(
         "yaml_path,property_name,expected_value",
@@ -341,10 +340,14 @@ class TestSweepJobSchema:
         assert sweep_entity.sampling_algorithm.__dict__[property_name] == expected_value
 
     @pytest.mark.parametrize(
-        "identity",
-        [AmlToken(), UserIdentity(), ManagedIdentity()],
+        ("identity", "rest_identity"),
+        [
+            (AmlTokenConfiguration(), RestAmlToken()),
+            (UserIdentityConfiguration(), RestUserIdentity()),
+            (ManagedIdentityConfiguration(), RestManagedIdentity()),
+        ],
     )
-    def test_identity_to_rest(self, identity):
+    def test_identity_to_rest(self, identity, rest_identity):
         command_job = CommandJob(
             code="./src",
             command="python train.py --lr 0.01",
@@ -361,4 +364,4 @@ class TestSweepJobSchema:
         )
         rest = sweep._to_rest_object()
 
-        assert rest.properties.identity == identity
+        assert rest.properties.identity == rest_identity

@@ -31,7 +31,7 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 
 ### Prerequisites
 
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
 * An existing Question Answering resource
 
@@ -40,7 +40,7 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 
 1. Install the Azure QuestionAnswering client library for Python with [pip][pip]:
 ```bash
-pip install --pre azure-ai-language-questionanswering
+pip install azure-ai-language-questionanswering
 ```
 2. Clone or download this sample repository
 3. Open the sample folder in Visual Studio Code or your IDE of choice.

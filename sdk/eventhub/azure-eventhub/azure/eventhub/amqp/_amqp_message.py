@@ -105,7 +105,7 @@ class AmqpAnnotatedMessage(object):
     def __repr__(self) -> str:
         # pylint: disable=bare-except
         message_repr = "body={}".format(str(self))
-        message_repr += ", body_type={}".format(self.body_type)
+        message_repr += ", body_type={}".format(self.body_type.value)
         try:
             message_repr += ", header={}".format(self.header)
         except:

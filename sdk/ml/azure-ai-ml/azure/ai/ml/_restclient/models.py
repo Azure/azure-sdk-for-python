@@ -11,4 +11,4 @@ from .runhistory.models import *
 from .v2020_09_01_dataplanepreview.models import *
 from .v2021_10_01.models import *
 from .v2021_10_01_dataplanepreview.models import *
-from .v2022_05_01.models import *
+from .v2022_10_01.models import *

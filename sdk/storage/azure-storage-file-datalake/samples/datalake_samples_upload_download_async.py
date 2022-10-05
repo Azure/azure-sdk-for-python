@@ -98,7 +98,7 @@ def get_random_bytes(size):
     return bytes(result)
 
 
-async def run():
+async def main():
     account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")
     account_key = os.getenv('STORAGE_ACCOUNT_KEY', "")
 
@@ -125,5 +125,4 @@ async def run():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run())
+    asyncio.run(main())

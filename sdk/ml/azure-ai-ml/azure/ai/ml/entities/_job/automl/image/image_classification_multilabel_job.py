@@ -2,28 +2,27 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-member
 
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ClassificationMultilabelPrimaryMetrics
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationMultilabelPrimaryMetrics
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ImageClassificationMultilabel as RestImageClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData, TaskType
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
-from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.automl.image.automl_image_classification_base import AutoMLImageClassificationBase
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
 from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
     """Configuration for AutoML multi-label Image Classification job."""
 
@@ -41,18 +40,16 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         :param kwargs: Job-specific arguments
         """
         # Extract any super class init settings
-        data = kwargs.pop("data", None)
         limits = kwargs.pop("limits", None)
         sweep = kwargs.pop("sweep", None)
-        image_model = kwargs.pop("image_model", None)
+        training_parameters = kwargs.pop("training_parameters", None)
         search_space = kwargs.pop("search_space", None)
 
         super().__init__(
             task_type=TaskType.IMAGE_CLASSIFICATION_MULTILABEL,
-            data=data,
             limits=limits,
             sweep=sweep,
-            image_model=image_model,
+            training_parameters=training_parameters,
             search_space=search_space,
             **kwargs,
         )
@@ -74,14 +71,15 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             else ClassificationMultilabelPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    def _to_rest_object(self) -> JobBaseData:
-        self._resolve_data_inputs()
-
+    def _to_rest_object(self) -> JobBase:
         image_classification_multilabel_task = RestImageClassificationMultilabel(
-            data_settings=self._data,
+            target_column_name=self.target_column_name,
+            training_data=self.training_data,
+            validation_data=self.validation_data,
+            validation_data_size=self.validation_data_size,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
-            model_settings=self._image_model,
+            model_settings=self._training_parameters,
             search_space=(
                 [entry._to_rest_object() for entry in self._search_space if entry is not None]
                 if self._search_space is not None
@@ -90,6 +88,8 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
         )
+        # resolve data inputs in rest obj
+        self._resolve_data_inputs(image_classification_multilabel_task)
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
@@ -104,15 +104,15 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=image_classification_multilabel_task,
-            identity=self.identity,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
-        result = JobBaseData(properties=properties)
+        result = JobBase(properties=properties)
         result.name = self.name
         return result
 
     @classmethod
-    def _from_rest_object(cls, obj: JobBaseData) -> "ImageClassificationMultilabelJob":
+    def _from_rest_object(cls, obj: JobBase) -> "ImageClassificationMultilabelJob":
         properties: RestAutoMLJob = obj.properties
         task_details: RestImageClassificationMultilabel = properties.task_details
 
@@ -130,11 +130,15 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": properties.identity,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         }
 
         image_classification_multilabel_job = cls(
-            data=task_details.data_settings,
+            target_column_name=task_details.target_column_name,
+            training_data=task_details.training_data,
+            validation_data=task_details.validation_data,
+            validation_data_size=task_details.validation_data_size,
             limits=(
                 ImageLimitSettings._from_rest_object(task_details.limit_settings)
                 if task_details.limit_settings
@@ -145,7 +149,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
                 if task_details.sweep_settings
                 else None
             ),
-            image_model=task_details.model_settings,
+            training_parameters=task_details.model_settings,
             search_space=cls._get_search_space_from_str(task_details.search_space),
             primary_metric=task_details.primary_metric,
             log_verbosity=task_details.log_verbosity,
@@ -162,13 +166,15 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
-    ) -> "AutoMLJob":
+    ) -> "ImageClassificationMultilabelJob":
         from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationMultilabelSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMultilabelNodeSchema
 
+        inside_pipeline = kwargs.pop("inside_pipeline", False)
         if inside_pipeline:
+            if context.get("inside_pipeline", None) is None:
+                context["inside_pipeline"] = True
             loaded_data = load_from_dict(
                 ImageClassificationMultilabelNodeSchema,
                 data,
@@ -190,24 +196,24 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ImageClassificationMultilabelJob":
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
-        search_space_val = loaded_data.pop("search_space", None)
-        search_space = ImageClassificationMultilabelJob._get_search_space_from_str(search_space_val)
         data_settings = {
             "training_data": loaded_data.pop("training_data"),
             "target_column_name": loaded_data.pop("target_column_name"),
             "validation_data": loaded_data.pop("validation_data", None),
             "validation_data_size": loaded_data.pop("validation_data_size", None),
         }
-        job = ImageClassificationMultilabelJob(search_space=search_space, **loaded_data)
+        job = ImageClassificationMultilabelJob(**loaded_data)
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_classification import ImageClassificationMultilabelSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageClassificationMultilabelNodeSchema
 
         if inside_pipeline:
-            schema_dict = ImageClassificationMultilabelNodeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            schema_dict = ImageClassificationMultilabelNodeSchema(
+                context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
+            ).dump(self)
         else:
             schema_dict = ImageClassificationMultilabelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 

@@ -1,12 +1,11 @@
 {
   "meta": {
     "autorest_options": {
-      "version": "3.8.4",
-      "use": ["@autorest/python@6.0.1", "@autorest/modelerfour@4.23.5"],
+      "version": "3.9.2",
+      "use": ["@autorest/python@6.1.9", "@autorest/modelerfour@4.24.3"],
       "python": "",
       "sdkrel:python-sdks-folder": "./sdk/.",
-      "version-tolerant": false,
-      "models-mode": "msrest"
+      "version-tolerant": false
     },
     "advanced_options": {
       "create_sdk_pull_requests": true,

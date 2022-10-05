@@ -217,7 +217,7 @@ class FileSystemSamplesAsync(object):
 
             await file_system_client.delete_file_system()
 
-async def run():
+async def main():
     sample = FileSystemSamplesAsync()
     await sample.file_system_sample()
     await sample.acquire_lease_on_file_system()
@@ -227,6 +227,4 @@ async def run():
     await sample.create_file_from_file_system()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run())
-    loop.close()
+    asyncio.run(main())

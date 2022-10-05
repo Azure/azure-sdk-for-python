@@ -148,11 +148,11 @@ class CollectionRoutingMapTests(unittest.TestCase):
         overlappingRanges = crm.get_overlapping_ranges([fullRangeMinToMaxRange])
         self.assertEqual(4, len(overlappingRanges))
         
-        onlyParitionRanges = [item[0] for item in partitionKeyRanges]
+        onlyPartitionRanges = [item[0] for item in partitionKeyRanges]
         def getKey(r):
             return r['id']
-        onlyParitionRanges.sort(key = getKey)
-        self.assertEqual(overlappingRanges, onlyParitionRanges)
+        onlyPartitionRanges.sort(key = getKey)
+        self.assertEqual(overlappingRanges, onlyPartitionRanges)
                        
         noPoint = routing_range.Range(CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey, False, False)
         self.assertEqual(0, len(crm.get_overlapping_ranges([noPoint])))               

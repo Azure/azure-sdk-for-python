@@ -201,7 +201,11 @@ class StressTestRunner(object):
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
+<<<<<<< HEAD
                     logging_enable=self.args.pyamqp_logging_enable,
+=======
+                    logging_enable=self.args.uamqp_logging_enable,
+>>>>>>> main
                     **retry_options
                 )
         elif self.args.aad_client_id:
