@@ -5,7 +5,7 @@
 # ------------------------------------
 import pytest
 
-from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring.aio import AuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
 from helpers import QnaAuthoringAsyncHelper
@@ -16,16 +16,16 @@ class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
 
     def test_polling_interval(self, qna_creds):
         # test default
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         assert client._config.polling_interval == 5
         # test override
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), polling_interval=1)
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), polling_interval=1)
         assert client._config.polling_interval == 1
 
     @pytest.mark.asyncio
     async def test_create_project_aad(self, recorded_test, qna_creds):
-        token = self.get_credential(QuestionAnsweringAuthoringClient, is_async=True)
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], token)
+        token = self.get_credential(AuthoringClient, is_async=True)
+        client = AuthoringClient(qna_creds["qna_endpoint"], token)
 
         # create project
         project_name = "IssacNewton"
@@ -50,7 +50,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
 
     @pytest.mark.asyncio
     async def test_create_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -75,7 +75,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringTestCase):
 
     @pytest.mark.asyncio
     async def test_deploy_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create deployable project
         project_name = "IssacNewton"

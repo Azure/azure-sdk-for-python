@@ -13,13 +13,13 @@ from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import QuestionAnsweringAuthoringClientConfiguration
-from ._operations import QuestionAnsweringAuthoringClientOperationsMixin
+from ._configuration import AuthoringClientConfiguration
+from ._operations import AuthoringClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 
-class QuestionAnsweringAuthoringClient(
-    QuestionAnsweringAuthoringClientOperationsMixin
+class AuthoringClient(
+    AuthoringClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
@@ -42,7 +42,7 @@ class QuestionAnsweringAuthoringClient(
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = QuestionAnsweringAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -80,7 +80,7 @@ class QuestionAnsweringAuthoringClient(
         self._client.close()
 
     def __enter__(self):
-        # type: () -> QuestionAnsweringAuthoringClient
+        # type: () -> AuthoringClient
         self._client.__enter__()
         return self
 

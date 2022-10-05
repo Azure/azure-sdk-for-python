@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
 from helpers import QnaAuthoringHelper
@@ -13,7 +13,7 @@ from testcase import QuestionAnsweringTestCase
 class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
 
     def test_add_source(self, recorded_test, qna_creds):
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -51,7 +51,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
         assert source_added
 
     def test_add_qna(self, recorded_test, qna_creds):
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -89,7 +89,7 @@ class TestSourcesQnasSynonyms(QuestionAnsweringTestCase):
         assert qna_added
 
     def test_add_synonym(self, recorded_test, qna_creds):
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
