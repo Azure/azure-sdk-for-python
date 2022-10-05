@@ -839,7 +839,7 @@ class TestCommandFunction:
 
     def test_command_services_nodes(self) -> None:
         services = {
-            "my_jupyter": {"job_service_type": "JupyterLab", "nodes": "all"},
+            "my_jupyterlab": {"job_service_type": "JupyterLab", "nodes": "all"},
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
                 "properties": {
@@ -857,7 +857,7 @@ class TestCommandFunction:
         )
 
         rest_obj = command_obj._to_rest_object()
-        assert rest_obj["services"]["JupyterLab"].get("nodes") == {"nodes_value_type": "All"}
+        assert rest_obj["services"]["my_jupyterlab"].get("nodes") == {"nodes_value_type": "All"}
         assert rest_obj["services"]["my_tensorboard"].get("nodes") == None
 
         services_invalid_nodes = {"my_service": {"nodes": "All"}}
