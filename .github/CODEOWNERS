@@ -149,7 +149,10 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/machinelearningcompute/                                         @shutchings
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @azureml-github @Azure/azure-ml-sdk
+/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
+
+# PRLabel: %Local Endpoints
+/sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %Maps
 /sdk/maps/                                                           @alextts627
@@ -814,7 +817,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 
 
 # Management Plane
-/**/*mgmt*/                                                          @BigCat20196	 @msyyc
+/**/*mgmt*/                                                          @Wzb123456789 @msyyc
 
 
 ###########

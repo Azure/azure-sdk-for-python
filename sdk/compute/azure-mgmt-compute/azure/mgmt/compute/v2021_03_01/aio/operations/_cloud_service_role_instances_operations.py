@@ -181,7 +181,7 @@ class CloudServiceRoleInstancesOperations:
         role_instance_name: str,
         resource_group_name: str,
         cloud_service_name: str,
-        expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
         **kwargs: Any
     ) -> _models.RoleInstance:
         """Gets a role instance from a cloud service.
@@ -315,7 +315,7 @@ class CloudServiceRoleInstancesOperations:
         self,
         resource_group_name: str,
         cloud_service_name: str,
-        expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.RoleInstance"]:
         """Gets the list of all role instances in a cloud service. Use nextLink property in the response

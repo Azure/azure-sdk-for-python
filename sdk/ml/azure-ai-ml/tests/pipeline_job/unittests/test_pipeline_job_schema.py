@@ -12,11 +12,11 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     StochasticOptimizer,
 )
@@ -33,7 +33,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_contains_allowed_characters,
 )
-from azure.ai.ml.entities._job.automl.image.image_search_space_utils import _convert_sweep_dist_dict_to_str_dict
+from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.exceptions import UserErrorException, ValidationException

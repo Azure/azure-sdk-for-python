@@ -10,13 +10,12 @@ import os
 from enum import Enum
 from os import PathLike
 from typing import Dict, List, Optional, Union
-
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -39,13 +38,30 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._job.sweep.search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    SweepDistribution,
+    Uniform,
+)
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._credentials import (
+    ManagedIdentityConfiguration,
+    AmlTokenConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
-from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from .._util import (
     convert_ordered_dict_to_dict,
     from_rest_dict_to_dummy_rest_object,
@@ -103,7 +119,8 @@ class Command(BaseNode):
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     :param services: Interactive services for the node.
     :type services: Dict[str, JobService]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -125,7 +142,10 @@ class Command(BaseNode):
         ] = None,
         outputs: Dict[str, Union[str, Output]] = None,
         limits: CommandJobLimits = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
         distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
         environment: Union[Environment, str] = None,
         environment_variables: Dict = None,
@@ -247,7 +267,7 @@ class Command(BaseNode):
             msg = "Can't set command property for a registered component {}"
             raise ValidationException(
                 message=msg.format(self.component),
-                no_personal_data_message=msg.format(self.component),
+                no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -272,7 +292,7 @@ class Command(BaseNode):
             msg = "Can't set code property for a registered component {}"
             raise ValidationException(
                 message=msg.format(self.component),
-                no_personal_data_message=msg.format(self.component),
+                no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -326,8 +346,14 @@ class Command(BaseNode):
         timeout: int = None,
         trial_timeout: int = None,
         early_termination_policy: Union[EarlyTerminationPolicy, str] = None,
-        search_space: Dict[str, SweepDistribution] = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        search_space: Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The
         command component in current Command node will be used as its trial
@@ -357,7 +383,10 @@ class Command(BaseNode):
         :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping
             or truncation_selection.
         :param identity: Identity that training job will use while running on compute.
-        :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
+        :type identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration]
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
         """
@@ -524,7 +553,8 @@ class Command(BaseNode):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=Identity._from_rest_object(rest_command_job.identity) if rest_command_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_command_job.identity) if rest_command_job.identity else None,
             environment_variables=rest_command_job.environment_variables,
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
@@ -595,7 +625,7 @@ class Command(BaseNode):
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )

@@ -22,14 +22,12 @@ import asyncio
 import os
 
 async def authentication_maps_service_client_with_subscription_key_credential_async():
-    # [START create_maps_search_service_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
     subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-    # [END create_maps_search_service_client_with_key_async]
 
     async with maps_search_client:
         result = await maps_search_client.get_point_of_interest_categories()
