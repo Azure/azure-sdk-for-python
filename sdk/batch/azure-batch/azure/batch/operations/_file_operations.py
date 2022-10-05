@@ -7,17 +7,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
-)
+from msrest import Serializer
+
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -26,15 +20,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._serialization import Serializer
 from .._vendor import _format_url_section
-
-T = TypeVar("T")
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-
 
 def build_delete_from_task_request(
     job_id: str,
@@ -42,47 +33,51 @@ def build_delete_from_task_request(
     file_path: str,
     *,
     recursive: Optional[bool] = None,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
-        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
+        "filePath": _SERIALIZER.url("file_path", file_path, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if recursive is not None:
-        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+        _params['recursive'] = _SERIALIZER.query("recursive", recursive, 'bool')
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_get_from_task_request(
@@ -90,9 +85,9 @@ def build_get_from_task_request(
     task_id: str,
     file_path: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     ocp_range: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -102,42 +97,46 @@ def build_get_from_task_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json, application/octet-stream")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json, application/octet-stream")
 
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
-        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
+        "filePath": _SERIALIZER.url("file_path", file_path, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if ocp_range is not None:
-        _headers["ocp-range"] = _SERIALIZER.header("ocp_range", ocp_range, "str")
+        _headers['ocp-range'] = _SERIALIZER.header("ocp_range", ocp_range, 'str')
     if if_modified_since is not None:
-        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_get_properties_from_task_request(
@@ -145,9 +144,9 @@ def build_get_properties_from_task_request(
     task_id: str,
     file_path: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -156,40 +155,44 @@ def build_get_properties_from_task_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
-        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
+        "filePath": _SERIALIZER.url("file_path", file_path, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if if_modified_since is not None:
-        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="HEAD",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_delete_from_compute_node_request(
@@ -198,47 +201,51 @@ def build_delete_from_compute_node_request(
     file_path: str,
     *,
     recursive: Optional[bool] = None,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
-        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
+        "filePath": _SERIALIZER.url("file_path", file_path, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if recursive is not None:
-        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+        _params['recursive'] = _SERIALIZER.query("recursive", recursive, 'bool')
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_get_from_compute_node_request(
@@ -246,9 +253,9 @@ def build_get_from_compute_node_request(
     node_id: str,
     file_path: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     ocp_range: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -258,42 +265,46 @@ def build_get_from_compute_node_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json, application/octet-stream")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json, application/octet-stream")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
-        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
+        "filePath": _SERIALIZER.url("file_path", file_path, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if ocp_range is not None:
-        _headers["ocp-range"] = _SERIALIZER.header("ocp_range", ocp_range, "str")
+        _headers['ocp-range'] = _SERIALIZER.header("ocp_range", ocp_range, 'str')
     if if_modified_since is not None:
-        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_get_properties_from_compute_node_request(
@@ -301,9 +312,9 @@ def build_get_properties_from_compute_node_request(
     node_id: str,
     file_path: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -312,40 +323,44 @@ def build_get_properties_from_compute_node_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
-        "filePath": _SERIALIZER.url("file_path", file_path, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
+        "filePath": _SERIALIZER.url("file_path", file_path, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if if_modified_since is not None:
-        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
+        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="HEAD",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_list_from_task_request(
@@ -354,51 +369,55 @@ def build_list_from_task_request(
     *,
     filter: Optional[str] = None,
     recursive: Optional[bool] = None,
-    max_results: int = 1000,
-    timeout: int = 30,
+    max_results: Optional[int] = 1000,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files"
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-        "taskId": _SERIALIZER.url("task_id", task_id, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
     if recursive is not None:
-        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+        _params['recursive'] = _SERIALIZER.query("recursive", recursive, 'bool')
     if max_results is not None:
-        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
+        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_list_from_compute_node_request(
@@ -407,52 +426,55 @@ def build_list_from_compute_node_request(
     *,
     filter: Optional[str] = None,
     recursive: Optional[bool] = None,
-    max_results: int = 1000,
-    timeout: int = 30,
+    max_results: Optional[int] = 1000,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
     if recursive is not None:
-        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+        _params['recursive'] = _SERIALIZER.query("recursive", recursive, 'bool')
     if max_results is not None:
-        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
+        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 class FileOperations:
     """
@@ -473,6 +495,7 @@ class FileOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace
     def delete_from_task(  # pylint: disable=inconsistent-return-statements
         self,
@@ -481,9 +504,9 @@ class FileOperations:
         file_path: str,
         *,
         recursive: Optional[bool] = None,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -491,11 +514,11 @@ class FileOperations:
 
         Deletes the specified Task file from the Compute Node where the Task ran.
 
-        :param job_id: The ID of the Job that contains the Task. Required.
+        :param job_id: The ID of the Job that contains the Task.
         :type job_id: str
-        :param task_id: The ID of the Task whose file you want to delete. Required.
+        :param task_id: The ID of the Task whose file you want to delete.
         :type task_id: str
-        :param file_path: The path to the Task file or directory that you want to delete. Required.
+        :param file_path: The path to the Task file or directory that you want to delete.
         :type file_path: str
         :keyword recursive: Whether to delete children of a directory. If the filePath parameter
          represents a directory instead of a file, you can set recursive to true to delete the directory
@@ -503,7 +526,7 @@ class FileOperations:
          empty or deletion will fail. Default value is None.
         :paramtype recursive: bool
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -518,43 +541,43 @@ class FileOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_delete_from_task_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
+            api_version=api_version,
             recursive=recursive,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -563,11 +586,14 @@ class FileOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def get_from_task(
@@ -576,25 +602,25 @@ class FileOperations:
         task_id: str,
         file_path: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> IO:
         """Returns the content of the specified Task file.
 
-        :param job_id: The ID of the Job that contains the Task. Required.
+        :param job_id: The ID of the Job that contains the Task.
         :type job_id: str
-        :param task_id: The ID of the Task whose file you want to retrieve. Required.
+        :param task_id: The ID of the Task whose file you want to retrieve.
         :type task_id: str
-        :param file_path: The path to the Task file that you want to get the content of. Required.
+        :param file_path: The path to the Task file that you want to get the content of.
         :type file_path: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -608,7 +634,7 @@ class FileOperations:
          value is None.
         :paramtype ocp_date: ~datetime.datetime
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
-         The format is bytes=startRange-endRange. Default value is None.
+         The format is bytes=startRange-endRange.
         :paramtype ocp_range: str
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the client. The operation will be performed only if the resource on the service has been
@@ -618,27 +644,27 @@ class FileOperations:
          known to the client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :return: Iterator of the response bytes
-        :rtype: Iterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: IO
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
+        
         request = build_get_from_task_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -646,19 +672,19 @@ class FileOperations:
             ocp_range=ocp_range,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request,
+            stream=True,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -667,25 +693,25 @@ class FileOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['ocp-creation-time']=self._deserialize('rfc-1123', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
 
-        deserialized = response.iter_bytes()
+        deserialized = response
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
+
+
 
     @distributed_trace
     def get_properties_from_task(  # pylint: disable=inconsistent-return-statements
@@ -694,9 +720,9 @@ class FileOperations:
         task_id: str,
         file_path: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -704,14 +730,14 @@ class FileOperations:
     ) -> None:
         """Gets the properties of the specified Task file.
 
-        :param job_id: The ID of the Job that contains the Task. Required.
+        :param job_id: The ID of the Job that contains the Task.
         :type job_id: str
-        :param task_id: The ID of the Task whose file you want to get the properties of. Required.
+        :param task_id: The ID of the Task whose file you want to get the properties of.
         :type task_id: str
-        :param file_path: The path to the Task file that you want to get the properties of. Required.
+        :param file_path: The path to the Task file that you want to get the properties of.
         :type file_path: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -734,44 +760,44 @@ class FileOperations:
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_get_properties_from_task_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -780,21 +806,22 @@ class FileOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['ocp-creation-time']=self._deserialize('rfc-1123', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def delete_from_compute_node(  # pylint: disable=inconsistent-return-statements
@@ -804,9 +831,9 @@ class FileOperations:
         file_path: str,
         *,
         recursive: Optional[bool] = None,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -814,11 +841,11 @@ class FileOperations:
 
         Deletes the specified file from the Compute Node.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
+        :param node_id: The ID of the Compute Node from which you want to delete the file.
         :type node_id: str
-        :param file_path: The path to the file or directory that you want to delete. Required.
+        :param file_path: The path to the file or directory that you want to delete.
         :type file_path: str
         :keyword recursive: Whether to delete children of a directory. If the filePath parameter
          represents a directory instead of a file, you can set recursive to true to delete the directory
@@ -826,7 +853,7 @@ class FileOperations:
          empty or deletion will fail. Default value is None.
         :paramtype recursive: bool
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -841,43 +868,43 @@ class FileOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_delete_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
+            api_version=api_version,
             recursive=recursive,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -886,11 +913,14 @@ class FileOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def get_from_compute_node(
@@ -899,26 +929,25 @@ class FileOperations:
         node_id: str,
         file_path: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> IO:
         """Returns the content of the specified Compute Node file.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that contains the file. Required.
+        :param node_id: The ID of the Compute Node that contains the file.
         :type node_id: str
         :param file_path: The path to the Compute Node file that you want to get the content of.
-         Required.
         :type file_path: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -932,7 +961,7 @@ class FileOperations:
          value is None.
         :paramtype ocp_date: ~datetime.datetime
         :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
-         The format is bytes=startRange-endRange. Default value is None.
+         The format is bytes=startRange-endRange.
         :paramtype ocp_range: str
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the client. The operation will be performed only if the resource on the service has been
@@ -942,27 +971,27 @@ class FileOperations:
          known to the client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :return: Iterator of the response bytes
-        :rtype: Iterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: IO
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
+        
         request = build_get_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -970,19 +999,19 @@ class FileOperations:
             ocp_range=ocp_range,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request,
+            stream=True,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -991,25 +1020,25 @@ class FileOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['ocp-creation-time']=self._deserialize('rfc-1123', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
 
-        deserialized = response.iter_bytes()
+        deserialized = response
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
+
+
 
     @distributed_trace
     def get_properties_from_compute_node(  # pylint: disable=inconsistent-return-statements
@@ -1018,9 +1047,9 @@ class FileOperations:
         node_id: str,
         file_path: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1028,15 +1057,14 @@ class FileOperations:
     ) -> None:
         """Gets the properties of the specified Compute Node file.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that contains the file. Required.
+        :param node_id: The ID of the Compute Node that contains the file.
         :type node_id: str
         :param file_path: The path to the Compute Node file that you want to get the properties of.
-         Required.
         :type file_path: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1059,44 +1087,44 @@ class FileOperations:
         :paramtype if_unmodified_since: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_get_properties_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1105,21 +1133,22 @@ class FileOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("rfc-1123", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['ocp-creation-time']=self._deserialize('rfc-1123', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
+        response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def list_from_task(
@@ -1129,20 +1158,20 @@ class FileOperations:
         *,
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
-        max_results: int = 1000,
-        timeout: int = 30,
+        max_results: Optional[int] = 1000,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable["_models.NodeFile"]:
+    ) -> Iterable[_models.NodeFileListResult]:
         """Lists the files in a Task's directory on its Compute Node.
 
         Lists the files in a Task's directory on its Compute Node.
 
-        :param job_id: The ID of the Job that contains the Task. Required.
+        :param job_id: The ID of the Job that contains the Task.
         :type job_id: str
-        :param task_id: The ID of the Task whose files you want to list. Required.
+        :param task_id: The ID of the Task whose files you want to list.
         :type task_id: str
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
@@ -1155,7 +1184,7 @@ class FileOperations:
          files can be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1168,29 +1197,27 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of NodeFile
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.NodeFile]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: An iterator like instance of NodeFileListResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.NodeFileListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.NodeFileListResult]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.NodeFileListResult]
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_list_from_task_request(
                     job_id=job_id,
                     task_id=task_id,
+                    api_version=api_version,
                     filter=filter,
                     recursive=recursive,
                     max_results=max_results,
@@ -1198,34 +1225,38 @@ class FileOperations:
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
-                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url(
-                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
-                    ),
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                
+                request = build_list_from_task_request(
+                    job_id=job_id,
+                    task_id=task_id,
+                    client_request_id=client_request_id,
+                    return_client_request_id=return_client_request_id,
+                    ocp_date=ocp_date,
+                    headers=_headers,
+                    params=_params,
+                )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url(
-                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
-                    ),
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
+                path_format_arguments = {
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("_models.NodeFileListResult", pipeline_response)
+            deserialized = self._deserialize("NodeFileListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1234,8 +1265,10 @@ class FileOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1246,7 +1279,11 @@ class FileOperations:
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def list_from_compute_node(
@@ -1256,20 +1293,20 @@ class FileOperations:
         *,
         filter: Optional[str] = None,
         recursive: Optional[bool] = None,
-        max_results: int = 1000,
-        timeout: int = 30,
+        max_results: Optional[int] = 1000,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable["_models.NodeFile"]:
+    ) -> Iterable[_models.NodeFileListResult]:
         """Lists all of the files in Task directories on the specified Compute Node.
 
         Lists all of the files in Task directories on the specified Compute Node.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node whose files you want to list. Required.
+        :param node_id: The ID of the Compute Node whose files you want to list.
         :type node_id: str
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
@@ -1281,7 +1318,7 @@ class FileOperations:
          files can be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1294,29 +1331,27 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of NodeFile
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.NodeFile]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: An iterator like instance of NodeFileListResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.NodeFileListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.NodeFileListResult]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.NodeFileListResult]
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_list_from_compute_node_request(
                     pool_id=pool_id,
                     node_id=node_id,
+                    api_version=api_version,
                     filter=filter,
                     recursive=recursive,
                     max_results=max_results,
@@ -1324,34 +1359,38 @@ class FileOperations:
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
-                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url(
-                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
-                    ),
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                
+                request = build_list_from_compute_node_request(
+                    pool_id=pool_id,
+                    node_id=node_id,
+                    client_request_id=client_request_id,
+                    return_client_request_id=return_client_request_id,
+                    ocp_date=ocp_date,
+                    headers=_headers,
+                    params=_params,
+                )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url(
-                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
-                    ),
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
+                path_format_arguments = {
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("_models.NodeFileListResult", pipeline_response)
+            deserialized = self._deserialize("NodeFileListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1360,8 +1399,10 @@ class FileOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1372,4 +1413,8 @@ class FileOperations:
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+

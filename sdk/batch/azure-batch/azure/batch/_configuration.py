@@ -9,7 +9,6 @@
 from typing import Any
 
 from azure.core.configuration import Configuration
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from ._version import VERSION
@@ -21,42 +20,40 @@ class BatchServiceClientConfiguration(Configuration):  # pylint: disable=too-man
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param batch_url: The base URL for all Azure Batch service requests. Required.
+    :param batch_url: The base URL for all Azure Batch service requests.
     :type batch_url: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. Default value is "2022-01-01.15.0". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, batch_url: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        batch_url: str,
+        **kwargs: Any
+    ) -> None:
         super(BatchServiceClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-01-01.15.0")  # type: str
+        api_version = kwargs.pop('api_version', "2022-01-01.15.0")  # type: str
 
         if batch_url is None:
             raise ValueError("Parameter 'batch_url' must not be None.")
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
 
         self.batch_url = batch_url
-        self.credential = credential
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "batch/{}".format(VERSION))
+        kwargs.setdefault('sdk_moniker', 'batch/{}'.format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
-        self, **kwargs  # type: Any
+        self,
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get("authentication_policy")
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "Authorization", **kwargs)
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')

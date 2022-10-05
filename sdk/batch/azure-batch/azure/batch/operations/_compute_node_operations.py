@@ -7,17 +7,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
-)
+from msrest import Serializer
+
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -26,62 +20,66 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._serialization import Serializer
 from .._vendor import _format_url_section
-
-T = TypeVar("T")
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-
 def build_add_user_request(
     pool_id: str,
     node_id: str,
     *,
-    json: _models.ComputeNodeUser,
-    timeout: int = 30,
+    json: Optional[_models.ComputeNodeUser] = None,
+    content: Any = None,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 
 def build_delete_user_request(
@@ -89,45 +87,49 @@ def build_delete_user_request(
     node_id: str,
     user_name: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
-        "userName": _SERIALIZER.url("user_name", user_name, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
+        "userName": _SERIALIZER.url("user_name", user_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_update_user_request(
@@ -135,49 +137,56 @@ def build_update_user_request(
     node_id: str,
     user_name: str,
     *,
-    json: _models.NodeUpdateUserParameters,
-    timeout: int = 30,
+    json: Optional[_models.NodeUpdateUserParameters] = None,
+    content: Any = None,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
-        "userName": _SERIALIZER.url("user_name", user_name, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
+        "userName": _SERIALIZER.url("user_name", user_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, json=json, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 
 def build_get_request(
@@ -185,370 +194,414 @@ def build_get_request(
     node_id: str,
     *,
     select: Optional[str] = None,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
+        _params['$select'] = _SERIALIZER.query("select", select, 'str')
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_reboot_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: int = 30,
-    client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
-    ocp_date: Optional[datetime.datetime] = None,
     json: Optional[_models.NodeRebootParameters] = None,
+    content: Any = None,
+    timeout: Optional[int] = 30,
+    client_request_id: Optional[str] = None,
+    return_client_request_id: Optional[bool] = False,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reboot"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 
 def build_reimage_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: int = 30,
-    client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
-    ocp_date: Optional[datetime.datetime] = None,
     json: Optional[_models.NodeReimageParameters] = None,
+    content: Any = None,
+    timeout: Optional[int] = 30,
+    client_request_id: Optional[str] = None,
+    return_client_request_id: Optional[bool] = False,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reimage"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 
 def build_disable_scheduling_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: int = 30,
-    client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
-    ocp_date: Optional[datetime.datetime] = None,
     json: Optional[_models.NodeDisableSchedulingParameters] = None,
+    content: Any = None,
+    timeout: Optional[int] = 30,
+    client_request_id: Optional[str] = None,
+    return_client_request_id: Optional[bool] = False,
+    ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/disablescheduling"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 
 def build_enable_scheduling_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/enablescheduling"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_get_remote_login_settings_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/remoteloginsettings"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_get_remote_desktop_request(
     pool_id: str,
     node_id: str,
     *,
-    timeout: int = 30,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json, application/octet-stream")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json, application/octet-stream")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/rdp"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_upload_batch_service_logs_request(
     pool_id: str,
     node_id: str,
     *,
-    json: _models.UploadBatchServiceLogsConfiguration,
-    timeout: int = 30,
+    json: Optional[_models.UploadBatchServiceLogsConfiguration] = None,
+    content: Any = None,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/uploadbatchservicelogs"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
-        "nodeId": _SERIALIZER.url("node_id", node_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
+        "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        json=json,
+        content=content,
+        **kwargs
+    )
 
 
 def build_list_request(
@@ -556,51 +609,54 @@ def build_list_request(
     *,
     filter: Optional[str] = None,
     select: Optional[str] = None,
-    max_results: int = 1000,
-    timeout: int = 30,
+    max_results: Optional[int] = 1000,
+    timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: bool = False,
+    return_client_request_id: Optional[bool] = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
+    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/pools/{poolId}/nodes"
     path_format_arguments = {
-        "poolId": _SERIALIZER.url("pool_id", pool_id, "str"),
+        "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
     if select is not None:
-        _params["$select"] = _SERIALIZER.query("select", select, "str")
+        _params['$select'] = _SERIALIZER.query("select", select, 'str')
     if max_results is not None:
-        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
+        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
     if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if client_request_id is not None:
-        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
+        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
     if return_client_request_id is not None:
-        _headers["return-client-request-id"] = _SERIALIZER.header(
-            "return_client_request_id", return_client_request_id, "bool"
-        )
+        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
     if ocp_date is not None:
-        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 class ComputeNodeOperations:
     """
@@ -621,6 +677,7 @@ class ComputeNodeOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace
     def add_user(  # pylint: disable=inconsistent-return-statements
         self,
@@ -628,9 +685,9 @@ class ComputeNodeOperations:
         node_id: str,
         user: _models.ComputeNodeUser,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -638,14 +695,14 @@ class ComputeNodeOperations:
 
         You can add a user Account to a Compute Node only when it is in the idle or running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the machine on which you want to create a user Account. Required.
+        :param node_id: The ID of the machine on which you want to create a user Account.
         :type node_id: str
-        :param user: The user Account to be created. Required.
+        :param user: The user Account to be created.
         :type user: ~azure-batch.models.ComputeNodeUser
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -660,46 +717,45 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _json = self._serialize.body(user, "ComputeNodeUser")
+        _content = self._serialize.body(user, 'ComputeNodeUser')
 
         request = build_add_user_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -708,14 +764,17 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def delete_user(  # pylint: disable=inconsistent-return-statements
@@ -724,9 +783,9 @@ class ComputeNodeOperations:
         node_id: str,
         user_name: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -734,14 +793,14 @@ class ComputeNodeOperations:
 
         You can delete a user Account to a Compute Node only when it is in the idle or running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the machine on which you want to delete a user Account. Required.
+        :param node_id: The ID of the machine on which you want to delete a user Account.
         :type node_id: str
-        :param user_name: The name of the user Account to delete. Required.
+        :param user_name: The name of the user Account to delete.
         :type user_name: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -756,42 +815,42 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_delete_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -800,11 +859,14 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def update_user(  # pylint: disable=inconsistent-return-statements
@@ -814,9 +876,9 @@ class ComputeNodeOperations:
         user_name: str,
         parameters: _models.NodeUpdateUserParameters,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -827,16 +889,16 @@ class ComputeNodeOperations:
         left unmodified. You can update a user Account on a Compute Node only when it is in the idle or
         running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the machine on which you want to update a user Account. Required.
+        :param node_id: The ID of the machine on which you want to update a user Account.
         :type node_id: str
-        :param user_name: The name of the user Account to update. Required.
+        :param user_name: The name of the user Account to update.
         :type user_name: str
-        :param parameters: The parameters for the request. Required.
+        :param parameters: The parameters for the request.
         :type parameters: ~azure-batch.models.NodeUpdateUserParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -851,47 +913,46 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _json = self._serialize.body(parameters, "NodeUpdateUserParameters")
+        _content = self._serialize.body(parameters, 'NodeUpdateUserParameters')
 
         request = build_update_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -900,14 +961,17 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def get(
@@ -916,9 +980,9 @@ class ComputeNodeOperations:
         node_id: str,
         *,
         select: Optional[str] = None,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.ComputeNode:
@@ -926,14 +990,14 @@ class ComputeNodeOperations:
 
         Gets information about the specified Compute Node.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to get information about. Required.
+        :param node_id: The ID of the Compute Node that you want to get information about.
         :type node_id: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -948,42 +1012,42 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: ComputeNode
         :rtype: ~azure-batch.models.ComputeNode
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ComputeNode]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ComputeNode]
 
+        
         request = build_get_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
             select=select,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -992,17 +1056,19 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = self._deserialize("ComputeNode", pipeline_response)
+        deserialized = self._deserialize('ComputeNode', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
+
+
 
     @distributed_trace
     def reboot(  # pylint: disable=inconsistent-return-statements
@@ -1011,9 +1077,9 @@ class ComputeNodeOperations:
         node_id: str,
         parameters: Optional[_models.NodeRebootParameters] = None,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1021,14 +1087,14 @@ class ComputeNodeOperations:
 
         You can restart a Compute Node only if it is in an idle or running state.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
+        :param node_id: The ID of the Compute Node that you want to restart.
         :type node_id: str
         :param parameters: The parameters for the request. Default value is None.
         :type parameters: ~azure-batch.models.NodeRebootParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1043,49 +1109,48 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         if parameters is not None:
-            _json = self._serialize.body(parameters, "NodeRebootParameters")
+            _content = self._serialize.body(parameters, 'NodeRebootParameters')
         else:
-            _json = None
+            _content = None
 
         request = build_reboot_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1094,14 +1159,17 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def reimage(  # pylint: disable=inconsistent-return-statements
@@ -1110,9 +1178,9 @@ class ComputeNodeOperations:
         node_id: str,
         parameters: Optional[_models.NodeReimageParameters] = None,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1122,14 +1190,14 @@ class ComputeNodeOperations:
         state. This API can be invoked only on Pools created with the cloud service configuration
         property.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
+        :param node_id: The ID of the Compute Node that you want to restart.
         :type node_id: str
         :param parameters: The parameters for the request. Default value is None.
         :type parameters: ~azure-batch.models.NodeReimageParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1144,49 +1212,48 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         if parameters is not None:
-            _json = self._serialize.body(parameters, "NodeReimageParameters")
+            _content = self._serialize.body(parameters, 'NodeReimageParameters')
         else:
-            _json = None
+            _content = None
 
         request = build_reimage_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1195,14 +1262,17 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def disable_scheduling(  # pylint: disable=inconsistent-return-statements
@@ -1211,9 +1281,9 @@ class ComputeNodeOperations:
         node_id: str,
         parameters: Optional[_models.NodeDisableSchedulingParameters] = None,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1222,15 +1292,14 @@ class ComputeNodeOperations:
         You can disable Task scheduling on a Compute Node only if its current scheduling state is
         enabled.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
         :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
-         Required.
         :type node_id: str
         :param parameters: The parameters for the request. Default value is None.
         :type parameters: ~azure-batch.models.NodeDisableSchedulingParameters
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1245,49 +1314,48 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         if parameters is not None:
-            _json = self._serialize.body(parameters, "NodeDisableSchedulingParameters")
+            _content = self._serialize.body(parameters, 'NodeDisableSchedulingParameters')
         else:
-            _json = None
+            _content = None
 
         request = build_disable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1296,14 +1364,17 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def enable_scheduling(  # pylint: disable=inconsistent-return-statements
@@ -1311,9 +1382,9 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1322,13 +1393,12 @@ class ComputeNodeOperations:
         You can enable Task scheduling on a Compute Node only if its current scheduling state is
         disabled.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
         :param node_id: The ID of the Compute Node on which you want to enable Task scheduling.
-         Required.
         :type node_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1343,41 +1413,41 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        
         request = build_enable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1386,14 +1456,17 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def get_remote_login_settings(
@@ -1401,9 +1474,9 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.ComputeNodeGetRemoteLoginSettingsResult:
@@ -1414,13 +1487,12 @@ class ComputeNodeOperations:
         the virtual machine configuration property. For Pools created with a cloud service
         configuration, see the GetRemoteDesktop API.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
         :param node_id: The ID of the Compute Node for which to obtain the remote login settings.
-         Required.
         :type node_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1435,41 +1507,41 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: ComputeNodeGetRemoteLoginSettingsResult
         :rtype: ~azure-batch.models.ComputeNodeGetRemoteLoginSettingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ComputeNodeGetRemoteLoginSettingsResult]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ComputeNodeGetRemoteLoginSettingsResult]
 
+        
         request = build_get_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1478,17 +1550,19 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = self._deserialize("ComputeNodeGetRemoteLoginSettingsResult", pipeline_response)
+        deserialized = self._deserialize('ComputeNodeGetRemoteLoginSettingsResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
+
+
 
     @distributed_trace
     def get_remote_desktop(
@@ -1496,12 +1570,12 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> IO:
         """Gets the Remote Desktop Protocol file for the specified Compute Node.
 
         Before you can access a Compute Node by using the RDP file, you must create a user Account on
@@ -1509,13 +1583,13 @@ class ComputeNodeOperations:
         configuration. For Pools created with a virtual machine configuration, see the
         GetRemoteLoginSettings API.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
-         Protocol file. Required.
+         Protocol file.
         :type node_id: str
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1528,43 +1602,43 @@ class ComputeNodeOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: Iterator of the response bytes
-        :rtype: Iterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: IO
+        :rtype: IO
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
+        
         request = build_get_remote_desktop_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request,
+            stream=True,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1573,17 +1647,19 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = response.iter_bytes()
+        deserialized = response
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
+
+
 
     @distributed_trace
     def upload_batch_service_logs(
@@ -1592,9 +1668,9 @@ class ComputeNodeOperations:
         node_id: str,
         upload_batch_service_logs_configuration: _models.UploadBatchServiceLogsConfiguration,
         *,
-        timeout: int = 30,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.UploadBatchServiceLogsResult:
@@ -1605,17 +1681,17 @@ class ComputeNodeOperations:
         log files should be shared with Azure support to aid in debugging issues with the Batch
         service.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :param pool_id: The ID of the Pool that contains the Compute Node.
         :type pool_id: str
         :param node_id: The ID of the Compute Node from which you want to upload the Azure Batch
-         service log files. Required.
+         service log files.
         :type node_id: str
         :param upload_batch_service_logs_configuration: The Azure Batch service log files upload
-         configuration. Required.
+         configuration.
         :type upload_batch_service_logs_configuration:
          ~azure-batch.models.UploadBatchServiceLogsConfiguration
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1630,46 +1706,45 @@ class ComputeNodeOperations:
         :paramtype ocp_date: ~datetime.datetime
         :return: UploadBatchServiceLogsResult
         :rtype: ~azure-batch.models.UploadBatchServiceLogsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.UploadBatchServiceLogsResult]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.UploadBatchServiceLogsResult]
 
-        _json = self._serialize.body(upload_batch_service_logs_configuration, "UploadBatchServiceLogsConfiguration")
+        _content = self._serialize.body(upload_batch_service_logs_configuration, 'UploadBatchServiceLogsConfiguration')
 
         request = build_upload_batch_service_logs_request(
             pool_id=pool_id,
             node_id=node_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
             timeout=timeout,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request,
+            stream=False,
+            **kwargs
         )
-
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1678,15 +1753,17 @@ class ComputeNodeOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
 
-        deserialized = self._deserialize("UploadBatchServiceLogsResult", pipeline_response)
+        deserialized = self._deserialize('UploadBatchServiceLogsResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
+
+
 
     @distributed_trace
     def list(
@@ -1695,18 +1772,18 @@ class ComputeNodeOperations:
         *,
         filter: Optional[str] = None,
         select: Optional[str] = None,
-        max_results: int = 1000,
-        timeout: int = 30,
+        max_results: Optional[int] = 1000,
+        timeout: Optional[int] = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: bool = False,
+        return_client_request_id: Optional[bool] = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ComputeNode"]:
+    ) -> Iterable[_models.ComputeNodeListResult]:
         """Lists the Compute Nodes in the specified Pool.
 
         Lists the Compute Nodes in the specified Pool.
 
-        :param pool_id: The ID of the Pool from which you want to list Compute Nodes. Required.
+        :param pool_id: The ID of the Pool from which you want to list Compute Nodes.
         :type pool_id: str
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
@@ -1718,7 +1795,7 @@ class ComputeNodeOperations:
          Compute Nodes can be returned. Default value is 1000.
         :paramtype max_results: int
         :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. Default value is 30.
+         seconds. The default is 30 seconds.
         :paramtype timeout: int
         :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
          no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
@@ -1731,28 +1808,26 @@ class ComputeNodeOperations:
          current system clock time; set it explicitly if you are calling the REST API directly. Default
          value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of ComputeNode
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.ComputeNode]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :return: An iterator like instance of ComputeNodeListResult
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.ComputeNodeListResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.ComputeNodeListResult]
+        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ComputeNodeListResult]
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_list_request(
                     pool_id=pool_id,
+                    api_version=api_version,
                     filter=filter,
                     select=select,
                     max_results=max_results,
@@ -1760,34 +1835,37 @@ class ComputeNodeOperations:
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
                     ocp_date=ocp_date,
-                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url(
-                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
-                    ),
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                
+                request = build_list_request(
+                    pool_id=pool_id,
+                    client_request_id=client_request_id,
+                    return_client_request_id=return_client_request_id,
+                    ocp_date=ocp_date,
+                    headers=_headers,
+                    params=_params,
+                )
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url(
-                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
-                    ),
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
+                path_format_arguments = {
+                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                }
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("_models.ComputeNodeListResult", pipeline_response)
+            deserialized = self._deserialize("ComputeNodeListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1796,8 +1874,10 @@ class ComputeNodeOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request,
+                stream=False,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1808,4 +1888,8 @@ class ComputeNodeOperations:
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
