@@ -14,8 +14,7 @@ from azure.ai.ml.entities._job.automl.nlp import (
     NlpSearchSpace,
     NlpSweepSettings,
 )
-from azure.ai.ml.entities._job.automl.tabular import (
-    ClassificationJob,
+from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
 )
