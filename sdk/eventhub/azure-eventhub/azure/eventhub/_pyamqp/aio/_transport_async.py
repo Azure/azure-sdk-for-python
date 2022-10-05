@@ -271,7 +271,7 @@ class AsyncTransport(AsyncTransportMixin):
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
                     raise (e if e is not None else socket.error("failed to resolve broker hostname"))
-                continue
+                continue    # pragma: no cover
             # now that we have address(es) for the hostname, connect to broker
             for i, res in enumerate(entries):
                 af, socktype, proto, _, sa = res
