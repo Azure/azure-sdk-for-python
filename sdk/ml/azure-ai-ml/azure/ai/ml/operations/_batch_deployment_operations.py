@@ -7,8 +7,7 @@
 from typing import Dict, List
 import re
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource as RestBatchJobResource
-from azure.ai.ml.entities._deployment.batch_job_resource import BatchJobResource
+from azure.ai.ml.entities._deployment.batch_job import BatchJob
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -207,7 +206,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str, *, name: str = None) -> List[BatchJobResource]:
+    def list_jobs(self, endpoint_name: str, *, name: str = None) -> List[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
@@ -217,7 +216,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
-        :rtype: List[BatchJobResource]
+        :rtype: List[BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
@@ -226,20 +225,17 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         )
 
         with modified_operation_client(self._batch_job_deployment, mfe_base_uri):
+    
             result = self._batch_job_deployment.list(
                 endpoint_name=endpoint_name,
                 deployment_name=name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
-                cls=lambda objs: [BatchJobResource._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [BatchJob._from_rest_object(obj) for obj in objs],
                 **self._init_kwargs,
             )
-
-            import debugpy
-            debugpy.connect(('localhost', 5678))
-            debugpy.breakpoint()
-
-            return result
+            
+            return list(result)
 
     def _get_workspace_location(self) -> str:
         """Get the workspace location TODO[TASK 1260265]: can we cache this

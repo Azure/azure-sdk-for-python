@@ -125,3 +125,5 @@ class TestBatchDeploymentOperations:
         mock_aml_services_2022_05_01.batch_deployments.begin_delete.return_value = mock_delete_poller
         mock_batch_deployment_operations.begin_delete(endpoint_name="batch-ept", name=random_name)
         mock_batch_deployment_operations._batch_deployment.begin_delete.assert_called_once()
+
+

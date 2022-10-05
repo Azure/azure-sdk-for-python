@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from typing import Dict, Union
-# from azure.ai.ml._schema._deployment.batch.batch_job import OutputDataSchema
+# from azure.ai.ml._schema._deployment.batch.batch_job_property import OutputDataSchema
 from azure.ai.ml._schema.core.fields import ArmStr
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 

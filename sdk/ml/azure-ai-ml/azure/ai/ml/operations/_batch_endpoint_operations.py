@@ -12,9 +12,9 @@ from typing import TYPE_CHECKING, Dict, List
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml.entities._deployment.batch_job_resource import BatchJobResource
+from azure.ai.ml.entities._deployment.batch_job import BatchJob
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
+from azure.ai.ml._schema._deployment.batch.batch_job_property import BatchJobPropertySchema
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -196,7 +196,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         input: Input = None,  # pylint: disable=redefined-builtin
         params_override=None,
         **kwargs,  # pylint: disable=unused-argument
-    ) -> BatchJobResource:
+    ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
 
         :param endpoint_name: The endpoint name.
@@ -217,7 +217,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The invoked batch deployment job.
-        :rtype: BatchJobResource
+        :rtype: BatchJob
         """
         params_override = params_override or []
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
@@ -248,7 +248,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        batch_job = BatchJobSchema(context=context).load(data={})  # pylint: disable=no-member
+        batch_job = BatchJobPropertySchema(context=context).load(data={})  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
         if (
@@ -278,23 +278,23 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(
             endpoint.properties.scoring_uri,
-            json=BatchJobResource(properties=batch_job).serialize(),
+            json=BatchJob(properties=batch_job).serialize(),
             headers=headers,
         )
         validate_response(response)
         batch_job = json.loads(response.text())
-        return BatchJobResource.deserialize(batch_job)
+        return BatchJob.deserialize(batch_job)
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str) -> List[BatchJobResource]:
+    def list_jobs(self, endpoint_name: str) -> List[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs
-        :rtype: list[BatchJobResource]
+        :rtype: list[BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
