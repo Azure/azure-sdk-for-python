@@ -3,7 +3,6 @@
 ## 0.2.0 (Unreleased)
 
 ### Features Added
- - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
 
 ### Breaking Changes
 
@@ -17,6 +16,7 @@
 
 ### Features Added
  - Most configuration classes from the entity package now implement the standard mapping protocol.
+ 
 ### Breaking Changes
 - OnlineDeploymentOperations.delete has been renamed to begin_delete.
 - Datastore credentials are switched to use unified credential configuration classes.
@@ -53,7 +53,6 @@
 ### Other Changes
  - Removed declaration on Python 3.6 support
  - Added support for custom setup scripts on compute instances.
- - Removed declaration on Python 3.6 support.
  - Updated dependencies upper bounds to be major versions.
 
 ## 0.1.0b7 (2022-09-22)
@@ -77,7 +76,6 @@
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
  - JobOperations.download defaults to "." instead of Path.cwd()
- - Workspace.list_keys renamed to Workspace.get_keys.
 
 ### Bugs Fixed
 
