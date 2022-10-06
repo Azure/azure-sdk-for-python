@@ -201,7 +201,6 @@ def format_create_validation_error(
     )
     from azure.ai.ml._schema.job import CommandJobSchema
     from azure.ai.ml._schema._sweep import SweepJobSchema
-    from azure.ai.ml._schema.assets.data import DataSchema
     from azure.ai.ml._schema.assets.environment import EnvironmentSchema
     from azure.ai.ml._schema.assets.model import ModelSchema
 
