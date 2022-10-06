@@ -390,9 +390,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Compute - VMSS %Service Attention
 #/<NotInRepo>/          @Drewm3 @avirishuv
 
-# ServiceLabel: %Confidential Ledger %Service Attention
-sdk/confidentialledger/azure-confidentialledger          @lynshi
-
 # ServiceLabel: %Connected Kubernetes %Service Attention
 #/<NotInRepo>/          @akashkeshari
 
