@@ -15,7 +15,9 @@ from ._models import (
     BoundingBox,
     Copyright,
     RegionalCopyrights,
-    RegionCopyrightsCountry
+    RegionCopyrightsCountry,
+    ImagePushpinStyle,
+    ImagePathStyle
 )
 
 
@@ -33,4 +35,6 @@ __all__ = [
     'RasterTileFormat',
     'RegionalCopyrights',
     'RegionCopyrightsCountry',
+    'ImagePushpinStyle',
+    'ImagePathStyle'
 ]

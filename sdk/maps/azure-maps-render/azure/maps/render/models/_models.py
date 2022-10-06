@@ -3,8 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports, C0302, C0203
-from typing import NamedTuple
+# pylint: disable=unused-import,ungrouped-imports,super-init-not-called, C0302, C0203
+from typing import NamedTuple, Any
 from .._generated.models import (
     Copyright as GenCopyright,
     RegionCopyrights as GenRegionCopyrights,
@@ -52,9 +52,12 @@ class RegionalCopyrights(GenRegionCopyrights):
     :keyword country: Country property.
     :paramtype country: ~azure.maps.render.models.RegionCopyrightsCountry
     """
-    def __init__(self, copyrights=None, country=None):
-        self.copyrights = copyrights
-        self.country = country
+    def __init__(
+        self,
+        **kwargs: Any
+    ):
+        self.copyrights = kwargs.get("copyrights", None)
+        self.country = kwargs.get("country", None)
 
 class Copyright(GenCopyright):
     """Represents information about the coordinate range
@@ -66,10 +69,13 @@ class Copyright(GenCopyright):
     :keyword regional_copyrights: Regions array.
     :paramtype regional_copyrights: list[RegionalCopyrights]
     """
-    def __init__(self, format_version=None, general_copyrights=None, regional_copyrights=None):
-        self.format_version = format_version
-        self.general_copyrights = general_copyrights
-        self.regional_copyrights = regional_copyrights
+    def __init__(
+        self,
+        **kwargs: Any
+    ):
+        self.format_version = kwargs.get("format_version", None)
+        self.general_copyrights = kwargs.get("general_copyrights", None)
+        self.regional_copyrights = kwargs.get("regional_copyrights", None)
 
 class RegionCopyrightsCountry(GenRegionCopyrightsCountry):
     """Country property.
@@ -81,9 +87,12 @@ class RegionCopyrightsCountry(GenRegionCopyrightsCountry):
     :keyword label: Label property.
     :paramtype label: str
     """
-    def __init__(self, iso3_code=None, label=None):
-        self.iso3_code = iso3_code
-        self.label = label
+    def __init__(
+        self,
+        **kwargs: Any
+    ):
+        self.iso3_code = kwargs.get("iso3_code", None)
+        self.label = kwargs.get("label", None)
 
 
 class MapTileset(GenMapTileset):  # pylint: disable=too-many-instance-attributes
@@ -137,34 +146,93 @@ class MapTileset(GenMapTileset):  # pylint: disable=too-many-instance-attributes
     """
     def __init__(
         self,
-        tilejson_version= None,
-        name= None,
-        description= None,
-        version= None,
-        map_attribution= None,
-        template= None,
-        legend= None,
-        scheme= None,
-        tiles_endpoints= None,
-        grid_endpoints= None,
-        data_files = None,
-        min_zoom= None,
-        max_zoom= None,
-        bounds= None,
-        center= None
+        **kwargs: Any
     ):
-        self.tilejson_version = tilejson_version
-        self.name = name
-        self.description = description
-        self.version = version
-        self.map_attribution = map_attribution
-        self.template = template
-        self.legend = legend
-        self.scheme = scheme
-        self.tiles_endpoints = tiles_endpoints
-        self.grid_endpoints = grid_endpoints
-        self.data_files = data_files
-        self.min_zoom = min_zoom
-        self.max_zoom = max_zoom
-        self.bounds = bounds
-        self.center = center
+        self.tilejson_version = kwargs.get("tilejson_version", None)
+        self.name = kwargs.get("name", None)
+        self.description = kwargs.get("description", None)
+        self.version = kwargs.get("version", None)
+        self.map_attribution = kwargs.get("map_attribution", None)
+        self.template = kwargs.get("template", None)
+        self.legend = kwargs.get("legend", None)
+        self.scheme = kwargs.get("scheme", None)
+        self.tiles_endpoints = kwargs.get("tiles_endpoints", None)
+        self.grid_endpoints = kwargs.get("grid_endpoints", None)
+        self.data_files = kwargs.get("data_files", None)
+        self.min_zoom = kwargs.get("min_zoom", None)
+        self.max_zoom = kwargs.get("max_zoom", None)
+        self.bounds = kwargs.get("bounds", None)
+        self.center = kwargs.get("center", None)
+
+class ImagePathStyle(object):
+    """Path style including line color, line opacity, circle position, color and opacity settings
+
+    :keyword path_positions:
+        The list of point coordinate on the path.
+    :paramtype path_positions: LatLon
+    :keyword line_color:
+        Line color of the path, including line opacity information.
+    :paramtype line_color: str
+    :keyword fill_color:
+        Fill color of the path, including line opacity information.
+    :paramtype fill_color: str
+    :keyword line_width_in_pixels:
+        Line width of the path in pixels.
+    :paramtype line_width_in_pixels: int
+    :keyword circle_radius_in_meters:
+        Circle radius in meters.
+    :paramtype circle_radius_in_meters: int
+    """
+    path_positions: LatLon = None
+    line_color: str = None
+    fill_color: str = None
+    line_width_in_pixels: int = 0
+    circle_radius_in_meters: int = 0
+
+class ImagePushpinStyle(object):
+    """Pushpin style including pin and label color, scale, rotation and position settings
+
+    :keyword pushpin_positions:
+        The list of Pushpin coordinate on the map.
+    :paramtype path_positions: LatLon
+    :keyword pushpin_anchor_shift_in_pixels:
+        To override the anchor location of the pin image,
+        user can designate how to shift or move the anchor location by pixels
+    :paramtype pushpin_anchor_shift_in_pixels: int
+    :keyword pushpin_color:
+        Pushpin color including opacity information.
+    :paramtype pushpin_color: str
+    :keyword pushpin_scale_ratio:
+        Pushpin scale ratio. Value should greater than zero. A value of 1 is the standard scale.
+        Values larger than 1 will make the pins larger, and values smaller than 1 will make them smaller.
+    :paramtype pushpin_scale_ratio: float
+    :keyword custom_pushpin_image_uri:
+        Custom pushpin image, can only be 'ref="Uri"' format.
+    :paramtype custom_pushpin_image_uri: str
+    :keyword label_anchor_shift_in_pixels:
+        The anchor location of label for built-in pushpins is at the top center of custom pushpins.
+        To override the anchor location of the pin image,
+        user can designate how to shift or move the anchor location by pixels
+    :paramtype label_anchor_shift_in_pixels: LatLon
+    :keyword label_color:
+        Label color information. Opacity value other than 1 be ignored.
+    :paramtype label_color: str
+    :keyword label_scale_ratio:
+        Label scale ratio. Should greater than 0. A value of 1 is the standard scale.
+        Values larger than 1 will make the label larger.
+    :paramtype label_scale_ratio: float
+    :keyword rotation_in_degrees:
+        A number of degrees of clockwise rotation.
+        Use a negative number to rotate counter-clockwise.
+        Value can be -360 to 360.
+    :paramtype rotation_in_degrees: int
+    """
+    pushpin_positions: LatLon = None
+    pushpin_anchor_shift_in_pixels: int = 0
+    pushpin_color: str = None
+    pushpin_scale_ratio: float = 0.0
+    custom_pushpin_image_uri: str = None
+    label_anchor_shift_in_pixels: LatLon = None
+    label_color: str = None
+    label_scale_ratio: float = 0.0
+    rotation_in_degrees: int = 0

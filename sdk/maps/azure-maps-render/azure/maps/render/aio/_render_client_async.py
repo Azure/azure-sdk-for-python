@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import Iterator, Any, Union, Tuple, List
+from typing import AsyncIterator, Any, Union, Tuple, List
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
@@ -21,7 +21,9 @@ from ..models import (
     MapTileset,
     MapAttribution,
     CopyrightCaption,
-    RasterTileFormat
+    RasterTileFormat,
+    ImagePushpinStyle,
+    ImagePathStyle
 )
 
 
@@ -68,7 +70,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         x: int,
         y: int,
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> AsyncIterator[bytes]:
         """The Get Map Tiles API allows users to request map tiles in vector or raster formats typically
         to be integrated into a map control or SDK. Some example tiles that can be requested are Azure
         Maps road tiles, real-time  Weather Radar tiles. By default, Azure Maps uses vector tiles for its web map
@@ -104,8 +106,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             regions.
         :paramtype localized_map_view: str or ~azure.maps.render.models.LocalizedMapView
         :return:
-            Iterator of the response bytes
-        :rtype: Iterator[bytes]
+            AsyncIterator of the response bytes
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -184,7 +186,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         zoom: int,
         bounds: BoundingBox,
         **kwargs: Any
-    ) -> List[str]:
+    ) -> MapAttribution:
         """The Get Map Attribution API allows users to request map copyright attribution information for a
         section of a tileset.
 
@@ -201,8 +203,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             position of the bounding box as float.
             E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :type bounds: BoundingBox
-        :return: List[str]
-        :rtype: List[str]
+        :return: MapAttribution
+        :rtype: ~azure.maps.render.models.MapAttribution
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -227,7 +229,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
             bounds=bounds,
             **kwargs
         )
-        return async_result.copyrights
+        return async_result
 
     @distributed_trace_async
     async def get_map_state_tile(
@@ -237,7 +239,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         x: int,
         y: int,
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> AsyncIterator[bytes]:
         """Fetches state tiles in vector format typically to be integrated into indoor maps module of map
         control or SDK.
 
@@ -253,8 +255,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :param stateset_id:
             The stateset id.
         :type stateset_id: str
-        :return: Iterator of the response bytes
-        :rtype: Iterator[bytes]
+        :return: AsyncIterator of the response bytes
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return await self._render_client.get_map_state_tile(
@@ -298,9 +300,8 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
     @distributed_trace_async
     async def get_map_static_image(
         self,
-        img_format: Union[str, RasterTileFormat],
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> AsyncIterator[bytes]:
         """ The static image service renders a user-defined, rectangular image containing a map section
         using a zoom level from 0 to 20. The static image service renders a user-defined, rectangular
         image containing a map section using a zoom level from 0 to 20. The supported resolution range
@@ -310,9 +311,9 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         choice. If you want to support a lot of zooming, panning and changing of the map content, the
         map tile service would be a better choice.
 
-        :param img_format:
+        :keyword img_format:
             Desired format of the response. Possible value: png. "png" Default value is "png".
-        :type img_format: str or ~azure.maps.render.models.RasterTileFormat
+        :paramtype img_format: str or ~azure.maps.render.models.RasterTileFormat
         :keyword layer:
             Map layer requested.
         :paramtype layer: str or ~azure.maps.render.models.StaticMapLayer
@@ -345,13 +346,15 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         :paramtype localized_map_view: str or ~azure.maps.render.models.LocalizedMapView
         :keyword pins:
             Pushpin style and instances. Use this parameter to optionally add pushpins to the image.
-        :paramtype pins: list[str]
+        :paramtype pins:
+            list[str] or ~azure.maps.render.models.ImagePushpinStyle
         :keyword path:
             Path style and locations. Use this parameter to optionally add lines, polygons
             or circles to the image.
-        :paramtype path: list[str]
-        :return: Iterator of the response bytes
-        :rtype: Iterator[bytes]
+        :paramtype path:
+            list[str] or ~azure.maps.render.models.ImagePathStyle
+        :return: AsyncIterator of the response bytes
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -364,6 +367,31 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
                 :caption: Return static image service renders a user-defined,
                     rectangular image containing a map section using a zoom level from 0 to 20.
         """
+        _pins=kwargs.pop("pins", None)
+        if _pins is not None:
+            if isinstance(_pins, ImagePushpinStyle):
+                res=[
+                    f"{ImagePushpinStyle.pushpin_positions or ''}|" \
+                    f"{ImagePushpinStyle.label_anchor_shift_in_pixels or ''}|" \
+                    f"{ImagePushpinStyle.label_color or ''}|{ImagePushpinStyle.pushpin_scale_ratio or ''}|" \
+                    f"{ImagePushpinStyle.custom_pushpin_image_uri or ''}|" \
+                    f"{ImagePushpinStyle.label_anchor_shift_in_pixels or ''}|" \
+                    f"{ImagePushpinStyle.label_color or ''}|" \
+                    f"{ImagePushpinStyle.label_scale_ratio or ''}|" \
+                    f"{ImagePushpinStyle.rotation_in_degrees or ''}"
+                ]
+                _pins = list(filter(None, res))
+
+        _path=kwargs.pop("path", None)
+        if _path is not None:
+            if isinstance(_path, ImagePathStyle):
+                res=[
+                    f"{ImagePathStyle.path_positions or ''}|" \
+                    f"{ImagePathStyle.line_color or ''}|{ImagePathStyle.fill_color or ''}|" \
+                    f"{ImagePathStyle.line_width_in_pixels or ''}|" \
+                    f"{ImagePathStyle.circle_radius_in_meters or ''}|" \
+                ]
+                _path = list(filter(None, res))
 
         _center=kwargs.pop("center", None)
         if _center is not None:
@@ -371,11 +399,13 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
 
         _bbox = kwargs.pop("bounding_box_private", None)
         if _bbox is not None:
-            _bbox = f"{_bbox.south}, {_bbox.west}, {_bbox.north}, {_bbox.east}"
+            _bbox = [_bbox.south, _bbox.west, _bbox.north, _bbox.east]
 
         return await self._render_client.get_map_static_image(
-            format=img_format,
+            format=kwargs.pop("img_format", "png"),
             center=_center,
+            pins=_pins,
+            path=_path,
             bounding_box_private=_bbox,
             **kwargs
         )
@@ -465,7 +495,7 @@ class MapsRenderClient(AsyncMapsRenderClientBase):
         _include_text=kwargs.pop("include_text", True)
 
         return await self._render_client.get_copyright_for_tile(
-            z=tile_index_z,
+            z=z,
             x=x,
             y=y,
             include_text= "yes" if _include_text else "no",

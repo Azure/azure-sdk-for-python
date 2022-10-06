@@ -36,8 +36,8 @@ class TestMapsRenderClient(AzureRecordedTestCase):
     def test_get_map_tileset(self):
         result = self.client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
         assert result.name == "microsoft.base"
-        assert "TomTom" in result.attribution
-        assert len(result.tiles) > 0
+        assert "TomTom" in result.map_attribution
+        assert len(result.tiles_endpoints) > 0
 
     @MapsRenderPreparer()
     @recorded_by_proxy
@@ -47,7 +47,7 @@ class TestMapsRenderClient(AzureRecordedTestCase):
             zoom=6,
             bounds=BoundingBox(south=42.982261, west=24.980233, north=56.526017, east=1.355233)
         )
-        assert len(result) > 0
+        assert len(result.copyrights) > 0
 
     @MapsRenderPreparer()
     @recorded_by_proxy

@@ -18,7 +18,10 @@ from .models import (
     Copyright,
     MapTileset,
     CopyrightCaption,
-    RasterTileFormat
+    RasterTileFormat,
+    MapAttribution,
+    ImagePushpinStyle,
+    ImagePathStyle
 )
 
 class MapsRenderClient(MapsRenderClientBase):
@@ -179,7 +182,7 @@ class MapsRenderClient(MapsRenderClientBase):
         zoom: int,
         bounds: BoundingBox,
         **kwargs: Any
-    ) -> List[str]:
+    ) -> MapAttribution:
         """The Get Map Attribution API allows users to request map copyright attribution information for a
         section of a tileset.
 
@@ -196,8 +199,8 @@ class MapsRenderClient(MapsRenderClientBase):
             position of the bounding box as float.
             E.g. BoundingBox(west=37.553, south=-122.453, east=33.2, north=57)
         :type bounds: BoundingBox
-        :return: List[str]
-        :rtype: List[str]
+        :return: MapAttribution
+        :rtype: ~azure.maps.render.models.MapAttribution
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
@@ -221,7 +224,7 @@ class MapsRenderClient(MapsRenderClientBase):
             zoom=zoom,
             bounds=bounds,
             **kwargs
-        ).copyrights
+        )
 
     @distributed_trace
     def get_map_state_tile(
@@ -294,7 +297,6 @@ class MapsRenderClient(MapsRenderClientBase):
     @distributed_trace
     def get_map_static_image(
         self,
-        img_format: Union[str, RasterTileFormat],
         **kwargs: Any
     ) -> Iterator[bytes]:
         """ The static image service renders a user-defined, rectangular image containing a map section
@@ -306,9 +308,9 @@ class MapsRenderClient(MapsRenderClientBase):
         choice. If you want to support a lot of zooming, panning and changing of the map content, the
         map tile service would be a better choice.
 
-        :param img_format:
+        :keyword img_format:
             Desired format of the response. Possible value: png. "png" Default value is "png".
-        :type img_format: str or ~azure.maps.render.models.RasterTileFormat
+        :paramtype img_format: str or ~azure.maps.render.models.RasterTileFormat
         :keyword layer:
             Map layer requested.
         :paramtype layer: str or ~azure.maps.render.models.StaticMapLayer
@@ -341,11 +343,13 @@ class MapsRenderClient(MapsRenderClientBase):
         :paramtype localized_map_view: str or ~azure.maps.render.models.LocalizedMapView
         :keyword pins:
             Pushpin style and instances. Use this parameter to optionally add pushpins to the image.
-        :paramtype pins: list[str]
+        :paramtype pins:
+            list[str] or ~azure.maps.render.models.ImagePushpinStyle
         :keyword path:
             Path style and locations. Use this parameter to optionally add lines, polygons
             or circles to the image.
-        :paramtype path: list[str]
+        :paramtype path:
+            list[str] or ~azure.maps.render.models.ImagePathStyle
         :return: Iterator of the response bytes
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -360,6 +364,31 @@ class MapsRenderClient(MapsRenderClientBase):
                 :caption: Return static image service renders a user-defined,
                     rectangular image containing a map section using a zoom level from 0 to 20.
         """
+        _pins=kwargs.pop("pins", None)
+        if _pins is not None:
+            if isinstance(_pins, ImagePushpinStyle):
+                res=[
+                    f"{ImagePushpinStyle.pushpin_positions or ''}|" \
+                    f"{ImagePushpinStyle.label_anchor_shift_in_pixels or ''}|" \
+                    f"{ImagePushpinStyle.label_color or ''}|{ImagePushpinStyle.pushpin_scale_ratio or ''}|" \
+                    f"{ImagePushpinStyle.custom_pushpin_image_uri or ''}|" \
+                    f"{ImagePushpinStyle.label_anchor_shift_in_pixels or ''}|" \
+                    f"{ImagePushpinStyle.label_color or ''}|" \
+                    f"{ImagePushpinStyle.label_scale_ratio or ''}|" \
+                    f"{ImagePushpinStyle.rotation_in_degrees or ''}"
+                ]
+                _pins = list(filter(None, res))
+
+        _path=kwargs.pop("path", None)
+        if _path is not None:
+            if isinstance(_path, ImagePathStyle):
+                res=[
+                    f"{ImagePathStyle.path_positions or ''}|" \
+                    f"{ImagePathStyle.line_color or ''}|{ImagePathStyle.fill_color or ''}|" \
+                    f"{ImagePathStyle.line_width_in_pixels or ''}|" \
+                    f"{ImagePathStyle.circle_radius_in_meters or ''}|" \
+                ]
+                _path = list(filter(None, res))
 
         _center=kwargs.pop("center", None)
         if _center is not None:
@@ -367,11 +396,13 @@ class MapsRenderClient(MapsRenderClientBase):
 
         _bbox = kwargs.pop("bounding_box_private", None)
         if _bbox is not None:
-            _bbox = f"{_bbox.south}, {_bbox.west}, {_bbox.north}, {_bbox.east}"
+            _bbox = [_bbox.south, _bbox.west, _bbox.north, _bbox.east]
 
         return self._render_client.get_map_static_image(
-            format=img_format,
+            format=kwargs.pop("img_format", "png"),
             center=_center,
+            pins=_pins,
+            path=_path,
             bounding_box_private=_bbox,
             **kwargs
         )

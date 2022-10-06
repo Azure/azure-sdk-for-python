@@ -15,13 +15,13 @@
       "ResponseHeaders": {
         "Content-Length": "365",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 05 Oct 2022 19:16:54 GMT",
-        "Expires": "Wed, 12 Oct 2022 19:16:54 GMT",
+        "Date": "Thu, 06 Oct 2022 06:50:53 GMT",
+        "Expires": "Thu, 13 Oct 2022 06:50:54 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 0E7FB7A78C174B46949B016B3B9D64ED Ref B: TPE30EDGE0622 Ref C: 2022-10-05T19:16:54Z"
+        "X-MSEdge-Ref": "Ref A: 386E85CA98434B049F8CF419CBE5D288 Ref B: TPE30EDGE0920 Ref C: 2022-10-06T06:50:54Z"
       },
       "ResponseBody": {
         "tilejson": "2.2.0",

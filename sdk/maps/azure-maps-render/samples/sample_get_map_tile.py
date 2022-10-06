@@ -39,11 +39,11 @@ def get_map_tile():
         tile_size="512"
     )
 
-    print("Get map tile result:")
+    print("Get map tile result store in file name 'map_tile.png'")
     # print(result)
-    file = open('map_tile.png', 'wb')
-    file.write(next(result))
-    file.close()
+    with open('map_tile.png', 'wb') as file:
+        file.write(next(result))
+        file.close()
     # [END get_map_tile]
 
 if __name__ == '__main__':

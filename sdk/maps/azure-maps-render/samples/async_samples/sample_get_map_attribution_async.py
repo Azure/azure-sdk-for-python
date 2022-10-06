@@ -42,7 +42,7 @@ async def get_map_attribution_async():
         )
 
     print("Get map attribution result:")
-    print(result[0])
+    print(result.copyrights[0])
     # [END get_map_attribution_async]
 
 if __name__ == '__main__':
