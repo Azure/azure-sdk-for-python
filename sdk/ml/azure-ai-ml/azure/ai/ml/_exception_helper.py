@@ -154,32 +154,32 @@ def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[s
     if error_types[ValidationErrorType.INVALID_VALUE]:
         errors += f"\n{count}) One or more fields are invalid"
         resolutions += f"Double-check that all specified parameters are of the correct types and formats \
-        prescribed by the {entity_type} schema.\n"
+        prescribed by the {entity_type} schema."
         count += 1
     if error_types[ValidationErrorType.UNKNOWN_FIELD]:
         errors += f"\n{count}) A least one unrecognized parameter is specified"
-        resolutions += f"Remove any parameters not prescribed by the {entity_type} schema.\n"
+        resolutions += f"Remove any parameters not prescribed by the {entity_type} schema."
         count += 1
     if error_types[ValidationErrorType.MISSING_FIELD]:
         errors += f"\n{count}) At least one required parameter is missing"
-        resolutions += f"Ensure all parameters required by the {entity_type} schema are specified.\n"
+        resolutions += f"Ensure all parameters required by the {entity_type} schema are specified."
         count += 1
     if error_types[ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND]:
         errors += f"\n{count}) One or more files or folders do not exist.\n"
-        resolutions += "Double-check the directory paths you provided and enter the correct paths.\n"
+        resolutions += "Double-check the directory paths you provided and enter the correct paths."
         count += 1
     if error_types[ValidationErrorType.CANNOT_SERIALIZE]:
         errors += f"\n{count}) One or more fields cannot be serialized.\n"
         resolutions += f"Double-check that all specified parameters are of the correct types and formats \
-        prescribed by the {entity_type} schema.\n"
+        prescribed by the {entity_type} schema."
         count += 1
     if error_types[ValidationErrorType.CANNOT_PARSE]:
         errors += f"\n{count}) YAML file cannot be parsed.\n"
-        resolutions += "Double-check your YAML file for syntax and formatting errors.\n"
+        resolutions += "Double-check your YAML file for syntax and formatting errors."
         count += 1
     if error_types[ValidationErrorType.RESOURCE_NOT_FOUND]:
         errors += f"\n{count}) Resource was not found.\n"
-        resolutions += "Double-check that the resource has been specified correctly and that you have access to it.\n"
+        resolutions += "Double-check that the resource has been specified correctly and that you have access to it."
         count += 1
 
     return errors, resolutions
@@ -192,6 +192,18 @@ def format_create_validation_error(
     Formats a detailed error message for validation errors.
     """
     from azure.ai.ml.entities._util import REF_DOC_ERROR_MESSAGE_MAP
+    from azure.ai.ml._schema.assets.data import DataSchema
+    from azure.ai.ml._schema._datastore import (
+        AzureBlobSchema,
+        AzureDataLakeGen1Schema,
+        AzureDataLakeGen2Schema,
+        AzureFileSchema,
+    )
+    from azure.ai.ml._schema.job import CommandJobSchema
+    from azure.ai.ml._schema._sweep import SweepJobSchema
+    from azure.ai.ml._schema.assets.data import DataSchema
+    from azure.ai.ml._schema.assets.environment import EnvironmentSchema
+    from azure.ai.ml._schema.assets.model import ModelSchema
 
     entity_type, details = get_entity_type(error)
     error_types, details = format_details_section(error, details, entity_type)
@@ -201,28 +213,29 @@ def format_create_validation_error(
         description = YAML_CREATION_ERROR_DESCRIPTION.format(entity_type=entity_type)
 
         if entity_type == ErrorTarget.MODEL:
-            schema_type = "ModelSchema"
+            schema_type = ModelSchema
         elif entity_type == ErrorTarget.DATA:
-            schema_type = "DataSchema"
+            schema_type = DataSchema
         elif entity_type == ErrorTarget.COMMAND_JOB:
-            schema_type = "CommandJobSchema"
+            schema_type = CommandJobSchema
         elif entity_type == ErrorTarget.SWEEP_JOB:
-            schema_type = "SweepJobSchema"
+            schema_type = SweepJobSchema
         elif entity_type in [ErrorTarget.BLOB_DATASTORE, ErrorTarget.DATASTORE]:
-            schema_type = "AzureBlobSchema"
+            schema_type = AzureBlobSchema
         elif entity_type == ErrorTarget.GEN1_DATASTORE:
-            schema_type = "AzureDataLakeGen1Schema"
+            schema_type = AzureDataLakeGen1Schema
         elif entity_type == ErrorTarget.GEN2_DATASTORE:
-            schema_type = "AzureDataLakeGen2Schema"
+            schema_type = AzureDataLakeGen2Schema
         elif entity_type == ErrorTarget.FILE_DATASTORE:
-            schema_type = "AzureFileSchema"
+            schema_type = AzureFileSchema
         elif entity_type == ErrorTarget.ENVIRONMENT:
-            schema_type = "EnvironmentSchema"
+            schema_type = EnvironmentSchema
 
-        resolutions += REF_DOC_ERROR_MESSAGE_MAP.get(schema_type, "")
+        resolutions += " " + REF_DOC_ERROR_MESSAGE_MAP.get(schema_type, "")
     else:
         description = ""
 
+    resolutions += "\n"
     formatted_error = SCHEMA_VALIDATION_ERROR_TEMPLATE.format(
         description=description,
         error_msg=errors,
