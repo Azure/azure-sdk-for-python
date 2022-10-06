@@ -3,27 +3,27 @@
 trigger:
   branches:
     include:
-    - main
-    - hotfix/*
-    - release/*
-    - restapi*
+      - main
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/appconfiguration/
-    - sdk/core/
+      - sdk/appconfiguration/
+      - sdk/core/
 
 pr:
   branches:
     include:
-    - main
-    - feature/*
-    - hotfix/*
-    - release/*
-    - restapi*
+      - main
+      - feature/*
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/appconfiguration/
-    - sdk/core/
+      - sdk/appconfiguration/
+      - sdk/core/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -34,9 +34,9 @@ extends:
     ValidateFormatting: false
     TestProxy: true
     Artifacts:
-    - name: azure-appconfiguration
-      safeName: azureappconfiguration
-    - name: azure-appconfigurationprovider
-      safeName: azureappconfigurationprovider
-    - name: azure-mgmt-appconfiguration
-      safeName: azuremgmtappconfiguration
+      - name: azure-appconfiguration
+        safeName: azureappconfiguration
+      - name: azure-appconfiguration-provider
+        safeName: azureappconfigurationprovider
+      - name: azure-mgmt-appconfiguration
+        safeName: azuremgmtappconfiguration

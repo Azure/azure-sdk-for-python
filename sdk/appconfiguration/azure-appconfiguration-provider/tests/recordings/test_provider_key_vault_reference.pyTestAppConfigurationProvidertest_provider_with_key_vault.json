@@ -182,7 +182,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Correlation-Context": "RequestType=Startup,UsesKeyVault",
-        "User-Agent": "python-appconfigurationprovider/1.0.0b1 azsdk-python-appconfiguration/1.4.0 Python/3.9.13 (Windows-10-10.0.19044-SP0)"
+        "User-Agent": "python-appconfiguration-provider/1.0.0b1 azsdk-python-appconfiguration/1.4.0 Python/3.9.13 (Windows-10-10.0.19044-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
