@@ -75,7 +75,6 @@
  - Remove invalid option from create_or_update typehints.
  - Change error returned by (begin_)create_or_update invalid input to TypeError.
  - Rename set_image_model APIs for all vision tasks to set_training_parameters
- - JobOperations.download no longer provides a default value for download_path
  - JobOperations.download defaults to "." instead of Path.cwd()
  - Workspace.list_keys renamed to Workspace.get_keys.
 
