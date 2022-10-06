@@ -17,6 +17,7 @@ class StackEnsembleSettings(RestTranslatableMixin):
         stack_meta_learner_k_wargs: Any = None,
         stack_meta_learner_train_percentage: float = 0.2,
         stack_meta_learner_type: StackMetaLearnerType = None,
+        **kwargs
     ):
         """
         :param stack_meta_learner_k_wargs: Optional parameters to pass to the initializer of the
