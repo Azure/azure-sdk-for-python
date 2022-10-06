@@ -143,12 +143,14 @@ def start_test_proxy(request) -> None:
                 log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
 
                 _LOGGER.info("{} is calculated repo root".format(root))
+
+                os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, envname)
+
                 proc = subprocess.Popen(
                     shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
                     stderr=log,
                     env = {
-                        "PROXY_ASSETS_FOLDER": os.path.join(root, envname)
                     }
                 )
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
