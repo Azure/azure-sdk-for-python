@@ -116,6 +116,13 @@
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
 
+# PRLabel: %Local Endpoints
+/sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
+
+# PRLabel: %Job
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job                          @DouglasXiaoMS @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job                        @DouglasXiaoMS @TonyJ1 @wangchao1230
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
@@ -267,7 +274,7 @@
 #/<NotInRepo>/          @assafi
 
 # ServiceLabel: %Cognitive - Form Recognizer %Service Attention
-#/<NotInRepo>/          @ctstone @anrothMSFT
+#/<NotInRepo>/          @ctstone @vkurpad
 
 # ServiceLabel: %Cognitive - Anomaly Detector %Service Attention
 #/<NotInRepo>/          @yingqunpku @bowgong

@@ -20,7 +20,6 @@ from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
 from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
 from ._compute._usage import Usage, UsageName
-from ._compute._user_assigned_identity import UserAssignedIdentity
 from ._compute._vm_size import VmSize
 from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
 from ._compute.compute import Compute, NetworkSettings
@@ -41,7 +40,8 @@ from ._deployment.resource_requirements_settings import ResourceRequirementsSett
 from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
-from ._endpoint.online_endpoint import KubernetesOnlineEndpoint, ManagedOnlineEndpoint, OnlineEndpoint
+from ._endpoint.online_endpoint import KubernetesOnlineEndpoint, ManagedOnlineEndpoint, OnlineEndpoint,\
+    EndpointAuthKeys, EndpointAuthToken
 from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
 from ._job.input_port import InputPort
@@ -74,7 +74,7 @@ from ._job.sweep.search_space import (
 )
 from ._registry.registry import Registry
 from ._registry.registry_support_classes import (
-    RegistryRegionArmDetails,
+    RegistryRegionDetails,
     SystemCreatedAcrAccount,
     SystemCreatedStorageAccount,
 )
@@ -85,11 +85,16 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
-from ._workspace.identity import ManagedServiceIdentity
-from ._workspace.identity import UserAssignedIdentity as WorkspaceUserAssignedIdentity
+from ._workspace.diagnose import (
+    DiagnoseRequestProperties,
+    DiagnoseResponseResult,
+    DiagnoseResponseResultValue,
+    DiagnoseResult,
+    DiagnoseWorkspaceParameters,
+)
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
-from ._workspace.workspace_keys import WorkspaceKeys
+from ._workspace.workspace_keys import WorkspaceKeys, NotebookAccessKeys, ContainerRegistryCredential
 from ._credentials import (
     PatTokenConfiguration, SasTokenConfiguration, ManagedIdentityConfiguration,
     AccountKeyConfiguration, UsernamePasswordConfiguration, ServicePrincipalConfiguration,
@@ -146,8 +151,11 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
-    "ManagedServiceIdentity",
-    "WorkspaceUserAssignedIdentity", # pylint: disable=naming-mismatch
+    "DiagnoseRequestProperties",
+    "DiagnoseResult",
+    "DiagnoseResponseResult",
+    "DiagnoseResponseResultValue",
+    "DiagnoseWorkspaceParameters",
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",
@@ -182,7 +190,6 @@ __all__ = [
     "ResourceSettings",
     "AssignedUserConfiguration",
     "ComputeInstanceSshSettings",
-    "UserAssignedIdentity",
     "VmSize",
     "Usage",
     "UsageName",
@@ -202,7 +209,7 @@ __all__ = [
     "SystemCreatedAcrAccount",
     "SystemCreatedStorageAccount",
     "ValidationResult",
-    "RegistryRegionArmDetails",
+    "RegistryRegionDetails",
     "Registry",
     "SynapseSparkCompute",
     "AutoScaleSettings",
@@ -223,4 +230,8 @@ __all__ = [
     "UserIdentityConfiguration",
     "AmlTokenConfiguration",
     "IdentityConfiguration",
+    "NotebookAccessKeys",
+    "ContainerRegistryCredential",
+    "EndpointAuthKeys",
+    "EndpointAuthToken"
 ]

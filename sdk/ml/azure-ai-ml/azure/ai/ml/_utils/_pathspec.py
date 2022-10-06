@@ -1,5 +1,7 @@
 # ---------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) 2013-2022 Caleb P. Burns credits dahlia <https://github.com/dahlia>
+# Licensed under the MPLv2 License. See License.txt in the project root for
+# license information.
 # ---------------------------------------------------------
 """
 This file code has been vendored from pathspec repo.
