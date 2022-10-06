@@ -14,15 +14,15 @@ class StackEnsembleSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        stack_meta_learner_k_wargs: Any = None, # cspell:disable-line
+        stack_meta_learner_k_wargs: Any = None,
         stack_meta_learner_train_percentage: float = 0.2,
         stack_meta_learner_type: StackMetaLearnerType = None,
         **kwargs
     ):
         """
-        :param stack_meta_learner_kwargs: Optional parameters to pass to the initializer of the 
+        :param stack_meta_learner_k_wargs: Optional parameters to pass to the initializer of the 
          meta-learner.
-        :type stack_meta_learner_kwargs: any
+        :type stack_meta_learner_k_wargs: any
         :param stack_meta_learner_train_percentage: Specifies the proportion of the training set
          (when choosing train and validation type of training) to be reserved for training the
          meta-learner. Default value is 0.2.
@@ -35,7 +35,7 @@ class StackEnsembleSettings(RestTranslatableMixin):
          ~azure.mgmt.machinelearningservices.models.StackMetaLearnerType
         """
         super(StackEnsembleSettings, self).__init__(**kwargs)
-        self.stack_meta_learner_k_wargs = stack_meta_learner_k_wargs # cspell:disable-line
+        self.stack_meta_learner_k_wargs = stack_meta_learner_k_wargs
         self.stack_meta_learner_train_percentage = stack_meta_learner_train_percentage
         self.stack_meta_learner_type = stack_meta_learner_type
     
