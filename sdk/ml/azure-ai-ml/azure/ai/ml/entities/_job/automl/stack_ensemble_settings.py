@@ -1,15 +1,19 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 from typing import Any
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     StackEnsembleSettings as RestStackEnsembleSettings,
-    StackMetaLearnerType
+    StackMetaLearnerType,
 )
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
+
 class StackEnsembleSettings(RestTranslatableMixin):
-    """Advance setting to customize StackEnsemble run.
-    """
+    """Advance setting to customize StackEnsemble run."""
 
     def __init__(
         self,
@@ -20,7 +24,7 @@ class StackEnsembleSettings(RestTranslatableMixin):
         **kwargs
     ):
         """
-        :param stack_meta_learner_k_wargs: Optional parameters to pass to the initializer of the 
+        :param stack_meta_learner_k_wargs: Optional parameters to pass to the initializer of the
          meta-learner.
         :type stack_meta_learner_k_wargs: any
         :param stack_meta_learner_train_percentage: Specifies the proportion of the training set
@@ -38,24 +42,24 @@ class StackEnsembleSettings(RestTranslatableMixin):
         self.stack_meta_learner_k_wargs = stack_meta_learner_k_wargs
         self.stack_meta_learner_train_percentage = stack_meta_learner_train_percentage
         self.stack_meta_learner_type = stack_meta_learner_type
-    
+
     def _to_rest_object(self) -> RestStackEnsembleSettings:
         return RestStackEnsembleSettings(
-            stack_meta_learner_k_wargs = self.stack_meta_learner_k_wargs,
-            stack_meta_learner_train_percentage = self.stack_meta_learner_train_percentage,
-            stack_meta_learner_type = self.stack_meta_learner_type
+            stack_meta_learner_k_wargs=self.stack_meta_learner_k_wargs,
+            stack_meta_learner_train_percentage=self.stack_meta_learner_train_percentage,
+            stack_meta_learner_type=self.stack_meta_learner_type,
         )
-    
+
     @classmethod
     def _from_rest_object(
         cls, obj: RestStackEnsembleSettings
     ) -> "StackEnsembleSettings":
         return cls(
-            stack_meta_learner_k_wargs = obj.stack_meta_learner_k_wargs,
-            stack_meta_learner_train_percentage = obj.stack_meta_learner_train_percentage,
-            stack_meta_learner_type = obj.stack_meta_learner_type
+            stack_meta_learner_k_wargs=obj.stack_meta_learner_k_wargs,
+            stack_meta_learner_train_percentage=obj.stack_meta_learner_train_percentage,
+            stack_meta_learner_type=obj.stack_meta_learner_type,
         )
-    
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, StackEnsembleSettings):
             return NotImplemented
@@ -63,7 +67,8 @@ class StackEnsembleSettings(RestTranslatableMixin):
         return (
             super().__eq__(other)
             and self.stack_meta_learner_k_wargs == other.stack_meta_learner_k_wargs
-            and self.stack_meta_learner_train_percentage == other.stack_meta_learner_train_percentage
+            and self.stack_meta_learner_train_percentage
+            == other.stack_meta_learner_train_percentage
             and self.stack_meta_learner_type == other.stack_meta_learner_type
         )
 
