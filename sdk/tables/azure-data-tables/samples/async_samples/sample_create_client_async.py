@@ -56,7 +56,7 @@ class CreateClients(object):
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-        with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
+        async with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
             properties = await table_service.get_service_properties()
             print("Properties: {}".format(properties))
         # [END create_table_service_client]
