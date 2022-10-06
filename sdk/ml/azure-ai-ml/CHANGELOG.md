@@ -1,4 +1,6 @@
 ## 0.1.0 (In Progress)
+- GA release
+- Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
 ### Features Added
 
