@@ -459,9 +459,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Device Provisioning Service %Service Attention
 #/<NotInRepo>/          @nberdy
 
-# ServiceLabel: %Device Update %Service Attention
-/sdk/deviceupdate/       @dpokluda @sedols
-
 # ServiceLabel: %Digital Twins %Service Attention
 #/<NotInRepo>/          @sourabhguha @inesk-vt
 
