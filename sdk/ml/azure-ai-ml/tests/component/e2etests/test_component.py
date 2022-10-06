@@ -721,7 +721,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
         validation_result = client.components.validate(component)
         assert validation_result.passed is False
-        assert validation_result.messages == {
+        assert validation_result.error_messages == {
             "name": "Missing data for required field.",
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }

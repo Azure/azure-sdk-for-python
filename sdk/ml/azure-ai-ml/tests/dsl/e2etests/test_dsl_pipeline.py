@@ -875,7 +875,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             required_param_with_default=None,
         )
         validate_result = pipeline._validate()
-        assert validate_result.messages == {
+        assert validate_result.error_messages == {
             "inputs.required_param_with_default": "Required input 'required_param_with_default' for pipeline 'pipeline_with_default_optional_parameters' not provided."
         }
 

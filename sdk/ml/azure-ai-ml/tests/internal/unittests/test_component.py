@@ -278,14 +278,14 @@ class TestComponent:
     )
     def test_invalid_environment(self, yaml_path: str, invalid_field: str) -> None:
         component = load_component(source=yaml_path)
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert not validation_result.passed
-        assert validation_result.invalid_fields[0] == f"environment.conda.{invalid_field}"
+        assert f"environment.conda.{invalid_field}" in validation_result.error_messages
 
     def test_environment_duplicate_dependencies_warning(self) -> None:
         yaml_path = "./tests/test_configs/internal/env-duplicate-dependencies/component_spec.yaml"
         component = load_component(source=yaml_path)
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         # pass validate with warning message
         assert validation_result.passed
         expected_warning_message = (
@@ -319,7 +319,7 @@ class TestComponent:
             "./tests/test_configs/internal/component_with_additional_includes/helloworld_additional_includes.yml"
         )
         component: InternalComponent = load_component(source=yaml_path)
-        assert component._customized_validate().passed, component._customized_validate()._to_dict()
+        assert component._validate().passed, component._validate()._to_dict()
         # resolve
         with component._resolve_local_code() as code_path:
             assert code_path.is_dir()
@@ -340,7 +340,7 @@ class TestComponent:
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
         yaml_path = os.path.join("./tests/test_configs/internal/component_with_additional_includes/", yaml_path)
         component: InternalComponent = load_component(source=yaml_path)
-        assert component._customized_validate().passed, component._customized_validate()._to_dict()
+        assert component._validate().passed, component._validate()._to_dict()
         # resolve
         with component._resolve_local_code() as code_path:
             assert code_path.is_dir()
@@ -372,9 +372,9 @@ class TestComponent:
         component = load_component(
             os.path.join("./tests/test_configs/internal/component_with_additional_includes", yaml_path)
         )
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert validation_result.passed is False
-        assert validation_result.messages["*"].startswith(expected_error_msg_prefix), validation_result.messages["*"]
+        assert validation_result.error_messages["*"].startswith(expected_error_msg_prefix)
 
     def test_component_input_types(self) -> None:
         yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
@@ -436,7 +436,7 @@ class TestComponent:
     def test_component_input_list_type(self) -> None:
         yaml_path = "./tests/test_configs/internal/scope-component/component_spec.yaml"
         component: InternalComponent = load_component(yaml_path)
-        assert component._customized_validate().passed is True
+        assert component._validate().passed is True
         input_text_data_type = component._to_rest_object().properties.component_spec["inputs"]["TextData"]["type"]
         # for list type component input, REST object should remain type list for service contract
         assert isinstance(input_text_data_type, list)

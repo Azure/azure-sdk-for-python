@@ -30,7 +30,7 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import (
     try_get_non_arbitrary_attr_for_potential_attr_dict,
 )
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -118,7 +118,7 @@ class PipelineComponent(Component):
                 )
         return jobs
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate pipeline component structure."""
         validation_result = super(PipelineComponent, self)._customized_validate()
 
@@ -224,7 +224,7 @@ class PipelineComponent(Component):
                             optional_binding_in_expression_dict[pipeline_input_name].append(pipeline_input_name)
         return binding_dict, optional_binding_in_expression_dict
 
-    def _validate_binding_inputs(self, node: BaseNode) -> ValidationResult:
+    def _validate_binding_inputs(self, node: BaseNode) -> MutableValidationResult:
         """Validate pipeline binding inputs and return all used pipeline input
         names.
 
@@ -321,7 +321,8 @@ class PipelineComponent(Component):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return PipelineComponentSchema(context=context)
 
-    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
         # jobs validations are done in _customized_validate()
         return ["jobs"]
 

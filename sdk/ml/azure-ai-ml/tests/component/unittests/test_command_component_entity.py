@@ -362,14 +362,14 @@ class TestCommandComponentEntity:
                 {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
             ],
         )
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert validation_result.passed
 
         # user can still overwrite input name to illegal
         component.inputs["COMPONENT_IN_NUMBER"] = Input(description="1", type="number")
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert not validation_result.passed
-        assert validation_result.invalid_fields[0] == "inputs.COMPONENT_IN_NUMBER"
+        assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
     def test_primitive_output(self):
         expected_rest_component = {
