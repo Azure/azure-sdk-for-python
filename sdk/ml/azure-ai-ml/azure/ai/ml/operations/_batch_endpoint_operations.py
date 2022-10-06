@@ -307,7 +307,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 endpoint_name=endpoint_name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
-                cls=BatchJob._from_rest_object,
+                cls=lambda objs: [BatchJob._from_rest_object(obj) for obj in objs],
                 **self._init_kwargs,
             )
 
