@@ -18,9 +18,9 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import RegressionModels
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import StackEnsembleSettings
 from azure.ai.ml._restclient.v2022_10_01_preview.models import TrainingSettings as RestTrainingSettings
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -77,7 +77,8 @@ class TrainingSettings(RestTranslatableMixin):
             enable_model_explainability=self.enable_model_explainability,
             enable_stack_ensemble=self.enable_stack_ensemble,
             enable_vote_ensemble=self.enable_vote_ensemble,
-            stack_ensemble_settings=self.stack_ensemble_settings,
+            stack_ensemble_settings=self.stack_ensemble_settings._to_rest_object(
+            ) if self.stack_ensemble_settings else None,
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
         )
 
@@ -90,7 +91,12 @@ class TrainingSettings(RestTranslatableMixin):
             enable_stack_ensemble=obj.enable_stack_ensemble,
             enable_vote_ensemble=obj.enable_vote_ensemble,
             ensemble_model_download_timeout=from_iso_duration_format_mins(obj.ensemble_model_download_timeout),
-            stack_ensemble_settings=obj.stack_ensemble_settings,
+            stack_ensemble_settings=(
+                StackEnsembleSettings._from_rest_object(
+                    obj.stack_ensemble_settings)
+                if obj.stack_ensemble_settings
+                else None                
+            ),
         )
 
     def __eq__(self, other: object) -> bool:

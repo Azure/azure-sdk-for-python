@@ -36,7 +36,7 @@ class StackEnsembleSettingsSchema(metaclass=PatchedSchemaMeta):
         # Converting it here, as there is no corresponding entity class
         stack_meta_learner_type = data.pop("stack_meta_learner_type")
         stack_meta_learner_type = StackMetaLearnerType[stack_meta_learner_type.upper()]
-        from azure.ai.ml.entities._job.automl.tabular.stack_ensemble_settings import StackEnsembleSettings
+        from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
         return StackEnsembleSettings(stack_meta_learner_type=stack_meta_learner_type, **data)
 
 

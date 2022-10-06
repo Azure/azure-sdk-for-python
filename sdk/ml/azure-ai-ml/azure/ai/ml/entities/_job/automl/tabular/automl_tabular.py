@@ -21,7 +21,7 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
 )
-from azure.ai.ml.entities._job.automl.tabular.stack_ensemble_settings import (
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
     StackEnsembleSettings
 )
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings

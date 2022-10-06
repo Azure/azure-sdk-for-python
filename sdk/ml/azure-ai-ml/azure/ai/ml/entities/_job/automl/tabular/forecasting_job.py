@@ -22,8 +22,8 @@ from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabula
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.tabular.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._util import load_from_dict
 
 
