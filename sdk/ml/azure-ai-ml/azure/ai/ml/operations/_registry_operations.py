@@ -61,7 +61,7 @@ class RegistryOperations:
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
-        if scope.lower == Scope.SUBSCRIPTION:
+        if scope.lower() == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
                 cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
             )
