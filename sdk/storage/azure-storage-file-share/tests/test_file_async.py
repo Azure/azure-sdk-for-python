@@ -5,11 +5,11 @@
 # --------------------------------------------------------------------------
 import base64
 import os
-import requests
 import uuid
 from datetime import datetime, timedelta
 
 import pytest
+import requests
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient
@@ -1022,8 +1022,10 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_update_range_from_file_url_with_oauth(
-            self, storage_account_name, storage_account_key):
+    async def test_update_range_from_file_url_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         source_blob_client = await self._create_source_blob()
         access_token = await self.generate_oauth_token().get_token("https://storage.azure.com/.default")
@@ -2523,10 +2525,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         assert properties is not None
 
     @FileSharePreparer()
-    @recorded_by_proxy_async
     async def test_account_sas_raises_if_sas_already_in_uri(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
 
         with pytest.raises(ValueError):
             ShareFileClient(
