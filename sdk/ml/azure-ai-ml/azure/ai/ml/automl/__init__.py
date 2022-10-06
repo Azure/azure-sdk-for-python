@@ -14,6 +14,7 @@ from azure.ai.ml.entities._job.automl.image import (
 )
 from azure.ai.ml.entities._job.automl.nlp import (
     NlpFeaturizationSettings,
+    NlpFixedParameters,
     NlpLimitSettings,
     NlpSearchSpace,
     NlpSweepSettings,
@@ -87,6 +88,7 @@ __all__ = [
     "ForecastingSettings",
     "TabularLimitSettings",
     "NlpFeaturizationSettings",
+    "NlpFixedParameters",
     "NlpLimitSettings",
     "NlpSweepSettings",
     "NlpSearchSpace",
