@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=R0902
+# pylint: disable=R0902,protected-access,no-member
 
 from typing import List, Union
 
