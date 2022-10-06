@@ -20,7 +20,7 @@ from ._models import (
 )
 from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._models import LocationMode
-from ._error import _process_table_error
+from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
 
@@ -134,7 +134,11 @@ class TableServiceClient(TablesBaseClient):
         try:
             service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
         return service_properties_deserialize(service_props)
 
     @distributed_trace
@@ -167,7 +171,11 @@ class TableServiceClient(TablesBaseClient):
         try:
             self._client.service.set_properties(props, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
 
     @distributed_trace
     def create_table(self, table_name, **kwargs):

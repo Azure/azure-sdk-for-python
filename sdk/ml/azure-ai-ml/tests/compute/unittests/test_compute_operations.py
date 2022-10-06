@@ -6,17 +6,22 @@ import vcr
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, \
+    ManagedIdentityConfiguration
 from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
 def mock_compute_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2021_10_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock
 ) -> ComputeOperations:
-    yield ComputeOperations(operation_scope=mock_workspace_scope, service_client=mock_aml_services_2021_10_01)
+    yield ComputeOperations(
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+        service_client=mock_aml_services_2021_10_01,
+    )
 
 
 class funny:
@@ -86,7 +91,7 @@ class TestComputeOperation:
             identity=IdentityConfiguration(
                 type="UserAssigned",
                 user_assigned_identities=[
-                    UserAssignedIdentity(
+                    ManagedIdentityConfiguration(
                         resource_id="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/MC_banibatch_bani-aks_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omsagent-bani-aks"
                     )
                 ],

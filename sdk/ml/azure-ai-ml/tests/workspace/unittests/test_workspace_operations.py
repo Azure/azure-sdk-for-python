@@ -2,11 +2,13 @@ from typing import Callable
 from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
+from azure.ai.ml._utils.utils import camel_to_snake
 from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.entities import CustomerManagedKey, ManagedServiceIdentity, Workspace, WorkspaceUserAssignedIdentity
+from azure.ai.ml.entities import CustomerManagedKey, Workspace, \
+    IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.polling import LROPoller
 
@@ -46,20 +48,20 @@ class TestWorkspaceOperation:
         mock_workspace_operation._operation.get.assert_called_once()
 
     def test_list_keys(self, mock_workspace_operation: WorkspaceOperations) -> None:
-        mock_workspace_operation.list_keys("random_name")
+        mock_workspace_operation.get_keys("random_name")
         mock_workspace_operation._operation.list_keys.assert_called_once()
 
     def test_begin_sync_keys_no_wait(
         self, mock_workspace_operation: WorkspaceOperations
     ) -> None:
-        mock_workspace_operation.begin_sync_keys(name="random_name", no_wait=True)
+        mock_workspace_operation.begin_sync_keys(name="random_name")
         mock_workspace_operation._operation.begin_resync_keys.assert_called_once()
 
     def test_begin_sync_keys_wait(
         self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
     ) -> None:
         mocker.patch("azure.ai.ml._utils._azureml_polling.polling_wait", return_value=LROPoller)
-        mock_workspace_operation.begin_sync_keys(name="random_name", no_wait=False)
+        mock_workspace_operation.begin_sync_keys(name="random_name")
         mock_workspace_operation._operation.begin_resync_keys.assert_called_once()
 
     def test_begin_create(
@@ -69,7 +71,7 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
-        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
+        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
 
     def test_begin_create_with_resource_group(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture):
@@ -78,7 +80,7 @@ class TestWorkspaceOperation:
             resource_group="another_resource_group",
         )
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
-        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
+        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
 
         def outgoing_call(rg, name):
             assert rg == "another_resource_group"
@@ -96,11 +98,11 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", side_effect=Exception)
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
-        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=None)
-        mock_workspace_operation.begin_create(workspace=Workspace(name="name"), no_wait=True)
+        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
+        mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
 
     def test_begin_create_existing_ws(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture):
-        def outgoing_call(rg, name, params, polling):
+        def outgoing_call(rg, name, params, polling, cls):
             assert name == "name"
             return DEFAULT
 
@@ -119,17 +121,17 @@ class TestWorkspaceOperation:
             public_network_access="Enabled",
             container_registry="foo_conntainer_registry",
             application_insights="foo_application_insights",
-            identity=ManagedServiceIdentity(
-                type=ManagedServiceIdentityType.USER_ASSIGNED,
-                user_assigned_identities={
-                    "resource1": WorkspaceUserAssignedIdentity(),
-                    "resource2": WorkspaceUserAssignedIdentity(),
-                },
+            identity=IdentityConfiguration(
+                type=camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED),
+                user_assigned_identities=[
+                    ManagedIdentityConfiguration(resource_id="resource1"),
+                    ManagedIdentityConfiguration(resource_id="resource2")
+                ],
             ),
             primary_user_assigned_identity="resource2",
         )
 
-        def outgoing_call(rg, name, params, polling):
+        def outgoing_call(rg, name, params, polling, cls):
             assert rg == "test_resource_group"
             assert name == "name"
             assert params.description == "description"
@@ -142,11 +144,12 @@ class TestWorkspaceOperation:
             assert params.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
             assert len(params.identity.user_assigned_identities) == 2
             assert params.primary_user_assigned_identity == "resource2"
-            assert polling is False
+            assert polling is True
+            assert callable(cls)
             return DEFAULT
 
         mock_workspace_operation._operation.begin_update.side_effect = outgoing_call
-        mock_workspace_operation.begin_update(ws, no_wait=True, update_dependent_resources=True)
+        mock_workspace_operation.begin_update(ws, update_dependent_resources=True)
         mock_workspace_operation._operation.begin_update.assert_called()
 
     def test_update_with_empty_property_values(
@@ -155,7 +158,7 @@ class TestWorkspaceOperation:
         ws = Workspace(name="name", description="", display_name="", image_build_compute="")
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=ws)
 
-        def outgoing_call(rg, name, params, polling):
+        def outgoing_call(rg, name, params, polling, cls):
             assert rg == "test_resource_group"
             assert name == "name"
             assert params.description == ""  # empty string is supported for description.
@@ -166,42 +169,43 @@ class TestWorkspaceOperation:
             assert (
                 params.public_network_access is None
             )  # was not set for update, no change on service side for this property.
-            assert polling is False
+            assert polling is True
+            assert callable(cls)
             return DEFAULT
 
         mock_workspace_operation._operation.begin_update.side_effect = outgoing_call
-        mock_workspace_operation.begin_update(ws, no_wait=True)
+        mock_workspace_operation.begin_update(ws)
         mock_workspace_operation._operation.begin_update.assert_called()
 
     def test_delete_no_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations.delete_resource_by_arm_id", return_value=None)
-        mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, no_wait=True)
+        mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
     def test_delete_wait(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations.delete_resource_by_arm_id", return_value=None)
         mocker.patch("azure.ai.ml._utils._azureml_polling.polling_wait", return_value=LROPoller)
-        mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, no_wait=False)
+        mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
     def test_delete_wait_exception(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         patch("azure.ai.ml.operations._workspace_operations.delete_resource_by_arm_id", return_value=None)
         patch("azure.ai.ml._utils._azureml_polling.polling_wait", side_effect=Exception)
         with pytest.raises(Exception):
-            mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, no_wait=False)
+            mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
             mock_workspace_operation._operation.begin_delete.assert_called_once()
 
     def test_begin_diagnose_no_wait(
         self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
     ) -> None:
-        mock_workspace_operation.begin_diagnose(name="random_name", no_wait=True)
+        mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
         mocker.patch("azure.ai.ml._restclient.v2021_10_01.models.DiagnoseRequestProperties", return_value=None)
 
     def test_begin_diagnose_wait(
         self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
     ) -> None:
-        mock_workspace_operation.begin_diagnose(name="random_name", no_wait=False)
+        mock_workspace_operation.begin_diagnose(name="random_name")
         mock_workspace_operation._operation.begin_diagnose.assert_called_once()
         mocker.patch("azure.ai.ml._restclient.v2021_10_01.models.DiagnoseRequestProperties", return_value=None)
 

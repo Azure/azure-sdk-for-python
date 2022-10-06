@@ -381,7 +381,6 @@ class AKS(Compute, AKSSchema):
         super(AKS, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'AKS'  # type: str
-        self.compute_type = 'AKS'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -516,7 +515,6 @@ class AksComputeSecrets(ComputeSecrets, AksComputeSecretsProperties):
         self.user_kube_config = kwargs.get('user_kube_config', None)
         self.admin_kube_config = kwargs.get('admin_kube_config', None)
         self.image_pull_secret_name = kwargs.get('image_pull_secret_name', None)
-        self.compute_type = 'AKS'  # type: str
         self.compute_type = 'AKS'  # type: str
 
 
@@ -821,7 +819,6 @@ class AmlCompute(Compute, AmlComputeSchema):
         """
         super(AmlCompute, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
-        self.compute_type = 'AmlCompute'  # type: str
         self.compute_type = 'AmlCompute'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -2492,13 +2489,7 @@ class AzureBlobDatastore(DatastoreProperties, AzureDatastore):
         self.properties = kwargs.get('properties', None)
         self.tags = kwargs.get('tags', None)
         self.credentials = kwargs['credentials']
-        self.datastore_type = 'AzureBlob'  # type: str
         self.is_default = None
-        self.account_name = kwargs.get('account_name', None)
-        self.container_name = kwargs.get('container_name', None)
-        self.endpoint = kwargs.get('endpoint', None)
-        self.protocol = kwargs.get('protocol', None)
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
 
 
 class AzureDataLakeGen1Datastore(DatastoreProperties, AzureDatastore):
@@ -2591,10 +2582,7 @@ class AzureDataLakeGen1Datastore(DatastoreProperties, AzureDatastore):
         self.properties = kwargs.get('properties', None)
         self.tags = kwargs.get('tags', None)
         self.credentials = kwargs['credentials']
-        self.datastore_type = 'AzureDataLakeGen1'  # type: str
         self.is_default = None
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
-        self.store_name = kwargs['store_name']
 
 
 class AzureDataLakeGen2Datastore(DatastoreProperties, AzureDatastore):
@@ -2706,13 +2694,7 @@ class AzureDataLakeGen2Datastore(DatastoreProperties, AzureDatastore):
         self.properties = kwargs.get('properties', None)
         self.tags = kwargs.get('tags', None)
         self.credentials = kwargs['credentials']
-        self.datastore_type = 'AzureDataLakeGen2'  # type: str
         self.is_default = None
-        self.account_name = kwargs['account_name']
-        self.endpoint = kwargs.get('endpoint', None)
-        self.filesystem = kwargs['filesystem']
-        self.protocol = kwargs.get('protocol', None)
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
 
 
 class AzureFileDatastore(DatastoreProperties, AzureDatastore):
@@ -2826,13 +2808,7 @@ class AzureFileDatastore(DatastoreProperties, AzureDatastore):
         self.properties = kwargs.get('properties', None)
         self.tags = kwargs.get('tags', None)
         self.credentials = kwargs['credentials']
-        self.datastore_type = 'AzureFile'  # type: str
         self.is_default = None
-        self.account_name = kwargs['account_name']
-        self.endpoint = kwargs.get('endpoint', None)
-        self.file_share_name = kwargs['file_share_name']
-        self.protocol = kwargs.get('protocol', None)
-        self.service_data_access_auth_identity = kwargs.get('service_data_access_auth_identity', None)
 
 
 class EarlyTerminationPolicy(msrest.serialization.Model):
@@ -4195,11 +4171,7 @@ class Classification(AutoMLVertical, TableVertical):
         self.training_settings = kwargs.get('training_settings', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'Classification'  # type: str
         self.training_data = kwargs['training_data']
-        self.positive_label = kwargs.get('positive_label', None)
-        self.primary_metric = kwargs.get('primary_metric', None)
-        self.training_settings = kwargs.get('training_settings', None)
 
 
 class TrainingSettings(msrest.serialization.Model):
@@ -5470,7 +5442,6 @@ class ComputeInstance(Compute, ComputeInstanceSchema):
         super(ComputeInstance, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'ComputeInstance'  # type: str
-        self.compute_type = 'ComputeInstance'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -6179,10 +6150,6 @@ class ComputeResource(Resource, ComputeResourceSchema):
         self.name = None
         self.type = None
         self.system_data = None
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
 
 
 class ComputeSchedules(msrest.serialization.Model):
@@ -6663,7 +6630,6 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'custom_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'custom_model'  # type: str
 
 
 class JobOutput(msrest.serialization.Model):
@@ -6755,7 +6721,6 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'custom_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'custom_model'  # type: str
 
 
 class CustomNCrossValidations(NCrossValidations):
@@ -7064,7 +7029,6 @@ class Databricks(Compute, DatabricksSchema):
         super(Databricks, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'Databricks'  # type: str
-        self.compute_type = 'Databricks'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -7131,7 +7095,6 @@ class DatabricksComputeSecrets(ComputeSecrets, DatabricksComputeSecretsPropertie
         """
         super(DatabricksComputeSecrets, self).__init__(**kwargs)
         self.databricks_access_token = kwargs.get('databricks_access_token', None)
-        self.compute_type = 'Databricks'  # type: str
         self.compute_type = 'Databricks'  # type: str
 
 
@@ -7488,7 +7451,6 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
         """
         super(DataLakeAnalytics, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
-        self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -9517,11 +9479,7 @@ class Forecasting(AutoMLVertical, TableVertical):
         self.training_settings = kwargs.get('training_settings', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'Forecasting'  # type: str
         self.training_data = kwargs['training_data']
-        self.forecasting_settings = kwargs.get('forecasting_settings', None)
-        self.primary_metric = kwargs.get('primary_metric', None)
-        self.training_settings = kwargs.get('training_settings', None)
 
 
 class ForecastingSettings(msrest.serialization.Model):
@@ -10057,7 +10015,6 @@ class HDInsight(Compute, HDInsightSchema):
         super(HDInsight, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'HDInsight'  # type: str
-        self.compute_type = 'HDInsight'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -10463,9 +10420,7 @@ from a set of classes - e.g. each image is classified as either an image of a 'c
         self.primary_metric = kwargs.get('primary_metric', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'ImageClassification'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = kwargs.get('primary_metric', None)
 
 
 class ImageClassificationMultilabel(AutoMLVertical, ImageClassificationBase):
@@ -10580,9 +10535,7 @@ from a set of labels - e.g. an image could be labeled with both 'cat' and 'dog'.
         self.primary_metric = kwargs.get('primary_metric', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'ImageClassificationMultilabel'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = kwargs.get('primary_metric', None)
 
 
 class ImageObjectDetectionBase(ImageVertical):
@@ -10762,9 +10715,7 @@ drawing a polygon around each object in the image.
         self.primary_metric = kwargs.get('primary_metric', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'ImageInstanceSegmentation'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = kwargs.get('primary_metric', None)
 
 
 class ImageLimitSettings(msrest.serialization.Model):
@@ -12639,9 +12590,7 @@ bounding box e.g. locate all dogs and cats in an image and draw a bounding box a
         self.primary_metric = kwargs.get('primary_metric', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'ImageObjectDetection'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = kwargs.get('primary_metric', None)
 
 
 class ImageSweepSettings(msrest.serialization.Model):
@@ -13116,8 +13065,6 @@ class KerberosKeytabCredentials(DatastoreCredentials, KerberosCredentials):
         self.kerberos_realm = kwargs['kerberos_realm']
         self.credentials_type = 'KerberosKeytab'  # type: str
         self.secrets = kwargs['secrets']
-        self.credentials_type = 'KerberosKeytab'  # type: str
-        self.secrets = kwargs['secrets']
 
 
 class KerberosKeytabSecrets(DatastoreSecrets):
@@ -13210,8 +13157,6 @@ class KerberosPasswordCredentials(DatastoreCredentials, KerberosCredentials):
         self.kerberos_kdc_address = kwargs['kerberos_kdc_address']
         self.kerberos_principal = kwargs['kerberos_principal']
         self.kerberos_realm = kwargs['kerberos_realm']
-        self.credentials_type = 'KerberosPassword'  # type: str
-        self.secrets = kwargs['secrets']
         self.credentials_type = 'KerberosPassword'  # type: str
         self.secrets = kwargs['secrets']
 
@@ -13353,7 +13298,6 @@ class Kubernetes(Compute, KubernetesSchema):
         """
         super(Kubernetes, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
-        self.compute_type = 'Kubernetes'  # type: str
         self.compute_type = 'Kubernetes'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -14973,7 +14917,6 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'mlflow_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'mlflow_model'  # type: str
 
 
 class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
@@ -15023,7 +14966,6 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'mlflow_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'mlflow_model'  # type: str
 
 
 class MLTableData(DataVersionBaseProperties):
@@ -15141,7 +15083,6 @@ class MLTableJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'mltable'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'mltable'  # type: str
 
 
 class MLTableJobOutput(JobOutput, AssetJobOutput):
@@ -15191,7 +15132,6 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'mltable'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'mltable'  # type: str
 
 
 class ModelContainer(Resource):
@@ -18227,10 +18167,7 @@ class Regression(AutoMLVertical, TableVertical):
         self.training_settings = kwargs.get('training_settings', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'Regression'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = kwargs.get('primary_metric', None)
-        self.training_settings = kwargs.get('training_settings', None)
 
 
 class RegressionTrainingSettings(TrainingSettings):
@@ -21016,9 +20953,7 @@ NLP - Natural Language Processing.
         self.primary_metric = kwargs.get('primary_metric', None)
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'TextClassification'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = kwargs.get('primary_metric', None)
 
 
 class TextClassificationMultilabel(AutoMLVertical, NlpVertical):
@@ -21125,9 +21060,7 @@ NLP - Natural Language Processing.
         self.primary_metric = None
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'TextClassificationMultilabel'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = None
 
 
 class TextNer(AutoMLVertical, NlpVertical):
@@ -21235,9 +21168,7 @@ NLP - Natural Language Processing.
         self.primary_metric = None
         self.log_verbosity = kwargs.get('log_verbosity', None)
         self.target_column_name = kwargs.get('target_column_name', None)
-        self.task_type = 'TextNER'  # type: str
         self.training_data = kwargs['training_data']
-        self.primary_metric = None
 
 
 class TmpfsOptions(msrest.serialization.Model):
@@ -21377,7 +21308,6 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'triton_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'triton_model'  # type: str
 
 
 class TritonModelJobOutput(JobOutput, AssetJobOutput):
@@ -21427,7 +21357,6 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'triton_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'triton_model'  # type: str
 
 
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
@@ -21672,7 +21601,6 @@ class UriFileJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'uri_file'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'uri_file'  # type: str
 
 
 class UriFileJobOutput(JobOutput, AssetJobOutput):
@@ -21722,7 +21650,6 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'uri_file'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'uri_file'  # type: str
 
 
 class UriFolderDataVersion(DataVersionBaseProperties):
@@ -21834,7 +21761,6 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'uri_folder'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'uri_folder'  # type: str
 
 
 class UriFolderJobOutput(JobOutput, AssetJobOutput):
@@ -21884,7 +21810,6 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'uri_folder'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'uri_folder'  # type: str
 
 
 class Usage(msrest.serialization.Model):
@@ -22290,7 +22215,6 @@ class VirtualMachine(Compute, VirtualMachineSchema):
         super(VirtualMachine, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'VirtualMachine'  # type: str
-        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -22447,7 +22371,6 @@ class VirtualMachineSecrets(ComputeSecrets, VirtualMachineSecretsSchema):
         """
         super(VirtualMachineSecrets, self).__init__(**kwargs)
         self.administrator_account = kwargs.get('administrator_account', None)
-        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_type = 'VirtualMachine'  # type: str
 
 

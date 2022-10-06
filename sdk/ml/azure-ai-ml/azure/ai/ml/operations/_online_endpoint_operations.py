@@ -12,13 +12,15 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    EndpointAuthKeys,
-    EndpointAuthToken,
     KeyType,
     RegenerateEndpointKeysRequest,
 )
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -29,6 +31,7 @@ from azure.ai.ml.entities import OnlineDeployment, OnlineEndpoint
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
+from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys, EndpointAuthToken
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -37,7 +40,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
@@ -55,14 +58,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_endpoint_helper: _LocalEndpointHelper,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        super(OnlineEndpointOperations, self).__init__(operation_scope)
-        ops_logger.update_info(kwargs)
+        super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
+        # ops_logger.update_info(kwargs)
         self._online_operation = service_client_02_2022_preview.online_endpoints
         self._online_deployment_operation = service_client_02_2022_preview.online_deployments
         self._all_operations = all_operations
@@ -73,7 +77,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.List", ActivityType.PUBLICAPI)
     def list(self, *, local: bool = False) -> ItemPaged[OnlineEndpoint]:
         """List endpoints of the workspace.
 
@@ -93,7 +97,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.ListKeys", ActivityType.PUBLICAPI)
     def get_keys(self, name: str) -> Union[EndpointAuthKeys, EndpointAuthToken]:
         """Get the auth credentials.
 
@@ -101,12 +105,12 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if cannot get online credentials
         :return: Depending on the auth mode in the endpoint, returns either keys or token
-        :rtype: Union[EndpointAuthKeys, EndpointAuthToken]
+        :rtype: Union[~azure.ai.ml.entities.EndpointAuthKeys, ~azure.ai.ml.entities.EndpointAuthToken]
         """
         return self._get_online_credentials(name=name)
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -117,9 +121,9 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         :param name: Name of the endpoint.
         :type name: str
-        :param local: Flag to indicate whether to interact with endpoints in local Docker environment.
-            Default: False
-        :type local: (bool, optional)
+        :param local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
+        :type local: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: Endpoint object retrieved from the service.
         :rtype: ~azure.ai.ml.entities.OnlineEndpoint
         """
@@ -154,7 +158,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return converted_endpoint
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str = None, *, local: bool = False) -> LROPoller[None]:
         """Delete an Online Endpoint.
 
@@ -162,6 +166,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :type name: str
         :param local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
         :type local: bool
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status if remote, else returns None if local.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
@@ -189,7 +194,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.BeginDeleteOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: OnlineEndpoint, *, local: bool = False) -> LROPoller[OnlineEndpoint]:
         """Create or update an endpoint.
 
@@ -197,6 +202,15 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :type endpoint: ~azure.ai.ml.entities.OnlineEndpoint
         :param local: Whether to interact with the endpoint in local Docker environment. Defaults to False.
         :type local: bool
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineEndpoint cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineEndpoint assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineEndpoint model cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status if remote, else returns None if local.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineEndpoint]
         """
@@ -217,6 +231,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 orchestrators = OperationOrchestrator(
                     operation_container=self._all_operations,
                     operation_scope=self._operation_scope,
+                    operation_config=self._operation_config,
                 )
                 if hasattr(endpoint_resource.properties, "compute"):
                     endpoint_resource.properties.compute = orchestrators.get_asset_arm_id(
@@ -241,7 +256,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.BeginGenerateKeys", ActivityType.PUBLICAPI)
     def begin_regenerate_keys(
         self,
         name: str,
@@ -276,7 +291,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
@@ -293,15 +308,18 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :param request_file: File containing the request payload. This is only valid for online endpoint.
-        :type request_file: (str, optional)
+        :type request_file: Optional[str]
         :param deployment_name: Name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
-        :type deployment_name: (str, optional)
+        :type deployment_name: Optional[str]
         :param input_data: To use a pre-registered data asset, pass str in format
-        :type input_data: (Union[str, Data], optional)
-        :param local: Flag to indicate whether to interact with endpoints in local Docker environment.
-            Default: False.
-        :type local: (bool, optional)
+        :type input_data: Optional[Union[str, Data]]
+        :param local: Indicates whether to interact with endpoints in local Docker environment. Defaults to False.
+        :type local: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
+        :raises ~azure.ai.ml.exceptions.MultipleLocalDeploymentsFoundError: Raised if there are multiple deployments
+            and no deployment_name is specified.
+        :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if local endpoint is None.
         :return: Prediction output for online endpoint.
         :rtype: str
         """
@@ -337,7 +355,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(endpoint.properties.scoring_uri, json=data, headers=headers)
         validate_response(response)
-        return response.text
+        return response.text()
 
     def _get_workspace_location(self) -> str:
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
@@ -356,6 +374,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
                 endpoint_name=name,
+                # pylint: disable=protected-access
+                cls=lambda x, response, z: EndpointAuthKeys._from_rest_object(response),
                 **self._init_kwargs,
             )
 
@@ -363,6 +383,8 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             endpoint_name=name,
+            # pylint: disable=protected-access
+            cls=lambda x, response, z: EndpointAuthToken._from_rest_object(response),
             **self._init_kwargs,
         )
 

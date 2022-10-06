@@ -1,5 +1,28 @@
 # Release History
 
+## 9.0.0 (2022-09-26)
+
+### Features Added
+
+  - Added operation AccountsOperations.begin_renew_credentials
+  - Added operation NetAppResourceOperations.query_region_info
+  - Model AccountEncryption has a new parameter identity
+  - Model AccountEncryption has a new parameter key_vault_properties
+  - Model NetAppAccount has a new parameter disable_showmount
+  - Model NetAppAccount has a new parameter identity
+  - Model NetAppAccountPatch has a new parameter disable_showmount
+  - Model Volume has a new parameter delete_base_snapshot
+  - Model Volume has a new parameter smb_access_based_enumeration
+  - Model Volume has a new parameter smb_non_browsable
+  - Model VolumeGroupVolumeProperties has a new parameter delete_base_snapshot
+  - Model VolumeGroupVolumeProperties has a new parameter smb_access_based_enumeration
+  - Model VolumeGroupVolumeProperties has a new parameter smb_non_browsable
+
+### Breaking Changes
+
+  - Model Vault no longer has parameter location
+  - Operation VolumesOperations.begin_relocate has a new parameter body
+
 ## 8.1.0 (2022-08-02)
 
 **Features**

@@ -57,7 +57,7 @@ class AISuperComputerScalePolicy(BaseProperty):
         self.min_instance_type_count = min_instance_type_count
 
 
-class AISuperComputerConfiguration(BaseProperty):
+class AISuperComputerConfiguration(BaseProperty):  # pylint: disable=too-many-instance-attributes
     """A class to manage AI Super Computer Configuration."""
 
     def __init__(

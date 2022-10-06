@@ -65,13 +65,19 @@ from enum import EnumMeta
 from inspect import Parameter, signature
 from typing import Dict, Iterable, Sequence, Union, overload
 
+from typing_extensions import Literal
+
 from azure.ai.ml._schema.component.input_output import SUPPORTED_PARAM_TYPES
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 
 class _InputOutputBase(DictMixin, RestTranslatableMixin):
     def __init__(
@@ -120,6 +126,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :type optional: bool
     :param description: Description of the input
     :type description: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     _EMPTY = Parameter.empty
@@ -128,7 +136,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        type: str = "uri_folder",
+        type: Literal["uri_folder"] = "uri_folder",
         path: str = None,
         mode: str = None,
         optional: bool = None,
@@ -154,13 +162,15 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type description: str
         :param datastore: The datastore to upload local files to.
         :type datastore: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
     def __init__(
         self,
         *,
-        type: str = "number",
+        type: Literal["number"] = "number",
         default: float = None,
         min: float = None,
         max: float = None,
@@ -182,13 +192,15 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
     def __init__(
         self,
         *,
-        type: str = "integer",
+        type: Literal["integer"] = "integer",
         default: int = None,
         min: int = None,
         max: int = None,
@@ -210,13 +222,15 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
     def __init__(
         self,
         *,
-        type: str = "string",
+        type: Literal["string"] = "string",
         default: str = None,
         optional: bool = None,
         description: str = None,
@@ -232,13 +246,15 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     @overload
     def __init__(
         self,
         *,
-        type: str = "boolean",
+        type: Literal["boolean"] = "boolean",
         default: bool = None,
         optional: bool = None,
         description: str = None,
@@ -254,6 +270,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         :type optional: bool
         :param description: Description of the input
         :type description: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
 
     def __init__(
@@ -543,7 +561,14 @@ class Output(_InputOutputBase):
     """
 
     @overload
-    def __init__(self, type="uri_folder", path=None, mode=None, description=None):
+    def __init__(
+        self,
+        *,
+        type: Literal["uri_folder"] = "uri_folder",
+        path=None,
+        mode=None,
+        description=None,
+    ):
         """Define a uri_folder output.
 
         :param type: The type of the data output. Possible values include:
@@ -561,7 +586,7 @@ class Output(_InputOutputBase):
         """
 
     @overload
-    def __init__(self, type="uri_file", path=None, mode=None, description=None):
+    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
         """Define a uri_file output.
 
         :param type: The type of the data output. Possible values include:
@@ -634,6 +659,8 @@ class EnumInput(Input):
         :type description: str
         :param optional: If the param is optional.
         :type optional: bool
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
         enum_values = self._assert_enum_valid(enum)
         # This is used to parse enum class instead of enum str value if a enum class is provided.

@@ -231,7 +231,7 @@ class ArmStr(Field):
     def _jsonschema_type_mapping(self):
         schema = {
             "type": "string",
-            "pattern": "^azureml:.*",
+            "pattern": self.pattern,
             "arm_type": self.azureml_type,
         }
         if self.name is not None:

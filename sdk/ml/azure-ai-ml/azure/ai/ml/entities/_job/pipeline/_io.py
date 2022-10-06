@@ -9,8 +9,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentJobConstants, IOConstants
@@ -23,15 +23,17 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_dataset_literal_inputs,
 )
 from azure.ai.ml.entities._job.pipeline._attr_dict import K, V
-from azure.ai.ml.entities._job.pipeline._exceptions import (
-    UnexpectedAttributeError,
-    UnexpectedKeywordError,
-    UserErrorException,
-)
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_job_helpers import from_dict_to_rest_io, process_sdk_component_job_io
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UnexpectedAttributeError,
+    UnexpectedKeywordError,
+    UserErrorException,
+    ValidationException,
+)
 
 # pylint: disable=pointless-string-statement
 """Classes in this file converts input & output set by user to pipeline job input & output."""
@@ -339,6 +341,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :type owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully validated.
+            Details will be provided in the error message.
         """
         # Allow inline output binding with string, eg: "component_out_path_1": "${{parents.outputs.job_out_data_1}}"
         if data and not isinstance(data, (Output, str)):
@@ -416,6 +420,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             owner=self._owner,
             meta=self._meta,
         )
+
+    def __hash__(self):
+        return id(self)
 
 
 class PipelineInput(NodeInput, PipelineExpressionMixin):

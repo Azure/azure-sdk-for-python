@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.operations import ComponentOperations
 
@@ -13,11 +13,13 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 @pytest.fixture
 def mock_component_operation(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_02_01_preview: Mock,
     mock_machinelearning_client: Mock,
 ) -> ComponentOperations:
     yield ComponentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_02_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
     )
@@ -60,7 +62,8 @@ class TestComponentOperation:
         )
 
     def test_create_autoincrement(
-        self, mock_component_operation: ComponentOperations) -> None:
+        self, mock_component_operation: ComponentOperations
+    ) -> None:
         task = {
             "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},

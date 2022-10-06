@@ -6,9 +6,9 @@
 import binascii
 import re
 
-from azure.ai.ml._local_endpoints.errors import VSCodeCommandNotFound
 from azure.ai.ml._local_endpoints.utilities.commandline_utility import run_cli_command
 from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_resolver import DevContainerResolver
+from azure.ai.ml.exceptions import VSCodeCommandNotFound
 
 
 class VSCodeClient(object):
@@ -32,6 +32,7 @@ class VSCodeClient(object):
         )
         devcontainer.write_file(build_directory)
         return devcontainer.local_path
+
     # pylint: disable=no-self-use
     def invoke_dev_container(self, devcontainer_path: str, app_path: str) -> None:
         hex_encoded_devcontainer_path = _encode_hex(devcontainer_path)
@@ -45,6 +46,7 @@ class VSCodeClient(object):
         except Exception as e:
             output = e.output.decode(encoding="UTF-8") # pylint: disable=no-member
             raise VSCodeCommandNotFound(output)
+
 
 def _encode_hex(path: str):
     vscode_path = re.sub("\\s+", "", path) # pylint: disable=specify-parameter-names-in-call

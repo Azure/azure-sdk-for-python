@@ -7,11 +7,11 @@
 from marshmallow import fields as flds
 from marshmallow import post_load
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import BlockedTransformers
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BlockedTransformers
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants, AutoMLTransformerParameterKeys
+from azure.ai.ml.constants._job.automl import AutoMLConstants, AutoMLTransformerParameterKeys
 
 
 class ColumnTransformerSchema(metaclass=PatchedSchemaMeta):
@@ -63,7 +63,7 @@ class TableFeaturizationSettingsSchema(FeaturizationSettingsSchema):
             allowed_values=[o.value for o in AutoMLTransformerParameterKeys],
             casing_transform=camel_to_snake,
         ),
-        values=flds.List(NestedField(ColumnTransformerSchema()))
+        values=flds.List(NestedField(ColumnTransformerSchema())),
     )
     enable_dnn_featurization = flds.Bool()
 
