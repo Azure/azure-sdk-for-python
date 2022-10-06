@@ -463,7 +463,7 @@ def build_add_feedback_request(project_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
+class AuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Gets all projects for a user.

@@ -88,6 +88,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         if (
             not skip_script_validation
+            and deployment
+            and deployment.code_configuration
             and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
             and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
         ):

@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_dump, post_load, pre_load
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
@@ -146,12 +146,12 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
 
     @post_dump
     def conversion(self, data, **kwargs):
-        if self.context.get("inside_pipeline", False): # pylint: disable=no-member
+        if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
             # AutoML job inside pipeline does load(dump) instead of calling to_rest_object
             # explicitly for creating the autoRest Object from sdk job.
             # Hence for pipeline job, we explicitly convert Sweep Distribution dict to str after dump in this method.
             # For standalone automl job, same conversion happens in image_classification_job._to_rest_object()
-            from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
                 _convert_sweep_dist_dict_to_str_dict,
             )
 
@@ -160,8 +160,8 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
 
     @pre_load
     def before_make(self, data, **kwargs):
-        if self.context.get("inside_pipeline", False): # pylint: disable=no-member
-            from azure.ai.ml.entities._job.automl.image.image_search_space_utils import _convert_sweep_dist_str_to_dict
+        if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
+            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.
             data = _convert_sweep_dist_str_to_dict(data)
@@ -191,12 +191,12 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
 
     @post_dump
     def conversion(self, data, **kwargs):
-        if self.context.get("inside_pipeline", False): # pylint: disable=no-member
+        if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
             # AutoML job inside pipeline does load(dump) instead of calling to_rest_object
             # explicitly for creating the autoRest Object from sdk job object.
             # Hence for pipeline job, we explicitly convert Sweep Distribution dict to str after dump in this method.
             # For standalone automl job, same conversion happens in image_object_detection_job._to_rest_object()
-            from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
+            from azure.ai.ml.entities._job.automl.search_space_utils import (
                 _convert_sweep_dist_dict_to_str_dict,
             )
 
@@ -205,8 +205,8 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
 
     @pre_load
     def before_make(self, data, **kwargs):
-        if self.context.get("inside_pipeline", False): # pylint: disable=no-member
-            from azure.ai.ml.entities._job.automl.image.image_search_space_utils import _convert_sweep_dist_str_to_dict
+        if self.context.get("inside_pipeline", False):  # pylint: disable=no-member
+            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_str_to_dict
 
             # Converting Sweep Distribution str to Sweep Distribution dict for complying with search_space schema.
             data = _convert_sweep_dist_str_to_dict(data)

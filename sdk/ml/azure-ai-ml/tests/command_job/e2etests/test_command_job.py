@@ -10,7 +10,7 @@ import pytest
 
 from azure.ai.ml import Input, MLClient, command, load_environment, load_job
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import COMMON_RUNTIME_ENV_VAR, LOCAL_COMPUTE_TARGET, TID_FMT, AssetTypes
 from azure.ai.ml.entities._assets._artifacts.data import Data
@@ -131,9 +131,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job_2.compute == "testCompute"
         check_tid_in_url(client, command_job_2)
 
-    @pytest.mark.skip(
-        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
-    )
+    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_builder(self, data_with_2_versions: str, client: MLClient) -> None:
 
@@ -225,6 +223,7 @@ class TestCommandJob(AzureRecordedTestCase):
         client.jobs.stream(job_name)
         assert client.jobs.get(job_name).parameters
 
+    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_with_modified_environment(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")

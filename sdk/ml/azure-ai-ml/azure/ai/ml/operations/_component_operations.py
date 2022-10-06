@@ -31,9 +31,8 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import Component
+from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._validation import ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
