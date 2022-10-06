@@ -116,8 +116,7 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
         try:
             endpoint = load_online_endpoint(endpoint_mir_yaml)
             endpoint.name = mir_endpoint_name
-            endpoint_response = client.online_endpoints.begin_create_or_update(endpoint=endpoint)
-            assert isinstance(endpoint_response, LROPoller[OnlineEndpoint])
+            client.online_endpoints.begin_create_or_update(endpoint=endpoint)
 
             get_obj = client.online_endpoints.get(name=mir_endpoint_name)
             assert get_obj.name == mir_endpoint_name
