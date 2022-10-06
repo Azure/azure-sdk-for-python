@@ -1,4 +1,3 @@
-include _meta.json
 include *.md
 include LICENSE
 include azure/__init__.py

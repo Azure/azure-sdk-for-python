@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
 from azure.ai.ml._utils.utils import dict_eq
 from azure.ai.ml.constants._common import (
@@ -116,7 +117,11 @@ class OnlineEndpoint(Endpoint):
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
         # pylint: disable=protected-access
-        identity = self.identity._to_online_endpoint_rest_object() if self.identity else None
+        identity = (
+            self.identity._to_online_endpoint_rest_object()
+            if self.identity
+            else RestManagedServiceIdentityConfiguration(type="SystemAssigned")
+        )
         validate_endpoint_or_deployment_name(self.name)
         validate_identity_type_defined(self.identity)
         properties = RestOnlineEndpoint(
@@ -440,7 +445,6 @@ class EndpointAuthKeys(RestTranslatableMixin):
         :keyword secondary_key: The secondary key.
         :paramtype secondary_key: str
         """
-        super(EndpointAuthKeys, self).__init__(**kwargs)
         self.primary_key = kwargs.get('primary_key', None)
         self.secondary_key = kwargs.get('secondary_key', None)
 
@@ -485,7 +489,6 @@ class EndpointAuthToken(RestTranslatableMixin):
         :keyword token_type: Access token type.
         :paramtype token_type: str
         """
-        super(EndpointAuthToken, self).__init__(**kwargs)
         self.access_token = kwargs.get('access_token', None)
         self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
         self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)

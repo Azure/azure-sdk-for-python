@@ -24,7 +24,6 @@ USAGE:
 
 
 import os
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 

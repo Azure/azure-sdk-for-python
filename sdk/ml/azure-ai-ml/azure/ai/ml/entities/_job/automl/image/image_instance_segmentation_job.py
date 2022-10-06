@@ -6,12 +6,11 @@
 
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import InstanceSegmentationPrimaryMetrics, JobBase, TaskType
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InstanceSegmentationPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -23,7 +22,6 @@ from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSwe
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
     """Configuration for AutoML Image Instance Segmentation job."""
 
@@ -206,7 +204,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict: # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageInstanceSegmentationSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageInstanceSegmentationNodeSchema
 

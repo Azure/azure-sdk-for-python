@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
-from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
+from ._client import AuthoringClient as AuthoringClientGenerated
 
 POLLING_INTERVAL_DEFAULT = 5
 
@@ -33,7 +33,7 @@ def _authentication_policy(credential, **kwargs):
     return authentication_policy
 
 
-class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated):
+class AuthoringClient(AuthoringClientGenerated):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -70,7 +70,7 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
 
 
 __all__: List[str] = [
-    "QuestionAnsweringAuthoringClient"
+    "AuthoringClient"
 ]  # Add all objects you want publicly available to users at this package level
 
 
