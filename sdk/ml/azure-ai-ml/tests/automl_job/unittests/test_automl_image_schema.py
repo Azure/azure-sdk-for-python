@@ -159,6 +159,8 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
             learning_rate="uniform(0.005,0.05)",
             model_name="choice('vitb16r224','vits16r224')",
             number_of_epochs="choice(15,30)",
+            ams_gradient="choice(True,False)"
+
         ),
         RestImageClassificationSearchSpace(
             learning_rate="uniform(0.005,0.05)",
@@ -166,6 +168,7 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
             training_crop_size="choice(224,256)",
             validation_crop_size="choice(224,256)",
             validation_resize_size="choice(288,320,352)",
+            ams_gradient="False"
         ),
     ]
 
