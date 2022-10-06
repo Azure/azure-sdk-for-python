@@ -39,7 +39,7 @@ from azure.ai.ml.constants._common import (
     LROConfigurations,
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
-from azure.ai.ml.entities import BatchEndpoint
+from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.credentials import TokenCredential
@@ -196,7 +196,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         input: Input = None,  # pylint: disable=redefined-builtin
         params_override=None,
         **kwargs,  # pylint: disable=unused-argument
-    ) -> BatchJobResource:
+    ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
 
         :param endpoint_name: The endpoint name.
@@ -217,7 +217,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The invoked batch deployment job.
-        :rtype: BatchJobResource
+        :rtype: BatchJob
         """
         params_override = params_override or []
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
@@ -283,18 +283,18 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
         validate_response(response)
         batch_job = json.loads(response.text())
-        return BatchJobResource.deserialize(batch_job)
+        return BatchJob._from_rest_object(BatchJobResource.deserialize(batch_job))
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str) -> List[BatchJobResource]:
+    def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs
-        :rtype: list[BatchJobResource]
+        :rtype: ItemPaged[BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
@@ -307,6 +307,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 endpoint_name=endpoint_name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
+                cls=BatchJob._from_rest_object,
                 **self._init_kwargs,
             )
 
