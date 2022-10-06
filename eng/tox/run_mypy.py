@@ -42,11 +42,7 @@ if __name__ == "__main__":
                 "mypy",
                 "--python-version",
                 "3.10",
-                "--no-implicit-optional",
                 "--show-error-codes",
-                "--warn-redundant-casts",
-                "--warn-unused-ignores",
-                "--warn-return-any",
                 "--ignore-missing-imports",
                 os.path.join(args.target_package, "azure"),
                 os.path.join(args.target_package, "samples")
