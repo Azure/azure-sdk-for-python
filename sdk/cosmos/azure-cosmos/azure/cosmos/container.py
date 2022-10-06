@@ -330,6 +330,7 @@ class ContainerProxy(object):
         max_item_count=None,  # type: Optional[int]
         enable_scan_in_query=None,  # type: Optional[bool]
         populate_query_metrics=None,  # type: Optional[bool]
+        correlated_activity_id = None, # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -396,6 +397,8 @@ class ContainerProxy(object):
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+        if correlated_activity_id is not None:
+            feed_options["correlatedActivityId"] = correlated_activity_id
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
