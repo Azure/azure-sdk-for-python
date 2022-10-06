@@ -34,9 +34,9 @@ extends:
     ValidateFormatting: false
     TestProxy: true
     Artifacts:
-      - name: azure-appconfiguration
-        safeName: azureappconfiguration
-      - name: azure-appconfiguration-provider
-        safeName: azureappconfigurationprovider
-      - name: azure-mgmt-appconfiguration
-        safeName: azuremgmtappconfiguration
+    - name: azure-appconfiguration
+      safeName: azureappconfiguration
+    - name: azure-appconfiguration-provider
+      safeName: azureappconfigurationprovider
+    - name: azure-mgmt-appconfiguration
+      safeName: azuremgmtappconfiguration
