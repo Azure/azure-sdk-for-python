@@ -13,9 +13,9 @@
 ## 0.1.0 (In Progress)
 - GA release
 - Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
-- Registry list operation now accepts scope value to allow subscription-only based requests.
 
 ### Features Added
+- Registry list operation now accepts scope value to allow subscription-only based requests.
 
 ### Breaking Changes
 - OnlineDeploymentOperations.delete has been renamed to begin_delete.
