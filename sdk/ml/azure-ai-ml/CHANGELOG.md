@@ -1,6 +1,35 @@
 # Release History
 
-## 0.1.0 (Unreleased)
+## 0.2.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 0.1.0 (In Progress)
+- GA release
+- Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
+
+### Features Added
+
+### Breaking Changes
+- OnlineDeploymentOperations.delete has been renamed to begin_delete.
+- Datastore credentials are switched to use unified credential configuration classes.
+- UserAssignedIdentity is replaced by ManagedIdentityConfiguration
+- Endpoint and Job use unified identity classes.
+- Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
+
+### Bugs Fixed
+
+### Other Changes
+ - Switched Compute operations to use Oct preview API version.
+
+
+## 0.1.0b8 (In Progress)
 
 ### Features Added
  - Support passing JobService as argument to Command()
@@ -8,18 +37,14 @@
  - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
  - Support `month_days` in `RecurrencePattern` when using `RecurrenceSchedule`.
  - Support `ml_client.schedules.list` with `list_view_type`, default to `ENABLED_ONLY`.
+ - Add support for model sweeping and hyperparameter tuning in AutoML NLP jobs.
+ - Added `ml_client.jobs.show_services()` operation.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
 - Deprecated parameter path has been removed from load and dump methods.
 - JobOperations.cancel() is renamed to JobOperations.begin_cancel() and it returns LROPoller
 - Workspace.list_keys renamed to Workspace.get_keys.
-- OnlineDeploymentOperations.delete has been renamed to begin_attach.
-- Datastore credentials are switched to use unified credential configuration classes.
-- UserAssignedIdentity is replaced by ManagedIdentityConfiguration
-- Job using unified identity classes.
-- Endpoint uses unified identity classes.
-- Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
@@ -41,7 +66,7 @@
  - Enable using @dsl.pipeline without brackets when no additional parameters.
  - Expose Azure subscription Id and resource group name from MLClient objects.
  - Added Idle Shutdown support for Compute Instances, allowing instances to shutdown after a set period of inactivity.
- - Online Deployment Data Collection for eventhub and data storage will be supported. 
+ - Online Deployment Data Collection for eventhub and data storage will be supported.
  - Syntax validation on scoring scripts of Batch Deployment and Online Deployment will prevent the user from submitting bad deployments.
 
 ### Breaking Changes
