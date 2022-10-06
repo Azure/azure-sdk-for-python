@@ -8,7 +8,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
