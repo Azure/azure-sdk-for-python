@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-from typing import Optional, Union
-
-from azure.ai.ml import Input
+# pylint: disable=R0902,too-many-locals
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
