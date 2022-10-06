@@ -744,30 +744,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Communication %Service Attention
 #/<NotInRepo>/          @acsdevx-msft
 
-# ServiceLabel: %Communication - Chat %Service Attention
-/sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
-
-# ServiceLabel: %Communication - Email %Service Attention
-/sdk/communication/azure-communication-email/                        @yogeshmo
-
-# ServiceLabel: %Communication - Job Router %Service Attention
-/sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi
-
-# ServiceLabel: %Communication - Phone Numbers %Service Attention
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
-
-# ServiceLabel: %Communication - Rooms %Service Attention
-/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
-
-# ServiceLabel: %Communication - SMS %Service Attention
-/sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
-
-# ServiceLabel: %Communication - Identity %Service Attention
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
-
-# ServiceLabel: %Communication - NetworkTraversal %Service Attention
-/sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
-
 # ServiceLabel: %ML-AutoML %Service Attention
 #/<NotInRepo>/          @Aniththa
 
