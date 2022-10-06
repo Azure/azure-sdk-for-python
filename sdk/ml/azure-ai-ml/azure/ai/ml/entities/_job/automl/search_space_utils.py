@@ -16,6 +16,7 @@ from azure.ai.ml._schema._sweep.search_space import (
     RandintSchema,
     UniformSchema,
 )
+from azure.ai.ml._utils.utils import float_to_str
 from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._job.sweep.search_space import (
     Choice,
@@ -40,8 +41,11 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, SweepDistribution]) -> str:
+    if isinstance(sweep_distribution, float):
+        # Float requires some special handling for small values that get auto-represented with scientific notation.
+        return float_to_str(sweep_distribution)
     if not isinstance(sweep_distribution, SweepDistribution):
-        # Convert [bool, int, float, str] types to str
+        # Convert [bool, float, str] types to str
         return str(sweep_distribution)
 
     rest_object = sweep_distribution._to_rest_object()
@@ -88,11 +92,16 @@ def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, Swe
         for value in rest_object[1][0]:
             if isinstance(value, str):
                 sweep_distribution_args.append("'" + value + "'")
+            elif isinstance(value, float):
+                sweep_distribution_args.append(float_to_str(value))
             else:
                 sweep_distribution_args.append(str(value))
     else:
         for value in rest_object[1]:
-            sweep_distribution_args.append(str(value))
+            if isinstance(value, float):
+                sweep_distribution_args.append(float_to_str(value))
+            else:
+                sweep_distribution_args.append(str(value))
 
     sweep_distribution_str = sweep_distribution_type + "("
     sweep_distribution_str += ",".join(sweep_distribution_args)
