@@ -39,7 +39,7 @@ az appconfig kv set-keyvault --name <config-store-name> --key secret --secret-id
 Install the Azure App Configuration Provider client library for Python with pip:
 
 ```commandline
-pip install provider
+pip install azure.appconfiguration.provider
 ```
 
 ## Contents

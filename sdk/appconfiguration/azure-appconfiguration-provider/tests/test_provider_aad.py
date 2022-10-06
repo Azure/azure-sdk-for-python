@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfigurationprovider import (
+from azure.appconfiguration.provider import (
     AzureAppConfigurationProvider,
     SettingSelector
 )
