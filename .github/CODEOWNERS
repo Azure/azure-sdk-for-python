@@ -134,8 +134,6 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
-# ServiceLabel: %Device Update for IoT Hub %Service Attention
-/sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @lmazuel @rakshith91
