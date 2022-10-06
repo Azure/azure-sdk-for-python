@@ -1,14 +1,15 @@
 import pytest
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 import personalizer_helpers_async
 
 import personalizer_helpers
 
 
-class TestMultiSlotEventAsync(AzureTestCase):
+class TestMultiSlotEventAsync(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_multi_slot_reward(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
@@ -17,7 +18,7 @@ class TestMultiSlotEventAsync(AzureTestCase):
         await client.multi_slot_events.reward(event_id, {"reward": [{"slotId": "myslotid", "value": 1.0}]})
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_multi_slot_activate(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')

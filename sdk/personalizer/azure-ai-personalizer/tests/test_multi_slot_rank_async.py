@@ -1,14 +1,15 @@
 import pytest
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 import personalizer_helpers_async
 
 import personalizer_helpers
 
 
-class TestMultiSlotRankAsync(AzureTestCase):
+class TestMultiSlotRankAsync(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
@@ -23,7 +24,7 @@ class TestMultiSlotRankAsync(AzureTestCase):
         assert slots[1]['rewardActionId'] == "SportsArticle"
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')

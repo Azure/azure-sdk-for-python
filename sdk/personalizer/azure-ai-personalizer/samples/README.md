@@ -4,7 +4,7 @@ languages:
   - python
 products:
   - azure
-  - azure-ai-personalizer
+  - azure-personalizer
 ---
 
 # Samples for Azure Personalizer client library for Python

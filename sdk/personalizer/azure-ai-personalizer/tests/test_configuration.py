@@ -1,4 +1,4 @@
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 import personalizer_helpers
 import time
 
@@ -16,9 +16,10 @@ def policy_equals(actual, expected):
     assert actual.get('arguments') == expected.get('arguments')
 
 
-class TestConfiguration(AzureTestCase):
+class TestConfiguration(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
+    @recorded_by_proxy
     def test_update_configuration(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
@@ -40,6 +41,7 @@ class TestConfiguration(AzureTestCase):
         configuration_equals(new_configuration, configuration)
 
     @personalizer_helpers.PersonalizerPreparer()
+    @recorded_by_proxy
     def test_update_policy(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
@@ -55,6 +57,7 @@ class TestConfiguration(AzureTestCase):
         policy_equals(new_policy, policy)
 
     @personalizer_helpers.PersonalizerPreparer()
+    @recorded_by_proxy
     def test_reset_policy(self, **kwargs):
         default_policy = {
             "name": "app1",

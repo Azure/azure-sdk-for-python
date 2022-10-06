@@ -1,10 +1,11 @@
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 import personalizer_helpers
 
 
-class TestMultiSlotRank(AzureTestCase):
+class TestMultiSlotRank(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
+    @recorded_by_proxy
     def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
@@ -19,6 +20,7 @@ class TestMultiSlotRank(AzureTestCase):
         assert slots[1]['rewardActionId'] == "SportsArticle"
 
     @personalizer_helpers.PersonalizerPreparer()
+    @recorded_by_proxy
     def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')

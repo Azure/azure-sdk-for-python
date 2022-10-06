@@ -1,14 +1,15 @@
 import pytest
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 import personalizer_helpers
 import personalizer_helpers_async
 
 
-class TestModelAsync(AzureTestCase):
+class TestModelAsync(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
     @pytest.mark.skip('Get model is returning bad request')
+    @recorded_by_proxy_async
     async def test_model_import_export(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')

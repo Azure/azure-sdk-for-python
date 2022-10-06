@@ -1,5 +1,6 @@
 import pytest
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 import personalizer_helpers_async
 import asyncio
 
@@ -18,10 +19,10 @@ def policy_equals(actual, expected):
     assert actual.get('arguments') == expected.get('arguments')
 
 
-class TestConfigurationAsync(AzureTestCase):
+class TestConfigurationAsync(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_update_configuration(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
@@ -43,7 +44,7 @@ class TestConfigurationAsync(AzureTestCase):
         configuration_equals(new_configuration, configuration)
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_update_policy(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
@@ -59,7 +60,7 @@ class TestConfigurationAsync(AzureTestCase):
         policy_equals(new_policy, policy)
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_reset_policy(self, **kwargs):
         default_policy = {
             "name": "app1",

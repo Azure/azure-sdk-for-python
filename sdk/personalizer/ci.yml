@@ -29,6 +29,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: personalizer
+    TestProxy: true
     ValidateFormatting: true
     Artifacts:
     - name: azure-ai-personalizer

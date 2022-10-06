@@ -1,6 +1,7 @@
 
 import pytest
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 import personalizer_helpers_async
 import asyncio
 from datetime import date
@@ -9,11 +10,11 @@ import uuid
 import personalizer_helpers
 
 
-class TestEvaluationsAsync(AzureTestCase):
+class TestEvaluationsAsync(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
     @pytest.mark.skip('Get evaluation api is currently failing')
+    @recorded_by_proxy_async
     async def test_run_evaluation(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
@@ -40,7 +41,7 @@ class TestEvaluationsAsync(AzureTestCase):
         await client.evaluations.delete(evaluation_id)
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.asyncio
+    @recorded_by_proxy_async
     async def test_list_evaluations(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')

@@ -12,7 +12,11 @@ DESCRIPTION:
     This sample demos sending a rank and reward call to personalizer for multi-slot configuration.
 USAGE: python multi_slot_rank_actions_and_reward_events.py
 """
-from util import get_personalizer_client
+
+import os
+import sys
+from azure.ai.personalizer import PersonalizerClient
+from azure.core.credentials import AzureKeyCredential
 
 
 def main():
@@ -65,6 +69,28 @@ def main():
         rank_response.get("eventId"),
         {"reward": [{"slotId": "Main Article", "value": 1.0}]})
     print("Completed sending reward response")
+
+
+def get_personalizer_client():
+    endpoint = get_endpoint()
+    api_key = get_api_key()
+    return PersonalizerClient(endpoint, AzureKeyCredential(api_key))
+
+
+def get_endpoint():
+    try:
+        return os.environ['PERSONALIZER_ENDPOINT']
+    except KeyError:
+        print("PERSONALIZER_ENDPOINT must be set.")
+        sys.exit(1)
+
+
+def get_api_key():
+    try:
+        return os.environ['PERSONALIZER_API_KEY']
+    except KeyError:
+        print("PERSONALIZER_API_KEY must be set.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
