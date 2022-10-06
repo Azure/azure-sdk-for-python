@@ -54,7 +54,7 @@ from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineIOMixi
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 
 module_logger = logging.getLogger(__name__)
@@ -223,7 +223,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
         return PipelineJobSchema(context=context)
 
-    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
         # jobs validations are done in _customized_validate()
         return ["component", "jobs"]
 
@@ -241,7 +242,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         validation_result.merge_with(self.component._validate_compute_is_set())
         return validation_result
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate that all provided inputs and parameters are valid for
         current pipeline and components in it."""
         validation_result = super(PipelineJob, self)._customized_validate()
@@ -294,7 +295,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 )
         return validation_result
 
-    def _validate_init_finalize_job(self) -> ValidationResult:
+    def _validate_init_finalize_job(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         # subgraph (PipelineComponent) should not have on_init/on_finalize set
         for job_name, job in self.jobs.items():
