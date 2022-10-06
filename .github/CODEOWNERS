@@ -519,9 +519,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Managed Services %Service Attention
 #/<NotInRepo>/          @Lighthouse-Azure
 
-# ServiceLabel: %Maps %Service Attention
-/sdk/maps/              @alextts627
-
 # ServiceLabel: %MariaDB %Service Attention
 #/<NotInRepo>/          @ambhatna @savjani
 
