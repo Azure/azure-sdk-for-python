@@ -11,6 +11,8 @@
 ### Other Changes
 
 ## 0.1.0 (In Progress)
+- GA release
+- Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
 ### Features Added
 
@@ -35,6 +37,8 @@
  - Added a `show_progress` parameter to MLClient for enable/disable progress bars of long running operations.
  - Support `month_days` in `RecurrencePattern` when using `RecurrenceSchedule`.
  - Support `ml_client.schedules.list` with `list_view_type`, default to `ENABLED_ONLY`.
+ - Add support for model sweeping and hyperparameter tuning in AutoML NLP jobs.
+ - Added `ml_client.jobs.show_services()` operation.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.

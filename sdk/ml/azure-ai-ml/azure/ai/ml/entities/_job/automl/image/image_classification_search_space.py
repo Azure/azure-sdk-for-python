@@ -7,7 +7,7 @@
 from typing import Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageModelDistributionSettingsClassification
-from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
+from azure.ai.ml.entities._job.automl.search_space_utils import (
     _convert_from_rest_object,
     _convert_to_rest_object,
 )
