@@ -93,6 +93,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
 
+# PRLabel: %Load Testing
 /sdk/loadtestservice/azure-developer-loadtesting                     @msyyc @iscai-msft
 
 # PRLabel: %Monitor - LogAnalytics
