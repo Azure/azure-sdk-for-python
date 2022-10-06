@@ -21,7 +21,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def search_address():
-    # [START search_address]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -30,7 +29,6 @@ def search_address():
     result = maps_search_client.search_address(query="15127 NE 24th Street, Redmond, WA 98052")
 
     print(result.results[0].address)
-    # [END search_address]
 
 if __name__ == '__main__':
     search_address()

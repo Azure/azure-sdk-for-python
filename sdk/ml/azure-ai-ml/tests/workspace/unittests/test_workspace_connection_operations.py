@@ -5,9 +5,9 @@ import pytest
 
 from azure.ai.ml import load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.entities import WorkspaceConnection
-from azure.ai.ml.entities._workspace.connections.credentials import PatTokenCredentials
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.entities import WorkspaceConnection, PatTokenConfiguration
 from azure.ai.ml.operations import WorkspaceConnectionsOperations
 
 
@@ -19,12 +19,14 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_workspace_connection_operation(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_01_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> WorkspaceConnectionsOperations:
     yield WorkspaceConnectionsOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_01_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
@@ -49,7 +51,7 @@ class TestWorkspaceConnectionsOperation:
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
             type=ConnectionCategory.PYTHON_FEED,
-            credentials=PatTokenCredentials(pat="dummy_pat"),
+            credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
         )
         mock_workspace_connection_operation.get("random_name")
@@ -63,14 +65,15 @@ class TestWorkspaceConnectionsOperation:
     ):
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
-            type=ConnectionCategory.PYTHON_FEED,
-            credentials=PatTokenCredentials(pat="dummy_pat"),
+            type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
+            credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
             metadata=None,
         )
         workspace_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
         )
+
         mock_workspace_connection_operation.create_or_update(workspace_connection=workspace_connection)
         mock_workspace_connection_operation._operation.create.assert_called_once()
 

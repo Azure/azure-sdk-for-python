@@ -6,7 +6,7 @@ from collections import deque
 from typing import Dict, Union
 
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.exceptions import UserErrorException
 
 module_logger = logging.getLogger(__name__)
 

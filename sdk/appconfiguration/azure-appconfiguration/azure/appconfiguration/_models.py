@@ -4,7 +4,7 @@
 # ------------------------------------
 import json
 from typing import Any, Union
-from msrest.serialization import Model
+from ._generated._serialization import Model
 from ._generated.models import KeyValue
 
 try:

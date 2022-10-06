@@ -6,11 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, cast
 from ._models import (
     MetadataFilter as MetadataFilterGenerated,
     AnswersFromTextOptions as AnswersFromTextOptionsGenerated,
     TextDocument,
+    JSON
 )
 
 
@@ -34,7 +35,8 @@ class MetadataFilter(MetadataFilterGenerated):
          "AND", "OR".
         :paramtype logical_operation: str
         """
-        super().__init__(metadata=metadata, logical_operation=logical_operation, **kwargs)
+        # pylint:disable=useless-super-delegation
+        super().__init__(metadata=cast(Optional[List[JSON]], metadata), logical_operation=logical_operation, **kwargs)
 
 
 class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
@@ -65,7 +67,9 @@ class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
          default.
         :paramtype language: str
         """
-        super().__init__(question=question, text_documents=text_documents, language=language, **kwargs)
+        super().__init__(
+            question=question, text_documents=cast(List[TextDocument], text_documents), language=language, **kwargs
+        )
         self.string_index_type = "UnicodeCodePoint"
         self._attribute_map.update({"string_index_type": {"key": "stringIndexType", "type": "str"}})
 

@@ -7,19 +7,18 @@
 import time
 import types
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Union
+from typing import Callable, Dict, Iterable, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import (
-    AML_INTERNAL_LOGGER_NAMESPACE,
-    ActivityType,
-    monitor_with_activity,
-    monitor_with_telemetry_mixin,
+from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
@@ -46,7 +45,7 @@ from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):
@@ -60,13 +59,14 @@ class ComponentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Dict,
     ):
-        super(ComponentOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        super(ComponentOperations, self).__init__(operation_scope, operation_config)
+        # if "app_insights_handler" in kwargs:
+        #     logger.addHandler(kwargs.pop("app_insights_handler"))
         self._version_operation = service_client.component_versions
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
@@ -74,7 +74,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
-        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope)
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -93,7 +93,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
-    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,
@@ -147,16 +147,20 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Component:
+    # @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
         :param name: Name of the code component.
         :type name: str
         :param version: Version of the component.
-        :type version: str
+        :type version: Optional[str]
         :param label: Label of the component. (mutually exclusive with version)
-        :type label: str
+        :type label: Optional[str]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully
+            identified and retrieved. Details will be provided in the error message.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -199,7 +203,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
     # pylint: disable=no-self-use
     def validate(
         self,
@@ -218,7 +222,7 @@ class ComponentOperations(_ScopeDependentOperations):
         """
         return self._validate(component, raise_on_failure=raise_on_failure)
 
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
+    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
@@ -237,12 +241,12 @@ class ComponentOperations(_ScopeDependentOperations):
         result.resolve_location_for_diagnostics(component._source_path)
         return result
 
-    @monitor_with_telemetry_mixin(
-        logger,
-        "Component.CreateOrUpdate",
-        ActivityType.PUBLICAPI,
-        extra_keys=["is_anonymous"],
-    )
+    # @monitor_with_telemetry_mixin(
+    #     logger,
+    #     "Component.CreateOrUpdate",
+    #     ActivityType.PUBLICAPI,
+    #     extra_keys=["is_anonymous"],
+    # )
     def create_or_update(
         self, component: Union[Component, types.FunctionType], version=None, *, skip_validation: bool = False, **kwargs
     ) -> Component:
@@ -256,6 +260,18 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param skip_validation: whether to skip validation before creating/updating the component
         :type skip_validation: bool
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ComponentException: Raised if Component type is unsupported.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Component model cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -336,7 +352,7 @@ class ComponentOperations(_ScopeDependentOperations):
             self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, self._orchestrators.resolve_azureml_id)
         return component
 
-    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str, version: str = None, label: str = None) -> None:
         """Archive a component.
 
@@ -357,7 +373,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str, version: str = None, label: str = None) -> None:
         """Restore an archived component.
 
@@ -418,7 +434,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        get_arm_id_and_fill_back = OperationOrchestrator(self._all_operations, self._operation_scope).get_asset_arm_id
+        get_arm_id_and_fill_back = OperationOrchestrator(
+            self._all_operations, self._operation_scope, self._operation_config
+        ).get_asset_arm_id
 
         # resolve component's code
         _try_resolve_code_for_component(component=component, get_arm_id_and_fill_back=get_arm_id_and_fill_back)
@@ -462,7 +480,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
-        from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._builders import BaseNode
         from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
