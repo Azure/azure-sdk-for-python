@@ -95,7 +95,7 @@ class TrainingSettings(RestTranslatableMixin):
                 StackEnsembleSettings._from_rest_object(
                     obj.stack_ensemble_settings)
                 if obj.stack_ensemble_settings
-                else None                
+                else None
             ),
         )
 
