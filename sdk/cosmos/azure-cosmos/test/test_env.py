@@ -72,7 +72,7 @@ class EnvTest(unittest.TestCase):
 
     def test_insert(self):
         # create a document using the document definition
-        d = {'id': '1',
+        d = {'id': '2',
                  'name': 'sample document',
                  'spam': 'eggs',
                  'cnt': '1',
