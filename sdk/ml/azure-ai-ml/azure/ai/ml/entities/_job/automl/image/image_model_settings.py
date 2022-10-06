@@ -622,7 +622,7 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
      Must be a positive integer. Note: training run may get into CUDA OOM if the size is too big.
      Note: This settings is not supported for the 'yolov5' algorithm.
     :type min_size: int
-    :param model_size: Model size. Must be 'small', 'medium', 'large', or 'xlarge'.
+    :param model_size: Model size. Must be 'small', 'medium', 'large'.
      Note: training run may get into CUDA OOM if the model size is too big.
      Note: This settings is only supported for the 'yolov5' algorithm. Possible values include:
      "None", "Small", "Medium", "Large", "ExtraLarge".

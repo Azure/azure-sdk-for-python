@@ -38,8 +38,8 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelDistributionSettingsObjectDetection as RestImageObjectDetectionSearchSpace,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
-    ImageModelSettingsClassification,
-    ImageModelSettingsObjectDetection,
+    ImageModelSettingsClassification as RestImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageObjectDetection as RestImageObjectDetection,
@@ -68,6 +68,8 @@ from azure.ai.ml.entities._job.automl.image import (
     image_classification_job,
     image_instance_segmentation_job,
     image_object_detection_job,
+    ImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection,
 )
 
 
@@ -130,8 +132,8 @@ def expected_image_sweep_settings() -> RestImageSweepSettings:
 
 
 @pytest.fixture
-def expected_image_model_settings_classification() -> ImageModelSettingsClassification:
-    return ImageModelSettingsClassification(
+def expected_image_model_settings_classification() -> RestImageModelSettingsClassification:
+    return RestImageModelSettingsClassification(
         checkpoint_frequency=1,
         early_stopping=True,
         early_stopping_delay=2,
@@ -141,8 +143,8 @@ def expected_image_model_settings_classification() -> ImageModelSettingsClassifi
 
 
 @pytest.fixture
-def expected_image_model_settings_object_detection() -> ImageModelSettingsObjectDetection:
-    return ImageModelSettingsObjectDetection(
+def expected_image_model_settings_object_detection() -> RestImageModelSettingsObjectDetection:
+    return RestImageModelSettingsObjectDetection(
         checkpoint_frequency=1,
         early_stopping=True,
         early_stopping_delay=2,
@@ -210,7 +212,7 @@ def expected_image_classification_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettingsClassification,
+    expected_image_model_settings_classification: RestImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
@@ -240,7 +242,7 @@ def expected_image_classification_multilabel_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettingsClassification,
+    expected_image_model_settings_classification: RestImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
@@ -270,7 +272,7 @@ def expected_image_object_detection_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
+    expected_image_model_settings_object_detection: RestImageModelSettingsObjectDetection,
     expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
@@ -300,7 +302,7 @@ def expected_image_instance_segmentation_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
+    expected_image_model_settings_object_detection: RestImageModelSettingsObjectDetection,
     expected_image_instance_segmentation_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
