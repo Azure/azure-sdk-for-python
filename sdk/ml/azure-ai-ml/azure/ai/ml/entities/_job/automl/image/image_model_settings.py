@@ -29,8 +29,6 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
     :type advanced_settings: str
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :type ams_gradient: bool
-    :param augmentations: Settings for using Augmentations.
-    :type augmentations: str
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
     :type beta1: float
@@ -39,8 +37,6 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
     :type beta2: float
     :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
     :type checkpoint_frequency: int
-    :param checkpoint_model: The pretrained checkpoint model for incremental training.
-    :type checkpoint_model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
     :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
      incremental training.
     :type checkpoint_run_id: str
@@ -120,11 +116,9 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
         *,
         advanced_settings: str = None,
         ams_gradient: bool = None,
-        augmentations: str = None,
         beta1: float = None,
         beta2: float = None,
         checkpoint_frequency: int = None,
-        checkpoint_model: Input = None,
         checkpoint_run_id: str = None,
         distributed: bool = None,
         early_stopping: bool = None,
@@ -153,11 +147,9 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
     ):
         self.advanced_settings = advanced_settings
         self.ams_gradient = ams_gradient
-        self.augmentations = augmentations
         self.beta1 = beta1
         self.beta2 = beta2
         self.checkpoint_frequency = checkpoint_frequency
-        self.checkpoint_model = checkpoint_model
         self.checkpoint_run_id = checkpoint_run_id
         self.distributed = distributed
         self.early_stopping = early_stopping
@@ -191,11 +183,9 @@ class ImageModelDistributionSettings(RestTranslatableMixin):
         return (
             self.advanced_settings == other.advanced_settings
             and self.ams_gradient == other.ams_gradient
-            and self.augmentations == other.augmentations
             and self.beta1 == other.beta1
             and self.beta2 == other.beta2
             and self.checkpoint_frequency == other.checkpoint_frequency
-            and self.checkpoint_model == other.checkpoint_model
             and self.checkpoint_run_id == other.checkpoint_run_id
             and self.distributed == other.distributed
             and self.early_stopping == other.early_stopping
@@ -232,8 +222,6 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
     :type advanced_settings: str
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :type ams_gradient: bool
-    :param augmentations: Settings for using Augmentations.
-    :type augmentations: str
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
     :type beta1: float
@@ -242,8 +230,6 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
     :type beta2: float
     :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
     :type checkpoint_frequency: int
-    :param checkpoint_model: The pretrained checkpoint model for incremental training.
-    :type checkpoint_model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
     :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
      incremental training.
     :type checkpoint_run_id: str
@@ -336,11 +322,9 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
         *,
         advanced_settings: str = None,
         ams_gradient: bool = None,
-        augmentations: str = None,
         beta1: float = None,
         beta2: float = None,
         checkpoint_frequency: int = None,
-        checkpoint_model: Input = None,
         checkpoint_run_id: str = None,
         distributed: bool = None,
         early_stopping: bool = None,
@@ -375,11 +359,9 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
         super(ImageModelSettingsClassification, self).__init__(
             advanced_settings=advanced_settings,
             ams_gradient=ams_gradient,
-            augmentations=augmentations,
             beta1=beta1,
             beta2=beta2,
             checkpoint_frequency=checkpoint_frequency,
-            checkpoint_model=checkpoint_model,
             checkpoint_run_id=checkpoint_run_id,
             distributed=distributed,
             early_stopping=early_stopping,
@@ -416,11 +398,9 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
         return RestImageModelSettingsClassification(
             advanced_settings=self.advanced_settings,
             ams_gradient=self.ams_gradient,
-            augmentations=self.augmentations,
             beta1=self.beta1,
             beta2=self.beta2,
             checkpoint_frequency=self.checkpoint_frequency,
-            checkpoint_model=self.checkpoint_model,
             checkpoint_run_id=self.checkpoint_run_id,
             distributed=self.distributed,
             early_stopping=self.early_stopping,
@@ -459,11 +439,9 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
         return cls(
             advanced_settings=obj.advanced_settings,
             ams_gradient=obj.ams_gradient,
-            augmentations=obj.augmentations,
             beta1=obj.beta1,
             beta2=obj.beta2,
             checkpoint_frequency=obj.checkpoint_frequency,
-            checkpoint_model=obj.checkpoint_model,
             checkpoint_run_id=obj.checkpoint_run_id,
             distributed=obj.distributed,
             early_stopping=obj.early_stopping,
@@ -518,8 +496,6 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
     :type advanced_settings: str
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :type ams_gradient: bool
-    :param augmentations: Settings for using Augmentations.
-    :type augmentations: str
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the range
      [0, 1].
     :type beta1: float
@@ -528,8 +504,6 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
     :type beta2: float
     :param checkpoint_frequency: Frequency to store model checkpoints. Must be a positive integer.
     :type checkpoint_frequency: int
-    :param checkpoint_model: The pretrained checkpoint model for incremental training.
-    :type checkpoint_model: ~azure.mgmt.machinelearningservices.models.MLFlowModelJobInput
     :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
      incremental training.
     :type checkpoint_run_id: str
@@ -662,11 +636,9 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         *,
         advanced_settings: str = None,
         ams_gradient: bool = None,
-        augmentations: str = None,
         beta1: float = None,
         beta2: float = None,
         checkpoint_frequency: int = None,
-        checkpoint_model: Input = None,
         checkpoint_run_id: str = None,
         distributed: bool = None,
         early_stopping: bool = None,
@@ -710,11 +682,9 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         super(ImageModelSettingsObjectDetection, self).__init__(
             advanced_settings=advanced_settings,
             ams_gradient=ams_gradient,
-            augmentations=augmentations,
             beta1=beta1,
             beta2=beta2,
             checkpoint_frequency=checkpoint_frequency,
-            checkpoint_model=checkpoint_model,
             checkpoint_run_id=checkpoint_run_id,
             distributed=distributed,
             early_stopping=early_stopping,
@@ -760,11 +730,9 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         return RestImageModelSettingsObjectDetection(
             advanced_settings=self.advanced_settings,
             ams_gradient=self.ams_gradient,
-            augmentations=self.augmentations,
             beta1=self.beta1,
             beta2=self.beta2,
             checkpoint_frequency=self.checkpoint_frequency,
-            checkpoint_model=self.checkpoint_model,
             checkpoint_run_id=self.checkpoint_run_id,
             distributed=self.distributed,
             early_stopping=self.early_stopping,
@@ -812,11 +780,9 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         return cls(
             advanced_settings=obj.advanced_settings,
             ams_gradient=obj.ams_gradient,
-            augmentations=obj.augmentations,
             beta1=obj.beta1,
             beta2=obj.beta2,
             checkpoint_frequency=obj.checkpoint_frequency,
-            checkpoint_model=obj.checkpoint_model,
             checkpoint_run_id=obj.checkpoint_run_id,
             distributed=obj.distributed,
             early_stopping=obj.early_stopping,
