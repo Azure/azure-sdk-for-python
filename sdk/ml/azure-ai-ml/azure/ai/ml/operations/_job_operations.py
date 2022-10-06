@@ -63,7 +63,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import Compute, Job, PipelineJob, ServiceInstance
+from azure.ai.ml.entities import Compute, Job, PipelineJob, ValidationResult, ServiceInstance
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -74,7 +74,10 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
+from azure.ai.ml.entities._validation import (
+    SchemaValidatableMixin,
+    _ValidationResultBuilder,
+)
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -96,7 +99,6 @@ from azure.core.tracing.decorator import distributed_trace
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
 from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
-from ..entities._validation import ValidationResult, _ValidationResultBuilder
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
