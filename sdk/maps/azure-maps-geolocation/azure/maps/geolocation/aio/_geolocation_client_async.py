@@ -10,13 +10,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._base_client_async import AsyncGeolocationClientBase
+from ._base_client_async import AsyncMapsGeolocationClientBase
 from ..models import (
     Geolocation
 )
 
 # By default, use the latest supported API version
-class GeolocationClient(AsyncGeolocationClientBase):
+class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
     """Azure Maps Geolocation REST APIs.
 
     :param credential: Credential needed for the client to connect to Azure.
@@ -36,13 +36,13 @@ class GeolocationClient(AsyncGeolocationClientBase):
             :end-before: [END create_maps_geolocation_service_client_with_key_async]
             :language: python
             :dedent: 4
-            :caption: Creating the GeolocationClient with an subscription key.
+            :caption: Creating the MapsGeolocationClient with an subscription key.
         .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
             :start-after: [START create_maps_geolocation_service_client_with_aad_async]
             :end-before: [END create_maps_geolocation_service_client_with_aad_async]
             :language: python
             :dedent: 4
-            :caption: Creating the GeolocationClient with a token credential.
+            :caption: Creating the MapsGeolocationClient with a token credential.
     """
     def __init__(
         self,

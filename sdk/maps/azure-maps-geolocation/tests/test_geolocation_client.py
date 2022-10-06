@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 import os
 from azure.core.credentials import AccessToken, AzureKeyCredential
-from azure.maps.geolocation import GeolocationClient
+from azure.maps.geolocation import MapsGeolocationClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from geolocation_preparer import MapsGeolocationPreparer
 
-class TestGeolocationClient(AzureRecordedTestCase):
+class TestMapsGeolocationClient(AzureRecordedTestCase):
     def setup_method(self, method):
-        self.client = GeolocationClient(
+        self.client = MapsGeolocationClient(
             credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
         )
         assert self.client is not None

@@ -8,14 +8,14 @@ from typing import Union, Any
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
-from ._base_client import GeolocationClientBase
+from ._base_client import MapsGeolocationClientBase
 from .models import (
     Geolocation
 )
 
 
 # By default, use the latest supported API version
-class GeolocationClient(GeolocationClientBase):
+class MapsGeolocationClient(MapsGeolocationClientBase):
     """Azure Maps Geolocation REST APIs.
 
     :param credential:
@@ -37,13 +37,13 @@ class GeolocationClient(GeolocationClientBase):
             :end-before: [END create_maps_geolocation_service_client_with_key]
             :language: python
             :dedent: 4
-            :caption: Creating the GeolocationClient with an subscription key.
+            :caption: Creating the MapsGeolocationClient with an subscription key.
         .. literalinclude:: ../samples/sample_authentication.py
             :start-after: [START create_maps_geolocation_service_client_with_aad]
             :end-before: [END create_maps_geolocation_service_client_with_aad]
             :language: python
             :dedent: 4
-            :caption: Creating the GeolocationClient with a token credential.
+            :caption: Creating the MapsGeolocationClient with a token credential.
     """
 
     def __init__(
