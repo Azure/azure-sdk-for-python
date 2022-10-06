@@ -8,6 +8,7 @@ from azure.appconfigurationprovider import (
     SettingSelector,
     AzureAppConfigurationKeyVaultOptions
 )
+from azure.keyvault.secrets import SecretClient
 from devtools_testutils import (
     AzureRecordedTestCase, 
     recorded_by_proxy
@@ -25,6 +26,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_provider_with_key_vault(self, appconfiguration_endpoint_string):
-        key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=self.get_credential(AzureAppConfigurationClient))
+        key_vault_cred = self.get_credential(SecretClient)
+        key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=key_vault_cred)
         client = self.build_provider_aad(appconfiguration_endpoint_string, key_vault_options=key_vault_options)
         assert client["secret"] == "my-secret"
