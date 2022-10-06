@@ -4,10 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 import importlib
+import os
+import inspect
 import json
 import argparse
 from pathlib import Path
-from typing import Dict, Optional, List, Set, Any, TypeVar, Type, Callable
+from typing import Dict, Optional, List, Any, TypeVar, Callable
+
+from jinja2 import FileSystemLoader, Environment
+
+PACKAGING_TOOLS_DIR = (Path(__file__) / "..").resolve()
 
 
 def _get_metadata(path: Path) -> Dict[str, Any]:
@@ -107,6 +113,29 @@ class Operation(VersionedObject):
         super().__init__(code_model, name, added_on=added_on)
         self.operation_group = operation_group
         self.parameters: List[Parameter] = self._combine_parameters()
+        self.source_code: str = inspect.getsource(self._get_op(self.code_model.sorted_api_versions[-1]))
+
+    @property
+    def decorator(self) -> str:
+        retval: List[str] = []
+        if not (self.added_on or any(p for p in self.parameters if p.added_on)) or self.name[0] == "_":
+            return ""
+        retval.append("    @api_version_validation(")
+        if self.added_on:
+            retval.append(f'        method_added_on="{self.added_on}",')
+        params_added_on = {
+            f'"{p.name}"': f'"{p.added_on}"'
+            for p in self.parameters if p.added_on
+        }
+        if params_added_on:
+            retval.append(f"        params_added_on={params_added_on}")
+        retval.append("    )")
+        return "\n".join(retval)
+
+    def _get_op(self, api_version: str):
+        module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
+        operation_group = getattr(module.operations, self.operation_group.name)
+        return getattr(operation_group, self.name)
 
     def _combine_parameters(self) -> List[Parameter]:
         # don't want api versions if my operation group isn't in them
@@ -115,9 +144,7 @@ class Operation(VersionedObject):
         ]
 
         def _get_names_by_api_version(api_version: str):
-            module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
-            operation_group = getattr(module.operations, self.operation_group.name)
-            op = getattr(operation_group, self.name)
+            op = self._get_op(api_version)
             # return retvals beside kwargs and the response
             return list(op.__annotations__.keys())[: len(op.__annotations__.keys()) - 2]
 
@@ -144,15 +171,22 @@ class OperationGroup(VersionedObject):
     ):
         super().__init__(code_model, name=name, added_on=added_on)
         self.operations: List[Operation] = self._combine_operations()
+        self.generated_class = self._get_og(self.code_model.sorted_api_versions[-1])
+
+    def _get_og(self, api_version: str):
+        module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
+        return getattr(module.operations, self.name)
 
     def _combine_operations(self) -> List[Operation]:
         # chose api versions greater than when I was added
         api_versions = [v for v in self.code_model.sorted_api_versions if v >= self.added_on]
 
         def _get_names_by_api_version(api_version: str):
-            module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
-            operation_group = getattr(module.operations, self.name)
-            return [d for d in dir(operation_group) if d[0] != "_" and d != "models"]
+            operation_group = self._get_og(api_version)
+            return [
+                d for d in dir(operation_group)
+                if callable(getattr(operation_group, d)) and d[:2] != "__"
+            ]
 
         def _get_operation(code_model: "CodeModel", name: str, added_on: Optional[str] = None) -> Operation:
             return Operation(code_model, name, operation_group=self, added_on=added_on)
@@ -165,14 +199,8 @@ class OperationGroup(VersionedObject):
         )
 
 
-class Serializer:
-    def serialize(self):
-        pass
-
-
 class CodeModel:
     def __init__(self, pkg_path: Path):
-        self.serializer = Serializer()
         root_of_code = pkg_path
         for sub_folder in pkg_path.stem.split("-"):
             root_of_code = root_of_code / sub_folder
@@ -213,25 +241,55 @@ class CodeModel:
             )
         return ogs
 
+class Serializer:
+    def __init__(self, code_model: "CodeModel") -> None:
+        self.code_model = code_model
+        self.env = Environment(
+            loader=FileSystemLoader(searchpath="templates/multiapi_combiner"),
+            keep_trailing_newline=True,
+            line_statement_prefix="##",
+            line_comment_prefix="###",
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
+
+    def serialize_operations_folder(self):
+        template = self.env.get_template("operation_groups.py.jinja2")
+        # Path.mkdir(PACKAGING_TOOLS_DIR / "operations")
+        with open(PACKAGING_TOOLS_DIR / "operations/_operations.py", "w") as fd:
+            fd.write(template.render(code_model=self.code_model))
+
     def serialize(self):
-        # return self.serializer.serialize()
+        self.serialize_operations_folder()
+        # self.serialize_client_file()
+        # self.serialize_version_file()
+        # self.serialize_models_file()
+        # serialize
+
+
+
+        template = self.env.get_template("operation.py.jinja2")
         retval = {}
 
-        for operation_group in self.operation_groups:
+        for operation_group in self.code_model.operation_groups:
             if operation_group.added_on:
                 retval[operation_group.name] = {"added_on": operation_group.added_on}
             for operation in operation_group.operations:
                 if operation.added_on:
-                    retval.setdefault(operation_group.name, {}).setdefault("operations", {}).setdefault(
-                        operation.name, {}
-                    )["addedOn"] = operation.added_on
-                for parameter in operation.parameters:
-                    if parameter.added_on:
-                        retval.setdefault(operation_group.name, {}).setdefault("operations", {}).setdefault(
-                            operation.name, {}
-                        ).setdefault("parameters", {}).setdefault(parameter.name, {})["addedOn"] = parameter.added_on
-        with open("output.json", "w") as fd:
-            fd.write(json.dumps(retval))
+                    with open("operation.py", "w") as fd:
+                        fd.write(template.render(operation=operation))
+
+        #             retval.setdefault(operation_group.name, {}).setdefault("operations", {}).setdefault(
+        #                 operation.name, {}
+        #             )["addedOn"] = operation.added_on
+        #         for parameter in operation.parameters:
+        #             if parameter.added_on:
+        #                 retval.setdefault(operation_group.name, {}).setdefault("operations", {}).setdefault(
+        #                     operation.name, {}
+        #                 ).setdefault("parameters", {}).setdefault(parameter.name, {})["addedOn"] = parameter.added_on
+        # with open("output.json", "w") as fd:
+        #     fd.write(json.dumps(retval))
+
 
 
 def get_args() -> argparse.Namespace:
@@ -242,4 +300,4 @@ def get_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     code_model = CodeModel(Path(get_args().pkg_path))
-    code_model.serialize()
+    Serializer(code_model).serialize()

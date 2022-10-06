@@ -1,0 +1,9 @@
+class {{ operation_group.generated_class.__name__ }}:
+    """
+    {{ operation_group.generated_class.__doc__ }}
+    """
+
+    {% for operation in operation_group.operations %}
+        {% include "operation.py.jinja2" %}
+
+    {% endfor %}
