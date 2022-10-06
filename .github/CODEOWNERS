@@ -238,8 +238,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %AAD %Service Attention
 #/<NotInRepo>/          @adamedx
 
-# ServiceLabel: %AgriFood %Service Attention
-/sdk/agrifood/azure-agrifood-farming         @bhargav-kansagara
 
 # ServiceLabel: %AKS %Service Attention
 #/<NotInRepo>/          @Azure/aks-pm
