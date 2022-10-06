@@ -3921,9 +3921,9 @@ class TestInitFinalizeJob:
         invalid_pipeline1.settings.on_finalize = "finalize_job"
         validation_result1 = invalid_pipeline1._validate_init_finalize_job()
         assert not validation_result1.passed
-        assert validation_result1.messages["settings.on_init"] == "On_init job name init_job not exists in jobs."
+        assert validation_result1.error_messages["settings.on_init"] == "On_init job name init_job not exists in jobs."
         assert (
-            validation_result1.messages["settings.on_finalize"]
+            validation_result1.error_messages["settings.on_finalize"]
             == "On_finalize job name finalize_job not exists in jobs."
         )
 
@@ -3941,13 +3941,13 @@ class TestInitFinalizeJob:
         invalid_pipeline2.settings.on_finalize = "node1"
         validation_result2 = invalid_pipeline2._validate_init_finalize_job()
         assert not validation_result2.passed
-        assert validation_result2.messages["jobs"] == "No other job except for on_init/on_finalize job."
+        assert validation_result2.error_messages["jobs"] == "No other job except for on_init/on_finalize job."
         assert (
-            validation_result2.messages["settings.on_init"]
+            validation_result2.error_messages["settings.on_init"]
             == "On_init job should not have connection to other execution node."
         )
         assert (
-            validation_result2.messages["settings.on_finalize"]
+            validation_result2.error_messages["settings.on_finalize"]
             == "On_finalize job should not have connection to other execution node."
         )
 
@@ -3991,7 +3991,7 @@ class TestInitFinalizeJob:
             set_pipeline_settings(on_init=init_job, on_finalize=finalize_job)
 
         valid_pipeline = subgraph_init_finalize_job_func()
-        assert valid_pipeline._customized_validate().passed
+        assert valid_pipeline._validate().passed
         assert valid_pipeline.settings.on_init == "init_job"
         assert valid_pipeline.settings.on_finalize == "finalize_job"
 
