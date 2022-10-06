@@ -40,6 +40,10 @@ stages:
         vmImage: $(OSVmImage)
 
       steps:
+        - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+          parameters:
+            BuildTargetingString: 'azure-*'
+
         - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
           parameters:
             EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
