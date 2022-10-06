@@ -28,7 +28,13 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import TextNer as RestTextNer
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
-from azure.ai.ml.automl import NlpFeaturizationSettings, NlpLimitSettings, NlpSearchSpace, NlpSweepSettings
+from azure.ai.ml.automl import (
+    NlpFeaturizationSettings,
+    NlpFixedParameters,
+    NlpLimitSettings,
+    NlpSearchSpace,
+    NlpSweepSettings
+)
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -338,7 +344,7 @@ class TestAutoMLNLPSchema:
         assert automl_job.limits and isinstance(automl_job.limits, NlpLimitSettings)
         assert automl_job.featurization and isinstance(automl_job.featurization, NlpFeaturizationSettings)
         assert automl_job.compute and isinstance(automl_job.compute, str)
-        assert automl_job.training_parameters and isinstance(automl_job.training_parameters, RestNlpFixedParameters)
+        assert automl_job.training_parameters and isinstance(automl_job.training_parameters, NlpFixedParameters)
 
         if run_type == "sweep":
             assert automl_job.sweep and isinstance(automl_job.sweep, NlpSweepSettings)
