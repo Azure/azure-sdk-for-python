@@ -531,9 +531,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %Migrate %Service Attention
 #/<NotInRepo>/          @shijojoy
 
-# ServiceLabel: %Mixed Reality %Service Attention
-/sdk/mixedreality/azure-mixedreality-authentication                  @crtreasu
-
 # ServiceLabel: %Mobile Engagement %Service Attention
 #/<NotInRepo>/          @kpiteira
 
