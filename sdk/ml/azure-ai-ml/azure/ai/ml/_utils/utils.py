@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import decimal
 import hashlib
 import json
 import logging
@@ -74,6 +75,12 @@ def snake_to_pascal(text: Optional[str]) -> str:
     return _csv_parser(text, _snake_to_pascal_convert)
 
 
+def snake_to_kebab(text: Optional[str]) -> Optional[str]:
+    # aka spinal case
+    if text:
+        return re.sub("_", "-", text)
+
+
 # https://stackoverflow.com/questions/1175208
 # This works for pascal to snake as well
 def _camel_to_snake_convert(text: str) -> str:
@@ -101,6 +108,13 @@ def _snake_to_camel(name):
 def camel_case_transformer(key, value):
     """transfer string to camel case."""
     return (snake_to_camel(key), value)
+
+
+def float_to_str(f):
+    with decimal.localcontext() as ctx:
+        ctx.prec = 20  # Support up to 20 significant figures.
+        float_as_dec = ctx.create_decimal(repr(f))
+        return format(float_as_dec, 'f')
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
