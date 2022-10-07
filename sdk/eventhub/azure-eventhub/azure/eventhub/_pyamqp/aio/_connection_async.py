@@ -496,7 +496,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
             _LOGGER.error(
-                "Connection error: {}".format(frame[0])  # pylint:disable=logging-format-interpolation
+                "Connection error: %r",frame[0]
             )
 
     async def _incoming_begin(self, channel, frame):
