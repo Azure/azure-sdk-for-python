@@ -12,10 +12,10 @@ def create_mock_client():
     return MapsGeolocationClient(credential= Mock(AzureKeyCredential))
 
 class AzureMapsGeolocationClientUnitTest(AzureTestCase):
-    def test_get_geolocation(self):
+    def test_get_country_code(self):
         client = create_mock_client()
         with pytest.raises(ServiceRequestError):
-            client.get_geolocation(ip_address="12345123")
+            client.get_country_code(ip_address="12345123")
 
 
 if __name__ == "__main__" :

@@ -34,7 +34,7 @@ def authentication_maps_service_client_with_subscription_key_credential():
     maps_geolocation_client = MapsGeolocationClient(credential=AzureKeyCredential(subscription_key))
     # [END create_maps_geolocation_service_client_with_key]
 
-    result = maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+    result = maps_geolocation_client.get_country_code(ip_address="2001:4898:80e8:b::189")
 
     print(result)
 
@@ -53,7 +53,7 @@ def authentication_maps_service_client_with_aad_credential():
     maps_geolocation_client = MapsGeolocationClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_geolocation_service_client_with_aad]
 
-    result = maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+    result = maps_geolocation_client.get_country_code(ip_address="2001:4898:80e8:b::189")
 
     print(result)
 

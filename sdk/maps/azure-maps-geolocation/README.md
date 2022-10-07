@@ -113,7 +113,7 @@ from azure.maps.geolocation import MapsGeolocationClient
 
 BLOCK_COUNTRY_LIST = ['US', 'TW', 'AF', 'AX', 'DL']
 INCOME_IP_ADDRESS = "2001:4898:80e8:b::189"
-geolocation_result = client.get_geolocation(ip_address=INCOME_IP_ADDRESS)
+geolocation_result = client.get_country_code(ip_address=INCOME_IP_ADDRESS)
 
 result_country_code = geolocation_result.iso_code
 
@@ -169,7 +169,7 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 pip install azure-maps-geolocation --pre
 
 python samples/sample_authentication.py
-python sample/sample_get_geolocation.py
+python sample/sample_get_country_code.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.

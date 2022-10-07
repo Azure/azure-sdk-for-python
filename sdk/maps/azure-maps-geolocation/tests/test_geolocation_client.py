@@ -18,7 +18,7 @@ class TestMapsGeolocationClient(AzureRecordedTestCase):
 
     @MapsGeolocationPreparer()
     @recorded_by_proxy
-    def test_get_geolocation(self):
-        result = self.client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+    def test_get_country_code(self):
+        result = self.client.get_country_code(ip_address="2001:4898:80e8:b::189")
         assert result is not None
         assert result.iso_code == 'US'

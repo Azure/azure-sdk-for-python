@@ -37,7 +37,7 @@ async def authentication_maps_service_client_with_subscription_key_credential_as
     # [END create_maps_geolocation_service_client_with_key_async]
 
     async with maps_geolocation_client:
-        result = await maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+        result = await maps_geolocation_client.get_country_code(ip_address="2001:4898:80e8:b::189")
 
     print(result)
 
@@ -56,7 +56,7 @@ async def authentication_maps_service_client_with_aad_credential_async():
     # [END create_maps_geolocation_service_client_with_aad_async]
 
     async with maps_geolocation_client:
-        result = await maps_geolocation_client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+        result = await maps_geolocation_client.get_country_code(ip_address="2001:4898:80e8:b::189")
 
     print(result)
 

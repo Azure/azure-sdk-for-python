@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 from ._base_client import MapsGeolocationClientBase
 from .models import (
-    Geolocation
+    CountryRegionResult
 )
 
 
@@ -57,11 +57,11 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
         )
 
     @distributed_trace
-    def get_geolocation(
+    def get_country_code(
         self,
         ip_address: str,
         **kwargs: Any
-    ) -> Geolocation:
+    ) -> CountryRegionResult:
         """
         This service will return the ISO country code for the provided IP address. Developers can use
         this information  to block or alter certain content based on geographical locations where the
@@ -72,16 +72,16 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
         :type ip_address:
             str
         :return:
-            Geolocation
+            CountryRegionResult
         :rtype:
-            ~azure.maps.geolocation.models.Geolocation
+            ~azure.maps.geolocation.models.CountryRegionResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_get_geolocation.py
-                :start-after: [START get_geolocation]
-                :end-before: [END get_geolocation]
+            .. literalinclude:: ../samples/sample_get_country_code.py
+                :start-after: [START get_country_code]
+                :end-before: [END get_country_code]
                 :language: python
                 :dedent: 4
                 :caption:  Return the ISO country code for the provided IP address.
@@ -93,7 +93,7 @@ class MapsGeolocationClient(MapsGeolocationClientBase):
             **kwargs
         )
 
-        return Geolocation(
+        return CountryRegionResult(
             ip_address=geolocation_result.ip_address,
             iso_code=geolocation_result.country_region.iso_code
         )

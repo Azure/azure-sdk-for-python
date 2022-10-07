@@ -15,12 +15,12 @@
       "ResponseHeaders": {
         "Content-Length": "70",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 06 Oct 2022 15:30:58 GMT",
+        "Date": "Fri, 07 Oct 2022 18:53:37 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: B576F60656534C65B38BCB1851C88DB4 Ref B: TPE30EDGE0708 Ref C: 2022-10-06T15:30:58Z"
+        "X-MSEdge-Ref": "Ref A: 0A1AB6F5A00144E98960DA58A1F90C5B Ref B: TPE30EDGE0918 Ref C: 2022-10-07T18:53:38Z"
       },
       "ResponseBody": {
         "countryRegion": {

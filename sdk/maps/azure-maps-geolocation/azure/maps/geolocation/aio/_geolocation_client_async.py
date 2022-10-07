@@ -12,7 +12,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 
 from ._base_client_async import AsyncMapsGeolocationClientBase
 from ..models import (
-    Geolocation
+    CountryRegionResult
 )
 
 # By default, use the latest supported API version
@@ -55,11 +55,11 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
 
 
     @distributed_trace_async
-    async def get_geolocation(
+    async def get_country_code(
         self,
         ip_address: str,
         **kwargs: Any
-    ) -> Geolocation:
+    ) -> CountryRegionResult:
         """
         This service will return the ISO country code for the provided IP address. Developers can use
         this information  to block or alter certain content based on geographical locations where the
@@ -69,16 +69,16 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
             The IP address. Both IPv4 and IPv6 are allowed. Required.
         :type ip_address: str
         :return:
-            Geolocation
+            CountryRegionResult
         :rtype:
-            ~azure.maps.geolocation.models.Geolocation
+            ~azure.maps.geolocation.models.CountryRegionResult
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_get_geolocation_async.py
-                :start-after: [START get_geolocation_async]
-                :end-before: [END get_geolocation_async]
+            .. literalinclude:: ../samples/async_samples/sample_get_country_code_async.py
+                :start-after: [START get_country_code_async]
+                :end-before: [END get_country_code_async]
                 :language: python
                 :dedent: 4
                 :caption:  Return the ISO country code for the provided IP address.
@@ -90,7 +90,7 @@ class MapsGeolocationClient(AsyncMapsGeolocationClientBase):
             **kwargs
         )
 
-        return Geolocation(
+        return CountryRegionResult(
             ip_address=geolocation_result.ip_address,
             iso_code=geolocation_result.country_region.iso_code
         )
