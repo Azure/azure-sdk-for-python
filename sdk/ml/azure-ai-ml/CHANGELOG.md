@@ -15,6 +15,7 @@
 
 ### Other Changes
  - Switched Compute operations to use Oct preview API version.
+ - Updated batch deployment/endpoint invoke and list-jobs function signatures with curated BatchJob class.
 
 
 ## 0.1.0b8 (In Progress)
