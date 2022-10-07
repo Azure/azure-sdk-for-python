@@ -70,14 +70,19 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
         
-    @CommunicationPreparer()
-    def test_create_user_and_token_with_custom_minimum_validity(self, communication_livetest_dynamic_connection_string):
+    @parameterized.expand(
+        [
+            ("min_valid_hours", 1),
+            ("max_valid_hours", 24),
+        ]
+    ) 
+    def test_create_user_and_token_with_valid_custom_expirations(self, _, valid_hours):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         
-        token_expires_in = timedelta(hours=1)
+        token_expires_in = timedelta(hours=valid_hours)
         user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
         
         assert user.properties.get('id') is not None
@@ -85,46 +90,20 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         
         if is_live():
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
-
-    @CommunicationPreparer()
-    def test_create_user_and_token_with_custom_maximum_validity(self, communication_livetest_dynamic_connection_string):
+   
+    @parameterized.expand(
+        [
+            ("min_invalid_mins", 59),
+            ("max_invalid_mins", 1441),
+        ]
+    )
+    def test_create_user_and_token_with_invalid_custom_expirations(self, _, invalid_mins):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         
-        token_expires_in = timedelta(hours=24)
-        user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
-
-        assert user.properties.get('id') is not None
-        assert token_response.token is not None
-        
-        if is_live():
-            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
-        
-    @CommunicationPreparer()
-    def test_create_user_and_token_with_custom_validity_under_minimum_allowed(self, communication_livetest_dynamic_connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
-            http_logging_policy=get_http_logging_policy()
-        )
-        
-        token_expires_in = timedelta(minutes=59)
-        
-        with pytest.raises(Exception) as ex:
-            identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
-            
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
-        
-    @CommunicationPreparer()
-    def test_create_user_and_token_with_custom_validity_over_maximum_allowed(self, communication_livetest_dynamic_connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
-            http_logging_policy=get_http_logging_policy()
-        )
-        
-        token_expires_in = timedelta(minutes=1441)
+        token_expires_in = timedelta(minutes=invalid_mins)
         
         with pytest.raises(Exception) as ex:
             identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
@@ -164,63 +143,41 @@ class CommunicationIdentityClientTest(CommunicationIdentityTestCase):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
         
-    @CommunicationPreparer()
-    def test_get_token_with_custom_minimum_validity(self, communication_livetest_dynamic_connection_string):
+    @parameterized.expand(
+        [
+            ("min_valid_hours", 1),
+            ("max_valid_hours", 24),
+        ]
+    )
+    def test_get_token_with_valid_custom_expirations(self, _, valid_hours):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
 
-        token_expires_in = timedelta(hours=1)
+        token_expires_in = timedelta(hours=valid_hours)
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
         if is_live():
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
-        
-    @CommunicationPreparer()
-    def test_get_token_with_custom_maximum_validity(self, communication_livetest_dynamic_connection_string):
+  
+    @parameterized.expand(
+        [
+            ("min_invalid_mins", 59),
+            ("max_invalid_mins", 1441),
+        ]
+    )
+    def test_get_token_with_invalid_custom_expirations(self, _, invalid_mins):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
 
-        token_expires_in = timedelta(hours=24)
-        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
-
-        assert user.properties.get('id') is not None
-        assert token_response.token is not None
-        if is_live():
-            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
-        
-    @CommunicationPreparer()
-    def test_get_token_with_custom_validity_under_minimum_allowed(self, communication_livetest_dynamic_connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
-            http_logging_policy=get_http_logging_policy()
-        )
-        user = identity_client.create_user()
-
-        token_expires_in = timedelta(minutes=59)
-        
-        with pytest.raises(Exception) as ex:
-            identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
-        
-    @CommunicationPreparer()
-    def test_get_token_with_custom_validity_over_maximum_allowed(self, communication_livetest_dynamic_connection_string):
-        identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
-            http_logging_policy=get_http_logging_policy()
-        )
-        user = identity_client.create_user()
-
-        token_expires_in = timedelta(minutes=1441)
+        token_expires_in = timedelta(minutes=invalid_mins)
         
         with pytest.raises(Exception) as ex:
             identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)

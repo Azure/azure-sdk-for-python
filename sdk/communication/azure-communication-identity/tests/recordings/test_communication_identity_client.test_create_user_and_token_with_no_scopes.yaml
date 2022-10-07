@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"createTokenWithScopes": null}'
+    body: '{"createTokenWithScopes": null, "expiresInMinutes": null}'
     headers:
       Accept:
       - application/json
@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '31'
+      - '57'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.3.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.0 Python/3.10.0 (macOS-12.6-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 16 Sep 2022 17:41:12 GMT
+      - Fri, 07 Oct 2022 14:37:49 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 16 Sep 2022 17:41:12 GMT
+      - Fri, 07 Oct 2022 14:37:50 GMT
       ms-cv:
-      - sjI6SoEEikmVwh24rYjuVw.0
+      - YhmTB0W+qkmzvUnZrix4Zw.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 48ms
+      - 92ms
     status:
       code: 201
       message: Created

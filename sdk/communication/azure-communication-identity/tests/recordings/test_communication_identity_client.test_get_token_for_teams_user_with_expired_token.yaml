@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrTQBRs2S-njti3sxKPWH95K0opltpau6Hqq7wy1Jh0sgGZ0jeB95FpChl8O_T-kC_P0urUN0RYnrRhs1iH0JJ7B-WqGwydlU5RHJLDPdgDGAL1_zspOMoC_k4tevpp31ju_t6CxFQcYPSn8LN0mlVaDokKQETA7LC9l1FJCy3Xb0gAA;
-        fpc=AvWy6bLB6gRMqudegBTmf74; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrBcxWzeGcBf7hDe1I2PqhjoFNfu27vV8DBz_uJCQZz3dZyV4lFzT9lDq_TP8N4hPoRJ-Q945AquKkWNTqVMqMg1bImnONco6ANzpUHMUzOi1wtKoiCKP5XSTQiLqo_RlzAwZ96odM7-zXsm9MmBbOGv1owhGx_CQDSENWe3qGL3rbtDvs391Vl6d77kGmTA4_E0ji435Rd9T8EwLKMRhAI2Ev8o1UaIeTC1-J64xPAjIgAA;
+        fpc=Aq8hHJmFcVFJudWnaJbcDZU; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.28.1
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 16 Sep 2022 17:41:21 GMT
+      - Fri, 07 Oct 2022 14:38:00 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AvWy6bLB6gRMqudegBTmf74; expires=Sun, 16-Oct-2022 17:41:21 GMT; path=/;
+      - fpc=Aq8hHJmFcVFJudWnaJbcDZU; expires=Sun, 06-Nov-2022 14:38:00 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.13622.7 - NEULR2 ProdSlices
+      - 2.1.13777.6 - WEULR1 ProdSlices
       x-xss-protection:
       - '0'
     status:
@@ -66,9 +66,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.3.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.0 Python/3.10.0 (macOS-12.6-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 16 Sep 2022 17:41:21 GMT
+      - Fri, 07 Oct 2022 14:38:00 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -81,9 +81,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Fri, 16 Sep 2022 17:41:21 GMT
+      - Fri, 07 Oct 2022 14:38:00 GMT
       ms-cv:
-      - Z+nGD39bs0aw97xaaoDGrw.0
+      - CgNqGtqt5k6Nb/43K5QsMg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -93,7 +93,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 33ms
+      - 115ms
     status:
       code: 401
       message: Unauthorized
