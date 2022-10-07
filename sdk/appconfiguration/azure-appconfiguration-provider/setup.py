@@ -41,6 +41,7 @@ exclude_packages = [
     "samples",
     # Exclude packages that will be covered by PEP420 or nspkg
     "azure",
+    "azure.appconfiguration"
 ]
 if sys.version_info < (3, 5, 3):
     exclude_packages.extend(["*.aio", "*.aio.*"])
