@@ -72,9 +72,9 @@ class CommunicationIdentityClientSamples(object):
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         user = identity_client.create_user()
         print("Getting token for: " + user.properties.get('id'))
-        token_expires_in = timedelta(minutes=60)
+        token_expires_in = timedelta(hours=1)
         tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
-        print("Token issued with value: " + tokenresponse.token)
+        print("Issued token with custom expiration" + tokenresponse.token)
 
     def revoke_tokens(self):
         from azure.communication.identity import (
@@ -135,10 +135,10 @@ class CommunicationIdentityClientSamples(object):
         else:
             identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
         print("Creating new user with token")
-        token_expires_in = timedelta(minutes=60)
+        token_expires_in = timedelta(hours=1)
         user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
         print("User created with id:" + user.properties.get('id'))
-        print("Token issued with value: " + tokenresponse.token)
+        print("Issued token with custom expiration: " + tokenresponse.token)
 
     def delete_user(self):
         from azure.communication.identity import CommunicationIdentityClient

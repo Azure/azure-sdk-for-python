@@ -4,15 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 import os
-from datetime import datetime, timedelta, timezone
-from dateutil import parser
 from typing import (  # pylint: disable=unused-import
     cast,
     Tuple,
 )
 from azure.core.pipeline.policies import HttpLoggingPolicy, HeadersPolicy
-
-TOKEN_EXPIRATION_ALLOWED_DEVIATION = 0.05
 
 def create_token_credential():
     # type: () -> FakeTokenCredential or DefaultAzureCredential
@@ -76,17 +72,3 @@ def parse_connection_str(conn_str):
         host = str(endpoint)
 
     return host, str(shared_access_key)
-
-def token_expiration_within_allowed_deviation(
-    expected_token_expiration,
-    token_expires_in,
-    allowed_deviation
-):
-    # type: (timedelta, datetime, float) -> bool
-    utc_now = datetime.now(timezone.utc)
-    token_expiration = parser.parse(token_expires_in)
-    token_expiration_in_seconds = (token_expiration - utc_now).total_seconds()
-    expected_seconds = expected_token_expiration.total_seconds();
-    time_difference = abs(expected_seconds - token_expiration_in_seconds)
-    allowed_time_difference = expected_seconds * allowed_deviation
-    return time_difference < allowed_time_difference
