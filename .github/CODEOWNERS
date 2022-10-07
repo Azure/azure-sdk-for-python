@@ -134,7 +134,6 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
-
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @lmazuel @rakshith91
 
@@ -236,7 +235,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # ServiceLabel: %AAD %Service Attention
 #/<NotInRepo>/          @adamedx
 
-
 # ServiceLabel: %AKS %Service Attention
 #/<NotInRepo>/          @Azure/aks-pm
 
@@ -286,7 +284,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 #/<NotInRepo>/          @mjudeikis @jim-minter @julienstroheker @amanohar
 
 # ServiceLabel: %Attestation %Service Attention
-/sdk/attestation/          @anilba06 @Azure/azure-sdk-write-attestation @gkostal @larryo
+#/<NotInRepo>/          @anilba06
 
 # ServiceLabel: %Authorization %Service Attention
 #/<NotInRepo>/          @darshanhs90 @AshishGargMicrosoft
