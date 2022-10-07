@@ -42,7 +42,7 @@ from ...operations._operations import (
     build_log_get_properties_request,
     build_model_get_properties_request,
     build_model_get_request,
-    build_model_import_method_request,
+    build_model_import_model_request,
     build_model_reset_request,
     build_multi_slot_events_activate_request,
     build_multi_slot_events_reward_request,
@@ -2139,7 +2139,7 @@ class ModelOperations:
         return cast(AsyncIterator[bytes], deserialized)
 
     @distributed_trace_async
-    async def import_method(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def import_model(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Model File.
 
         Replace the existing model file for the Personalizer service.
@@ -2166,7 +2166,7 @@ class ModelOperations:
 
         _content = body
 
-        request = build_model_import_method_request(
+        request = build_model_import_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

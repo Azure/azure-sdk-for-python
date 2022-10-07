@@ -7,7 +7,6 @@ stages:
       ServiceDirectory: personalizer
       MatrixReplace:
         - TestSamples=.*/true
-      Clouds: Canary
       EnvVars:
         AZURE_CLIENT_ID: $(PERSONALIZER_CLIENT_ID)
         AZURE_TENANT_ID: $(PERSONALIZER_TENANT_ID)

@@ -49,5 +49,8 @@ directive:
   - where-operation: Evaluations_List
     transform: >
         $.parameters[1]["x-ms-client-name"] = "filter_expression";
+  - rename-operation:
+      from: Model_Import
+      to: Model_ImportModel
 ```
 

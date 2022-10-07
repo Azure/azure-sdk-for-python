@@ -11,7 +11,10 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from ._client import PersonalizerClient as PersonalizerClientGenerated
 
-__all__ = ["PersonalizerClient"] # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "PersonalizerClient"
+]  # Add all objects you want publicly available to users at this package level
+
 
 def _authentication_policy(credential, **kwargs):
     if credential is None:
@@ -73,7 +76,6 @@ class PersonalizerClient(PersonalizerClientGenerated):
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential, **kwargs)),
             **kwargs
         )
-        self._default_language = kwargs.pop("default_language", None)
 
 
 def patch_sdk():

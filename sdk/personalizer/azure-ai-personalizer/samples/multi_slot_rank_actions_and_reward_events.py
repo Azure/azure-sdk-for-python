@@ -11,6 +11,7 @@ FILE: multi_slot_rank_actions_and_reward_events.py
 DESCRIPTION:
     This sample demos sending a rank and reward call to personalizer for multi-slot configuration.
 USAGE: python multi_slot_rank_actions_and_reward_events.py
+Environment variables PERSONALIZER_ENDPOINT and PERSONALIZER_API_KEY must be set as per your personalizer instance.
 """
 
 import os

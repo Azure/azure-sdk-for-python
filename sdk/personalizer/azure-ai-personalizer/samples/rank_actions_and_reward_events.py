@@ -11,6 +11,7 @@ FILE: rank_actions_and_reward_events.py
 DESCRIPTION:
     This sample demos sending a rank and reward call to personalizer
 USAGE: python rank_actions_and_reward_events.py
+Environment variables PERSONALIZER_ENDPOINT and PERSONALIZER_API_KEY must be set as per your personalizer instance.
 """
 import os
 import sys

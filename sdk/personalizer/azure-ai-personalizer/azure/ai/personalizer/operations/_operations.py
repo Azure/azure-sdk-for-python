@@ -488,7 +488,7 @@ def build_model_get_request(*, signed: bool = False, **kwargs: Any) -> HttpReque
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_model_import_method_request(*, content: IO, **kwargs: Any) -> HttpRequest:
+def build_model_import_model_request(*, content: IO, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2716,7 +2716,7 @@ class ModelOperations:
         return cast(Iterator[bytes], deserialized)
 
     @distributed_trace
-    def import_method(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def import_model(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Model File.
 
         Replace the existing model file for the Personalizer service.
@@ -2743,7 +2743,7 @@ class ModelOperations:
 
         _content = body
 
-        request = build_model_import_method_request(
+        request = build_model_import_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
