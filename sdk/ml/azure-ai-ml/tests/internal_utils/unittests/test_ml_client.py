@@ -114,7 +114,7 @@ class TestMachineLearningClient:
 
         assert ml_client.workspaces._operation._client._base_url == mock_url
         assert ml_client.compute._operation._client._base_url == mock_url
-        assert ml_client.jobs._operation_2022_06_preview._client._base_url == mock_url
+        assert ml_client.jobs._operation_2022_10_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
     # @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
@@ -447,4 +447,17 @@ class TestMachineLearningClient:
         assert (
             message
             == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
+        )
+
+    def test_ml_client_with_both_workspace_registry_names_throws(self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> None:	
+        with pytest.raises(ValidationException) as exception:	
+            MLClient(	
+                credential=auth,	
+                workspace_name=e2e_ws_scope.workspace_name,	
+                registry_name="testfeed",	
+            )	
+        message = exception.value.args[0]	
+        assert (	
+            message	
+            == "Both workspace_name and registry_name cannot be used together, for the ml_client."	
         )

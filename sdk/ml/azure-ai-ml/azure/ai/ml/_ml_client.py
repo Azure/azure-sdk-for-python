@@ -155,6 +155,14 @@ class MLClient(object):
 
         if credential is None:
             raise ValueError("credential can not be None")
+
+        if registry_name and workspace_name:
+            raise ValidationException(
+            message="Both workspace_name and registry_name cannot be used together, for the ml_client.",
+            no_personal_data_message="Both workspace_name and registry_name are used for ml_client.",
+            target=ErrorTarget.GENERAL,
+            error_category=ErrorCategory.USER_ERROR,
+        )
         if not registry_name:
             _validate_missing_sub_or_rg_and_raise(subscription_id, resource_group_name)
         self._credential = credential
@@ -421,7 +429,7 @@ class MLClient(object):
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_06_2022_preview,
+            self._service_client_10_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,

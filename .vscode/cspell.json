@@ -54,7 +54,6 @@
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
-    "sdk/eventgrid/azure-eventgrid/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
@@ -82,6 +81,7 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
     "sdk/ml/azure-ai-ml/swagger/**",
+    "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
@@ -101,6 +101,7 @@
     "aad",
     "aadclient",
     "AADSTS",
+    "adamw",
     "addfinalizer",
     "addinivalue",
     "adfs",
@@ -146,6 +147,8 @@
     "deque",
     "deserialization",
     "disablecov",
+    "distilbert",
+    "distilroberta",
     "docfx",
     "dont",
     "dotenv",
@@ -351,6 +354,7 @@
     "westus",
     "wfile",
     "westus",
+    "xlnet",
     "BUILDID",
     "documentdb",
     "chdir",
@@ -509,6 +513,14 @@
       ]
     },
     {
+      "filename": "sdk/eventgrid/**/*",
+      "words": [
+        "cncf",
+        "CNCF",
+        "Cncf"
+      ]
+    },
+    {
       "filename": "sdk/eventhub/test-resources.json",
       "words": [
         "mmspecial"
@@ -543,7 +555,8 @@
         "dmac",
         "ierr",
         "mymodel",
-        "heif"
+        "heif",
+        "racwd"
       ]
     },
     {
@@ -708,6 +721,7 @@
         "myworkspace",
         "mydatastore",
         "mlnlp",
+        "prec",
         "pacf",
         "armid",
         "dsvm",
@@ -787,7 +801,8 @@
         "segs",
         "fnmatch",
         "posixpath",
-        "SEPS"
+        "SEPS",
+        "wargs"
       ]
     },
     {

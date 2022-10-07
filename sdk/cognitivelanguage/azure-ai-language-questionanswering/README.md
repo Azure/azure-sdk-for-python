@@ -1,5 +1,3 @@
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/azure-sdk-for-python.client?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46?branchName=main)
-
 # Azure Cognitive Language Services Question Answering client library for Python
 
 Question Answering is a cloud-based API service that lets you create a conversational question-and-answer layer over your existing data. Use it to build a knowledge base by extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Answer users’ questions with the best answers from the QnAs in your knowledge base—automatically. Your knowledge base gets smarter, too, as it continually learns from users' behavior.
@@ -23,12 +21,14 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure QuestionAnswering client library for Python with [pip][pip_link]:
 
 ```bash
-pip install azure-ai-language-questionanswering --pre
+pip install azure-ai-language-questionanswering
 ```
+
+> Note: this version of the client library defaults to the service API version `2021-10-01`.
 
 ### Authenticate the client
 
-In order to interact with the Question Answering service, you'll need to create an instance of the [QuestionAnsweringClient][questionanswering_client_class] class or an instance of the [QuestionAnsweringAuthoringClient][questionansweringauthoring_client_class] for managing projects within your resource. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+In order to interact with the Question Answering service, you'll need to create an instance of the [QuestionAnsweringClient][questionanswering_client_class] class or an instance of the [AuthoringClient][questionansweringauthoring_client_class] for managing projects within your resource. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
 
@@ -54,17 +54,17 @@ credential = AzureKeyCredential("{api-key}")
 client = QuestionAnsweringClient(endpoint, credential)
 ```
 
-#### Create QuestionAnsweringAuthoringClient
-With your endpoint and API key, you can instantiate a [QuestionAnsweringAuthoringClient][questionansweringauthoring_client_class]:
+#### Create AuthoringClient
+With your endpoint and API key, you can instantiate a [AuthoringClient][questionansweringauthoring_client_class]:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
 endpoint = "https://{myaccount}.api.cognitive.microsoft.com"
 credential = AzureKeyCredential("{api-key}")
 
-client = QuestionAnsweringAuthoringClient(endpoint, credential)
+client = AuthoringClient(endpoint, credential)
 ```
 
 #### Create a client with an Azure Active Directory Credential
@@ -105,8 +105,8 @@ client = QuestionAnsweringClient(endpoint="https://<my-custom-subdomain>.cogniti
 The [QuestionAnsweringClient][questionanswering_client_class] is the primary interface for asking questions using a knowledge base with your own information, or text input using pre-trained models.
 For asynchronous operations, an async `QuestionAnsweringClient` is in the `azure.ai.language.questionanswering.aio` namespace.
 
-### QuestionAnsweringAuthoringClient
-The [QuestionAnsweringAuthoringClient][questionansweringauthoring_client_class] provides an interface for managing Question Answering projects. Examples of the available operations include creating and deploying projects, updating your knowledge sources, and updating question and answer pairs. It provides both synchronous and asynchronous APIs.
+### AuthoringClient
+The [AuthoringClient][questionansweringauthoring_client_class] provides an interface for managing Question Answering projects. Examples of the available operations include creating and deploying projects, updating your knowledge sources, and updating question and answer pairs. It provides both synchronous and asynchronous APIs.
 
 ## Examples
 
@@ -175,21 +175,21 @@ output = await client.get_answers(
 )
 ```
 
-### QuestionAnsweringAuthoringClient
+### AuthoringClient
 
 #### Create a new project
 
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
 # get service secrets
 endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
 key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
 # create client
-client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
+client = AuthoringClient(endpoint, AzureKeyCredential(key))
 with client:
 
     # create project
