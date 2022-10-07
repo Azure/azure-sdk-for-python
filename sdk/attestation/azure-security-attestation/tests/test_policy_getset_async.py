@@ -264,14 +264,12 @@ class TestAsyncPolicyGetSet(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @AttestationPreparer()
-    async def test_add_remove_policy_certificate(
-        self,
-        attestation_isolated_url,
-        attestation_isolated_signing_certificate,
-        attestation_isolated_signing_key,
-        attestation_policy_signing_key0,
-        attestation_policy_signing_certificate0,
-    ):
+    async def test_add_remove_policy_certificate(self,**kwargs):    
+        attestation_isolated_url = kwargs.pop("attestation_isolated_url")   
+        attestation_isolated_signing_certificate = kwargs.pop("attestation_isolated_signing_certificate")   
+        attestation_isolated_signing_key = kwargs.pop("attestation_isolated_signing_key")   
+        attestation_policy_signing_key0 = kwargs.pop("attestation_policy_signing_key0")   
+        attestation_policy_signing_certificate0 = kwargs.pop("attestation_policy_signing_certificate0")   
         # type: (str, str, str, str, str, str) -> None
 
         signing_certificate = pem_from_base64(
