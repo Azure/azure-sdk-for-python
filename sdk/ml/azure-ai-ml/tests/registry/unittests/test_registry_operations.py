@@ -54,3 +54,8 @@ class TestRegistryOperations:
         # valid creation of new registry
         mock_registry_operation.begin_create(registry=reg)
         mock_registry_operation._operation.begin_create_or_update.assert_called_once()
+
+    def test_delete(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
+
+        mock_registry_operation.delete(registry_name="some registry")
+        mock_registry_operation._operation.delete.assert_called_once()
