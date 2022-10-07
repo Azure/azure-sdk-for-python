@@ -10,10 +10,11 @@ from azure.core.credentials import AccessToken
 
 from .._generated.aio._communication_identity_client\
     import CommunicationIdentityClient as CommunicationIdentityClientGen
-from .._shared.utils import parse_connection_str, get_authentication_policy, create_body
+from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+from .._utils import convert_timedelta_to_mins
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -111,10 +112,13 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
         token_expires_in = kwargs.pop('token_expires_in', None)
-        body = create_body(scopes, token_expires_in, scopes_key_name='createTokenWithScopes')
-
+        request_body = {
+            'createTokenWithScopes': scopes,
+            'expiresInMinutes': convert_timedelta_to_mins(token_expires_in)
+        }
+        
         return await self._identity_service_client.communication_identity.create(
-            body=body,
+            body=request_body,
             cls=lambda pr, u, e: (CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),
                 AccessToken(u['accessToken']['token'], u['accessToken']['expiresOn'])),
             **kwargs)
@@ -158,11 +162,14 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :rtype: ~azure.core.credentials.AccessToken
         """
         token_expires_in = kwargs.pop('token_expires_in', None)
-        body = create_body(scopes, token_expires_in, scopes_key_name='scopes')
+        request_body = {
+            'scopes': scopes,
+            'expiresInMinutes': convert_timedelta_to_mins(token_expires_in)
+        }
 
         return await self._identity_service_client.communication_identity.issue_access_token(
             user.properties['id'],
-            body=body,
+            body=request_body,
             cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
             **kwargs)
 
@@ -205,13 +212,13 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
-        body = {
+        request_body = {
             "token": aad_token,
             "appId": client_id,
             "userId": user_object_id
         }
         return await self._identity_service_client.communication_identity.exchange_teams_user_access_token(
-            body=body,
+            body=request_body,
             cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
             **kwargs)
 
