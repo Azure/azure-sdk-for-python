@@ -13,7 +13,12 @@ from azure.ai.ml._restclient.v2021_10_01.models._models_py3 import (
     DatasetVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.constants._common import AssetTypes, YAMLRefDocLinks
+from azure.ai.ml.constants._common import (
+    REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
+    AssetTypes,
+    YAMLRefDocLinks,
+    YAMLRefDocSchemaNames,
+)
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget
@@ -179,7 +184,7 @@ class TestDataOperations:
 
         with pytest.raises(Exception) as ex:
             load_data("tests/test_configs/dataset/data_missing_path_test.yml")
-        assert f"For a more detailed breakdown of the Data schema, please see: {YAMLRefDocLinks.DATA}."
+        assert REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA)
 
     @patch("azure.ai.ml.operations._data_operations.read_local_mltable_metadata_contents")
     @patch("azure.ai.ml.operations._data_operations.read_remote_mltable_metadata_contents")
