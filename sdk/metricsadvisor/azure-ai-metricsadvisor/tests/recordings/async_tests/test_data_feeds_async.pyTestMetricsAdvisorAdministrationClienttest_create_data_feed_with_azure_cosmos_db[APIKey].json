@@ -8,56 +8,87 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "709",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1d7013d1-5e0d-11ec-919a-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022dataSourceType\u0022: \u0022AzureCosmosDB\u0022, \u0022dataFeedName\u0022: \u0022cosmosfeed9f1b5329-2585-4ef8-9bbb-30fb8fea69f5\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022}], \u0022dataStartFrom\u0022: \u00222019-10-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: 0, \u0022maxConcurrency\u0022: -1, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022viewMode\u0022: \u0022Private\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022connectionString\u0022: \u0022azure_cosmosdb_connection_string\u0022, \u0022sqlQuery\u0022: \u0022\u0027SELECT * FROM Items I where I.Timestamp \u003E= @StartTime and I.Timestamp \u003C @EndTime\u0027\u0022, \u0022database\u0022: \u0022adsample\u0022, \u0022collectionId\u0022: \u0022adsample\u0022}}",
+      "RequestBody": {
+        "dataSourceType": "AzureCosmosDB",
+        "dataFeedName": "cosmosfeed399e3ce7-566e-4daf-aa7a-94a8fe01348a",
+        "granularityName": "Daily",
+        "metrics": [
+          {
+            "metricName": "cost"
+          },
+          {
+            "metricName": "revenue"
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category"
+          },
+          {
+            "dimensionName": "city"
+          }
+        ],
+        "dataStartFrom": "2019-10-01T00:00:00.000Z",
+        "startOffsetInSeconds": 0,
+        "maxConcurrency": -1,
+        "minRetryIntervalInSeconds": -1,
+        "stopRetryAfterInSeconds": -1,
+        "viewMode": "Private",
+        "authenticationType": "Basic",
+        "dataSourceParameter": {
+          "connectionString": "azure_cosmosdb_connection_string",
+          "sqlQuery": "\u0027SELECT * FROM Items I where I.Timestamp \u003E= @StartTime and I.Timestamp \u003C @EndTime\u0027",
+          "database": "adsample",
+          "collectionId": "adsample"
+        }
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "5a91c8b9-be49-40a9-a5dd-7f20e31055db",
+        "apim-request-id": "a3836eb8-4144-41d0-8b21-11afebc493b7",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:11:35 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/0145208c-2dd4-4565-a9b3-04c491c04143",
+        "Date": "Thu, 29 Sep 2022 23:25:17 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/8c52ece0-58f9-4fdc-ace1-6e0df9143f7f",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "511",
-        "X-Request-ID": "5a91c8b9-be49-40a9-a5dd-7f20e31055db"
+        "x-envoy-upstream-service-time": "505",
+        "X-Request-ID": "a3836eb8-4144-41d0-8b21-11afebc493b7"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/0145208c-2dd4-4565-a9b3-04c491c04143",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/8c52ece0-58f9-4fdc-ace1-6e0df9143f7f",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1dc4c2f9-5e0d-11ec-8ca1-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6f09fc45-ea88-4f66-be33-81eecdd453c2",
+        "apim-request-id": "e068a345-5957-441a-86df-0537e08b628b",
         "Content-Length": "1294",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:11:36 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "217",
-        "X-Request-ID": "6f09fc45-ea88-4f66-be33-81eecdd453c2"
+        "x-envoy-upstream-service-time": "153",
+        "X-Request-ID": "e068a345-5957-441a-86df-0537e08b628b"
       },
       "ResponseBody": {
-        "dataFeedId": "0145208c-2dd4-4565-a9b3-04c491c04143",
-        "dataFeedName": "cosmosfeed9f1b5329-2585-4ef8-9bbb-30fb8fea69f5",
+        "dataFeedId": "8c52ece0-58f9-4fdc-ace1-6e0df9143f7f",
+        "dataFeedName": "cosmosfeed399e3ce7-566e-4daf-aa7a-94a8fe01348a",
         "metrics": [
           {
-            "metricId": "eb765cb5-dfb4-4c24-b051-4a4611de2b75",
+            "metricId": "30d00d32-d1ca-4cf7-b86d-11c2ccf4f549",
             "metricName": "cost",
             "metricDisplayName": "cost",
             "metricDescription": ""
           },
           {
-            "metricId": "30773f6f-0d8c-4be2-8b1e-6316451c0ae1",
+            "metricId": "55cac1ab-5630-46b4-8ce4-26cd9045ce2c",
             "metricName": "revenue",
             "metricDisplayName": "revenue",
             "metricDescription": ""
@@ -94,7 +125,7 @@
         "viewers": [],
         "creator": "krpratic@microsoft.com",
         "status": "Active",
-        "createdTime": "2021-12-16T01:11:36Z",
+        "createdTime": "2022-09-29T23:25:17Z",
         "isAdmin": true,
         "actionLinkTemplate": "",
         "dataSourceParameter": {
@@ -106,31 +137,30 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/0145208c-2dd4-4565-a9b3-04c491c04143",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/8c52ece0-58f9-4fdc-ace1-6e0df9143f7f",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "1ded0ae6-5e0d-11ec-a583-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "36d546ec-57ce-42fc-871a-e751309120c1",
+        "apim-request-id": "db3c472f-7d1b-44d7-a703-de5e10ddc6ef",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:11:36 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "333",
-        "X-Request-ID": "36d546ec-57ce-42fc-871a-e751309120c1"
+        "x-envoy-upstream-service-time": "294",
+        "X-Request-ID": "db3c472f-7d1b-44d7-a703-de5e10ddc6ef"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "data_feed_id": "0145208c-2dd4-4565-a9b3-04c491c04143",
-    "data_feed_name": "cosmosfeed9f1b5329-2585-4ef8-9bbb-30fb8fea69f5"
+    "data_feed_id": "8c52ece0-58f9-4fdc-ace1-6e0df9143f7f",
+    "data_feed_name": "cosmosfeed399e3ce7-566e-4daf-aa7a-94a8fe01348a"
   }
 }

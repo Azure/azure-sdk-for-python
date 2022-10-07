@@ -30,7 +30,6 @@ from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, Pi
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.exceptions import UserErrorException
 
 _BUILDER_STACK_MAX_DEPTH = 100

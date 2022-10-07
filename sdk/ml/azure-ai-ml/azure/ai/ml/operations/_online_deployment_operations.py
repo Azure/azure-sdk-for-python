@@ -20,7 +20,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies,validate_scoring_script
@@ -44,7 +43,7 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -66,7 +65,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_02_2022_preview.online_deployments
         self._online_endpoint_operations = service_client_02_2022_preview.online_endpoints
@@ -75,7 +74,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -92,16 +91,25 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type local: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.DeploymentException: Raised if OnlineDeployment type is unsupported. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
+            be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be
+            successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.DeploymentException: Raised if OnlineDeployment type is unsupported.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :raises ~azure.ai.ml.exceptions.LocalEndpointInFailedStateError: Raised if local endpoint is in a failed state.
-        :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if Docker image cannot be found for local deployment.
-        :raises ~azure.ai.ml.exceptions.LocalEndpointImageBuildError: Raised if Docker image cannot be successfully built for local deployment.
-        :raises ~azure.ai.ml.exceptions.RequiredLocalArtifactsNotFoundError: Raised if  local artifacts cannot be found for local deployment.
-        :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint. VSCode debug is only supported for local endpoints.
+        :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if Docker image cannot be
+            found for local deployment.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointImageBuildError: Raised if Docker image cannot be
+            successfully built for local deployment.
+        :raises ~azure.ai.ml.exceptions.RequiredLocalArtifactsNotFoundError: Raised if local artifacts cannot be
+            found for local deployment.
+        :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint.
+            VSCode debug is only supported for local endpoints.
         :raises ~azure.ai.ml.exceptions.VSCodeCommandNotFound: Raised if VSCode instance cannot be instantiated.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
@@ -116,7 +124,13 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                 )
-            if not skip_script_validation and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX) and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code):
+            if (
+                not skip_script_validation
+                and deployment
+                and deployment.code_configuration
+                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
+                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+            ):
                 validate_scoring_script(deployment)
 
             path_format_arguments = {
@@ -168,7 +182,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
@@ -199,8 +213,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
+    # @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment
@@ -224,7 +238,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
@@ -267,7 +281,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         ).content
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 

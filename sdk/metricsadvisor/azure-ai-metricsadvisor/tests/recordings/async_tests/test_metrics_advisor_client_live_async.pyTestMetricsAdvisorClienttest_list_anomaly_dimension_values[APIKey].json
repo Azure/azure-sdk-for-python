@@ -6,36 +6,30 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "107",
+        "Content-Length": "105",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "630fee43-5e0d-11ec-b954-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022startTime\u0022: \u00222021-01-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022, \u0022dimensionName\u0022: \u0022region\u0022}",
+      "RequestBody": {
+        "startTime": "2022-02-28T00:00:00.000Z",
+        "endTime": "2022-09-29T00:00:00.000Z",
+        "dimensionName": "Dim1"
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6b0ed570-75c3-4e33-8849-3bf69dc26d71",
-        "Content-Length": "114",
+        "apim-request-id": "4c94321c-90c2-4801-b689-52393f4e897b",
+        "Content-Length": "27",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:13:33 GMT",
+        "Date": "Thu, 29 Sep 2022 23:26:48 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "214",
-        "X-Request-ID": "6b0ed570-75c3-4e33-8849-3bf69dc26d71"
+        "x-envoy-upstream-service-time": "206",
+        "X-Request-ID": "4c94321c-90c2-4801-b689-52393f4e897b"
       },
       "ResponseBody": {
         "value": [
           "__SUM__",
-          "Karachi",
-          "Mumbai",
-          "Delhi",
-          "Seoul",
-          "Beijing",
-          "Cairo",
-          "New York",
-          "Miami",
-          "Tianjin",
-          "Istanbul"
+          "JPN"
         ]
       }
     }

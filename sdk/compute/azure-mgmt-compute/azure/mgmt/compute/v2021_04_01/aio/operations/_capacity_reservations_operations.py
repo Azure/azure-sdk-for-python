@@ -656,7 +656,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        expand: Optional[Union[str, "_models.CapacityReservationInstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.CapacityReservationInstanceViewTypes]] = None,
         **kwargs: Any
     ) -> _models.CapacityReservation:
         """The operation that retrieves information about the capacity reservation.

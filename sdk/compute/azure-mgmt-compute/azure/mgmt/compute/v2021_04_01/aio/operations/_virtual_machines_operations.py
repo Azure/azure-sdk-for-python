@@ -921,7 +921,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
         **kwargs: Any
     ) -> _models.VirtualMachine:
         """Retrieves information about the model view or the instance view of a virtual machine.

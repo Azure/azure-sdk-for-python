@@ -30,7 +30,7 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import (
     try_get_non_arbitrary_attr_for_potential_attr_dict,
 )
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -55,7 +55,8 @@ class PipelineComponent(Component):
     :type outputs: Component outputs
     :param jobs: Id to components dict inside pipeline definition.
     :type jobs: OrderedDict[str, Component]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated. Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if PipelineComponent cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(
@@ -117,13 +118,13 @@ class PipelineComponent(Component):
                 )
         return jobs
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate pipeline component structure."""
         validation_result = super(PipelineComponent, self)._customized_validate()
 
         # Validate inputs
-        for input_name, input in self.inputs.items():
-            if input.type is None:
+        for input_name, input_value in self.inputs.items():
+            if input_value.type is None:
                 validation_result.append_error(
                     yaml_path="inputs.{}".format(input_name),
                     message="Parameter type unknown, please add type annotation or specify input default value.",
@@ -223,7 +224,7 @@ class PipelineComponent(Component):
                             optional_binding_in_expression_dict[pipeline_input_name].append(pipeline_input_name)
         return binding_dict, optional_binding_in_expression_dict
 
-    def _validate_binding_inputs(self, node: BaseNode) -> ValidationResult:
+    def _validate_binding_inputs(self, node: BaseNode) -> MutableValidationResult:
         """Validate pipeline binding inputs and return all used pipeline input
         names.
 
@@ -320,7 +321,8 @@ class PipelineComponent(Component):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return PipelineComponentSchema(context=context)
 
-    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
         # jobs validations are done in _customized_validate()
         return ["jobs"]
 
@@ -383,7 +385,7 @@ class PipelineComponent(Component):
         """Check ignored keys and return rest object."""
         ignored_keys = self._check_ignored_keys(self)
         if ignored_keys:
-            module_logger.warning("%s ignored on pipeline component %r." % (ignored_keys, self.name))
+            module_logger.warning("%s ignored on pipeline component %r.", ignored_keys, self.name)
         component = self._to_dict()
         # add source type to component rest object
         component["_source"] = self._source

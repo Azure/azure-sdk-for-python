@@ -7,11 +7,11 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2022_10_01.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2022_10_01.models import JobScheduleAction
+from azure.ai.ml._restclient.v2022_10_01.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_10_01.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2022_10_01.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants import JobType
@@ -22,7 +22,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, 
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
@@ -192,13 +192,14 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     def _get_validation_error_target(cls) -> ErrorTarget:
         return ErrorTarget.SCHEDULE
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic."""
         if isinstance(self.create_job, PipelineJob):
             return self.create_job._validate()
         return self._create_empty_validation_result()
 
-    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.

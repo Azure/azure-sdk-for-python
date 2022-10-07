@@ -40,7 +40,7 @@ from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
-from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
@@ -76,7 +76,7 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
     datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[datastore.type].format(
         datastore.account_name, storage_endpoint
     )
-    if isinstance(credentials, AccountKeyCredentials):
+    if isinstance(credentials, AccountKeyConfiguration):
         datastore_info["credential"] = credentials.account_key
     else:
         try:
@@ -138,7 +138,7 @@ def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_fold
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
         elif isinstance(storage_client, Gen2StorageClient):
-            token = generate_file_sas(
+            token = generate_file_sas( # pylint: disable=no-value-for-parameter
                 account_name=ds_info["storage_account"],
                 file_system_name=ds_info["container_name"],
                 file_name=item_name,

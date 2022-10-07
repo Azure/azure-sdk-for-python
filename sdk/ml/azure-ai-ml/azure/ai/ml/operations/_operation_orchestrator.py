@@ -23,7 +23,7 @@ from azure.ai.ml._utils._arm_id_utils import (
 )
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
-from azure.ai.ml._utils.utils import is_private_preview_enabled
+from azure.ai.ml._utils.utils import is_private_preview_enabled # pylint: disable=unused-import
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -112,7 +112,8 @@ class OperationOrchestrator(object):
         :type sub_workspace_resource: Optional[bool]
         :param arm_id_cache_dict: A dict to cache the ARM id of input asset.
         :type arm_id_cache_dict: Optional[Dict[str, str]]
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted or asset cannot be successfully registered.
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted
+            or asset cannot be successfully registered.
         :return: The ARM Id or entity object
         :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
         """
@@ -138,7 +139,6 @@ class OperationOrchestrator(object):
                 if (
                     azureml_type == "environments"
                     and asset.startswith(CURATED_ENV_PREFIX)
-                    and is_private_preview_enabled()
                 ):
                     module_logger.warning(
                         "This job/deployment uses curated environments. The syntax for using curated "

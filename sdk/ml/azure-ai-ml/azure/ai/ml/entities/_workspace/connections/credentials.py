@@ -5,7 +5,6 @@
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ConnectionAuthType,
     ManagedIdentity,
-    PersonalAccessToken,
     ServicePrincipal,
     SharedAccessSignature,
     UsernamePassword,
