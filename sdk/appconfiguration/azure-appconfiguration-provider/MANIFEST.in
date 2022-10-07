@@ -6,4 +6,4 @@ include azure/appconfiguration/__init__.py
 include azure/appconfiguration/provider/*.py
 recursive-include samples *.py *.md
 recursive-include doc *.rst
-include azure/appconfiguration/py.typed
+include azure/appconfiguration/provider/py.typed
