@@ -8,8 +8,8 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJob
 class BatchJob(object):
 
     """Batch jobs that are created with batch deployments/endpoints invocation.
-    
-    This class shouldn't be instantiated directly. Instead, it is used as the 
+
+    This class shouldn't be instantiated directly. Instead, it is used as the
     return type of batch deployment/endpoint invocation and job listing.
     """
 
