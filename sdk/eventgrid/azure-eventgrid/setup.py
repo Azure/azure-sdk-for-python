@@ -50,14 +50,13 @@ setup(
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
@@ -66,7 +65,7 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'msrest>=0.6.21',
+        'msrest>=0.7.1',
         'azure-core<2.0.0,>=1.18.0',
     ],
 )
