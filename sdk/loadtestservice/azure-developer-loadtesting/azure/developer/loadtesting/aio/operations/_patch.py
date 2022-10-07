@@ -92,45 +92,6 @@ class TestOperations(TestOperationsGenerated):
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
 
-    class ValidationStatus(Enum):
-        """Enum to store validation status
-        """
-        VALIDATION_INITIATED = 1
-        VALIDATION_SUCCESS = 2
-        VALIDATION_FAILED = 3
-
-    async def check_validation_status(self, test_id: str, *, refresh_time: int = 10, time_out: int = 600) -> ValidationStatus:
-        """Check if the JMX file is validated to run test
-
-        :param test_id: Unique id for the test [required]
-        :type test_id: str
-
-        :param refresh_time: time difference (in secs) for next request [default = 10 sec]
-        :type refresh_time: int
-
-        :param time_out: time to stop polling for the validation status (in secs) [default = 600 sec]
-        :type time_out: int
-        """
-        start_time = time.time()
-
-        while True:
-            result = await self.get_load_test(test_id)
-
-            try:
-                status = result["inputArtifacts"]["testScriptUrl"]["validationStatus"]
-
-            except TypeError:
-                raise azure.core.exceptions.ResourceNotFoundError(
-                    f"No JMX file found to validate with TestID: {test_id}")
-
-            if status != "VALIDATION_INITIATED":
-                return self.ValidationStatus[status]
-
-            if time.time() - start_time + refresh_time > time_out:
-                return self.ValidationStatus["TIMEOUT"]
-
-            await asyncio.sleep(refresh_time)
-
 class AppComponentOperations:
     def __init__(self, *args, **kwargs):
         self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
