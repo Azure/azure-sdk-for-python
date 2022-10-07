@@ -184,7 +184,7 @@ class TestDataOperations:
 
         with pytest.raises(Exception) as ex:
             load_data("tests/test_configs/dataset/data_missing_path_test.yml")
-        assert REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA)
+        assert REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA) in ex
 
     @patch("azure.ai.ml.operations._data_operations.read_local_mltable_metadata_contents")
     @patch("azure.ai.ml.operations._data_operations.read_remote_mltable_metadata_contents")
