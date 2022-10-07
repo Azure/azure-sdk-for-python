@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import platform
 import re
 import unittest
 from os import urandom
@@ -79,7 +80,7 @@ class TestLargeFile(StorageRecordedTestCase):
         assert self.payload_dropping_policy.append_counter == 1
         assert self.payload_dropping_policy.append_sizes[0] == LARGEST_BLOCK_SIZE
 
-    @pytest.mark.skip(reason="Pypy3 on Linux failed somehow, skip for now to investigate")
+    @pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="Test failing on Pypy3 Linux, skip to investigate")
     @pytest.mark.live_test_only
     @DataLakePreparer()
     def test_upload_large_stream_without_network(self, **kwargs):
