@@ -1,4 +1,6 @@
-[
+{
+  "version": "1.0",
+  "tasks": [
     {
       "taskType": "trigger",
       "capabilityId": "IssueResponder",
@@ -11,8 +13,7 @@
           "operands": [
             {
               "name": "isAction",
-              "parameters": {
-              }
+              "parameters": {}
             },
             {
               "operator": "not",
@@ -1060,6 +1061,25 @@
             ]
           },
           {
+            "label": "ML-Local Endpoints",
+            "pathFilter": [
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
+            "label": "ML-Jobs",
+            "pathFilter": [
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "Tables",
             "pathFilter": [
               "sdk/tables/"
@@ -1525,7 +1545,9 @@
               "Attestation"
             ],
             "mentionees": [
-              "anilba06"
+              "anilba06",
+              "gkostal",
+              "Azure/azure-sdk-write-attestation"
             ]
           },
           {
@@ -1893,8 +1915,8 @@
               "Container Registry"
             ],
             "mentionees": [
-              "toddysm",
-              "northtyphoon"
+              "djyou",
+              "YalinLi0312"
             ]
           },
           {
@@ -3240,12 +3262,82 @@
               "Service Attention"
             ],
             "mentionees": [
-              "@cijothomas",
-              "@reyang",
-              "@rajkumar-rangaraj",
-              "@TimothyMothra",
-              "@vishweshbankwar",
-              "@ramthi"
+              "cijothomas",
+              "reyang",
+              "rajkumar-rangaraj",
+              "TimothyMothra",
+              "vishweshbankwar",
+              "ramthi"
+            ]
+          },
+          {
+            "labels": [
+              "Service Attention",
+              "AgriFood"
+            ],
+            "mentionees": [
+              "bhargav-kansagara"
+            ]
+          },
+          {
+            "labels": [
+              "Service Attention",
+              "Confidential Ledger"
+            ],
+            "mentionees": [
+              "lynshi"
+            ]
+          },
+          {
+            "labels": [
+              "Service Attention",
+              "Device Update"
+            ],
+            "mentionees": [
+              "dpokluda",
+              "sedols"
+            ]
+          },
+          {
+            "labels": [
+              "Service Attention",
+              "Maps"
+            ],
+            "mentionees": [
+              "alextts627"
+            ]
+          },
+          {
+            "labels": [
+              "Service Attention",
+              "Mixed Reality"
+            ],
+            "mentionees": [
+              "crtreasu",
+              "rikogeln"
+            ]
+          },
+          {
+            "labels": [
+              "Service Attention",
+              "ML-Local Endpoints"
+            ],
+            "mentionees": [
+              "NonStatic2014",
+              "arunsu",
+              "stanley-msft",
+              "JustinFirsching"
+            ]
+          },
+          {
+            "labels": [
+              "Service Attention",
+              "ML-Jobs"
+            ],
+            "mentionees": [
+              "DouglasXiaoMS",
+              "TonyJ1",
+              "wangchao1230"
             ]
           }
         ],
@@ -4449,4 +4541,24 @@
         ]
       }
     }
+  ],
+  "userGroups": [
+    {
+      "_id": "5f074a9e4200c210c870e0ee",
+      "groupType": "GitHub",
+      "name": "MariaDB and MySQL Contacts",
+      "githubUserNames": [
+        "ambhatna",
+        "savjani",
+        "mksuni",
+        "Bashar-MSFT"
+      ],
+      "assignmentSchemes": [
+        {
+          "target": "All",
+          "lastAssignedIndex": 90
+        }
+      ]
+    }
   ]
+}
