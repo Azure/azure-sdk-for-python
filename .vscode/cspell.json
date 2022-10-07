@@ -794,7 +794,8 @@
         "segs",
         "fnmatch",
         "posixpath",
-        "SEPS"
+        "SEPS",
+        "wargs"
       ]
     },
     {
