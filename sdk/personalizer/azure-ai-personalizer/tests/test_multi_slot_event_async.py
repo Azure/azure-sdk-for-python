@@ -15,7 +15,7 @@ class TestMultiSlotEventAsync(AzureRecordedTestCase):
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
         client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         event_id = "123456789"
-        await client.multi_slot_events.reward(event_id, {"reward": [{"slotId": "myslotid", "value": 1.0}]})
+        await client.multi_slot_events.reward(event_id, {"reward": [{"slotId": "slot_id_to_be_rewarded", "value": 1.0}]})
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy_async

@@ -15,7 +15,7 @@ class TestEventAsync(AzureRecordedTestCase):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
-        await client.events.reward("myeventid", {"value": 1.0})
+        await client.events.reward("event_id_returned_by_rank", {"value": 1.0})
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy_async
@@ -23,4 +23,4 @@ class TestEventAsync(AzureRecordedTestCase):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
-        await client.events.activate("myeventid")
+        await client.events.activate("event_id_returned_by_rank")
