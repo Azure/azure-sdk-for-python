@@ -4,31 +4,31 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import requests
 import time
 import unittest
 from datetime import datetime, timedelta
 
 import pytest
-import requests
-from azure.core.pipeline.transport import RequestsTransport
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-
+from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.fileshare import (
     AccessPolicy,
     AccountSasPermissions,
+    generate_account_sas,
+    generate_share_sas,
     ResourceTypes,
     ShareAccessTier,
     ShareClient,
     ShareFileClient,
-    ShareSasPermissions,
-    ShareServiceClient,
     ShareProtocols,
     ShareRootSquash,
-    generate_account_sas,
-    generate_share_sas,)
-from devtools_testutils import recorded_by_proxy
+    ShareSasPermissions,
+    ShareServiceClient
+)
 
-from devtools_testutils.storage import StorageTestCase, LogCaptured, StorageRecordedTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
