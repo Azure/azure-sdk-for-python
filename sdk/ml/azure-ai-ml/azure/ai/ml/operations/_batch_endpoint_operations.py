@@ -283,7 +283,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
         validate_response(response)
         batch_job = json.loads(response.text())
-        return BatchJob._from_rest_object(BatchJobResource.deserialize(batch_job))
+        return BatchJobResource.deserialize(batch_job)
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
