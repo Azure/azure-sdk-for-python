@@ -243,6 +243,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
                     workspace_name=self._workspace_name,
                     endpoint_name=endpoint.name,
                     body=endpoint_resource,
+                    cls=lambda response, deserialized, headers: OnlineEndpoint._from_rest_object(deserialized),
                     **self._init_kwargs,
                 )
                 return poller
