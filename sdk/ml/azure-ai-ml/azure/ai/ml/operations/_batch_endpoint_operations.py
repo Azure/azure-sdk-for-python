@@ -203,7 +203,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :param deployment_name: The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
         :type deployment_name: Optional[str]
-        :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder 
+        :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
         :type inputs: Dict[str, Input]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
