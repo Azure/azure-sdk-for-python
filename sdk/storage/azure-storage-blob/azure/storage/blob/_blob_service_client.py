@@ -12,12 +12,12 @@ from typing import (
 )
 from urllib.parse import urlparse
 
+from typing_extensions import Self
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from typing_extensions import Self
-
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.models import LocationMode
 from ._shared.parser import _to_utc_datetime

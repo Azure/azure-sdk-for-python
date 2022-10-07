@@ -7,14 +7,11 @@ from typing import (
     Any, Dict, Optional, Union,
     TYPE_CHECKING
 )
+from urllib.parse import quote, unquote
 
-try:
-    from urllib.parse import quote, unquote
-except ImportError:
-    from urllib2 import quote, unquote # type: ignore
-from azure.core.pipeline import Pipeline
 from typing_extensions import Self
 
+from azure.core.pipeline import Pipeline
 from ._deserialize import deserialize_dir_properties
 from ._shared.base_client import TransportWrapper, parse_connection_str
 from ._data_lake_file_client import DataLakeFileClient

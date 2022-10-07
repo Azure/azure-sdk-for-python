@@ -4,16 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from urllib.parse import urlparse
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
+from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-from typing_extensions import Self
-
 from azure.storage.blob import BlobServiceClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._deserialize import get_datalake_service_properties

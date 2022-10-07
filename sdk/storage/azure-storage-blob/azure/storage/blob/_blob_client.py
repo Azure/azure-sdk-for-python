@@ -15,12 +15,12 @@ from urllib.parse import urlparse, quote, unquote
 import warnings
 
 import six
+from typing_extensions import Self
+
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from typing_extensions import Self
-
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.uploads import IterStreamer

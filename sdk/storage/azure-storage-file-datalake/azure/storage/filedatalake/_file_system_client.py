@@ -6,20 +6,15 @@
 # pylint: disable=too-many-lines
 import functools
 from typing import Any, Dict, Optional, Union, TYPE_CHECKING
-
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
+from urllib.parse import urlparse, quote, unquote
 
 import six
+from typing_extensions import Self
+
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
-from typing_extensions import Self
-
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged

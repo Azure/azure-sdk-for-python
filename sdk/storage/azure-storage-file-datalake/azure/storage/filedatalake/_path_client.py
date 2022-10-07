@@ -6,13 +6,9 @@
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
     Any, Dict, Optional, Union,
-    TYPE_CHECKING)
-
-try:
-    from urllib.parse import urlparse, quote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote  # type: ignore
+    TYPE_CHECKING
+)
+from urllib.parse import urlparse, quote
 
 import six
 
