@@ -140,12 +140,8 @@ class AppComponentOperations:
         self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
 
     def get_app_components(
-            self,
-            *,
-            test_run_id: Optional[str] = None,
-            test_id: Optional[str] = None,
-            name: Optional[str] = None,
-            **kwargs: Any,
+        self, *, test_run_id: Optional[str] = None, test_id: Optional[str] = None,
+        name: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Get App Components for a test or a test run by its name.
 
@@ -202,7 +198,7 @@ class AppComponentOperations:
 
     @overload
     def create_or_update_app_components(
-            self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -278,7 +274,7 @@ class AppComponentOperations:
 
     @overload
     def create_or_update_app_components(
-            self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 

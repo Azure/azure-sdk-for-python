@@ -6,11 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
-import time
 from typing import Any, IO, Optional, Union, cast, overload, List, MutableMapping, Coroutine, BinaryIO, Awaitable
-from enum import Enum
-import azure.core.exceptions
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -92,6 +88,7 @@ class TestOperations(TestOperationsGenerated):
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
 
+
 class AppComponentOperations:
     def __init__(self, *args, **kwargs):
         self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
@@ -103,7 +100,7 @@ class AppComponentOperations:
             test_id: Optional[str] = None,
             name: Optional[str] = None,
             **kwargs: Any,
-    ) -> Coroutine[Any, Any, MutableMapping[str, Any]]:
+    ) -> MutableMapping[str, Any]:
         """Get App Components for a test or a test run by its name.
 
         Get App Components for a test or a test run by its name.
@@ -151,9 +148,9 @@ class AppComponentOperations:
         """
 
         if name is not None:
-            return self.__app_component_operations_generated.get_app_component_by_name(name=name, **kwargs)
+            return await self.__app_component_operations_generated.get_app_component_by_name(name=name, **kwargs)
         else:
-            return self.__app_component_operations_generated.get_app_component(
+            return await self.__app_component_operations_generated.get_app_component(
                 test_run_id=test_run_id, test_id=test_id, **kwargs
             )
 
@@ -284,8 +281,8 @@ class AppComponentOperations:
         """
 
     @distributed_trace
-    async def create_or_update_app_components(self, name: str, body: Union[JSON, IO], **kwargs: Any) -> Coroutine[
-        Any, Any, MutableMapping[str, Any]]:
+    async def create_or_update_app_components(self, name: str, body: Union[JSON, IO], **kwargs: Any) -> MutableMapping[
+        str, Any]:
         """Associate an App Component (Azure resource) to a test or test run.
 
         Associate an App Component (Azure resource) to a test or test run.
@@ -331,12 +328,12 @@ class AppComponentOperations:
                     }
                 }
         """
-        return self.__app_component_operations_generated.create_or_update_app_components(name, body, **kwargs)
+        return await self.__app_component_operations_generated.create_or_update_app_components(name, body, **kwargs)
 
     @distributed_trace
     async def delete_app_components(  # pylint: disable=inconsistent-return-statements
             self, name: str, **kwargs: Any
-    ) -> Coroutine[Any, Any, None]:
+    ) -> None:
         """Delete an App Component.
 
         Delete an App Component.
@@ -349,7 +346,7 @@ class AppComponentOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return self.__app_component_operations_generated.delete_app_components(name, **kwargs)
+        return await self.__app_component_operations_generated.delete_app_components(name, **kwargs)
 
 
 __all__: List[str] = ["TestOperations", "AppComponentOperations"]
