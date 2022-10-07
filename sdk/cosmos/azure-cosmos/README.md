@@ -581,6 +581,32 @@ def integrated_cache_snippet():
 ```
 For more information on Integrated Cache, see [Azure Cosmos DB integrated cache - Overview][cosmos_integrated_cache].
 
+### Configuring network transport
+
+CosmosDB SDK under the hood is using `requests` library as a network transport. In case you would like to change it's settings you may pass it into `CosmosClient` constructor or `from_connection_string` class method.
+
+For example if you would like to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`.
+
+```Python
+from azure.cosmos import CosmosClient
+import requests
+
+session = requests.Session()
+adapter = requests.adapters.HTTPAdapter(pool_connections=42, pool_maxsize=42)
+session.mount('https://', adapter)
+
+
+cosmos_client = CosmosClient.from_connection_string(
+    COSMOS_CONNECTION_STRING,
+    transport=RequestsTransport(session=session)
+)
+
+# or 
+
+cosmos_client = CosmosClient(uri, key, transport=RequestsTransport(session=session))
+
+```
+
 ## Troubleshooting
 
 ### General
