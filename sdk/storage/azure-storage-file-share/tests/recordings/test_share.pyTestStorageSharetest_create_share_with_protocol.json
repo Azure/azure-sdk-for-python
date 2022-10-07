@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://storagename.file.core.windows.net/testshare3ed9b2c14?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/testshare3ed9b2c14?restype=share",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -30,7 +30,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/testshare3ed9b2c14?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/testshare3ed9b2c14?restype=share",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -69,7 +69,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/testshare3ed9b2c14?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/testshare3ed9b2c14?restype=share",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -108,7 +108,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/testshare3ed9b2c14?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/testshare3ed9b2c14?restype=share",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/xml",

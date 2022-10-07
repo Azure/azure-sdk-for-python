@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://storagename.file.core.windows.net/share1fd6730de?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/share1fd6730de?restype=share",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -29,7 +29,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/share2fd6730de?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/share2fd6730de?restype=share",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -57,7 +57,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/share1fd6730de?restype=share\u0026comp=properties",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/share1fd6730de?restype=share\u0026comp=properties",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -85,7 +85,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/share2fd6730de?restype=share\u0026comp=properties",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/share2fd6730de?restype=share\u0026comp=properties",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -113,7 +113,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/share1fd6730de?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/share1fd6730de?restype=share",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -152,7 +152,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/share2fd6730de?restype=share",
+      "RequestUri": "https://pyacrstoragestorname.file.core.windows.net/share2fd6730de?restype=share",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",

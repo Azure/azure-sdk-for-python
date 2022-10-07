@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 21:41:53 GMT",
+        "x-ms-date": "Fri, 07 Oct 2022 22:59:30 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 21:41:54 GMT",
-        "ETag": "\u00220x8DAA8ACC0F44685\u0022",
-        "Last-Modified": "Fri, 07 Oct 2022 21:41:55 GMT",
+        "Date": "Fri, 07 Oct 2022 22:59:31 GMT",
+        "ETag": "\u00220x8DAA8B798EC7728\u0022",
+        "Last-Modified": "Fri, 07 Oct 2022 22:59:32 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -36,24 +36,24 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 21:41:54 GMT",
+        "x-ms-date": "Fri, 07 Oct 2022 22:59:31 GMT",
         "x-ms-lease-action": "acquire",
         "x-ms-lease-duration": "15",
-        "x-ms-proposed-lease-id": "be0c14ff-2c18-4016-b1a7-de8bc77f2140",
+        "x-ms-proposed-lease-id": "00000000-1111-2222-3333-444444444444",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 21:41:54 GMT",
-        "ETag": "\u00220x8DAA8ACC0F44685\u0022",
-        "Last-Modified": "Fri, 07 Oct 2022 21:41:55 GMT",
+        "Date": "Fri, 07 Oct 2022 22:59:31 GMT",
+        "ETag": "\u00220x8DAA8B798EC7728\u0022",
+        "Last-Modified": "Fri, 07 Oct 2022 22:59:32 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-lease-id": "be0c14ff-2c18-4016-b1a7-de8bc77f2140",
+        "x-ms-lease-id": "00000000-1111-2222-3333-444444444444",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
@@ -67,10 +67,10 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 21:41:54 GMT",
+        "x-ms-date": "Fri, 07 Oct 2022 22:59:31 GMT",
         "x-ms-lease-action": "acquire",
         "x-ms-lease-duration": "-1",
-        "x-ms-proposed-lease-id": "87e66818-f197-4c09-b358-80278a43c52d",
+        "x-ms-proposed-lease-id": "44444444-3333-2222-1111-000000000000",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
@@ -78,7 +78,7 @@
       "ResponseHeaders": {
         "Content-Length": "221",
         "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 21:41:54 GMT",
+        "Date": "Fri, 07 Oct 2022 22:59:31 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -88,8 +88,8 @@
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseAlreadyPresent\u003C/Code\u003E\u003CMessage\u003EThere is already a lease present.\n",
-        "RequestId:050a30de-301a-009b-1595-da8ca5000000\n",
-        "Time:2022-10-07T21:41:55.3440960Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:1ed66668-501a-009d-6ea0-dabf1a000000\n",
+        "Time:2022-10-07T22:59:32.6680590Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     },
     {
@@ -101,24 +101,24 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 21:42:11 GMT",
+        "x-ms-date": "Fri, 07 Oct 2022 22:59:48 GMT",
         "x-ms-lease-action": "acquire",
         "x-ms-lease-duration": "-1",
-        "x-ms-proposed-lease-id": "27389d95-4c81-45e8-94a9-b7dc1877fe28",
+        "x-ms-proposed-lease-id": "00000000-1111-2222-3333-444444444444",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 21:42:11 GMT",
-        "ETag": "\u00220x8DAA8ACC0F44685\u0022",
-        "Last-Modified": "Fri, 07 Oct 2022 21:41:55 GMT",
+        "Date": "Fri, 07 Oct 2022 22:59:48 GMT",
+        "ETag": "\u00220x8DAA8B798EC7728\u0022",
+        "Last-Modified": "Fri, 07 Oct 2022 22:59:32 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-lease-id": "27389d95-4c81-45e8-94a9-b7dc1877fe28",
+        "x-ms-lease-id": "00000000-1111-2222-3333-444444444444",
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null

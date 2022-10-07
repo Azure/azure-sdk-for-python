@@ -222,7 +222,7 @@ class TestStorageShare(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference("testshare1")
+        share = self._get_share_reference("testshare2")
 
         # Act
         share.create_share()
@@ -235,8 +235,8 @@ class TestStorageShare(StorageRecordedTestCase):
             credential=storage_account_key
         )
 
-        share_lease = share.acquire_lease()
-        share_snapshot_lease = snapshot_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        share_lease = share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        share_snapshot_lease = snapshot_client.acquire_lease(lease_id='44444444-3333-2222-1111-000000000000')
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -289,13 +289,13 @@ class TestStorageShare(StorageRecordedTestCase):
         share_client = self._create_share('test1')
 
         # Act
-        lease = share_client.acquire_lease(lease_duration=15)
+        lease = share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         with pytest.raises(HttpResponseError):
-            share_client.acquire_lease()
+            share_client.acquire_lease(lease_id='44444444-3333-2222-1111-000000000000')
         self.sleep(17)
-        share_client.acquire_lease()
+        share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1421,8 +1421,8 @@ class TestStorageShare(StorageRecordedTestCase):
         self.assertNamedItemInContainer(resp, 'pref_dir3')
         self._delete_shares()
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy
     def test_shared_access_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
