@@ -6,158 +6,245 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AccountListSupportedImagesResult
-from ._models import AffinityInformation
-from ._models import Application
-from ._models import ApplicationListResult
-from ._models import ApplicationPackageReference
-from ._models import AuthenticationTokenSettings
-from ._models import AutoPoolSpecification
-from ._models import AutoScaleRun
-from ._models import AutoScaleRunError
-from ._models import AutoUserSpecification
-from ._models import AzureBlobFileSystemConfiguration
-from ._models import AzureFileShareConfiguration
-from ._models import BatchError
-from ._models import BatchErrorDetail
-from ._models import BatchJob
-from ._models import BatchJobDisableParameters
-from ._models import BatchJobListPreparationAndReleaseTaskStatusResult
-from ._models import BatchJobListResult
-from ._models import BatchJobSchedule
-from ._models import BatchJobScheduleListResult
-from ._models import BatchJobScheduleUpdate
-from ._models import BatchJobTerminateParameters
-from ._models import BatchJobUpdate
-from ._models import BatchPool
-from ._models import BatchPoolEnableAutoScaleParameters
-from ._models import BatchPoolEvaluateAutoScaleParameters
-from ._models import BatchPoolIdentity
-from ._models import BatchPoolListResult
-from ._models import BatchPoolResizeParameters
-from ._models import BatchPoolUpdate
-from ._models import BatchTask
-from ._models import BatchTaskCollection
-from ._models import BatchTaskListResult
-from ._models import BatchTaskListSubtasksResult
-from ._models import CIFSMountConfiguration
-from ._models import Certificate
-from ._models import CertificateListResult
-from ._models import CertificateReference
-from ._models import CloudServiceConfiguration
-from ._models import ComputeNode
-from ._models import ComputeNodeEndpointConfiguration
-from ._models import ComputeNodeError
-from ._models import ComputeNodeGetRemoteLoginSettingsResult
-from ._models import ComputeNodeIdentityReference
-from ._models import ComputeNodeInformation
-from ._models import ComputeNodeListResult
-from ._models import ComputeNodeUser
-from ._models import ContainerConfiguration
-from ._models import ContainerRegistry
-from ._models import DataDisk
-from ._models import DeleteCertificateError
-from ._models import DiffDiskSettings
-from ._models import DiskEncryptionConfiguration
-from ._models import EnvironmentSetting
-from ._models import ErrorMessage
-from ._models import ExitCodeMapping
-from ._models import ExitCodeRangeMapping
-from ._models import ExitConditions
-from ._models import ExitOptions
-from ._models import FileProperties
-from ._models import HttpHeader
-from ._models import ImageInformation
-from ._models import ImageReference
-from ._models import InboundEndpoint
-from ._models import InboundNATPool
-from ._models import InstanceViewStatus
-from ._models import JobConstraints
-from ._models import JobExecutionInformation
-from ._models import JobManagerTask
-from ._models import JobNetworkConfiguration
-from ._models import JobPreparationAndReleaseTaskExecutionInformation
-from ._models import JobPreparationTask
-from ._models import JobPreparationTaskExecutionInformation
-from ._models import JobReleaseTask
-from ._models import JobReleaseTaskExecutionInformation
-from ._models import JobScheduleExecutionInformation
-from ._models import JobScheduleStatistics
-from ._models import JobSchedulingError
-from ._models import JobSpecification
-from ._models import JobStatistics
-from ._models import LinuxUserConfiguration
-from ._models import MetadataItem
-from ._models import MountConfiguration
-from ._models import MultiInstanceSettings
-from ._models import NFSMountConfiguration
-from ._models import NameValuePair
-from ._models import NetworkConfiguration
-from ._models import NetworkSecurityGroupRule
-from ._models import NodeAgentInformation
-from ._models import NodeCounts
-from ._models import NodeDisableSchedulingParameters
-from ._models import NodeFile
-from ._models import NodeFileListResult
-from ._models import NodePlacementConfiguration
-from ._models import NodeRebootParameters
-from ._models import NodeReimageParameters
-from ._models import NodeRemoveParameters
-from ._models import NodeUpdateUserParameters
-from ._models import NodeVMExtension
-from ._models import NodeVMExtensionList
-from ._models import OSDisk
-from ._models import OutputFile
-from ._models import OutputFileBlobContainerDestination
-from ._models import OutputFileDestination
-from ._models import OutputFileUploadOptions
-from ._models import PoolEndpointConfiguration
-from ._models import PoolInformation
-from ._models import PoolListUsageMetricsResult
-from ._models import PoolNodeCounts
-from ._models import PoolNodeCountsListResult
-from ._models import PoolSpecification
-from ._models import PoolStatistics
-from ._models import PoolUsageMetrics
-from ._models import PublicIPAddressConfiguration
-from ._models import RecentJob
-from ._models import ResizeError
-from ._models import ResourceFile
-from ._models import ResourceStatistics
-from ._models import Schedule
-from ._models import StartTask
-from ._models import StartTaskInformation
-from ._models import SubtaskInformation
-from ._models import TaskAddCollectionResult
-from ._models import TaskAddResult
-from ._models import TaskConstraints
-from ._models import TaskContainerExecutionInformation
-from ._models import TaskContainerSettings
-from ._models import TaskCounts
-from ._models import TaskCountsResult
-from ._models import TaskDependencies
-from ._models import TaskExecutionInformation
-from ._models import TaskFailureInformation
-from ._models import TaskIdRange
-from ._models import TaskInformation
-from ._models import TaskSchedulingPolicy
-from ._models import TaskSlotCounts
-from ._models import TaskStatistics
-from ._models import UploadBatchServiceLogsConfiguration
-from ._models import UploadBatchServiceLogsResult
-from ._models import UsageStatistics
-from ._models import UserAccount
-from ._models import UserAssignedIdentity
-from ._models import UserIdentity
-from ._models import VMExtension
-from ._models import VMExtensionInstanceView
-from ._models import VirtualMachineConfiguration
-from ._models import VirtualMachineInfo
-from ._models import WindowsConfiguration
-from ._models import WindowsUserConfiguration
+from ._models_py3 import AccountListPoolNodeCountsOptions
+from ._models_py3 import AccountListSupportedImagesOptions
+from ._models_py3 import AccountListSupportedImagesResult
+from ._models_py3 import AffinityInformation
+from ._models_py3 import ApplicationGetOptions
+from ._models_py3 import ApplicationListOptions
+from ._models_py3 import ApplicationListResult
+from ._models_py3 import ApplicationPackageReference
+from ._models_py3 import ApplicationSummary
+from ._models_py3 import AuthenticationTokenSettings
+from ._models_py3 import AutoPoolSpecification
+from ._models_py3 import AutoScaleRun
+from ._models_py3 import AutoScaleRunError
+from ._models_py3 import AutoUserSpecification
+from ._models_py3 import AzureBlobFileSystemConfiguration
+from ._models_py3 import AzureFileShareConfiguration
+from ._models_py3 import BatchError
+from ._models_py3 import BatchErrorDetail
+from ._models_py3 import BatchPoolIdentity
+from ._models_py3 import CIFSMountConfiguration
+from ._models_py3 import Certificate
+from ._models_py3 import CertificateAddOptions
+from ._models_py3 import CertificateAddParameter
+from ._models_py3 import CertificateCancelDeletionOptions
+from ._models_py3 import CertificateDeleteOptions
+from ._models_py3 import CertificateGetOptions
+from ._models_py3 import CertificateListOptions
+from ._models_py3 import CertificateListResult
+from ._models_py3 import CertificateReference
+from ._models_py3 import CloudJob
+from ._models_py3 import CloudJobListPreparationAndReleaseTaskStatusResult
+from ._models_py3 import CloudJobListResult
+from ._models_py3 import CloudJobSchedule
+from ._models_py3 import CloudJobScheduleListResult
+from ._models_py3 import CloudPool
+from ._models_py3 import CloudPoolListResult
+from ._models_py3 import CloudServiceConfiguration
+from ._models_py3 import CloudTask
+from ._models_py3 import CloudTaskListResult
+from ._models_py3 import CloudTaskListSubtasksResult
+from ._models_py3 import ComputeNode
+from ._models_py3 import ComputeNodeAddUserOptions
+from ._models_py3 import ComputeNodeDeleteUserOptions
+from ._models_py3 import ComputeNodeDisableSchedulingOptions
+from ._models_py3 import ComputeNodeEnableSchedulingOptions
+from ._models_py3 import ComputeNodeEndpointConfiguration
+from ._models_py3 import ComputeNodeError
+from ._models_py3 import ComputeNodeExtensionGetOptions
+from ._models_py3 import ComputeNodeExtensionListOptions
+from ._models_py3 import ComputeNodeGetOptions
+from ._models_py3 import ComputeNodeGetRemoteDesktopOptions
+from ._models_py3 import ComputeNodeGetRemoteLoginSettingsOptions
+from ._models_py3 import ComputeNodeGetRemoteLoginSettingsResult
+from ._models_py3 import ComputeNodeIdentityReference
+from ._models_py3 import ComputeNodeInformation
+from ._models_py3 import ComputeNodeListOptions
+from ._models_py3 import ComputeNodeListResult
+from ._models_py3 import ComputeNodeRebootOptions
+from ._models_py3 import ComputeNodeReimageOptions
+from ._models_py3 import ComputeNodeUpdateUserOptions
+from ._models_py3 import ComputeNodeUploadBatchServiceLogsOptions
+from ._models_py3 import ComputeNodeUser
+from ._models_py3 import ContainerConfiguration
+from ._models_py3 import ContainerRegistry
+from ._models_py3 import DataDisk
+from ._models_py3 import DeleteCertificateError
+from ._models_py3 import DiffDiskSettings
+from ._models_py3 import DiskEncryptionConfiguration
+from ._models_py3 import EnvironmentSetting
+from ._models_py3 import ErrorMessage
+from ._models_py3 import ExitCodeMapping
+from ._models_py3 import ExitCodeRangeMapping
+from ._models_py3 import ExitConditions
+from ._models_py3 import ExitOptions
+from ._models_py3 import FileDeleteFromComputeNodeOptions
+from ._models_py3 import FileDeleteFromTaskOptions
+from ._models_py3 import FileGetFromComputeNodeOptions
+from ._models_py3 import FileGetFromTaskOptions
+from ._models_py3 import FileGetPropertiesFromComputeNodeOptions
+from ._models_py3 import FileGetPropertiesFromTaskOptions
+from ._models_py3 import FileListFromComputeNodeOptions
+from ._models_py3 import FileListFromTaskOptions
+from ._models_py3 import FileProperties
+from ._models_py3 import HttpHeader
+from ._models_py3 import ImageInformation
+from ._models_py3 import ImageReference
+from ._models_py3 import InboundEndpoint
+from ._models_py3 import InboundNATPool
+from ._models_py3 import InstanceViewStatus
+from ._models_py3 import JobAddOptions
+from ._models_py3 import JobAddParameter
+from ._models_py3 import JobConstraints
+from ._models_py3 import JobDeleteOptions
+from ._models_py3 import JobDisableOptions
+from ._models_py3 import JobDisableParameter
+from ._models_py3 import JobEnableOptions
+from ._models_py3 import JobExecutionInformation
+from ._models_py3 import JobGetAllLifetimeStatisticsOptions
+from ._models_py3 import JobGetOptions
+from ._models_py3 import JobGetTaskCountsOptions
+from ._models_py3 import JobListFromJobScheduleOptions
+from ._models_py3 import JobListOptions
+from ._models_py3 import JobListPreparationAndReleaseTaskStatusOptions
+from ._models_py3 import JobManagerTask
+from ._models_py3 import JobNetworkConfiguration
+from ._models_py3 import JobPatchOptions
+from ._models_py3 import JobPatchParameter
+from ._models_py3 import JobPreparationAndReleaseTaskExecutionInformation
+from ._models_py3 import JobPreparationTask
+from ._models_py3 import JobPreparationTaskExecutionInformation
+from ._models_py3 import JobReleaseTask
+from ._models_py3 import JobReleaseTaskExecutionInformation
+from ._models_py3 import JobScheduleAddOptions
+from ._models_py3 import JobScheduleAddParameter
+from ._models_py3 import JobScheduleDeleteOptions
+from ._models_py3 import JobScheduleDisableOptions
+from ._models_py3 import JobScheduleEnableOptions
+from ._models_py3 import JobScheduleExecutionInformation
+from ._models_py3 import JobScheduleExistsOptions
+from ._models_py3 import JobScheduleGetOptions
+from ._models_py3 import JobScheduleListOptions
+from ._models_py3 import JobSchedulePatchOptions
+from ._models_py3 import JobSchedulePatchParameter
+from ._models_py3 import JobScheduleStatistics
+from ._models_py3 import JobScheduleTerminateOptions
+from ._models_py3 import JobScheduleUpdateOptions
+from ._models_py3 import JobScheduleUpdateParameter
+from ._models_py3 import JobSchedulingError
+from ._models_py3 import JobSpecification
+from ._models_py3 import JobStatistics
+from ._models_py3 import JobTerminateOptions
+from ._models_py3 import JobTerminateParameter
+from ._models_py3 import JobUpdateOptions
+from ._models_py3 import JobUpdateParameter
+from ._models_py3 import LinuxUserConfiguration
+from ._models_py3 import MetadataItem
+from ._models_py3 import MountConfiguration
+from ._models_py3 import MultiInstanceSettings
+from ._models_py3 import NFSMountConfiguration
+from ._models_py3 import NameValuePair
+from ._models_py3 import NetworkConfiguration
+from ._models_py3 import NetworkSecurityGroupRule
+from ._models_py3 import NodeAgentInformation
+from ._models_py3 import NodeCounts
+from ._models_py3 import NodeDisableSchedulingParameter
+from ._models_py3 import NodeFile
+from ._models_py3 import NodeFileListResult
+from ._models_py3 import NodePlacementConfiguration
+from ._models_py3 import NodeRebootParameter
+from ._models_py3 import NodeReimageParameter
+from ._models_py3 import NodeRemoveParameter
+from ._models_py3 import NodeUpdateUserParameter
+from ._models_py3 import NodeVMExtension
+from ._models_py3 import NodeVMExtensionList
+from ._models_py3 import OSDisk
+from ._models_py3 import OutputFile
+from ._models_py3 import OutputFileBlobContainerDestination
+from ._models_py3 import OutputFileDestination
+from ._models_py3 import OutputFileUploadOptions
+from ._models_py3 import PoolAddOptions
+from ._models_py3 import PoolAddParameter
+from ._models_py3 import PoolDeleteOptions
+from ._models_py3 import PoolDisableAutoScaleOptions
+from ._models_py3 import PoolEnableAutoScaleOptions
+from ._models_py3 import PoolEnableAutoScaleParameter
+from ._models_py3 import PoolEndpointConfiguration
+from ._models_py3 import PoolEvaluateAutoScaleOptions
+from ._models_py3 import PoolEvaluateAutoScaleParameter
+from ._models_py3 import PoolExistsOptions
+from ._models_py3 import PoolGetAllLifetimeStatisticsOptions
+from ._models_py3 import PoolGetOptions
+from ._models_py3 import PoolInformation
+from ._models_py3 import PoolListOptions
+from ._models_py3 import PoolListUsageMetricsOptions
+from ._models_py3 import PoolListUsageMetricsResult
+from ._models_py3 import PoolNodeCounts
+from ._models_py3 import PoolNodeCountsListResult
+from ._models_py3 import PoolPatchOptions
+from ._models_py3 import PoolPatchParameter
+from ._models_py3 import PoolRemoveNodesOptions
+from ._models_py3 import PoolResizeOptions
+from ._models_py3 import PoolResizeParameter
+from ._models_py3 import PoolSpecification
+from ._models_py3 import PoolStatistics
+from ._models_py3 import PoolStopResizeOptions
+from ._models_py3 import PoolUpdatePropertiesOptions
+from ._models_py3 import PoolUpdatePropertiesParameter
+from ._models_py3 import PoolUsageMetrics
+from ._models_py3 import PublicIPAddressConfiguration
+from ._models_py3 import RecentJob
+from ._models_py3 import ResizeError
+from ._models_py3 import ResourceFile
+from ._models_py3 import ResourceStatistics
+from ._models_py3 import Schedule
+from ._models_py3 import StartTask
+from ._models_py3 import StartTaskInformation
+from ._models_py3 import SubtaskInformation
+from ._models_py3 import TaskAddCollectionOptions
+from ._models_py3 import TaskAddCollectionParameter
+from ._models_py3 import TaskAddCollectionResult
+from ._models_py3 import TaskAddOptions
+from ._models_py3 import TaskAddParameter
+from ._models_py3 import TaskAddResult
+from ._models_py3 import TaskConstraints
+from ._models_py3 import TaskContainerExecutionInformation
+from ._models_py3 import TaskContainerSettings
+from ._models_py3 import TaskCounts
+from ._models_py3 import TaskCountsResult
+from ._models_py3 import TaskDeleteOptions
+from ._models_py3 import TaskDependencies
+from ._models_py3 import TaskExecutionInformation
+from ._models_py3 import TaskFailureInformation
+from ._models_py3 import TaskGetOptions
+from ._models_py3 import TaskIdRange
+from ._models_py3 import TaskInformation
+from ._models_py3 import TaskListOptions
+from ._models_py3 import TaskListSubtasksOptions
+from ._models_py3 import TaskReactivateOptions
+from ._models_py3 import TaskSchedulingPolicy
+from ._models_py3 import TaskSlotCounts
+from ._models_py3 import TaskStatistics
+from ._models_py3 import TaskTerminateOptions
+from ._models_py3 import TaskUpdateOptions
+from ._models_py3 import TaskUpdateParameter
+from ._models_py3 import UploadBatchServiceLogsConfiguration
+from ._models_py3 import UploadBatchServiceLogsResult
+from ._models_py3 import UsageStatistics
+from ._models_py3 import UserAccount
+from ._models_py3 import UserAssignedIdentity
+from ._models_py3 import UserIdentity
+from ._models_py3 import VMExtension
+from ._models_py3 import VMExtensionInstanceView
+from ._models_py3 import VirtualMachineConfiguration
+from ._models_py3 import VirtualMachineInfo
+from ._models_py3 import WindowsConfiguration
+from ._models_py3 import WindowsUserConfiguration
 
 
-from ._enums import (
+from ._batch_service_client_enums import (
     AllocationState,
     AutoUserScope,
     CachingType,
@@ -209,11 +296,15 @@ from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
+    'AccountListPoolNodeCountsOptions',
+    'AccountListSupportedImagesOptions',
     'AccountListSupportedImagesResult',
     'AffinityInformation',
-    'Application',
+    'ApplicationGetOptions',
+    'ApplicationListOptions',
     'ApplicationListResult',
     'ApplicationPackageReference',
+    'ApplicationSummary',
     'AuthenticationTokenSettings',
     'AutoPoolSpecification',
     'AutoScaleRun',
@@ -223,38 +314,49 @@ __all__ = [
     'AzureFileShareConfiguration',
     'BatchError',
     'BatchErrorDetail',
-    'BatchJob',
-    'BatchJobDisableParameters',
-    'BatchJobListPreparationAndReleaseTaskStatusResult',
-    'BatchJobListResult',
-    'BatchJobSchedule',
-    'BatchJobScheduleListResult',
-    'BatchJobScheduleUpdate',
-    'BatchJobTerminateParameters',
-    'BatchJobUpdate',
-    'BatchPool',
-    'BatchPoolEnableAutoScaleParameters',
-    'BatchPoolEvaluateAutoScaleParameters',
     'BatchPoolIdentity',
-    'BatchPoolListResult',
-    'BatchPoolResizeParameters',
-    'BatchPoolUpdate',
-    'BatchTask',
-    'BatchTaskCollection',
-    'BatchTaskListResult',
-    'BatchTaskListSubtasksResult',
     'CIFSMountConfiguration',
     'Certificate',
+    'CertificateAddOptions',
+    'CertificateAddParameter',
+    'CertificateCancelDeletionOptions',
+    'CertificateDeleteOptions',
+    'CertificateGetOptions',
+    'CertificateListOptions',
     'CertificateListResult',
     'CertificateReference',
+    'CloudJob',
+    'CloudJobListPreparationAndReleaseTaskStatusResult',
+    'CloudJobListResult',
+    'CloudJobSchedule',
+    'CloudJobScheduleListResult',
+    'CloudPool',
+    'CloudPoolListResult',
     'CloudServiceConfiguration',
+    'CloudTask',
+    'CloudTaskListResult',
+    'CloudTaskListSubtasksResult',
     'ComputeNode',
+    'ComputeNodeAddUserOptions',
+    'ComputeNodeDeleteUserOptions',
+    'ComputeNodeDisableSchedulingOptions',
+    'ComputeNodeEnableSchedulingOptions',
     'ComputeNodeEndpointConfiguration',
     'ComputeNodeError',
+    'ComputeNodeExtensionGetOptions',
+    'ComputeNodeExtensionListOptions',
+    'ComputeNodeGetOptions',
+    'ComputeNodeGetRemoteDesktopOptions',
+    'ComputeNodeGetRemoteLoginSettingsOptions',
     'ComputeNodeGetRemoteLoginSettingsResult',
     'ComputeNodeIdentityReference',
     'ComputeNodeInformation',
+    'ComputeNodeListOptions',
     'ComputeNodeListResult',
+    'ComputeNodeRebootOptions',
+    'ComputeNodeReimageOptions',
+    'ComputeNodeUpdateUserOptions',
+    'ComputeNodeUploadBatchServiceLogsOptions',
     'ComputeNodeUser',
     'ContainerConfiguration',
     'ContainerRegistry',
@@ -268,6 +370,14 @@ __all__ = [
     'ExitCodeRangeMapping',
     'ExitConditions',
     'ExitOptions',
+    'FileDeleteFromComputeNodeOptions',
+    'FileDeleteFromTaskOptions',
+    'FileGetFromComputeNodeOptions',
+    'FileGetFromTaskOptions',
+    'FileGetPropertiesFromComputeNodeOptions',
+    'FileGetPropertiesFromTaskOptions',
+    'FileListFromComputeNodeOptions',
+    'FileListFromTaskOptions',
     'FileProperties',
     'HttpHeader',
     'ImageInformation',
@@ -275,20 +385,51 @@ __all__ = [
     'InboundEndpoint',
     'InboundNATPool',
     'InstanceViewStatus',
+    'JobAddOptions',
+    'JobAddParameter',
     'JobConstraints',
+    'JobDeleteOptions',
+    'JobDisableOptions',
+    'JobDisableParameter',
+    'JobEnableOptions',
     'JobExecutionInformation',
+    'JobGetAllLifetimeStatisticsOptions',
+    'JobGetOptions',
+    'JobGetTaskCountsOptions',
+    'JobListFromJobScheduleOptions',
+    'JobListOptions',
+    'JobListPreparationAndReleaseTaskStatusOptions',
     'JobManagerTask',
     'JobNetworkConfiguration',
+    'JobPatchOptions',
+    'JobPatchParameter',
     'JobPreparationAndReleaseTaskExecutionInformation',
     'JobPreparationTask',
     'JobPreparationTaskExecutionInformation',
     'JobReleaseTask',
     'JobReleaseTaskExecutionInformation',
+    'JobScheduleAddOptions',
+    'JobScheduleAddParameter',
+    'JobScheduleDeleteOptions',
+    'JobScheduleDisableOptions',
+    'JobScheduleEnableOptions',
     'JobScheduleExecutionInformation',
+    'JobScheduleExistsOptions',
+    'JobScheduleGetOptions',
+    'JobScheduleListOptions',
+    'JobSchedulePatchOptions',
+    'JobSchedulePatchParameter',
     'JobScheduleStatistics',
+    'JobScheduleTerminateOptions',
+    'JobScheduleUpdateOptions',
+    'JobScheduleUpdateParameter',
     'JobSchedulingError',
     'JobSpecification',
     'JobStatistics',
+    'JobTerminateOptions',
+    'JobTerminateParameter',
+    'JobUpdateOptions',
+    'JobUpdateParameter',
     'LinuxUserConfiguration',
     'MetadataItem',
     'MountConfiguration',
@@ -299,14 +440,14 @@ __all__ = [
     'NetworkSecurityGroupRule',
     'NodeAgentInformation',
     'NodeCounts',
-    'NodeDisableSchedulingParameters',
+    'NodeDisableSchedulingParameter',
     'NodeFile',
     'NodeFileListResult',
     'NodePlacementConfiguration',
-    'NodeRebootParameters',
-    'NodeReimageParameters',
-    'NodeRemoveParameters',
-    'NodeUpdateUserParameters',
+    'NodeRebootParameter',
+    'NodeReimageParameter',
+    'NodeRemoveParameter',
+    'NodeUpdateUserParameter',
     'NodeVMExtension',
     'NodeVMExtensionList',
     'OSDisk',
@@ -314,13 +455,34 @@ __all__ = [
     'OutputFileBlobContainerDestination',
     'OutputFileDestination',
     'OutputFileUploadOptions',
+    'PoolAddOptions',
+    'PoolAddParameter',
+    'PoolDeleteOptions',
+    'PoolDisableAutoScaleOptions',
+    'PoolEnableAutoScaleOptions',
+    'PoolEnableAutoScaleParameter',
     'PoolEndpointConfiguration',
+    'PoolEvaluateAutoScaleOptions',
+    'PoolEvaluateAutoScaleParameter',
+    'PoolExistsOptions',
+    'PoolGetAllLifetimeStatisticsOptions',
+    'PoolGetOptions',
     'PoolInformation',
+    'PoolListOptions',
+    'PoolListUsageMetricsOptions',
     'PoolListUsageMetricsResult',
     'PoolNodeCounts',
     'PoolNodeCountsListResult',
+    'PoolPatchOptions',
+    'PoolPatchParameter',
+    'PoolRemoveNodesOptions',
+    'PoolResizeOptions',
+    'PoolResizeParameter',
     'PoolSpecification',
     'PoolStatistics',
+    'PoolStopResizeOptions',
+    'PoolUpdatePropertiesOptions',
+    'PoolUpdatePropertiesParameter',
     'PoolUsageMetrics',
     'PublicIPAddressConfiguration',
     'RecentJob',
@@ -331,21 +493,33 @@ __all__ = [
     'StartTask',
     'StartTaskInformation',
     'SubtaskInformation',
+    'TaskAddCollectionOptions',
+    'TaskAddCollectionParameter',
     'TaskAddCollectionResult',
+    'TaskAddOptions',
+    'TaskAddParameter',
     'TaskAddResult',
     'TaskConstraints',
     'TaskContainerExecutionInformation',
     'TaskContainerSettings',
     'TaskCounts',
     'TaskCountsResult',
+    'TaskDeleteOptions',
     'TaskDependencies',
     'TaskExecutionInformation',
     'TaskFailureInformation',
+    'TaskGetOptions',
     'TaskIdRange',
     'TaskInformation',
+    'TaskListOptions',
+    'TaskListSubtasksOptions',
+    'TaskReactivateOptions',
     'TaskSchedulingPolicy',
     'TaskSlotCounts',
     'TaskStatistics',
+    'TaskTerminateOptions',
+    'TaskUpdateOptions',
+    'TaskUpdateParameter',
     'UploadBatchServiceLogsConfiguration',
     'UploadBatchServiceLogsResult',
     'UsageStatistics',

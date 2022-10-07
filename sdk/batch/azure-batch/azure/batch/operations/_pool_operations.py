@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -46,7 +46,7 @@ def build_list_usage_metrics_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/poolusagemetrics"
+    _url = kwargs.pop("template_url", "/poolusagemetrics")
 
     # Construct parameters
     if start_time is not None:
@@ -94,7 +94,7 @@ def build_get_all_lifetime_statistics_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/lifetimepoolstats"
+    _url = kwargs.pop("template_url", "/lifetimepoolstats")
 
     # Construct parameters
     if timeout is not None:
@@ -121,7 +121,7 @@ def build_get_all_lifetime_statistics_request(
 
 def build_add_request(
     *,
-    json: Optional[_models.BatchPool] = None,
+    json: Optional[_models.PoolAddParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -137,7 +137,7 @@ def build_add_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools"
+    _url = kwargs.pop("template_url", "/pools")
 
     # Construct parameters
     if timeout is not None:
@@ -185,7 +185,7 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools"
+    _url = kwargs.pop("template_url", "/pools")
 
     # Construct parameters
     if filter is not None:
@@ -238,7 +238,7 @@ def build_delete_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -296,7 +296,7 @@ def build_exists_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -356,7 +356,7 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -401,7 +401,7 @@ def build_get_request(
 def build_patch_request(
     pool_id: str,
     *,
-    json: Optional[_models.BatchPoolUpdate] = None,
+    json: Optional[_models.PoolPatchParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -421,7 +421,7 @@ def build_patch_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -479,7 +479,7 @@ def build_disable_auto_scale_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/disableautoscale"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/disableautoscale")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -512,7 +512,7 @@ def build_disable_auto_scale_request(
 def build_enable_auto_scale_request(
     pool_id: str,
     *,
-    json: Optional[_models.BatchPoolEnableAutoScaleParameters] = None,
+    json: Optional[_models.PoolEnableAutoScaleParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -532,7 +532,7 @@ def build_enable_auto_scale_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/enableautoscale"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/enableautoscale")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -577,7 +577,7 @@ def build_enable_auto_scale_request(
 def build_evaluate_auto_scale_request(
     pool_id: str,
     *,
-    json: Optional[_models.BatchPoolEvaluateAutoScaleParameters] = None,
+    json: Optional[_models.PoolEvaluateAutoScaleParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -593,7 +593,7 @@ def build_evaluate_auto_scale_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/evaluateautoscale"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/evaluateautoscale")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -630,7 +630,7 @@ def build_evaluate_auto_scale_request(
 def build_resize_request(
     pool_id: str,
     *,
-    json: Optional[_models.BatchPoolResizeParameters] = None,
+    json: Optional[_models.PoolResizeParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -650,7 +650,7 @@ def build_resize_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/resize"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/resize")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -712,7 +712,7 @@ def build_stop_resize_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/stopresize"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/stopresize")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -753,7 +753,7 @@ def build_stop_resize_request(
 def build_update_properties_request(
     pool_id: str,
     *,
-    json: Optional[_models.BatchPool] = None,
+    json: Optional[_models.PoolUpdatePropertiesParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -769,7 +769,7 @@ def build_update_properties_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/updateproperties"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/updateproperties")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -806,7 +806,7 @@ def build_update_properties_request(
 def build_remove_nodes_request(
     pool_id: str,
     *,
-    json: Optional[_models.NodeRemoveParameters] = None,
+    json: Optional[_models.NodeRemoveParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -826,7 +826,7 @@ def build_remove_nodes_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/removenodes"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/removenodes")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -890,15 +890,7 @@ class PoolOperations:
     @distributed_trace
     def list_usage_metrics(
         self,
-        *,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        filter: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        pool_list_usage_metrics_options: Optional[_models.PoolListUsageMetricsOptions] = None,
         **kwargs: Any
     ) -> Iterable[_models.PoolListUsageMetricsResult]:
         """Lists the usage metrics, aggregated by Pool across individual time intervals, for the specified
@@ -910,36 +902,11 @@ class PoolOperations:
         and end times of the last aggregation interval currently available; that is, only the last
         aggregation interval is returned.
 
-        :keyword start_time: The earliest time from which to include metrics. This must be at least two
-         and a half hours before the current time. If not specified this defaults to the start time of
-         the last aggregation interval currently available. Default value is None.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: The latest time from which to include metrics. This must be at least two
-         hours before the current time. If not specified this defaults to the end time of the last
-         aggregation interval currently available. Default value is None.
-        :paramtype end_time: ~datetime.datetime
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics.
-         Default value is None.
-        :paramtype filter: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         results will be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of PoolListUsageMetricsResult
+        :param pool_list_usage_metrics_options: Parameter group. Default value is None.
+        :type pool_list_usage_metrics_options: ~azure-batch.models.PoolListUsageMetricsOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either PoolListUsageMetricsResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.PoolListUsageMetricsResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -955,38 +922,82 @@ class PoolOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _start_time = None
+                _end_time = None
+                _filter = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if pool_list_usage_metrics_options is not None:
+                    _start_time = pool_list_usage_metrics_options.start_time
+                    _end_time = pool_list_usage_metrics_options.end_time
+                    _filter = pool_list_usage_metrics_options.filter
+                    _max_results = pool_list_usage_metrics_options.max_results
+                    _timeout = pool_list_usage_metrics_options.timeout
+                    _client_request_id = pool_list_usage_metrics_options.client_request_id
+                    _return_client_request_id = pool_list_usage_metrics_options.return_client_request_id
+                    _ocp_date = pool_list_usage_metrics_options.ocp_date
                 
                 request = build_list_usage_metrics_request(
                     api_version=api_version,
-                    start_time=start_time,
-                    end_time=end_time,
-                    filter=filter,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    start_time=_start_time,
+                    end_time=_end_time,
+                    filter=_filter,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list_usage_metrics.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _start_time = None
+                _end_time = None
+                _filter = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if pool_list_usage_metrics_options is not None:
+                    _start_time = pool_list_usage_metrics_options.start_time
+                    _end_time = pool_list_usage_metrics_options.end_time
+                    _filter = pool_list_usage_metrics_options.filter
+                    _max_results = pool_list_usage_metrics_options.max_results
+                    _timeout = pool_list_usage_metrics_options.timeout
+                    _client_request_id = pool_list_usage_metrics_options.client_request_id
+                    _return_client_request_id = pool_list_usage_metrics_options.return_client_request_id
+                    _ocp_date = pool_list_usage_metrics_options.ocp_date
                 
                 request = build_list_usage_metrics_request(
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    start_time=_start_time,
+                    end_time=_end_time,
+                    filter=_filter,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -1022,16 +1033,12 @@ class PoolOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list_usage_metrics.metadata = {'url': "/poolusagemetrics"}  # type: ignore
 
     @distributed_trace
     def get_all_lifetime_statistics(
         self,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        pool_get_all_lifetime_statistics_options: Optional[_models.PoolGetAllLifetimeStatisticsOptions] = None,
         **kwargs: Any
     ) -> _models.PoolStatistics:
         """Gets lifetime summary statistics for all of the Pools in the specified Account.
@@ -1041,21 +1048,11 @@ class PoolOperations:
         available. The Batch service performs periodic roll-up of statistics. The typical delay is
         about 30 minutes.
 
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: PoolStatistics
+        :param pool_get_all_lifetime_statistics_options: Parameter group. Default value is None.
+        :type pool_get_all_lifetime_statistics_options:
+         ~azure-batch.models.PoolGetAllLifetimeStatisticsOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PoolStatistics, or the result of cls(response)
         :rtype: ~azure-batch.models.PoolStatistics
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1070,16 +1067,27 @@ class PoolOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.PoolStatistics]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if pool_get_all_lifetime_statistics_options is not None:
+            _timeout = pool_get_all_lifetime_statistics_options.timeout
+            _client_request_id = pool_get_all_lifetime_statistics_options.client_request_id
+            _return_client_request_id = pool_get_all_lifetime_statistics_options.return_client_request_id
+            _ocp_date = pool_get_all_lifetime_statistics_options.ocp_date
+
         request = build_get_all_lifetime_statistics_request(
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.get_all_lifetime_statistics.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1110,17 +1118,14 @@ class PoolOperations:
 
         return deserialized
 
+    get_all_lifetime_statistics.metadata = {'url': "/lifetimepoolstats"}  # type: ignore
 
 
     @distributed_trace
     def add(  # pylint: disable=inconsistent-return-statements
         self,
-        pool: _models.BatchPool,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        pool: _models.PoolAddParameter,
+        pool_add_options: Optional[_models.PoolAddOptions] = None,
         **kwargs: Any
     ) -> None:
         """Adds a Pool to the specified Account.
@@ -1129,22 +1134,11 @@ class PoolOperations:
         names. This information may appear in telemetry logs accessible to Microsoft Support engineers.
 
         :param pool: The Pool to be added.
-        :type pool: ~azure-batch.models.BatchPool
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :type pool: ~azure-batch.models.PoolAddParameter
+        :param pool_add_options: Parameter group. Default value is None.
+        :type pool_add_options: ~azure-batch.models.PoolAddOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1160,19 +1154,30 @@ class PoolOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(pool, 'BatchPool')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if pool_add_options is not None:
+            _timeout = pool_add_options.timeout
+            _client_request_id = pool_add_options.client_request_id
+            _return_client_request_id = pool_add_options.return_client_request_id
+            _ocp_date = pool_add_options.ocp_date
+        _content = self._serialize.body(pool, 'PoolAddParameter')
 
         request = build_add_request(
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.add.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1201,60 +1206,31 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    add.metadata = {'url': "/pools"}  # type: ignore
 
 
     @distributed_trace
     def list(
         self,
-        *,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        pool_list_options: Optional[_models.PoolListOptions] = None,
         **kwargs: Any
-    ) -> Iterable[_models.BatchPoolListResult]:
+    ) -> Iterable[_models.CloudPoolListResult]:
         """Lists all of the Pools in the specified Account.
 
         Lists all of the Pools in the specified Account.
 
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-pools.
-         Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         Pools can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of BatchPoolListResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.BatchPoolListResult]
+        :param pool_list_options: Parameter group. Default value is None.
+        :type pool_list_options: ~azure-batch.models.PoolListOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either CloudPoolListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.CloudPoolListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchPoolListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudPoolListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1262,38 +1238,82 @@ class PoolOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _filter = None
+                _select = None
+                _expand = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if pool_list_options is not None:
+                    _filter = pool_list_options.filter
+                    _select = pool_list_options.select
+                    _expand = pool_list_options.expand
+                    _max_results = pool_list_options.max_results
+                    _timeout = pool_list_options.timeout
+                    _client_request_id = pool_list_options.client_request_id
+                    _return_client_request_id = pool_list_options.return_client_request_id
+                    _ocp_date = pool_list_options.ocp_date
                 
                 request = build_list_request(
                     api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    filter=_filter,
+                    select=_select,
+                    expand=_expand,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _filter = None
+                _select = None
+                _expand = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if pool_list_options is not None:
+                    _filter = pool_list_options.filter
+                    _select = pool_list_options.select
+                    _expand = pool_list_options.expand
+                    _max_results = pool_list_options.max_results
+                    _timeout = pool_list_options.timeout
+                    _client_request_id = pool_list_options.client_request_id
+                    _return_client_request_id = pool_list_options.return_client_request_id
+                    _ocp_date = pool_list_options.ocp_date
                 
                 request = build_list_request(
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    filter=_filter,
+                    select=_select,
+                    expand=_expand,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -1302,7 +1322,7 @@ class PoolOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("BatchPoolListResult", pipeline_response)
+            deserialized = self._deserialize("CloudPoolListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1329,21 +1349,13 @@ class PoolOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list.metadata = {'url': "/pools"}  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        pool_delete_options: Optional[_models.PoolDeleteOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Pool from the specified Account.
@@ -1361,37 +1373,10 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool to delete.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param pool_delete_options: Parameter group. Default value is None.
+        :type pool_delete_options: ~azure-batch.models.PoolDeleteOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1406,21 +1391,40 @@ class PoolOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_delete_options is not None:
+            _timeout = pool_delete_options.timeout
+            _client_request_id = pool_delete_options.client_request_id
+            _return_client_request_id = pool_delete_options.return_client_request_id
+            _ocp_date = pool_delete_options.ocp_date
+            _if_match = pool_delete_options.if_match
+            _if_none_match = pool_delete_options.if_none_match
+            _if_modified_since = pool_delete_options.if_modified_since
+            _if_unmodified_since = pool_delete_options.if_unmodified_since
+
         request = build_delete_request(
             pool_id=pool_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.delete.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1446,58 +1450,24 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    delete.metadata = {'url': "/pools/{poolId}"}  # type: ignore
 
 
     @distributed_trace
     def exists(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        pool_exists_options: Optional[_models.PoolExistsOptions] = None,
         **kwargs: Any
     ) -> None:
         """Gets basic properties of a Pool.
 
         :param pool_id: The ID of the Pool to get.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param pool_exists_options: Parameter group. Default value is None.
+        :type pool_exists_options: ~azure-batch.models.PoolExistsOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1512,21 +1482,40 @@ class PoolOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_exists_options is not None:
+            _timeout = pool_exists_options.timeout
+            _client_request_id = pool_exists_options.client_request_id
+            _return_client_request_id = pool_exists_options.return_client_request_id
+            _ocp_date = pool_exists_options.ocp_date
+            _if_match = pool_exists_options.if_match
+            _if_none_match = pool_exists_options.if_none_match
+            _if_modified_since = pool_exists_options.if_modified_since
+            _if_unmodified_since = pool_exists_options.if_unmodified_since
+
         request = build_exists_request(
             pool_id=pool_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.exists.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1555,65 +1544,25 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    exists.metadata = {'url': "/pools/{poolId}"}  # type: ignore
 
 
     @distributed_trace
     def get(
         self,
         pool_id: str,
-        *,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        pool_get_options: Optional[_models.PoolGetOptions] = None,
         **kwargs: Any
-    ) -> _models.BatchPool:
+    ) -> _models.CloudPool:
         """Gets information about the specified Pool.
 
         :param pool_id: The ID of the Pool to get.
         :type pool_id: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: BatchPool
-        :rtype: ~azure-batch.models.BatchPool
+        :param pool_get_options: Parameter group. Default value is None.
+        :type pool_get_options: ~azure-batch.models.PoolGetOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CloudPool, or the result of cls(response)
+        :rtype: ~azure-batch.models.CloudPool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -1625,25 +1574,48 @@ class PoolOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchPool]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudPool]
 
-        
+        _select = None
+        _expand = None
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_get_options is not None:
+            _select = pool_get_options.select
+            _expand = pool_get_options.expand
+            _timeout = pool_get_options.timeout
+            _client_request_id = pool_get_options.client_request_id
+            _return_client_request_id = pool_get_options.return_client_request_id
+            _ocp_date = pool_get_options.ocp_date
+            _if_match = pool_get_options.if_match
+            _if_none_match = pool_get_options.if_none_match
+            _if_modified_since = pool_get_options.if_modified_since
+            _if_unmodified_since = pool_get_options.if_unmodified_since
+
         request = build_get_request(
             pool_id=pool_id,
             api_version=api_version,
-            select=select,
-            expand=expand,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            select=_select,
+            expand=_expand,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1667,29 +1639,22 @@ class PoolOperations:
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = self._deserialize('BatchPool', pipeline_response)
+        deserialized = self._deserialize('CloudPool', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    get.metadata = {'url': "/pools/{poolId}"}  # type: ignore
 
 
     @distributed_trace
     def patch(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_update: _models.BatchPoolUpdate,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        pool_patch_parameter: _models.PoolPatchParameter,
+        pool_patch_options: Optional[_models.PoolPatchOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -1700,39 +1665,12 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool to update.
         :type pool_id: str
-        :param pool_update: The parameters for the request.
-        :type pool_update: ~azure-batch.models.BatchPoolUpdate
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param pool_patch_parameter: The parameters for the request.
+        :type pool_patch_parameter: ~azure-batch.models.PoolPatchParameter
+        :param pool_patch_options: Parameter group. Default value is None.
+        :type pool_patch_options: ~azure-batch.models.PoolPatchOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1748,24 +1686,43 @@ class PoolOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(pool_update, 'BatchPoolUpdate')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_patch_options is not None:
+            _timeout = pool_patch_options.timeout
+            _client_request_id = pool_patch_options.client_request_id
+            _return_client_request_id = pool_patch_options.return_client_request_id
+            _ocp_date = pool_patch_options.ocp_date
+            _if_match = pool_patch_options.if_match
+            _if_none_match = pool_patch_options.if_none_match
+            _if_modified_since = pool_patch_options.if_modified_since
+            _if_unmodified_since = pool_patch_options.if_unmodified_since
+        _content = self._serialize.body(pool_patch_parameter, 'PoolPatchParameter')
 
         request = build_patch_request(
             pool_id=pool_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.patch.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1794,17 +1751,14 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    patch.metadata = {'url': "/pools/{poolId}"}  # type: ignore
 
 
     @distributed_trace
     def disable_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        pool_disable_auto_scale_options: Optional[_models.PoolDisableAutoScaleOptions] = None,
         **kwargs: Any
     ) -> None:
         """Disables automatic scaling for a Pool.
@@ -1813,21 +1767,10 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool on which to disable automatic scaling.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param pool_disable_auto_scale_options: Parameter group. Default value is None.
+        :type pool_disable_auto_scale_options: ~azure-batch.models.PoolDisableAutoScaleOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1842,17 +1785,28 @@ class PoolOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if pool_disable_auto_scale_options is not None:
+            _timeout = pool_disable_auto_scale_options.timeout
+            _client_request_id = pool_disable_auto_scale_options.client_request_id
+            _return_client_request_id = pool_disable_auto_scale_options.return_client_request_id
+            _ocp_date = pool_disable_auto_scale_options.ocp_date
+
         request = build_disable_auto_scale_request(
             pool_id=pool_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.disable_auto_scale.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1881,22 +1835,15 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    disable_auto_scale.metadata = {'url': "/pools/{poolId}/disableautoscale"}  # type: ignore
 
 
     @distributed_trace
     def enable_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolEnableAutoScaleParameters,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        pool_enable_auto_scale_parameter: _models.PoolEnableAutoScaleParameter,
+        pool_enable_auto_scale_options: Optional[_models.PoolEnableAutoScaleOptions] = None,
         **kwargs: Any
     ) -> None:
         """Enables automatic scaling for a Pool.
@@ -1909,39 +1856,12 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool on which to enable automatic scaling.
         :type pool_id: str
-        :param parameters: The parameters for the request.
-        :type parameters: ~azure-batch.models.BatchPoolEnableAutoScaleParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param pool_enable_auto_scale_parameter: The parameters for the request.
+        :type pool_enable_auto_scale_parameter: ~azure-batch.models.PoolEnableAutoScaleParameter
+        :param pool_enable_auto_scale_options: Parameter group. Default value is None.
+        :type pool_enable_auto_scale_options: ~azure-batch.models.PoolEnableAutoScaleOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1957,24 +1877,43 @@ class PoolOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(parameters, 'BatchPoolEnableAutoScaleParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_enable_auto_scale_options is not None:
+            _timeout = pool_enable_auto_scale_options.timeout
+            _client_request_id = pool_enable_auto_scale_options.client_request_id
+            _return_client_request_id = pool_enable_auto_scale_options.return_client_request_id
+            _ocp_date = pool_enable_auto_scale_options.ocp_date
+            _if_match = pool_enable_auto_scale_options.if_match
+            _if_none_match = pool_enable_auto_scale_options.if_none_match
+            _if_modified_since = pool_enable_auto_scale_options.if_modified_since
+            _if_unmodified_since = pool_enable_auto_scale_options.if_unmodified_since
+        _content = self._serialize.body(pool_enable_auto_scale_parameter, 'PoolEnableAutoScaleParameter')
 
         request = build_enable_auto_scale_request(
             pool_id=pool_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.enable_auto_scale.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -2003,18 +1942,15 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    enable_auto_scale.metadata = {'url': "/pools/{poolId}/enableautoscale"}  # type: ignore
 
 
     @distributed_trace
     def evaluate_auto_scale(
         self,
         pool_id: str,
-        parameters: _models.BatchPoolEvaluateAutoScaleParameters,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        pool_evaluate_auto_scale_parameter: _models.PoolEvaluateAutoScaleParameter,
+        pool_evaluate_auto_scale_options: Optional[_models.PoolEvaluateAutoScaleOptions] = None,
         **kwargs: Any
     ) -> _models.AutoScaleRun:
         """Gets the result of evaluating an automatic scaling formula on the Pool.
@@ -2025,23 +1961,12 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
         :type pool_id: str
-        :param parameters: The parameters for the request.
-        :type parameters: ~azure-batch.models.BatchPoolEvaluateAutoScaleParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: AutoScaleRun
+        :param pool_evaluate_auto_scale_parameter: The parameters for the request.
+        :type pool_evaluate_auto_scale_parameter: ~azure-batch.models.PoolEvaluateAutoScaleParameter
+        :param pool_evaluate_auto_scale_options: Parameter group. Default value is None.
+        :type pool_evaluate_auto_scale_options: ~azure-batch.models.PoolEvaluateAutoScaleOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AutoScaleRun, or the result of cls(response)
         :rtype: ~azure-batch.models.AutoScaleRun
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -2057,20 +1982,31 @@ class PoolOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AutoScaleRun]
 
-        _content = self._serialize.body(parameters, 'BatchPoolEvaluateAutoScaleParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if pool_evaluate_auto_scale_options is not None:
+            _timeout = pool_evaluate_auto_scale_options.timeout
+            _client_request_id = pool_evaluate_auto_scale_options.client_request_id
+            _return_client_request_id = pool_evaluate_auto_scale_options.return_client_request_id
+            _ocp_date = pool_evaluate_auto_scale_options.ocp_date
+        _content = self._serialize.body(pool_evaluate_auto_scale_parameter, 'PoolEvaluateAutoScaleParameter')
 
         request = build_evaluate_auto_scale_request(
             pool_id=pool_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.evaluate_auto_scale.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -2102,22 +2038,15 @@ class PoolOperations:
 
         return deserialized
 
+    evaluate_auto_scale.metadata = {'url': "/pools/{poolId}/evaluateautoscale"}  # type: ignore
 
 
     @distributed_trace
     def resize(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.BatchPoolResizeParameters,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        pool_resize_parameter: _models.PoolResizeParameter,
+        pool_resize_options: Optional[_models.PoolResizeOptions] = None,
         **kwargs: Any
     ) -> None:
         """Changes the number of Compute Nodes that are assigned to a Pool.
@@ -2131,39 +2060,12 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool to resize.
         :type pool_id: str
-        :param parameters: The parameters for the request.
-        :type parameters: ~azure-batch.models.BatchPoolResizeParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param pool_resize_parameter: The parameters for the request.
+        :type pool_resize_parameter: ~azure-batch.models.PoolResizeParameter
+        :param pool_resize_options: Parameter group. Default value is None.
+        :type pool_resize_options: ~azure-batch.models.PoolResizeOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -2179,24 +2081,43 @@ class PoolOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(parameters, 'BatchPoolResizeParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_resize_options is not None:
+            _timeout = pool_resize_options.timeout
+            _client_request_id = pool_resize_options.client_request_id
+            _return_client_request_id = pool_resize_options.return_client_request_id
+            _ocp_date = pool_resize_options.ocp_date
+            _if_match = pool_resize_options.if_match
+            _if_none_match = pool_resize_options.if_none_match
+            _if_modified_since = pool_resize_options.if_modified_since
+            _if_unmodified_since = pool_resize_options.if_unmodified_since
+        _content = self._serialize.body(pool_resize_parameter, 'PoolResizeParameter')
 
         request = build_resize_request(
             pool_id=pool_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.resize.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -2225,21 +2146,14 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    resize.metadata = {'url': "/pools/{poolId}/resize"}  # type: ignore
 
 
     @distributed_trace
     def stop_resize(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        pool_stop_resize_options: Optional[_models.PoolStopResizeOptions] = None,
         **kwargs: Any
     ) -> None:
         """Stops an ongoing resize operation on the Pool.
@@ -2253,37 +2167,10 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool whose resizing you want to stop.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param pool_stop_resize_options: Parameter group. Default value is None.
+        :type pool_stop_resize_options: ~azure-batch.models.PoolStopResizeOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -2298,21 +2185,40 @@ class PoolOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_stop_resize_options is not None:
+            _timeout = pool_stop_resize_options.timeout
+            _client_request_id = pool_stop_resize_options.client_request_id
+            _return_client_request_id = pool_stop_resize_options.return_client_request_id
+            _ocp_date = pool_stop_resize_options.ocp_date
+            _if_match = pool_stop_resize_options.if_match
+            _if_none_match = pool_stop_resize_options.if_none_match
+            _if_modified_since = pool_stop_resize_options.if_modified_since
+            _if_unmodified_since = pool_stop_resize_options.if_unmodified_since
+
         request = build_stop_resize_request(
             pool_id=pool_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.stop_resize.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -2341,18 +2247,15 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    stop_resize.metadata = {'url': "/pools/{poolId}/stopresize"}  # type: ignore
 
 
     @distributed_trace
     def update_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_update_properties_parameter: _models.BatchPool,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        pool_update_properties_parameter: _models.PoolUpdatePropertiesParameter,
+        pool_update_properties_options: Optional[_models.PoolUpdatePropertiesOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -2364,22 +2267,11 @@ class PoolOperations:
         :param pool_id: The ID of the Pool to update.
         :type pool_id: str
         :param pool_update_properties_parameter: The parameters for the request.
-        :type pool_update_properties_parameter: ~azure-batch.models.BatchPool
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :type pool_update_properties_parameter: ~azure-batch.models.PoolUpdatePropertiesParameter
+        :param pool_update_properties_options: Parameter group. Default value is None.
+        :type pool_update_properties_options: ~azure-batch.models.PoolUpdatePropertiesOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -2395,20 +2287,31 @@ class PoolOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(pool_update_properties_parameter, 'BatchPool')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if pool_update_properties_options is not None:
+            _timeout = pool_update_properties_options.timeout
+            _client_request_id = pool_update_properties_options.client_request_id
+            _return_client_request_id = pool_update_properties_options.return_client_request_id
+            _ocp_date = pool_update_properties_options.ocp_date
+        _content = self._serialize.body(pool_update_properties_parameter, 'PoolUpdatePropertiesParameter')
 
         request = build_update_properties_request(
             pool_id=pool_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.update_properties.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -2437,22 +2340,15 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    update_properties.metadata = {'url': "/pools/{poolId}/updateproperties"}  # type: ignore
 
 
     @distributed_trace
     def remove_nodes(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: _models.NodeRemoveParameters,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        node_remove_parameter: _models.NodeRemoveParameter,
+        pool_remove_nodes_options: Optional[_models.PoolRemoveNodesOptions] = None,
         **kwargs: Any
     ) -> None:
         """Removes Compute Nodes from the specified Pool.
@@ -2463,39 +2359,12 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool from which you want to remove Compute Nodes.
         :type pool_id: str
-        :param parameters: The parameters for the request.
-        :type parameters: ~azure-batch.models.NodeRemoveParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param node_remove_parameter: The parameters for the request.
+        :type node_remove_parameter: ~azure-batch.models.NodeRemoveParameter
+        :param pool_remove_nodes_options: Parameter group. Default value is None.
+        :type pool_remove_nodes_options: ~azure-batch.models.PoolRemoveNodesOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -2511,24 +2380,43 @@ class PoolOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(parameters, 'NodeRemoveParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if pool_remove_nodes_options is not None:
+            _timeout = pool_remove_nodes_options.timeout
+            _client_request_id = pool_remove_nodes_options.client_request_id
+            _return_client_request_id = pool_remove_nodes_options.return_client_request_id
+            _ocp_date = pool_remove_nodes_options.ocp_date
+            _if_match = pool_remove_nodes_options.if_match
+            _if_none_match = pool_remove_nodes_options.if_none_match
+            _if_modified_since = pool_remove_nodes_options.if_modified_since
+            _if_unmodified_since = pool_remove_nodes_options.if_unmodified_since
+        _content = self._serialize.body(node_remove_parameter, 'NodeRemoveParameter')
 
         request = build_remove_nodes_request(
             pool_id=pool_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.remove_nodes.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -2557,4 +2445,5 @@ class PoolOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    remove_nodes.metadata = {'url': "/pools/{poolId}/removenodes"}  # type: ignore
 

@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -47,7 +47,7 @@ def build_add_user_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/users"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/users")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -100,7 +100,7 @@ def build_delete_user_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/users/{userName}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -137,7 +137,7 @@ def build_update_user_request(
     node_id: str,
     user_name: str,
     *,
-    json: Optional[_models.NodeUpdateUserParameters] = None,
+    json: Optional[_models.NodeUpdateUserParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -153,7 +153,7 @@ def build_update_user_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/users/{userName}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -207,7 +207,7 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -244,7 +244,7 @@ def build_reboot_request(
     pool_id: str,
     node_id: str,
     *,
-    json: Optional[_models.NodeRebootParameters] = None,
+    json: Optional[_models.NodeRebootParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -260,7 +260,7 @@ def build_reboot_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/reboot"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/reboot")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -299,7 +299,7 @@ def build_reimage_request(
     pool_id: str,
     node_id: str,
     *,
-    json: Optional[_models.NodeReimageParameters] = None,
+    json: Optional[_models.NodeReimageParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -315,7 +315,7 @@ def build_reimage_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/reimage"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/reimage")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -354,7 +354,7 @@ def build_disable_scheduling_request(
     pool_id: str,
     node_id: str,
     *,
-    json: Optional[_models.NodeDisableSchedulingParameters] = None,
+    json: Optional[_models.NodeDisableSchedulingParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -370,7 +370,7 @@ def build_disable_scheduling_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/disablescheduling"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/disablescheduling")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -422,7 +422,7 @@ def build_enable_scheduling_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/enablescheduling"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/enablescheduling")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -470,7 +470,7 @@ def build_get_remote_login_settings_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/remoteloginsettings"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/remoteloginsettings")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -518,7 +518,7 @@ def build_get_remote_desktop_request(
     accept = _headers.pop('Accept', "application/json, application/octet-stream")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/rdp"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/rdp")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -569,7 +569,7 @@ def build_upload_batch_service_logs_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/uploadbatchservicelogs"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/uploadbatchservicelogs")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -623,7 +623,7 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
     }
@@ -684,11 +684,7 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         user: _models.ComputeNodeUser,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_add_user_options: Optional[_models.ComputeNodeAddUserOptions] = None,
         **kwargs: Any
     ) -> None:
         """Adds a user Account to the specified Compute Node.
@@ -701,21 +697,10 @@ class ComputeNodeOperations:
         :type node_id: str
         :param user: The user Account to be created.
         :type user: ~azure-batch.models.ComputeNodeUser
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param compute_node_add_user_options: Parameter group. Default value is None.
+        :type compute_node_add_user_options: ~azure-batch.models.ComputeNodeAddUserOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -731,6 +716,15 @@ class ComputeNodeOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_add_user_options is not None:
+            _timeout = compute_node_add_user_options.timeout
+            _client_request_id = compute_node_add_user_options.client_request_id
+            _return_client_request_id = compute_node_add_user_options.return_client_request_id
+            _ocp_date = compute_node_add_user_options.ocp_date
         _content = self._serialize.body(user, 'ComputeNodeUser')
 
         request = build_add_user_request(
@@ -739,13 +733,15 @@ class ComputeNodeOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.add_user.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -774,6 +770,7 @@ class ComputeNodeOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    add_user.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/users"}  # type: ignore
 
 
     @distributed_trace
@@ -782,11 +779,7 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         user_name: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_delete_user_options: Optional[_models.ComputeNodeDeleteUserOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a user Account from the specified Compute Node.
@@ -799,21 +792,10 @@ class ComputeNodeOperations:
         :type node_id: str
         :param user_name: The name of the user Account to delete.
         :type user_name: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param compute_node_delete_user_options: Parameter group. Default value is None.
+        :type compute_node_delete_user_options: ~azure-batch.models.ComputeNodeDeleteUserOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -828,19 +810,30 @@ class ComputeNodeOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_delete_user_options is not None:
+            _timeout = compute_node_delete_user_options.timeout
+            _client_request_id = compute_node_delete_user_options.client_request_id
+            _return_client_request_id = compute_node_delete_user_options.return_client_request_id
+            _ocp_date = compute_node_delete_user_options.ocp_date
+
         request = build_delete_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.delete_user.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -866,6 +859,7 @@ class ComputeNodeOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    delete_user.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/users/{userName}"}  # type: ignore
 
 
     @distributed_trace
@@ -874,12 +868,8 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         user_name: str,
-        parameters: _models.NodeUpdateUserParameters,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        node_update_user_parameter: _models.NodeUpdateUserParameter,
+        compute_node_update_user_options: Optional[_models.ComputeNodeUpdateUserOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the password and expiration time of a user Account on the specified Compute Node.
@@ -895,23 +885,12 @@ class ComputeNodeOperations:
         :type node_id: str
         :param user_name: The name of the user Account to update.
         :type user_name: str
-        :param parameters: The parameters for the request.
-        :type parameters: ~azure-batch.models.NodeUpdateUserParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param node_update_user_parameter: The parameters for the request.
+        :type node_update_user_parameter: ~azure-batch.models.NodeUpdateUserParameter
+        :param compute_node_update_user_options: Parameter group. Default value is None.
+        :type compute_node_update_user_options: ~azure-batch.models.ComputeNodeUpdateUserOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -927,7 +906,16 @@ class ComputeNodeOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(parameters, 'NodeUpdateUserParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_update_user_options is not None:
+            _timeout = compute_node_update_user_options.timeout
+            _client_request_id = compute_node_update_user_options.client_request_id
+            _return_client_request_id = compute_node_update_user_options.return_client_request_id
+            _ocp_date = compute_node_update_user_options.ocp_date
+        _content = self._serialize.body(node_update_user_parameter, 'NodeUpdateUserParameter')
 
         request = build_update_user_request(
             pool_id=pool_id,
@@ -936,13 +924,15 @@ class ComputeNodeOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.update_user.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -971,6 +961,7 @@ class ComputeNodeOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    update_user.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/users/{userName}"}  # type: ignore
 
 
     @distributed_trace
@@ -978,12 +969,7 @@ class ComputeNodeOperations:
         self,
         pool_id: str,
         node_id: str,
-        *,
-        select: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_get_options: Optional[_models.ComputeNodeGetOptions] = None,
         **kwargs: Any
     ) -> _models.ComputeNode:
         """Gets information about the specified Compute Node.
@@ -994,23 +980,10 @@ class ComputeNodeOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to get information about.
         :type node_id: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: ComputeNode
+        :param compute_node_get_options: Parameter group. Default value is None.
+        :type compute_node_get_options: ~azure-batch.models.ComputeNodeGetOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ComputeNode, or the result of cls(response)
         :rtype: ~azure-batch.models.ComputeNode
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1025,19 +998,32 @@ class ComputeNodeOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ComputeNode]
 
-        
+        _select = None
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_get_options is not None:
+            _select = compute_node_get_options.select
+            _timeout = compute_node_get_options.timeout
+            _client_request_id = compute_node_get_options.client_request_id
+            _return_client_request_id = compute_node_get_options.return_client_request_id
+            _ocp_date = compute_node_get_options.ocp_date
+
         request = build_get_request(
             pool_id=pool_id,
             node_id=node_id,
             api_version=api_version,
-            select=select,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            select=_select,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1068,6 +1054,7 @@ class ComputeNodeOperations:
 
         return deserialized
 
+    get.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}"}  # type: ignore
 
 
     @distributed_trace
@@ -1075,12 +1062,8 @@ class ComputeNodeOperations:
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.NodeRebootParameters] = None,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        node_reboot_parameter: Optional[_models.NodeRebootParameter] = None,
+        compute_node_reboot_options: Optional[_models.ComputeNodeRebootOptions] = None,
         **kwargs: Any
     ) -> None:
         """Restarts the specified Compute Node.
@@ -1091,23 +1074,12 @@ class ComputeNodeOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart.
         :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: ~azure-batch.models.NodeRebootParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param node_reboot_parameter: The parameters for the request. Default value is None.
+        :type node_reboot_parameter: ~azure-batch.models.NodeRebootParameter
+        :param compute_node_reboot_options: Parameter group. Default value is None.
+        :type compute_node_reboot_options: ~azure-batch.models.ComputeNodeRebootOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1123,8 +1095,17 @@ class ComputeNodeOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        if parameters is not None:
-            _content = self._serialize.body(parameters, 'NodeRebootParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_reboot_options is not None:
+            _timeout = compute_node_reboot_options.timeout
+            _client_request_id = compute_node_reboot_options.client_request_id
+            _return_client_request_id = compute_node_reboot_options.return_client_request_id
+            _ocp_date = compute_node_reboot_options.ocp_date
+        if node_reboot_parameter is not None:
+            _content = self._serialize.body(node_reboot_parameter, 'NodeRebootParameter')
         else:
             _content = None
 
@@ -1134,13 +1115,15 @@ class ComputeNodeOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.reboot.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1169,6 +1152,7 @@ class ComputeNodeOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    reboot.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/reboot"}  # type: ignore
 
 
     @distributed_trace
@@ -1176,12 +1160,8 @@ class ComputeNodeOperations:
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.NodeReimageParameters] = None,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        node_reimage_parameter: Optional[_models.NodeReimageParameter] = None,
+        compute_node_reimage_options: Optional[_models.ComputeNodeReimageOptions] = None,
         **kwargs: Any
     ) -> None:
         """Reinstalls the operating system on the specified Compute Node.
@@ -1194,23 +1174,12 @@ class ComputeNodeOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart.
         :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: ~azure-batch.models.NodeReimageParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param node_reimage_parameter: The parameters for the request. Default value is None.
+        :type node_reimage_parameter: ~azure-batch.models.NodeReimageParameter
+        :param compute_node_reimage_options: Parameter group. Default value is None.
+        :type compute_node_reimage_options: ~azure-batch.models.ComputeNodeReimageOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1226,8 +1195,17 @@ class ComputeNodeOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        if parameters is not None:
-            _content = self._serialize.body(parameters, 'NodeReimageParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_reimage_options is not None:
+            _timeout = compute_node_reimage_options.timeout
+            _client_request_id = compute_node_reimage_options.client_request_id
+            _return_client_request_id = compute_node_reimage_options.return_client_request_id
+            _ocp_date = compute_node_reimage_options.ocp_date
+        if node_reimage_parameter is not None:
+            _content = self._serialize.body(node_reimage_parameter, 'NodeReimageParameter')
         else:
             _content = None
 
@@ -1237,13 +1215,15 @@ class ComputeNodeOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.reimage.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1272,6 +1252,7 @@ class ComputeNodeOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    reimage.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/reimage"}  # type: ignore
 
 
     @distributed_trace
@@ -1279,12 +1260,8 @@ class ComputeNodeOperations:
         self,
         pool_id: str,
         node_id: str,
-        parameters: Optional[_models.NodeDisableSchedulingParameters] = None,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        node_disable_scheduling_parameter: Optional[_models.NodeDisableSchedulingParameter] = None,
+        compute_node_disable_scheduling_options: Optional[_models.ComputeNodeDisableSchedulingOptions] = None,
         **kwargs: Any
     ) -> None:
         """Disables Task scheduling on the specified Compute Node.
@@ -1296,23 +1273,14 @@ class ComputeNodeOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
         :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: ~azure-batch.models.NodeDisableSchedulingParameters
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
+        :param node_disable_scheduling_parameter: The parameters for the request. Default value is
          None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :type node_disable_scheduling_parameter: ~azure-batch.models.NodeDisableSchedulingParameter
+        :param compute_node_disable_scheduling_options: Parameter group. Default value is None.
+        :type compute_node_disable_scheduling_options:
+         ~azure-batch.models.ComputeNodeDisableSchedulingOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1328,8 +1296,17 @@ class ComputeNodeOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        if parameters is not None:
-            _content = self._serialize.body(parameters, 'NodeDisableSchedulingParameters')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_disable_scheduling_options is not None:
+            _timeout = compute_node_disable_scheduling_options.timeout
+            _client_request_id = compute_node_disable_scheduling_options.client_request_id
+            _return_client_request_id = compute_node_disable_scheduling_options.return_client_request_id
+            _ocp_date = compute_node_disable_scheduling_options.ocp_date
+        if node_disable_scheduling_parameter is not None:
+            _content = self._serialize.body(node_disable_scheduling_parameter, 'NodeDisableSchedulingParameter')
         else:
             _content = None
 
@@ -1339,13 +1316,15 @@ class ComputeNodeOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.disable_scheduling.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1374,6 +1353,7 @@ class ComputeNodeOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    disable_scheduling.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/disablescheduling"}  # type: ignore
 
 
     @distributed_trace
@@ -1381,11 +1361,7 @@ class ComputeNodeOperations:
         self,
         pool_id: str,
         node_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_enable_scheduling_options: Optional[_models.ComputeNodeEnableSchedulingOptions] = None,
         **kwargs: Any
     ) -> None:
         """Enables Task scheduling on the specified Compute Node.
@@ -1397,21 +1373,11 @@ class ComputeNodeOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node on which you want to enable Task scheduling.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param compute_node_enable_scheduling_options: Parameter group. Default value is None.
+        :type compute_node_enable_scheduling_options:
+         ~azure-batch.models.ComputeNodeEnableSchedulingOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1426,18 +1392,29 @@ class ComputeNodeOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_enable_scheduling_options is not None:
+            _timeout = compute_node_enable_scheduling_options.timeout
+            _client_request_id = compute_node_enable_scheduling_options.client_request_id
+            _return_client_request_id = compute_node_enable_scheduling_options.return_client_request_id
+            _ocp_date = compute_node_enable_scheduling_options.ocp_date
+
         request = build_enable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.enable_scheduling.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1466,6 +1443,7 @@ class ComputeNodeOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    enable_scheduling.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/enablescheduling"}  # type: ignore
 
 
     @distributed_trace
@@ -1473,11 +1451,7 @@ class ComputeNodeOperations:
         self,
         pool_id: str,
         node_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_get_remote_login_settings_options: Optional[_models.ComputeNodeGetRemoteLoginSettingsOptions] = None,
         **kwargs: Any
     ) -> _models.ComputeNodeGetRemoteLoginSettingsResult:
         """Gets the settings required for remote login to a Compute Node.
@@ -1491,21 +1465,11 @@ class ComputeNodeOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node for which to obtain the remote login settings.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: ComputeNodeGetRemoteLoginSettingsResult
+        :param compute_node_get_remote_login_settings_options: Parameter group. Default value is None.
+        :type compute_node_get_remote_login_settings_options:
+         ~azure-batch.models.ComputeNodeGetRemoteLoginSettingsOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ComputeNodeGetRemoteLoginSettingsResult, or the result of cls(response)
         :rtype: ~azure-batch.models.ComputeNodeGetRemoteLoginSettingsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1520,18 +1484,29 @@ class ComputeNodeOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.ComputeNodeGetRemoteLoginSettingsResult]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_get_remote_login_settings_options is not None:
+            _timeout = compute_node_get_remote_login_settings_options.timeout
+            _client_request_id = compute_node_get_remote_login_settings_options.client_request_id
+            _return_client_request_id = compute_node_get_remote_login_settings_options.return_client_request_id
+            _ocp_date = compute_node_get_remote_login_settings_options.ocp_date
+
         request = build_get_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.get_remote_login_settings.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1562,6 +1537,7 @@ class ComputeNodeOperations:
 
         return deserialized
 
+    get_remote_login_settings.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/remoteloginsettings"}  # type: ignore
 
 
     @distributed_trace
@@ -1569,11 +1545,7 @@ class ComputeNodeOperations:
         self,
         pool_id: str,
         node_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_get_remote_desktop_options: Optional[_models.ComputeNodeGetRemoteDesktopOptions] = None,
         **kwargs: Any
     ) -> IO:
         """Gets the Remote Desktop Protocol file for the specified Compute Node.
@@ -1588,21 +1560,11 @@ class ComputeNodeOperations:
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: IO
+        :param compute_node_get_remote_desktop_options: Parameter group. Default value is None.
+        :type compute_node_get_remote_desktop_options:
+         ~azure-batch.models.ComputeNodeGetRemoteDesktopOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1617,18 +1579,29 @@ class ComputeNodeOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_get_remote_desktop_options is not None:
+            _timeout = compute_node_get_remote_desktop_options.timeout
+            _client_request_id = compute_node_get_remote_desktop_options.client_request_id
+            _return_client_request_id = compute_node_get_remote_desktop_options.return_client_request_id
+            _ocp_date = compute_node_get_remote_desktop_options.ocp_date
+
         request = build_get_remote_desktop_request(
             pool_id=pool_id,
             node_id=node_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.get_remote_desktop.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1652,13 +1625,14 @@ class ComputeNodeOperations:
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = response
+        deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    get_remote_desktop.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/rdp"}  # type: ignore
 
 
     @distributed_trace
@@ -1667,11 +1641,7 @@ class ComputeNodeOperations:
         pool_id: str,
         node_id: str,
         upload_batch_service_logs_configuration: _models.UploadBatchServiceLogsConfiguration,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_upload_batch_service_logs_options: Optional[_models.ComputeNodeUploadBatchServiceLogsOptions] = None,
         **kwargs: Any
     ) -> _models.UploadBatchServiceLogsResult:
         """Upload Azure Batch service log files from the specified Compute Node to Azure Blob Storage.
@@ -1690,21 +1660,11 @@ class ComputeNodeOperations:
          configuration.
         :type upload_batch_service_logs_configuration:
          ~azure-batch.models.UploadBatchServiceLogsConfiguration
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: UploadBatchServiceLogsResult
+        :param compute_node_upload_batch_service_logs_options: Parameter group. Default value is None.
+        :type compute_node_upload_batch_service_logs_options:
+         ~azure-batch.models.ComputeNodeUploadBatchServiceLogsOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: UploadBatchServiceLogsResult, or the result of cls(response)
         :rtype: ~azure-batch.models.UploadBatchServiceLogsResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1720,6 +1680,15 @@ class ComputeNodeOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.UploadBatchServiceLogsResult]
 
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_upload_batch_service_logs_options is not None:
+            _timeout = compute_node_upload_batch_service_logs_options.timeout
+            _client_request_id = compute_node_upload_batch_service_logs_options.client_request_id
+            _return_client_request_id = compute_node_upload_batch_service_logs_options.return_client_request_id
+            _ocp_date = compute_node_upload_batch_service_logs_options.ocp_date
         _content = self._serialize.body(upload_batch_service_logs_configuration, 'UploadBatchServiceLogsConfiguration')
 
         request = build_upload_batch_service_logs_request(
@@ -1728,13 +1697,15 @@ class ComputeNodeOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.upload_batch_service_logs.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1763,20 +1734,14 @@ class ComputeNodeOperations:
 
         return deserialized
 
+    upload_batch_service_logs.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/uploadbatchservicelogs"}  # type: ignore
 
 
     @distributed_trace
     def list(
         self,
         pool_id: str,
-        *,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_list_options: Optional[_models.ComputeNodeListOptions] = None,
         **kwargs: Any
     ) -> Iterable[_models.ComputeNodeListResult]:
         """Lists the Compute Nodes in the specified Pool.
@@ -1785,30 +1750,11 @@ class ComputeNodeOperations:
 
         :param pool_id: The ID of the Pool from which you want to list Compute Nodes.
         :type pool_id: str
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
-         Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         Compute Nodes can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of ComputeNodeListResult
+        :param compute_node_list_options: Parameter group. Default value is None.
+        :type compute_node_list_options: ~azure-batch.models.ComputeNodeListOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either ComputeNodeListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.ComputeNodeListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1824,39 +1770,78 @@ class ComputeNodeOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _filter = None
+                _select = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if compute_node_list_options is not None:
+                    _filter = compute_node_list_options.filter
+                    _select = compute_node_list_options.select
+                    _max_results = compute_node_list_options.max_results
+                    _timeout = compute_node_list_options.timeout
+                    _client_request_id = compute_node_list_options.client_request_id
+                    _return_client_request_id = compute_node_list_options.return_client_request_id
+                    _ocp_date = compute_node_list_options.ocp_date
                 
                 request = build_list_request(
                     pool_id=pool_id,
                     api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    filter=_filter,
+                    select=_select,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _filter = None
+                _select = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if compute_node_list_options is not None:
+                    _filter = compute_node_list_options.filter
+                    _select = compute_node_list_options.select
+                    _max_results = compute_node_list_options.max_results
+                    _timeout = compute_node_list_options.timeout
+                    _client_request_id = compute_node_list_options.client_request_id
+                    _return_client_request_id = compute_node_list_options.return_client_request_id
+                    _ocp_date = compute_node_list_options.ocp_date
                 
                 request = build_list_request(
                     pool_id=pool_id,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    filter=_filter,
+                    select=_select,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -1892,4 +1877,4 @@ class ComputeNodeOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list.metadata = {'url': "/pools/{poolId}/nodes"}  # type: ignore

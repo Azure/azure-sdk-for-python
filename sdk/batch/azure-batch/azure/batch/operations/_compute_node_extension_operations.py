@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -46,7 +46,7 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/extensions/{extensionName}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/extensions/{extensionName}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -99,7 +99,7 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/extensions"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/extensions")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -159,12 +159,7 @@ class ComputeNodeExtensionOperations:
         pool_id: str,
         node_id: str,
         extension_name: str,
-        *,
-        select: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_extension_get_options: Optional[_models.ComputeNodeExtensionGetOptions] = None,
         **kwargs: Any
     ) -> _models.NodeVMExtension:
         """Gets information about the specified Compute Node Extension.
@@ -178,23 +173,10 @@ class ComputeNodeExtensionOperations:
         :param extension_name: The name of the of the Compute Node Extension that you want to get
          information about.
         :type extension_name: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: NodeVMExtension
+        :param compute_node_extension_get_options: Parameter group. Default value is None.
+        :type compute_node_extension_get_options: ~azure-batch.models.ComputeNodeExtensionGetOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NodeVMExtension, or the result of cls(response)
         :rtype: ~azure-batch.models.NodeVMExtension
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -209,20 +191,33 @@ class ComputeNodeExtensionOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.NodeVMExtension]
 
-        
+        _select = None
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if compute_node_extension_get_options is not None:
+            _select = compute_node_extension_get_options.select
+            _timeout = compute_node_extension_get_options.timeout
+            _client_request_id = compute_node_extension_get_options.client_request_id
+            _return_client_request_id = compute_node_extension_get_options.return_client_request_id
+            _ocp_date = compute_node_extension_get_options.ocp_date
+
         request = build_get_request(
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
             api_version=api_version,
-            select=select,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            select=_select,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -253,6 +248,7 @@ class ComputeNodeExtensionOperations:
 
         return deserialized
 
+    get.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/extensions/{extensionName}"}  # type: ignore
 
 
     @distributed_trace
@@ -260,13 +256,7 @@ class ComputeNodeExtensionOperations:
         self,
         pool_id: str,
         node_id: str,
-        *,
-        select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        compute_node_extension_list_options: Optional[_models.ComputeNodeExtensionListOptions] = None,
         **kwargs: Any
     ) -> Iterable[_models.NodeVMExtensionList]:
         """Lists the Compute Nodes Extensions in the specified Pool.
@@ -277,26 +267,10 @@ class ComputeNodeExtensionOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to list extensions.
         :type node_id: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         Compute Nodes can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of NodeVMExtensionList
+        :param compute_node_extension_list_options: Parameter group. Default value is None.
+        :type compute_node_extension_list_options: ~azure-batch.models.ComputeNodeExtensionListOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either NodeVMExtensionList or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.NodeVMExtensionList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -312,40 +286,74 @@ class ComputeNodeExtensionOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _select = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if compute_node_extension_list_options is not None:
+                    _select = compute_node_extension_list_options.select
+                    _max_results = compute_node_extension_list_options.max_results
+                    _timeout = compute_node_extension_list_options.timeout
+                    _client_request_id = compute_node_extension_list_options.client_request_id
+                    _return_client_request_id = compute_node_extension_list_options.return_client_request_id
+                    _ocp_date = compute_node_extension_list_options.ocp_date
                 
                 request = build_list_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     api_version=api_version,
-                    select=select,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    select=_select,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _select = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if compute_node_extension_list_options is not None:
+                    _select = compute_node_extension_list_options.select
+                    _max_results = compute_node_extension_list_options.max_results
+                    _timeout = compute_node_extension_list_options.timeout
+                    _client_request_id = compute_node_extension_list_options.client_request_id
+                    _return_client_request_id = compute_node_extension_list_options.return_client_request_id
+                    _ocp_date = compute_node_extension_list_options.ocp_date
                 
                 request = build_list_request(
                     pool_id=pool_id,
                     node_id=node_id,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    select=_select,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -381,4 +389,4 @@ class ComputeNodeExtensionOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/extensions"}  # type: ignore

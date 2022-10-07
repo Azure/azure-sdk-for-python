@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -30,7 +30,7 @@ _SERIALIZER.client_side_validation = False
 def build_add_request(
     job_id: str,
     *,
-    json: Optional[_models.BatchTask] = None,
+    json: Optional[_models.TaskAddParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -46,7 +46,7 @@ def build_add_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
     }
@@ -100,7 +100,7 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
     }
@@ -141,7 +141,7 @@ def build_list_request(
 def build_add_collection_request(
     job_id: str,
     *,
-    json: Optional[_models.BatchTaskCollection] = None,
+    json: Optional[_models.TaskAddCollectionParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -157,7 +157,7 @@ def build_add_collection_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/addtaskcollection"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/addtaskcollection")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
     }
@@ -212,7 +212,7 @@ def build_delete_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -274,7 +274,7 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -321,7 +321,7 @@ def build_update_request(
     job_id: str,
     task_id: str,
     *,
-    json: Optional[_models.BatchTask] = None,
+    json: Optional[_models.TaskUpdateParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -341,7 +341,7 @@ def build_update_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -402,7 +402,7 @@ def build_list_subtasks_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}/subtasksinfo"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}/subtasksinfo")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -456,7 +456,7 @@ def build_terminate_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}/terminate"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}/terminate")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -516,7 +516,7 @@ def build_reactivate_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}/reactivate"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}/reactivate")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -578,12 +578,8 @@ class TaskOperations:
     def add(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        task: _models.BatchTask,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        task: _models.TaskAddParameter,
+        task_add_options: Optional[_models.TaskAddOptions] = None,
         **kwargs: Any
     ) -> None:
         """Adds a Task to the specified Job.
@@ -595,22 +591,11 @@ class TaskOperations:
         :param job_id: The ID of the Job to which the Task is to be added.
         :type job_id: str
         :param task: The Task to be added.
-        :type task: ~azure-batch.models.BatchTask
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :type task: ~azure-batch.models.TaskAddParameter
+        :param task_add_options: Parameter group. Default value is None.
+        :type task_add_options: ~azure-batch.models.TaskAddOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -626,20 +611,31 @@ class TaskOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(task, 'BatchTask')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if task_add_options is not None:
+            _timeout = task_add_options.timeout
+            _client_request_id = task_add_options.client_request_id
+            _return_client_request_id = task_add_options.return_client_request_id
+            _ocp_date = task_add_options.ocp_date
+        _content = self._serialize.body(task, 'TaskAddParameter')
 
         request = build_add_request(
             job_id=job_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.add.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -668,23 +664,16 @@ class TaskOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    add.metadata = {'url': "/jobs/{jobId}/tasks"}  # type: ignore
 
 
     @distributed_trace
     def list(
         self,
         job_id: str,
-        *,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        task_list_options: Optional[_models.TaskListOptions] = None,
         **kwargs: Any
-    ) -> Iterable[_models.BatchTaskListResult]:
+    ) -> Iterable[_models.CloudTaskListResult]:
         """Lists all of the Tasks that are associated with the specified Job.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to
@@ -692,40 +681,18 @@ class TaskOperations:
 
         :param job_id: The ID of the Job.
         :type job_id: str
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-tasks.
-         Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         Tasks can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of BatchTaskListResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.BatchTaskListResult]
+        :param task_list_options: Parameter group. Default value is None.
+        :type task_list_options: ~azure-batch.models.TaskListOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either CloudTaskListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.CloudTaskListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchTaskListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudTaskListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -733,40 +700,84 @@ class TaskOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _filter = None
+                _select = None
+                _expand = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if task_list_options is not None:
+                    _filter = task_list_options.filter
+                    _select = task_list_options.select
+                    _expand = task_list_options.expand
+                    _max_results = task_list_options.max_results
+                    _timeout = task_list_options.timeout
+                    _client_request_id = task_list_options.client_request_id
+                    _return_client_request_id = task_list_options.return_client_request_id
+                    _ocp_date = task_list_options.ocp_date
                 
                 request = build_list_request(
                     job_id=job_id,
                     api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    filter=_filter,
+                    select=_select,
+                    expand=_expand,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _filter = None
+                _select = None
+                _expand = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if task_list_options is not None:
+                    _filter = task_list_options.filter
+                    _select = task_list_options.select
+                    _expand = task_list_options.expand
+                    _max_results = task_list_options.max_results
+                    _timeout = task_list_options.timeout
+                    _client_request_id = task_list_options.client_request_id
+                    _return_client_request_id = task_list_options.return_client_request_id
+                    _ocp_date = task_list_options.ocp_date
                 
                 request = build_list_request(
                     job_id=job_id,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    filter=_filter,
+                    select=_select,
+                    expand=_expand,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -775,7 +786,7 @@ class TaskOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("BatchTaskListResult", pipeline_response)
+            deserialized = self._deserialize("CloudTaskListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -802,18 +813,14 @@ class TaskOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list.metadata = {'url': "/jobs/{jobId}/tasks"}  # type: ignore
 
     @distributed_trace
     def add_collection(
         self,
         job_id: str,
-        task_collection: _models.BatchTaskCollection,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        task_collection: _models.TaskAddCollectionParameter,
+        task_add_collection_options: Optional[_models.TaskAddCollectionOptions] = None,
         **kwargs: Any
     ) -> _models.TaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
@@ -834,22 +841,11 @@ class TaskOperations:
         :param job_id: The ID of the Job to which the Task collection is to be added.
         :type job_id: str
         :param task_collection: The Tasks to be added.
-        :type task_collection: ~azure-batch.models.BatchTaskCollection
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: TaskAddCollectionResult
+        :type task_collection: ~azure-batch.models.TaskAddCollectionParameter
+        :param task_add_collection_options: Parameter group. Default value is None.
+        :type task_add_collection_options: ~azure-batch.models.TaskAddCollectionOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: TaskAddCollectionResult, or the result of cls(response)
         :rtype: ~azure-batch.models.TaskAddCollectionResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -865,20 +861,31 @@ class TaskOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.TaskAddCollectionResult]
 
-        _content = self._serialize.body(task_collection, 'BatchTaskCollection')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if task_add_collection_options is not None:
+            _timeout = task_add_collection_options.timeout
+            _client_request_id = task_add_collection_options.client_request_id
+            _return_client_request_id = task_add_collection_options.return_client_request_id
+            _ocp_date = task_add_collection_options.ocp_date
+        _content = self._serialize.body(task_collection, 'TaskAddCollectionParameter')
 
         request = build_add_collection_request(
             job_id=job_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.add_collection.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -907,6 +914,7 @@ class TaskOperations:
 
         return deserialized
 
+    add_collection.metadata = {'url': "/jobs/{jobId}/addtaskcollection"}  # type: ignore
 
 
     @distributed_trace
@@ -914,15 +922,7 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        task_delete_options: Optional[_models.TaskDeleteOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Task from the specified Job.
@@ -936,37 +936,10 @@ class TaskOperations:
         :type job_id: str
         :param task_id: The ID of the Task to delete.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param task_delete_options: Parameter group. Default value is None.
+        :type task_delete_options: ~azure-batch.models.TaskDeleteOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -981,22 +954,41 @@ class TaskOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if task_delete_options is not None:
+            _timeout = task_delete_options.timeout
+            _client_request_id = task_delete_options.client_request_id
+            _return_client_request_id = task_delete_options.return_client_request_id
+            _ocp_date = task_delete_options.ocp_date
+            _if_match = task_delete_options.if_match
+            _if_none_match = task_delete_options.if_none_match
+            _if_modified_since = task_delete_options.if_modified_since
+            _if_unmodified_since = task_delete_options.if_unmodified_since
+
         request = build_delete_request(
             job_id=job_id,
             task_id=task_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.delete.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1022,6 +1014,7 @@ class TaskOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    delete.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
 
 
     @distributed_trace
@@ -1029,19 +1022,9 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        *,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        task_get_options: Optional[_models.TaskGetOptions] = None,
         **kwargs: Any
-    ) -> _models.BatchTask:
+    ) -> _models.CloudTask:
         """Gets information about the specified Task.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to
@@ -1051,42 +1034,11 @@ class TaskOperations:
         :type job_id: str
         :param task_id: The ID of the Task to get information about.
         :type task_id: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: BatchTask
-        :rtype: ~azure-batch.models.BatchTask
+        :param task_get_options: Parameter group. Default value is None.
+        :type task_get_options: ~azure-batch.models.TaskGetOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CloudTask, or the result of cls(response)
+        :rtype: ~azure-batch.models.CloudTask
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -1098,26 +1050,49 @@ class TaskOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchTask]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudTask]
 
-        
+        _select = None
+        _expand = None
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if task_get_options is not None:
+            _select = task_get_options.select
+            _expand = task_get_options.expand
+            _timeout = task_get_options.timeout
+            _client_request_id = task_get_options.client_request_id
+            _return_client_request_id = task_get_options.return_client_request_id
+            _ocp_date = task_get_options.ocp_date
+            _if_match = task_get_options.if_match
+            _if_none_match = task_get_options.if_none_match
+            _if_modified_since = task_get_options.if_modified_since
+            _if_unmodified_since = task_get_options.if_unmodified_since
+
         request = build_get_request(
             job_id=job_id,
             task_id=task_id,
             api_version=api_version,
-            select=select,
-            expand=expand,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            select=_select,
+            expand=_expand,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1142,13 +1117,14 @@ class TaskOperations:
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
 
-        deserialized = self._deserialize('BatchTask', pipeline_response)
+        deserialized = self._deserialize('CloudTask', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    get.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
 
 
     @distributed_trace
@@ -1156,16 +1132,8 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        task: _models.BatchTask,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        task_update_parameter: _models.TaskUpdateParameter,
+        task_update_options: Optional[_models.TaskUpdateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Task.
@@ -1174,39 +1142,12 @@ class TaskOperations:
         :type job_id: str
         :param task_id: The ID of the Task to update.
         :type task_id: str
-        :param task: The parameters for the request.
-        :type task: ~azure-batch.models.BatchTask
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param task_update_parameter: The parameters for the request.
+        :type task_update_parameter: ~azure-batch.models.TaskUpdateParameter
+        :param task_update_options: Parameter group. Default value is None.
+        :type task_update_options: ~azure-batch.models.TaskUpdateOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1222,7 +1163,24 @@ class TaskOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(task, 'BatchTask')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if task_update_options is not None:
+            _timeout = task_update_options.timeout
+            _client_request_id = task_update_options.client_request_id
+            _return_client_request_id = task_update_options.return_client_request_id
+            _ocp_date = task_update_options.ocp_date
+            _if_match = task_update_options.if_match
+            _if_none_match = task_update_options.if_none_match
+            _if_modified_since = task_update_options.if_modified_since
+            _if_unmodified_since = task_update_options.if_unmodified_since
+        _content = self._serialize.body(task_update_parameter, 'TaskUpdateParameter')
 
         request = build_update_request(
             job_id=job_id,
@@ -1230,17 +1188,19 @@ class TaskOperations:
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.update.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1269,6 +1229,7 @@ class TaskOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    update.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
 
 
     @distributed_trace
@@ -1276,14 +1237,9 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        *,
-        select: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        task_list_subtasks_options: Optional[_models.TaskListSubtasksOptions] = None,
         **kwargs: Any
-    ) -> _models.BatchTaskListSubtasksResult:
+    ) -> _models.CloudTaskListSubtasksResult:
         """Lists all of the subtasks that are associated with the specified multi-instance Task.
 
         If the Task is not a multi-instance Task then this returns an empty collection.
@@ -1292,24 +1248,11 @@ class TaskOperations:
         :type job_id: str
         :param task_id: The ID of the Task.
         :type task_id: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: BatchTaskListSubtasksResult
-        :rtype: ~azure-batch.models.BatchTaskListSubtasksResult
+        :param task_list_subtasks_options: Parameter group. Default value is None.
+        :type task_list_subtasks_options: ~azure-batch.models.TaskListSubtasksOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CloudTaskListSubtasksResult, or the result of cls(response)
+        :rtype: ~azure-batch.models.CloudTaskListSubtasksResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -1321,21 +1264,34 @@ class TaskOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchTaskListSubtasksResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudTaskListSubtasksResult]
 
-        
+        _select = None
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if task_list_subtasks_options is not None:
+            _select = task_list_subtasks_options.select
+            _timeout = task_list_subtasks_options.timeout
+            _client_request_id = task_list_subtasks_options.client_request_id
+            _return_client_request_id = task_list_subtasks_options.return_client_request_id
+            _ocp_date = task_list_subtasks_options.ocp_date
+
         request = build_list_subtasks_request(
             job_id=job_id,
             task_id=task_id,
             api_version=api_version,
-            select=select,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            select=_select,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.list_subtasks.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1359,13 +1315,14 @@ class TaskOperations:
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = self._deserialize('BatchTaskListSubtasksResult', pipeline_response)
+        deserialized = self._deserialize('CloudTaskListSubtasksResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    list_subtasks.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/subtasksinfo"}  # type: ignore
 
 
     @distributed_trace
@@ -1373,15 +1330,7 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        task_terminate_options: Optional[_models.TaskTerminateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Task.
@@ -1394,37 +1343,10 @@ class TaskOperations:
         :type job_id: str
         :param task_id: The ID of the Task to terminate.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param task_terminate_options: Parameter group. Default value is None.
+        :type task_terminate_options: ~azure-batch.models.TaskTerminateOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1439,22 +1361,41 @@ class TaskOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if task_terminate_options is not None:
+            _timeout = task_terminate_options.timeout
+            _client_request_id = task_terminate_options.client_request_id
+            _return_client_request_id = task_terminate_options.return_client_request_id
+            _ocp_date = task_terminate_options.ocp_date
+            _if_match = task_terminate_options.if_match
+            _if_none_match = task_terminate_options.if_none_match
+            _if_modified_since = task_terminate_options.if_modified_since
+            _if_unmodified_since = task_terminate_options.if_unmodified_since
+
         request = build_terminate_request(
             job_id=job_id,
             task_id=task_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.terminate.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1483,6 +1424,7 @@ class TaskOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    terminate.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/terminate"}  # type: ignore
 
 
     @distributed_trace
@@ -1490,15 +1432,7 @@ class TaskOperations:
         self,
         job_id: str,
         task_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        task_reactivate_options: Optional[_models.TaskReactivateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Reactivates a Task, allowing it to run again even if its retry count has been exhausted.
@@ -1514,37 +1448,10 @@ class TaskOperations:
         :type job_id: str
         :param task_id: The ID of the Task to reactivate.
         :type task_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param task_reactivate_options: Parameter group. Default value is None.
+        :type task_reactivate_options: ~azure-batch.models.TaskReactivateOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1559,22 +1466,41 @@ class TaskOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if task_reactivate_options is not None:
+            _timeout = task_reactivate_options.timeout
+            _client_request_id = task_reactivate_options.client_request_id
+            _return_client_request_id = task_reactivate_options.return_client_request_id
+            _ocp_date = task_reactivate_options.ocp_date
+            _if_match = task_reactivate_options.if_match
+            _if_none_match = task_reactivate_options.if_none_match
+            _if_modified_since = task_reactivate_options.if_modified_since
+            _if_unmodified_since = task_reactivate_options.if_unmodified_since
+
         request = build_reactivate_request(
             job_id=job_id,
             task_id=task_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.reactivate.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1603,4 +1529,5 @@ class TaskOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    reactivate.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/reactivate"}  # type: ignore
 

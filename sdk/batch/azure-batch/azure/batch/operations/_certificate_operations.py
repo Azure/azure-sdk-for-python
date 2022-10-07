@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -29,7 +29,7 @@ _SERIALIZER.client_side_validation = False
 
 def build_add_request(
     *,
-    json: Optional[_models.Certificate] = None,
+    json: Optional[_models.CertificateAddParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -45,7 +45,7 @@ def build_add_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/certificates"
+    _url = kwargs.pop("template_url", "/certificates")
 
     # Construct parameters
     if timeout is not None:
@@ -92,7 +92,7 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/certificates"
+    _url = kwargs.pop("template_url", "/certificates")
 
     # Construct parameters
     if filter is not None:
@@ -140,7 +140,7 @@ def build_cancel_deletion_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"
+    _url = kwargs.pop("template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete")  # pylint: disable=line-too-long
     path_format_arguments = {
         "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
         "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, 'str'),
@@ -188,7 +188,7 @@ def build_delete_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
+    _url = kwargs.pop("template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})")
     path_format_arguments = {
         "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
         "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, 'str'),
@@ -237,7 +237,7 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
+    _url = kwargs.pop("template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})")
     path_format_arguments = {
         "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
         "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, 'str'),
@@ -292,12 +292,8 @@ class CertificateOperations:
     @distributed_trace
     def add(  # pylint: disable=inconsistent-return-statements
         self,
-        certificate: _models.Certificate,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        certificate: _models.CertificateAddParameter,
+        certificate_add_options: Optional[_models.CertificateAddOptions] = None,
         **kwargs: Any
     ) -> None:
         """Adds a Certificate to the specified Account.
@@ -305,22 +301,11 @@ class CertificateOperations:
         Adds a Certificate to the specified Account.
 
         :param certificate: The Certificate to be added.
-        :type certificate: ~azure-batch.models.Certificate
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :type certificate: ~azure-batch.models.CertificateAddParameter
+        :param certificate_add_options: Parameter group. Default value is None.
+        :type certificate_add_options: ~azure-batch.models.CertificateAddOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -336,19 +321,30 @@ class CertificateOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(certificate, 'Certificate')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if certificate_add_options is not None:
+            _timeout = certificate_add_options.timeout
+            _client_request_id = certificate_add_options.client_request_id
+            _return_client_request_id = certificate_add_options.return_client_request_id
+            _ocp_date = certificate_add_options.ocp_date
+        _content = self._serialize.body(certificate, 'CertificateAddParameter')
 
         request = build_add_request(
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.add.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -377,49 +373,24 @@ class CertificateOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    add.metadata = {'url': "/certificates"}  # type: ignore
 
 
     @distributed_trace
     def list(
         self,
-        *,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        certificate_list_options: Optional[_models.CertificateListOptions] = None,
         **kwargs: Any
     ) -> Iterable[_models.CertificateListResult]:
         """Lists all of the Certificates that have been added to the specified Account.
 
         Lists all of the Certificates that have been added to the specified Account.
 
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
-         Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         Certificates can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of CertificateListResult
+        :param certificate_list_options: Parameter group. Default value is None.
+        :type certificate_list_options: ~azure-batch.models.CertificateListOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either CertificateListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -435,37 +406,76 @@ class CertificateOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _filter = None
+                _select = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if certificate_list_options is not None:
+                    _filter = certificate_list_options.filter
+                    _select = certificate_list_options.select
+                    _max_results = certificate_list_options.max_results
+                    _timeout = certificate_list_options.timeout
+                    _client_request_id = certificate_list_options.client_request_id
+                    _return_client_request_id = certificate_list_options.return_client_request_id
+                    _ocp_date = certificate_list_options.ocp_date
                 
                 request = build_list_request(
                     api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    filter=_filter,
+                    select=_select,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _filter = None
+                _select = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if certificate_list_options is not None:
+                    _filter = certificate_list_options.filter
+                    _select = certificate_list_options.select
+                    _max_results = certificate_list_options.max_results
+                    _timeout = certificate_list_options.timeout
+                    _client_request_id = certificate_list_options.client_request_id
+                    _return_client_request_id = certificate_list_options.return_client_request_id
+                    _ocp_date = certificate_list_options.ocp_date
                 
                 request = build_list_request(
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    filter=_filter,
+                    select=_select,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -501,18 +511,14 @@ class CertificateOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list.metadata = {'url': "/certificates"}  # type: ignore
 
     @distributed_trace
     def cancel_deletion(  # pylint: disable=inconsistent-return-statements
         self,
         thumbprint_algorithm: str,
         thumbprint: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        certificate_cancel_deletion_options: Optional[_models.CertificateCancelDeletionOptions] = None,
         **kwargs: Any
     ) -> None:
         """Cancels a failed deletion of a Certificate from the specified Account.
@@ -529,21 +535,10 @@ class CertificateOperations:
         :type thumbprint_algorithm: str
         :param thumbprint: The thumbprint of the Certificate being deleted.
         :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param certificate_cancel_deletion_options: Parameter group. Default value is None.
+        :type certificate_cancel_deletion_options: ~azure-batch.models.CertificateCancelDeletionOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -558,18 +553,29 @@ class CertificateOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if certificate_cancel_deletion_options is not None:
+            _timeout = certificate_cancel_deletion_options.timeout
+            _client_request_id = certificate_cancel_deletion_options.client_request_id
+            _return_client_request_id = certificate_cancel_deletion_options.return_client_request_id
+            _ocp_date = certificate_cancel_deletion_options.ocp_date
+
         request = build_cancel_deletion_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.cancel_deletion.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -598,6 +604,7 @@ class CertificateOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    cancel_deletion.metadata = {'url': "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"}  # type: ignore
 
 
     @distributed_trace
@@ -605,11 +612,7 @@ class CertificateOperations:
         self,
         thumbprint_algorithm: str,
         thumbprint: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        certificate_delete_options: Optional[_models.CertificateDeleteOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Certificate from the specified Account.
@@ -628,21 +631,10 @@ class CertificateOperations:
         :type thumbprint_algorithm: str
         :param thumbprint: The thumbprint of the Certificate to be deleted.
         :type thumbprint: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param certificate_delete_options: Parameter group. Default value is None.
+        :type certificate_delete_options: ~azure-batch.models.CertificateDeleteOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -657,18 +649,29 @@ class CertificateOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if certificate_delete_options is not None:
+            _timeout = certificate_delete_options.timeout
+            _client_request_id = certificate_delete_options.client_request_id
+            _return_client_request_id = certificate_delete_options.return_client_request_id
+            _ocp_date = certificate_delete_options.ocp_date
+
         request = build_delete_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.delete.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -696,6 +699,7 @@ class CertificateOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    delete.metadata = {'url': "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"}  # type: ignore
 
 
     @distributed_trace
@@ -703,12 +707,7 @@ class CertificateOperations:
         self,
         thumbprint_algorithm: str,
         thumbprint: str,
-        *,
-        select: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        certificate_get_options: Optional[_models.CertificateGetOptions] = None,
         **kwargs: Any
     ) -> _models.Certificate:
         """Gets information about the specified Certificate.
@@ -718,23 +717,10 @@ class CertificateOperations:
         :type thumbprint_algorithm: str
         :param thumbprint: The thumbprint of the Certificate to get.
         :type thumbprint: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: Certificate
+        :param certificate_get_options: Parameter group. Default value is None.
+        :type certificate_get_options: ~azure-batch.models.CertificateGetOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Certificate, or the result of cls(response)
         :rtype: ~azure-batch.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -749,19 +735,32 @@ class CertificateOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.Certificate]
 
-        
+        _select = None
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if certificate_get_options is not None:
+            _select = certificate_get_options.select
+            _timeout = certificate_get_options.timeout
+            _client_request_id = certificate_get_options.client_request_id
+            _return_client_request_id = certificate_get_options.return_client_request_id
+            _ocp_date = certificate_get_options.ocp_date
+
         request = build_get_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
             api_version=api_version,
-            select=select,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            select=_select,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -792,4 +791,5 @@ class CertificateOperations:
 
         return deserialized
 
+    get.metadata = {'url': "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"}  # type: ignore
 

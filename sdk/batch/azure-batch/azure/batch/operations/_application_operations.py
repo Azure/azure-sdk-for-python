@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -43,7 +43,7 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/applications"
+    _url = kwargs.pop("template_url", "/applications")
 
     # Construct parameters
     if max_results is not None:
@@ -86,7 +86,7 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/applications/{applicationId}"
+    _url = kwargs.pop("template_url", "/applications/{applicationId}")
     path_format_arguments = {
         "applicationId": _SERIALIZER.url("application_id", application_id, 'str'),
     }
@@ -138,12 +138,7 @@ class ApplicationOperations:
     @distributed_trace
     def list(
         self,
-        *,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        application_list_options: Optional[_models.ApplicationListOptions] = None,
         **kwargs: Any
     ) -> Iterable[_models.ApplicationListResult]:
         """Lists all of the applications available in the specified Account.
@@ -153,24 +148,11 @@ class ApplicationOperations:
         applications and versions that are not yet available to Compute Nodes, use the Azure portal or
         the Azure Resource Manager API.
 
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of ApplicationListResult
+        :param application_list_options: Parameter group. Default value is None.
+        :type application_list_options: ~azure-batch.models.ApplicationListOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either ApplicationListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.ApplicationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -186,35 +168,64 @@ class ApplicationOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if application_list_options is not None:
+                    _max_results = application_list_options.max_results
+                    _timeout = application_list_options.timeout
+                    _client_request_id = application_list_options.client_request_id
+                    _return_client_request_id = application_list_options.return_client_request_id
+                    _ocp_date = application_list_options.ocp_date
                 
                 request = build_list_request(
                     api_version=api_version,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if application_list_options is not None:
+                    _max_results = application_list_options.max_results
+                    _timeout = application_list_options.timeout
+                    _client_request_id = application_list_options.client_request_id
+                    _return_client_request_id = application_list_options.return_client_request_id
+                    _ocp_date = application_list_options.ocp_date
                 
                 request = build_list_request(
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -250,19 +261,15 @@ class ApplicationOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list.metadata = {'url': "/applications"}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         application_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        application_get_options: Optional[_models.ApplicationGetOptions] = None,
         **kwargs: Any
-    ) -> _models.Application:
+    ) -> _models.ApplicationSummary:
         """Gets information about the specified Application.
 
         This operation returns only Applications and versions that are available for use on Compute
@@ -272,22 +279,11 @@ class ApplicationOperations:
 
         :param application_id: The ID of the Application.
         :type application_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: Application
-        :rtype: ~azure-batch.models.Application
+        :param application_get_options: Parameter group. Default value is None.
+        :type application_get_options: ~azure-batch.models.ApplicationGetOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ApplicationSummary, or the result of cls(response)
+        :rtype: ~azure-batch.models.ApplicationSummary
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -299,19 +295,30 @@ class ApplicationOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Application]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ApplicationSummary]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if application_get_options is not None:
+            _timeout = application_get_options.timeout
+            _client_request_id = application_get_options.client_request_id
+            _return_client_request_id = application_get_options.return_client_request_id
+            _ocp_date = application_get_options.ocp_date
+
         request = build_get_request(
             application_id=application_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -335,11 +342,12 @@ class ApplicationOperations:
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = self._deserialize('Application', pipeline_response)
+        deserialized = self._deserialize('ApplicationSummary', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    get.metadata = {'url': "/applications/{applicationId}"}  # type: ignore
 

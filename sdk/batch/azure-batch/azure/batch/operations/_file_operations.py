@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -46,7 +46,7 @@ def build_delete_from_task_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}/files/{filePath}")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -101,7 +101,7 @@ def build_get_from_task_request(
     accept = _headers.pop('Accept', "application/json, application/octet-stream")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}/files/{filePath}")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -159,7 +159,7 @@ def build_get_properties_from_task_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}/files/{filePath}")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -214,7 +214,7 @@ def build_delete_from_compute_node_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/files/{filePath}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -269,7 +269,7 @@ def build_get_from_compute_node_request(
     accept = _headers.pop('Accept', "application/json, application/octet-stream")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/files/{filePath}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -327,7 +327,7 @@ def build_get_properties_from_compute_node_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/files/{filePath}")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -383,7 +383,7 @@ def build_list_from_task_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobs/{jobId}/tasks/{taskId}/files"
+    _url = kwargs.pop("template_url", "/jobs/{jobId}/tasks/{taskId}/files")
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
         "taskId": _SERIALIZER.url("task_id", task_id, 'str'),
@@ -440,7 +440,7 @@ def build_list_from_compute_node_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/pools/{poolId}/nodes/{nodeId}/files"
+    _url = kwargs.pop("template_url", "/pools/{poolId}/nodes/{nodeId}/files")
     path_format_arguments = {
         "poolId": _SERIALIZER.url("pool_id", pool_id, 'str'),
         "nodeId": _SERIALIZER.url("node_id", node_id, 'str'),
@@ -502,12 +502,8 @@ class FileOperations:
         job_id: str,
         task_id: str,
         file_path: str,
-        *,
         recursive: Optional[bool] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        file_delete_from_task_options: Optional[_models.FileDeleteFromTaskOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes the specified Task file from the Compute Node where the Task ran.
@@ -520,26 +516,15 @@ class FileOperations:
         :type task_id: str
         :param file_path: The path to the Task file or directory that you want to delete.
         :type file_path: str
-        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
+        :param recursive: Whether to delete children of a directory. If the filePath parameter
          represents a directory instead of a file, you can set recursive to true to delete the directory
          and all of the files and subdirectories in it. If recursive is false then the directory must be
          empty or deletion will fail. Default value is None.
-        :paramtype recursive: bool
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :type recursive: bool
+        :param file_delete_from_task_options: Parameter group. Default value is None.
+        :type file_delete_from_task_options: ~azure-batch.models.FileDeleteFromTaskOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -554,20 +539,31 @@ class FileOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if file_delete_from_task_options is not None:
+            _timeout = file_delete_from_task_options.timeout
+            _client_request_id = file_delete_from_task_options.client_request_id
+            _return_client_request_id = file_delete_from_task_options.return_client_request_id
+            _ocp_date = file_delete_from_task_options.ocp_date
+
         request = build_delete_from_task_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
             api_version=api_version,
             recursive=recursive,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.delete_from_task.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -593,6 +589,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    delete_from_task.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
 
 
     @distributed_trace
@@ -601,14 +598,7 @@ class FileOperations:
         job_id: str,
         task_id: str,
         file_path: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        ocp_range: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        file_get_from_task_options: Optional[_models.FileGetFromTaskOptions] = None,
         **kwargs: Any
     ) -> IO:
         """Returns the content of the specified Task file.
@@ -619,32 +609,10 @@ class FileOperations:
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
-         The format is bytes=startRange-endRange.
-        :paramtype ocp_range: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: IO
+        :param file_get_from_task_options: Parameter group. Default value is None.
+        :type file_get_from_task_options: ~azure-batch.models.FileGetFromTaskOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -659,22 +627,39 @@ class FileOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _ocp_range = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if file_get_from_task_options is not None:
+            _timeout = file_get_from_task_options.timeout
+            _client_request_id = file_get_from_task_options.client_request_id
+            _return_client_request_id = file_get_from_task_options.return_client_request_id
+            _ocp_date = file_get_from_task_options.ocp_date
+            _ocp_range = file_get_from_task_options.ocp_range
+            _if_modified_since = file_get_from_task_options.if_modified_since
+            _if_unmodified_since = file_get_from_task_options.if_unmodified_since
+
         request = build_get_from_task_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            ocp_range=ocp_range,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            ocp_range=_ocp_range,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.get_from_task.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -704,13 +689,14 @@ class FileOperations:
         response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
         response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
 
-        deserialized = response
+        deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    get_from_task.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
 
 
     @distributed_trace
@@ -719,13 +705,7 @@ class FileOperations:
         job_id: str,
         task_id: str,
         file_path: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        file_get_properties_from_task_options: Optional[_models.FileGetPropertiesFromTaskOptions] = None,
         **kwargs: Any
     ) -> None:
         """Gets the properties of the specified Task file.
@@ -736,29 +716,11 @@ class FileOperations:
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the properties of.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param file_get_properties_from_task_options: Parameter group. Default value is None.
+        :type file_get_properties_from_task_options:
+         ~azure-batch.models.FileGetPropertiesFromTaskOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -773,21 +735,36 @@ class FileOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if file_get_properties_from_task_options is not None:
+            _timeout = file_get_properties_from_task_options.timeout
+            _client_request_id = file_get_properties_from_task_options.client_request_id
+            _return_client_request_id = file_get_properties_from_task_options.return_client_request_id
+            _ocp_date = file_get_properties_from_task_options.ocp_date
+            _if_modified_since = file_get_properties_from_task_options.if_modified_since
+            _if_unmodified_since = file_get_properties_from_task_options.if_unmodified_since
+
         request = build_get_properties_from_task_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.get_properties_from_task.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -821,6 +798,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    get_properties_from_task.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
 
 
     @distributed_trace
@@ -829,12 +807,8 @@ class FileOperations:
         pool_id: str,
         node_id: str,
         file_path: str,
-        *,
         recursive: Optional[bool] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        file_delete_from_compute_node_options: Optional[_models.FileDeleteFromComputeNodeOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes the specified file from the Compute Node.
@@ -847,26 +821,16 @@ class FileOperations:
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete.
         :type file_path: str
-        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
+        :param recursive: Whether to delete children of a directory. If the filePath parameter
          represents a directory instead of a file, you can set recursive to true to delete the directory
          and all of the files and subdirectories in it. If recursive is false then the directory must be
          empty or deletion will fail. Default value is None.
-        :paramtype recursive: bool
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :type recursive: bool
+        :param file_delete_from_compute_node_options: Parameter group. Default value is None.
+        :type file_delete_from_compute_node_options:
+         ~azure-batch.models.FileDeleteFromComputeNodeOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -881,20 +845,31 @@ class FileOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if file_delete_from_compute_node_options is not None:
+            _timeout = file_delete_from_compute_node_options.timeout
+            _client_request_id = file_delete_from_compute_node_options.client_request_id
+            _return_client_request_id = file_delete_from_compute_node_options.return_client_request_id
+            _ocp_date = file_delete_from_compute_node_options.ocp_date
+
         request = build_delete_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
             api_version=api_version,
             recursive=recursive,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.delete_from_compute_node.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -920,6 +895,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    delete_from_compute_node.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
 
 
     @distributed_trace
@@ -928,14 +904,7 @@ class FileOperations:
         pool_id: str,
         node_id: str,
         file_path: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        ocp_range: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        file_get_from_compute_node_options: Optional[_models.FileGetFromComputeNodeOptions] = None,
         **kwargs: Any
     ) -> IO:
         """Returns the content of the specified Compute Node file.
@@ -946,32 +915,10 @@ class FileOperations:
         :type node_id: str
         :param file_path: The path to the Compute Node file that you want to get the content of.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
-         The format is bytes=startRange-endRange.
-        :paramtype ocp_range: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: IO
+        :param file_get_from_compute_node_options: Parameter group. Default value is None.
+        :type file_get_from_compute_node_options: ~azure-batch.models.FileGetFromComputeNodeOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: IO, or the result of cls(response)
         :rtype: IO
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -986,22 +933,39 @@ class FileOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[IO]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _ocp_range = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if file_get_from_compute_node_options is not None:
+            _timeout = file_get_from_compute_node_options.timeout
+            _client_request_id = file_get_from_compute_node_options.client_request_id
+            _return_client_request_id = file_get_from_compute_node_options.return_client_request_id
+            _ocp_date = file_get_from_compute_node_options.ocp_date
+            _ocp_range = file_get_from_compute_node_options.ocp_range
+            _if_modified_since = file_get_from_compute_node_options.if_modified_since
+            _if_unmodified_since = file_get_from_compute_node_options.if_unmodified_since
+
         request = build_get_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            ocp_range=ocp_range,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            ocp_range=_ocp_range,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.get_from_compute_node.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1031,13 +995,14 @@ class FileOperations:
         response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
         response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
 
-        deserialized = response
+        deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    get_from_compute_node.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
 
 
     @distributed_trace
@@ -1046,13 +1011,7 @@ class FileOperations:
         pool_id: str,
         node_id: str,
         file_path: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        file_get_properties_from_compute_node_options: Optional[_models.FileGetPropertiesFromComputeNodeOptions] = None,
         **kwargs: Any
     ) -> None:
         """Gets the properties of the specified Compute Node file.
@@ -1063,29 +1022,11 @@ class FileOperations:
         :type node_id: str
         :param file_path: The path to the Compute Node file that you want to get the properties of.
         :type file_path: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param file_get_properties_from_compute_node_options: Parameter group. Default value is None.
+        :type file_get_properties_from_compute_node_options:
+         ~azure-batch.models.FileGetPropertiesFromComputeNodeOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1100,21 +1041,36 @@ class FileOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if file_get_properties_from_compute_node_options is not None:
+            _timeout = file_get_properties_from_compute_node_options.timeout
+            _client_request_id = file_get_properties_from_compute_node_options.client_request_id
+            _return_client_request_id = file_get_properties_from_compute_node_options.return_client_request_id
+            _ocp_date = file_get_properties_from_compute_node_options.ocp_date
+            _if_modified_since = file_get_properties_from_compute_node_options.if_modified_since
+            _if_unmodified_since = file_get_properties_from_compute_node_options.if_unmodified_since
+
         request = build_get_properties_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.get_properties_from_compute_node.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1148,6 +1104,7 @@ class FileOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    get_properties_from_compute_node.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
 
 
     @distributed_trace
@@ -1155,14 +1112,8 @@ class FileOperations:
         self,
         job_id: str,
         task_id: str,
-        *,
-        filter: Optional[str] = None,
         recursive: Optional[bool] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        file_list_from_task_options: Optional[_models.FileListFromTaskOptions] = None,
         **kwargs: Any
     ) -> Iterable[_models.NodeFileListResult]:
         """Lists the files in a Task's directory on its Compute Node.
@@ -1173,31 +1124,13 @@ class FileOperations:
         :type job_id: str
         :param task_id: The ID of the Task whose files you want to list.
         :type task_id: str
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
-         Default value is None.
-        :paramtype filter: str
-        :keyword recursive: Whether to list children of the Task directory. This parameter can be used
-         in combination with the filter parameter to list specific type of files. Default value is None.
-        :paramtype recursive: bool
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         files can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of NodeFileListResult
+        :param recursive: Whether to list children of the Task directory. This parameter can be used in
+         combination with the filter parameter to list specific type of files. Default value is None.
+        :type recursive: bool
+        :param file_list_from_task_options: Parameter group. Default value is None.
+        :type file_list_from_task_options: ~azure-batch.models.FileListFromTaskOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either NodeFileListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.NodeFileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1213,41 +1146,76 @@ class FileOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _filter = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if file_list_from_task_options is not None:
+                    _filter = file_list_from_task_options.filter
+                    _max_results = file_list_from_task_options.max_results
+                    _timeout = file_list_from_task_options.timeout
+                    _client_request_id = file_list_from_task_options.client_request_id
+                    _return_client_request_id = file_list_from_task_options.return_client_request_id
+                    _ocp_date = file_list_from_task_options.ocp_date
                 
                 request = build_list_from_task_request(
                     job_id=job_id,
                     task_id=task_id,
                     api_version=api_version,
-                    filter=filter,
+                    filter=_filter,
                     recursive=recursive,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list_from_task.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _filter = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if file_list_from_task_options is not None:
+                    _filter = file_list_from_task_options.filter
+                    _max_results = file_list_from_task_options.max_results
+                    _timeout = file_list_from_task_options.timeout
+                    _client_request_id = file_list_from_task_options.client_request_id
+                    _return_client_request_id = file_list_from_task_options.return_client_request_id
+                    _ocp_date = file_list_from_task_options.ocp_date
                 
                 request = build_list_from_task_request(
                     job_id=job_id,
                     task_id=task_id,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    filter=_filter,
+                    recursive=recursive,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -1283,21 +1251,15 @@ class FileOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list_from_task.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/files"}  # type: ignore
 
     @distributed_trace
     def list_from_compute_node(
         self,
         pool_id: str,
         node_id: str,
-        *,
-        filter: Optional[str] = None,
         recursive: Optional[bool] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        file_list_from_compute_node_options: Optional[_models.FileListFromComputeNodeOptions] = None,
         **kwargs: Any
     ) -> Iterable[_models.NodeFileListResult]:
         """Lists all of the files in Task directories on the specified Compute Node.
@@ -1308,30 +1270,12 @@ class FileOperations:
         :type pool_id: str
         :param node_id: The ID of the Compute Node whose files you want to list.
         :type node_id: str
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
-         Default value is None.
-        :paramtype filter: str
-        :keyword recursive: Whether to list children of a directory. Default value is None.
-        :paramtype recursive: bool
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         files can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of NodeFileListResult
+        :param recursive: Whether to list children of a directory. Default value is None.
+        :type recursive: bool
+        :param file_list_from_compute_node_options: Parameter group. Default value is None.
+        :type file_list_from_compute_node_options: ~azure-batch.models.FileListFromComputeNodeOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either NodeFileListResult or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.NodeFileListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1347,41 +1291,76 @@ class FileOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _filter = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if file_list_from_compute_node_options is not None:
+                    _filter = file_list_from_compute_node_options.filter
+                    _max_results = file_list_from_compute_node_options.max_results
+                    _timeout = file_list_from_compute_node_options.timeout
+                    _client_request_id = file_list_from_compute_node_options.client_request_id
+                    _return_client_request_id = file_list_from_compute_node_options.return_client_request_id
+                    _ocp_date = file_list_from_compute_node_options.ocp_date
                 
                 request = build_list_from_compute_node_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     api_version=api_version,
-                    filter=filter,
+                    filter=_filter,
                     recursive=recursive,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list_from_compute_node.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _filter = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if file_list_from_compute_node_options is not None:
+                    _filter = file_list_from_compute_node_options.filter
+                    _max_results = file_list_from_compute_node_options.max_results
+                    _timeout = file_list_from_compute_node_options.timeout
+                    _client_request_id = file_list_from_compute_node_options.client_request_id
+                    _return_client_request_id = file_list_from_compute_node_options.return_client_request_id
+                    _ocp_date = file_list_from_compute_node_options.ocp_date
                 
                 request = build_list_from_compute_node_request(
                     pool_id=pool_id,
                     node_id=node_id,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    filter=_filter,
+                    recursive=recursive,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -1417,4 +1396,4 @@ class FileOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list_from_compute_node.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/files"}  # type: ignore

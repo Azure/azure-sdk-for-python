@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._vendor import _format_url_section
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -47,7 +47,7 @@ def build_exists_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -105,7 +105,7 @@ def build_delete_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -165,7 +165,7 @@ def build_get_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -210,7 +210,7 @@ def build_get_request(
 def build_patch_request(
     job_schedule_id: str,
     *,
-    json: Optional[_models.BatchJobScheduleUpdate] = None,
+    json: Optional[_models.JobSchedulePatchParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -230,7 +230,7 @@ def build_patch_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -275,7 +275,7 @@ def build_patch_request(
 def build_update_request(
     job_schedule_id: str,
     *,
-    json: Optional[_models.BatchJobSchedule] = None,
+    json: Optional[_models.JobScheduleUpdateParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -295,7 +295,7 @@ def build_update_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -357,7 +357,7 @@ def build_disable_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}/disable"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}/disable")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -415,7 +415,7 @@ def build_enable_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}/enable"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}/enable")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -473,7 +473,7 @@ def build_terminate_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules/{jobScheduleId}/terminate"
+    _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}/terminate")
     path_format_arguments = {
         "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
     }
@@ -513,7 +513,7 @@ def build_terminate_request(
 
 def build_add_request(
     *,
-    json: Optional[_models.BatchJobSchedule] = None,
+    json: Optional[_models.JobScheduleAddParameter] = None,
     content: Any = None,
     timeout: Optional[int] = 30,
     client_request_id: Optional[str] = None,
@@ -529,7 +529,7 @@ def build_add_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules"
+    _url = kwargs.pop("template_url", "/jobschedules")
 
     # Construct parameters
     if timeout is not None:
@@ -577,7 +577,7 @@ def build_list_request(
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
-    _url = "/jobschedules"
+    _url = kwargs.pop("template_url", "/jobschedules")
 
     # Construct parameters
     if filter is not None:
@@ -633,15 +633,7 @@ class JobScheduleOperations:
     def exists(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_exists_options: Optional[_models.JobScheduleExistsOptions] = None,
         **kwargs: Any
     ) -> None:
         """Checks the specified Job Schedule exists.
@@ -650,37 +642,10 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule which you want to check.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param job_schedule_exists_options: Parameter group. Default value is None.
+        :type job_schedule_exists_options: ~azure-batch.models.JobScheduleExistsOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -695,21 +660,40 @@ class JobScheduleOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_exists_options is not None:
+            _timeout = job_schedule_exists_options.timeout
+            _client_request_id = job_schedule_exists_options.client_request_id
+            _return_client_request_id = job_schedule_exists_options.return_client_request_id
+            _ocp_date = job_schedule_exists_options.ocp_date
+            _if_match = job_schedule_exists_options.if_match
+            _if_none_match = job_schedule_exists_options.if_none_match
+            _if_modified_since = job_schedule_exists_options.if_modified_since
+            _if_unmodified_since = job_schedule_exists_options.if_unmodified_since
+
         request = build_exists_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.exists.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -738,21 +722,14 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    exists.metadata = {'url': "/jobschedules/{jobScheduleId}"}  # type: ignore
 
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_delete_options: Optional[_models.JobScheduleDeleteOptions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job Schedule from the specified Account.
@@ -765,37 +742,10 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to delete.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param job_schedule_delete_options: Parameter group. Default value is None.
+        :type job_schedule_delete_options: ~azure-batch.models.JobScheduleDeleteOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -810,21 +760,40 @@ class JobScheduleOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_delete_options is not None:
+            _timeout = job_schedule_delete_options.timeout
+            _client_request_id = job_schedule_delete_options.client_request_id
+            _return_client_request_id = job_schedule_delete_options.return_client_request_id
+            _ocp_date = job_schedule_delete_options.ocp_date
+            _if_match = job_schedule_delete_options.if_match
+            _if_none_match = job_schedule_delete_options.if_none_match
+            _if_modified_since = job_schedule_delete_options.if_modified_since
+            _if_unmodified_since = job_schedule_delete_options.if_unmodified_since
+
         request = build_delete_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.delete.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -850,65 +819,25 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    delete.metadata = {'url': "/jobschedules/{jobScheduleId}"}  # type: ignore
 
 
     @distributed_trace
     def get(
         self,
         job_schedule_id: str,
-        *,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_get_options: Optional[_models.JobScheduleGetOptions] = None,
         **kwargs: Any
-    ) -> _models.BatchJobSchedule:
+    ) -> _models.CloudJobSchedule:
         """Gets information about the specified Job Schedule.
 
         :param job_schedule_id: The ID of the Job Schedule to get.
         :type job_schedule_id: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: BatchJobSchedule
-        :rtype: ~azure-batch.models.BatchJobSchedule
+        :param job_schedule_get_options: Parameter group. Default value is None.
+        :type job_schedule_get_options: ~azure-batch.models.JobScheduleGetOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CloudJobSchedule, or the result of cls(response)
+        :rtype: ~azure-batch.models.CloudJobSchedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         error_map = {
@@ -920,25 +849,48 @@ class JobScheduleOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchJobSchedule]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudJobSchedule]
 
-        
+        _select = None
+        _expand = None
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_get_options is not None:
+            _select = job_schedule_get_options.select
+            _expand = job_schedule_get_options.expand
+            _timeout = job_schedule_get_options.timeout
+            _client_request_id = job_schedule_get_options.client_request_id
+            _return_client_request_id = job_schedule_get_options.return_client_request_id
+            _ocp_date = job_schedule_get_options.ocp_date
+            _if_match = job_schedule_get_options.if_match
+            _if_none_match = job_schedule_get_options.if_none_match
+            _if_modified_since = job_schedule_get_options.if_modified_since
+            _if_unmodified_since = job_schedule_get_options.if_unmodified_since
+
         request = build_get_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
-            select=select,
-            expand=expand,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            select=_select,
+            expand=_expand,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.get.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -962,29 +914,22 @@ class JobScheduleOperations:
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
 
-        deserialized = self._deserialize('BatchJobSchedule', pipeline_response)
+        deserialized = self._deserialize('CloudJobSchedule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
+    get.metadata = {'url': "/jobschedules/{jobScheduleId}"}  # type: ignore
 
 
     @distributed_trace
     def patch(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        job_schedule_update: _models.BatchJobScheduleUpdate,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_patch_parameter: _models.JobSchedulePatchParameter,
+        job_schedule_patch_options: Optional[_models.JobSchedulePatchOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -996,39 +941,12 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to update.
         :type job_schedule_id: str
-        :param job_schedule_update: The parameters for the request.
-        :type job_schedule_update: ~azure-batch.models.BatchJobScheduleUpdate
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param job_schedule_patch_parameter: The parameters for the request.
+        :type job_schedule_patch_parameter: ~azure-batch.models.JobSchedulePatchParameter
+        :param job_schedule_patch_options: Parameter group. Default value is None.
+        :type job_schedule_patch_options: ~azure-batch.models.JobSchedulePatchOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1044,24 +962,43 @@ class JobScheduleOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(job_schedule_update, 'BatchJobScheduleUpdate')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_patch_options is not None:
+            _timeout = job_schedule_patch_options.timeout
+            _client_request_id = job_schedule_patch_options.client_request_id
+            _return_client_request_id = job_schedule_patch_options.return_client_request_id
+            _ocp_date = job_schedule_patch_options.ocp_date
+            _if_match = job_schedule_patch_options.if_match
+            _if_none_match = job_schedule_patch_options.if_none_match
+            _if_modified_since = job_schedule_patch_options.if_modified_since
+            _if_unmodified_since = job_schedule_patch_options.if_unmodified_since
+        _content = self._serialize.body(job_schedule_patch_parameter, 'JobSchedulePatchParameter')
 
         request = build_patch_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.patch.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1090,22 +1027,15 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    patch.metadata = {'url': "/jobschedules/{jobScheduleId}"}  # type: ignore
 
 
     @distributed_trace
     def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        job_schedule: _models.BatchJobSchedule,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_update_parameter: _models.JobScheduleUpdateParameter,
+        job_schedule_update_options: Optional[_models.JobScheduleUpdateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -1117,39 +1047,12 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to update.
         :type job_schedule_id: str
-        :param job_schedule: The parameters for the request.
-        :type job_schedule: ~azure-batch.models.BatchJobSchedule
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param job_schedule_update_parameter: The parameters for the request.
+        :type job_schedule_update_parameter: ~azure-batch.models.JobScheduleUpdateParameter
+        :param job_schedule_update_options: Parameter group. Default value is None.
+        :type job_schedule_update_options: ~azure-batch.models.JobScheduleUpdateOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1165,24 +1068,43 @@ class JobScheduleOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(job_schedule, 'BatchJobSchedule')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_update_options is not None:
+            _timeout = job_schedule_update_options.timeout
+            _client_request_id = job_schedule_update_options.client_request_id
+            _return_client_request_id = job_schedule_update_options.return_client_request_id
+            _ocp_date = job_schedule_update_options.ocp_date
+            _if_match = job_schedule_update_options.if_match
+            _if_none_match = job_schedule_update_options.if_none_match
+            _if_modified_since = job_schedule_update_options.if_modified_since
+            _if_unmodified_since = job_schedule_update_options.if_unmodified_since
+        _content = self._serialize.body(job_schedule_update_parameter, 'JobScheduleUpdateParameter')
 
         request = build_update_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.update.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1211,21 +1133,14 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    update.metadata = {'url': "/jobschedules/{jobScheduleId}"}  # type: ignore
 
 
     @distributed_trace
     def disable(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_disable_options: Optional[_models.JobScheduleDisableOptions] = None,
         **kwargs: Any
     ) -> None:
         """Disables a Job Schedule.
@@ -1234,37 +1149,10 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to disable.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param job_schedule_disable_options: Parameter group. Default value is None.
+        :type job_schedule_disable_options: ~azure-batch.models.JobScheduleDisableOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1279,21 +1167,40 @@ class JobScheduleOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_disable_options is not None:
+            _timeout = job_schedule_disable_options.timeout
+            _client_request_id = job_schedule_disable_options.client_request_id
+            _return_client_request_id = job_schedule_disable_options.return_client_request_id
+            _ocp_date = job_schedule_disable_options.ocp_date
+            _if_match = job_schedule_disable_options.if_match
+            _if_none_match = job_schedule_disable_options.if_none_match
+            _if_modified_since = job_schedule_disable_options.if_modified_since
+            _if_unmodified_since = job_schedule_disable_options.if_unmodified_since
+
         request = build_disable_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.disable.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1322,21 +1229,14 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    disable.metadata = {'url': "/jobschedules/{jobScheduleId}/disable"}  # type: ignore
 
 
     @distributed_trace
     def enable(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_enable_options: Optional[_models.JobScheduleEnableOptions] = None,
         **kwargs: Any
     ) -> None:
         """Enables a Job Schedule.
@@ -1345,37 +1245,10 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to enable.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param job_schedule_enable_options: Parameter group. Default value is None.
+        :type job_schedule_enable_options: ~azure-batch.models.JobScheduleEnableOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1390,21 +1263,40 @@ class JobScheduleOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_enable_options is not None:
+            _timeout = job_schedule_enable_options.timeout
+            _client_request_id = job_schedule_enable_options.client_request_id
+            _return_client_request_id = job_schedule_enable_options.return_client_request_id
+            _ocp_date = job_schedule_enable_options.ocp_date
+            _if_match = job_schedule_enable_options.if_match
+            _if_none_match = job_schedule_enable_options.if_none_match
+            _if_modified_since = job_schedule_enable_options.if_modified_since
+            _if_unmodified_since = job_schedule_enable_options.if_unmodified_since
+
         request = build_enable_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.enable.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1433,21 +1325,14 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    enable.metadata = {'url': "/jobschedules/{jobScheduleId}/enable"}  # type: ignore
 
 
     @distributed_trace
     def terminate(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        if_match: Optional[str] = None,
-        if_none_match: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
+        job_schedule_terminate_options: Optional[_models.JobScheduleTerminateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Terminates a Job Schedule.
@@ -1456,37 +1341,10 @@ class JobScheduleOperations:
 
         :param job_schedule_id: The ID of the Job Schedule to terminates.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword if_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service
-         exactly matches the value specified by the client. Default value is None.
-        :paramtype if_match: str
-        :keyword if_none_match: An ETag value associated with the version of the resource known to the
-         client. The operation will be performed only if the resource's current ETag on the service does
-         not match the value specified by the client. Default value is None.
-        :paramtype if_none_match: str
-        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
-         to the client. The operation will be performed only if the resource on the service has been
-         modified since the specified time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
-         known to the client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :return: None
+        :param job_schedule_terminate_options: Parameter group. Default value is None.
+        :type job_schedule_terminate_options: ~azure-batch.models.JobScheduleTerminateOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1501,21 +1359,40 @@ class JobScheduleOperations:
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        _if_match = None
+        _if_none_match = None
+        _if_modified_since = None
+        _if_unmodified_since = None
+        if job_schedule_terminate_options is not None:
+            _timeout = job_schedule_terminate_options.timeout
+            _client_request_id = job_schedule_terminate_options.client_request_id
+            _return_client_request_id = job_schedule_terminate_options.return_client_request_id
+            _ocp_date = job_schedule_terminate_options.ocp_date
+            _if_match = job_schedule_terminate_options.if_match
+            _if_none_match = job_schedule_terminate_options.if_none_match
+            _if_modified_since = job_schedule_terminate_options.if_modified_since
+            _if_unmodified_since = job_schedule_terminate_options.if_unmodified_since
+
         request = build_terminate_request(
             job_schedule_id=job_schedule_id,
             api_version=api_version,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            if_match=_if_match,
+            if_none_match=_if_none_match,
+            if_modified_since=_if_modified_since,
+            if_unmodified_since=_if_unmodified_since,
+            template_url=self.terminate.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1544,40 +1421,26 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    terminate.metadata = {'url': "/jobschedules/{jobScheduleId}/terminate"}  # type: ignore
 
 
     @distributed_trace
     def add(  # pylint: disable=inconsistent-return-statements
         self,
-        job_schedule: _models.BatchJobSchedule,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        cloud_job_schedule: _models.JobScheduleAddParameter,
+        job_schedule_add_options: Optional[_models.JobScheduleAddOptions] = None,
         **kwargs: Any
     ) -> None:
         """Adds a Job Schedule to the specified Account.
 
         Adds a Job Schedule to the specified Account.
 
-        :param job_schedule: The Job Schedule to be added.
-        :type job_schedule: ~azure-batch.models.BatchJobSchedule
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: None
+        :param cloud_job_schedule: The Job Schedule to be added.
+        :type cloud_job_schedule: ~azure-batch.models.JobScheduleAddParameter
+        :param job_schedule_add_options: Parameter group. Default value is None.
+        :type job_schedule_add_options: ~azure-batch.models.JobScheduleAddOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1593,19 +1456,30 @@ class JobScheduleOperations:
         content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
-        _content = self._serialize.body(job_schedule, 'BatchJobSchedule')
+        _timeout = None
+        _client_request_id = None
+        _return_client_request_id = None
+        _ocp_date = None
+        if job_schedule_add_options is not None:
+            _timeout = job_schedule_add_options.timeout
+            _client_request_id = job_schedule_add_options.client_request_id
+            _return_client_request_id = job_schedule_add_options.return_client_request_id
+            _ocp_date = job_schedule_add_options.ocp_date
+        _content = self._serialize.body(cloud_job_schedule, 'JobScheduleAddParameter')
 
         request = build_add_request(
             api_version=api_version,
             content_type=content_type,
             content=_content,
-            timeout=timeout,
-            client_request_id=client_request_id,
-            return_client_request_id=return_client_request_id,
-            ocp_date=ocp_date,
+            timeout=_timeout,
+            client_request_id=_client_request_id,
+            return_client_request_id=_return_client_request_id,
+            ocp_date=_ocp_date,
+            template_url=self.add.metadata['url'],
             headers=_headers,
             params=_params,
         )
+        request = _convert_request(request)
         path_format_arguments = {
             "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
         }
@@ -1634,60 +1508,32 @@ class JobScheduleOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
+    add.metadata = {'url': "/jobschedules"}  # type: ignore
 
 
     @distributed_trace
     def list(
         self,
-        *,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
+        job_schedule_list_options: Optional[_models.JobScheduleListOptions] = None,
         **kwargs: Any
-    ) -> Iterable[_models.BatchJobScheduleListResult]:
+    ) -> Iterable[_models.CloudJobScheduleListResult]:
         """Lists all of the Job Schedules in the specified Account.
 
         Lists all of the Job Schedules in the specified Account.
 
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-schedules.
-         Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         Job Schedules can be returned. Default value is 1000.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is
-         None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is False.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly. Default
-         value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :return: An iterator like instance of BatchJobScheduleListResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.BatchJobScheduleListResult]
+        :param job_schedule_list_options: Parameter group. Default value is None.
+        :type job_schedule_list_options: ~azure-batch.models.JobScheduleListOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either CloudJobScheduleListResult or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.CloudJobScheduleListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BatchJobScheduleListResult]
+        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudJobScheduleListResult]
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1695,38 +1541,82 @@ class JobScheduleOperations:
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
+                _filter = None
+                _select = None
+                _expand = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if job_schedule_list_options is not None:
+                    _filter = job_schedule_list_options.filter
+                    _select = job_schedule_list_options.select
+                    _expand = job_schedule_list_options.expand
+                    _max_results = job_schedule_list_options.max_results
+                    _timeout = job_schedule_list_options.timeout
+                    _client_request_id = job_schedule_list_options.client_request_id
+                    _return_client_request_id = job_schedule_list_options.return_client_request_id
+                    _ocp_date = job_schedule_list_options.ocp_date
                 
                 request = build_list_request(
                     api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
-                    max_results=max_results,
-                    timeout=timeout,
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    filter=_filter,
+                    select=_select,
+                    expand=_expand,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=self.list.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
+                _filter = None
+                _select = None
+                _expand = None
+                _max_results = None
+                _timeout = None
+                _client_request_id = None
+                _return_client_request_id = None
+                _ocp_date = None
+                if job_schedule_list_options is not None:
+                    _filter = job_schedule_list_options.filter
+                    _select = job_schedule_list_options.select
+                    _expand = job_schedule_list_options.expand
+                    _max_results = job_schedule_list_options.max_results
+                    _timeout = job_schedule_list_options.timeout
+                    _client_request_id = job_schedule_list_options.client_request_id
+                    _return_client_request_id = job_schedule_list_options.return_client_request_id
+                    _ocp_date = job_schedule_list_options.ocp_date
                 
                 request = build_list_request(
-                    client_request_id=client_request_id,
-                    return_client_request_id=return_client_request_id,
-                    ocp_date=ocp_date,
+                    api_version=api_version,
+                    filter=_filter,
+                    select=_select,
+                    expand=_expand,
+                    max_results=_max_results,
+                    timeout=_timeout,
+                    client_request_id=_client_request_id,
+                    return_client_request_id=_return_client_request_id,
+                    ocp_date=_ocp_date,
+                    template_url=next_link,
                     headers=_headers,
                     params=_params,
                 )
+                request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
@@ -1735,7 +1625,7 @@ class JobScheduleOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("BatchJobScheduleListResult", pipeline_response)
+            deserialized = self._deserialize("CloudJobScheduleListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1762,4 +1652,4 @@ class JobScheduleOperations:
         return ItemPaged(
             get_next, extract_data
         )
-
+    list.metadata = {'url': "/jobschedules"}  # type: ignore
