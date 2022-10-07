@@ -49,6 +49,7 @@
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
  - Removed declaration on Python 3.6 support
