@@ -125,6 +125,7 @@ def get_errno(exc):
     return 0
 
 
+# TODO: fails when host = hostname:port/path. fix
 def to_host_port(host, port=AMQP_PORT):
     """Convert hostname:port string to host, port tuple."""
     m = IPV6_LITERAL.match(host)

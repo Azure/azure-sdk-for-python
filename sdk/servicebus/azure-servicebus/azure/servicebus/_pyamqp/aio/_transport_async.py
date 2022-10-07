@@ -271,11 +271,8 @@ class AsyncTransport(
                     # if getaddrinfo succeeded before for another address
                     # family, reraise the previous socket.error since it's more
                     # relevant to users
-                    raise e if e is not None else socket.error(
-                        "failed to resolve broker hostname"
-                    )
-                continue  # pragma: no cover
-
+                    raise (e if e is not None else socket.error("failed to resolve broker hostname"))
+                continue    # pragma: no cover
             # now that we have address(es) for the hostname, connect to broker
             for i, res in enumerate(entries):
                 af, socktype, proto, _, sa = res
@@ -428,12 +425,14 @@ class AsyncTransport(
             )
 
 
-class WebSocketTransportAsync(AsyncTransportMixin):
+class WebSocketTransportAsync(
+    AsyncTransportMixin
+): # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         host,
         *,
-        port=WEBSOCKET_PORT,  # pylint: disable=unused-argument
+        port=WEBSOCKET_PORT,
         connect_timeout=None,
         ssl_opts=None,
         **kwargs
@@ -443,7 +442,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        self.host = host
+        self.host, self.port = to_host_port(host, port)
         self.ws = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
@@ -464,6 +463,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
 
         try:
             from aiohttp import ClientSession
+            from urllib.parse import urlsplit
 
             if username or password:
                 from aiohttp import BasicAuth
@@ -471,8 +471,15 @@ class WebSocketTransportAsync(AsyncTransportMixin):
                 http_proxy_auth = BasicAuth(login=username, password=password)
 
             self.session = ClientSession()
+            if self._custom_endpoint:
+                url = f"wss://{self._custom_endpoint}"
+            else:
+                url = f"wss://{self.host}"
+                parsed_url = urlsplit(url)
+                url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
+
             self.ws = await self.session.ws_connect(
-                url="wss://{}".format(self._custom_endpoint or self.host),
+                url=url,
                 timeout=self._connect_timeout,
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,

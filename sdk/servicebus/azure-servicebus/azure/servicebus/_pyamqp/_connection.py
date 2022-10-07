@@ -103,7 +103,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if custom_endpoint_address:
             custom_parsed_url = urlparse(custom_endpoint_address)
             custom_port = custom_parsed_url.port or WEBSOCKET_PORT
-            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname, custom_port, custom_parsed_url.path)
+            custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
@@ -466,7 +466,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
             _LOGGER.error(
-                "Connection error: {}".format(frame[0])  # pylint:disable=logging-format-interpolation
+                "Connection error: %r", frame[0]
             )
 
 
@@ -526,8 +526,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     description="Invalid channel number received"
                 ))
             return
-        self._incoming_endpoints.pop(channel)
-        self._outgoing_endpoints.pop(channel)
 
     def _process_incoming_frame(self, channel, frame):  # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool

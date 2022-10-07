@@ -299,7 +299,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                         "failed to resolve broker hostname"
                     )
                 continue  # pragma: no cover
-            
+
             # now that we have address(es) for the hostname, connect to broker
             for i, res in enumerate(entries):
                 af, socktype, proto, _, sa = res
