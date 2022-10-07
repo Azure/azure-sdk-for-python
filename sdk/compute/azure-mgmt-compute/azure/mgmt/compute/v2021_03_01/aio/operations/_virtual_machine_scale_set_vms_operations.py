@@ -889,7 +889,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        expand: Optional[Union[str, "_models.InstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
         **kwargs: Any
     ) -> _models.VirtualMachineScaleSetVM:
         """Gets a virtual machine from a VM scale set.

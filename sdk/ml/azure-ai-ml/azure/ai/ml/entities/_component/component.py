@@ -31,7 +31,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 # pylint: disable=protected-access, redefined-builtin
@@ -81,6 +81,8 @@ class Component(
     :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -140,13 +142,17 @@ class Component(
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
+
+    @property
+    def _func(self):
         from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 
-        # validate input names before create component function
-        # TODO(1924371): discuss if validate & update self._func after input changes
-        self._validate_io_names(self._inputs)
-        self._validate_io_names(self._outputs)
-        self._func = _generate_component_function(self)
+        # validate input/output names before creating component function
+        validation_result = self._validate_io_names(self.inputs)
+        validation_result.merge_with(self._validate_io_names(self.outputs))
+        validation_result.try_raise(error_target=self._get_validation_error_target())
+
+        return _generate_component_function(self)
 
     @property
     def type(self) -> str:
@@ -245,7 +251,7 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(cls, io_dict: Dict, raise_error=True):
+    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> MutableValidationResult:
         """Validate input/output names, raise exception if invalid."""
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
@@ -265,7 +271,7 @@ class Component(
                 )
             else:
                 lower2original_kwargs[lower_key] = name
-        return validation_result.try_raise(error_target=ErrorTarget.COMPONENT, raise_error=raise_error)
+        return validation_result.try_raise(error_target=cls._get_validation_error_target(), raise_error=raise_error)
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -372,7 +378,7 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
         # If private features are enable and component has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationError
@@ -389,8 +395,9 @@ class Component(
                 message="Not a valid code value: git paths are not supported.",
                 yaml_path="code",
             )
-        # validate inputs names before creation in case user added invalid inputs after entity built
+        # validate inputs names
         validation_result.merge_with(self._validate_io_names(self.inputs, raise_error=False))
+        validation_result.merge_with(self._validate_io_names(self.outputs, raise_error=False))
 
         return validation_result
 

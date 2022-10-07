@@ -82,6 +82,7 @@ def load_common(
     params_override = params_override or []
     yaml_dict = _try_load_yaml_dict(source)
 
+    # pylint: disable=protected-access
     cls, type_str = cls._resolve_cls_and_type(data=yaml_dict, params_override=params_override)
 
     try:
@@ -90,7 +91,9 @@ def load_common(
         if issubclass(cls, SchemaValidatableMixin):
             validation_result = _ValidationResultBuilder.from_validation_error(e, relative_origin)
             validation_result.try_raise(
+                # pylint: disable=protected-access
                 error_target=cls._get_validation_error_target(),
+                # pylint: disable=protected-access
                 schema=cls._create_schema_for_validation_with_base_path(),
                 raise_mashmallow_error=True,
                 additional_message=""
@@ -129,6 +132,7 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 def _load_common_raising_marshmallow_error(
     cls: Type[Resource], yaml_dict, relative_origin: Union[PathLike, str], params_override: list = None, **kwargs
 ) -> Resource:
+    # pylint: disable=protected-access
     return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
 
 
@@ -155,7 +159,8 @@ def load_job(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Job cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Loaded job object.
     :rtype: Job
     """
@@ -245,7 +250,8 @@ def load_datastore(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Datastore cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Loaded datastore object.
     :rtype: Datastore
     """
@@ -275,7 +281,8 @@ def load_code(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Code cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Loaded compute object.
     :rtype: Compute
     """
@@ -375,7 +382,7 @@ def load_component(
             no_personal_data_message=msg,
             target=ErrorTarget.COMPONENT,
             error_category=ErrorCategory.USER_ERROR,
-            error_type=ValidationErrorType.MISSING_VALUE,
+            error_type=ValidationErrorType.MISSING_FIELD,
         )
     return component_entity
 
@@ -403,7 +410,8 @@ def load_model(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Constructed model object.
     :rtype: Model
     """
@@ -433,7 +441,8 @@ def load_data(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Constructed data object.
     :rtype: Data
     """
@@ -463,7 +472,8 @@ def load_environment(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Constructed environment object.
     :rtype: Environment
     """
@@ -493,7 +503,8 @@ def load_online_deployment(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Online Deployment cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Constructed online deployment object.
     :rtype: OnlineDeployment
     """
@@ -553,7 +564,8 @@ def load_online_endpoint(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Online Endpoint cannot be successfully validated.
+        Details will be provided in the error message.
     :return: Constructed online endpoint object.
     :rtype: OnlineEndpoint
     """

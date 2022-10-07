@@ -3,7 +3,6 @@ import os
 from functools import partial
 from io import StringIO
 from pathlib import Path
-from typing import Callable
 from unittest import mock
 from unittest.mock import patch
 
@@ -14,7 +13,6 @@ from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
 from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
@@ -40,10 +38,9 @@ from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
 from azure.ai.ml.entities._job.job_service import JobService
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from azure.ai.ml.sweep import (
     BanditPolicy,
@@ -183,6 +180,18 @@ class TestDSLPipeline:
         assert pipeline.component.inputs["job_in_number"]["description"] == "a number parameter"
         assert pipeline.component.outputs["job_out_path"].description == "a path output"
         assert pipeline.description == pipeline.component.description
+
+    def test_dsl_pipeline_comment(self) -> None:
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline
+        def sample_pipeline_with_comment():
+            node = hello_world_component_func(component_in_path=Input(path="/a/path/on/ds"), component_in_number=1)
+            node.comment = "arbitrary string"
+
+        pipeline = sample_pipeline_with_comment()
+        assert pipeline.jobs["node"].comment == "arbitrary string"
 
     def test_dsl_pipeline_sweep_node(self) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -402,7 +411,9 @@ class TestDSLPipeline:
         assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(spark_node_dict_from_rest, *omit_fields)
         omit_fields = [
             "jobs.add_greeting_column.componentId",
+            "jobs.add_greeting_column.properties",
             "jobs.count_by_row.componentId",
+            "jobs.count_by_row.properties",
         ]
         actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
         assert actual_job == {
@@ -1150,13 +1161,13 @@ class TestDSLPipeline:
             "tags": {},
             "type": "command",
         }
-        omit_fields = "componentId"
-        assert pydash.omit(component_from_dsl._to_rest_object(), omit_fields) == expected_component
-        assert pydash.omit(component_from_sdk._to_rest_object(), omit_fields) == expected_component
+        omit_fields = ["componentId", "properties"]
+        assert pydash.omit(component_from_dsl._to_rest_object(), *omit_fields) == expected_component
+        assert pydash.omit(component_from_sdk._to_rest_object(), *omit_fields) == expected_component
         expected_component.update({"_source": "REMOTE.WORKSPACE.COMPONENT"})
-        assert pydash.omit(component_from_rest._to_rest_object(), omit_fields) == expected_component
+        assert pydash.omit(component_from_rest._to_rest_object(), *omit_fields) == expected_component
         expected_component.update({"_source": "YAML.JOB"})
-        assert pydash.omit(component_from_yaml._to_rest_object(), omit_fields) == expected_component
+        assert pydash.omit(component_from_yaml._to_rest_object(), *omit_fields) == expected_component
 
     def test_pipeline_with_command_function(self):
         # component func
@@ -1213,6 +1224,7 @@ class TestDSLPipeline:
         omit_fields = [
             "name",
             "properties.jobs.*.componentId",
+            "properties.jobs.*.properties",
             "properties.settings._source",
         ]
 
@@ -1374,6 +1386,7 @@ class TestDSLPipeline:
         omit_fields = [
             "properties.jobs.*.componentId",
             "properties.jobs.*.code",
+            "properties.jobs.*.properties",
             "properties.settings._source",
         ]
 
@@ -1567,6 +1580,7 @@ class TestDSLPipeline:
         omit_fields = [
             "properties.jobs.*.componentId",
             "properties.jobs.*.code",
+            "properties.jobs.*.properties",
             "properties.settings._source",
         ]
 
@@ -1794,6 +1808,7 @@ class TestDSLPipeline:
         )
         omit_fields = [
             "properties.jobs.spark_node.componentId",
+            "properties.jobs.spark_node.properties",
         ]
         pipeline_job1 = pydash.omit(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
@@ -1899,6 +1914,7 @@ class TestDSLPipeline:
         omit_fields = [
             "name",
             "properties.jobs.parallel_node.componentId",
+            "properties.jobs.parallel_node.properties",
         ]
 
         pipeline1 = pipeline(data)
@@ -1907,6 +1923,7 @@ class TestDSLPipeline:
         pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
         omit_field = [
             "jobs.parallel_node.task",
+            "jobs.*.properties",
             "outputs",  # TODO: figure out why outputs can't be regenerated correctly
         ]
 
@@ -2014,6 +2031,8 @@ class TestDSLPipeline:
             "name",
             "properties.jobs.node1.componentId",
             "properties.jobs.node2.componentId",
+            "properties.jobs.node1.properties",
+            "properties.jobs.node2.properties",
         ]
 
         data = Input(type=AssetTypes.MLTABLE, path="/a/path/on/ds", mode="eval_mount")
@@ -2140,6 +2159,8 @@ class TestDSLPipeline:
             "name",
             "properties.jobs.node1.componentId",
             "properties.jobs.node2.componentId",
+            "properties.jobs.node1.properties",
+            "properties.jobs.node2.properties",
         ]
 
         data = Input(type=AssetTypes.URI_FOLDER, path="/a/path/on/ds")
@@ -2443,8 +2464,11 @@ class TestDSLPipeline:
         pipeline.outputs.job_out_data.mode = "upload"
         omit_fields = [
             "jobs.batch_inference_node1.componentId",
-            "jobs.batch_inference_node2.componentId",
+            "jobs.batch_inference_node1.properties",
             "jobs.convert_data_node.componentId",
+            "jobs.convert_data_node.properties",
+            "jobs.batch_inference_node2.componentId",
+            "jobs.batch_inference_node2.properties",
         ]
         actual_job = pydash.omit(pipeline._to_rest_object().properties.as_dict(), *omit_fields)
         assert actual_job == {
@@ -2662,7 +2686,10 @@ class TestDSLPipeline:
         pipeline_dict1 = pipeline1._to_rest_object().as_dict()
         pipeline_dict1 = pydash.omit(
             pipeline_dict1["properties"],
-            ["jobs.node1.componentId", "jobs.node2.display_name", "jobs.node2.properties"],
+            "jobs.node1.componentId",
+            "jobs.node2.display_name",
+            "jobs.node1.properties",
+            "jobs.node2.properties",
         )
         assert pipeline_dict1 == {
             "compute_id": "cpu-cluster",
@@ -2922,6 +2949,7 @@ class TestDSLPipeline:
             "properties.inputs.training_input.uri",
             "properties.jobs.train_with_sample_data.componentId",
             "properties.jobs.train_with_sample_data._source",
+            "properties.jobs.train_with_sample_data.properties",
             "properties.settings._source",
         ]
         dsl_pipeline_job_dict = pydash.omit(dsl_pipeline_job_dict, omit_fields)
@@ -2989,6 +3017,7 @@ class TestDSLPipeline:
             "properties.inputs.training_input.uri",
             "properties.jobs.train_with_sample_data.componentId",
             "properties.jobs.train_with_sample_data._source",
+            "properties.jobs.train_with_sample_data.properties",
             "properties.settings._source",
         ]
         dsl_pipeline_job_dict = pydash.omit(dsl_pipeline_job_dict, omit_fields)
@@ -3055,6 +3084,7 @@ class TestDSLPipeline:
             "properties.inputs.training_input.uri",
             "properties.jobs.train_with_sample_data.componentId",
             "properties.jobs.train_with_sample_data._source",
+            "properties.jobs.train_with_sample_data.properties",
             "properties.settings._source",
         ]
         dsl_pipeline_job_dict = pydash.omit(dsl_pipeline_job_dict, omit_fields)
@@ -3130,6 +3160,7 @@ class TestDSLPipeline:
             "properties.inputs.training_input.uri",
             "properties.jobs.train_with_sample_data.componentId",
             "properties.jobs.train_with_sample_data._source",
+            "properties.jobs.train_with_sample_data.properties",
             "properties.settings._source",
         ]
         dsl_pipeline_job_dict = pydash.omit(dsl_pipeline_job_dict, omit_fields)
@@ -3221,7 +3252,6 @@ class TestDSLPipeline:
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
             "tags": {},
-            "is_deterministic": True,
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
@@ -3233,7 +3263,6 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
                     "outputs": {},
-                    "component": {},
                     "type": "command",
                 },
                 "node2": {
@@ -3243,14 +3272,21 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
                     },
                     "outputs": {"component_out_path": "${{parent.outputs.sub_pipeline_out}}"},
-                    "component": {},
                     "type": "command",
                 },
             },
         }
-        actual_dict = pipeline.jobs["node1"].component._to_dict()
-        actual_dict["jobs"]["node1"]["component"] = {}
-        actual_dict["jobs"]["node2"]["component"] = {}
+        omit_fields = [
+            "component",
+            "jobs.node1.component",
+            "jobs.node2.component",
+            "jobs.node1.properties",
+            "jobs.node2.properties",
+        ]
+        actual_dict = pydash.omit(
+            pipeline.jobs["node1"].component._to_dict(),
+            *omit_fields,
+        )
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
@@ -3280,7 +3316,7 @@ class TestDSLPipeline:
             },
         }
         actual_dict = pipeline._to_dict()
-        actual_dict = pydash.omit(actual_dict, *["jobs.node1.component", "jobs.node2.component", "component"])
+        actual_dict = pydash.omit(actual_dict, *omit_fields)
         assert actual_dict == expected_root_dict
 
     def test_dsl_pipeline_with_command_builder_setting_binding_node_and_pipeline_level(self) -> None:
@@ -3295,6 +3331,7 @@ class TestDSLPipeline:
             "properties.inputs.training_input.uri",
             "properties.jobs.train_with_sample_data.componentId",
             "properties.jobs.train_with_sample_data._source",
+            "properties.jobs.train_with_sample_data.properties",
             "properties.settings._source",
             "type",
         ]
@@ -3371,6 +3408,7 @@ class TestDSLPipeline:
             "properties.inputs.pipeline_training_input.uri",
             "properties.jobs.subgraph1.componentId",
             "properties.jobs.subgraph1._source",
+            "properties.jobs.subgraph1.properties",
             "properties.settings._source",
         ]
         dsl_pipeline_job_dict = pydash.omit(dsl_pipeline_job_dict, omit_fields)
@@ -3453,7 +3491,6 @@ class TestDSLPipeline:
             "tags": {"key": "val"},
             "version": "2",
             "display_name": "pipeline_comp",
-            "is_deterministic": True,
             "inputs": {"path": {"type": "uri_folder"}},
             "outputs": {"component_out_path": {"type": "uri_folder"}},
             "type": "pipeline",
@@ -3507,7 +3544,6 @@ class TestDSLPipeline:
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
             "tags": {},
-            "is_deterministic": True,
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
@@ -3519,7 +3555,6 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
                     "outputs": {},
-                    "component": {},
                     "type": "command",
                 },
                 "node2": {
@@ -3529,14 +3564,18 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
                     },
                     "outputs": {"component_out_path": "${{parent.outputs.sub_pipeline_out}}"},
-                    "component": {},
                     "type": "command",
                 },
             },
         }
-        actual_dict = pipeline.jobs["node1"].component._to_dict()
-        actual_dict["jobs"]["node1"]["component"] = {}
-        actual_dict["jobs"]["node2"]["component"] = {}
+        omit_fields = [
+            "component",
+            "jobs.node1.component",
+            "jobs.node2.component",
+            "jobs.node1.properties",
+            "jobs.node2.properties",
+        ]
+        actual_dict = pydash.omit(pipeline.jobs["node1"].component._to_dict(), *omit_fields)
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
@@ -3565,7 +3604,6 @@ class TestDSLPipeline:
                 },
             },
         }
-        omit_fields = ["component", "jobs.node1.component", "jobs.node2.component"]
         actual_dict = pydash.omit(pipeline._to_dict(), *omit_fields)
         assert actual_dict == expected_root_dict
 
@@ -3594,7 +3632,6 @@ class TestDSLPipeline:
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
             "tags": {},
-            "is_deterministic": True,
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
@@ -3606,7 +3643,6 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
                     "outputs": {},
-                    "component": {},
                     "type": "command",
                 },
                 "node2": {
@@ -3616,14 +3652,14 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
                     },
                     "outputs": {"component_out_path": "${{parent.outputs.sub_pipeline_out}}"},
-                    "component": {},
                     "type": "command",
                 },
             },
         }
-        actual_dict = pipeline.jobs["node1"].component._to_dict()
-        actual_dict["jobs"]["node1"]["component"] = {}
-        actual_dict["jobs"]["node2"]["component"] = {}
+        actual_dict = pydash.omit(
+            pipeline.jobs["node1"].component._to_dict(),
+            *["jobs.node1.component", "jobs.node2.component", "jobs.node1.properties", "jobs.node2.properties"],
+        )
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
@@ -3640,7 +3676,6 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
                     "outputs": {},
-                    "component": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -3649,14 +3684,17 @@ class TestDSLPipeline:
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.sub_pipeline_out}}"},
                     },
                     "outputs": {"sub_pipeline_out": "${{parent.outputs.sub_pipeline_out}}"},
-                    "component": {},
                     "type": "pipeline",
                 },
             },
         }
-        actual_dict = pipeline._to_dict()
-        actual_dict["jobs"]["node1"]["component"] = {}
-        actual_dict["jobs"]["node2"]["component"] = {}
+        actual_dict = pydash.omit(
+            pipeline._to_dict(),
+            "jobs.node1.properties",
+            "jobs.node2.properties",
+            "jobs.node1.component",
+            "jobs.node2.component",
+        )
         assert actual_dict == expected_root_dict
 
     def test_pipeline_with_command_services(self):
@@ -3700,8 +3738,7 @@ class TestDSLPipeline:
             assert isinstance(service, JobService)
 
         job_rest_obj = pipeline._to_rest_object()
-        for name, service in job_rest_obj.properties.jobs["node"]["services"].items():
-            assert isinstance(service, RestJobService)
+        assert job_rest_obj.properties.jobs["node"]["services"] == services
 
         recovered_obj = PipelineJob._from_rest_object(job_rest_obj)
         node_services = recovered_obj.jobs["node"].services
@@ -3726,8 +3763,7 @@ class TestDSLPipeline:
             assert isinstance(service, JobService)
 
         job_rest_obj = pipeline._to_rest_object()
-        for name, service in job_rest_obj.properties.jobs["node"]["services"].items():
-            assert isinstance(service, RestJobService)
+        assert job_rest_obj.properties.jobs["node"]["services"] == new_services
 
     def test_pipeline_decorator_without_brackets(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
@@ -3827,6 +3863,7 @@ class TestInitFinalizeJob:
         from azure.ai.ml.dsl import pipeline
 
         def assert_pipeline_job_init_finalize_job(pipeline_job: PipelineJob):
+            assert pipeline_job._validate_init_finalize_job().passed
             assert pipeline_job.settings.on_init == "init_job"
             assert pipeline_job.settings.on_finalize == "finalize_job"
             pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
@@ -3884,9 +3921,9 @@ class TestInitFinalizeJob:
         invalid_pipeline1.settings.on_finalize = "finalize_job"
         validation_result1 = invalid_pipeline1._validate_init_finalize_job()
         assert not validation_result1.passed
-        assert validation_result1.messages["settings.on_init"] == "On_init job name init_job not exists in jobs."
+        assert validation_result1.error_messages["settings.on_init"] == "On_init job name init_job not exists in jobs."
         assert (
-            validation_result1.messages["settings.on_finalize"]
+            validation_result1.error_messages["settings.on_finalize"]
             == "On_finalize job name finalize_job not exists in jobs."
         )
 
@@ -3904,23 +3941,38 @@ class TestInitFinalizeJob:
         invalid_pipeline2.settings.on_finalize = "node1"
         validation_result2 = invalid_pipeline2._validate_init_finalize_job()
         assert not validation_result2.passed
-        assert validation_result2.messages["jobs"] == "No other job except for on_init/on_finalize job."
+        assert validation_result2.error_messages["jobs"] == "No other job except for on_init/on_finalize job."
         assert (
-            validation_result2.messages["settings.on_init"]
+            validation_result2.error_messages["settings.on_init"]
             == "On_init job should not have connection to other execution node."
         )
         assert (
-            validation_result2.messages["settings.on_finalize"]
+            validation_result2.error_messages["settings.on_finalize"]
             == "On_finalize job should not have connection to other execution node."
         )
 
         # invalid case: call `set_pipeline_settings` out of `pipeline` decorator
         from azure.ai.ml._internal.dsl import set_pipeline_settings
-        from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+        from azure.ai.ml.exceptions import UserErrorException
 
         with pytest.raises(UserErrorException) as e:
             set_pipeline_settings(on_init="init_job", on_finalize="finalize_job")
         assert str(e.value) == "Please call `set_pipeline_settings` inside a `pipeline` decorated function."
+
+        # invalid case: set on_init for pipeline component
+        @dsl.pipeline
+        def subgraph_func():
+            node = self.component_func()
+            set_pipeline_settings(on_init=node)  # set on_init for subgraph (pipeline component)
+
+        @dsl.pipeline
+        def subgraph_with_init_func():
+            subgraph_func()
+            self.component_func()
+
+        with pytest.raises(UserErrorException) as e:
+            subgraph_with_init_func()
+        assert str(e.value) == "On_init/on_finalize is not supported for pipeline component."
 
     def test_init_finalize_job_with_subgraph(self, caplog) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
@@ -3930,7 +3982,6 @@ class TestInitFinalizeJob:
         def subgraph_func():
             node = self.component_func()
             node.compute = "cpu-cluster"
-            set_pipeline_settings(on_init=node)  # will be ignored when in subgraph
 
         @dsl.pipeline()
         def subgraph_init_finalize_job_func():
@@ -3939,25 +3990,8 @@ class TestInitFinalizeJob:
             finalize_job = subgraph_func()
             set_pipeline_settings(on_init=init_job, on_finalize=finalize_job)
 
-        # as we set on_init for subgraph, there should be warning of ignoring on_init setting
-        # update logger name to "Operation" to enable caplog capture logs
-        from azure.ai.ml.dsl import _pipeline_decorator
-
-        _pipeline_decorator.module_logger = logging.getLogger("Operation")
-        with caplog.at_level(logging.WARNING):
-            valid_pipeline = subgraph_init_finalize_job_func()
-        assert any(
-            [
-                (
-                    "Job settings {'on_init': 'node'} on pipeline function 'subgraph_func' "
-                    "are ignored when using inside PipelineJob."
-                )
-                == msg.replace("  ", "")  # hack here, use replace to remove spaces in the middle
-                for msg in caplog.messages
-            ]
-        )
-
-        assert valid_pipeline._customized_validate().passed
+        valid_pipeline = subgraph_init_finalize_job_func()
+        assert valid_pipeline._validate().passed
         assert valid_pipeline.settings.on_init == "init_job"
         assert valid_pipeline.settings.on_finalize == "finalize_job"
 
@@ -4003,6 +4037,8 @@ class TestInitFinalizeJob:
         omit_fields = [
             "jobs.add_greeting_column.componentId",
             "jobs.count_by_row.componentId",
+            "jobs.add_greeting_column.properties",
+            "jobs.count_by_row.properties",
         ]
         actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
         assert actual_job == {

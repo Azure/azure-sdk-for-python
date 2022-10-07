@@ -23,7 +23,6 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 
 async def fuzzy_search_batch_with_search_queries():
-    # [START fuzzy_search_batch_with_search_queries]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
@@ -41,10 +40,8 @@ async def fuzzy_search_batch_with_search_queries():
     print(result)
     print(result.batch_id)
     return result
-    # [END fuzzy_search_batch_with_search_queries]
 
 async def fuzzy_search_batch_with_batch_id(batch_id=None):
-    # [START fuzzy_search_batch_with_batch_id]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
@@ -57,7 +54,6 @@ async def fuzzy_search_batch_with_batch_id(batch_id=None):
 
     print(result.__dict__)
     print(result._polling_method._initial_response)
-    # [END fuzzy_search_batch_with_batch_id]
 
 async def main():
     result = await fuzzy_search_batch_with_search_queries()

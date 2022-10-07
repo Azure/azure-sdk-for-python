@@ -5,13 +5,10 @@
 import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta
+from html import escape
 
 import six
 
-if six.PY3:
-    from html import escape
-else:
-    from cgi import escape
 
 SUPPORTED_VALUE_TYPE_TUPLE = (int, float, str, datetime, timedelta)
 TABLE_FMT = '<table style="width:100%">{0}</table>'

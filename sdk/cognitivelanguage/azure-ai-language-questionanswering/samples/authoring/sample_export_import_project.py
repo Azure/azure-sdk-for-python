@@ -23,14 +23,14 @@ def sample_export_import_project():
     # [START export_import_project]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+    from azure.ai.language.questionanswering.authoring import AuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
+    client = AuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
 
         # create project
@@ -49,7 +49,7 @@ def sample_export_import_project():
         # export
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json"
+            file_format="json"
         )
         export_result = export_poller.result()
         export_url = export_result["resultUrl"]

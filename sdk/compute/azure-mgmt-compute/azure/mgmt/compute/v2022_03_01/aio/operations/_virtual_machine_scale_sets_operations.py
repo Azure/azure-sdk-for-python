@@ -708,7 +708,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        expand: Optional[Union[str, "_models.ExpandTypesForGetVMScaleSets"]] = None,
+        expand: Optional[Union[str, _models.ExpandTypesForGetVMScaleSets]] = None,
         **kwargs: Any
     ) -> _models.VirtualMachineScaleSet:
         """Display information about a virtual machine scale set.

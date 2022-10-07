@@ -59,7 +59,7 @@ class SharedGalleryImageVersionsOperations:
         location: str,
         gallery_unique_name: str,
         gallery_image_name: str,
-        shared_to: Optional[Union[str, "_models.SharedToValues"]] = None,
+        shared_to: Optional[Union[str, _models.SharedToValues]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.SharedGalleryImageVersion"]:
         """List shared gallery image versions by subscription id or tenant id.

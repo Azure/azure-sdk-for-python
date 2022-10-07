@@ -3,8 +3,10 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 
-class ManagedServiceIdentityType(str, Enum):
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are allowed)."""
 
     NONE = "None"

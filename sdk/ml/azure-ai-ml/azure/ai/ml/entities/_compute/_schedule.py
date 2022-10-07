@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
-from .._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
+from .._schedule.trigger import CronTrigger, RecurrenceTrigger
 
 
 class ComputeStartStopSchedule(RestTranslatableMixin):
@@ -102,6 +102,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
         return schedule
 
 
+@experimental
 class ComputeSchedules(RestTranslatableMixin):
     """Compute schedules.
 

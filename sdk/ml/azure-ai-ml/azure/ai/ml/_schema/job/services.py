@@ -18,6 +18,7 @@ class JobServiceSchema(PathAwareSchema):
     port = fields.Int()
     endpoint = fields.Str(dump_only=True)
     status = fields.Str(dump_only=True)
+    nodes = fields.Str()
     error_message = fields.Str(dump_only=True)
     properties = fields.Dict()
 

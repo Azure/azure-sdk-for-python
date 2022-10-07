@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
-from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
+from ._client import AuthoringClient as AuthoringClientGenerated
 
 POLLING_INTERVAL_DEFAULT = 5
 
@@ -33,12 +33,13 @@ def _authentication_policy(credential, **kwargs):
     return authentication_policy
 
 
-class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated):
+class AuthoringClient(AuthoringClientGenerated):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">
+    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
@@ -69,7 +70,7 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
 
 
 __all__: List[str] = [
-    "QuestionAnsweringAuthoringClient"
+    "AuthoringClient"
 ]  # Add all objects you want publicly available to users at this package level
 
 
