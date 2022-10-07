@@ -58,6 +58,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
+_DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1" # pylint: disable=line-too-long
 
 
 def get_api_version(kwargs, default):
@@ -347,6 +348,8 @@ class TransportWrapper(HttpTransport):
 
 
 def parse_connection_str(conn_str, credential, keyword_args):
+    if conn_str is not None and conn_str.lower() == "usedevelopmentstorage=true":
+        conn_str = _DEV_CONN_STRING
     conn_settings = parse_connection_string(conn_str)
     primary = None
     secondary = None

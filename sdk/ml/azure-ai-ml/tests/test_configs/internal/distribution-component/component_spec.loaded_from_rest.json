@@ -1,5 +1,4 @@
 {
-  "name": "test_145516991038",
   "tags": {},
   "version": "0.0.1",
   "$schema": "https://componentsdk.azureedge.net/jsonschema/DistributedComponent.json",
@@ -8,7 +7,8 @@
   "inputs": {
     "input_path": {
       "type": "path",
-      "description": "The directory contains input data."
+      "description": "The directory contains input data.",
+      "datastore_mode": "Mount"
     },
     "string_parameter": {
       "type": "string",
@@ -19,13 +19,14 @@
   "outputs": {
     "output_path": {
       "type": "path",
-      "description": "The directory contains output data."
+      "description": "The directory contains output data.",
+      "datastore_mode": "Upload"
     }
   },
   "type": "DistributedComponent",
   "environment": {
-    "name": "AzureML-Minimal",
-    "os": "Linux"
+    "os": "Linux",
+    "name": "AzureML-Minimal"
   },
   "launcher": {
     "type": "mpi",

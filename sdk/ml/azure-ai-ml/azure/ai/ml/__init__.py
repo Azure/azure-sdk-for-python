@@ -15,7 +15,11 @@ from ._version import VERSION
 from .entities._builders.command_func import command
 from .entities._builders.spark_func import spark
 from .entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from .entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
+from .entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration
+)
 from .entities._load_functions import (
     load_batch_deployment,
     load_batch_endpoint,
@@ -28,6 +32,7 @@ from .entities._load_functions import (
     load_model,
     load_online_deployment,
     load_online_endpoint,
+    load_registry,
     load_workspace,
     load_workspace_connection,
 )
@@ -45,9 +50,9 @@ __all__ = [
     "MpiDistribution",
     "PyTorchDistribution",
     "TensorFlowDistribution",
-    "ManagedIdentity",
-    "AmlToken",
-    "UserIdentity",
+    "ManagedIdentityConfiguration",
+    "AmlTokenConfiguration",
+    "UserIdentityConfiguration",
     "load_batch_deployment",
     "load_batch_endpoint",
     "load_component",
@@ -60,6 +65,7 @@ __all__ = [
     "load_online_deployment",
     "load_online_endpoint",
     "load_workspace",
+    "load_registry",
     "load_workspace_connection",
 ]
 

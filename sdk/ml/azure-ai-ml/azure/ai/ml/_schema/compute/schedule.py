@@ -48,6 +48,12 @@ class RecurrenceScheduleSchema(metaclass=PatchedSchemaMeta):
     hours = fields.List(fields.Int())
     minutes = fields.List(fields.Int())
 
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import RecurrencePattern
+
+        return RecurrencePattern(**data)
+
 
 class RecurrenceTriggerSchema(BaseTriggerSchema):
     type = StringTransformedEnum(required=True, allowed_values=TriggerType.RECURRENCE)

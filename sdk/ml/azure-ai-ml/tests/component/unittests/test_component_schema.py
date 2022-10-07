@@ -326,7 +326,7 @@ class TestSparkComponent:
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         spark_component = load_component(
-            path=component_yaml,
+            component_yaml,
         )
         validation_result = spark_component._validate()
         assert validation_result.passed is True

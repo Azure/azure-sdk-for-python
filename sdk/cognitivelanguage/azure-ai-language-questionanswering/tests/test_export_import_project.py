@@ -3,24 +3,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
-from testcase import (
-    QuestionAnsweringTest,
-    GlobalQuestionAnsweringAccountPreparer,
-    QnaAuthoringHelper
-)
+from helpers import QnaAuthoringHelper
+from testcase import QuestionAnsweringTestCase
 
-from azure.ai.language.questionanswering.projects import QuestionAnsweringProjectsClient
 
-class ExportAndImportTests(QuestionAnsweringTest):
+class TestExportAndImport(QuestionAnsweringTestCase):
 
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_export_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_export_project(self, recorded_test, qna_creds):
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -29,17 +22,15 @@ class ExportAndImportTests(QuestionAnsweringTest):
         # export project
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json",
+            file_format="json",
             **self.kwargs_for_polling
         )
         result = export_poller.result()
         assert result["status"] == "succeeded"
         assert result["resultUrl"] is not None
 
-
-    @GlobalQuestionAnsweringAccountPreparer()
-    def test_import_project(self, qna_account, qna_key):
-        client = QuestionAnsweringProjectsClient(qna_account, AzureKeyCredential(qna_key))
+    def test_import_project(self, recorded_test, qna_creds):
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -68,7 +59,8 @@ class ExportAndImportTests(QuestionAnsweringTest):
             options=project,
             **self.kwargs_for_polling
         )
-        import_poller.result()
+        job_state = import_poller.result()
+        assert job_state["jobId"]
 
         # assert
         project_found = False

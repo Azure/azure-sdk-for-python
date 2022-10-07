@@ -9,31 +9,31 @@ from typing import Any, Dict
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml.entities._datastore.credentials import (
-    AccountKeyCredentials,
-    CertificateCredentials,
-    NoneCredentials,
-    SasTokenCredentials,
-    ServicePrincipalCredentials,
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    CertificateConfiguration,
+    NoneCredentialConfiguration,
+    SasTokenConfiguration,
+    ServicePrincipalConfiguration,
 )
 
 
 class NoneCredentialsSchema(metaclass=PatchedSchemaMeta):
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> NoneCredentials:
-        return NoneCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> NoneCredentialConfiguration:
+        return NoneCredentialConfiguration(**data)
 
 
 class AccountKeySchema(metaclass=PatchedSchemaMeta):
     account_key = fields.Str(required=True)
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> AccountKeyCredentials:
-        return AccountKeyCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> AccountKeyConfiguration:
+        return AccountKeyConfiguration(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
-        if not isinstance(data, AccountKeyCredentials):
+        if not isinstance(data, AccountKeyConfiguration):
             raise ValidationError("Cannot dump non-AccountKeyCredentials object into AccountKeyCredentials")
         return data
 
@@ -42,12 +42,12 @@ class SasTokenSchema(metaclass=PatchedSchemaMeta):
     sas_token = fields.Str(required=True)
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> SasTokenCredentials:
-        return SasTokenCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> SasTokenConfiguration:
+        return SasTokenConfiguration(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
-        if not isinstance(data, SasTokenCredentials):
+        if not isinstance(data, SasTokenConfiguration):
             raise ValidationError("Cannot dump non-SasTokenCredentials object into SasTokenCredentials")
         return data
 
@@ -63,12 +63,12 @@ class ServicePrincipalSchema(BaseTenantCredentialSchema):
     client_secret = fields.Str(required=True)
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> ServicePrincipalCredentials:
-        return ServicePrincipalCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> ServicePrincipalConfiguration:
+        return ServicePrincipalConfiguration(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
-        if not isinstance(data, ServicePrincipalCredentials):
+        if not isinstance(data, ServicePrincipalConfiguration):
             raise ValidationError("Cannot dump non-ServicePrincipalCredentials object into ServicePrincipalCredentials")
         return data
 
@@ -78,11 +78,11 @@ class CertificateSchema(BaseTenantCredentialSchema):
     thumbprint = fields.Str(required=True)
 
     @post_load
-    def make(self, data: Dict[str, Any], **kwargs) -> CertificateCredentials:
-        return CertificateCredentials(**data)
+    def make(self, data: Dict[str, Any], **kwargs) -> CertificateConfiguration:
+        return CertificateConfiguration(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
-        if not isinstance(data, CertificateCredentials):
+        if not isinstance(data, CertificateConfiguration):
             raise ValidationError("Cannot dump non-CertificateCredentials object into CertificateCredentials")
         return data

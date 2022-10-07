@@ -9,7 +9,14 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -21,8 +28,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._job_versions_operations import build_get_request, build_list_by_job_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class JobVersionsOperations:
     """
@@ -43,49 +52,43 @@ class JobVersionsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_by_job(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        job_agent_name: str,
-        job_name: str,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.JobVersionListResult]:
+        self, resource_group_name: str, server_name: str, job_agent_name: str, job_name: str, **kwargs: Any
+    ) -> AsyncIterable["_models.JobVersion"]:
         """Gets all versions of a job.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
-        :param job_name: The name of the job to get.
+        :param job_name: The name of the job to get. Required.
         :type job_name: str
-        :keyword api_version: Api Version. Default value is "2020-11-01-preview". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobVersionListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobVersionListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either JobVersion or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.JobVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-11-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobVersionListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobVersionListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_job_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
@@ -93,7 +96,7 @@ class JobVersionsOperations:
                     job_name=job_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_job.metadata['url'],
+                    template_url=self.list_by_job.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -101,18 +104,7 @@ class JobVersionsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_by_job_request(
-                    resource_group_name=resource_group_name,
-                    server_name=server_name,
-                    job_agent_name=job_agent_name,
-                    job_name=job_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -128,10 +120,8 @@ class JobVersionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -141,11 +131,9 @@ class JobVersionsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_job.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/versions"}  # type: ignore
+    list_by_job.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/versions"}  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -160,36 +148,35 @@ class JobVersionsOperations:
         """Gets a job version.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
-        :param job_name: The name of the job.
+        :param job_name: The name of the job. Required.
         :type job_name: str
-        :param job_version: The version of the job to get.
+        :param job_version: The version of the job to get. Required.
         :type job_version: int
-        :keyword api_version: Api Version. Default value is "2020-11-01-preview". Note that overriding
-         this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobVersion, or the result of cls(response)
+        :return: JobVersion or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.JobVersion
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-11-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobVersion]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobVersion]
 
-        
         request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
@@ -198,7 +185,7 @@ class JobVersionsOperations:
             job_version=job_version,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -206,22 +193,20 @@ class JobVersionsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('JobVersion', pipeline_response)
+        deserialized = self._deserialize("JobVersion", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/versions/{jobVersion}"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/versions/{jobVersion}"}  # type: ignore

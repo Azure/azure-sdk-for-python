@@ -20,9 +20,10 @@ from azure.core.tracing.decorator import distributed_trace
 from ._deserialize import _convert_to_entity, _trim_service_metadata
 from ._entity import TableEntity
 from ._error import (
-    _process_table_error,
-    _reraise_error,
     _decode_error,
+    _process_table_error,
+    _reprocess_error,
+    _reraise_error,
     _validate_tablename_error
 )
 from ._generated.models import (
@@ -219,21 +220,15 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                     permission=value.permission
                 )
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
-        signed_identifiers = identifiers  # type: ignore
         try:
             self._client.table.set_access_policy(
-                table=self.table_name, table_acl=signed_identifiers or None, **kwargs  # type: ignore
+                table=self.table_name, table_acl=identifiers or None, **kwargs  # type: ignore
             )
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
-                if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
-                and len(signed_identifiers) > 5):
-                    raise ValueError(
-                        'Too many access policies provided. The server does not support setting '
-                        'more than 5 access policies on a single resource.'
-                    )
+                _reprocess_error(table_error, identifiers=identifiers)
                 raise
 
     @distributed_trace
@@ -260,7 +255,11 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         try:
             result = self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error, table_name=self.table_name)
+            try:
+                _process_table_error(error, table_name=self.table_name)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace
@@ -289,7 +288,11 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error, table_name=self.table_name)
+            try:
+                _process_table_error(error, table_name=self.table_name)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
 
     @overload
     def delete_entity(self, partition_key, row_key, **kwargs):
