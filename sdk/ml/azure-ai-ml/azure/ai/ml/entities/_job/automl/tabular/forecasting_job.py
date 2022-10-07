@@ -11,7 +11,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import Forecasting as Re
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ForecastingPrimaryMetrics,
     JobBase,
-    StackEnsembleSettings,
     TaskType,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
@@ -24,6 +23,7 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import Tabu
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._util import load_from_dict
 
 

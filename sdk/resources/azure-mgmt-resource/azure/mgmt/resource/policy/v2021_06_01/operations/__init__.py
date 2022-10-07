@@ -11,11 +11,21 @@ from ._operations import PolicyAssignmentsOperations
 from ._operations import PolicyDefinitionsOperations
 from ._operations import PolicySetDefinitionsOperations
 from ._operations import PolicyExemptionsOperations
+from ._operations import VariablesOperations
+from ._operations import VariableValuesOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'DataPolicyManifestsOperations',
-    'PolicyAssignmentsOperations',
-    'PolicyDefinitionsOperations',
-    'PolicySetDefinitionsOperations',
-    'PolicyExemptionsOperations',
+    "DataPolicyManifestsOperations",
+    "PolicyAssignmentsOperations",
+    "PolicyDefinitionsOperations",
+    "PolicySetDefinitionsOperations",
+    "PolicyExemptionsOperations",
+    "VariablesOperations",
+    "VariableValuesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
