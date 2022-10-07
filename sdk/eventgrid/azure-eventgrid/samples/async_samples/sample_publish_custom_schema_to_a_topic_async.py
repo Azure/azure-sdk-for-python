@@ -49,5 +49,4 @@ async def publish_event():
     # [END publish_custom_schema_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(publish_event())
+    asyncio.run(publish_event())
