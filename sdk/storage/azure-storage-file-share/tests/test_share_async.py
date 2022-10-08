@@ -1251,6 +1251,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
     async def test_set_share_acl_with_signed_identifiers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop('variables', {})
 
         self._setup(storage_account_name, storage_account_key)
         share = self._get_share_reference()
@@ -1258,10 +1259,12 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         # Act
         identifiers = dict()
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(minutes=1))
         identifiers['testid'] = AccessPolicy(
             permission=ShareSasPermissions(write=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-            start=datetime.utcnow() - timedelta(minutes=1),
+            expiry=expiry_time,
+            start=start_time,
         )
 
         resp = await share.set_share_access_policy(identifiers)
@@ -1272,6 +1275,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert len(acl['signed_identifiers']) == 1
         assert acl['signed_identifiers'][0].id == 'testid'
         await self._delete_shares(share.share_name)
+
+        return variables
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -1291,7 +1296,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             await share.set_share_access_policy(identifiers)
-        assert str(e.value.exception) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+        assert str(e.value.args[0]) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
