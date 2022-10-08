@@ -552,7 +552,59 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_list_subdirectories_and_files_include_other_data(self, **kwargs):
+    async def test_list_subdirectories_and_files_encoded_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = await share_client.create_directory('dir1\uFFFE')
+        await asyncio.gather(
+            directory.create_subdirectory("subdir1\uFFFE"),
+            directory.upload_file("file1\uFFFE", "data1"))
+
+        # Act
+        list_dir = []
+        async for d in directory.list_directories_and_files():
+            list_dir.append(d)
+
+        # Assert
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == 'subdir1\uFFFE'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'file1\uFFFE'
+        assert list_dir[1]['is_directory'] == False
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_subdirectories_and_files_encoded_prefix_async(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = await share_client.create_directory('\uFFFFdir1')
+        await asyncio.gather(
+            directory.create_subdirectory("\uFFFFsubdir1"),
+            directory.upload_file("\uFFFFfile1", "data1"))
+
+        # Act
+        list_dir = []
+        async for d in directory.list_directories_and_files(name_starts_with="\uFFFF"):
+            list_dir.append(d)
+
+        # Assert
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == '\uFFFFsubdir1'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == '\uFFFFfile1'
+        assert list_dir[1]['is_directory'] == False
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_subdirectories_and_files_include_other_data_async(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

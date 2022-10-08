@@ -518,6 +518,50 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_list_subdirectories_and_files_encoded(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = share_client.create_directory('directory\uFFFE')
+        directory.create_subdirectory("subdir1\uFFFE")
+        directory.upload_file("file\uFFFE", "data1")
+
+        # Act
+        list_dir = list(directory.list_directories_and_files())
+
+        # Assert
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == 'subdir1\uFFFE'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'file\uFFFE'
+        assert list_dir[1]['is_directory'] == False
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_list_subdirectories_and_files_encoded_prefix(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = share_client.create_directory('\uFFFFdirectory')
+        directory.create_subdirectory("\uFFFFsubdir1")
+        directory.upload_file("\uFFFFfile", "data1")
+
+        # Act
+        list_dir = list(directory.list_directories_and_files(name_starts_with="\uFFFF"))
+
+        # Assert
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == '\uFFFFsubdir1'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == '\uFFFFfile'
+        assert list_dir[1]['is_directory'] == False
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_list_subdirectories_and_files_include_other_data(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
