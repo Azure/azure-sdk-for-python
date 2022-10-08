@@ -3,7 +3,7 @@
 ## 0.2.0 (Unreleased)
 
 ### Features Added
-
+ - Most configuration classes from the entity package now implement the standard mapping protocol.
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -15,7 +15,6 @@
 - Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
 ### Features Added
- - Most configuration classes from the entity package now implement the standard mapping protocol.
  
 ### Breaking Changes
 - OnlineDeploymentOperations.delete has been renamed to begin_delete.
