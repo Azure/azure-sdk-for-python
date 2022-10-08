@@ -11,18 +11,16 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import NetworkManagementClientConfiguration
 from ._operations_mixin import NetworkManagementClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -43,9 +41,9 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -72,8 +70,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             'network_security_perimeters': '2021-02-01-preview',
             'nsp_access_rules': '2021-02-01-preview',
             'nsp_access_rules_reconcile': '2021-02-01-preview',
+            'nsp_association_reconcile': '2021-02-01-preview',
             'nsp_associations': '2021-02-01-preview',
-            'nsp_associations_proxy': '2021-02-01-preview',
             'nsp_profiles': '2021-02-01-preview',
             'p2_svpn_server_configurations': '2019-07-01',
             'perimeter_associable_resource_types': '2021-02-01-preview',
@@ -254,6 +252,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import ActiveConnectivityConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'active_connectivity_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -267,6 +266,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import ActiveSecurityAdminRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'active_security_admin_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -280,6 +280,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import ActiveSecurityUserRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'active_security_user_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -296,6 +297,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AdminRuleCollectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'admin_rule_collections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -312,6 +314,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AdminRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'admin_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -343,6 +346,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ApplicationGatewayPrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateway_private_endpoint_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -374,6 +378,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ApplicationGatewayPrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateway_private_link_resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -480,6 +485,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ApplicationGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_gateways'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -571,6 +577,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ApplicationSecurityGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_security_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -644,6 +651,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AvailableDelegationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_delegations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -738,6 +746,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AvailableEndpointServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_endpoint_services'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -796,6 +805,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AvailablePrivateEndpointTypesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_private_endpoint_types'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -869,6 +879,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AvailableResourceGroupDelegationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_resource_group_delegations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -918,6 +929,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AvailableServiceAliasesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'available_service_aliases'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -991,6 +1003,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AzureFirewallFqdnTagsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'azure_firewall_fqdn_tags'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1073,6 +1086,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import AzureFirewallsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'azure_firewalls'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1131,6 +1145,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import BastionHostsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'bastion_hosts'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1231,6 +1246,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import BgpServiceCommunitiesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'bgp_service_communities'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1244,6 +1260,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ConfigurationPolicyGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'configuration_policy_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1335,6 +1352,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ConnectionMonitorsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'connection_monitors'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1351,6 +1369,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ConnectivityConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'connectivity_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1379,6 +1398,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import CustomIPPrefixesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'custom_ip_prefixes'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1446,6 +1466,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import DdosCustomPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ddos_custom_policies'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1531,6 +1552,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import DdosProtectionPlansOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ddos_protection_plans'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1625,6 +1647,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import DefaultSecurityRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'default_security_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1653,6 +1676,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import DscpConfigurationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'dscp_configuration'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1666,6 +1690,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import EffectiveConnectivityConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'effective_connectivity_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1679,6 +1704,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import EffectiveVirtualNetworksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'effective_virtual_networks'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1785,6 +1811,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteCircuitAuthorizationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuit_authorizations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1870,6 +1897,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteCircuitConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuit_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1976,6 +2004,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteCircuitPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuit_peerings'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2082,6 +2111,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteCircuitsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_circuits'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2155,6 +2185,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2240,6 +2271,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteCrossConnectionPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_cross_connection_peerings'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2325,6 +2357,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteCrossConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_cross_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2398,6 +2431,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_gateways'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2471,6 +2505,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_links'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2484,6 +2519,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRoutePortAuthorizationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_port_authorizations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2557,6 +2593,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRoutePortsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_ports'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2630,6 +2667,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRoutePortsLocationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_ports_locations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2643,6 +2681,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteProviderPortsLocationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_provider_ports_location'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2749,6 +2788,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ExpressRouteServiceProvidersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'express_route_service_providers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2804,6 +2844,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import FirewallPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policies'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2817,6 +2858,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import FirewallPolicyIdpsSignaturesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_idps_signatures'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2830,6 +2872,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import FirewallPolicyIdpsSignaturesFilterValuesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_idps_signatures_filter_values'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2843,6 +2886,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import FirewallPolicyIdpsSignaturesOverridesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_idps_signatures_overrides'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2874,6 +2918,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import FirewallPolicyRuleCollectionGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_rule_collection_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2908,6 +2953,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2020_04_01.aio.operations import FirewallPolicyRuleGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'firewall_policy_rule_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2951,6 +2997,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import FlowLogsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'flow_logs'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -2985,6 +3032,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import HubRouteTablesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'hub_route_tables'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3067,6 +3115,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import HubVirtualNetworkConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'hub_virtual_network_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3161,6 +3210,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import InboundNatRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'inbound_nat_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3189,6 +3239,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import InboundSecurityRuleOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'inbound_security_rule'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3214,6 +3265,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2019_02_01.aio.operations import InterfaceEndpointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'interface_endpoints'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3251,6 +3303,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import IpAllocationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ip_allocations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3297,6 +3350,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import IpGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'ip_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3391,6 +3445,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LoadBalancerBackendAddressPoolsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_backend_address_pools'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3485,6 +3540,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LoadBalancerFrontendIPConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_frontend_ip_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3579,6 +3635,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LoadBalancerLoadBalancingRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_load_balancing_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3673,6 +3730,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LoadBalancerNetworkInterfacesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_network_interfaces'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3746,6 +3804,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LoadBalancerOutboundRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_outbound_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3840,6 +3899,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LoadBalancerProbesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancer_probes'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -3946,6 +4006,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LoadBalancersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'load_balancers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4052,6 +4113,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import LocalNetworkGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'local_network_gateways'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4065,6 +4127,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ManagementGroupNetworkManagerConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'management_group_network_manager_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4126,6 +4189,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NatGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nat_gateways'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4148,6 +4212,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NatRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nat_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4164,6 +4229,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4258,6 +4324,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkInterfaceIPConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interface_ip_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4352,6 +4419,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkInterfaceLoadBalancersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interface_load_balancers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4425,6 +4493,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkInterfaceTapConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interface_tap_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4531,6 +4600,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkInterfacesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_interfaces'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4547,6 +4617,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkManagerCommitsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_manager_commits'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4563,6 +4634,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkManagerDeploymentStatusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_manager_deployment_status'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4576,6 +4648,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import NetworkManagerEffectiveSecurityAdminRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_manager_effective_security_admin_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4592,6 +4665,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkManagersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_managers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4665,6 +4739,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkProfilesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_profiles'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4771,6 +4846,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkSecurityGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_security_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4784,6 +4860,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import NetworkSecurityPerimetersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_security_perimeters'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4824,6 +4901,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkVirtualAppliancesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_virtual_appliances'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4927,6 +5005,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import NetworkWatchersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'network_watchers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4940,6 +5019,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import NspAccessRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nsp_access_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4953,6 +5033,21 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import NspAccessRulesReconcileOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nsp_access_rules_reconcile'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_association_reconcile(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspAssociationReconcileOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NspAssociationReconcileOperations>`
+        """
+        api_version = self._get_api_version('nsp_association_reconcile')
+        if api_version == '2021-02-01-preview':
+            from ..v2021_02_01_preview.aio.operations import NspAssociationReconcileOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_association_reconcile'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4966,19 +5061,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import NspAssociationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nsp_associations'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def nsp_associations_proxy(self):
-        """Instance depends on the API version:
-
-           * 2021-02-01-preview: :class:`NspAssociationsProxyOperations<azure.mgmt.network.v2021_02_01_preview.aio.operations.NspAssociationsProxyOperations>`
-        """
-        api_version = self._get_api_version('nsp_associations_proxy')
-        if api_version == '2021-02-01-preview':
-            from ..v2021_02_01_preview.aio.operations import NspAssociationsProxyOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'nsp_associations_proxy'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -4992,6 +5075,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import NspProfilesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nsp_profiles'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5083,6 +5167,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5156,6 +5241,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import P2SVpnGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'p2_svpn_gateways'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5190,6 +5276,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2019_07_01.aio.operations import P2SVpnServerConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'p2_svpn_server_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5293,6 +5380,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import PacketCapturesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'packet_captures'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5357,6 +5445,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import PeerExpressRouteCircuitConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'peer_express_route_circuit_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5370,6 +5459,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import PerimeterAssociableResourceTypesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'perimeter_associable_resource_types'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5407,6 +5497,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import PrivateDnsZoneGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_dns_zone_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5465,6 +5556,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import PrivateEndpointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoints'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5523,6 +5615,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import PrivateLinkServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_services'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5629,6 +5722,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import PublicIPAddressesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'public_ip_addresses'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5705,6 +5799,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import PublicIPPrefixesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'public_ip_prefixes'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5766,6 +5861,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ResourceNavigationLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_navigation_links'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5866,6 +5962,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import RouteFilterRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'route_filter_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -5966,6 +6063,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import RouteFiltersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'route_filters'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6072,6 +6170,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import RouteTablesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'route_tables'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6178,6 +6277,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import RoutesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'routes'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6191,6 +6291,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import RoutingIntentOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'routing_intent'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6204,6 +6305,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ScopeConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'scope_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6220,6 +6322,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import SecurityAdminConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_admin_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6257,6 +6360,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import SecurityPartnerProvidersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_partner_providers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6363,6 +6467,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import SecurityRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6376,6 +6481,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import SecurityUserConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'security_user_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6437,6 +6543,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ServiceAssociationLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_association_links'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6513,6 +6620,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ServiceEndpointPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_endpoint_policies'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6589,6 +6697,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ServiceEndpointPolicyDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_endpoint_policy_definitions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6602,6 +6711,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ServiceTagInformationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_tag_information'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6660,6 +6770,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import ServiceTagsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service_tags'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6673,6 +6784,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import StaticMembersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'static_members'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6779,6 +6891,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import SubnetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subnets'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6792,6 +6905,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import SubscriptionNetworkManagerConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subscription_network_manager_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6898,6 +7012,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import UsagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'usages'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6911,6 +7026,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import UserRuleCollectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'user_rule_collections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6924,6 +7040,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2021_02_01_preview.aio.operations import UserRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'user_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6955,6 +7072,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualApplianceSitesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_appliance_sites'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -6986,6 +7104,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualApplianceSkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_appliance_skus'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7017,6 +7136,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualHubBgpConnectionOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_bgp_connection'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7048,6 +7168,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualHubBgpConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_bgp_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7079,6 +7200,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualHubIpConfigurationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_ip_configuration'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7125,6 +7247,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualHubRouteTableV2SOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hub_route_table_v2_s'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7207,6 +7330,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualHubsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_hubs'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7313,6 +7437,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualNetworkGatewayConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_gateway_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7329,6 +7454,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualNetworkGatewayNatRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_gateway_nat_rules'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7435,6 +7561,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualNetworkGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_gateways'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7538,6 +7665,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualNetworkPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_peerings'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7611,6 +7739,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualNetworkTapsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_network_taps'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7717,6 +7846,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualNetworksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_networks'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7769,6 +7899,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualRouterPeeringsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_router_peerings'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7821,6 +7952,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualRoutersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_routers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7903,6 +8035,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VirtualWansOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_wans'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -7985,6 +8118,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8067,6 +8201,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnGatewaysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_gateways'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8122,6 +8257,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnLinkConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_link_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8171,6 +8307,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnServerConfigurationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_server_configurations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8220,6 +8357,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnServerConfigurationsAssociatedWithVirtualWanOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_server_configurations_associated_with_virtual_wan'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8275,6 +8413,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnSiteLinkConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_site_link_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8330,6 +8469,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnSiteLinksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_site_links'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8412,6 +8552,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnSitesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_sites'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8494,6 +8635,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import VpnSitesConfigurationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vpn_sites_configuration'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8558,6 +8700,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import WebApplicationFirewallPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'web_application_firewall_policies'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -8583,6 +8726,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from ..v2022_01_01.aio.operations import WebCategoriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'web_categories'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

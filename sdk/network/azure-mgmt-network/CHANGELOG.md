@@ -1,5 +1,18 @@
 # Release History
 
+## 22.0.0 (2022-10-08)
+
+### Features Added
+
+  - Added operation group NspAssociationReconcileOperations
+  - Model NspProfile has a new parameter diagnostic_settings_version
+
+### Breaking Changes
+
+  - Removed operation NetworkSecurityPerimetersOperations.check_members
+  - Removed operation NetworkSecurityPerimetersOperations.query
+  - Removed operation group NspAssociationsProxyOperations
+
 ## 21.0.1 (2022-08-17)
 
 ### Bugs Fixed
