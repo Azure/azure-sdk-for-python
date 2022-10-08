@@ -630,7 +630,7 @@ class _GroupAttrDict(InputsAttrDict):
 
     def insert_group_name_for_items(self, group_name):
         # Insert one group name for all items.
-        for k, v in self.items():
+        for v in self.values():
             if isinstance(v, _GroupAttrDict):
                 v.insert_group_name_for_items(group_name)
             elif isinstance(v, PipelineInput):

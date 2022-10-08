@@ -10,6 +10,8 @@ import typing
 from collections import Counter
 from typing import Dict, Tuple, Union
 
+from marshmallow import Schema
+
 from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionDetails
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._schema import PathAwareSchema
@@ -30,7 +32,6 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import (
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from marshmallow import Schema
 
 module_logger = logging.getLogger(__name__)
 
@@ -233,7 +234,7 @@ class PipelineComponent(Component):
         """
         component_definition_inputs = {}
         # Add flattened group input into definition inputs.
-        # e.g. {'group_name.item': PipelineInput}
+        # e.g. Add {'group_name.item': PipelineInput} for {'group_name': GroupInput}
         for name, val in node.component.inputs.items():
             if isinstance(val, GroupInput):
                 component_definition_inputs.update(val.flatten(group_parameter_name=name))

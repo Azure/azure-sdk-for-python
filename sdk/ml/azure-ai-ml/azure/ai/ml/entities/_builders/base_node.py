@@ -231,7 +231,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 value = value._deepcopy()  # Decoupled input and output
                 io_dict[key] = value
                 value.mode = None
-            elif type(value) == dict:  # Use type comparison instead of is_instance to skip _GroupAttrDict
+            elif type(value) == dict: # pylint: disable=unidiomatic-typecheck
+                # Use type comparison instead of is_instance to skip _GroupAttrDict
+                # when loading from yaml io will be a dict,
+                # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
                 # parse dict to allowed type
                 io_dict[key] = parse_cls(**value)
 
