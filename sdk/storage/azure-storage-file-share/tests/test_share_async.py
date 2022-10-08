@@ -4,35 +4,30 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import requests
 import time
 from datetime import datetime, timedelta
 
 import pytest
-import requests
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.fileshare import (
     AccessPolicy,
     AccountSasPermissions,
+    generate_account_sas,
+    generate_share_sas,
     ResourceTypes,
     ShareAccessTier,
     ShareProtocols,
     ShareRootSquash,
-    ShareSasPermissions,
-    generate_account_sas,
-    generate_share_sas,
+    ShareSasPermissions
 )
-from azure.storage.fileshare.aio import (
-    ShareServiceClient,
-    ShareFileClient,
-    ShareClient,
-)
+from azure.storage.fileshare.aio import ShareClient, ShareFileClient, ShareServiceClient
+
 from devtools_testutils.aio import recorded_by_proxy_async
-from settings.testcase import FileSharePreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase, AsyncStorageRecordedTestCase
 from devtools_testutils.storage import LogCaptured
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import FileSharePreparer
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 # ------------------------------------------------------------------------------
