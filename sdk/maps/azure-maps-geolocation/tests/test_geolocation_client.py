@@ -5,20 +5,20 @@
 # --------------------------------------------------------------------------
 import os
 from azure.core.credentials import AccessToken, AzureKeyCredential
-from azure.maps.geolocation import GeolocationClient
+from azure.maps.geolocation import MapsGeolocationClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from geolocation_preparer import MapsGeolocationPreparer
 
-class TestGeolocationClient(AzureRecordedTestCase):
+class TestMapsGeolocationClient(AzureRecordedTestCase):
     def setup_method(self, method):
-        self.client = GeolocationClient(
+        self.client = MapsGeolocationClient(
             credential=AzureKeyCredential(os.environ.get('AZURE_SUBSCRIPTION_KEY', "AzureMapsSubscriptionKey"))
         )
         assert self.client is not None
 
     @MapsGeolocationPreparer()
     @recorded_by_proxy
-    def test_get_geolocation(self):
-        result = self.client.get_geolocation(ip_address="2001:4898:80e8:b::189")
+    def test_get_country_code(self):
+        result = self.client.get_country_code(ip_address="2001:4898:80e8:b::189")
         assert result is not None
         assert result.iso_code == 'US'

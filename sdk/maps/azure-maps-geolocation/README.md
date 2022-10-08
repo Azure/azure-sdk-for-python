@@ -31,7 +31,7 @@ Install the Azure Maps Service Geolocation SDK.
 pip install azure-maps-geolocation
 ```
 
-### Create and Authenticate the GeolocationClient
+### Create and Authenticate the MapsGeolocationClient
 
 To create a client object to access the Azure Maps Geolocation API, you will need a **credential** object. Azure Maps Geolocation client also support two ways to authenticate.
 
@@ -43,11 +43,11 @@ Then pass an `AZURE_SUBSCRIPTION_KEY` as the `credential` parameter into an inst
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.geolocation import GeolocationClient
+from azure.maps.geolocation import MapsGeolocationClient
 
 credential = AzureKeyCredential(os.environ.get("AZURE_SUBSCRIPTION_KEY"))
 
-geolocation_client = GeolocationClient(
+geolocation_client = MapsGeolocationClient(
     credential=credential,
 )
 ```
@@ -71,11 +71,11 @@ Next, set the values of the client ID, tenant ID, and client secret of the AAD a
 You will also need to specify the Azure Maps resource you intend to use by specifying the `clientId` in the client options. The Azure Maps resource client id can be found in the Authentication sections in the Azure Maps resource. Please refer to the [documentation][how_to_manage_authentication] on how to find it.
 
 ```python
-from azure.maps.geolocation import GeolocationClient
+from azure.maps.geolocation import MapsGeolocationClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-geolocation_client = GeolocationClient(
+geolocation_client = MapsGeolocationClient(
     client_id="<Azure Maps Client ID>",
     credential=credential
 )
@@ -87,8 +87,8 @@ The Azure Maps Geolocation client library for Python allows you to interact with
 
 ### Sync Clients
 
-`GeolocationClient` is the primary client for developers using the Azure Maps Geolocation client library for Python.
-Once you initialized a `GeolocationClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Geolocation service that you can access.
+`MapsGeolocationClient` is the primary client for developers using the Azure Maps Geolocation client library for Python.
+Once you initialized a `MapsGeolocationClient` class, you can explore the methods on this client object to understand the different features of the Azure Maps Geolocation service that you can access.
 
 ### Async Clients
 
@@ -109,11 +109,11 @@ The following sections provide several code snippets covering some of the most c
 This service will return the ISO country code for the provided IP address. Developers can use this information to block or alter certain content based on geographical locations where the application is being viewed from.
 
 ```python
-from azure.maps.geolocation import GeolocationClient
+from azure.maps.geolocation import MapsGeolocationClient
 
 BLOCK_COUNTRY_LIST = ['US', 'TW', 'AF', 'AX', 'DL']
 INCOME_IP_ADDRESS = "2001:4898:80e8:b::189"
-geolocation_result = client.get_geolocation(ip_address=INCOME_IP_ADDRESS)
+geolocation_result = client.get_country_code(ip_address=INCOME_IP_ADDRESS)
 
 result_country_code = geolocation_result.iso_code
 
@@ -139,7 +139,7 @@ Detailed DEBUG level logging, including request/response bodies and unredacted h
 ```python
 import sys
 import logging
-from azure.maps.geolocation import GeolocationClient
+from azure.maps.geolocation import MapsGeolocationClient
 
 # Create a logger for the 'azure.maps.geolocation' SDK
 logger = logging.getLogger('azure.maps.geolocation')
@@ -169,7 +169,7 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 pip install azure-maps-geolocation --pre
 
 python samples/sample_authentication.py
-python sample/sample_get_geolocation.py
+python sample/sample_get_country_code.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.
