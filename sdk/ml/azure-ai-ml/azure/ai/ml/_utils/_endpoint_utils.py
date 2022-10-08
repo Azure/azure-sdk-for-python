@@ -180,23 +180,33 @@ def validate_scoring_script(deployment):
             contents = script.read()
             try:
                 ast.parse(contents, score_script_path)
-            except Exception as err:
+            except Exception as err: # pylint: disable=broad-except
                 err.filename = err.filename.split("/")[-1]
-                msg = f"Failed to submit deployment {deployment.name} due to syntax errors in scoring script {err.filename}.\nError on line {err.lineno}: {err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
+                msg = (
+                    f"Failed to submit deployment {deployment.name} due to syntax errors " # pylint: disable=no-member
+                    f"in scoring script {err.filename}.\nError on line {err.lineno}: "
+                    f"{err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
+                )
 
-                np_msg = "Failed to submit deployment due to syntax errors in deployment script.\n If you wish to bypass this validation use --skip-script-validation paramater."
+                np_msg = (
+                    "Failed to submit deployment due to syntax errors in deployment script."
+                    "\n If you wish to bypass this validation use --skip-script-validation paramater."
+                )
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.BATCH_DEPLOYMENT if isinstance(deployment, BatchDeployment) else ErrorTarget.ONLINE_DEPLOYMENT,
+                    target=(
+                        ErrorTarget.BATCH_DEPLOYMENT
+                        if isinstance(deployment, BatchDeployment)
+                        else ErrorTarget.ONLINE_DEPLOYMENT
+                    ),
                     no_personal_data_message=np_msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.CANNOT_PARSE,
                 )
     except Exception as err:
-        if type(err) is ValidationException:
+        if isinstance(err, ValidationException):
             raise err
-        else:
-            raise MlException(
-                message= f"Failed to open scoring script {err.filename}.",
-                no_personal_data_message= "Failed to open scoring script.",
-            )
+        raise MlException(
+            message= f"Failed to open scoring script {err.filename}.",
+            no_personal_data_message= "Failed to open scoring script.",
+        )

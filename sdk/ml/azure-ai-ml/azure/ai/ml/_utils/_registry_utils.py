@@ -30,12 +30,15 @@ class RegistryDiscovery:
         self.registry_name = registry_name
         self.service_client_registry_discovery_client = service_client_registry_discovery_client
         self.kwargs = kwargs
+        self._resource_group = None
+        self._subscription_id = None
+        self._base_url = None
 
     def _get_registry_details(self) -> str:
-        response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(
+        response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace( # pylint: disable=line-too-long
             self.registry_name
         )
-        self.base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
+        self._base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
         self._subscription_id = response.subscription_id
         self._resource_group = response.resource_group
 
@@ -47,7 +50,7 @@ class RegistryDiscovery:
             subscription_id=self._subscription_id,
             resource_group=self._resource_group,
             credential=self.credential,
-            base_url=self.base_url,
+            base_url=self._base_url,
             **self.kwargs,
         )
         return service_client_10_2021_dataplanepreview

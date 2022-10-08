@@ -8,7 +8,7 @@ import json
 import os
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
@@ -21,7 +21,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
@@ -40,7 +39,7 @@ from azure.ai.ml.constants._common import (
     LROConfigurations,
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
-from azure.ai.ml.entities import BatchEndpoint
+from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.credentials import TokenCredential
@@ -55,7 +54,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class BatchEndpointOperations(_ScopeDependentOperations):
@@ -77,7 +76,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     ):
 
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._batch_operation = service_client_05_2022.batch_endpoints
         self._batch_deployment_operation = service_client_05_2022.batch_deployments
         self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
@@ -92,7 +91,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return self._all_operations.all_operations[AzureMLResourceType.DATASTORE]
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.List", ActivityType.PUBLICAPI)
     def list(self) -> ItemPaged[BatchEndpoint]:
         """List endpoints of the workspace.
 
@@ -107,7 +106,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name: str,
@@ -130,7 +129,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return endpoint_data
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str) -> LROPoller[None]:
         """Delete a batch Endpoint.
 
@@ -160,7 +159,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(self, endpoint: BatchEndpoint) -> LROPoller[BatchEndpoint]:
         """Create or update a batch endpoint.
 
@@ -188,16 +187,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
     def invoke(
         self,
         endpoint_name: str,
         *,
         deployment_name: str = None,
-        input: Input = None,  # pylint: disable=redefined-builtin
-        params_override=None,
-        **kwargs,  # pylint: disable=unused-argument
-    ) -> BatchJobResource:
+        inputs: Dict[str, Input] = None,
+        **kwargs,
+    ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
 
         :param endpoint_name: The endpoint name.
@@ -205,31 +203,43 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :param deployment_name: The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
         :type deployment_name: Optional[str]
-        :param input: An existing data asset, public uri file or folder to use with the deployment
-        :type input: Optional[Input]
-        :param params_override: Parameters to overwrite deployment configurations, for batch endpoints only.
-        :type params_override: Dict
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets (e.g. Data, Code, Model, Environment) cannot be successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if BatchEndpoint model cannot be successfully validated. Details will be provided in the error message.
+        :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder
+            to use with the deployment
+        :type inputs: Dict[str, Input]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if BatchEndpoint model cannot be successfully validated.
+            Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The invoked batch deployment job.
-        :rtype: BatchJobResource
+        :rtype: BatchJob
         """
-        params_override = params_override or []
+        params_override = kwargs.get("params_override", None) or []
+        input = kwargs.get("input", None) # pylint: disable=redefined-builtin
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
         if deployment_name:
             self._validate_deployment_name(endpoint_name, deployment_name)
 
-        if isinstance(input, Input):
+        if input and isinstance(input, Input):
             if HTTP_PREFIX not in input.path:
                 self._resolve_input(input, os.getcwd())
             # MFE expects a dictionary as input_data that's why we are using
-            # "input_data" as key before parsing it to JobInput
-            params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"input_data": input}})
+            # "UriFolder" or "UriFile" as keys depending on the input type
+            if input.type == "uri_folder":
+                params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFolder": input}})
+            elif input.type == "uri_file":
+                params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFile": input}})
+        elif inputs:
+            for key, input_data in inputs.items():
+                if isinstance(input_data, Input) and HTTP_PREFIX not in input_data.path:
+                    self._resolve_input(input_data, os.getcwd())
+            params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
         else:
             msg = (
-                "Unsupported input please use either a path on the datastore, public URI, "
+                "Unsupported input type please use a dictionary of either a path on the datastore, public URI, "
                 "a registered data asset, or a local folder path."
             )
             raise ValidationException(
@@ -274,24 +284,24 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
         response = self._requests_pipeline.post(
-            endpoint.properties.scoring_uri,
-            json=BatchJobResource(properties=batch_job).serialize(),
-            headers=headers,
+           endpoint.properties.scoring_uri,
+           json=BatchJobResource(properties=batch_job).serialize(),
+           headers=headers,
         )
         validate_response(response)
         batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)
 
     @distributed_trace
-    @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str) -> List[BatchJobResource]:
+    # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
+    def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs
-        :rtype: list[BatchJobResource]
+        :rtype: ItemPaged[BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

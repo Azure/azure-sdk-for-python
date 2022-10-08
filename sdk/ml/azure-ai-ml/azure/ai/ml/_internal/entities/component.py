@@ -15,7 +15,7 @@ from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
 from .._schema.component import InternalBaseComponentSchema
@@ -176,12 +176,15 @@ class InternalComponent(Component):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalBaseComponentSchema(context=context)
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
         if isinstance(self.environment, InternalEnvironment):
-            validation_result.merge_with(self.environment.validate(self._source_path))
+            validation_result.merge_with(
+                self.environment._validate(self._source_path),
+                field_name="environment",
+            )
         if self._additional_includes is not None:
-            validation_result.merge_with(self._additional_includes.validate())
+            validation_result.merge_with(self._additional_includes._validate())
         return validation_result
 
     @classmethod
@@ -226,7 +229,7 @@ class InternalComponent(Component):
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
 
-    def _schema_validate(self) -> ValidationResult:
+    def _schema_validate(self) -> MutableValidationResult:
         """Validate the resource with the schema.
 
         return type: ValidationResult

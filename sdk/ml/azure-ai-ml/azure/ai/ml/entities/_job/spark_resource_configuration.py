@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -12,7 +12,13 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
-    instance_type_list = ["standard_e4s_v3", "standard_e8s_v3", "standard_e16s_v3", "standard_e32s_v3", "standard_e64s_v3"]
+    instance_type_list = [
+        "standard_e4s_v3",
+        "standard_e8s_v3",
+        "standard_e16s_v3",
+        "standard_e32s_v3",
+        "standard_e64s_v3",
+    ]
 
     def __init__(self, *, instance_type: str = None, runtime_version: str = None):
         self.instance_type = instance_type
@@ -56,7 +62,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                     error_category=ErrorCategory.USER_ERROR,
                 )
         elif isinstance(self.runtime_version, str):
-            runtime_arr = self.runtime_version.split('.')
+            runtime_arr = self.runtime_version.split(".")
             try:
                 for runtime in runtime_arr:
                     int(runtime)
@@ -72,7 +78,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                 )
             first_number = int(runtime_arr[0])
             second_number = int(runtime_arr[1])
-            if first_number != 3 or second_number != 1 and second_number != 2:
+            if first_number != 3 or second_number not in (1, 2):
                 msg = "runtime version should be either 3.1 or 3.2"
                 raise ValidationException(
                     message=msg,

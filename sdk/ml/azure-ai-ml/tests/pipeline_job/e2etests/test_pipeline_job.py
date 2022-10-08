@@ -1051,7 +1051,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert actual_dict == {
             "featurization": {"dataset_language": "eng"},
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "max_nodes": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -1080,7 +1080,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "max_nodes": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -1103,7 +1103,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["automl_text_ner"], fields_to_omit)
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "max_nodes": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",

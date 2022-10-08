@@ -77,13 +77,15 @@ class ErrorTarget:
     ARM_RESOURCE = "ArmResource"
     ARTIFACT = "Artifact"
     SCHEDULE = "Schedule"
+    REGISTRY = "Registry"
     UNKNOWN = "Unknown"
 
 
 class MlException(AzureError):
     """
-    The base class for all exceptions raised in AzureML SDK code base. If there is a need to define a custom exception type,
-    that custom exception type should extend from this class.
+    The base class for all exceptions raised in AzureML SDK code base.
+    If there is a need to define a custom exception type, that custom exception type
+    should extend from this class.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -101,9 +103,9 @@ class MlException(AzureError):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         self._error_category = error_category
@@ -170,9 +172,9 @@ class DeploymentException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(DeploymentException, self).__init__(
@@ -204,9 +206,9 @@ class ComponentException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(ComponentException, self).__init__(
@@ -238,9 +240,9 @@ class JobException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(JobException, self).__init__(
@@ -272,9 +274,9 @@ class ModelException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(ModelException, self).__init__(
@@ -306,9 +308,9 @@ class AssetException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(AssetException, self).__init__(
@@ -360,10 +362,10 @@ class ValidationException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         error_type: ValidationErrorType = ValidationErrorType.GENERIC,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.USER_ERROR,
-        *args,
         **kwargs,
     ):
         """
@@ -413,7 +415,8 @@ class ValidationException(MlException):
 
 class AssetPathException(MlException):
     """
-    Class for the exception raised when an attempt is made to update the path of an existing asset. Asset paths are immutable.
+    Class for the exception raised when an attempt is made to update the path of an existing asset.
+    Asset paths are immutable.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -430,9 +433,9 @@ class AssetPathException(MlException):
         self,
         message: str,
         no_personal_data_message: str,
+        *args,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         error_category: ErrorCategory = ErrorCategory.UNKNOWN,
-        *args,
         **kwargs,
     ):
         super(AssetPathException, self).__init__(
@@ -631,7 +634,8 @@ class DockerEngineNotAvailableError(MlException):
 
 
 class MultipleLocalDeploymentsFoundError(MlException):
-    """Exception raised when no deployment name is specified for local endpoint even though multiple deployments exist."""
+    """Exception raised when no deployment name is specified for local endpoint
+    even though multiple deployments exist."""
 
     def __init__(self, endpoint_name: str, error_category=ErrorCategory.UNKNOWN):
         super().__init__(
@@ -692,7 +696,7 @@ class CloudArtifactsNotSupportedError(MlException):
             else f"local endpoint ({endpoint_name})"
         )
         err = (
-            "Local endpoints only support local artifacts. '%s' in '%s' " "referenced cloud artifacts.",
+            "Local endpoints only support local artifacts. '%s' in '%s' referenced cloud artifacts.",
             invalid_artifact,
             resource_name,
         )
@@ -735,11 +739,53 @@ class RequiredLocalArtifactsNotFoundError(MlException):
         )
 
 
+class JobParsingError(MlException):
+    """Exception that the job data returned by MFE cannot be parsed."""
+
+    def __init__(self, error_category, no_personal_data_message, message, *args, **kwargs):
+        super(JobParsingError, self).__init__(
+            message=message,
+            target=ErrorTarget.JOB,
+            error_category=error_category,
+            no_personal_data_message=no_personal_data_message,
+            *args,
+            **kwargs,
+        )
+
+
+class PipelineChildJobError(MlException):
+    """Exception that the pipeline child job is not supported."""
+
+    ERROR_MESSAGE_TEMPLATE = "az ml job {command} is not supported on pipeline child job, {prompt_message}."
+    PROMPT_STUDIO_UI_MESSAGE = "please go to studio UI to do related actions{url}"
+    PROMPT_PARENT_MESSAGE = "please use this command on pipeline parent job"
+
+    def __init__(self, job_id: str, command: str = "parse", prompt_studio_ui: bool = False):
+        from azure.ai.ml.entities._job._studio_url_from_job_id import studio_url_from_job_id
+
+        if prompt_studio_ui:
+            url = studio_url_from_job_id(job_id)
+            if url:
+                url = f": {url}"
+            prompt_message = self.PROMPT_STUDIO_UI_MESSAGE.format(url=url)
+        else:
+            prompt_message = self.PROMPT_PARENT_MESSAGE
+
+        super(PipelineChildJobError, self).__init__(
+            message=self.ERROR_MESSAGE_TEMPLATE.format(command=command, prompt_message=prompt_message),
+            no_personal_data_message="Pipeline child job is not supported currently.",
+            target=ErrorTarget.JOB,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+        self.job_id = job_id
+
+
 ## -------- VSCode Debugger Errors -------- ##
 
 
 class InvalidVSCodeRequestError(MlException):
-    """Exception raised when VS Code Debug is invoked with a remote endpoint. VSCode debug is only supported for local endpoints."""
+    """Exception raised when VS Code Debug is invoked with a remote endpoint.
+    VSCode debug is only supported for local endpoints."""
 
     def __init__(self, error_category=ErrorCategory.USER_ERROR, msg=None):
         super().__init__(

@@ -10,7 +10,7 @@ from azure.ai.ml import load_online_endpoint
 from azure.ai.ml._arm_deployments.arm_deployment_executor import ArmDeploymentExecutor
 from azure.ai.ml._artifacts._constants import EMPTY_DIRECTORY_ERROR
 from azure.ai.ml._ml_client import MLClient
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys, EndpointAuthToken
+from azure.ai.ml.entities import EndpointAuthToken, EndpointAuthKeys
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.constants._common import AML_TOKEN_YAML, KEY, ONLINE_ENDPOINT_TYPE
 from azure.ai.ml.constants._endpoint import EndpointKeyType
