@@ -23,7 +23,7 @@ from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpr
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
