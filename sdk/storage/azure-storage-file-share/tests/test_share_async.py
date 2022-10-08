@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -31,30 +29,20 @@ from azure.storage.fileshare.aio import (
     ShareFileClient,
     ShareClient,
 )
+from devtools_testutils.aio import recorded_by_proxy_async
 from settings.testcase import FileSharePreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase, AsyncStorageRecordedTestCase
 from devtools_testutils.storage import LogCaptured
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 # ------------------------------------------------------------------------------
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class StorageShareTest(AsyncStorageTestCase):
+class TestStorageShareAsync(AsyncStorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -87,6 +75,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
     # --Test cases for shares -----------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -102,6 +91,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -122,6 +112,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_snapshot_with_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -154,6 +145,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_share_with_snapshots(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -173,6 +165,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_undelete_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -205,6 +198,7 @@ class StorageShareTest(AsyncStorageTestCase):
                 break
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_lease_share_acquire_and_release(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -212,11 +206,12 @@ class StorageShareTest(AsyncStorageTestCase):
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share('test')
         # Act
-        lease = await share_client.acquire_lease()
+        lease = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         await lease.release()
         # Assert
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_acquire_lease_on_sharesnapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -235,8 +230,8 @@ class StorageShareTest(AsyncStorageTestCase):
             credential=storage_account_key
         )
 
-        share_lease = await share.acquire_lease()
-        share_snapshot_lease = await snapshot_client.acquire_lease()
+        share_lease = await share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        share_snapshot_lease = await snapshot_client.acquire_lease(lease_id='44444444-3333-2222-1111-000000000000')
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -257,13 +252,14 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_lease_share_renew(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share('test')
-        lease = await share_client.acquire_lease(lease_duration=15)
+        lease = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         self.sleep(10)
         lease_id_start = lease.id
 
@@ -279,6 +275,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await share_client.delete_share()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_lease_share_with_duration(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -287,15 +284,16 @@ class StorageShareTest(AsyncStorageTestCase):
         share_client = await self._create_share('test')
 
         # Act
-        lease = await share_client.acquire_lease(lease_duration=15)
+        lease = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         with pytest.raises(HttpResponseError):
-            await share_client.acquire_lease()
+            await share_client.acquire_lease(lease_id='44444444-3333-2222-1111-000000000000')
         self.sleep(17)
-        await share_client.acquire_lease()
+        await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_lease_share_twice(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -304,13 +302,14 @@ class StorageShareTest(AsyncStorageTestCase):
         share_client = await self._create_share('test')
 
         # Act
-        lease = await share_client.acquire_lease(lease_duration=15)
+        lease = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         lease2 = await share_client.acquire_lease(lease_id=lease.id)
         assert lease.id == lease2.id
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_lease_share_with_proposed_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -326,6 +325,7 @@ class StorageShareTest(AsyncStorageTestCase):
         assert proposed_lease_id == lease.id
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_lease_share_change_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -335,7 +335,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Act
         lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
-        lease = await share_client.acquire_lease()
+        lease = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         lease_id1 = lease.id
         await lease.change(proposed_lease_id=lease_id)
         await lease.renew()
@@ -348,6 +348,7 @@ class StorageShareTest(AsyncStorageTestCase):
         assert lease_id2 == lease_id
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_metadata_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -355,7 +356,7 @@ class StorageShareTest(AsyncStorageTestCase):
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share('test1')
         metadata = {'hello': 'world', 'number': '43'}
-        lease_id = await share_client.acquire_lease()
+        lease_id = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         await share_client.set_share_metadata(metadata, lease=lease_id)
@@ -366,6 +367,7 @@ class StorageShareTest(AsyncStorageTestCase):
         assert md == metadata
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_share_metadata_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -374,7 +376,7 @@ class StorageShareTest(AsyncStorageTestCase):
         share_client = await self._create_share('test')
         metadata = {'hello': 'world', 'number': '43'}
         await share_client.set_share_metadata(metadata)
-        lease_id = await share_client.acquire_lease()
+        lease_id = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         props = await share_client.get_share_properties(lease=lease_id)
@@ -384,6 +386,7 @@ class StorageShareTest(AsyncStorageTestCase):
         assert md == metadata
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_share_properties_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -392,7 +395,7 @@ class StorageShareTest(AsyncStorageTestCase):
         share_client = await self._create_share('test')
         metadata = {'hello': 'world', 'number': '43'}
         await share_client.set_share_metadata(metadata)
-        lease_id = await share_client.acquire_lease()
+        lease_id = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         props = await share_client.get_share_properties(lease=lease_id)
@@ -406,13 +409,14 @@ class StorageShareTest(AsyncStorageTestCase):
         assert props.lease.status == 'locked'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_share_acl_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share('test')
-        lease_id = await share_client.acquire_lease()
+        lease_id = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         acl = await share_client.get_share_access_policy(lease=lease_id)
@@ -422,18 +426,22 @@ class StorageShareTest(AsyncStorageTestCase):
         assert acl.get('public_access') is None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_acl_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        variables = kwargs.pop('variables', {})
 
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share('test')
-        lease_id = await share_client.acquire_lease()
+        lease_id = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         access_policy = AccessPolicy(permission=ShareSasPermissions(read=True),
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow())
+                                     expiry=expiry_time,
+                                     start=start_time)
         signed_identifiers = {'testid': access_policy}
 
         await share_client.set_share_access_policy(signed_identifiers, lease=lease_id)
@@ -443,7 +451,10 @@ class StorageShareTest(AsyncStorageTestCase):
         assert acl is not None
         assert acl.get('public_access') is None
 
+        return variables
+
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_lease_share_break_period(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -452,7 +463,7 @@ class StorageShareTest(AsyncStorageTestCase):
         share_client = await self._create_share('test')
 
         # Act
-        lease = await share_client.acquire_lease(lease_duration=15)
+        lease = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         await lease.break_lease(lease_break_period=5)
@@ -461,13 +472,14 @@ class StorageShareTest(AsyncStorageTestCase):
             await share_client.delete_share(lease=lease)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_share_with_lease_id(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         share_client = await self._create_share('test')
-        lease = await share_client.acquire_lease(lease_duration=15)
+        lease = await share_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -483,6 +495,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_restore_to_existing_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -514,6 +527,7 @@ class StorageShareTest(AsyncStorageTestCase):
                 break
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -539,6 +553,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share_fail_on_exist(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -554,6 +569,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share_with_already_existing_share_fail_on_exist(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -571,6 +587,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share_with_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -589,6 +606,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share_with_quota(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -606,6 +624,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share_with_access_tier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -623,6 +642,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_share_exists(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -638,6 +658,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_share_not_exists(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -653,6 +674,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_share_snapshot_exists(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -670,6 +692,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_share_snapshot_not_exists(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -687,6 +710,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_unicode_create_share_unicode_name(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -704,6 +728,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_no_options(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -722,13 +747,12 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(shares, share.share_name)
         await self._delete_shares(share.share_name)
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_no_options_for_premium_account(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
         premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
-        # TODO: add recordings to this test
         self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
         share = await self._create_share()
 
@@ -749,6 +773,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_leased_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -757,7 +782,7 @@ class StorageShareTest(AsyncStorageTestCase):
         share = await self._create_share()
 
         # Act
-        lease = await share.acquire_lease()
+        lease = await share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         resp = []
         async for s in self.fsc.list_shares():
             resp.append(s)
@@ -772,8 +797,8 @@ class StorageShareTest(AsyncStorageTestCase):
         await lease.release()
         await self._delete_shares()
 
-    @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_with_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -798,8 +823,8 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
         await self._delete_shares(share.share_name)
 
-    @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_with_prefix(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -821,6 +846,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_with_include_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -845,6 +871,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_with_num_results_and_marker(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -880,15 +907,16 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(shares2, share_names[3])
         await self._delete_shares(prefix)
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_shares_account_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
         share = await self._create_share()
-        sas_token = generate_account_sas(
+        sas_token = self.generate_sas(
+            generate_account_sas,
             storage_account_name,
             storage_account_key,
             ResourceTypes(service=True),
@@ -911,6 +939,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -929,6 +958,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_share_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -947,6 +977,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_share_metadata_with_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -967,6 +998,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_properties(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -997,13 +1029,13 @@ class StorageShareTest(AsyncStorageTestCase):
         assert share2_tier == "Cool"
         await self._delete_shares()
 
-    @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_share_with_protocol(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
 
         # Act
         share_client = self._get_share_reference("testshare2")
@@ -1019,13 +1051,13 @@ class StorageShareTest(AsyncStorageTestCase):
         assert share_root_squash == ShareRootSquash.root_squash
         await share_client.delete_share()
 
-    @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_properties_with_root_squash(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
         share1 = await self._create_share("share1", protocols=ShareProtocols.NFS)
         share2 = await self._create_share("share2", protocols=ShareProtocols.NFS)
 
@@ -1044,11 +1076,13 @@ class StorageShareTest(AsyncStorageTestCase):
         assert share2_root_squash == ShareRootSquash.root_squash
         await self._delete_shares()
 
-    @pytest.mark.playback_test_only
     @FileSharePreparer()
-    async def test_list_shares_with_root_squash_and_protocols(
-            self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
+    @recorded_by_proxy_async
+    async def test_list_shares_with_root_squash_and_protocols(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
+
+        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
         await self._create_share(prefix="testshare1", protocols="NFS", root_squash=ShareRootSquash.all_squash)
         await self._create_share(prefix="testshare2", protocols=ShareProtocols.SMB)
         # Act
@@ -1068,6 +1102,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_share_properties_for_premium_account(self, **kwargs):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
         premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
@@ -1089,6 +1124,7 @@ class StorageShareTest(AsyncStorageTestCase):
         assert props.next_allowed_quota_downgrade_time is not None
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_share_with_existing_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1105,6 +1141,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_share_with_existing_share_fail_not_exist(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1121,6 +1158,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_share_with_non_existing_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1138,6 +1176,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_share_with_non_existing_share_fail_not_exist(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1154,6 +1193,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(client.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_share_stats(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1170,6 +1210,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_acl(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1187,6 +1228,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_acl_with_empty_signed_identifiers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1205,6 +1247,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_acl_with_signed_identifiers(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1231,6 +1274,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_share_acl_too_many_ids(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1247,13 +1291,11 @@ class StorageShareTest(AsyncStorageTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             await share.set_share_access_policy(identifiers)
-        self.assertEqual(
-            str(e.exception),
-            'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
-        )
+        assert str(e.value.exception) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_directories_and_files(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1283,6 +1325,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_directories_and_files_with_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1315,6 +1358,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_directories_and_files_with_num_results(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1342,6 +1386,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_directories_and_files_with_num_results_and_marker(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1379,6 +1424,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_directories_and_files_with_prefix(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1407,14 +1453,11 @@ class StorageShareTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'pref_dir3')
         await self._delete_shares(share)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_shared_access_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # SAS URL is calculated from storage key, so this test runs live only
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         file_name = 'file1'
@@ -1448,6 +1491,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_permission_for_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1469,13 +1513,12 @@ class StorageShareTest(AsyncStorageTestCase):
         assert permission_key == permission_key2
         await self._delete_shares(share_client.share_name)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_transport_closed_only_once(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        if not self.is_live:
-            return
         self._setup(storage_account_name, storage_account_key)
         transport = AioHttpTransport()
         url = self.account_url(storage_account_name, "file")
@@ -1492,6 +1535,7 @@ class StorageShareTest(AsyncStorageTestCase):
         await self._delete_shares(share_name)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_directory_from_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

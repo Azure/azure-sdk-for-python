@@ -798,7 +798,6 @@ class TestStorageShare(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        #share = self._get_share_reference()
         share = self._create_share('random1')
         snapshot1 = share.create_snapshot()
         snapshot2 = share.create_snapshot()

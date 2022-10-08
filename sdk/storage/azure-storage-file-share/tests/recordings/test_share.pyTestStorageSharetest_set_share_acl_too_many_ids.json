@@ -9,16 +9,16 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:17 GMT",
+        "x-ms-date": "Fri, 07 Oct 2022 23:59:55 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 22:29:17 GMT",
-        "ETag": "\u00220x8DAA8B35FDFF669\u0022",
-        "Last-Modified": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "Date": "Fri, 07 Oct 2022 23:59:57 GMT",
+        "ETag": "\u00220x8DAA8C009BAAF2E\u0022",
+        "Last-Modified": "Fri, 07 Oct 2022 23:59:57 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -35,14 +35,14 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:17 GMT",
+        "x-ms-date": "Sat, 08 Oct 2022 00:00:13 GMT",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:17 GMT",
+        "Date": "Sat, 08 Oct 2022 00:00:14 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -50,10 +50,10 @@
         "Transfer-Encoding": "chunked",
         "x-ms-version": "2021-06-08"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.file.core.windows.net/\u0022\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Erandom1c4702bcd\u003C/Name\u003E\u003CSnapshot\u003E2022-10-07T22:15:58.0000000Z\u003C/Snapshot\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 22:15:58 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8B182E476CC\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Erandom1c4702bcd\u003C/Name\u003E\u003CSnapshot\u003E2022-10-07T22:15:59.0000000Z\u003C/Snapshot\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 22:15:58 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8B182E476CC\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Erandom1c4702bcd\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 22:15:58 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8B182E476CC\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 22:15:58 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eshareec592bf3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 22:29:18 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8B35FDFF669\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 22:29:18 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etest14c92c18\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:53 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A7FFDC9B94\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:53 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etest16da2c33\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:56 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A801C1410E\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:56 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etest18722c3f\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:57 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A802333752\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:56 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etest62022f39\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:52 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A7FF807F58\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:52 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etest67a12839\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:51 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A7FF176CB6\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:51 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etestc0022b9e\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:51 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A7FEAC5E8F\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:51 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etestef2e50\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:54 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A800706C00\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:53 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Etestff0c2e44\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 21:07:54 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8A800C4252F\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Elocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eleased\u003C/LeaseState\u003E\u003CLeaseDuration\u003Einfinite\u003C/LeaseDuration\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 21:07:54 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.file.core.windows.net/\u0022\u003E\u003CShares\u003E\u003CShare\u003E\u003CName\u003Eremoteshare95192fcd\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003ETue, 04 Oct 2022 21:07:30 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA64C72D052E5\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003ETue, 04 Oct 2022 21:07:30 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eremotesharec5f126ad\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003ETue, 04 Oct 2022 21:03:06 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA64BD577A206\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003ETue, 04 Oct 2022 21:03:06 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eremoteshareee052c0c\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003ETue, 04 Oct 2022 19:46:53 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA6412FDF4E6A\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003ETue, 04 Oct 2022 19:46:53 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003CShare\u003E\u003CName\u003Eshareec592bf3\u003C/Name\u003E\u003CProperties\u003E\u003CLast-Modified\u003EFri, 07 Oct 2022 23:59:57 GMT\u003C/Last-Modified\u003E\u003CEtag\u003E\u00220x8DAA8C009BAAF2E\u0022\u003C/Etag\u003E\u003CLeaseStatus\u003Eunlocked\u003C/LeaseStatus\u003E\u003CLeaseState\u003Eavailable\u003C/LeaseState\u003E\u003CQuota\u003E5120\u003C/Quota\u003E\u003CAccessTier\u003ETransactionOptimized\u003C/AccessTier\u003E\u003CAccessTierChangeTime\u003EFri, 07 Oct 2022 23:59:57 GMT\u003C/AccessTierChangeTime\u003E\u003CDefaultEncryptionScope\u003E$account-encryption-key\u003C/DefaultEncryptionScope\u003E\u003CDenyEncryptionScopeOverride\u003Efalse\u003C/DenyEncryptionScopeOverride\u003E\u003C/Properties\u003E\u003C/Share\u003E\u003C/Shares\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/random1c4702bcd?restype=share",
+      "RequestUri": "https://storagename.file.core.windows.net/remoteshare95192fcd?restype=share",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -61,7 +61,7 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:17 GMT",
+        "x-ms-date": "Sat, 08 Oct 2022 00:00:15 GMT",
         "x-ms-delete-snapshots": "include",
         "x-ms-version": "2021-06-08"
       },
@@ -69,7 +69,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "Date": "Sat, 08 Oct 2022 00:00:16 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -79,7 +79,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/random1c4702bcd?restype=share",
+      "RequestUri": "https://storagename.file.core.windows.net/remotesharec5f126ad?restype=share",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -87,7 +87,7 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "x-ms-date": "Sat, 08 Oct 2022 00:00:16 GMT",
         "x-ms-delete-snapshots": "include",
         "x-ms-version": "2021-06-08"
       },
@@ -95,7 +95,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "Date": "Sat, 08 Oct 2022 00:00:17 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -105,7 +105,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/random1c4702bcd?restype=share",
+      "RequestUri": "https://storagename.file.core.windows.net/remoteshareee052c0c?restype=share",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -113,7 +113,7 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "x-ms-date": "Sat, 08 Oct 2022 00:00:16 GMT",
         "x-ms-delete-snapshots": "include",
         "x-ms-version": "2021-06-08"
       },
@@ -121,7 +121,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "Date": "Sat, 08 Oct 2022 00:00:17 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -139,7 +139,7 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "x-ms-date": "Sat, 08 Oct 2022 00:00:16 GMT",
         "x-ms-delete-snapshots": "include",
         "x-ms-version": "2021-06-08"
       },
@@ -147,7 +147,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
+        "Date": "Sat, 08 Oct 2022 00:00:17 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -155,262 +155,6 @@
         "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/test14c92c18?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f17-a01a-0052-689c-da3148000000\n",
-        "Time:2022-10-07T22:29:19.3958385Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/test16da2c33?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f19-a01a-0052-699c-da3148000000\n",
-        "Time:2022-10-07T22:29:19.4817909Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/test18722c3f?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f1c-a01a-0052-6a9c-da3148000000\n",
-        "Time:2022-10-07T22:29:19.5727408Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/test62022f39?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f1e-a01a-0052-6b9c-da3148000000\n",
-        "Time:2022-10-07T22:29:19.6606916Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/test67a12839?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f20-a01a-0052-6c9c-da3148000000\n",
-        "Time:2022-10-07T22:29:19.7506423Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/testc0022b9e?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f22-a01a-0052-6d9c-da3148000000\n",
-        "Time:2022-10-07T22:29:19.8445905Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/testef2e50?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f24-a01a-0052-6e9c-da3148000000\n",
-        "Time:2022-10-07T22:29:19.9365390Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
-    },
-    {
-      "RequestUri": "https://storagename.file.core.windows.net/testff0c2e44?restype=share",
-      "RequestMethod": "DELETE",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Fri, 07 Oct 2022 22:29:18 GMT",
-        "x-ms-delete-snapshots": "include",
-        "x-ms-version": "2021-06-08"
-      },
-      "RequestBody": null,
-      "StatusCode": 412,
-      "ResponseHeaders": {
-        "Content-Length": "273",
-        "Content-Type": "application/xml",
-        "Date": "Fri, 07 Oct 2022 22:29:19 GMT",
-        "Server": [
-          "Windows-Azure-File/1.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "x-ms-error-code": "LeaseIdMissing",
-        "x-ms-version": "2021-06-08"
-      },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ELeaseIdMissing\u003C/Code\u003E\u003CMessage\u003EThere is currently a lease on the file share and no lease ID was specified in the request.\n",
-        "RequestId:7ee02f26-a01a-0052-6f9c-da3148000000\n",
-        "Time:2022-10-07T22:29:20.0244910Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
     }
   ],
   "Variables": {}
