@@ -49,7 +49,7 @@ class UploadLogsResult:
         """This will iterate over the errors directly.
         """
         return iter((err.error, err.failed_logs) for err in self.errors)
-    
+
     def __len__(self):
         """This will return the length of the errors"""
         return len(self.errors)

@@ -9,24 +9,19 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import MonitorIngestionClientConfiguration
-from ._operations import MonitorIngestionClientOperationsMixin
+from ._configuration import LogsIngestionClientConfiguration
+from ._operations import LogsIngestionClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
     from azure.core.credentials import TokenCredential
 
 
-class MonitorIngestionClient(
-    MonitorIngestionClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class LogsIngestionClient(LogsIngestionClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Azure Monitor Data Collection Python Client.
 
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule, for example
@@ -39,13 +34,9 @@ class MonitorIngestionClient(
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: "TokenCredential", **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = MonitorIngestionClientConfiguration(
-            endpoint=endpoint, credential=credential, **kwargs
-        )
+        self._config = LogsIngestionClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -61,7 +52,7 @@ class MonitorIngestionClient(
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -72,14 +63,10 @@ class MonitorIngestionClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
@@ -87,7 +74,7 @@ class MonitorIngestionClient(
         self._client.close()
 
     def __enter__(self):
-        # type: () -> MonitorIngestionClient
+        # type: () -> LogsIngestionClient
         self._client.__enter__()
         return self
 

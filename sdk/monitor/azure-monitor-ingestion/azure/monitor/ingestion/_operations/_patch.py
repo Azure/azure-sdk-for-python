@@ -8,8 +8,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys
 import concurrent.futures
-from typing import List, Any, Optional, Union, IO
-from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
+from typing import List, Any, Optional, Union, IO, overload
+from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from .._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from .._helpers import _create_gzip_requests
 
@@ -17,11 +17,11 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
-class MonitorIngestionClientOperationsMixin(GeneratedOps):
-    def upload( # pylint: disable=arguments-renamed, arguments-differ
+
+class LogsIngestionClientOperationsMixin(GeneratedOps):
+    def upload(  # pylint: disable=arguments-renamed, arguments-differ
         self,
         rule_id: str,
         stream_name: str,
@@ -54,7 +54,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
             with concurrent.futures.ThreadPoolExecutor(max_concurrency) as executor:
                 future_to_req = {
                     executor.submit(
-                        super(MonitorIngestionClientOperationsMixin, self).upload,
+                        super(LogsIngestionClientOperationsMixin, self).upload,
                         rule_id,
                         stream=stream_name,
                         body=request,
@@ -67,27 +67,16 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
                     try:
                         req = future_to_req[future]
                         response = future.result()
-                    except Exception as err: # pylint: disable=bare-exception
-                        results.append(UploadLogsError(
-                            error = err,
-                            failed_logs = req
-                        ))
+                    except Exception as err:  # pylint: disable=bare-exception
+                        results.append(UploadLogsError(error=err, failed_logs=req))
         else:
             for request in requests:
                 try:
                     response = super().upload(
-                        rule_id,
-                        stream=stream_name,
-                        body=request,
-                        content_encoding="gzip",
-                        **kwargs
+                        rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs
                     )
-                except Exception as err: # pylint: disable=bare-exception
-                    results.append(UploadLogsError(
-                        error = err,
-                        failed_logs = request
-                    ))
-
+                except Exception as err:  # pylint: disable=bare-exception
+                    results.append(UploadLogsError(error=err, failed_logs=request))
         if not results:
             status = UploadLogsStatus.SUCCESS
         elif 0 < len(results) < len(requests):
@@ -97,7 +86,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         return UploadLogsResult(errors=results, status=status)
 
 __all__: List[str] = [
-    "MonitorIngestionClientOperationsMixin"
+    "LogsIngestionClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 

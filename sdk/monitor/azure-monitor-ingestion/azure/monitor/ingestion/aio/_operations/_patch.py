@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import sys
 import asyncio
 from typing import List, Any, Optional, Union, IO
-from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
+from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from ..._helpers import _create_gzip_requests
 
@@ -17,11 +17,11 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
-class MonitorIngestionClientOperationsMixin(GeneratedOps):
-    async def upload( # pylint: disable=arguments-renamed, arguments-differ
+
+class LogsIngestionClientOperationsMixin(GeneratedOps):
+    async def upload(  # pylint: disable=arguments-renamed, arguments-differ
         self,
         rule_id: str,
         stream_name: str,
@@ -55,50 +55,31 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
             results = []
             for request in requests:
                 if len(tasks) >= max_concurrency:
-                    done, tasks = await asyncio.wait(
-                        tasks, return_when=asyncio.FIRST_COMPLETED
-                    )
+                    done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
                     for task in done:
                         try:
                             res = task.result()
-                        except Exception as err: # pylint: disable=bare-exception
-                            results.append(UploadLogsError(
-                                error = err,
-                                failed_logs = request
-                            ))
-                tasks.add(asyncio.create_task(
-                    super(MonitorIngestionClientOperationsMixin, self).upload(
-                        rule_id,
-                        stream=stream_name,
-                        body=request,
-                        content_encoding="gzip",
-                        **kwargs
+                        except Exception as err:  # pylint: disable=bare-exception
+                            results.append(UploadLogsError(error=err, failed_logs=request))
+                tasks.add(
+                    asyncio.create_task(
+                        super(LogsIngestionClientOperationsMixin, self).upload(
+                            rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs
+                        )
                     )
-                ))
+                )
             done, _pending = await asyncio.wait(tasks)
             for task in done:
                 try:
                     res = task.result()
-                except Exception as err: # pylint: disable=bare-exception
-                    results.append(UploadLogsError(
-                        error = err,
-                        failed_logs = request
-                    ))
+                except Exception as err:  # pylint: disable=bare-exception
+                    results.append(UploadLogsError(error=err, failed_logs=request))
         else:
             for request in requests:
                 try:
-                    await super().upload(
-                        rule_id,
-                        stream=stream_name,
-                        body=request,
-                        content_encoding="gzip",
-                        **kwargs
-                    )
-                except Exception as err: # pylint: disable=bare-exception
-                    results.append(UploadLogsError(
-                        error = err,
-                        failed_logs = request
-                    ))
+                    await super().upload(rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs)
+                except Exception as err:  # pylint: disable=bare-exception
+                    results.append(UploadLogsError(error=err, failed_logs=request))
         if not results:
             status = UploadLogsStatus.SUCCESS
         elif 0 < len(results) < len(requests):
@@ -109,7 +90,7 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
 
 
 __all__: List[str] = [
-    "MonitorIngestionClientOperationsMixin"
+    "LogsIngestionClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
