@@ -7,6 +7,9 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+
+from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
 
@@ -55,6 +58,17 @@ common_omit_fields = [
     "settings._source",
     "source_job_id",
 ]
+
+
+def assert_job_cancel(pipeline, client: MLClient):
+    job = client.jobs.create_or_update(pipeline)
+    try:
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
+    except HttpResponseError:
+        pass
+    return job
 
 
 @pytest.mark.usefixtures(
@@ -1058,7 +1072,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             required_input: Input,
             required_param: str,
             node_compute: str = "cpu-cluster",
-            # node_compute: str = 'azureml:cpu-cluster', # both will be supported
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1089,6 +1102,52 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "Job settings {'default_datastore': 'test', 'continue_on_step_failure': True, 'force_rerun': True} on pipeline function 'valid_pipeline_func' are ignored when creating PipelineComponent."
             in caplog.messages
         )
+
+    def test_create_pipeline_with_parameter_group(self, client: MLClient) -> None:
+        default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
+
+        @parameter_group
+        class SubGroup:
+            required_param: str
+
+        @parameter_group
+        class Group:
+            sub: SubGroup
+            node_compute: str = "cpu-cluster"
+
+        @dsl.pipeline()
+        def sub_pipeline_func(
+            required_input: Input,
+            group: Group,
+            sub_group: SubGroup,
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=group.sub.required_param,
+            )
+            node2 = default_optional_func(
+                required_input=required_input,
+                required_param=sub_group.required_param,
+            )
+            node2.compute = group.node_compute
+
+        @dsl.pipeline(default_compute="cpu-cluster")
+        def root_pipeline_with_group(
+            r_required_input: Input,
+            r_group: Group,
+        ):
+            sub_pipeline_func(required_input=r_required_input, group=r_group, sub_group=r_group.sub)
+
+        job = root_pipeline_with_group(
+            r_required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+            r_group=Group(sub=SubGroup(required_param="hello")))
+        rest_job = assert_job_cancel(job, client)
+        assert len(rest_job.inputs) == 2
+        rest_job_dict = rest_job._to_dict()
+        assert rest_job_dict['inputs'] == {
+            'r_required_input': {'mode': 'ro_mount', 'type': 'uri_file', 'path': 'azureml:https://dprepdata.blob.core.windows.net/demo/Titanic.csv'},
+            'r_group.sub.required_param': 'hello', 'r_group.node_compute': 'cpu-cluster'}
+        assert rest_job_dict['jobs']['sub_pipeline_func']['inputs'] == {'required_input': {'path': '${{parent.inputs.r_required_input}}'}, 'group.sub.required_param': {'path': '${{parent.inputs.r_group.sub.required_param}}'}, 'group.node_compute': {'path': '${{parent.inputs.r_group.node_compute}}'}, 'sub_group.required_param': {'path': '${{parent.inputs.r_group.sub.required_param}}'}}
 
     def test_pipeline_with_none_parameter_has_default_optional_true(self, client: MLClient) -> None:
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
