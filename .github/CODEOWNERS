@@ -156,6 +156,13 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job                          @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job                        @DouglasXiaoMS @TonyJ1 @wangchao1230
 
+# PRLabel: %ML-Pipelines
+/sdk/ml/azure-ai-ml/azure/ai/ml/dsl                                  @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule                   @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component                  @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders                   @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_internal                            @wangchao1230
+
 # PRLabel: %Maps
 /sdk/maps/                                                           @alextts627
 
