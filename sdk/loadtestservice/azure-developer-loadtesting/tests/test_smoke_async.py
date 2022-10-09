@@ -17,10 +17,10 @@ class TestLoadtestingSmokeAsync(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_smoke_create_or_update_test(
-            self,
-            loadtesting_endpoint,
-            loadtesting_test_id,
-            loadtesting_subscription_id
+        self,
+        loadtesting_endpoint,
+        loadtesting_test_id,
+        loadtesting_subscription_id
     ):
         set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
@@ -47,11 +47,11 @@ class TestLoadtestingSmokeAsync(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_create_or_update_app_components(
-            self,
-            loadtesting_endpoint,
-            loadtesting_test_id,
-            loadtesting_app_component,
-            loadtesting_subscription_id
+        self,
+        loadtesting_endpoint,
+        loadtesting_test_id,
+        loadtesting_app_component,
+        loadtesting_subscription_id
     ):
         set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
@@ -75,15 +75,15 @@ class TestLoadtestingSmokeAsync(LoadtestingAsyncTest):
     @LoadtestingPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_get_app_components(
-            self,
-            loadtesting_endpoint,
-            loadtesting_test_id,
-            loadtesting_app_component
+        self,
+        loadtesting_endpoint,
+        loadtesting_test_id,
+        loadtesting_app_component
     ):
         set_bodiless_matcher()
         client = self.create_client(endpoint=loadtesting_endpoint)
         result = await client.load_test_administration.get_app_components(test_id=loadtesting_test_id)
         assert result is not None
 
-        result = client.load_test_administration.get_app_components(name=loadtesting_app_component)
+        result = await client.load_test_administration.get_app_components(name=loadtesting_app_component)
         assert result is not None

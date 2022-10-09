@@ -16,14 +16,14 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "95",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 09 Oct 2022 12:03:23 GMT",
+        "Date": "Sun, 09 Oct 2022 12:21:43 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13845.9 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.13845.9 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -34,7 +34,7 @@
       }
     },
     {
-      "RequestUri": "https://myservice.azure.com/loadtests/000?api-version=2022-06-01-preview",
+      "RequestUri": "https://myservice.azure.com/loadtests/to-be-deleted-test-id?api-version=2022-06-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -60,20 +60,21 @@
         "keyvaultReferenceIdentityType": "SystemAssigned",
         "keyvaultReferenceIdentityId": null
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "1072",
+        "Content-Length": "760",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 09 Oct 2022 12:03:24 GMT",
-        "mise-correlation-id": "b381f94a-b0df-441f-9001-a0931eed3159",
+        "Date": "Sun, 09 Oct 2022 12:21:44 GMT",
+        "Location": "https://myservice.azure.com/loadtests/to-be-deleted-test-id?resourceId=%2fsubscriptions%2f00000000-0000-0000-0000-000000000000%2fresourcegroups%2fyashika-rg%2fproviders%2fmicrosoft.loadtestservice%2floadtests%2floadtestsdk\u0026api-version=2022-06-01-preview",
+        "mise-correlation-id": "6085ad3d-6c99-4d80-9052-9f858a3eec2e",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "89db8821-cb9e-4464-bd5f-c50244c50e12"
+        "x-ms-correlation-request-id": "ce730ac0-24b7-4c2a-bbef-b1af19895af0"
       },
       "ResponseBody": {
-        "testId": "000",
+        "testId": "to-be-deleted-test-id",
         "description": "",
         "displayName": "TestingResource",
         "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/yashika-rg/providers/microsoft.loadtestservice/loadtests/loadtestsdk",
@@ -84,32 +85,16 @@
         "passFailCriteria": {
           "passFailMetrics": {}
         },
-        "createdDateTime": "2022-09-15T14:29:00.15Z",
+        "createdDateTime": "2022-10-09T12:21:44.206Z",
         "createdBy": null,
-        "lastModifiedDateTime": "2022-09-16T09:33:03.95Z",
-        "lastModifiedBy": "niveditjain@microsoft.com",
+        "lastModifiedDateTime": "2022-10-09T12:21:44.206Z",
+        "lastModifiedBy": null,
         "inputArtifacts": {
           "configUrl": null,
-          "testScriptUrl": {
-            "url": "url",
-            "fileId": "000",
-            "filename": "sample.jmx",
-            "fileType": 0,
-            "expireTime": "2022-10-09T12:13:24.7010537\u002B00:00",
-            "validationStatus": "VALIDATION_SUCCESS"
-          },
+          "testScriptUrl": null,
           "userPropUrl": null,
           "inputArtifactsZipFileurl": null,
-          "additionalUrls": [
-            {
-              "url": "url",
-              "fileId": "unique-image-file-id",
-              "filename": "sample-image.jpg",
-              "fileType": 2,
-              "expireTime": "2022-10-09T12:13:24.7010537\u002B00:00",
-              "validationStatus": ""
-            }
-          ]
+          "additionalUrls": []
         },
         "secrets": null,
         "certificate": null,
@@ -117,6 +102,59 @@
         "subnetId": null,
         "keyvaultReferenceIdentityType": "SystemAssigned",
         "keyvaultReferenceIdentityId": null
+      }
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/loadtests/to-be-deleted-test-id?api-version=2022-06-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b2 Python/3.10.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Date": "Sun, 09 Oct 2022 12:21:45 GMT",
+        "mise-correlation-id": "718feb10-8a18-4a98-8835-f04be01b6b55",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "6e7e4a16-523f-43d3-a850-55139866035e"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://myservice.azure.com/loadtests/0000-0000?api-version=2022-06-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-developer-loadtesting/1.0.0b2 Python/3.10.2 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-01-preview, 2022-06-01-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "126",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sun, 09 Oct 2022 12:21:46 GMT",
+        "mise-correlation-id": "39e68fe7-00b5-45a8-bf1b-662c30835b47",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "010d4734-f0a0-46c5-bda8-51baaba98839"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "TestNotFound",
+          "message": "Test not found with given identifier \u00220000-0000\u0022.",
+          "target": null,
+          "details": null
+        }
       }
     }
   ],

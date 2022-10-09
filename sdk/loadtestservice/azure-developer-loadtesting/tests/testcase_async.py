@@ -7,6 +7,7 @@
 from azure.developer.loadtesting.aio import LoadTestingClient
 from devtools_testutils import AzureRecordedTestCase
 
+
 class LoadtestingAsyncTest(AzureRecordedTestCase):
     def create_client(self, endpoint):
         credential = self.get_credential(LoadTestingClient, is_async=True)
