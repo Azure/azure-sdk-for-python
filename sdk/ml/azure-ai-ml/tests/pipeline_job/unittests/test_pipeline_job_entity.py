@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 from test_utilities.utils import verify_entity_load_and_dump
 
-from azure.ai.ml import MLClient, load_job, Output
+from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData as FebRestJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
@@ -26,7 +26,7 @@ from azure.ai.ml.entities._job.automl.image import (
 from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
-from azure.ai.ml.exceptions import ValidationException, UnexpectedAttributeError
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -1459,32 +1459,12 @@ class TestPipelineJobEntity:
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
         pipeline: PipelineJob = load_job(source=test_path)
 
-        test_output_path = "azureml://datastores/workspaceblobstore/paths/azureml/ps_copy_component/outputs/output_dir"
-
         # pipeline level output
         pipeline_output = pipeline.outputs["job_out_path_2"]
         assert pipeline_output.mode == "upload"
 
-        # node level output
-        pipeline.jobs["hello_world_component_1"].outputs["component_out_path_1"].path = test_output_path
-
-        # normal output from component
-        node_output = pipeline.jobs["hello_world_component_1"].outputs["component_out_path_1"]
-        assert node_output.path == test_output_path
-        assert node_output.mode == "mount"
-
+        # other node level output tests can be found in
+        # dsl/unittests/test_component_func.py::TestComponentFunc::test_component_outputs
         # data-binding-expression
-        node_output = pipeline.jobs["merge_component_outputs"].outputs["component_out_path_1"]
         with pytest.raises(ValidationException, match="<class '.*'> does not support setting path."):
-            node_output.path = test_output_path
-
-        # non-existent output
-        with pytest.raises(
-                UnexpectedAttributeError,
-                match="Got an unexpected attribute 'component_out_path_non', "
-                      "valid attributes: 'component_out_path_1', "
-                      "'component_out_path_2', 'component_out_path_3'."
-        ):
-            pipeline.jobs["hello_world_component_1"].outputs["component_out_path_non"] = Output(
-                path=test_output_path, mode="upload"
-            )
+            pipeline.jobs["merge_component_outputs"].outputs["component_out_path_1"].path = "xxx"

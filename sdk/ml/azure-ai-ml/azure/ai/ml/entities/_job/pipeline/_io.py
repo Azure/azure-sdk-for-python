@@ -647,12 +647,17 @@ class OutputsAttrDict(dict):
     def __getattr__(self, item) -> NodeOutput:
         return self.__getitem__(item)
 
+    def __getitem__(self, item) -> NodeOutput:
+        if item not in self:
+            # We raise this exception instead of KeyError as OutputsAttrDict doesn't support add new item after
+            # __init__.
+            raise UnexpectedAttributeError(keyword=item, keywords=list(self))
+        return super().__getitem__(item)
+
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):
             mode = value.mode
             value = Output(type=value.type, path=value.path, mode=mode)
-        if key not in self:
-            raise UnexpectedAttributeError(keyword=key, keywords=list(self))
         original_output = self.__getattr__(key)  # Note that an exception will be raised if the keyword is invalid.
         original_output._data = original_output._build_data(value)
 
