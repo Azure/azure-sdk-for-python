@@ -527,3 +527,22 @@ class TestPipelineJob:
             if key.startswith("data_"):
                 expected_inputs[key] = {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"}
         assert rest_obj.properties.jobs["node"]["inputs"] == expected_inputs
+
+    def test_data_binding_on_node_runsettings(self):
+        test_path = "./tests/test_configs/internal/helloworld_component_command.yml"
+        component: InternalComponent = load_component(test_path)
+
+        @pipeline()
+        def pipeline_func(compute_name: str = "cpu-cluster", environment_name: str = "AzureML-PyTorch-1.6-GPU:1"):
+            node = component(
+                training_data=Input(path="./tests/test_configs/data"),
+                max_epochs=1,
+            )
+            node.compute = compute_name
+            node.environment = environment_name
+        pipeline_job = pipeline_func()
+        assert pipeline_job._validate().passed, repr(pipeline_job._validate())
+        rest_object = pipeline_job._to_rest_object().properties.jobs["node"]
+        assert str(rest_object["computeId"]) == "${{parent.inputs.compute_name}}"
+        assert str(rest_object["environment"]) == "${{parent.inputs.environment_name}}"
+
