@@ -438,7 +438,6 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         """
         super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
         self._group_names = group_names if group_names else []
-        self._full_name = "%s.%s" % (".".join(self._group_names), self._name) if self._group_names else self._name
 
     def __str__(self) -> str:
         return self._data_binding()
@@ -451,7 +450,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
             msg = "Can not bind input to another component's input."
             raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)
         if isinstance(data, (PipelineInput, NodeOutput)):
-            # If value is input or output, it's a data binding, we require it have a owner so we can convert it to
+            # If value is input or output, it's a data binding, owner is required to convert it to
             # a data binding, eg: ${{parent.inputs.xxx}}
             if isinstance(data, NodeOutput) and data._owner is None:
                 msg = "Setting input binding {} to output without owner is not allowed."
@@ -468,7 +467,8 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         return data
 
     def _data_binding(self):
-        return f"${{{{parent.inputs.{self._full_name}}}}}"
+        full_name = "%s.%s" % (".".join(self._group_names), self._name) if self._group_names else self._name
+        return f"${{{{parent.inputs.{full_name}}}}}"
 
     def _to_input(self) -> Input:
         """Convert pipeline input to component input for pipeline component."""
@@ -627,6 +627,15 @@ class _GroupAttrDict(InputsAttrDict):
                     target=ErrorTarget.PIPELINE,
                 )
         return flattened_parameters
+
+    def insert_group_name_for_items(self, group_name):
+        # Insert one group name for all items.
+        for v in self.values():
+            if isinstance(v, _GroupAttrDict):
+                v.insert_group_name_for_items(group_name)
+            elif isinstance(v, PipelineInput):
+                # Insert group names for pipeline input
+                v._group_names = [group_name] + v._group_names
 
 
 class OutputsAttrDict(dict):
