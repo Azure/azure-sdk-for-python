@@ -6,8 +6,19 @@ from marshmallow import fields, post_dump, post_load
 
 from azure.ai.ml._schema import StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import DumpableFloatField, DumpableIntegerField
+from azure.ai.ml._schema.core.fields import DumpableFloatField, DumpableIntegerField, DumpableEnumField
 
+
+SUPPORTED_INTERNAL_PARAM_TYPES = [
+    "integer",
+    "Integer",
+    "boolean",
+    "Boolean",
+    "string",
+    "String",
+    "float",
+    "Float",
+]
 
 class InternalInputPortSchema(InputPortSchema):
     # skip client-side validate for type enum & support list
@@ -39,19 +50,17 @@ class InternalOutputPortSchema(OutputPortSchema):
     datastore_mode = fields.Str()
 
 
+class InternalPrimitiveOutputSchema(OutputPortSchema):
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_INTERNAL_PARAM_TYPES,
+        required=True,
+    )
+    is_control = fields.Bool()
+
+
 class InternalParameterSchema(ParameterSchema):
-    type = StringTransformedEnum(
-        allowed_values=[
-            "integer",
-            "Integer",
-            "boolean",
-            "Boolean",
-            "string",
-            "String",
-            "float",
-            "Float",
-        ],
-        casing_transform=lambda x: x,
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_INTERNAL_PARAM_TYPES,
         required=True,
         data_key="type",
     )

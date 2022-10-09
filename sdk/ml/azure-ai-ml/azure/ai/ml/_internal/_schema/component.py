@@ -15,6 +15,7 @@ from .input_output import (
     InternalInputPortSchema,
     InternalOutputPortSchema,
     InternalParameterSchema,
+    InternalPrimitiveOutputSchema,
 )
 
 
@@ -60,7 +61,16 @@ class InternalBaseComponentSchema(ComponentSchema):
             ]
         ),
     )
-    outputs = fields.Dict(keys=fields.Str(), values=NestedField(InternalOutputPortSchema))
+    # support primitive output for all internal components for now
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(InternalPrimitiveOutputSchema),
+                NestedField(InternalOutputPortSchema),
+            ]
+        ),
+    )
 
     # type field is required for registration
     type = StringTransformedEnum(

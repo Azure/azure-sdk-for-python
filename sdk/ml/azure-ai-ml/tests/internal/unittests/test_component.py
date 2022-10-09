@@ -377,7 +377,7 @@ class TestComponent:
         assert validation_result.error_messages["*"].startswith(expected_error_msg_prefix)
 
     def test_component_input_types(self) -> None:
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component: InternalComponent = load_component(yaml_path)
         component.code = "scope:1"
 
@@ -403,7 +403,7 @@ class TestComponent:
         assert component._validate().passed is True, repr(component._validate())
 
     def test_component_input_with_attrs(self) -> None:
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec_with_attrs.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec_with_attrs.yaml"
         component: InternalComponent = load_component(source=yaml_path)
 
         expected_inputs = {
@@ -431,6 +431,24 @@ class TestComponent:
 
         regenerated_component = Component._from_rest_object(component._to_rest_object())
         assert regenerated_component._to_rest_object().properties.component_spec["inputs"] == expected_inputs["inputs"]
+        assert component._validate().passed is True, repr(component._validate())
+
+    def test_component_output_with_attrs(self) -> None:
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec_with_outputs.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component
+
+        expected_outputs = {
+            "primitive_is_control": {
+                "is_control": True,
+                "type": "boolean",
+            }
+        }
+        assert component._to_rest_object().properties.component_spec["outputs"] == expected_outputs
+        assert component._validate().passed is True, repr(component._validate())
+
+        regenerated_component = Component._from_rest_object(component._to_rest_object())
+        assert regenerated_component._to_rest_object().properties.component_spec["outputs"] == expected_outputs
         assert component._validate().passed is True, repr(component._validate())
 
     def test_component_input_list_type(self) -> None:
