@@ -43,5 +43,5 @@ what you can do with the Azure Personalizer client library.
 
 <!-- LINKS -->
 [azure_subscription]: https://azure.microsoft.com/free/
-[personalizer]: https://azure.microsoft.com/en-us/products/cognitive-services/personalizer/
+[personalizer]: https://azure.microsoft.com/products/cognitive-services/personalizer/
 [python-personalizer-ref-docs]: https://aka.ms/azsdk/python/personalizer/docs

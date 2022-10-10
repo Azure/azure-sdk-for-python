@@ -10,7 +10,7 @@ class TestRank(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy_async
-    def test_rank_with_no_context_features(self, **kwargs):
+    async def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
@@ -23,11 +23,11 @@ class TestRank(AzureRecordedTestCase):
             ],
         }];
         request = {"actions": actions }
-        client.rank(request)
+        await client.rank(request)
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy_async
-    def test_rank_with_context_features(self, **kwargs):
+    async def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
@@ -63,4 +63,4 @@ class TestRank(AzureRecordedTestCase):
         "contextFeatures": contextFeatures,
         "excludedActions": ["Person1"],
         };
-        client.rank(request)
+        await client.rank(request)

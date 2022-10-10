@@ -80,7 +80,6 @@ class PersonalizerClient(PersonalizerClientGenerated):
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
-        self._default_language = kwargs.pop("default_language", None)
 
 
 def patch_sdk():
