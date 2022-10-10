@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Updated the optional dependency for async transport using AMQP over WebSocket from `websocket-client` to `aiohttp`.
+- Updated the optional dependency for async transport using AMQP over WebSocket from `websocket-client` to `aiohttp` (Issue #24315, thanks @hansmbakker for the suggestion).
 
 ## 5.8.0b1 (2022-09-22)
 
