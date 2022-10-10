@@ -98,3 +98,18 @@ _INSTRUMENTATIONS_LIST = [
 ]
 # cSpell:enable
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
+
+# Standard metrics
+
+# Temporary solution for checking which instrumentations support metric collection
+_INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
+    "opentelemetry.instrumentation.django",
+    "opentelemetry.instrumentation.falcon",
+    "opentelemetry.instrumentation.fastapi",
+    "opentelemetry.instrumentation.flask",
+    "opentelemetry.instrumentation.pyramid",
+    "opentelemetry.instrumentation.requests",
+    "opentelemetry.instrumentation.starlette",
+    "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.wsgi",
+)

@@ -23,6 +23,8 @@ These code samples show common champion scenario operations with the AzureMonito
 
 * Psycopg2 instrumentation: [sample_psycopg2.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_psycopg2.py)
 
+* Emitting metrics with instrumentations: [sample_metrics.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_metrics.py)
+
 * Azure AppConfig Add Config Setting: [sample_app_config.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_app_config.py)
 * Azure Communication Chat Create Client/Thread: [sample_comm_chat.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_chat.py)
 * Azure Communication Phone Numbers List Purchased Numbers: [sample_comm_phone.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_comm_phone.py)
@@ -122,6 +124,21 @@ $ pip install opentelemetry-instrumentation-psygopg2
 $ # from this directory
 $ python sample_psycopg2.py
 ```
+
+### Emitting metrics with instrumentations
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ pip install opentelemetry-instrumentation-flask
+$ pip install opentelemetry-instrumentation-requests
+$ # from this directory
+$ python sample_metrics.py
+```
+
+Calls made with the underlying instrumented libraries will track metrics information in the metrics explorer view in Application Insights. Only certain instrumentations support metrics collection, refer to https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/instrumentation/README.md for the full list. This also assumes you are using the latest versions of the instrumentation libraries.
 
 ### Collector
 

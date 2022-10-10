@@ -11,6 +11,7 @@ from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.trace import SpanKind
 
+from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATION_SUPPORTING_METRICS_LIST
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
@@ -424,6 +425,13 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         span.attributes,
         lambda key, val: not _is_opentelemetry_standard_attribute(key)
     )
+
+    # Standard metrics special properties
+    # Only add the property if span was generated from instrumentation that supports metrics collection
+    if span.instrumentation_scope is not None and \
+        span.instrumentation_scope.name in _INSTRUMENTATION_SUPPORTING_METRICS_LIST:
+        data.properties["_MS.ProcessedByMetricExtractors"] = "True"
+
     if span.links:
         # Max length for value is 8192
         # Since links are a fixed length (80) in json, max number of links would be 102

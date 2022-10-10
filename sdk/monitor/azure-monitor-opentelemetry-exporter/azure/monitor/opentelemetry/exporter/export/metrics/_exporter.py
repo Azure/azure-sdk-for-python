@@ -2,8 +2,9 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Optional, Any
+from typing import Mapping, Optional, Any
 
+from opentelemetry.util.types import AttributeValue
 from opentelemetry.sdk.metrics.export import (
     DataPointT,
     HistogramDataPoint,
@@ -155,15 +156,23 @@ def _convert_point_to_envelope(
         min_ = point.min
         max_ = point.max
 
+    # check if metric signal from instrumentation, treat as standard metric if so
+    properties = _handle_standard_metric(name, point.attributes, envelope.tags)
+
+    # truncation logic
+    properties = _utils._filter_custom_properties(properties)
+
+    if namespace is not None:
+        namespace = str(namespace)[:256]
     data_point = MetricDataPoint(
         name=str(name)[:1024],
-        namespace=str(namespace)[:256],
+        namespace=None,
         value=value,
         count=count,
         min=min_,
         max=max_,
     )
-    properties = _utils._filter_custom_properties(point.attributes)
+
     data = MetricsData(
         properties=properties,
         metrics=[data_point],
@@ -183,3 +192,56 @@ def _get_metric_export_result(result: ExportResult) -> MetricExportResult:
     ):
         return MetricExportResult.FAILURE
     return None
+
+
+def _handle_standard_metric(
+    name: str,
+    attributes: Mapping[str, AttributeValue],
+    tags: Mapping[str, str],
+) -> Mapping[str, AttributeValue]:
+    # TODO: switch to semconv constants
+    if name not in ("http.client.duration", "http.server.duration"):
+        return attributes
+    properties = {}
+    status_code = attributes.get("http.status_code", None)
+    if name == "http.client.duration":
+        properties["_MS.MetricId"] = "dependencies/duration"
+        properties["_MS.IsAutocollected"] = "True"
+        properties["Dependency.Type"] = "http"
+        properties["Dependency.Success"] = str(_is_status_code_success(status_code, 400))
+        target = None
+        if "peer.service" in attributes:
+            target = attributes["peer.service"]
+        elif "net.peer.name" in attributes:
+            if attributes["net.peer.name"] is None:
+                target = None
+            elif "net.host.port" in attributes and \
+                attributes["net.host.port"] is not None:
+                target = "{}:{}".format(
+                    attributes["net.peer.name"],
+                    attributes["net.host.port"],
+                )
+            else:
+                target = attributes["net.peer.name"]
+        properties["dependency/target"] = target
+        properties["dependency/resultCode"] = status_code
+        # TODO: operation/synthetic
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]
+        properties["cloud/roleName"] = tags["ai.cloud.role"]
+    elif name == "http.server.duration":
+        properties = {}
+        properties["_MS.MetricId"] = "requests/duration"
+        properties["_MS.IsAutocollected"] = "True"
+        properties["request/resultCode"] = status_code
+        # TODO: operation/synthetic
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]
+        properties["cloud/roleName"] = tags["ai.cloud.role"]
+        properties["Request.Success"] = str(_is_status_code_success(status_code, 500))
+
+    # TODO: rpc, database, messaging
+
+    return properties
+
+
+def _is_status_code_success(status_code: Optional[str], threshold: int) -> bool:
+    return status_code is not None and int(status_code) < threshold
