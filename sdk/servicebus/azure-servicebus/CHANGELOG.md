@@ -4,7 +4,7 @@
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
-Version 7.9.0a1 is our first efforts to build an Azure Service Bus client library based on pure Python implemented AMQP stack.
+Version 7.9.0a1 is our first efforts to build an Azure Service Bus client library based on a pure Python implemented AMQP stack.
 
 ### Breaking changes
 
