@@ -2,6 +2,8 @@
 
 ## 7.9.0a1 (2022-10-11)
 
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
 Version 7.9.0a1 is our first efforts to build an Azure Service Bus client library based on pure Python implemented AMQP stack.
 
 ### Breaking changes
@@ -12,14 +14,6 @@ Version 7.9.0a1 is our first efforts to build an Azure Service Bus client librar
 ### Other Changes
 
 - uAMQP dependency is removed.
-
-## 7.8.1 (2022-10-11)
-
-This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
-
-### Bugs Fixed
-
-- Fixed bug on async `ServiceBusClient` where `custom_endpoint_address` and `connection_verify` kwargs were not being passed through correctly. (Issue #26015)
 
 ## 7.8.0 (2022-07-06)
 
