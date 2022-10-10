@@ -58,7 +58,7 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022,
+        service_client: ServiceClient102022Preview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
@@ -300,8 +300,8 @@ class WorkspaceOperations:
         # Only the key uri property of customer_managed_key can be updated.
         # Check if user is updating CMK key uri, if so, add to update_param
         if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
-            customer_managed_key_uri = workspace.customer_managed_key.key_uri
-            update_param.encryption = EncryptionUpdateProperties(
+            customer_managed_key_uri=workspace.customer_managed_key.key_uri
+            update_param.encryption=EncryptionUpdateProperties(
                 key_vault_properties=EncryptionKeyVaultUpdateProperties(
                     key_identifier=customer_managed_key_uri,
                 )
