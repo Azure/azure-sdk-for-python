@@ -2352,7 +2352,7 @@ class TestStorageFile(StorageRecordedTestCase):
     def test_sas_signed_identifier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop("variables")
+        variables = kwargs.pop('variables', {})
 
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
