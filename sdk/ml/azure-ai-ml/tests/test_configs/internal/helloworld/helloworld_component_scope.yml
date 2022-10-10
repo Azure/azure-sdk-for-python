@@ -28,7 +28,7 @@ outputs:
     type: path
     description: output path of ss
 
-code: ./scope
+code: ../scope
 
 environment: azureml:AzureEnv:1
 

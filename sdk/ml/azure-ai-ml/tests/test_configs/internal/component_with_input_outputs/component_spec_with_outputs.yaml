@@ -16,7 +16,10 @@ outputs:
   primitive_is_control:
     is_control: true
     type: boolean
+  path_with_optional:
+    optional: false
+    type: AnyDirectory
 command: python -m azure.ml.component.dsl.executor --file run.py --name convert_file_to_boolean
-  --params --input {inputs.input} --output {outputs.output}
+  --params --input {inputs.input} --output {outputs.path_with_optional}
 environment:
   name: AzureML-Component

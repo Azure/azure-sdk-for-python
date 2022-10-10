@@ -11,7 +11,7 @@ DATA_VERSION = "2"
 PARAMETERS_TO_TEST = [
     # which of them are available for other components?
     (
-        "tests/test_configs/internal/ls_command_component.yaml",
+        "tests/test_configs/internal/command-component-ls/ls_command_component.yaml",
         {},
         {
             "compute": "cpu-cluster",  # runsettings.target

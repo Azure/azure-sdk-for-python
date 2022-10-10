@@ -105,7 +105,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_anonymous_internal_component_in_pipeline(
+    def test_pipeline_anonymous(
         self, client: MLClient, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict
     ):
         # curated env with name & version

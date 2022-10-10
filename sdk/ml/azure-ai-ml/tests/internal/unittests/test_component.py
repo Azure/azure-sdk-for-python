@@ -31,7 +31,7 @@ class TestComponent:
 
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
-        yaml_path = "./tests/test_configs/internal/helloworld_component_command.yml"
+        yaml_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
         with pytest.raises(
             ValidationException,
             match="Internal components is a private feature in v2, " "please set environment variable",
@@ -439,6 +439,10 @@ class TestComponent:
         assert component
 
         expected_outputs = {
+            "path_with_optional": {
+                # unknown field optional will be ignored
+                "type": 'AnyDirectory',
+            },
             "primitive_is_control": {
                 "is_control": True,
                 "type": "boolean",
@@ -464,7 +468,7 @@ class TestComponent:
         from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
         from azure.ai.ml.dsl._utils import environment_variable_overwrite
 
-        yaml_path = "./tests/test_configs/internal/helloworld_component_command.yml"
+        yaml_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
         component_func = load_component(source=yaml_path)
         loop_node = LoopNode(body=component_func())
         loop_node.body._referenced_control_flow_node_instance_id = loop_node._instance_id

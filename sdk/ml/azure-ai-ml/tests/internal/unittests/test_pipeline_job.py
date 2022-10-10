@@ -164,7 +164,7 @@ class TestPipelineJob:
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_internal_component_output_as_pipeline_component_output(self):
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component_func = load_component(yaml_path, params_override=[{"inputs": {}}])
 
         @pipeline()
@@ -220,7 +220,7 @@ class TestPipelineJob:
         assert result._to_dict() == {"result": "Succeeded"}
 
     def test_gjd_internal_component_in_pipeline(self):
-        yaml_path = "./tests/test_configs/internal/ls_command_component.yaml"  # GJD is based on CommandComponent
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # GJD is based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
 
@@ -246,7 +246,7 @@ class TestPipelineJob:
 
     def test_elastic_component_in_pipeline(self):
         yaml_path = (
-            "./tests/test_configs/internal/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
+            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
         )
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
@@ -303,7 +303,7 @@ class TestPipelineJob:
 
     def test_singularity_component_in_pipeline(self):
         yaml_path = (
-            "./tests/test_configs/internal/ls_command_component.yaml"  # singularity is based on CommandComponent
+            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
         )
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
@@ -366,7 +366,7 @@ class TestPipelineJob:
         }
 
     def test_load_pipeline_job_with_internal_components_as_node(self):
-        yaml_path = Path("./tests/test_configs/internal/helloworld_component_scope.yml")
+        yaml_path = Path("./tests/test_configs/internal/helloworld/helloworld_component_scope.yml")
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
@@ -472,7 +472,7 @@ class TestPipelineJob:
         assert dsl_pipeline._to_dict() == regenerated_pipeline_job._to_dict()
 
     def test_components_input_output(self):
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component: InternalComponent = load_component(yaml_path)
 
         fake_input = Input(type=AssetTypes.MLTABLE, path="azureml:scope_tsv:1")
@@ -529,7 +529,7 @@ class TestPipelineJob:
         assert rest_obj.properties.jobs["node"]["inputs"] == expected_inputs
 
     def test_data_binding_on_node_runsettings(self):
-        test_path = "./tests/test_configs/internal/helloworld_component_command.yml"
+        test_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
         component: InternalComponent = load_component(test_path)
 
         @pipeline()
