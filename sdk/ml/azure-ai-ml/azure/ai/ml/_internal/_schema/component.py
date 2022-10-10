@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump
+from marshmallow import fields, post_dump, INCLUDE
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -42,6 +42,8 @@ class NodeType:
 
 
 class InternalBaseComponentSchema(ComponentSchema):
+    class Meta:
+        unknown = INCLUDE
     # override name as 1p components allow . in name, which is not allowed in v2 components
     name = fields.Str()
 

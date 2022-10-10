@@ -228,14 +228,3 @@ class InternalComponent(Component):
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
-
-    def _schema_validate(self) -> MutableValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalComponent, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result

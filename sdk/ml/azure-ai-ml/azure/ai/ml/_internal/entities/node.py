@@ -95,17 +95,6 @@ class InternalBaseNode(BaseNode):
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         raise RuntimeError("Internal components doesn't support load from dict")
 
-    def _schema_validate(self) -> MutableValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalBaseNode, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class?
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result
-
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from .._schema.node import InternalBaseNodeSchema

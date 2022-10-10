@@ -12,6 +12,8 @@ from .component import InternalBaseComponentSchema, NodeType
 
 
 class InternalBaseNodeSchema(BaseNodeSchema):
+    class Meta:
+        unknown = INCLUDE
     component = UnionField(
         [
             # for registry type assets

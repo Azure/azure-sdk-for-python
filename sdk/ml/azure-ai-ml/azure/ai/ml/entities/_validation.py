@@ -420,7 +420,7 @@ class SchemaValidatableMixin:
         :type raise_error: bool
         return type: ValidationResult
         """
-        result = self._schema_validate()
+        result = self.__schema_validate()
         result.merge_with(self._customized_validate())
         return result.try_raise(
             raise_error=raise_error, error_target=self._get_validation_error_target()
@@ -443,7 +443,7 @@ class SchemaValidatableMixin:
         """
         return []
 
-    def _schema_validate(self) -> MutableValidationResult:
+    def __schema_validate(self) -> MutableValidationResult:
         """Validate the resource with the schema.
 
         return type: ValidationResult
