@@ -2,33 +2,48 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-self-use
 
-import logging
 import random
-import time
+import re
 from typing import Dict, Optional
 
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
-from azure.ai.ml._local_endpoints.errors import InvalidVSCodeRequestError
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import polling_wait, upload_dependencies
-from azure.ai.ml.constants import AzureMLResourceType, EndpointDeploymentLogContainerType, LROConfigurations
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies,validate_scoring_script
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
+from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
 from azure.ai.ml.entities import OnlineDeployment
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    InvalidVSCodeRequestError,
+    ValidationErrorType,
+    ValidationException,
+)
+from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
-from azure.identity import ChainedTokenCredential
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
-logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE + __name__)
-logger.propagate = False
-module_logger = logging.getLogger(__name__)
+ops_logger = OpsLogger(__name__)
+module_logger = ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -42,15 +57,15 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_deployment_helper: _LocalDeploymentHelper,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        super(OnlineDeploymentOperations, self).__init__(operation_scope)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
+        # ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_02_2022_preview.online_deployments
         self._online_endpoint_operations = service_client_02_2022_preview.online_endpoints
@@ -58,92 +73,117 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @distributed_trace
+    # @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
         *,
         local: bool = False,
         vscode_debug: bool = False,
-        no_wait: bool = False,
-    ) -> None:
+        skip_script_validation: bool = False,
+    ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
         :param deployment: the deployment entity
-        :type deployment: OnlineDeployment
+        :type deployment: ~azure.ai.ml.entities.OnlineDeployment
         :param local: Whether deployment should be created locally, defaults to False
         :type local: bool, optional
         :param vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
         :type vscode_debug: bool, optional
-        :param no_wait: Applied only to online deployment, defaults to False
-        :type no_wait: bool, optional
-        :return: None
-        :rtype: None | OnlineDeployment
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
+            be successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model cannot be
+            successfully validated. Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.DeploymentException: Raised if OnlineDeployment type is unsupported.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointInFailedStateError: Raised if local endpoint is in a failed state.
+        :raises ~azure.ai.ml.exceptions.InvalidLocalEndpointError: Raised if Docker image cannot be
+            found for local deployment.
+        :raises ~azure.ai.ml.exceptions.LocalEndpointImageBuildError: Raised if Docker image cannot be
+            successfully built for local deployment.
+        :raises ~azure.ai.ml.exceptions.RequiredLocalArtifactsNotFoundError: Raised if local artifacts cannot be
+            found for local deployment.
+        :raises ~azure.ai.ml.exceptions.InvalidVSCodeRequestError: Raised if VS Debug is invoked with a remote endpoint.
+            VSCode debug is only supported for local endpoints.
+        :raises ~azure.ai.ml.exceptions.VSCodeCommandNotFound: Raised if VSCode instance cannot be instantiated.
+        :return: A poller to track the operation status
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OnlineDeployment]
         """
-        if vscode_debug and not local:
-            raise InvalidVSCodeRequestError(
-                msg="VSCode Debug is only support for local endpoints. Please set local to True."
-            )
-        if local:
-            return self._local_deployment_helper.create_or_update(
-                deployment=deployment,
-                local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
-            )
-
-        start_time = time.time()
-        path_format_arguments = {
-            "endpointName": deployment.name,
-            "resourceGroupName": self._resource_group_name,
-            "workspaceName": self._workspace_name,
-        }
-
-        # This get() is to ensure, the endpoint exists and fail before even start the deployment
-        module_logger.info(f"Check: endpoint {deployment.endpoint_name} exists")
-        self._online_endpoint_operations.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            endpoint_name=deployment.endpoint_name,
-        )
-        orchestrators = OperationOrchestrator(
-            operation_container=self._all_operations,
-            operation_scope=self._operation_scope,
-        )
-
-        upload_dependencies(deployment, orchestrators)
         try:
-            location = self._get_workspace_location()
-            deployment_rest = deployment._to_rest_object(location=location)
+            if vscode_debug and not local:
+                raise InvalidVSCodeRequestError(
+                    msg="VSCode Debug is only support for local endpoints. Please set local to True."
+                )
+            if local:
+                return self._local_deployment_helper.create_or_update(
+                    deployment=deployment,
+                    local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
+                )
+            if (
+                not skip_script_validation
+                and deployment
+                and deployment.code_configuration
+                and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
+                and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
+            ):
+                validate_scoring_script(deployment)
 
-            poller = self._online_deployment.begin_create_or_update(
+            path_format_arguments = {
+                "endpointName": deployment.name,
+                "resourceGroupName": self._resource_group_name,
+                "workspaceName": self._workspace_name,
+            }
+
+            # This get() is to ensure, the endpoint exists and fail before even start the deployment
+            module_logger.info("Check: endpoint %s exists", deployment.endpoint_name)
+            self._online_endpoint_operations.get(
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
                 endpoint_name=deployment.endpoint_name,
-                deployment_name=deployment.name,
-                body=deployment_rest,
-                polling=AzureMLPolling(
-                    LROConfigurations.POLL_INTERVAL,
-                    path_format_arguments=path_format_arguments,
-                    **self._init_kwargs,
-                )
-                if not no_wait
-                else False,
-                polling_interval=LROConfigurations.POLL_INTERVAL,
-                **self._init_kwargs,
             )
-            if no_wait:
-                module_logger.info(
-                    f"Online deployment create/update request initiated. Status can be checked using `az ml online-deployment show -e {deployment.endpoint_name} -n {deployment.name}`\n"
+            orchestrators = OperationOrchestrator(
+                operation_container=self._all_operations,
+                operation_scope=self._operation_scope,
+                operation_config=self._operation_config,
+            )
+
+            upload_dependencies(deployment, orchestrators)
+            try:
+                location = self._get_workspace_location()
+                deployment_rest = deployment._to_rest_object(location=location)
+
+                poller = self._online_deployment.begin_create_or_update(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    endpoint_name=deployment.endpoint_name,
+                    deployment_name=deployment.name,
+                    body=deployment_rest,
+                    polling=AzureMLPolling(
+                        LROConfigurations.POLL_INTERVAL,
+                        path_format_arguments=path_format_arguments,
+                        **self._init_kwargs,
+                    ),
+                    polling_interval=LROConfigurations.POLL_INTERVAL,
+                    **self._init_kwargs,
+                    cls=lambda response, deserialized, headers: OnlineDeployment._from_rest_object(deserialized),
                 )
                 return poller
+            except Exception as ex:
+                raise ex
+        except Exception as ex:  # pylint: disable=broad-except
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
             else:
-                message = f"Creating/updating online deployment {deployment.name} "
-                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
+                raise ex
 
-        except Exception as ex:
-            raise ex
-
-    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str, local: bool = False) -> OnlineDeployment:
+    @distributed_trace
+    # @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
         :param name: The name of the deployment
@@ -151,9 +191,10 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: bool, optional
+        :type local: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: a deployment entity
-        :rtype: OnlineDeployment
+        :rtype: ~azure.ai.ml.entities.OnlineDeployment
         """
         if local:
             deployment = self._local_deployment_helper.get(endpoint_name=endpoint_name, deployment_name=name)
@@ -171,8 +212,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         deployment.endpoint_name = endpoint_name
         return deployment
 
-    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str, local: bool = False) -> None:
+    @distributed_trace
+    # @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment
@@ -180,7 +222,10 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: bool, optional
+        :type local: Optional[bool]
+        :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
+        :return: A poller to track the operation status
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
         if local:
             return self._local_deployment_helper.delete(name=endpoint_name, deployment_name=name)
@@ -192,12 +237,14 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    @distributed_trace
+    # @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
         endpoint_name: str,
         lines: int,
+        *,
         container_type: Optional[str] = None,
         local: bool = False,
     ) -> str:
@@ -233,8 +280,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         ).content
 
-    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
-    def list(self, endpoint_name: str, local: bool = False) -> ItemPaged[OnlineDeployment]:
+    @distributed_trace
+    # @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 
         :param endpoint_name: The name of the endpoint
@@ -242,7 +290,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param local: Whether deployment should be retrieved from local docker environment, defaults to False
         :type local: bool, optional
         :return: an iterator of deployment entities
-        :rtype: Iterable[OnlineDeployment]
+        :rtype: Iterable[~azure.ai.ml.entities.OnlineDeployment]
         """
         if local:
             return self._local_deployment_helper.list()
@@ -261,12 +309,18 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         if container_type == EndpointDeploymentLogContainerType.STORAGE_INITIALIZER:
             return EndpointDeploymentLogContainerType.STORAGE_INITIALIZER_REST
 
-        msg = f"Invalid container type '{container_type}'. Supported container types are {EndpointDeploymentLogContainerType.INFERENCE_SERVER} and {EndpointDeploymentLogContainerType.STORAGE_INITIALIZER}."
+        msg = "Invalid container type '{}'. Supported container types are {} and {}"
+        msg = msg.format(
+            container_type,
+            EndpointDeploymentLogContainerType.INFERENCE_SERVER,
+            EndpointDeploymentLogContainerType.STORAGE_INITIALIZER,
+        )
         raise ValidationException(
             message=msg,
             target=ErrorTarget.ONLINE_DEPLOYMENT,
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
 
     def _get_ARM_deployment_name(self, name: str):

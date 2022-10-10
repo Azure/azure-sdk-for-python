@@ -7,18 +7,19 @@ from typing import Dict, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
-from azure.ai.ml.constants import COMPONENT_TYPE, NodeType
+from azure.ai.ml.constants._common import COMPONENT_TYPE
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
-from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
-from .._validation import ValidationResult
+from .._validation import MutableValidationResult
 from .component import Component
 
 
@@ -44,7 +45,7 @@ class CommandComponent(Component, ParameterizedCommand):
     :param distribution: Distribution configuration for distributed training.
     :type distribution: Union[dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution]
     :param resources: Compute Resource configuration for the component.
-    :type resources: Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]
+    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
     :param inputs: Inputs of the component.
     :type inputs: dict
     :param outputs: Outputs of the component.
@@ -53,6 +54,8 @@ class CommandComponent(Component, ParameterizedCommand):
     :type instance_count: int
     :param is_deterministic: Whether the command component is deterministic.
     :type is_deterministic: bool
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(
@@ -67,7 +70,7 @@ class CommandComponent(Component, ParameterizedCommand):
         code: str = None,
         environment: Union[str, Environment] = None,
         distribution: Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution] = None,
-        resources: ResourceConfiguration = None,
+        resources: JobResourceConfiguration = None,
         inputs: Dict = None,
         outputs: Dict = None,
         instance_count: int = None,  # promoted property from resources.instance_count
@@ -132,7 +135,7 @@ class CommandComponent(Component, ParameterizedCommand):
         if not value:
             return
         if not self.resources:
-            self.resources = ResourceConfiguration(instance_count=value)
+            self.resources = JobResourceConfiguration(instance_count=value)
         else:
             self.resources.instance_count = value
 
@@ -141,7 +144,7 @@ class CommandComponent(Component, ParameterizedCommand):
         return {
             "environment": (str, Environment),
             "environment_variables": dict,
-            "resources": (dict, ResourceConfiguration),
+            "resources": (dict, JobResourceConfiguration),
             "code": (str, os.PathLike),
         }
 
@@ -154,8 +157,7 @@ class CommandComponent(Component, ParameterizedCommand):
         # handle case when environment is defined inline
         if isinstance(self.environment, Environment):
             return self.environment.id
-        else:
-            return self.environment
+        return self.environment
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -164,7 +166,7 @@ class CommandComponent(Component, ParameterizedCommand):
     def _customized_validate(self):
         return super(CommandComponent, self)._customized_validate().merge_with(self._validate_command())
 
-    def _validate_command(self) -> ValidationResult:
+    def _validate_command(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         # command
         if self.command:
@@ -188,7 +190,7 @@ class CommandComponent(Component, ParameterizedCommand):
             else:
                 try:
                     current_obj = current_obj[item]
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     return False
         return True
 
@@ -199,5 +201,5 @@ class CommandComponent(Component, ParameterizedCommand):
     def __str__(self):
         try:
             return self._to_yaml()
-        except BaseException:
+        except BaseException:  # pylint: disable=broad-except
             return super(CommandComponent, self).__str__()

@@ -1,14 +1,12 @@
 # Release History
 
-## 12.5.0b2 (Unreleased)
+## 12.5.0 (2022-10-11)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- Stable release of features from 12.5.0b1.
 
 ### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
 
 ## 12.5.0b1 (2022-08-23)
 

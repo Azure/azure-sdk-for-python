@@ -6,24 +6,23 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "12d79cd5-5e0d-11ec-9700-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6685d07a-ed6c-4f8a-8d98-1b6bdbf28c87",
+        "apim-request-id": "6e982534-ee4d-4e01-abab-dfe818d159d5",
         "Content-Length": "96",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:11:18 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "242",
-        "X-Request-ID": "6685d07a-ed6c-4f8a-8d98-1b6bdbf28c87"
+        "x-envoy-upstream-service-time": "223",
+        "X-Request-ID": "6e982534-ee4d-4e01-abab-dfe818d159d5"
       },
       "ResponseBody": {
-        "latestSuccessTimestamp": "2021-12-15T00:00:00Z",
-        "latestActiveTimestamp": "2021-12-15T00:00:00Z"
+        "latestSuccessTimestamp": "2022-09-28T00:00:00Z",
+        "latestActiveTimestamp": "2022-09-28T00:00:00Z"
       }
     }
   ],

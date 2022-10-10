@@ -2,24 +2,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,redefined-builtin,arguments-renamed
 
-from abc import abstractclassmethod, abstractmethod
+from abc import ABC, abstractclassmethod, abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Union
 
-from azure.ai.ml._ml_exceptions import DatastoreException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
-class Datastore(Resource, RestTranslatableMixin):
+class Datastore(Resource, RestTranslatableMixin, ABC):
 
     """Datastore of an Azure ML workspace, abstract class.
 
@@ -55,21 +55,25 @@ class Datastore(Resource, RestTranslatableMixin):
             **kwargs,
         )
 
-        self.credentials = NoneCredentials() if credentials is None else credentials
+        self.credentials = NoneCredentialConfiguration() if credentials is None else credentials
 
     @property
     def type(self) -> str:
         return self._type
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the datastore content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this datastore's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
         """
-
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, **kwargs)
 
     @abstractmethod
     def _to_dict(self) -> Dict:
@@ -124,6 +128,7 @@ class Datastore(Resource, RestTranslatableMixin):
             msg = f"Unsupported datastore type: {type}."
             raise ValidationException(
                 message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
                 target=ErrorTarget.DATASTORE,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
@@ -153,23 +158,23 @@ class Datastore(Resource, RestTranslatableMixin):
         datastore_type = datastore_resource.properties.datastore_type
         if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN1:
             return AzureDataLakeGen1Datastore._from_rest_object(datastore_resource)
-        elif datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
+        if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
             return AzureDataLakeGen2Datastore._from_rest_object(datastore_resource)
-        elif datastore_type == DatastoreType.AZURE_BLOB:
+        if datastore_type == DatastoreType.AZURE_BLOB:
             return AzureBlobDatastore._from_rest_object(datastore_resource)
-        elif datastore_type == DatastoreType.AZURE_FILE:
+        if datastore_type == DatastoreType.AZURE_FILE:
             return AzureFileDatastore._from_rest_object(datastore_resource)
         # disable unless preview release
         # elif datastore_type == DatastoreTypePreview.HDFS:
         #     return HdfsDatastore._from_rest_object(datastore_resource)
-        else:
-            msg = f"Unsupported datastore type {datastore_resource.properties.contents.type}"
-            raise DatastoreException(
-                message=msg,
-                target=ErrorTarget.DATASTORE,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.SYSTEM_ERROR,
-            )
+        msg = f"Unsupported datastore type {datastore_resource.properties.contents.type}"
+        raise ValidationException(
+            message=msg,
+            error_type=ValidationErrorType.INVALID_VALUE,
+            target=ErrorTarget.DATASTORE,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
 
     @abstractclassmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Datastore":

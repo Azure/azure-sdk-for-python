@@ -1,18 +1,15 @@
 # Release History
 
-## 12.5.0 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 12.4.1 (2022-10-11)
 
 ### Bugs Fixed
 * Fix handling of client-side exceptions that get raised during service requests (such as [#21416](https://github.com/Azure/azure-sdk-for-python/issues/21416)) ([#24788](https://github.com/Azure/azure-sdk-for-python/pull/24788))
 
 ### Other Changes
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later.
-* Bumped minimum dependency on `azure-core` to `>=1.24.0`
-* Bumped minimum dependency on `msrest` to `>=0.7.1`
+* Bumped minimum dependency on `azure-core` to `>=1.24.0`.
+* Bumped minimum dependency on `msrest` to `>=0.7.1`.
+* Added dependency `yarl` with version range `<2.0,>=1.0`.
 
 ## 12.4.0 (2022-05-10)
 
@@ -21,6 +18,8 @@
 
 ### Bugs Fixed
 * Fixed bug where odmtype tag was not being included for boolean and int32 types even when a full EdmProperty tuple was passed in. This is needed for CLI compatibility.
+
+[comment]: # ( cspell:ignore odmtype )
 
 ## 12.3.0 (2022-03-10)
 
@@ -44,6 +43,8 @@
 
 ### Features Added
 * Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+
+[comment]: # ( cspell:ignore yashbhutoria )
 
 ### Other Changes
 * Bumped dependency on `msrest` to `>=0.6.21`

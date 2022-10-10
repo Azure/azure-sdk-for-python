@@ -7,7 +7,6 @@
 from marshmallow import fields
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema._sweep.search_space import (
     ChoiceSchema,
     NormalSchema,
@@ -26,6 +25,7 @@ from azure.ai.ml._schema._sweep.sweep_termination import (
     MedianStoppingPolicySchema,
     TruncationSelectionPolicySchema,
 )
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 
 
 def SamplingAlgorithmField():

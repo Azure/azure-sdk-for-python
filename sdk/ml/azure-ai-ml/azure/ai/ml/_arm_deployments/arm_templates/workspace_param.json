@@ -109,5 +109,11 @@
     },
     "encryption_search_resourceid": {
         "value": ""
+    },
+    "identity": {
+        "value": {}
+    },
+    "primaryUserAssignedIdentity": {
+        "value": ""
     }
 }

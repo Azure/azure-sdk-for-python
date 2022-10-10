@@ -35,7 +35,7 @@ import asyncio
 
 
 async def sample_copy_model_to_async(custom_model_id):
-    # [START begin_copy_model_to_async]
+    # [START begin_copy_document_model_to_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 
@@ -53,7 +53,7 @@ async def sample_copy_model_to_async(custom_model_id):
 
     source_client = DocumentModelAdministrationClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
     async with source_client:
-        poller = await source_client.begin_copy_model_to(
+        poller = await source_client.begin_copy_document_model_to(
             model_id=source_model_id,
             target=target  # output from target client's call to get_copy_authorization()
         )
@@ -69,7 +69,7 @@ async def sample_copy_model_to_async(custom_model_id):
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
             ))
-    # [END begin_copy_model_to_async]
+    # [END begin_copy_document_model_to_async]
 
 
 async def main():
@@ -90,7 +90,7 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with document_model_admin_client:
-            model = await (await document_model_admin_client.begin_build_model(ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL"))).result()
+            model = await (await document_model_admin_client.begin_build_document_model(ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL"))).result()
             model_id = model.model_id
 
     await sample_copy_model_to_async(model_id)

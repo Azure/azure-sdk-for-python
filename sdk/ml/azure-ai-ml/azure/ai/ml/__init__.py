@@ -7,13 +7,19 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 import logging
 
 # from .entities._builders.parallel_func import parallel
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ._ml_client import MLClient
-from ._utils.utils import initialize_logger_info
+from ._utils._logger_utils import initialize_logger_info
+from ._version import VERSION
 from .entities._builders.command_func import command
+from .entities._builders.spark_func import spark
 from .entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from .entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration
+)
 from .entities._load_functions import (
     load_batch_deployment,
     load_batch_endpoint,
@@ -26,6 +32,7 @@ from .entities._load_functions import (
     load_model,
     load_online_deployment,
     load_online_endpoint,
+    load_registry,
     load_workspace,
     load_workspace_connection,
 )
@@ -36,15 +43,16 @@ initialize_logger_info(module_logger, terminator="\n")
 __all__ = [
     "MLClient",
     "command",
+    "spark",
     # "parallel",
     "Input",
     "Output",
     "MpiDistribution",
     "PyTorchDistribution",
     "TensorFlowDistribution",
-    "ManagedIdentity",
-    "AmlToken",
-    "UserIdentity",
+    "ManagedIdentityConfiguration",
+    "AmlTokenConfiguration",
+    "UserIdentityConfiguration",
     "load_batch_deployment",
     "load_batch_endpoint",
     "load_component",
@@ -57,5 +65,8 @@ __all__ = [
     "load_online_deployment",
     "load_online_endpoint",
     "load_workspace",
+    "load_registry",
     "load_workspace_connection",
 ]
+
+__version__ = VERSION

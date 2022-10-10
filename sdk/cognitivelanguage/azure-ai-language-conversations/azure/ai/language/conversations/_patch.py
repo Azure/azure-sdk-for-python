@@ -33,6 +33,8 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import ConversationAnalysisClient as GeneratedConversationAnalysisClient
 
+POLLING_INTERVAL_DEFAULT = 5
+
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -50,7 +52,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint: disable=client-accepts-api-version-keyword
+class ConversationAnalysisClient(GeneratedConversationAnalysisClient):
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). The synchronous API
     in this suite accepts a request and mediates among multiple language projects, such as LUIS
@@ -76,10 +78,16 @@ class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint:
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 

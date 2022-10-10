@@ -8,7 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +26,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._metric_alerts_status_operations import build_list_by_name_request, build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class MetricAlertsStatusOperations:
     """
@@ -41,43 +50,42 @@ class MetricAlertsStatusOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def list(
-        self,
-        resource_group_name: str,
-        rule_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, rule_name: str, **kwargs: Any
     ) -> _models.MetricAlertStatusCollection:
         """Retrieve an alert rule status.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param rule_name: The name of the rule.
+        :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MetricAlertStatusCollection, or the result of cls(response)
+        :return: MetricAlertStatusCollection or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MetricAlertStatusCollection]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricAlertStatusCollection]
 
-        
         request = build_list_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             rule_name=rule_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list.metadata['url'],
+            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -85,10 +93,9 @@ class MetricAlertsStatusOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -96,56 +103,54 @@ class MetricAlertsStatusOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)
+        deserialized = self._deserialize("MetricAlertStatusCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status"}  # type: ignore
-
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status"}  # type: ignore
 
     @distributed_trace_async
     async def list_by_name(
-        self,
-        resource_group_name: str,
-        rule_name: str,
-        status_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, rule_name: str, status_name: str, **kwargs: Any
     ) -> _models.MetricAlertStatusCollection:
         """Retrieve an alert rule status.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param rule_name: The name of the rule.
+        :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param status_name: The name of the status.
+        :param status_name: The name of the status. Required.
         :type status_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: MetricAlertStatusCollection, or the result of cls(response)
+        :return: MetricAlertStatusCollection or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2018_03_01.models.MetricAlertStatusCollection
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2018-03-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.MetricAlertStatusCollection]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-03-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MetricAlertStatusCollection]
 
-        
         request = build_list_by_name_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             rule_name=rule_name,
             status_name=status_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_by_name.metadata['url'],
+            template_url=self.list_by_name.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -153,10 +158,9 @@ class MetricAlertsStatusOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -164,12 +168,11 @@ class MetricAlertsStatusOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('MetricAlertStatusCollection', pipeline_response)
+        deserialized = self._deserialize("MetricAlertStatusCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_by_name.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status/{statusName}"}  # type: ignore
-
+    list_by_name.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}/status/{statusName}"}  # type: ignore

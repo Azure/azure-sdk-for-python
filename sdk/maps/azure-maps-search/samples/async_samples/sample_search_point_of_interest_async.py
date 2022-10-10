@@ -23,7 +23,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 async def search_point_of_interest_async():
-    # [START search_point_of_interest_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
 
@@ -34,8 +33,6 @@ async def search_point_of_interest_async():
 
     print("Get Search POI:")
     print(result)
-    # [END search_point_of_interest_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(search_point_of_interest_async())
+    asyncio.run(search_point_of_interest_async())

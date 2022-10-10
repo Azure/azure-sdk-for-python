@@ -11,7 +11,7 @@ import asyncio
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
@@ -200,6 +200,19 @@ async def create_container(db, id):
         except Exception:
             print('Creating container with analytical storage can only happen in synapse link activated accounts, skipping step')
 
+    print("\n2.8 Create Container - With auto scale settings")
+
+    try:
+        container = await db.create_container(
+            id=id+"_container_auto_scale_settings",
+            partition_key=partition_key,
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
+        )
+        print('Container with id \'{0}\' created'.format(container.id))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'{0}\' already exists'.format(coll['id']))
+
 
 
 async def manage_provisioned_throughput(db, id):
@@ -261,7 +274,7 @@ async def list_containers(db):
     for container in containers:
         print(container['id'])
 
-    # Alternitavely, you can directly iterate over the asynchronous iterator without building a separate
+    # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for container in container_list:
         print(container['id'])
@@ -317,6 +330,4 @@ async def run_sample():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_sample())
-
+    asyncio.run(run_sample())

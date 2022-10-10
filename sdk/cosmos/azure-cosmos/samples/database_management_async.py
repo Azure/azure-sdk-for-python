@@ -10,7 +10,7 @@ import asyncio
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
@@ -56,7 +56,7 @@ async def find_database(client, id):
     else:
         print('No database with id \'{0}\' was found'. format(id))
 
-    # Alternitavely, you can directly iterate over the asynchronous iterator without building a separate
+    # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for database in query_databases_response:
         print(database['id'])
@@ -67,6 +67,17 @@ async def create_database(client, id):
 
     try:
         await client.create_database(id=id)
+        print('Database with id \'{0}\' created'.format(id))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A database with id \'{0}\' already exists'.format(id))
+
+    print("\n2.8 Create Database - With auto scale settings")
+
+    try:
+        await client.create_database(
+            id=id,
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
         print('Database with id \'{0}\' created'.format(id))
 
     except exceptions.CosmosResourceExistsError:
@@ -109,7 +120,7 @@ async def list_databases(client):
     for database in databases:
         print(database['id'])
 
-    # Alternitavely, you can directly iterate over the asynchronous iterator without building a separate
+    # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
     async for database in list_databases_response:
         print(database['id'])
@@ -151,5 +162,4 @@ async def run_sample():
             print("\nrun_sample done")
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_sample())
+    asyncio.run(run_sample())
