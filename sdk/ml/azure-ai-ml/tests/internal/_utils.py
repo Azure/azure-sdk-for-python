@@ -106,6 +106,7 @@ PARAMETERS_TO_TEST = [
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
         },
         {
+            "compute_name": "cpu-cluster",  # runsettings.hdinsight.compute_name
             "queue": "default",  # runsettings.hdinsight.queue
             "driver_memory": "1g",  # runsettings.hdinsight.driver_memory
             "driver_cores": 2,  # runsettings.hdinsight.driver_cores

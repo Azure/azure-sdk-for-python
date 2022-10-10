@@ -176,6 +176,7 @@ class HDInsight(InternalBaseNode):
         kwargs.pop("type", None)
         super(HDInsight, self).__init__(type=NodeType.HDI, **kwargs)
         self._init = True
+        self._compute_name: str = kwargs.pop("compute_name", None)
         self._queue: str = kwargs.pop("queue", None)
         self._driver_memory: str = kwargs.pop("driver_memory", None)
         self._driver_cores: int = kwargs.pop("driver_cores", None)
@@ -185,6 +186,15 @@ class HDInsight(InternalBaseNode):
         self._conf: Union[dict, str] = kwargs.pop("conf", None)
         self._hdinsight_spark_job_name: str = kwargs.pop("hdinsight_spark_job_name", None)
         self._init = False
+
+    @property
+    def compute_name(self) -> str:
+        """Name of the compute to be used."""
+        return self._compute_name
+
+    @compute_name.setter
+    def compute_name(self, value: str):
+        self._compute_name = value
 
     @property
     def queue(self) -> str:
@@ -267,6 +277,7 @@ class HDInsight(InternalBaseNode):
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return [
+            "compute_name",
             "queue",
             "driver_cores",
             "executor_memory",
