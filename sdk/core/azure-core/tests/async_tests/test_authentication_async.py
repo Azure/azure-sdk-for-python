@@ -7,11 +7,13 @@ import asyncio
 from email.policy import HTTP
 import time
 from unittest.mock import Mock
+from requests import Response
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy, AsyncRedirectPolicy
+from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 import pytest
 
 pytestmark = pytest.mark.asyncio
@@ -226,3 +228,125 @@ def get_completed_future(result=None):
     fut = asyncio.Future()
     fut.set_result(result)
     return fut
+
+@pytest.mark.asyncio
+async def test_bearer_policy_redirect_same_domain():
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self._first = True
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+        async def close(self):
+            pass
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers['location'] = "https://localhost"
+                return response
+            assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+    async def get_token(_):
+        token = AccessToken(auth_headder, 0)
+        return token
+
+    credential = Mock(get_token=get_token)
+    auth_policy = AsyncBearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = AsyncRedirectPolicy()
+    pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy])
+
+    await pipeline.run(HttpRequest("GET", "https://localhost"))
+
+@pytest.mark.asyncio
+async def test_bearer_policy_redirect_different_domain():
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self._first = True
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers['location'] = "https://localhost1"
+                return response
+            assert "Authorization" not in request.headers
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+
+    async def get_token(_):
+        token = AccessToken(auth_headder, 0)
+        return token
+
+    credential = Mock(get_token=get_token)
+    auth_policy = AsyncBearerTokenCredentialPolicy(credential, expected_scope)
+    redirect_policy = AsyncRedirectPolicy()
+    pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy])
+
+    await pipeline.run(HttpRequest("GET", "https://localhost"))
+
+@pytest.mark.asyncio
+async def test_bearer_policy_redirect_always_adding_header():
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self._first = True
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            if self._first:
+                self._first = False
+                assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+                response = Response()
+                response.status_code = 301
+                response.headers['location'] = "https://localhost1"
+                return response
+            assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
+            response = Response()
+            response.status_code = 200
+            return response
+
+    auth_headder = "token"
+    expected_scope = "scope"
+
+    async def get_token(_):
+        token = AccessToken(auth_headder, 0)
+        return token
+
+    credential = Mock(get_token=get_token)
+    auth_policy = AsyncBearerTokenCredentialPolicy(credential, expected_scope, always_adding_header=True)
+    redirect_policy = AsyncRedirectPolicy()
+    pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy])
+
+    await pipeline.run(HttpRequest("GET", "https://localhost"))

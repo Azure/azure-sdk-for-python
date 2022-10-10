@@ -34,6 +34,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         self._lock = asyncio.Lock()
         self._scopes = scopes
         self._token = None  # type: Optional[AccessToken]
+        self._original_url = None
+        self._always_adding_header = kwargs.pop('always_adding_header', False)
 
     async def on_request(self, request: "PipelineRequest") -> None:  # pylint:disable=invalid-overridden-method
         """Adds a bearer token Authorization header to request and sends request to next policy.
@@ -130,3 +132,13 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
     def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
+
+    def _need_adding_header(self, url):
+        if self._always_adding_header:
+            return True
+        if not self._original_url:
+            self._original_url = url
+            return True
+        if self._original_url == url:
+            return True
+        return False
