@@ -69,6 +69,7 @@ class Model(Artifact):
         description: str = None,
         tags: Dict = None,
         properties: Dict = None,
+        is_ip_protected: bool = False,
         **kwargs,
     ):
         self.job_name = kwargs.pop("job_name", None)
@@ -79,6 +80,7 @@ class Model(Artifact):
             description=description,
             tags=tags,
             properties=properties,
+            is_ip_protected=is_ip_protected,
             **kwargs,
         )
         self.utc_time_created = utc_time_created

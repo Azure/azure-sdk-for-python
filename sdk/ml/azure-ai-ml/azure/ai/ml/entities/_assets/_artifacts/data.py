@@ -96,6 +96,7 @@ class Data(Artifact):
         properties: Optional[Dict] = None,
         path: Optional[str] = None,  # if type is mltable, the path has to be a folder.
         type: str = AssetTypes.URI_FOLDER,  # type: ignore
+        is_ip_protected: bool = False,
         **kwargs,
     ):
         self._skip_validation = kwargs.pop("skip_validation", False)
@@ -109,6 +110,7 @@ class Data(Artifact):
             description=description,
             tags=tags,
             properties=properties,
+            is_ip_protected=is_ip_protected,
             **kwargs,
         )
         self.path = path

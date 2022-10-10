@@ -1316,6 +1316,7 @@ class AssetBase(ResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
+        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -1326,6 +1327,7 @@ class AssetBase(ResourceBase):
         tags: Optional[Dict[str, str]] = None,
         is_anonymous: Optional[bool] = False,
         is_archived: Optional[bool] = False,
+        is_ip_protected: Optional[bool] = False,
         **kwargs
     ):
         """
@@ -1343,6 +1345,7 @@ class AssetBase(ResourceBase):
         super(AssetBase, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
         self.is_anonymous = is_anonymous
         self.is_archived = is_archived
+        self.is_ip_protected= is_ip_protected
 
 
 class AssetContainer(ResourceBase):
@@ -3487,6 +3490,7 @@ class CodeVersionDetails(AssetBase):
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'code_uri': {'key': 'codeUri', 'type': 'str'},
+        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -3498,6 +3502,7 @@ class CodeVersionDetails(AssetBase):
         is_anonymous: Optional[bool] = False,
         is_archived: Optional[bool] = False,
         code_uri: Optional[str] = None,
+        is_ip_protected: Optional[bool] = False,
         **kwargs
     ):
         """
@@ -3514,7 +3519,7 @@ class CodeVersionDetails(AssetBase):
         :keyword code_uri: Uri where code is located.
         :paramtype code_uri: str
         """
-        super(CodeVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, **kwargs)
+        super(CodeVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.code_uri = code_uri
 
 
@@ -4151,6 +4156,7 @@ class ComponentVersionDetails(AssetBase):
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'component_spec': {'key': 'componentSpec', 'type': 'object'},
+        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -4162,6 +4168,7 @@ class ComponentVersionDetails(AssetBase):
         is_anonymous: Optional[bool] = False,
         is_archived: Optional[bool] = False,
         component_spec: Optional[Any] = None,
+        is_ip_protected: Optional[bool] = False,
         **kwargs
     ):
         """
@@ -4185,7 +4192,7 @@ class ComponentVersionDetails(AssetBase):
          />.
         :paramtype component_spec: any
         """
-        super(ComponentVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, **kwargs)
+        super(ComponentVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.component_spec = component_spec
 
 
@@ -6425,6 +6432,7 @@ class DataVersionBaseDetails(AssetBase):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'data_type': {'key': 'dataType', 'type': 'str'},
         'data_uri': {'key': 'dataUri', 'type': 'str'},
+        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
     }
 
     _subtype_map = {
@@ -6440,6 +6448,7 @@ class DataVersionBaseDetails(AssetBase):
         tags: Optional[Dict[str, str]] = None,
         is_anonymous: Optional[bool] = False,
         is_archived: Optional[bool] = False,
+        is_ip_protected: Optional[bool] = False,
         **kwargs
     ):
         """
@@ -6457,7 +6466,7 @@ class DataVersionBaseDetails(AssetBase):
          Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20220501.Assets.DataVersionBase.DataType.
         :paramtype data_uri: str
         """
-        super(DataVersionBaseDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, **kwargs)
+        super(DataVersionBaseDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected,  **kwargs)
         self.data_type = 'DataVersionBaseDetails'  # type: str
         self.data_uri = data_uri
 
@@ -7357,6 +7366,7 @@ class EnvironmentVersionDetails(AssetBase):
         'image': {'key': 'image', 'type': 'str'},
         'inference_config': {'key': 'inferenceConfig', 'type': 'InferenceContainerProperties'},
         'os_type': {'key': 'osType', 'type': 'str'},
+        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -7372,6 +7382,7 @@ class EnvironmentVersionDetails(AssetBase):
         image: Optional[str] = None,
         inference_config: Optional["InferenceContainerProperties"] = None,
         os_type: Optional[Union[str, "OperatingSystemType"]] = None,
+        is_ip_protected: Optional[bool] = False,
         **kwargs
     ):
         """
@@ -7412,7 +7423,7 @@ class EnvironmentVersionDetails(AssetBase):
         :keyword os_type: The OS type of the environment. Possible values include: "Linux", "Windows".
         :paramtype os_type: str or ~azure.mgmt.machinelearningservices.models.OperatingSystemType
         """
-        super(EnvironmentVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, **kwargs)
+        super(EnvironmentVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.build = build
         self.conda_file = conda_file
         self.environment_type = None
@@ -10001,6 +10012,7 @@ class ModelVersionDetails(AssetBase):
         'job_name': {'key': 'jobName', 'type': 'str'},
         'model_type': {'key': 'modelType', 'type': 'str'},
         'model_uri': {'key': 'modelUri', 'type': 'str'},
+        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -10015,6 +10027,7 @@ class ModelVersionDetails(AssetBase):
         job_name: Optional[str] = None,
         model_type: Optional[str] = None,
         model_uri: Optional[str] = None,
+        is_ip_protected: Optional[bool] = False,
         **kwargs
     ):
         """
@@ -10037,7 +10050,7 @@ class ModelVersionDetails(AssetBase):
         :keyword model_uri: The URI path to the model contents.
         :paramtype model_uri: str
         """
-        super(ModelVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, **kwargs)
+        super(ModelVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.flavors = flavors
         self.job_name = job_name
         self.model_type = model_type

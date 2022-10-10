@@ -7,6 +7,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from azure.ai.ml._restclient.v2021_10_01.models import CreatedByType
 from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageUnit
 
+from ._assets import Code
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
@@ -137,6 +138,7 @@ __all__ = [
     "DefaultScaleSettings",
     "TargetUtilizationScaleSettings",
     "Asset",
+    "Code",
     "Environment",
     "BuildContext",
     "Model",

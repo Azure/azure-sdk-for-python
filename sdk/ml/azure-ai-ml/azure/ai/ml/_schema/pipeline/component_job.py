@@ -155,6 +155,13 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
 
+    def get_code_path(self, code):
+        # Return path of code
+        # handle case when code is defined inline
+        if isinstance(code, str):
+            return code
+        return code.path
+
     @post_dump(pass_original=True)
     def resolve_code_path(self, data, original_data, **kwargs):
         # Command.code is relative to pipeline instead of Command.component after serialization,
@@ -166,7 +173,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             and original_data.component.base_path != original_data._base_path
         ):
             try:
-                code_path = Path(original_data.component.base_path) / original_data.component.code
+                code_path = Path(original_data.component.base_path) / self.get_code_path(original_data.component.code)
                 if code_path.exists():
                     # relative path can't be calculated if component.base_path & pipeline.base_path are in different
                     # drive, so just use absolute path

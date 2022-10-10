@@ -100,6 +100,7 @@ class Environment(Asset):
         tags: Dict = None,
         properties: Dict = None,
         datastore: Optional[str] = None,
+        is_ip_protected: Optional[bool] = False,
         **kwargs,
     ):
         inference_config = kwargs.pop("inference_config", None)
@@ -111,6 +112,7 @@ class Environment(Asset):
             description=description,
             tags=tags,
             properties=properties,
+            is_ip_protected=is_ip_protected,
             **kwargs,
         )
 

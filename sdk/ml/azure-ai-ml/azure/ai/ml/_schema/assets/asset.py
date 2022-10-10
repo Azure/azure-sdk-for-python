@@ -21,6 +21,7 @@ class AssetSchema(ResourceSchema):
     version = VersionField()
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     latest_version = fields.Str(dump_only=True)
+    is_ip_protected = fields.Bool(load_default=False)
 
 
 class AnonymousAssetSchema(AssetSchema):

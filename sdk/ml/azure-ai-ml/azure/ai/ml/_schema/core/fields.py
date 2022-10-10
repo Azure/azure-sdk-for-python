@@ -621,8 +621,10 @@ def CodeField(**kwargs):
     :param required : if set to True, it is not possible to pass None
     :type required: bool
     """
+    from azure.ai.ml._schema.assets.code_asset import CodeAssetSchema
     return UnionField(
         [
+            NestedField(CodeAssetSchema),
             LocalPathField(),
             SerializeValidatedUrl(),
             GitStr(),

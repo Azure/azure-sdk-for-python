@@ -47,6 +47,7 @@ class Code(Artifact):
         tags: Dict = None,
         properties: Dict = None,
         path: Union[str, PathLike] = None,
+        is_ip_protected: bool = False,
         **kwargs,
     ):
         super().__init__(
@@ -56,6 +57,7 @@ class Code(Artifact):
             tags=tags,
             properties=properties,
             path=path,
+            is_ip_protected=is_ip_protected,
             **kwargs,
         )
         self._arm_type = ArmConstants.CODE_VERSION_TYPE

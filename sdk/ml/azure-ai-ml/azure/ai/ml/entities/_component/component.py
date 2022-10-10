@@ -101,6 +101,7 @@ class Component(
         yaml_str: str = None,
         _schema: str = None,
         creation_context: SystemData = None,
+        is_ip_protected: bool = False,
         **kwargs,
     ):
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
@@ -120,6 +121,7 @@ class Component(
             is_anonymous=kwargs.pop("is_anonymous", False),
             base_path=kwargs.pop("base_path", None),
             source_path=kwargs.pop("source_path", None),
+            is_ip_protected=is_ip_protected,
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
@@ -414,6 +416,7 @@ class Component(
             is_anonymous=self._is_anonymous,
             properties=self.properties,
             tags=self.tags,
+            is_ip_protected=self.is_ip_protected,
         )
         result = ComponentVersionData(properties=properties)
         result.name = self.name

@@ -10,7 +10,7 @@ from marshmallow import Schema
 from azure.ai.ml._schema.component.command_component import CommandComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.entities._assets import Environment, Code
+from azure.ai.ml.entities._assets import Code, Environment
 from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
@@ -156,13 +156,6 @@ class CommandComponent(Component, ParameterizedCommand):
         if isinstance(self.environment, Environment):
             return self.environment.id
         return self.environment
-
-    def _get_code_path(self)-> Union[str,None]:
-        # Return path of code
-        # handle case when code is defined inline
-        if isinstance(self.code, Code):
-            return self.code.path
-        return self.code
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:

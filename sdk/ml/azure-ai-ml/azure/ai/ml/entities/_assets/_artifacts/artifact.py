@@ -75,6 +75,7 @@ class Artifact(Asset):
         properties: Optional[Dict] = None,
         path: Optional[Union[str, PathLike]] = None,
         datastore: Optional[str] = None,
+        is_ip_protected: Optional[bool] = False,
         **kwargs,
     ):
         super().__init__(
@@ -83,6 +84,7 @@ class Artifact(Asset):
             description=description,
             tags=tags,
             properties=properties,
+            is_ip_protected=is_ip_protected,
             **kwargs,
         )
         self.path = path

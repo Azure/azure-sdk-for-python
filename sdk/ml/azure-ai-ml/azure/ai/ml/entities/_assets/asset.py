@@ -26,8 +26,8 @@ class Asset(Resource):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param is_intellectual_property: Specifies Whether the Asset is IP
-    :type is_intellectual_property: boolean
+    :param is_ip_protected: Specifies Whether the Asset is IP
+    :type is_ip_protected: boolean
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -39,13 +39,13 @@ class Asset(Resource):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        is_intellectual_property: Optional[bool] = False,
+        is_ip_protected: Optional[bool] = False,
         **kwargs,
     ):
 
         self._is_anonymous = kwargs.pop("is_anonymous", False)
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
-        self.is_intellectual_property = is_intellectual_property
+        self.is_ip_protected = is_ip_protected
 
         if not name and version is None:
             name = _get_random_name()
@@ -125,7 +125,7 @@ class Asset(Resource):
             and self.base_path == other.base_path
             and self._is_anonymous == other._is_anonymous
             and self._auto_increment_version == other._auto_increment_version
-            and self.is_intellectual_property == other.is_intellectual_property
+            and self.is_ip_protected == other.is_ip_protected
         )
 
     def __ne__(self, other) -> bool:
