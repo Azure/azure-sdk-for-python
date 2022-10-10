@@ -1660,6 +1660,7 @@ class TestStorageFile(StorageRecordedTestCase):
         actual_data = file_client.download_file().readall()
         assert actual_data == data
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_abort_copy_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")

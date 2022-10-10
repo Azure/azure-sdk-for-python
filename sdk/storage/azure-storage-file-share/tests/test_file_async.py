@@ -1685,6 +1685,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         actual_data = await content.readall()
         assert actual_data == data
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_abort_copy_file_async(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
