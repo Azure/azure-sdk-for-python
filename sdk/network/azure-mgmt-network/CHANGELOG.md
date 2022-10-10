@@ -1,5 +1,65 @@
 # Release History
 
+## 22.0.0 (2022-10-10)
+
+### Features Added
+
+  - Added operation PublicIPAddressesOperations.begin_ddos_protection_status
+  - Added operation VirtualHubsOperations.begin_get_inbound_routes
+  - Added operation VirtualHubsOperations.begin_get_outbound_routes
+  - Added operation VirtualNetworksOperations.begin_list_ddos_protection_status
+  - Added operation group ApplicationGatewayWafDynamicManifestsDefaultOperations
+  - Added operation group ApplicationGatewayWafDynamicManifestsOperations
+  - Added operation group NspAssociationReconcileOperations
+  - Added operation group RouteMapsOperations
+  - Added operation group VipSwapOperations
+  - Model ApplicationGatewayClientAuthConfiguration has a new parameter verify_client_revocation
+  - Model ApplicationGatewayFirewallRule has a new parameter action
+  - Model ApplicationGatewayFirewallRule has a new parameter rule_id_string
+  - Model ApplicationGatewayFirewallRule has a new parameter state
+  - Model ApplicationGatewayFirewallRuleSet has a new parameter tiers
+  - Model CustomIpPrefix has a new parameter asn
+  - Model CustomIpPrefix has a new parameter express_route_advertise
+  - Model CustomIpPrefix has a new parameter geo
+  - Model CustomIpPrefix has a new parameter prefix_type
+  - Model DdosProtectionPlan has a new parameter public_ip_addresses
+  - Model DdosSettings has a new parameter ddos_protection_plan
+  - Model DdosSettings has a new parameter protection_mode
+  - Model ExpressRouteConnection has a new parameter enable_private_link_fast_path
+  - Model ExpressRouteGateway has a new parameter allow_non_virtual_wan_traffic
+  - Model ExpressRouteLink has a new parameter colo_location
+  - Model ExpressRoutePort has a new parameter billing_type
+  - Model ManagedRuleOverride has a new parameter action
+  - Model NetworkInterface has a new parameter disable_tcp_state_tracking
+  - Model NspProfile has a new parameter diagnostic_settings_version
+  - Model Probe has a new parameter probe_threshold
+  - Model RoutingConfiguration has a new parameter inbound_route_map
+  - Model RoutingConfiguration has a new parameter outbound_route_map
+  - Model VirtualHub has a new parameter route_maps
+  - Model VirtualNetworkGateway has a new parameter allow_remote_vnet_traffic
+  - Model VirtualNetworkGateway has a new parameter allow_virtual_wan_traffic
+  - Model VirtualNetworkGateway has a new parameter virtual_network_gateway_policy_groups
+  - Model VirtualNetworkGatewayConnection has a new parameter enable_private_link_fast_path
+  - Model VirtualNetworkGatewayConnectionListEntity has a new parameter enable_private_link_fast_path
+  - Model VnetRoute has a new parameter static_routes_config
+  - Model VpnClientConfiguration has a new parameter vng_client_connection_configurations
+
+### Breaking Changes
+
+  - Model DdosCustomPolicy no longer has parameter protocol_custom_settings
+  - Model DdosCustomPolicy no longer has parameter public_ip_addresses
+  - Model DdosSettings no longer has parameter ddos_custom_policy
+  - Model DdosSettings no longer has parameter protected_ip
+  - Model DdosSettings no longer has parameter protection_coverage
+  - Operation NetworkManagementClientOperationsMixin.list_active_connectivity_configurations has a new parameter top
+  - Operation NetworkManagementClientOperationsMixin.list_active_security_admin_rules has a new parameter top
+  - Operation NetworkManagementClientOperationsMixin.list_network_manager_effective_connectivity_configurations has a new parameter top
+  - Operation NetworkManagementClientOperationsMixin.list_network_manager_effective_security_admin_rules has a new parameter top
+  - Operation NetworkManagerDeploymentStatusOperations.list has a new parameter top
+  - Removed operation NetworkSecurityPerimetersOperations.check_members
+  - Removed operation NetworkSecurityPerimetersOperations.query
+  - Removed operation group NspAssociationsProxyOperations
+
 ## 21.0.1 (2022-08-17)
 
 ### Bugs Fixed
