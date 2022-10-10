@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +28,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._backup_usage_summaries_crr_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class BackupUsageSummariesCRROperations:
     """
@@ -42,7 +52,6 @@ class BackupUsageSummariesCRROperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list(
         self,
@@ -51,46 +60,50 @@ class BackupUsageSummariesCRROperations:
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.BackupManagementUsageList]:
+    ) -> AsyncIterable["_models.BackupManagementUsage"]:
         """Fetches the backup management usage summaries of the vault.
 
-        :param vault_name: The name of the recovery services vault.
+        :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
-         present.
+         present. Required.
         :type resource_group_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
         :param skip_token: skipToken Filter. Default value is None.
         :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BackupManagementUsageList or the result of
+        :return: An iterator like instance of either BackupManagementUsage or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementUsageList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementUsage]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-11-15"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.BackupManagementUsageList]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BackupManagementUsageList]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     vault_name=vault_name,
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=api_version,
                     filter=filter,
                     skip_token=skip_token,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -98,18 +111,11 @@ class BackupUsageSummariesCRROperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    vault_name=vault_name,
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    filter=filter,
-                    skip_token=skip_token,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -125,10 +131,8 @@ class BackupUsageSummariesCRROperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -139,8 +143,6 @@ class BackupUsageSummariesCRROperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupUsageSummaries"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupUsageSummaries"}  # type: ignore

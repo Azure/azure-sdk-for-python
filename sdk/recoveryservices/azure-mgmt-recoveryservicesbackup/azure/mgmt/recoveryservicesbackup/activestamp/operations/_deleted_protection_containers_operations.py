@@ -37,13 +37,7 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_list_request(
-    vault_name: str,
-    resource_group_name: str,
-    subscription_id: str,
-    *,
-    filter: Optional[str] = None,
-    skip_token: Optional[str] = None,
-    **kwargs: Any
+    resource_group_name: str, vault_name: str, subscription_id: str, *, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -54,12 +48,12 @@ def build_list_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupJobs",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupDeletedProtectionContainers",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -68,8 +62,6 @@ def build_list_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
-    if skip_token is not None:
-        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -77,14 +69,14 @@ def build_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class BackupJobsOperations:
+class DeletedProtectionContainersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.recoveryservicesbackup.activestamp.RecoveryServicesBackupClient`'s
-        :attr:`backup_jobs` attribute.
+        :attr:`deleted_protection_containers` attribute.
     """
 
     models = _models
@@ -98,35 +90,29 @@ class BackupJobsOperations:
 
     @distributed_trace
     def list(
-        self,
-        vault_name: str,
-        resource_group_name: str,
-        filter: Optional[str] = None,
-        skip_token: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterable["_models.JobResource"]:
-        """Provides a pageable list of jobs.
+        self, resource_group_name: str, vault_name: str, filter: Optional[str] = None, **kwargs: Any
+    ) -> Iterable["_models.ProtectionContainerResource"]:
+        """Lists the soft deleted containers registered to Recovery Services Vault.
 
-        :param vault_name: The name of the recovery services vault. Required.
-        :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
          present. Required.
         :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
-        :param skip_token: skipToken Filter. Default value is None.
-        :type skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobResource or the result of cls(response)
+        :return: An iterator like instance of either ProtectionContainerResource or the result of
+         cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.recoveryservicesbackup.activestamp.models.JobResource]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionContainerResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobResourceList]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ProtectionContainerResourceList]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -140,11 +126,10 @@ class BackupJobsOperations:
             if not next_link:
 
                 request = build_list_request(
-                    vault_name=vault_name,
                     resource_group_name=resource_group_name,
+                    vault_name=vault_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
-                    skip_token=skip_token,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -165,7 +150,7 @@ class BackupJobsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("JobResourceList", pipeline_response)
+            deserialized = self._deserialize("ProtectionContainerResourceList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -187,4 +172,4 @@ class BackupJobsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupJobs"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupDeletedProtectionContainers"}  # type: ignore

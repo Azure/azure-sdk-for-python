@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,15 +10,14 @@
 import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class AADProperties(msrest.serialization.Model):
+class AADProperties(_serialization.Model):
     """AADProperties.
 
     :ivar service_principal_client_id:
@@ -33,11 +33,11 @@ class AADProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'service_principal_client_id': {'key': 'servicePrincipalClientId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'authority': {'key': 'authority', 'type': 'str'},
-        'audience': {'key': 'audience', 'type': 'str'},
-        'service_principal_object_id': {'key': 'servicePrincipalObjectId', 'type': 'str'},
+        "service_principal_client_id": {"key": "servicePrincipalClientId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "authority": {"key": "authority", "type": "str"},
+        "audience": {"key": "audience", "type": "str"},
+        "service_principal_object_id": {"key": "servicePrincipalObjectId", "type": "str"},
     }
 
     def __init__(
@@ -62,7 +62,7 @@ class AADProperties(msrest.serialization.Model):
         :keyword service_principal_object_id:
         :paramtype service_principal_object_id: str
         """
-        super(AADProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.service_principal_client_id = service_principal_client_id
         self.tenant_id = tenant_id
         self.authority = authority
@@ -70,7 +70,7 @@ class AADProperties(msrest.serialization.Model):
         self.service_principal_object_id = service_principal_object_id
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """ARM Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -84,25 +84,25 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
     }
 
     def __init__(
@@ -116,12 +116,12 @@ class Resource(msrest.serialization.Model):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -144,7 +144,7 @@ class AADPropertiesResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -153,19 +153,19 @@ class AADPropertiesResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AADProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "AADProperties"},
     }
 
     def __init__(
@@ -180,35 +180,36 @@ class AADPropertiesResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
         :keyword properties: AADPropertiesResource properties.
         :paramtype properties: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AADProperties
         """
-        super(AADPropertiesResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
-class ProtectedItem(msrest.serialization.Model):
+class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Base class for backup items.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFileshareProtectedItem, AzureIaaSVMProtectedItem, AzureVmWorkloadProtectedItem, DPMProtectedItem, GenericProtectedItem, MabFileFolderProtectedItem, AzureSqlProtectedItem.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureFileshareProtectedItem, AzureIaaSVMProtectedItem, AzureVmWorkloadProtectedItem,
+    DPMProtectedItem, GenericProtectedItem, MabFileFolderProtectedItem, AzureSqlProtectedItem
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -224,7 +225,7 @@ class ProtectedItem(msrest.serialization.Model):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -245,29 +246,37 @@ class ProtectedItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
     }
 
     _subtype_map = {
-        'protected_item_type': {'AzureFileShareProtectedItem': 'AzureFileshareProtectedItem', 'AzureIaaSVMProtectedItem': 'AzureIaaSVMProtectedItem', 'AzureVmWorkloadProtectedItem': 'AzureVmWorkloadProtectedItem', 'DPMProtectedItem': 'DPMProtectedItem', 'GenericProtectedItem': 'GenericProtectedItem', 'MabFileFolderProtectedItem': 'MabFileFolderProtectedItem', 'Microsoft.Sql/servers/databases': 'AzureSqlProtectedItem'}
+        "protected_item_type": {
+            "AzureFileShareProtectedItem": "AzureFileshareProtectedItem",
+            "AzureIaaSVMProtectedItem": "AzureIaaSVMProtectedItem",
+            "AzureVmWorkloadProtectedItem": "AzureVmWorkloadProtectedItem",
+            "DPMProtectedItem": "DPMProtectedItem",
+            "GenericProtectedItem": "GenericProtectedItem",
+            "MabFileFolderProtectedItem": "MabFileFolderProtectedItem",
+            "Microsoft.Sql/servers/databases": "AzureSqlProtectedItem",
+        }
     }
 
     def __init__(
@@ -292,12 +301,12 @@ class ProtectedItem(msrest.serialization.Model):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -313,7 +322,7 @@ class ProtectedItem(msrest.serialization.Model):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -334,7 +343,7 @@ class ProtectedItem(msrest.serialization.Model):
          will be performed.
         :paramtype resource_guard_operation_requests: list[str]
         """
-        super(ProtectedItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protected_item_type = None  # type: Optional[str]
         self.backup_management_type = backup_management_type
         self.workload_type = workload_type
@@ -352,21 +361,21 @@ class ProtectedItem(msrest.serialization.Model):
         self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
-class AzureFileshareProtectedItem(ProtectedItem):
+class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Azure File Share workload-specific backup item.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -382,7 +391,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -405,11 +414,11 @@ class AzureFileshareProtectedItem(ProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar health_status: backups running status for this backup item. Known values are: "Passed",
-     "ActionRequired", "ActionSuggested", "Invalid".
+     "ActionRequired", "ActionSuggested", and "Invalid".
     :vartype health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
     :ivar last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
@@ -425,33 +434,33 @@ class AzureFileshareProtectedItem(ProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureFileshareProtectedItemExtendedInfo'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "health_status": {"key": "healthStatus", "type": "str"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureFileshareProtectedItemExtendedInfo"},
     }
 
     def __init__(
@@ -484,12 +493,12 @@ class AzureFileshareProtectedItem(ProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -505,7 +514,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -530,11 +539,11 @@ class AzureFileshareProtectedItem(ProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword health_status: backups running status for this backup item. Known values are:
-         "Passed", "ActionRequired", "ActionSuggested", "Invalid".
+         "Passed", "ActionRequired", "ActionSuggested", and "Invalid".
         :paramtype health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
         :keyword last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
@@ -548,8 +557,24 @@ class AzureFileshareProtectedItem(ProtectedItem):
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AzureFileshareProtectedItemExtendedInfo
         """
-        super(AzureFileshareProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
-        self.protected_item_type = 'AzureFileShareProtectedItem'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            **kwargs
+        )
+        self.protected_item_type = "AzureFileShareProtectedItem"  # type: str
         self.friendly_name = friendly_name
         self.protection_status = protection_status
         self.protection_state = protection_state
@@ -560,7 +585,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         self.extended_info = extended_info
 
 
-class AzureFileshareProtectedItemExtendedInfo(msrest.serialization.Model):
+class AzureFileshareProtectedItemExtendedInfo(_serialization.Model):
     """Additional information about Azure File Share backup item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -580,16 +605,16 @@ class AzureFileshareProtectedItemExtendedInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_state': {'readonly': True},
-        'resource_state_sync_time': {'readonly': True},
+        "resource_state": {"readonly": True},
+        "resource_state_sync_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
-        'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
-        'policy_state': {'key': 'policyState', 'type': 'str'},
-        'resource_state': {'key': 'resourceState', 'type': 'str'},
-        'resource_state_sync_time': {'key': 'resourceStateSyncTime', 'type': 'iso-8601'},
+        "oldest_recovery_point": {"key": "oldestRecoveryPoint", "type": "iso-8601"},
+        "recovery_point_count": {"key": "recoveryPointCount", "type": "int"},
+        "policy_state": {"key": "policyState", "type": "str"},
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "resource_state_sync_time": {"key": "resourceStateSyncTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -610,7 +635,7 @@ class AzureFileshareProtectedItemExtendedInfo(msrest.serialization.Model):
          item.
         :paramtype policy_state: str
         """
-        super(AzureFileshareProtectedItemExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
@@ -618,38 +643,40 @@ class AzureFileshareProtectedItemExtendedInfo(msrest.serialization.Model):
         self.resource_state_sync_time = None
 
 
-class RecoveryPoint(msrest.serialization.Model):
+class RecoveryPoint(_serialization.Model):
     """Base class for backup copies. Workload-specific backup copies are derived from this class.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFileShareRecoveryPoint, AzureWorkloadRecoveryPoint, GenericRecoveryPoint, IaasVMRecoveryPoint.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureFileShareRecoveryPoint, AzureWorkloadRecoveryPoint, GenericRecoveryPoint,
+    IaasVMRecoveryPoint
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureFileShareRecoveryPoint': 'AzureFileShareRecoveryPoint', 'AzureWorkloadRecoveryPoint': 'AzureWorkloadRecoveryPoint', 'GenericRecoveryPoint': 'GenericRecoveryPoint', 'IaasVMRecoveryPoint': 'IaasVMRecoveryPoint'}
+        "object_type": {
+            "AzureFileShareRecoveryPoint": "AzureFileShareRecoveryPoint",
+            "AzureWorkloadRecoveryPoint": "AzureWorkloadRecoveryPoint",
+            "GenericRecoveryPoint": "GenericRecoveryPoint",
+            "IaasVMRecoveryPoint": "IaasVMRecoveryPoint",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RecoveryPoint, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -660,8 +687,8 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_type: Type of the backup copy. Specifies whether it is a crash consistent
      backup or app consistent.
@@ -675,67 +702,63 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_type': {'readonly': True},
-        'recovery_point_time': {'readonly': True},
-        'file_share_snapshot_uri': {'readonly': True},
-        'recovery_point_size_in_gb': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_type": {"readonly": True},
+        "recovery_point_time": {"readonly": True},
+        "file_share_snapshot_uri": {"readonly": True},
+        "recovery_point_size_in_gb": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_type': {'key': 'recoveryPointType', 'type': 'str'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'iso-8601'},
-        'file_share_snapshot_uri': {'key': 'fileShareSnapshotUri', 'type': 'str'},
-        'recovery_point_size_in_gb': {'key': 'recoveryPointSizeInGB', 'type': 'int'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_type": {"key": "recoveryPointType", "type": "str"},
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "iso-8601"},
+        "file_share_snapshot_uri": {"key": "fileShareSnapshotUri", "type": "str"},
+        "recovery_point_size_in_gb": {"key": "recoveryPointSizeInGB", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureFileShareRecoveryPoint, self).__init__(**kwargs)
-        self.object_type = 'AzureFileShareRecoveryPoint'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.object_type = "AzureFileShareRecoveryPoint"  # type: str
         self.recovery_point_type = None
         self.recovery_point_time = None
         self.file_share_snapshot_uri = None
         self.recovery_point_size_in_gb = None
 
 
-class RestoreRequest(msrest.serialization.Model):
+class RestoreRequest(_serialization.Model):
     """Base class for restore request. Workload-specific restore requests are derived from this class.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFileShareRestoreRequest, AzureWorkloadRestoreRequest, IaasVMRestoreRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureFileShareRestoreRequest, AzureWorkloadRestoreRequest, IaasVMRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureFileShareRestoreRequest': 'AzureFileShareRestoreRequest', 'AzureWorkloadRestoreRequest': 'AzureWorkloadRestoreRequest', 'IaasVMRestoreRequest': 'IaasVMRestoreRequest'}
+        "object_type": {
+            "AzureFileShareRestoreRequest": "AzureFileShareRestoreRequest",
+            "AzureWorkloadRestoreRequest": "AzureWorkloadRestoreRequest",
+            "IaasVMRestoreRequest": "IaasVMRestoreRequest",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RestoreRequest, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -744,21 +767,21 @@ class AzureFileShareRestoreRequest(RestoreRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Source storage account ARM Id.
     :vartype source_resource_id: str
     :ivar copy_options: Options to resolve copy conflicts. Known values are: "Invalid",
-     "CreateCopy", "Skip", "Overwrite", "FailOnConflict".
+     "CreateCopy", "Skip", "Overwrite", and "FailOnConflict".
     :vartype copy_options: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CopyOptions
     :ivar restore_request_type: Restore Type (FullShareRestore or ItemLevelRestore). Known values
-     are: "Invalid", "FullShareRestore", "ItemLevelRestore".
+     are: "Invalid", "FullShareRestore", and "ItemLevelRestore".
     :vartype restore_request_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestoreRequestType
     :ivar restore_file_specs: List of Source Files/Folders(which need to recover) and
@@ -771,17 +794,17 @@ class AzureFileShareRestoreRequest(RestoreRequest):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'copy_options': {'key': 'copyOptions', 'type': 'str'},
-        'restore_request_type': {'key': 'restoreRequestType', 'type': 'str'},
-        'restore_file_specs': {'key': 'restoreFileSpecs', 'type': '[RestoreFileSpecs]'},
-        'target_details': {'key': 'targetDetails', 'type': 'TargetAFSRestoreInfo'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "copy_options": {"key": "copyOptions", "type": "str"},
+        "restore_request_type": {"key": "restoreRequestType", "type": "str"},
+        "restore_file_specs": {"key": "restoreFileSpecs", "type": "[RestoreFileSpecs]"},
+        "target_details": {"key": "targetDetails", "type": "TargetAFSRestoreInfo"},
     }
 
     def __init__(
@@ -797,17 +820,17 @@ class AzureFileShareRestoreRequest(RestoreRequest):
     ):
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Source storage account ARM Id.
         :paramtype source_resource_id: str
         :keyword copy_options: Options to resolve copy conflicts. Known values are: "Invalid",
-         "CreateCopy", "Skip", "Overwrite", "FailOnConflict".
+         "CreateCopy", "Skip", "Overwrite", and "FailOnConflict".
         :paramtype copy_options: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CopyOptions
         :keyword restore_request_type: Restore Type (FullShareRestore or ItemLevelRestore). Known
-         values are: "Invalid", "FullShareRestore", "ItemLevelRestore".
+         values are: "Invalid", "FullShareRestore", and "ItemLevelRestore".
         :paramtype restore_request_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestoreRequestType
         :keyword restore_file_specs: List of Source Files/Folders(which need to recover) and
@@ -818,8 +841,8 @@ class AzureFileShareRestoreRequest(RestoreRequest):
         :paramtype target_details:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetAFSRestoreInfo
         """
-        super(AzureFileShareRestoreRequest, self).__init__(**kwargs)
-        self.object_type = 'AzureFileShareRestoreRequest'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "AzureFileShareRestoreRequest"  # type: str
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.copy_options = copy_options
@@ -828,24 +851,24 @@ class AzureFileShareRestoreRequest(RestoreRequest):
         self.target_details = target_details
 
 
-class AzureIaaSVMProtectedItem(ProtectedItem):
+class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific backup item.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureIaaSClassicComputeVMProtectedItem, AzureIaaSComputeVMProtectedItem.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureIaaSClassicComputeVMProtectedItem, AzureIaaSComputeVMProtectedItem
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -861,7 +884,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -887,11 +910,11 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar health_status: Health status of protected item. Known values are: "Passed",
-     "ActionRequired", "ActionSuggested", "Invalid".
+     "ActionRequired", "ActionSuggested", and "Invalid".
     :vartype health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
     :ivar health_details: Health details on this backup item.
@@ -915,44 +938,47 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[AzureIaaSVMHealthDetails]'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
-        'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "health_status": {"key": "healthStatus", "type": "str"},
+        "health_details": {"key": "healthDetails", "type": "[AzureIaaSVMHealthDetails]"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "protected_item_data_id": {"key": "protectedItemDataId", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureIaaSVMProtectedItemExtendedInfo"},
+        "extended_properties": {"key": "extendedProperties", "type": "ExtendedProperties"},
     }
 
     _subtype_map = {
-        'protected_item_type': {'Microsoft.ClassicCompute/virtualMachines': 'AzureIaaSClassicComputeVMProtectedItem', 'Microsoft.Compute/virtualMachines': 'AzureIaaSComputeVMProtectedItem'}
+        "protected_item_type": {
+            "Microsoft.ClassicCompute/virtualMachines": "AzureIaaSClassicComputeVMProtectedItem",
+            "Microsoft.Compute/virtualMachines": "AzureIaaSComputeVMProtectedItem",
+        }
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
@@ -986,12 +1012,12 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -1007,7 +1033,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -1035,11 +1061,11 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword health_status: Health status of protected item. Known values are: "Passed",
-         "ActionRequired", "ActionSuggested", "Invalid".
+         "ActionRequired", "ActionSuggested", and "Invalid".
         :paramtype health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
         :keyword health_details: Health details on this backup item.
@@ -1061,8 +1087,24 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         :paramtype extended_properties:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ExtendedProperties
         """
-        super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
-        self.protected_item_type = 'AzureIaaSVMProtectedItem'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            **kwargs
+        )
+        self.protected_item_type = "AzureIaaSVMProtectedItem"  # type: str
         self.friendly_name = friendly_name
         self.virtual_machine_id = virtual_machine_id
         self.protection_status = protection_status
@@ -1077,21 +1119,21 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         self.extended_properties = extended_properties
 
 
-class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
+class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific backup item representing the Classic Compute VM.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -1107,7 +1149,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -1133,11 +1175,11 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar health_status: Health status of protected item. Known values are: "Passed",
-     "ActionRequired", "ActionSuggested", "Invalid".
+     "ActionRequired", "ActionSuggested", and "Invalid".
     :vartype health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
     :ivar health_details: Health details on this backup item.
@@ -1161,40 +1203,40 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[AzureIaaSVMHealthDetails]'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
-        'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "health_status": {"key": "healthStatus", "type": "str"},
+        "health_details": {"key": "healthDetails", "type": "[AzureIaaSVMHealthDetails]"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "protected_item_data_id": {"key": "protectedItemDataId", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureIaaSVMProtectedItemExtendedInfo"},
+        "extended_properties": {"key": "extendedProperties", "type": "ExtendedProperties"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
@@ -1228,12 +1270,12 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -1249,7 +1291,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -1277,11 +1319,11 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword health_status: Health status of protected item. Known values are: "Passed",
-         "ActionRequired", "ActionSuggested", "Invalid".
+         "ActionRequired", "ActionSuggested", and "Invalid".
         :paramtype health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
         :keyword health_details: Health details on this backup item.
@@ -1303,25 +1345,53 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         :paramtype extended_properties:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ExtendedProperties
         """
-        super(AzureIaaSClassicComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, kpis_healths=kpis_healths, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
-        self.protected_item_type = 'Microsoft.ClassicCompute/virtualMachines'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            friendly_name=friendly_name,
+            virtual_machine_id=virtual_machine_id,
+            protection_status=protection_status,
+            protection_state=protection_state,
+            health_status=health_status,
+            health_details=health_details,
+            kpis_healths=kpis_healths,
+            last_backup_status=last_backup_status,
+            last_backup_time=last_backup_time,
+            protected_item_data_id=protected_item_data_id,
+            extended_info=extended_info,
+            extended_properties=extended_properties,
+            **kwargs
+        )
+        self.protected_item_type = "Microsoft.ClassicCompute/virtualMachines"  # type: str
 
 
-class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
+class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific backup item representing the Azure Resource Manager VM.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -1337,7 +1407,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -1363,11 +1433,11 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar health_status: Health status of protected item. Known values are: "Passed",
-     "ActionRequired", "ActionSuggested", "Invalid".
+     "ActionRequired", "ActionSuggested", and "Invalid".
     :vartype health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
     :ivar health_details: Health details on this backup item.
@@ -1391,40 +1461,40 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'virtual_machine_id': {'key': 'virtualMachineId', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'health_status': {'key': 'healthStatus', 'type': 'str'},
-        'health_details': {'key': 'healthDetails', 'type': '[AzureIaaSVMHealthDetails]'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
-        'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "health_status": {"key": "healthStatus", "type": "str"},
+        "health_details": {"key": "healthDetails", "type": "[AzureIaaSVMHealthDetails]"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "protected_item_data_id": {"key": "protectedItemDataId", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureIaaSVMProtectedItemExtendedInfo"},
+        "extended_properties": {"key": "extendedProperties", "type": "ExtendedProperties"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
@@ -1458,12 +1528,12 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -1479,7 +1549,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -1507,11 +1577,11 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword health_status: Health status of protected item. Known values are: "Passed",
-         "ActionRequired", "ActionSuggested", "Invalid".
+         "ActionRequired", "ActionSuggested", and "Invalid".
         :paramtype health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthStatus
         :keyword health_details: Health details on this backup item.
@@ -1533,11 +1603,39 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         :paramtype extended_properties:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ExtendedProperties
         """
-        super(AzureIaaSComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, kpis_healths=kpis_healths, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
-        self.protected_item_type = 'Microsoft.Compute/virtualMachines'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            friendly_name=friendly_name,
+            virtual_machine_id=virtual_machine_id,
+            protection_status=protection_status,
+            protection_state=protection_state,
+            health_status=health_status,
+            health_details=health_details,
+            kpis_healths=kpis_healths,
+            last_backup_status=last_backup_status,
+            last_backup_time=last_backup_time,
+            protected_item_data_id=protected_item_data_id,
+            extended_info=extended_info,
+            extended_properties=extended_properties,
+            **kwargs
+        )
+        self.protected_item_type = "Microsoft.Compute/virtualMachines"  # type: str
 
 
-class AzureIaaSVMErrorInfo(msrest.serialization.Model):
+class AzureIaaSVMErrorInfo(_serialization.Model):
     """Azure IaaS VM workload-specific error information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1553,33 +1651,29 @@ class AzureIaaSVMErrorInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'error_code': {'readonly': True},
-        'error_title': {'readonly': True},
-        'error_string': {'readonly': True},
-        'recommendations': {'readonly': True},
+        "error_code": {"readonly": True},
+        "error_title": {"readonly": True},
+        "error_string": {"readonly": True},
+        "recommendations": {"readonly": True},
     }
 
     _attribute_map = {
-        'error_code': {'key': 'errorCode', 'type': 'int'},
-        'error_title': {'key': 'errorTitle', 'type': 'str'},
-        'error_string': {'key': 'errorString', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+        "error_code": {"key": "errorCode", "type": "int"},
+        "error_title": {"key": "errorTitle", "type": "str"},
+        "error_string": {"key": "errorString", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureIaaSVMErrorInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.error_code = None
         self.error_title = None
         self.error_string = None
         self.recommendations = None
 
 
-class ResourceHealthDetails(msrest.serialization.Model):
+class ResourceHealthDetails(_serialization.Model):
     """Health Details for backup items.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1595,26 +1689,22 @@ class ResourceHealthDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'title': {'readonly': True},
-        'message': {'readonly': True},
-        'recommendations': {'readonly': True},
+        "code": {"readonly": True},
+        "title": {"readonly": True},
+        "message": {"readonly": True},
+        "recommendations": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'int'},
-        'title': {'key': 'title', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+        "code": {"key": "code", "type": "int"},
+        "title": {"key": "title", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceHealthDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.title = None
         self.message = None
@@ -1637,33 +1727,29 @@ class AzureIaaSVMHealthDetails(ResourceHealthDetails):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'title': {'readonly': True},
-        'message': {'readonly': True},
-        'recommendations': {'readonly': True},
+        "code": {"readonly": True},
+        "title": {"readonly": True},
+        "message": {"readonly": True},
+        "recommendations": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'int'},
-        'title': {'key': 'title', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+        "code": {"key": "code", "type": "int"},
+        "title": {"key": "title", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureIaaSVMHealthDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class Job(msrest.serialization.Model):
+class Job(_serialization.Model):
     """Defines workload agnostic properties for a job.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureIaaSVMJob, AzureStorageJob, AzureWorkloadJob, DpmJob, MabJob.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureIaaSVMJob, AzureStorageJob, AzureWorkloadJob, DpmJob, MabJob
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1671,7 +1757,7 @@ class Job(msrest.serialization.Model):
     :vartype entity_friendly_name: str
     :ivar backup_management_type: Backup management type to execute the current job. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar operation: The operation name.
@@ -1684,28 +1770,34 @@ class Job(msrest.serialization.Model):
     :vartype end_time: ~datetime.datetime
     :ivar activity_id: ActivityId of job.
     :vartype activity_id: str
-    :ivar job_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar job_type: This property will be used as the discriminator for deciding the specific types
+     in the polymorphic chain of types. Required.
     :vartype job_type: str
     """
 
     _validation = {
-        'job_type': {'required': True},
+        "job_type": {"required": True},
     }
 
     _attribute_map = {
-        'entity_friendly_name': {'key': 'entityFriendlyName', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'activity_id': {'key': 'activityId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
+        "entity_friendly_name": {"key": "entityFriendlyName", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "activity_id": {"key": "activityId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_type': {'AzureIaaSVMJob': 'AzureIaaSVMJob', 'AzureStorageJob': 'AzureStorageJob', 'AzureWorkloadJob': 'AzureWorkloadJob', 'DpmJob': 'DpmJob', 'MabJob': 'MabJob'}
+        "job_type": {
+            "AzureIaaSVMJob": "AzureIaaSVMJob",
+            "AzureStorageJob": "AzureStorageJob",
+            "AzureWorkloadJob": "AzureWorkloadJob",
+            "DpmJob": "DpmJob",
+            "MabJob": "MabJob",
+        }
     }
 
     def __init__(
@@ -1726,7 +1818,7 @@ class Job(msrest.serialization.Model):
         :paramtype entity_friendly_name: str
         :keyword backup_management_type: Backup management type to execute the current job. Known
          values are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql",
-         "AzureStorage", "AzureWorkload", "DefaultBackup".
+         "AzureStorage", "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword operation: The operation name.
@@ -1740,7 +1832,7 @@ class Job(msrest.serialization.Model):
         :keyword activity_id: ActivityId of job.
         :paramtype activity_id: str
         """
-        super(Job, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.entity_friendly_name = entity_friendly_name
         self.backup_management_type = backup_management_type
         self.operation = operation
@@ -1751,7 +1843,7 @@ class Job(msrest.serialization.Model):
         self.job_type = None  # type: Optional[str]
 
 
-class AzureIaaSVMJob(Job):
+class AzureIaaSVMJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure IaaS VM workload-specific job object.
 
     All required parameters must be populated in order to send to Azure.
@@ -1760,7 +1852,7 @@ class AzureIaaSVMJob(Job):
     :vartype entity_friendly_name: str
     :ivar backup_management_type: Backup management type to execute the current job. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar operation: The operation name.
@@ -1773,8 +1865,8 @@ class AzureIaaSVMJob(Job):
     :vartype end_time: ~datetime.datetime
     :ivar activity_id: ActivityId of job.
     :vartype activity_id: str
-    :ivar job_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar job_type: This property will be used as the discriminator for deciding the specific types
+     in the polymorphic chain of types. Required.
     :vartype job_type: str
     :ivar duration: Time elapsed during the execution of this job.
     :vartype duration: ~datetime.timedelta
@@ -1793,23 +1885,23 @@ class AzureIaaSVMJob(Job):
     """
 
     _validation = {
-        'job_type': {'required': True},
+        "job_type": {"required": True},
     }
 
     _attribute_map = {
-        'entity_friendly_name': {'key': 'entityFriendlyName', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'activity_id': {'key': 'activityId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'actions_info': {'key': 'actionsInfo', 'type': '[str]'},
-        'error_details': {'key': 'errorDetails', 'type': '[AzureIaaSVMErrorInfo]'},
-        'virtual_machine_version': {'key': 'virtualMachineVersion', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMJobExtendedInfo'},
+        "entity_friendly_name": {"key": "entityFriendlyName", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "activity_id": {"key": "activityId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "actions_info": {"key": "actionsInfo", "type": "[str]"},
+        "error_details": {"key": "errorDetails", "type": "[AzureIaaSVMErrorInfo]"},
+        "virtual_machine_version": {"key": "virtualMachineVersion", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureIaaSVMJobExtendedInfo"},
     }
 
     def __init__(
@@ -1835,7 +1927,7 @@ class AzureIaaSVMJob(Job):
         :paramtype entity_friendly_name: str
         :keyword backup_management_type: Backup management type to execute the current job. Known
          values are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql",
-         "AzureStorage", "AzureWorkload", "DefaultBackup".
+         "AzureStorage", "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword operation: The operation name.
@@ -1863,8 +1955,17 @@ class AzureIaaSVMJob(Job):
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AzureIaaSVMJobExtendedInfo
         """
-        super(AzureIaaSVMJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id, **kwargs)
-        self.job_type = 'AzureIaaSVMJob'  # type: str
+        super().__init__(
+            entity_friendly_name=entity_friendly_name,
+            backup_management_type=backup_management_type,
+            operation=operation,
+            status=status,
+            start_time=start_time,
+            end_time=end_time,
+            activity_id=activity_id,
+            **kwargs
+        )
+        self.job_type = "AzureIaaSVMJob"  # type: str
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details
@@ -1872,7 +1973,7 @@ class AzureIaaSVMJob(Job):
         self.extended_info = extended_info
 
 
-class AzureIaaSVMJobExtendedInfo(msrest.serialization.Model):
+class AzureIaaSVMJobExtendedInfo(_serialization.Model):
     """Azure IaaS VM workload-specific additional information for job.
 
     :ivar tasks_list: List of tasks associated with this job.
@@ -1892,12 +1993,12 @@ class AzureIaaSVMJobExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tasks_list': {'key': 'tasksList', 'type': '[AzureIaaSVMJobTaskDetails]'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'internal_property_bag': {'key': 'internalPropertyBag', 'type': '{str}'},
-        'progress_percentage': {'key': 'progressPercentage', 'type': 'float'},
-        'estimated_remaining_duration': {'key': 'estimatedRemainingDuration', 'type': 'str'},
-        'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
+        "tasks_list": {"key": "tasksList", "type": "[AzureIaaSVMJobTaskDetails]"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "internal_property_bag": {"key": "internalPropertyBag", "type": "{str}"},
+        "progress_percentage": {"key": "progressPercentage", "type": "float"},
+        "estimated_remaining_duration": {"key": "estimatedRemainingDuration", "type": "str"},
+        "dynamic_error_message": {"key": "dynamicErrorMessage", "type": "str"},
     }
 
     def __init__(
@@ -1927,7 +2028,7 @@ class AzureIaaSVMJobExtendedInfo(msrest.serialization.Model):
         :keyword dynamic_error_message: Non localized error message on job execution.
         :paramtype dynamic_error_message: str
         """
-        super(AzureIaaSVMJobExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.internal_property_bag = internal_property_bag
@@ -1936,7 +2037,7 @@ class AzureIaaSVMJobExtendedInfo(msrest.serialization.Model):
         self.dynamic_error_message = dynamic_error_message
 
 
-class AzureIaaSVMJobTaskDetails(msrest.serialization.Model):
+class AzureIaaSVMJobTaskDetails(_serialization.Model):
     """Azure IaaS VM workload-specific job task details.
 
     :ivar task_id: The task display name.
@@ -1959,14 +2060,14 @@ class AzureIaaSVMJobTaskDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'instance_id': {'key': 'instanceId', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'status': {'key': 'status', 'type': 'str'},
-        'progress_percentage': {'key': 'progressPercentage', 'type': 'float'},
-        'task_execution_details': {'key': 'taskExecutionDetails', 'type': 'str'},
+        "task_id": {"key": "taskId", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "instance_id": {"key": "instanceId", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "status": {"key": "status", "type": "str"},
+        "progress_percentage": {"key": "progressPercentage", "type": "float"},
+        "task_execution_details": {"key": "taskExecutionDetails", "type": "str"},
     }
 
     def __init__(
@@ -2001,7 +2102,7 @@ class AzureIaaSVMJobTaskDetails(msrest.serialization.Model):
          eg: number of bytes transferred etc.
         :paramtype task_execution_details: str
         """
-        super(AzureIaaSVMJobTaskDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_id = task_id
         self.start_time = start_time
         self.end_time = end_time
@@ -2012,7 +2113,7 @@ class AzureIaaSVMJobTaskDetails(msrest.serialization.Model):
         self.task_execution_details = task_execution_details
 
 
-class AzureIaaSVMProtectedItemExtendedInfo(msrest.serialization.Model):
+class AzureIaaSVMProtectedItemExtendedInfo(_serialization.Model):
     """Additional information on Azure IaaS VM specific backup item.
 
     :ivar oldest_recovery_point: The oldest backup copy available for this backup item.
@@ -2025,9 +2126,9 @@ class AzureIaaSVMProtectedItemExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
-        'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
-        'policy_inconsistent': {'key': 'policyInconsistent', 'type': 'bool'},
+        "oldest_recovery_point": {"key": "oldestRecoveryPoint", "type": "iso-8601"},
+        "recovery_point_count": {"key": "recoveryPointCount", "type": "int"},
+        "policy_inconsistent": {"key": "policyInconsistent", "type": "bool"},
     }
 
     def __init__(
@@ -2047,27 +2148,27 @@ class AzureIaaSVMProtectedItemExtendedInfo(msrest.serialization.Model):
          inconsistent.
         :paramtype policy_inconsistent: bool
         """
-        super(AzureIaaSVMProtectedItemExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_inconsistent = policy_inconsistent
 
 
-class AzureSqlProtectedItem(ProtectedItem):
+class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Azure SQL workload-specific backup item.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -2083,7 +2184,7 @@ class AzureSqlProtectedItem(ProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -2105,7 +2206,7 @@ class AzureSqlProtectedItem(ProtectedItem):
      contact Recovery Services.
     :vartype protected_item_data_id: str
     :ivar protection_state: Backup state of the backed up item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemState
     :ivar extended_info: Additional information for this backup item.
@@ -2114,28 +2215,28 @@ class AzureSqlProtectedItem(ProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureSqlProtectedItemExtendedInfo'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "protected_item_data_id": {"key": "protectedItemDataId", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureSqlProtectedItemExtendedInfo"},
     }
 
     def __init__(
@@ -2163,12 +2264,12 @@ class AzureSqlProtectedItem(ProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -2184,7 +2285,7 @@ class AzureSqlProtectedItem(ProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -2208,21 +2309,37 @@ class AzureSqlProtectedItem(ProtectedItem):
          to contact Recovery Services.
         :paramtype protected_item_data_id: str
         :keyword protection_state: Backup state of the backed up item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemState
         :keyword extended_info: Additional information for this backup item.
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AzureSqlProtectedItemExtendedInfo
         """
-        super(AzureSqlProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
-        self.protected_item_type = 'Microsoft.Sql/servers/databases'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            **kwargs
+        )
+        self.protected_item_type = "Microsoft.Sql/servers/databases"  # type: str
         self.protected_item_data_id = protected_item_data_id
         self.protection_state = protection_state
         self.extended_info = extended_info
 
 
-class AzureSqlProtectedItemExtendedInfo(msrest.serialization.Model):
+class AzureSqlProtectedItemExtendedInfo(_serialization.Model):
     """Additional information on Azure Sql specific protected item.
 
     :ivar oldest_recovery_point: The oldest backup copy available for this item in the service.
@@ -2234,9 +2351,9 @@ class AzureSqlProtectedItemExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
-        'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
-        'policy_state': {'key': 'policyState', 'type': 'str'},
+        "oldest_recovery_point": {"key": "oldestRecoveryPoint", "type": "iso-8601"},
+        "recovery_point_count": {"key": "recoveryPointCount", "type": "int"},
+        "policy_state": {"key": "policyState", "type": "str"},
     }
 
     def __init__(
@@ -2256,13 +2373,13 @@ class AzureSqlProtectedItemExtendedInfo(msrest.serialization.Model):
         :keyword policy_state: State of the backup policy associated with this backup item.
         :paramtype policy_state: str
         """
-        super(AzureSqlProtectedItemExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
 
 
-class AzureStorageErrorInfo(msrest.serialization.Model):
+class AzureStorageErrorInfo(_serialization.Model):
     """Azure storage specific error information.
 
     :ivar error_code: Error code.
@@ -2274,9 +2391,9 @@ class AzureStorageErrorInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error_code': {'key': 'errorCode', 'type': 'int'},
-        'error_string': {'key': 'errorString', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+        "error_code": {"key": "errorCode", "type": "int"},
+        "error_string": {"key": "errorString", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
     def __init__(
@@ -2295,13 +2412,13 @@ class AzureStorageErrorInfo(msrest.serialization.Model):
         :keyword recommendations: List of localized recommendations for above error code.
         :paramtype recommendations: list[str]
         """
-        super(AzureStorageErrorInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error_code = error_code
         self.error_string = error_string
         self.recommendations = recommendations
 
 
-class AzureStorageJob(Job):
+class AzureStorageJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure storage specific job.
 
     All required parameters must be populated in order to send to Azure.
@@ -2310,7 +2427,7 @@ class AzureStorageJob(Job):
     :vartype entity_friendly_name: str
     :ivar backup_management_type: Backup management type to execute the current job. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar operation: The operation name.
@@ -2323,8 +2440,8 @@ class AzureStorageJob(Job):
     :vartype end_time: ~datetime.datetime
     :ivar activity_id: ActivityId of job.
     :vartype activity_id: str
-    :ivar job_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar job_type: This property will be used as the discriminator for deciding the specific types
+     in the polymorphic chain of types. Required.
     :vartype job_type: str
     :ivar duration: Time elapsed during the execution of this job.
     :vartype duration: ~datetime.timedelta
@@ -2345,24 +2462,24 @@ class AzureStorageJob(Job):
     """
 
     _validation = {
-        'job_type': {'required': True},
+        "job_type": {"required": True},
     }
 
     _attribute_map = {
-        'entity_friendly_name': {'key': 'entityFriendlyName', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'activity_id': {'key': 'activityId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'actions_info': {'key': 'actionsInfo', 'type': '[str]'},
-        'error_details': {'key': 'errorDetails', 'type': '[AzureStorageErrorInfo]'},
-        'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
-        'storage_account_version': {'key': 'storageAccountVersion', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureStorageJobExtendedInfo'},
+        "entity_friendly_name": {"key": "entityFriendlyName", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "activity_id": {"key": "activityId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "actions_info": {"key": "actionsInfo", "type": "[str]"},
+        "error_details": {"key": "errorDetails", "type": "[AzureStorageErrorInfo]"},
+        "storage_account_name": {"key": "storageAccountName", "type": "str"},
+        "storage_account_version": {"key": "storageAccountVersion", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureStorageJobExtendedInfo"},
     }
 
     def __init__(
@@ -2389,7 +2506,7 @@ class AzureStorageJob(Job):
         :paramtype entity_friendly_name: str
         :keyword backup_management_type: Backup management type to execute the current job. Known
          values are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql",
-         "AzureStorage", "AzureWorkload", "DefaultBackup".
+         "AzureStorage", "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword operation: The operation name.
@@ -2419,8 +2536,17 @@ class AzureStorageJob(Job):
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AzureStorageJobExtendedInfo
         """
-        super(AzureStorageJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id, **kwargs)
-        self.job_type = 'AzureStorageJob'  # type: str
+        super().__init__(
+            entity_friendly_name=entity_friendly_name,
+            backup_management_type=backup_management_type,
+            operation=operation,
+            status=status,
+            start_time=start_time,
+            end_time=end_time,
+            activity_id=activity_id,
+            **kwargs
+        )
+        self.job_type = "AzureStorageJob"  # type: str
         self.duration = duration
         self.actions_info = actions_info
         self.error_details = error_details
@@ -2429,7 +2555,7 @@ class AzureStorageJob(Job):
         self.extended_info = extended_info
 
 
-class AzureStorageJobExtendedInfo(msrest.serialization.Model):
+class AzureStorageJobExtendedInfo(_serialization.Model):
     """Azure Storage workload-specific additional information for job.
 
     :ivar tasks_list: List of tasks for this job.
@@ -2442,9 +2568,9 @@ class AzureStorageJobExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tasks_list': {'key': 'tasksList', 'type': '[AzureStorageJobTaskDetails]'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
+        "tasks_list": {"key": "tasksList", "type": "[AzureStorageJobTaskDetails]"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "dynamic_error_message": {"key": "dynamicErrorMessage", "type": "str"},
     }
 
     def __init__(
@@ -2464,13 +2590,13 @@ class AzureStorageJobExtendedInfo(msrest.serialization.Model):
         :keyword dynamic_error_message: Non localized error message on job execution.
         :paramtype dynamic_error_message: str
         """
-        super(AzureStorageJobExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.dynamic_error_message = dynamic_error_message
 
 
-class AzureStorageJobTaskDetails(msrest.serialization.Model):
+class AzureStorageJobTaskDetails(_serialization.Model):
     """Azure storage workload specific job task details.
 
     :ivar task_id: The task display name.
@@ -2480,46 +2606,41 @@ class AzureStorageJobTaskDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "task_id": {"key": "taskId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        task_id: Optional[str] = None,
-        status: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, task_id: Optional[str] = None, status: Optional[str] = None, **kwargs):
         """
         :keyword task_id: The task display name.
         :paramtype task_id: str
         :keyword status: The status.
         :paramtype status: str
         """
-        super(AzureStorageJobTaskDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_id = task_id
         self.status = status
 
 
-class AzureVmWorkloadProtectedItem(ProtectedItem):
+class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific protected item.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureVmWorkloadSAPAseDatabaseProtectedItem, AzureVmWorkloadSAPHanaDatabaseProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureVmWorkloadSAPAseDatabaseProtectedItem, AzureVmWorkloadSAPHanaDatabaseProtectedItem,
+    AzureVmWorkloadSQLDatabaseProtectedItem
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -2535,7 +2656,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -2565,11 +2686,11 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-     Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+     Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
     :vartype last_backup_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
     :ivar last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -2580,7 +2701,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     :ivar protected_item_data_source_id: Data ID of the protected item.
     :vartype protected_item_data_source_id: str
     :ivar protected_item_health_status: Health status of the backup item, evaluated based on last
-     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
+     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable", and
      "IRPending".
     :vartype protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
@@ -2593,45 +2714,49 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'server_name': {'key': 'serverName', 'type': 'str'},
-        'parent_name': {'key': 'parentName', 'type': 'str'},
-        'parent_type': {'key': 'parentType', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
-        'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
-        'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "server_name": {"key": "serverName", "type": "str"},
+        "parent_name": {"key": "parentName", "type": "str"},
+        "parent_type": {"key": "parentType", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "last_backup_error_detail": {"key": "lastBackupErrorDetail", "type": "ErrorDetail"},
+        "protected_item_data_source_id": {"key": "protectedItemDataSourceId", "type": "str"},
+        "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
     }
 
     _subtype_map = {
-        'protected_item_type': {'AzureVmWorkloadSAPAseDatabase': 'AzureVmWorkloadSAPAseDatabaseProtectedItem', 'AzureVmWorkloadSAPHanaDatabase': 'AzureVmWorkloadSAPHanaDatabaseProtectedItem', 'AzureVmWorkloadSQLDatabase': 'AzureVmWorkloadSQLDatabaseProtectedItem'}
+        "protected_item_type": {
+            "AzureVmWorkloadSAPAseDatabase": "AzureVmWorkloadSAPAseDatabaseProtectedItem",
+            "AzureVmWorkloadSAPHanaDatabase": "AzureVmWorkloadSAPHanaDatabaseProtectedItem",
+            "AzureVmWorkloadSQLDatabase": "AzureVmWorkloadSQLDatabaseProtectedItem",
+        }
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
@@ -2666,12 +2791,12 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -2687,7 +2812,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -2719,11 +2844,11 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-         Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+         Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
         :paramtype last_backup_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
         :keyword last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -2735,7 +2860,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         :paramtype protected_item_data_source_id: str
         :keyword protected_item_health_status: Health status of the backup item, evaluated based on
          last heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
-         "IRPending".
+         and "IRPending".
         :paramtype protected_item_health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
         :keyword extended_info: Additional information for this backup item.
@@ -2745,8 +2870,24 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KPIResourceHealthDetails]
         """
-        super(AzureVmWorkloadProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
-        self.protected_item_type = 'AzureVmWorkloadProtectedItem'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            **kwargs
+        )
+        self.protected_item_type = "AzureVmWorkloadProtectedItem"  # type: str
         self.friendly_name = friendly_name
         self.server_name = server_name
         self.parent_name = parent_name
@@ -2762,7 +2903,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         self.kpis_healths = kpis_healths
 
 
-class AzureVmWorkloadProtectedItemExtendedInfo(msrest.serialization.Model):
+class AzureVmWorkloadProtectedItemExtendedInfo(_serialization.Model):
     """Additional information on Azure Workload for SQL specific backup item.
 
     :ivar oldest_recovery_point: The oldest backup copy available for this backup item.
@@ -2775,9 +2916,9 @@ class AzureVmWorkloadProtectedItemExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
-        'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
-        'policy_state': {'key': 'policyState', 'type': 'str'},
+        "oldest_recovery_point": {"key": "oldestRecoveryPoint", "type": "iso-8601"},
+        "recovery_point_count": {"key": "recoveryPointCount", "type": "int"},
+        "policy_state": {"key": "policyState", "type": "str"},
     }
 
     def __init__(
@@ -2797,27 +2938,29 @@ class AzureVmWorkloadProtectedItemExtendedInfo(msrest.serialization.Model):
          item.
         :paramtype policy_state: str
         """
-        super(AzureVmWorkloadProtectedItemExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
 
 
-class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
+class AzureVmWorkloadSAPAseDatabaseProtectedItem(
+    AzureVmWorkloadProtectedItem
+):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific protected item representing SAP ASE Database.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -2833,7 +2976,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -2863,11 +3006,11 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-     Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+     Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
     :vartype last_backup_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
     :ivar last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -2878,7 +3021,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar protected_item_data_source_id: Data ID of the protected item.
     :vartype protected_item_data_source_id: str
     :ivar protected_item_health_status: Health status of the backup item, evaluated based on last
-     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
+     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable", and
      "IRPending".
     :vartype protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
@@ -2891,41 +3034,41 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'server_name': {'key': 'serverName', 'type': 'str'},
-        'parent_name': {'key': 'parentName', 'type': 'str'},
-        'parent_type': {'key': 'parentType', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
-        'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
-        'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "server_name": {"key": "serverName", "type": "str"},
+        "parent_name": {"key": "parentName", "type": "str"},
+        "parent_type": {"key": "parentType", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "last_backup_error_detail": {"key": "lastBackupErrorDetail", "type": "ErrorDetail"},
+        "protected_item_data_source_id": {"key": "protectedItemDataSourceId", "type": "str"},
+        "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
@@ -2960,12 +3103,12 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -2981,7 +3124,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -3013,11 +3156,11 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-         Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+         Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
         :paramtype last_backup_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
         :keyword last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -3029,7 +3172,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :paramtype protected_item_data_source_id: str
         :keyword protected_item_health_status: Health status of the backup item, evaluated based on
          last heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
-         "IRPending".
+         and "IRPending".
         :paramtype protected_item_health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
         :keyword extended_info: Additional information for this backup item.
@@ -3039,25 +3182,56 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KPIResourceHealthDetails]
         """
-        super(AzureVmWorkloadSAPAseDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
-        self.protected_item_type = 'AzureVmWorkloadSAPAseDatabase'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            friendly_name=friendly_name,
+            server_name=server_name,
+            parent_name=parent_name,
+            parent_type=parent_type,
+            protection_status=protection_status,
+            protection_state=protection_state,
+            last_backup_status=last_backup_status,
+            last_backup_time=last_backup_time,
+            last_backup_error_detail=last_backup_error_detail,
+            protected_item_data_source_id=protected_item_data_source_id,
+            protected_item_health_status=protected_item_health_status,
+            extended_info=extended_info,
+            kpis_healths=kpis_healths,
+            **kwargs
+        )
+        self.protected_item_type = "AzureVmWorkloadSAPAseDatabase"  # type: str
 
 
-class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
+class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
+    AzureVmWorkloadProtectedItem
+):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific protected item representing SAP HANA Database.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -3073,7 +3247,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -3103,11 +3277,11 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-     Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+     Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
     :vartype last_backup_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
     :ivar last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -3118,7 +3292,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar protected_item_data_source_id: Data ID of the protected item.
     :vartype protected_item_data_source_id: str
     :ivar protected_item_health_status: Health status of the backup item, evaluated based on last
-     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
+     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable", and
      "IRPending".
     :vartype protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
@@ -3131,41 +3305,41 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'server_name': {'key': 'serverName', 'type': 'str'},
-        'parent_name': {'key': 'parentName', 'type': 'str'},
-        'parent_type': {'key': 'parentType', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
-        'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
-        'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "server_name": {"key": "serverName", "type": "str"},
+        "parent_name": {"key": "parentName", "type": "str"},
+        "parent_type": {"key": "parentType", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "last_backup_error_detail": {"key": "lastBackupErrorDetail", "type": "ErrorDetail"},
+        "protected_item_data_source_id": {"key": "protectedItemDataSourceId", "type": "str"},
+        "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
@@ -3200,12 +3374,12 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -3221,7 +3395,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -3253,11 +3427,11 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-         Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+         Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
         :paramtype last_backup_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
         :keyword last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -3269,7 +3443,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :paramtype protected_item_data_source_id: str
         :keyword protected_item_health_status: Health status of the backup item, evaluated based on
          last heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
-         "IRPending".
+         and "IRPending".
         :paramtype protected_item_health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
         :keyword extended_info: Additional information for this backup item.
@@ -3279,25 +3453,56 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KPIResourceHealthDetails]
         """
-        super(AzureVmWorkloadSAPHanaDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
-        self.protected_item_type = 'AzureVmWorkloadSAPHanaDatabase'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            friendly_name=friendly_name,
+            server_name=server_name,
+            parent_name=parent_name,
+            parent_type=parent_type,
+            protection_status=protection_status,
+            protection_state=protection_state,
+            last_backup_status=last_backup_status,
+            last_backup_time=last_backup_time,
+            last_backup_error_detail=last_backup_error_detail,
+            protected_item_data_source_id=protected_item_data_source_id,
+            protected_item_health_status=protected_item_health_status,
+            extended_info=extended_info,
+            kpis_healths=kpis_healths,
+            **kwargs
+        )
+        self.protected_item_type = "AzureVmWorkloadSAPHanaDatabase"  # type: str
 
 
-class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
+class AzureVmWorkloadSQLDatabaseProtectedItem(
+    AzureVmWorkloadProtectedItem
+):  # pylint: disable=too-many-instance-attributes
     """Azure VM workload-specific protected item representing SQL Database.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -3313,7 +3518,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -3343,11 +3548,11 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar protection_status: Backup status of this backup item.
     :vartype protection_status: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-     Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+     Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
     :vartype last_backup_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
     :ivar last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -3358,7 +3563,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     :ivar protected_item_data_source_id: Data ID of the protected item.
     :vartype protected_item_data_source_id: str
     :ivar protected_item_health_status: Health status of the backup item, evaluated based on last
-     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
+     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable", and
      "IRPending".
     :vartype protected_item_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
@@ -3371,41 +3576,41 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'server_name': {'key': 'serverName', 'type': 'str'},
-        'parent_name': {'key': 'parentName', 'type': 'str'},
-        'parent_type': {'key': 'parentType', 'type': 'str'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'last_backup_error_detail': {'key': 'lastBackupErrorDetail', 'type': 'ErrorDetail'},
-        'protected_item_data_source_id': {'key': 'protectedItemDataSourceId', 'type': 'str'},
-        'protected_item_health_status': {'key': 'protectedItemHealthStatus', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureVmWorkloadProtectedItemExtendedInfo'},
-        'kpis_healths': {'key': 'kpisHealths', 'type': '{KPIResourceHealthDetails}'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "server_name": {"key": "serverName", "type": "str"},
+        "parent_name": {"key": "parentName", "type": "str"},
+        "parent_type": {"key": "parentType", "type": "str"},
+        "protection_status": {"key": "protectionStatus", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "last_backup_error_detail": {"key": "lastBackupErrorDetail", "type": "ErrorDetail"},
+        "protected_item_data_source_id": {"key": "protectedItemDataSourceId", "type": "str"},
+        "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
+        "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
@@ -3440,12 +3645,12 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -3461,7 +3666,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -3493,11 +3698,11 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
-         Known values are: "Invalid", "Healthy", "Unhealthy", "IRPending".
+         Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
         :paramtype last_backup_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.LastBackupStatus
         :keyword last_backup_time: Timestamp of the last backup operation on this backup item.
@@ -3509,7 +3714,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :paramtype protected_item_data_source_id: str
         :keyword protected_item_health_status: Health status of the backup item, evaluated based on
          last heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable",
-         "IRPending".
+         and "IRPending".
         :paramtype protected_item_health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemHealthStatus
         :keyword extended_info: Additional information for this backup item.
@@ -3519,11 +3724,40 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KPIResourceHealthDetails]
         """
-        super(AzureVmWorkloadSQLDatabaseProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, friendly_name=friendly_name, server_name=server_name, parent_name=parent_name, parent_type=parent_type, protection_status=protection_status, protection_state=protection_state, last_backup_status=last_backup_status, last_backup_time=last_backup_time, last_backup_error_detail=last_backup_error_detail, protected_item_data_source_id=protected_item_data_source_id, protected_item_health_status=protected_item_health_status, extended_info=extended_info, kpis_healths=kpis_healths, **kwargs)
-        self.protected_item_type = 'AzureVmWorkloadSQLDatabase'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            friendly_name=friendly_name,
+            server_name=server_name,
+            parent_name=parent_name,
+            parent_type=parent_type,
+            protection_status=protection_status,
+            protection_state=protection_state,
+            last_backup_status=last_backup_status,
+            last_backup_time=last_backup_time,
+            last_backup_error_detail=last_backup_error_detail,
+            protected_item_data_source_id=protected_item_data_source_id,
+            protected_item_health_status=protected_item_health_status,
+            extended_info=extended_info,
+            kpis_healths=kpis_healths,
+            **kwargs
+        )
+        self.protected_item_type = "AzureVmWorkloadSQLDatabase"  # type: str
 
 
-class AzureWorkloadErrorInfo(msrest.serialization.Model):
+class AzureWorkloadErrorInfo(_serialization.Model):
     """Azure storage specific error information.
 
     :ivar error_code: Error code.
@@ -3539,11 +3773,11 @@ class AzureWorkloadErrorInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error_code': {'key': 'errorCode', 'type': 'int'},
-        'error_string': {'key': 'errorString', 'type': 'str'},
-        'error_title': {'key': 'errorTitle', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
-        'additional_details': {'key': 'additionalDetails', 'type': 'str'},
+        "error_code": {"key": "errorCode", "type": "int"},
+        "error_string": {"key": "errorString", "type": "str"},
+        "error_title": {"key": "errorTitle", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
+        "additional_details": {"key": "additionalDetails", "type": "str"},
     }
 
     def __init__(
@@ -3568,7 +3802,7 @@ class AzureWorkloadErrorInfo(msrest.serialization.Model):
         :keyword additional_details: Additional details for above error code.
         :paramtype additional_details: str
         """
-        super(AzureWorkloadErrorInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error_code = error_code
         self.error_string = error_string
         self.error_title = error_title
@@ -3576,7 +3810,7 @@ class AzureWorkloadErrorInfo(msrest.serialization.Model):
         self.additional_details = additional_details
 
 
-class AzureWorkloadJob(Job):
+class AzureWorkloadJob(Job):  # pylint: disable=too-many-instance-attributes
     """Azure storage specific job.
 
     All required parameters must be populated in order to send to Azure.
@@ -3585,7 +3819,7 @@ class AzureWorkloadJob(Job):
     :vartype entity_friendly_name: str
     :ivar backup_management_type: Backup management type to execute the current job. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar operation: The operation name.
@@ -3598,8 +3832,8 @@ class AzureWorkloadJob(Job):
     :vartype end_time: ~datetime.datetime
     :ivar activity_id: ActivityId of job.
     :vartype activity_id: str
-    :ivar job_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar job_type: This property will be used as the discriminator for deciding the specific types
+     in the polymorphic chain of types. Required.
     :vartype job_type: str
     :ivar workload_type: Workload type of the job.
     :vartype workload_type: str
@@ -3617,23 +3851,23 @@ class AzureWorkloadJob(Job):
     """
 
     _validation = {
-        'job_type': {'required': True},
+        "job_type": {"required": True},
     }
 
     _attribute_map = {
-        'entity_friendly_name': {'key': 'entityFriendlyName', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'activity_id': {'key': 'activityId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'actions_info': {'key': 'actionsInfo', 'type': '[str]'},
-        'error_details': {'key': 'errorDetails', 'type': '[AzureWorkloadErrorInfo]'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadJobExtendedInfo'},
+        "entity_friendly_name": {"key": "entityFriendlyName", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "activity_id": {"key": "activityId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "actions_info": {"key": "actionsInfo", "type": "[str]"},
+        "error_details": {"key": "errorDetails", "type": "[AzureWorkloadErrorInfo]"},
+        "extended_info": {"key": "extendedInfo", "type": "AzureWorkloadJobExtendedInfo"},
     }
 
     def __init__(
@@ -3659,7 +3893,7 @@ class AzureWorkloadJob(Job):
         :paramtype entity_friendly_name: str
         :keyword backup_management_type: Backup management type to execute the current job. Known
          values are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql",
-         "AzureStorage", "AzureWorkload", "DefaultBackup".
+         "AzureStorage", "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword operation: The operation name.
@@ -3686,8 +3920,17 @@ class AzureWorkloadJob(Job):
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AzureWorkloadJobExtendedInfo
         """
-        super(AzureWorkloadJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id, **kwargs)
-        self.job_type = 'AzureWorkloadJob'  # type: str
+        super().__init__(
+            entity_friendly_name=entity_friendly_name,
+            backup_management_type=backup_management_type,
+            operation=operation,
+            status=status,
+            start_time=start_time,
+            end_time=end_time,
+            activity_id=activity_id,
+            **kwargs
+        )
+        self.job_type = "AzureWorkloadJob"  # type: str
         self.workload_type = workload_type
         self.duration = duration
         self.actions_info = actions_info
@@ -3695,7 +3938,7 @@ class AzureWorkloadJob(Job):
         self.extended_info = extended_info
 
 
-class AzureWorkloadJobExtendedInfo(msrest.serialization.Model):
+class AzureWorkloadJobExtendedInfo(_serialization.Model):
     """Azure VM workload-specific additional information for job.
 
     :ivar tasks_list: List of tasks for this job.
@@ -3708,9 +3951,9 @@ class AzureWorkloadJobExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tasks_list': {'key': 'tasksList', 'type': '[AzureWorkloadJobTaskDetails]'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
+        "tasks_list": {"key": "tasksList", "type": "[AzureWorkloadJobTaskDetails]"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "dynamic_error_message": {"key": "dynamicErrorMessage", "type": "str"},
     }
 
     def __init__(
@@ -3730,13 +3973,13 @@ class AzureWorkloadJobExtendedInfo(msrest.serialization.Model):
         :keyword dynamic_error_message: Non localized error message on job execution.
         :paramtype dynamic_error_message: str
         """
-        super(AzureWorkloadJobExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.dynamic_error_message = dynamic_error_message
 
 
-class AzureWorkloadJobTaskDetails(msrest.serialization.Model):
+class AzureWorkloadJobTaskDetails(_serialization.Model):
     """Azure VM workload specific job task details.
 
     :ivar task_id: The task display name.
@@ -3746,24 +3989,18 @@ class AzureWorkloadJobTaskDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "task_id": {"key": "taskId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        task_id: Optional[str] = None,
-        status: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, task_id: Optional[str] = None, status: Optional[str] = None, **kwargs):
         """
         :keyword task_id: The task display name.
         :paramtype task_id: str
         :keyword status: The status.
         :paramtype status: str
         """
-        super(AzureWorkloadJobTaskDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_id = task_id
         self.status = status
 
@@ -3771,20 +4008,21 @@ class AzureWorkloadJobTaskDetails(msrest.serialization.Model):
 class AzureWorkloadRecoveryPoint(RecoveryPoint):
     """Workload specific recovery point, specifically encapsulates full/diff recovery point.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadPointInTimeRecoveryPoint, AzureWorkloadSAPHanaRecoveryPoint, AzureWorkloadSQLRecoveryPoint.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureWorkloadPointInTimeRecoveryPoint, AzureWorkloadSAPHanaRecoveryPoint,
+    AzureWorkloadSQLRecoveryPoint
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_time_in_utc: UTC time at which recovery point was created.
     :vartype recovery_point_time_in_utc: ~datetime.datetime
     :ivar type: Type of restore point. Known values are: "Invalid", "Full", "Log", "Differential",
-     "Incremental".
+     and "Incremental".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointType
     :ivar recovery_point_tier_details: Recovery point tier information.
     :vartype recovery_point_tier_details:
@@ -3795,21 +4033,28 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_time_in_utc': {'readonly': True},
-        'type': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_time_in_utc": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
-        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_time_in_utc": {"key": "recoveryPointTimeInUTC", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "recovery_point_tier_details": {"key": "recoveryPointTierDetails", "type": "[RecoveryPointTierInformation]"},
+        "recovery_point_move_readiness_info": {
+            "key": "recoveryPointMoveReadinessInfo",
+            "type": "{RecoveryPointMoveReadinessInfo}",
+        },
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadPointInTimeRecoveryPoint': 'AzureWorkloadPointInTimeRecoveryPoint', 'AzureWorkloadSAPHanaRecoveryPoint': 'AzureWorkloadSAPHanaRecoveryPoint', 'AzureWorkloadSQLRecoveryPoint': 'AzureWorkloadSQLRecoveryPoint'}
+        "object_type": {
+            "AzureWorkloadPointInTimeRecoveryPoint": "AzureWorkloadPointInTimeRecoveryPoint",
+            "AzureWorkloadSAPHanaRecoveryPoint": "AzureWorkloadSAPHanaRecoveryPoint",
+            "AzureWorkloadSQLRecoveryPoint": "AzureWorkloadSQLRecoveryPoint",
+        }
     }
 
     def __init__(
@@ -3827,8 +4072,8 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
         :paramtype recovery_point_move_readiness_info: dict[str,
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointMoveReadinessInfo]
         """
-        super(AzureWorkloadRecoveryPoint, self).__init__(**kwargs)
-        self.object_type = 'AzureWorkloadRecoveryPoint'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "AzureWorkloadRecoveryPoint"  # type: str
         self.recovery_point_time_in_utc = None
         self.type = None
         self.recovery_point_tier_details = recovery_point_tier_details
@@ -3838,20 +4083,20 @@ class AzureWorkloadRecoveryPoint(RecoveryPoint):
 class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
     """Recovery point specific to PointInTime.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSAPHanaPointInTimeRecoveryPoint.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureWorkloadSAPHanaPointInTimeRecoveryPoint
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_time_in_utc: UTC time at which recovery point was created.
     :vartype recovery_point_time_in_utc: ~datetime.datetime
     :ivar type: Type of restore point. Known values are: "Invalid", "Full", "Log", "Differential",
-     "Incremental".
+     and "Incremental".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointType
     :ivar recovery_point_tier_details: Recovery point tier information.
     :vartype recovery_point_tier_details:
@@ -3865,22 +4110,25 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_time_in_utc': {'readonly': True},
-        'type': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_time_in_utc": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
-        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
-        'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_time_in_utc": {"key": "recoveryPointTimeInUTC", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "recovery_point_tier_details": {"key": "recoveryPointTierDetails", "type": "[RecoveryPointTierInformation]"},
+        "recovery_point_move_readiness_info": {
+            "key": "recoveryPointMoveReadinessInfo",
+            "type": "{RecoveryPointMoveReadinessInfo}",
+        },
+        "time_ranges": {"key": "timeRanges", "type": "[PointInTimeRange]"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSAPHanaPointInTimeRecoveryPoint': 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'}
+        "object_type": {"AzureWorkloadSAPHanaPointInTimeRecoveryPoint": "AzureWorkloadSAPHanaPointInTimeRecoveryPoint"}
     }
 
     def __init__(
@@ -3902,24 +4150,29 @@ class AzureWorkloadPointInTimeRecoveryPoint(AzureWorkloadRecoveryPoint):
         :paramtype time_ranges:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.PointInTimeRange]
         """
-        super(AzureWorkloadPointInTimeRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, **kwargs)
-        self.object_type = 'AzureWorkloadPointInTimeRecoveryPoint'  # type: str
+        super().__init__(
+            recovery_point_tier_details=recovery_point_tier_details,
+            recovery_point_move_readiness_info=recovery_point_move_readiness_info,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadPointInTimeRecoveryPoint"  # type: str
         self.time_ranges = time_ranges
 
 
 class AzureWorkloadRestoreRequest(RestoreRequest):
     """AzureWorkload-specific restore.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadPointInTimeRestoreRequest, AzureWorkloadSAPHanaRestoreRequest, AzureWorkloadSQLRestoreRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureWorkloadPointInTimeRestoreRequest, AzureWorkloadSAPHanaRestoreRequest,
+    AzureWorkloadSQLRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Fully qualified ARM ID of the VM on which workload that was running
@@ -3930,7 +4183,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -3940,21 +4193,25 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
-        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
-        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
+        "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadPointInTimeRestoreRequest': 'AzureWorkloadPointInTimeRestoreRequest', 'AzureWorkloadSAPHanaRestoreRequest': 'AzureWorkloadSAPHanaRestoreRequest', 'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
+        "object_type": {
+            "AzureWorkloadPointInTimeRestoreRequest": "AzureWorkloadPointInTimeRestoreRequest",
+            "AzureWorkloadSAPHanaRestoreRequest": "AzureWorkloadSAPHanaRestoreRequest",
+            "AzureWorkloadSQLRestoreRequest": "AzureWorkloadSQLRestoreRequest",
+        }
     }
 
     def __init__(
@@ -3970,7 +4227,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     ):
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Fully qualified ARM ID of the VM on which workload that was
@@ -3982,7 +4239,7 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         :paramtype target_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -3990,8 +4247,8 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
         :paramtype target_virtual_machine_id: str
         """
-        super(AzureWorkloadRestoreRequest, self).__init__(**kwargs)
-        self.object_type = 'AzureWorkloadRestoreRequest'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "AzureWorkloadRestoreRequest"  # type: str
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
@@ -4005,11 +4262,11 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Fully qualified ARM ID of the VM on which workload that was running
@@ -4020,7 +4277,7 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4032,18 +4289,18 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
-        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
-        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
-        'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
+        "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
+        "point_in_time": {"key": "pointInTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -4060,7 +4317,7 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     ):
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Fully qualified ARM ID of the VM on which workload that was
@@ -4072,7 +4329,7 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         :paramtype target_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4082,8 +4339,16 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         :keyword point_in_time: PointInTime value.
         :paramtype point_in_time: ~datetime.datetime
         """
-        super(AzureWorkloadPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
-        self.object_type = 'AzureWorkloadPointInTimeRestoreRequest'  # type: str
+        super().__init__(
+            recovery_type=recovery_type,
+            source_resource_id=source_resource_id,
+            property_bag=property_bag,
+            target_info=target_info,
+            recovery_mode=recovery_mode,
+            target_virtual_machine_id=target_virtual_machine_id,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadPointInTimeRestoreRequest"  # type: str
         self.point_in_time = point_in_time
 
 
@@ -4094,13 +4359,13 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_time_in_utc: UTC time at which recovery point was created.
     :vartype recovery_point_time_in_utc: ~datetime.datetime
     :ivar type: Type of restore point. Known values are: "Invalid", "Full", "Log", "Differential",
-     "Incremental".
+     and "Incremental".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointType
     :ivar recovery_point_tier_details: Recovery point tier information.
     :vartype recovery_point_tier_details:
@@ -4114,18 +4379,21 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_time_in_utc': {'readonly': True},
-        'type': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_time_in_utc": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
-        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
-        'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_time_in_utc": {"key": "recoveryPointTimeInUTC", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "recovery_point_tier_details": {"key": "recoveryPointTierDetails", "type": "[RecoveryPointTierInformation]"},
+        "recovery_point_move_readiness_info": {
+            "key": "recoveryPointMoveReadinessInfo",
+            "type": "{RecoveryPointMoveReadinessInfo}",
+        },
+        "time_ranges": {"key": "timeRanges", "type": "[PointInTimeRange]"},
     }
 
     def __init__(
@@ -4147,23 +4415,28 @@ class AzureWorkloadSAPHanaPointInTimeRecoveryPoint(AzureWorkloadPointInTimeRecov
         :paramtype time_ranges:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.PointInTimeRange]
         """
-        super(AzureWorkloadSAPHanaPointInTimeRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, time_ranges=time_ranges, **kwargs)
-        self.object_type = 'AzureWorkloadSAPHanaPointInTimeRecoveryPoint'  # type: str
+        super().__init__(
+            recovery_point_tier_details=recovery_point_tier_details,
+            recovery_point_move_readiness_info=recovery_point_move_readiness_info,
+            time_ranges=time_ranges,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSAPHanaPointInTimeRecoveryPoint"  # type: str
 
 
 class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     """AzureWorkload SAP Hana-specific restore.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSAPHanaPointInTimeRestoreRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureWorkloadSAPHanaPointInTimeRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Fully qualified ARM ID of the VM on which workload that was running
@@ -4174,7 +4447,7 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4184,21 +4457,23 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
-        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
-        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
+        "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSAPHanaPointInTimeRestoreRequest': 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'}
+        "object_type": {
+            "AzureWorkloadSAPHanaPointInTimeRestoreRequest": "AzureWorkloadSAPHanaPointInTimeRestoreRequest"
+        }
     }
 
     def __init__(
@@ -4214,7 +4489,7 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     ):
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Fully qualified ARM ID of the VM on which workload that was
@@ -4226,7 +4501,7 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
         :paramtype target_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4234,8 +4509,16 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
          /subscriptions/{subId}/resourcegroups/{rg}/provider/Microsoft.Compute/virtualmachines/{vm}.
         :paramtype target_virtual_machine_id: str
         """
-        super(AzureWorkloadSAPHanaRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
-        self.object_type = 'AzureWorkloadSAPHanaRestoreRequest'  # type: str
+        super().__init__(
+            recovery_type=recovery_type,
+            source_resource_id=source_resource_id,
+            property_bag=property_bag,
+            target_info=target_info,
+            recovery_mode=recovery_mode,
+            target_virtual_machine_id=target_virtual_machine_id,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSAPHanaRestoreRequest"  # type: str
 
 
 class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreRequest):
@@ -4243,11 +4526,11 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Fully qualified ARM ID of the VM on which workload that was running
@@ -4258,7 +4541,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4270,18 +4553,18 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
-        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
-        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
-        'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
+        "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
+        "point_in_time": {"key": "pointInTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -4298,7 +4581,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     ):
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Fully qualified ARM ID of the VM on which workload that was
@@ -4310,7 +4593,7 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         :paramtype target_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4320,8 +4603,16 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         :keyword point_in_time: PointInTime value.
         :paramtype point_in_time: ~datetime.datetime
         """
-        super(AzureWorkloadSAPHanaPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
-        self.object_type = 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'  # type: str
+        super().__init__(
+            recovery_type=recovery_type,
+            source_resource_id=source_resource_id,
+            property_bag=property_bag,
+            target_info=target_info,
+            recovery_mode=recovery_mode,
+            target_virtual_machine_id=target_virtual_machine_id,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSAPHanaPointInTimeRestoreRequest"  # type: str
         self.point_in_time = point_in_time
 
 
@@ -4332,13 +4623,13 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_time_in_utc: UTC time at which recovery point was created.
     :vartype recovery_point_time_in_utc: ~datetime.datetime
     :ivar type: Type of restore point. Known values are: "Invalid", "Full", "Log", "Differential",
-     "Incremental".
+     and "Incremental".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointType
     :ivar recovery_point_tier_details: Recovery point tier information.
     :vartype recovery_point_tier_details:
@@ -4349,17 +4640,20 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_time_in_utc': {'readonly': True},
-        'type': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_time_in_utc": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
-        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_time_in_utc": {"key": "recoveryPointTimeInUTC", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "recovery_point_tier_details": {"key": "recoveryPointTierDetails", "type": "[RecoveryPointTierInformation]"},
+        "recovery_point_move_readiness_info": {
+            "key": "recoveryPointMoveReadinessInfo",
+            "type": "{RecoveryPointMoveReadinessInfo}",
+        },
     }
 
     def __init__(
@@ -4377,27 +4671,31 @@ class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
         :paramtype recovery_point_move_readiness_info: dict[str,
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointMoveReadinessInfo]
         """
-        super(AzureWorkloadSAPHanaRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, **kwargs)
-        self.object_type = 'AzureWorkloadSAPHanaRecoveryPoint'  # type: str
+        super().__init__(
+            recovery_point_tier_details=recovery_point_tier_details,
+            recovery_point_move_readiness_info=recovery_point_move_readiness_info,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSAPHanaRecoveryPoint"  # type: str
 
 
 class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
     """SQL specific recoverypoint, specifically encapsulates full/diff recoverypoint along with extended info.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSQLPointInTimeRecoveryPoint.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureWorkloadSQLPointInTimeRecoveryPoint
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_time_in_utc: UTC time at which recovery point was created.
     :vartype recovery_point_time_in_utc: ~datetime.datetime
     :ivar type: Type of restore point. Known values are: "Invalid", "Full", "Log", "Differential",
-     "Incremental".
+     and "Incremental".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointType
     :ivar recovery_point_tier_details: Recovery point tier information.
     :vartype recovery_point_tier_details:
@@ -4414,22 +4712,25 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_time_in_utc': {'readonly': True},
-        'type': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_time_in_utc": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
-        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadSQLRecoveryPointExtendedInfo'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_time_in_utc": {"key": "recoveryPointTimeInUTC", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "recovery_point_tier_details": {"key": "recoveryPointTierDetails", "type": "[RecoveryPointTierInformation]"},
+        "recovery_point_move_readiness_info": {
+            "key": "recoveryPointMoveReadinessInfo",
+            "type": "{RecoveryPointMoveReadinessInfo}",
+        },
+        "extended_info": {"key": "extendedInfo", "type": "AzureWorkloadSQLRecoveryPointExtendedInfo"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSQLPointInTimeRecoveryPoint': 'AzureWorkloadSQLPointInTimeRecoveryPoint'}
+        "object_type": {"AzureWorkloadSQLPointInTimeRecoveryPoint": "AzureWorkloadSQLPointInTimeRecoveryPoint"}
     }
 
     def __init__(
@@ -4454,8 +4755,12 @@ class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AzureWorkloadSQLRecoveryPointExtendedInfo
         """
-        super(AzureWorkloadSQLRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, **kwargs)
-        self.object_type = 'AzureWorkloadSQLRecoveryPoint'  # type: str
+        super().__init__(
+            recovery_point_tier_details=recovery_point_tier_details,
+            recovery_point_move_readiness_info=recovery_point_move_readiness_info,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSQLRecoveryPoint"  # type: str
         self.extended_info = extended_info
 
 
@@ -4466,13 +4771,13 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_time_in_utc: UTC time at which recovery point was created.
     :vartype recovery_point_time_in_utc: ~datetime.datetime
     :ivar type: Type of restore point. Known values are: "Invalid", "Full", "Log", "Differential",
-     "Incremental".
+     and "Incremental".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointType
     :ivar recovery_point_tier_details: Recovery point tier information.
     :vartype recovery_point_tier_details:
@@ -4492,19 +4797,22 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_time_in_utc': {'readonly': True},
-        'type': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_time_in_utc": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_time_in_utc': {'key': 'recoveryPointTimeInUTC', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
-        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'AzureWorkloadSQLRecoveryPointExtendedInfo'},
-        'time_ranges': {'key': 'timeRanges', 'type': '[PointInTimeRange]'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_time_in_utc": {"key": "recoveryPointTimeInUTC", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "recovery_point_tier_details": {"key": "recoveryPointTierDetails", "type": "[RecoveryPointTierInformation]"},
+        "recovery_point_move_readiness_info": {
+            "key": "recoveryPointMoveReadinessInfo",
+            "type": "{RecoveryPointMoveReadinessInfo}",
+        },
+        "extended_info": {"key": "extendedInfo", "type": "AzureWorkloadSQLRecoveryPointExtendedInfo"},
+        "time_ranges": {"key": "timeRanges", "type": "[PointInTimeRange]"},
     }
 
     def __init__(
@@ -4533,24 +4841,29 @@ class AzureWorkloadSQLPointInTimeRecoveryPoint(AzureWorkloadSQLRecoveryPoint):
         :paramtype time_ranges:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.PointInTimeRange]
         """
-        super(AzureWorkloadSQLPointInTimeRecoveryPoint, self).__init__(recovery_point_tier_details=recovery_point_tier_details, recovery_point_move_readiness_info=recovery_point_move_readiness_info, extended_info=extended_info, **kwargs)
-        self.object_type = 'AzureWorkloadSQLPointInTimeRecoveryPoint'  # type: str
+        super().__init__(
+            recovery_point_tier_details=recovery_point_tier_details,
+            recovery_point_move_readiness_info=recovery_point_move_readiness_info,
+            extended_info=extended_info,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSQLPointInTimeRecoveryPoint"  # type: str
         self.time_ranges = time_ranges
 
 
 class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     """AzureWorkload SQL -specific restore. Specifically for full/diff restore.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureWorkloadSQLPointInTimeRestoreRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureWorkloadSQLPointInTimeRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Fully qualified ARM ID of the VM on which workload that was running
@@ -4561,7 +4874,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4580,24 +4893,24 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
-        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
-        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
-        'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
-        'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
-        'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
+        "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
+        "should_use_alternate_target_location": {"key": "shouldUseAlternateTargetLocation", "type": "bool"},
+        "is_non_recoverable": {"key": "isNonRecoverable", "type": "bool"},
+        "alternate_directory_paths": {"key": "alternateDirectoryPaths", "type": "[SQLDataDirectoryMapping]"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureWorkloadSQLPointInTimeRestoreRequest': 'AzureWorkloadSQLPointInTimeRestoreRequest'}
+        "object_type": {"AzureWorkloadSQLPointInTimeRestoreRequest": "AzureWorkloadSQLPointInTimeRestoreRequest"}
     }
 
     def __init__(
@@ -4616,7 +4929,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     ):
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Fully qualified ARM ID of the VM on which workload that was
@@ -4628,7 +4941,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         :paramtype target_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4645,23 +4958,33 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         :paramtype alternate_directory_paths:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.SQLDataDirectoryMapping]
         """
-        super(AzureWorkloadSQLRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, **kwargs)
-        self.object_type = 'AzureWorkloadSQLRestoreRequest'  # type: str
+        super().__init__(
+            recovery_type=recovery_type,
+            source_resource_id=source_resource_id,
+            property_bag=property_bag,
+            target_info=target_info,
+            recovery_mode=recovery_mode,
+            target_virtual_machine_id=target_virtual_machine_id,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSQLRestoreRequest"  # type: str
         self.should_use_alternate_target_location = should_use_alternate_target_location
         self.is_non_recoverable = is_non_recoverable
         self.alternate_directory_paths = alternate_directory_paths
 
 
-class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
+class AzureWorkloadSQLPointInTimeRestoreRequest(
+    AzureWorkloadSQLRestoreRequest
+):  # pylint: disable=too-many-instance-attributes
     """AzureWorkload SQL -specific restore. Specifically for PointInTime/Log restore.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Fully qualified ARM ID of the VM on which workload that was running
@@ -4672,7 +4995,7 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
     :ivar target_info: Details of target database.
     :vartype target_info: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
     :ivar recovery_mode: Defines whether the current recovery mode is file restore or database
-     restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+     restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
     :vartype recovery_mode: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
     :ivar target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4693,21 +5016,21 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
-        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
-        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
-        'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
-        'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
-        'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
-        'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "target_info": {"key": "targetInfo", "type": "TargetRestoreInfo"},
+        "recovery_mode": {"key": "recoveryMode", "type": "str"},
+        "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
+        "should_use_alternate_target_location": {"key": "shouldUseAlternateTargetLocation", "type": "bool"},
+        "is_non_recoverable": {"key": "isNonRecoverable", "type": "bool"},
+        "alternate_directory_paths": {"key": "alternateDirectoryPaths", "type": "[SQLDataDirectoryMapping]"},
+        "point_in_time": {"key": "pointInTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -4727,7 +5050,7 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
     ):
         """
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Fully qualified ARM ID of the VM on which workload that was
@@ -4739,7 +5062,7 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
         :paramtype target_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.TargetRestoreInfo
         :keyword recovery_mode: Defines whether the current recovery mode is file restore or database
-         restore. Known values are: "Invalid", "FileRecovery", "WorkloadRecovery".
+         restore. Known values are: "Invalid", "FileRecovery", and "WorkloadRecovery".
         :paramtype recovery_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryMode
         :keyword target_virtual_machine_id: This is the complete ARM Id of the target VM
@@ -4758,12 +5081,23 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
         :keyword point_in_time: PointInTime value.
         :paramtype point_in_time: ~datetime.datetime
         """
-        super(AzureWorkloadSQLPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, target_virtual_machine_id=target_virtual_machine_id, should_use_alternate_target_location=should_use_alternate_target_location, is_non_recoverable=is_non_recoverable, alternate_directory_paths=alternate_directory_paths, **kwargs)
-        self.object_type = 'AzureWorkloadSQLPointInTimeRestoreRequest'  # type: str
+        super().__init__(
+            recovery_type=recovery_type,
+            source_resource_id=source_resource_id,
+            property_bag=property_bag,
+            target_info=target_info,
+            recovery_mode=recovery_mode,
+            target_virtual_machine_id=target_virtual_machine_id,
+            should_use_alternate_target_location=should_use_alternate_target_location,
+            is_non_recoverable=is_non_recoverable,
+            alternate_directory_paths=alternate_directory_paths,
+            **kwargs
+        )
+        self.object_type = "AzureWorkloadSQLPointInTimeRestoreRequest"  # type: str
         self.point_in_time = point_in_time
 
 
-class AzureWorkloadSQLRecoveryPointExtendedInfo(msrest.serialization.Model):
+class AzureWorkloadSQLRecoveryPointExtendedInfo(_serialization.Model):
     """Extended info class details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4776,51 +5110,47 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_directory_time_in_utc': {'readonly': True},
-        'data_directory_paths': {'readonly': True},
+        "data_directory_time_in_utc": {"readonly": True},
+        "data_directory_paths": {"readonly": True},
     }
 
     _attribute_map = {
-        'data_directory_time_in_utc': {'key': 'dataDirectoryTimeInUTC', 'type': 'iso-8601'},
-        'data_directory_paths': {'key': 'dataDirectoryPaths', 'type': '[SQLDataDirectory]'},
+        "data_directory_time_in_utc": {"key": "dataDirectoryTimeInUTC", "type": "iso-8601"},
+        "data_directory_paths": {"key": "dataDirectoryPaths", "type": "[SQLDataDirectory]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureWorkloadSQLRecoveryPointExtendedInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.data_directory_time_in_utc = None
         self.data_directory_paths = None
 
 
-class BackupManagementUsage(msrest.serialization.Model):
+class BackupManagementUsage(_serialization.Model):
     """Backup management usages of a vault.
 
     :ivar unit: Unit of the usage. Known values are: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond".
+     "CountPerSecond", and "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.UsagesUnit
     :ivar quota_period: Quota period of usage.
     :vartype quota_period: str
     :ivar next_reset_time: Next reset time of usage.
     :vartype next_reset_time: ~datetime.datetime
     :ivar current_value: Current value of usage.
-    :vartype current_value: long
+    :vartype current_value: int
     :ivar limit: Limit of usage.
-    :vartype limit: long
+    :vartype limit: int
     :ivar name: Name of usage.
     :vartype name: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.NameInfo
     """
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'next_reset_time': {'key': 'nextResetTime', 'type': 'iso-8601'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'NameInfo'},
+        "unit": {"key": "unit", "type": "str"},
+        "quota_period": {"key": "quotaPeriod", "type": "str"},
+        "next_reset_time": {"key": "nextResetTime", "type": "iso-8601"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "NameInfo"},
     }
 
     def __init__(
@@ -4836,20 +5166,20 @@ class BackupManagementUsage(msrest.serialization.Model):
     ):
         """
         :keyword unit: Unit of the usage. Known values are: "Count", "Bytes", "Seconds", "Percent",
-         "CountPerSecond", "BytesPerSecond".
+         "CountPerSecond", and "BytesPerSecond".
         :paramtype unit: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.UsagesUnit
         :keyword quota_period: Quota period of usage.
         :paramtype quota_period: str
         :keyword next_reset_time: Next reset time of usage.
         :paramtype next_reset_time: ~datetime.datetime
         :keyword current_value: Current value of usage.
-        :paramtype current_value: long
+        :paramtype current_value: int
         :keyword limit: Limit of usage.
-        :paramtype limit: long
+        :paramtype limit: int
         :keyword name: Name of usage.
         :paramtype name: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.NameInfo
         """
-        super(BackupManagementUsage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.unit = unit
         self.quota_period = quota_period
         self.next_reset_time = next_reset_time
@@ -4858,7 +5188,7 @@ class BackupManagementUsage(msrest.serialization.Model):
         self.name = name
 
 
-class BackupManagementUsageList(msrest.serialization.Model):
+class BackupManagementUsageList(_serialization.Model):
     """Backup management usage for vault.
 
     :ivar value: The list of backup management usages for the given vault.
@@ -4867,37 +5197,32 @@ class BackupManagementUsageList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BackupManagementUsage]'},
+        "value": {"key": "value", "type": "[BackupManagementUsage]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.BackupManagementUsage"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.BackupManagementUsage"]] = None, **kwargs):
         """
         :keyword value: The list of backup management usages for the given vault.
         :paramtype value:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementUsage]
         """
-        super(BackupManagementUsageList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class BackupResourceConfig(msrest.serialization.Model):
+class BackupResourceConfig(_serialization.Model):
     """The resource storage details.
 
     :ivar storage_model_type: Storage type. Known values are: "Invalid", "GeoRedundant",
-     "LocallyRedundant", "ZoneRedundant", "ReadAccessGeoZoneRedundant".
+     "LocallyRedundant", "ZoneRedundant", and "ReadAccessGeoZoneRedundant".
     :vartype storage_model_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.StorageType
     :ivar storage_type: Storage type. Known values are: "Invalid", "GeoRedundant",
-     "LocallyRedundant", "ZoneRedundant", "ReadAccessGeoZoneRedundant".
+     "LocallyRedundant", "ZoneRedundant", and "ReadAccessGeoZoneRedundant".
     :vartype storage_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.StorageType
     :ivar storage_type_state: Locked or Unlocked. Once a machine is registered against a resource,
-     the storageTypeState is always Locked. Known values are: "Invalid", "Locked", "Unlocked".
+     the storageTypeState is always Locked. Known values are: "Invalid", "Locked", and "Unlocked".
     :vartype storage_type_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.StorageTypeState
     :ivar cross_region_restore_flag: Opt in details of Cross Region Restore feature.
@@ -4905,10 +5230,10 @@ class BackupResourceConfig(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'storage_model_type': {'key': 'storageModelType', 'type': 'str'},
-        'storage_type': {'key': 'storageType', 'type': 'str'},
-        'storage_type_state': {'key': 'storageTypeState', 'type': 'str'},
-        'cross_region_restore_flag': {'key': 'crossRegionRestoreFlag', 'type': 'bool'},
+        "storage_model_type": {"key": "storageModelType", "type": "str"},
+        "storage_type": {"key": "storageType", "type": "str"},
+        "storage_type_state": {"key": "storageTypeState", "type": "str"},
+        "cross_region_restore_flag": {"key": "crossRegionRestoreFlag", "type": "bool"},
     }
 
     def __init__(
@@ -4922,22 +5247,22 @@ class BackupResourceConfig(msrest.serialization.Model):
     ):
         """
         :keyword storage_model_type: Storage type. Known values are: "Invalid", "GeoRedundant",
-         "LocallyRedundant", "ZoneRedundant", "ReadAccessGeoZoneRedundant".
+         "LocallyRedundant", "ZoneRedundant", and "ReadAccessGeoZoneRedundant".
         :paramtype storage_model_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.StorageType
         :keyword storage_type: Storage type. Known values are: "Invalid", "GeoRedundant",
-         "LocallyRedundant", "ZoneRedundant", "ReadAccessGeoZoneRedundant".
+         "LocallyRedundant", "ZoneRedundant", and "ReadAccessGeoZoneRedundant".
         :paramtype storage_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.StorageType
         :keyword storage_type_state: Locked or Unlocked. Once a machine is registered against a
-         resource, the storageTypeState is always Locked. Known values are: "Invalid", "Locked",
+         resource, the storageTypeState is always Locked. Known values are: "Invalid", "Locked", and
          "Unlocked".
         :paramtype storage_type_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.StorageTypeState
         :keyword cross_region_restore_flag: Opt in details of Cross Region Restore feature.
         :paramtype cross_region_restore_flag: bool
         """
-        super(BackupResourceConfig, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.storage_model_type = storage_model_type
         self.storage_type = storage_type
         self.storage_type_state = storage_type_state
@@ -4958,7 +5283,7 @@ class BackupResourceConfigResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -4968,19 +5293,19 @@ class BackupResourceConfigResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BackupResourceConfig'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "BackupResourceConfig"},
     }
 
     def __init__(
@@ -4995,7 +5320,7 @@ class BackupResourceConfigResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
@@ -5003,11 +5328,11 @@ class BackupResourceConfigResource(Resource):
         :paramtype properties:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupResourceConfig
         """
-        super(BackupResourceConfigResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
-class BEKDetails(msrest.serialization.Model):
+class BEKDetails(_serialization.Model):
     """BEK is bitlocker encryption key.
 
     :ivar secret_url: Secret is BEK.
@@ -5019,9 +5344,9 @@ class BEKDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'secret_url': {'key': 'secretUrl', 'type': 'str'},
-        'secret_vault_id': {'key': 'secretVaultId', 'type': 'str'},
-        'secret_data': {'key': 'secretData', 'type': 'str'},
+        "secret_url": {"key": "secretUrl", "type": "str"},
+        "secret_vault_id": {"key": "secretVaultId", "type": "str"},
+        "secret_data": {"key": "secretData", "type": "str"},
     }
 
     def __init__(
@@ -5040,71 +5365,63 @@ class BEKDetails(msrest.serialization.Model):
         :keyword secret_data: BEK data.
         :paramtype secret_data: str
         """
-        super(BEKDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.secret_url = secret_url
         self.secret_vault_id = secret_vault_id
         self.secret_data = secret_data
 
 
-class BMSAADPropertiesQueryObject(msrest.serialization.Model):
+class BMSAADPropertiesQueryObject(_serialization.Model):
     """Filters to list backup items.
 
     :ivar backup_management_type: Backup management type for the backed up item. Known values are:
      "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     """
 
     _attribute_map = {
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None,
-        **kwargs
+        self, *, backup_management_type: Optional[Union[str, "_models.BackupManagementType"]] = None, **kwargs
     ):
         """
         :keyword backup_management_type: Backup management type for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         """
-        super(BMSAADPropertiesQueryObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.backup_management_type = backup_management_type
 
 
-class BMSBackupSummariesQueryObject(msrest.serialization.Model):
+class BMSBackupSummariesQueryObject(_serialization.Model):
     """Query parameters to fetch backup summaries.
 
     :ivar type: Backup management type for this container. Known values are: "Invalid",
-     "BackupProtectedItemCountSummary", "BackupProtectionContainerCountSummary".
+     "BackupProtectedItemCountSummary", and "BackupProtectionContainerCountSummary".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.Type
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.Type"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "_models.Type"]] = None, **kwargs):
         """
         :keyword type: Backup management type for this container. Known values are: "Invalid",
-         "BackupProtectedItemCountSummary", "BackupProtectionContainerCountSummary".
+         "BackupProtectedItemCountSummary", and "BackupProtectionContainerCountSummary".
         :paramtype type: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.Type
         """
-        super(BMSBackupSummariesQueryObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
 
 
-class BMSRPQueryObject(msrest.serialization.Model):
+class BMSRPQueryObject(_serialization.Model):
     """Filters to list backup copies.
 
     :ivar start_date: Backup copies created after this time.
@@ -5112,7 +5429,7 @@ class BMSRPQueryObject(msrest.serialization.Model):
     :ivar end_date: Backup copies created before this time.
     :vartype end_date: ~datetime.datetime
     :ivar restore_point_query_type: RestorePoint type. Known values are: "Invalid", "Full", "Log",
-     "Differential", "FullAndDifferential", "All", "Incremental".
+     "Differential", "FullAndDifferential", "All", and "Incremental".
     :vartype restore_point_query_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointQueryType
     :ivar extended_info: In Get Recovery Point, it tells whether extended information about
@@ -5123,11 +5440,11 @@ class BMSRPQueryObject(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start_date': {'key': 'startDate', 'type': 'iso-8601'},
-        'end_date': {'key': 'endDate', 'type': 'iso-8601'},
-        'restore_point_query_type': {'key': 'restorePointQueryType', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'bool'},
-        'move_ready_rp_only': {'key': 'moveReadyRPOnly', 'type': 'bool'},
+        "start_date": {"key": "startDate", "type": "iso-8601"},
+        "end_date": {"key": "endDate", "type": "iso-8601"},
+        "restore_point_query_type": {"key": "restorePointQueryType", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "bool"},
+        "move_ready_rp_only": {"key": "moveReadyRPOnly", "type": "bool"},
     }
 
     def __init__(
@@ -5146,7 +5463,7 @@ class BMSRPQueryObject(msrest.serialization.Model):
         :keyword end_date: Backup copies created before this time.
         :paramtype end_date: ~datetime.datetime
         :keyword restore_point_query_type: RestorePoint type. Known values are: "Invalid", "Full",
-         "Log", "Differential", "FullAndDifferential", "All", "Incremental".
+         "Log", "Differential", "FullAndDifferential", "All", and "Incremental".
         :paramtype restore_point_query_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestorePointQueryType
         :keyword extended_info: In Get Recovery Point, it tells whether extended information about
@@ -5155,7 +5472,7 @@ class BMSRPQueryObject(msrest.serialization.Model):
         :keyword move_ready_rp_only: Whether the RP can be moved to another tier.
         :paramtype move_ready_rp_only: bool
         """
-        super(BMSRPQueryObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_date = start_date
         self.end_date = end_date
         self.restore_point_query_type = restore_point_query_type
@@ -5163,7 +5480,7 @@ class BMSRPQueryObject(msrest.serialization.Model):
         self.move_ready_rp_only = move_ready_rp_only
 
 
-class ClientScriptForConnect(msrest.serialization.Model):
+class ClientScriptForConnect(_serialization.Model):
     """Client script details for file / folder restore.
 
     :ivar script_content: File content of the client script for file / folder restore.
@@ -5184,11 +5501,11 @@ class ClientScriptForConnect(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'script_content': {'key': 'scriptContent', 'type': 'str'},
-        'script_extension': {'key': 'scriptExtension', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'script_name_suffix': {'key': 'scriptNameSuffix', 'type': 'str'},
+        "script_content": {"key": "scriptContent", "type": "str"},
+        "script_extension": {"key": "scriptExtension", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "script_name_suffix": {"key": "scriptNameSuffix", "type": "str"},
     }
 
     def __init__(
@@ -5218,7 +5535,7 @@ class ClientScriptForConnect(msrest.serialization.Model):
          If its null or empty then , ignore it.
         :paramtype script_name_suffix: str
         """
-        super(ClientScriptForConnect, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.script_content = script_content
         self.script_extension = script_extension
         self.os_type = os_type
@@ -5226,7 +5543,7 @@ class ClientScriptForConnect(msrest.serialization.Model):
         self.script_name_suffix = script_name_suffix
 
 
-class CrossRegionRestoreRequest(msrest.serialization.Model):
+class CrossRegionRestoreRequest(_serialization.Model):
     """CrossRegionRestoreRequest.
 
     :ivar cross_region_restore_access_details: Access details for cross region restore.
@@ -5237,8 +5554,8 @@ class CrossRegionRestoreRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cross_region_restore_access_details': {'key': 'crossRegionRestoreAccessDetails', 'type': 'CrrAccessToken'},
-        'restore_request': {'key': 'restoreRequest', 'type': 'RestoreRequest'},
+        "cross_region_restore_access_details": {"key": "crossRegionRestoreAccessDetails", "type": "CrrAccessToken"},
+        "restore_request": {"key": "restoreRequest", "type": "RestoreRequest"},
     }
 
     def __init__(
@@ -5256,7 +5573,7 @@ class CrossRegionRestoreRequest(msrest.serialization.Model):
         :paramtype restore_request:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RestoreRequest
         """
-        super(CrossRegionRestoreRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.cross_region_restore_access_details = cross_region_restore_access_details
         self.restore_request = restore_request
 
@@ -5275,7 +5592,7 @@ class CrossRegionRestoreRequestResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -5285,19 +5602,19 @@ class CrossRegionRestoreRequestResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CrossRegionRestoreRequest'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "CrossRegionRestoreRequest"},
     }
 
     def __init__(
@@ -5312,7 +5629,7 @@ class CrossRegionRestoreRequestResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
@@ -5320,20 +5637,19 @@ class CrossRegionRestoreRequestResource(Resource):
         :paramtype properties:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrossRegionRestoreRequest
         """
-        super(CrossRegionRestoreRequestResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
-class CrrAccessToken(msrest.serialization.Model):
+class CrrAccessToken(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """CrrAccessToken.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WorkloadCrrAccessToken.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    WorkloadCrrAccessToken
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
     :ivar access_token_string: Access token used for authentication.
     :vartype access_token_string: str
@@ -5346,7 +5662,7 @@ class CrrAccessToken(msrest.serialization.Model):
     :ivar resource_id: Resource Id of the source vault.
     :vartype resource_id: str
     :ivar protection_container_id: Protected item container id.
-    :vartype protection_container_id: long
+    :vartype protection_container_id: int
     :ivar recovery_point_id: Recovery Point Id.
     :vartype recovery_point_id: str
     :ivar recovery_point_time: Recovery Point Time.
@@ -5391,43 +5707,41 @@ class CrrAccessToken(msrest.serialization.Model):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'access_token_string': {'key': 'accessTokenString', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'protection_container_id': {'key': 'protectionContainerId', 'type': 'long'},
-        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'container_type': {'key': 'containerType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'datasource_type': {'key': 'datasourceType', 'type': 'str'},
-        'datasource_name': {'key': 'datasourceName', 'type': 'str'},
-        'datasource_id': {'key': 'datasourceId', 'type': 'str'},
-        'datasource_container_name': {'key': 'datasourceContainerName', 'type': 'str'},
-        'coordinator_service_stamp_id': {'key': 'coordinatorServiceStampId', 'type': 'str'},
-        'coordinator_service_stamp_uri': {'key': 'coordinatorServiceStampUri', 'type': 'str'},
-        'protection_service_stamp_id': {'key': 'protectionServiceStampId', 'type': 'str'},
-        'protection_service_stamp_uri': {'key': 'protectionServiceStampUri', 'type': 'str'},
-        'token_extended_information': {'key': 'tokenExtendedInformation', 'type': 'str'},
-        'rp_tier_information': {'key': 'rpTierInformation', 'type': '{str}'},
-        'rp_original_sa_option': {'key': 'rpOriginalSAOption', 'type': 'bool'},
-        'rp_is_managed_virtual_machine': {'key': 'rpIsManagedVirtualMachine', 'type': 'bool'},
-        'rp_vm_size_description': {'key': 'rpVMSizeDescription', 'type': 'str'},
-        'b_ms_active_region': {'key': 'bMSActiveRegion', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "access_token_string": {"key": "accessTokenString", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "protection_container_id": {"key": "protectionContainerId", "type": "int"},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "container_type": {"key": "containerType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "datasource_type": {"key": "datasourceType", "type": "str"},
+        "datasource_name": {"key": "datasourceName", "type": "str"},
+        "datasource_id": {"key": "datasourceId", "type": "str"},
+        "datasource_container_name": {"key": "datasourceContainerName", "type": "str"},
+        "coordinator_service_stamp_id": {"key": "coordinatorServiceStampId", "type": "str"},
+        "coordinator_service_stamp_uri": {"key": "coordinatorServiceStampUri", "type": "str"},
+        "protection_service_stamp_id": {"key": "protectionServiceStampId", "type": "str"},
+        "protection_service_stamp_uri": {"key": "protectionServiceStampUri", "type": "str"},
+        "token_extended_information": {"key": "tokenExtendedInformation", "type": "str"},
+        "rp_tier_information": {"key": "rpTierInformation", "type": "{str}"},
+        "rp_original_sa_option": {"key": "rpOriginalSAOption", "type": "bool"},
+        "rp_is_managed_virtual_machine": {"key": "rpIsManagedVirtualMachine", "type": "bool"},
+        "rp_vm_size_description": {"key": "rpVMSizeDescription", "type": "str"},
+        "b_ms_active_region": {"key": "bMSActiveRegion", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'WorkloadCrrAccessToken': 'WorkloadCrrAccessToken'}
-    }
+    _subtype_map = {"object_type": {"WorkloadCrrAccessToken": "WorkloadCrrAccessToken"}}
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         access_token_string: Optional[str] = None,
@@ -5469,7 +5783,7 @@ class CrrAccessToken(msrest.serialization.Model):
         :keyword resource_id: Resource Id of the source vault.
         :paramtype resource_id: str
         :keyword protection_container_id: Protected item container id.
-        :paramtype protection_container_id: long
+        :paramtype protection_container_id: int
         :keyword recovery_point_id: Recovery Point Id.
         :paramtype recovery_point_id: str
         :keyword recovery_point_time: Recovery Point Time.
@@ -5513,7 +5827,7 @@ class CrrAccessToken(msrest.serialization.Model):
         :keyword b_ms_active_region: Active region name of BMS Stamp.
         :paramtype b_ms_active_region: str
         """
-        super(CrrAccessToken, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
         self.access_token_string = access_token_string
         self.subscription_id = subscription_id
@@ -5556,7 +5870,7 @@ class CrrAccessTokenResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -5565,19 +5879,19 @@ class CrrAccessTokenResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CrrAccessToken'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "CrrAccessToken"},
     }
 
     def __init__(
@@ -5592,18 +5906,18 @@ class CrrAccessTokenResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
         :keyword properties: CrrAccessTokenResource properties.
         :paramtype properties: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrAccessToken
         """
-        super(CrrAccessTokenResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
-class CrrJobRequest(msrest.serialization.Model):
+class CrrJobRequest(_serialization.Model):
     """Request object for fetching CRR jobs.
 
     :ivar resource_id: Entire ARM resource id of the resource.
@@ -5613,24 +5927,18 @@ class CrrJobRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'job_name': {'key': 'jobName', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "job_name": {"key": "jobName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        job_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, job_name: Optional[str] = None, **kwargs):
         """
         :keyword resource_id: Entire ARM resource id of the resource.
         :paramtype resource_id: str
         :keyword job_name: Job Name of the job to be fetched.
         :paramtype job_name: str
         """
-        super(CrrJobRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.job_name = job_name
 
@@ -5649,7 +5957,7 @@ class CrrJobRequestResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -5658,19 +5966,19 @@ class CrrJobRequestResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'CrrJobRequest'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "CrrJobRequest"},
     }
 
     def __init__(
@@ -5685,18 +5993,18 @@ class CrrJobRequestResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
         :keyword properties: CrrJobRequestResource properties.
         :paramtype properties: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrJobRequest
         """
-        super(CrrJobRequestResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
-class DiskExclusionProperties(msrest.serialization.Model):
+class DiskExclusionProperties(_serialization.Model):
     """DiskExclusionProperties.
 
     :ivar disk_lun_list: List of Disks' Logical Unit Numbers (LUN) to be used for VM Protection.
@@ -5707,16 +6015,12 @@ class DiskExclusionProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_lun_list': {'key': 'diskLunList', 'type': '[int]'},
-        'is_inclusion_list': {'key': 'isInclusionList', 'type': 'bool'},
+        "disk_lun_list": {"key": "diskLunList", "type": "[int]"},
+        "is_inclusion_list": {"key": "isInclusionList", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        disk_lun_list: Optional[List[int]] = None,
-        is_inclusion_list: Optional[bool] = None,
-        **kwargs
+        self, *, disk_lun_list: Optional[List[int]] = None, is_inclusion_list: Optional[bool] = None, **kwargs
     ):
         """
         :keyword disk_lun_list: List of Disks' Logical Unit Numbers (LUN) to be used for VM Protection.
@@ -5725,12 +6029,12 @@ class DiskExclusionProperties(msrest.serialization.Model):
          from backup.
         :paramtype is_inclusion_list: bool
         """
-        super(DiskExclusionProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_lun_list = disk_lun_list
         self.is_inclusion_list = is_inclusion_list
 
 
-class DiskInformation(msrest.serialization.Model):
+class DiskInformation(_serialization.Model):
     """Disk information.
 
     :ivar lun:
@@ -5740,29 +6044,23 @@ class DiskInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
+        "lun": {"key": "lun", "type": "int"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        lun: Optional[int] = None,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, lun: Optional[int] = None, name: Optional[str] = None, **kwargs):
         """
         :keyword lun:
         :paramtype lun: int
         :keyword name:
         :paramtype name: str
         """
-        super(DiskInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.lun = lun
         self.name = name
 
 
-class DpmErrorInfo(msrest.serialization.Model):
+class DpmErrorInfo(_serialization.Model):
     """DPM workload-specific error information.
 
     :ivar error_string: Localized error string.
@@ -5772,29 +6070,23 @@ class DpmErrorInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error_string': {'key': 'errorString', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+        "error_string": {"key": "errorString", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        error_string: Optional[str] = None,
-        recommendations: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error_string: Optional[str] = None, recommendations: Optional[List[str]] = None, **kwargs):
         """
         :keyword error_string: Localized error string.
         :paramtype error_string: str
         :keyword recommendations: List of localized recommendations for above error code.
         :paramtype recommendations: list[str]
         """
-        super(DpmErrorInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error_string = error_string
         self.recommendations = recommendations
 
 
-class DpmJob(Job):
+class DpmJob(Job):  # pylint: disable=too-many-instance-attributes
     """DPM workload-specific job object.
 
     All required parameters must be populated in order to send to Azure.
@@ -5803,7 +6095,7 @@ class DpmJob(Job):
     :vartype entity_friendly_name: str
     :ivar backup_management_type: Backup management type to execute the current job. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar operation: The operation name.
@@ -5816,8 +6108,8 @@ class DpmJob(Job):
     :vartype end_time: ~datetime.datetime
     :ivar activity_id: ActivityId of job.
     :vartype activity_id: str
-    :ivar job_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar job_type: This property will be used as the discriminator for deciding the specific types
+     in the polymorphic chain of types. Required.
     :vartype job_type: str
     :ivar duration: Time elapsed for job.
     :vartype duration: ~datetime.timedelta
@@ -5841,26 +6133,26 @@ class DpmJob(Job):
     """
 
     _validation = {
-        'job_type': {'required': True},
+        "job_type": {"required": True},
     }
 
     _attribute_map = {
-        'entity_friendly_name': {'key': 'entityFriendlyName', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'activity_id': {'key': 'activityId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'dpm_server_name': {'key': 'dpmServerName', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'container_type': {'key': 'containerType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'actions_info': {'key': 'actionsInfo', 'type': '[str]'},
-        'error_details': {'key': 'errorDetails', 'type': '[DpmErrorInfo]'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'DpmJobExtendedInfo'},
+        "entity_friendly_name": {"key": "entityFriendlyName", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "activity_id": {"key": "activityId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "dpm_server_name": {"key": "dpmServerName", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "container_type": {"key": "containerType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "actions_info": {"key": "actionsInfo", "type": "[str]"},
+        "error_details": {"key": "errorDetails", "type": "[DpmErrorInfo]"},
+        "extended_info": {"key": "extendedInfo", "type": "DpmJobExtendedInfo"},
     }
 
     def __init__(
@@ -5889,7 +6181,7 @@ class DpmJob(Job):
         :paramtype entity_friendly_name: str
         :keyword backup_management_type: Backup management type to execute the current job. Known
          values are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql",
-         "AzureStorage", "AzureWorkload", "DefaultBackup".
+         "AzureStorage", "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword operation: The operation name.
@@ -5922,8 +6214,17 @@ class DpmJob(Job):
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DpmJobExtendedInfo
         """
-        super(DpmJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id, **kwargs)
-        self.job_type = 'DpmJob'  # type: str
+        super().__init__(
+            entity_friendly_name=entity_friendly_name,
+            backup_management_type=backup_management_type,
+            operation=operation,
+            status=status,
+            start_time=start_time,
+            end_time=end_time,
+            activity_id=activity_id,
+            **kwargs
+        )
+        self.job_type = "DpmJob"  # type: str
         self.duration = duration
         self.dpm_server_name = dpm_server_name
         self.container_name = container_name
@@ -5934,7 +6235,7 @@ class DpmJob(Job):
         self.extended_info = extended_info
 
 
-class DpmJobExtendedInfo(msrest.serialization.Model):
+class DpmJobExtendedInfo(_serialization.Model):
     """Additional information on the DPM workload-specific job.
 
     :ivar tasks_list: List of tasks associated with this job.
@@ -5947,9 +6248,9 @@ class DpmJobExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tasks_list': {'key': 'tasksList', 'type': '[DpmJobTaskDetails]'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
+        "tasks_list": {"key": "tasksList", "type": "[DpmJobTaskDetails]"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "dynamic_error_message": {"key": "dynamicErrorMessage", "type": "str"},
     }
 
     def __init__(
@@ -5969,13 +6270,13 @@ class DpmJobExtendedInfo(msrest.serialization.Model):
         :keyword dynamic_error_message: Non localized error message on job execution.
         :paramtype dynamic_error_message: str
         """
-        super(DpmJobExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.dynamic_error_message = dynamic_error_message
 
 
-class DpmJobTaskDetails(msrest.serialization.Model):
+class DpmJobTaskDetails(_serialization.Model):
     """DPM workload-specific job task details.
 
     :ivar task_id: The task display name.
@@ -5991,11 +6292,11 @@ class DpmJobTaskDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'status': {'key': 'status', 'type': 'str'},
+        "task_id": {"key": "taskId", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "duration": {"key": "duration", "type": "duration"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -6020,7 +6321,7 @@ class DpmJobTaskDetails(msrest.serialization.Model):
         :keyword status: The status.
         :paramtype status: str
         """
-        super(DpmJobTaskDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_id = task_id
         self.start_time = start_time
         self.end_time = end_time
@@ -6028,21 +6329,21 @@ class DpmJobTaskDetails(msrest.serialization.Model):
         self.status = status
 
 
-class DPMProtectedItem(ProtectedItem):
+class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Additional information on Backup engine specific backup item.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -6058,7 +6359,7 @@ class DPMProtectedItem(ProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -6081,7 +6382,7 @@ class DPMProtectedItem(ProtectedItem):
     :ivar backup_engine_name: Backup Management server protecting this backup item.
     :vartype backup_engine_name: str
     :ivar protection_state: Protection state of the backup engine. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemState
     :ivar extended_info: Extended info of the backup item.
@@ -6090,29 +6391,29 @@ class DPMProtectedItem(ProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'DPMProtectedItemExtendedInfo'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "backup_engine_name": {"key": "backupEngineName", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "DPMProtectedItemExtendedInfo"},
     }
 
     def __init__(
@@ -6141,12 +6442,12 @@ class DPMProtectedItem(ProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -6162,7 +6463,7 @@ class DPMProtectedItem(ProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -6187,22 +6488,38 @@ class DPMProtectedItem(ProtectedItem):
         :keyword backup_engine_name: Backup Management server protecting this backup item.
         :paramtype backup_engine_name: str
         :keyword protection_state: Protection state of the backup engine. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemState
         :keyword extended_info: Extended info of the backup item.
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DPMProtectedItemExtendedInfo
         """
-        super(DPMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
-        self.protected_item_type = 'DPMProtectedItem'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            **kwargs
+        )
+        self.protected_item_type = "DPMProtectedItem"  # type: str
         self.friendly_name = friendly_name
         self.backup_engine_name = backup_engine_name
         self.protection_state = protection_state
         self.extended_info = extended_info
 
 
-class DPMProtectedItemExtendedInfo(msrest.serialization.Model):
+class DPMProtectedItemExtendedInfo(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Additional information of DPM Protected item.
 
     :ivar protectable_object_load_path: Attribute to provide information on various DBs.
@@ -6236,20 +6553,20 @@ class DPMProtectedItemExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protectable_object_load_path': {'key': 'protectableObjectLoadPath', 'type': '{str}'},
-        'protected': {'key': 'protected', 'type': 'bool'},
-        'is_present_on_cloud': {'key': 'isPresentOnCloud', 'type': 'bool'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_refreshed_at': {'key': 'lastRefreshedAt', 'type': 'iso-8601'},
-        'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
-        'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
-        'on_premise_oldest_recovery_point': {'key': 'onPremiseOldestRecoveryPoint', 'type': 'iso-8601'},
-        'on_premise_latest_recovery_point': {'key': 'onPremiseLatestRecoveryPoint', 'type': 'iso-8601'},
-        'on_premise_recovery_point_count': {'key': 'onPremiseRecoveryPointCount', 'type': 'int'},
-        'is_collocated': {'key': 'isCollocated', 'type': 'bool'},
-        'protection_group_name': {'key': 'protectionGroupName', 'type': 'str'},
-        'disk_storage_used_in_bytes': {'key': 'diskStorageUsedInBytes', 'type': 'str'},
-        'total_disk_storage_size_in_bytes': {'key': 'totalDiskStorageSizeInBytes', 'type': 'str'},
+        "protectable_object_load_path": {"key": "protectableObjectLoadPath", "type": "{str}"},
+        "protected": {"key": "protected", "type": "bool"},
+        "is_present_on_cloud": {"key": "isPresentOnCloud", "type": "bool"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_refreshed_at": {"key": "lastRefreshedAt", "type": "iso-8601"},
+        "oldest_recovery_point": {"key": "oldestRecoveryPoint", "type": "iso-8601"},
+        "recovery_point_count": {"key": "recoveryPointCount", "type": "int"},
+        "on_premise_oldest_recovery_point": {"key": "onPremiseOldestRecoveryPoint", "type": "iso-8601"},
+        "on_premise_latest_recovery_point": {"key": "onPremiseLatestRecoveryPoint", "type": "iso-8601"},
+        "on_premise_recovery_point_count": {"key": "onPremiseRecoveryPointCount", "type": "int"},
+        "is_collocated": {"key": "isCollocated", "type": "bool"},
+        "protection_group_name": {"key": "protectionGroupName", "type": "str"},
+        "disk_storage_used_in_bytes": {"key": "diskStorageUsedInBytes", "type": "str"},
+        "total_disk_storage_size_in_bytes": {"key": "totalDiskStorageSizeInBytes", "type": "str"},
     }
 
     def __init__(
@@ -6301,7 +6618,7 @@ class DPMProtectedItemExtendedInfo(msrest.serialization.Model):
         :keyword total_disk_storage_size_in_bytes: total Disk storage in bytes.
         :paramtype total_disk_storage_size_in_bytes: str
         """
-        super(DPMProtectedItemExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protectable_object_load_path = protectable_object_load_path
         self.protected = protected
         self.is_present_on_cloud = is_present_on_cloud
@@ -6318,7 +6635,7 @@ class DPMProtectedItemExtendedInfo(msrest.serialization.Model):
         self.total_disk_storage_size_in_bytes = total_disk_storage_size_in_bytes
 
 
-class EncryptionDetails(msrest.serialization.Model):
+class EncryptionDetails(_serialization.Model):
     """Details needed if the VM was encrypted at the time of backup.
 
     :ivar encryption_enabled: Identifies whether this backup copy represents an encrypted VM at the
@@ -6335,11 +6652,11 @@ class EncryptionDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'encryption_enabled': {'key': 'encryptionEnabled', 'type': 'bool'},
-        'kek_url': {'key': 'kekUrl', 'type': 'str'},
-        'secret_key_url': {'key': 'secretKeyUrl', 'type': 'str'},
-        'kek_vault_id': {'key': 'kekVaultId', 'type': 'str'},
-        'secret_key_vault_id': {'key': 'secretKeyVaultId', 'type': 'str'},
+        "encryption_enabled": {"key": "encryptionEnabled", "type": "bool"},
+        "kek_url": {"key": "kekUrl", "type": "str"},
+        "secret_key_url": {"key": "secretKeyUrl", "type": "str"},
+        "kek_vault_id": {"key": "kekVaultId", "type": "str"},
+        "secret_key_vault_id": {"key": "secretKeyVaultId", "type": "str"},
     }
 
     def __init__(
@@ -6365,7 +6682,7 @@ class EncryptionDetails(msrest.serialization.Model):
         :keyword secret_key_vault_id: ID of Key Vault where Secret is stored.
         :paramtype secret_key_vault_id: str
         """
-        super(EncryptionDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.encryption_enabled = encryption_enabled
         self.kek_url = kek_url
         self.secret_key_url = secret_key_url
@@ -6373,7 +6690,7 @@ class EncryptionDetails(msrest.serialization.Model):
         self.secret_key_vault_id = secret_key_vault_id
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6381,31 +6698,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """Error Detail class which encapsulates Code, Message and Recommendations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6419,30 +6732,26 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'recommendations': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "recommendations": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.recommendations = None
 
 
-class ExtendedProperties(msrest.serialization.Model):
+class ExtendedProperties(_serialization.Model):
     """Extended Properties for Azure IaasVM Backup.
 
     :ivar disk_exclusion_properties: Extended Properties for Disk Exclusion.
@@ -6451,39 +6760,34 @@ class ExtendedProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'disk_exclusion_properties': {'key': 'diskExclusionProperties', 'type': 'DiskExclusionProperties'},
+        "disk_exclusion_properties": {"key": "diskExclusionProperties", "type": "DiskExclusionProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        disk_exclusion_properties: Optional["_models.DiskExclusionProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, disk_exclusion_properties: Optional["_models.DiskExclusionProperties"] = None, **kwargs):
         """
         :keyword disk_exclusion_properties: Extended Properties for Disk Exclusion.
         :paramtype disk_exclusion_properties:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DiskExclusionProperties
         """
-        super(ExtendedProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.disk_exclusion_properties = disk_exclusion_properties
 
 
-class GenericProtectedItem(ProtectedItem):
+class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """Base class for backup items.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -6499,7 +6803,7 @@ class GenericProtectedItem(ProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -6523,11 +6827,11 @@ class GenericProtectedItem(ProtectedItem):
      item.
     :vartype policy_state: str
     :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
-     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
     :vartype protection_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
     :ivar protected_item_id: Data Plane Service ID of the protected item.
-    :vartype protected_item_id: long
+    :vartype protected_item_id: int
     :ivar source_associations: Loosely coupled (type, value) associations (example - parent of a
      protected item).
     :vartype source_associations: dict[str, str]
@@ -6536,31 +6840,31 @@ class GenericProtectedItem(ProtectedItem):
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'policy_state': {'key': 'policyState', 'type': 'str'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'protected_item_id': {'key': 'protectedItemId', 'type': 'long'},
-        'source_associations': {'key': 'sourceAssociations', 'type': '{str}'},
-        'fabric_name': {'key': 'fabricName', 'type': 'str'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "policy_state": {"key": "policyState", "type": "str"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "protected_item_id": {"key": "protectedItemId", "type": "int"},
+        "source_associations": {"key": "sourceAssociations", "type": "{str}"},
+        "fabric_name": {"key": "fabricName", "type": "str"},
     }
 
     def __init__(
@@ -6591,12 +6895,12 @@ class GenericProtectedItem(ProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -6612,7 +6916,7 @@ class GenericProtectedItem(ProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -6638,19 +6942,35 @@ class GenericProtectedItem(ProtectedItem):
          item.
         :paramtype policy_state: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
-         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused".
+         "IRPending", "Protected", "ProtectionError", "ProtectionStopped", and "ProtectionPaused".
         :paramtype protection_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectionState
         :keyword protected_item_id: Data Plane Service ID of the protected item.
-        :paramtype protected_item_id: long
+        :paramtype protected_item_id: int
         :keyword source_associations: Loosely coupled (type, value) associations (example - parent of a
          protected item).
         :paramtype source_associations: dict[str, str]
         :keyword fabric_name: Name of this backup item's fabric.
         :paramtype fabric_name: str
         """
-        super(GenericProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
-        self.protected_item_type = 'GenericProtectedItem'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            **kwargs
+        )
+        self.protected_item_type = "GenericProtectedItem"  # type: str
         self.friendly_name = friendly_name
         self.policy_state = policy_state
         self.protection_state = protection_state
@@ -6664,8 +6984,8 @@ class GenericRecoveryPoint(RecoveryPoint):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar friendly_name: Friendly name of the backup copy.
     :vartype friendly_name: str
@@ -6678,15 +6998,15 @@ class GenericRecoveryPoint(RecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'recovery_point_type': {'key': 'recoveryPointType', 'type': 'str'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'iso-8601'},
-        'recovery_point_additional_info': {'key': 'recoveryPointAdditionalInfo', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "recovery_point_type": {"key": "recoveryPointType", "type": "str"},
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "iso-8601"},
+        "recovery_point_additional_info": {"key": "recoveryPointAdditionalInfo", "type": "str"},
     }
 
     def __init__(
@@ -6709,23 +7029,23 @@ class GenericRecoveryPoint(RecoveryPoint):
          copy.
         :paramtype recovery_point_additional_info: str
         """
-        super(GenericRecoveryPoint, self).__init__(**kwargs)
-        self.object_type = 'GenericRecoveryPoint'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "GenericRecoveryPoint"  # type: str
         self.friendly_name = friendly_name
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
         self.recovery_point_additional_info = recovery_point_additional_info
 
 
-class IaasVMRecoveryPoint(RecoveryPoint):
+class IaasVMRecoveryPoint(RecoveryPoint):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload specific backup copy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_type: Type of the backup copy.
     :vartype recovery_point_type: str
@@ -6768,31 +7088,37 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_type': {'readonly': True},
-        'recovery_point_time': {'readonly': True},
-        'recovery_point_additional_info': {'readonly': True},
-        'source_vm_storage_type': {'readonly': True},
-        'is_source_vm_encrypted': {'readonly': True},
+        "object_type": {"required": True},
+        "recovery_point_type": {"readonly": True},
+        "recovery_point_time": {"readonly": True},
+        "recovery_point_additional_info": {"readonly": True},
+        "source_vm_storage_type": {"readonly": True},
+        "is_source_vm_encrypted": {"readonly": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_type': {'key': 'recoveryPointType', 'type': 'str'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'iso-8601'},
-        'recovery_point_additional_info': {'key': 'recoveryPointAdditionalInfo', 'type': 'str'},
-        'source_vm_storage_type': {'key': 'sourceVMStorageType', 'type': 'str'},
-        'is_source_vm_encrypted': {'key': 'isSourceVMEncrypted', 'type': 'bool'},
-        'key_and_secret': {'key': 'keyAndSecret', 'type': 'KeyAndSecretDetails'},
-        'is_instant_ilr_session_active': {'key': 'isInstantIlrSessionActive', 'type': 'bool'},
-        'recovery_point_tier_details': {'key': 'recoveryPointTierDetails', 'type': '[RecoveryPointTierInformation]'},
-        'is_managed_virtual_machine': {'key': 'isManagedVirtualMachine', 'type': 'bool'},
-        'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
-        'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'recovery_point_disk_configuration': {'key': 'recoveryPointDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'recovery_point_move_readiness_info': {'key': 'recoveryPointMoveReadinessInfo', 'type': '{RecoveryPointMoveReadinessInfo}'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_type": {"key": "recoveryPointType", "type": "str"},
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "iso-8601"},
+        "recovery_point_additional_info": {"key": "recoveryPointAdditionalInfo", "type": "str"},
+        "source_vm_storage_type": {"key": "sourceVMStorageType", "type": "str"},
+        "is_source_vm_encrypted": {"key": "isSourceVMEncrypted", "type": "bool"},
+        "key_and_secret": {"key": "keyAndSecret", "type": "KeyAndSecretDetails"},
+        "is_instant_ilr_session_active": {"key": "isInstantIlrSessionActive", "type": "bool"},
+        "recovery_point_tier_details": {"key": "recoveryPointTierDetails", "type": "[RecoveryPointTierInformation]"},
+        "is_managed_virtual_machine": {"key": "isManagedVirtualMachine", "type": "bool"},
+        "virtual_machine_size": {"key": "virtualMachineSize", "type": "str"},
+        "original_storage_account_option": {"key": "originalStorageAccountOption", "type": "bool"},
+        "os_type": {"key": "osType", "type": "str"},
+        "recovery_point_disk_configuration": {
+            "key": "recoveryPointDiskConfiguration",
+            "type": "RecoveryPointDiskConfiguration",
+        },
+        "zones": {"key": "zones", "type": "[str]"},
+        "recovery_point_move_readiness_info": {
+            "key": "recoveryPointMoveReadinessInfo",
+            "type": "{RecoveryPointMoveReadinessInfo}",
+        },
     }
 
     def __init__(
@@ -6839,8 +7165,8 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         :paramtype recovery_point_move_readiness_info: dict[str,
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointMoveReadinessInfo]
         """
-        super(IaasVMRecoveryPoint, self).__init__(**kwargs)
-        self.object_type = 'IaasVMRecoveryPoint'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "IaasVMRecoveryPoint"  # type: str
         self.recovery_point_type = None
         self.recovery_point_time = None
         self.recovery_point_additional_info = None
@@ -6858,18 +7184,18 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.recovery_point_move_readiness_info = recovery_point_move_readiness_info
 
 
-class IaasVMRestoreRequest(RestoreRequest):
+class IaasVMRestoreRequest(RestoreRequest):  # pylint: disable=too-many-instance-attributes
     """IaaS VM workload-specific restore.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_point_id: ID of the backup copy to be recovered.
     :vartype recovery_point_id: str
     :ivar recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-     "AlternateLocation", "RestoreDisks", "Offline".
+     "AlternateLocation", "RestoreDisks", and "Offline".
     :vartype recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
     :ivar source_resource_id: Fully qualified ARM ID of the VM which is being recovered.
@@ -6932,31 +7258,31 @@ class IaasVMRestoreRequest(RestoreRequest):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
-        'recovery_type': {'key': 'recoveryType', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'target_virtual_machine_id': {'key': 'targetVirtualMachineId', 'type': 'str'},
-        'target_resource_group_id': {'key': 'targetResourceGroupId', 'type': 'str'},
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
-        'virtual_network_id': {'key': 'virtualNetworkId', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'target_domain_name_id': {'key': 'targetDomainNameId', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
-        'affinity_group': {'key': 'affinityGroup', 'type': 'str'},
-        'create_new_cloud_service': {'key': 'createNewCloudService', 'type': 'bool'},
-        'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
-        'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
-        'restore_disk_lun_list': {'key': 'restoreDiskLunList', 'type': '[int]'},
-        'restore_with_managed_disks': {'key': 'restoreWithManagedDisks', 'type': 'bool'},
-        'disk_encryption_set_id': {'key': 'diskEncryptionSetId', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'identity_info': {'key': 'identityInfo', 'type': 'IdentityInfo'},
-        'identity_based_restore_details': {'key': 'identityBasedRestoreDetails', 'type': 'IdentityBasedRestoreDetails'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "recovery_type": {"key": "recoveryType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "target_virtual_machine_id": {"key": "targetVirtualMachineId", "type": "str"},
+        "target_resource_group_id": {"key": "targetResourceGroupId", "type": "str"},
+        "storage_account_id": {"key": "storageAccountId", "type": "str"},
+        "virtual_network_id": {"key": "virtualNetworkId", "type": "str"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "target_domain_name_id": {"key": "targetDomainNameId", "type": "str"},
+        "region": {"key": "region", "type": "str"},
+        "affinity_group": {"key": "affinityGroup", "type": "str"},
+        "create_new_cloud_service": {"key": "createNewCloudService", "type": "bool"},
+        "original_storage_account_option": {"key": "originalStorageAccountOption", "type": "bool"},
+        "encryption_details": {"key": "encryptionDetails", "type": "EncryptionDetails"},
+        "restore_disk_lun_list": {"key": "restoreDiskLunList", "type": "[int]"},
+        "restore_with_managed_disks": {"key": "restoreWithManagedDisks", "type": "bool"},
+        "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "identity_info": {"key": "identityInfo", "type": "IdentityInfo"},
+        "identity_based_restore_details": {"key": "identityBasedRestoreDetails", "type": "IdentityBasedRestoreDetails"},
     }
 
     def __init__(
@@ -6988,7 +7314,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         :keyword recovery_point_id: ID of the backup copy to be recovered.
         :paramtype recovery_point_id: str
         :keyword recovery_type: Type of this recovery. Known values are: "Invalid", "OriginalLocation",
-         "AlternateLocation", "RestoreDisks", "Offline".
+         "AlternateLocation", "RestoreDisks", and "Offline".
         :paramtype recovery_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryType
         :keyword source_resource_id: Fully qualified ARM ID of the VM which is being recovered.
@@ -7050,8 +7376,8 @@ class IaasVMRestoreRequest(RestoreRequest):
         :paramtype identity_based_restore_details:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.IdentityBasedRestoreDetails
         """
-        super(IaasVMRestoreRequest, self).__init__(**kwargs)
-        self.object_type = 'IaasVMRestoreRequest'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "IaasVMRestoreRequest"  # type: str
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
@@ -7074,7 +7400,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.identity_based_restore_details = identity_based_restore_details
 
 
-class IdentityBasedRestoreDetails(msrest.serialization.Model):
+class IdentityBasedRestoreDetails(_serialization.Model):
     """IaaS VM workload specific restore details for restores using managed identity.
 
     :ivar object_type: Gets the class type.
@@ -7084,29 +7410,23 @@ class IdentityBasedRestoreDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'target_storage_account_id': {'key': 'targetStorageAccountId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "target_storage_account_id": {"key": "targetStorageAccountId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        object_type: Optional[str] = None,
-        target_storage_account_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, object_type: Optional[str] = None, target_storage_account_id: Optional[str] = None, **kwargs):
         """
         :keyword object_type: Gets the class type.
         :paramtype object_type: str
         :keyword target_storage_account_id: Fully qualified ARM ID of the target storage account.
         :paramtype target_storage_account_id: str
         """
-        super(IdentityBasedRestoreDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.object_type = object_type
         self.target_storage_account_id = target_storage_account_id
 
 
-class IdentityInfo(msrest.serialization.Model):
+class IdentityInfo(_serialization.Model):
     """Encapsulates Managed Identity related information.
 
     :ivar is_system_assigned_identity: To differentiate if the managed identity is system assigned
@@ -7118,8 +7438,8 @@ class IdentityInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_system_assigned_identity': {'key': 'isSystemAssignedIdentity', 'type': 'bool'},
-        'managed_identity_resource_id': {'key': 'managedIdentityResourceId', 'type': 'str'},
+        "is_system_assigned_identity": {"key": "isSystemAssignedIdentity", "type": "bool"},
+        "managed_identity_resource_id": {"key": "managedIdentityResourceId", "type": "str"},
     }
 
     def __init__(
@@ -7137,12 +7457,12 @@ class IdentityInfo(msrest.serialization.Model):
          Optional: Might not be required in the case of system assigned managed identity.
         :paramtype managed_identity_resource_id: str
         """
-        super(IdentityInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_system_assigned_identity = is_system_assigned_identity
         self.managed_identity_resource_id = managed_identity_resource_id
 
 
-class InstantItemRecoveryTarget(msrest.serialization.Model):
+class InstantItemRecoveryTarget(_serialization.Model):
     """Target details for file / folder restore.
 
     :ivar client_scripts: List of client scripts.
@@ -7151,38 +7471,33 @@ class InstantItemRecoveryTarget(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_scripts': {'key': 'clientScripts', 'type': '[ClientScriptForConnect]'},
+        "client_scripts": {"key": "clientScripts", "type": "[ClientScriptForConnect]"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_scripts: Optional[List["_models.ClientScriptForConnect"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_scripts: Optional[List["_models.ClientScriptForConnect"]] = None, **kwargs):
         """
         :keyword client_scripts: List of client scripts.
         :paramtype client_scripts:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.ClientScriptForConnect]
         """
-        super(InstantItemRecoveryTarget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_scripts = client_scripts
 
 
-class JobQueryObject(msrest.serialization.Model):
+class JobQueryObject(_serialization.Model):
     """Filters to list the jobs.
 
     :ivar status: Status of the job. Known values are: "Invalid", "InProgress", "Completed",
-     "Failed", "CompletedWithWarnings", "Cancelled", "Cancelling".
+     "Failed", "CompletedWithWarnings", "Cancelled", and "Cancelling".
     :vartype status: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobStatus
     :ivar backup_management_type: Type of backup management for the job. Known values are:
      "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar operation: Type of operation. Known values are: "Invalid", "Register", "UnRegister",
      "ConfigureBackup", "Backup", "Restore", "DisableBackup", "DeleteBackupData",
-     "CrossRegionRestore", "Undelete", "UpdateCustomerManagedKey".
+     "CrossRegionRestore", "Undelete", and "UpdateCustomerManagedKey".
     :vartype operation: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobOperationType
     :ivar job_id: JobID represents the job uniquely.
@@ -7194,12 +7509,12 @@ class JobQueryObject(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "status": {"key": "status", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -7215,16 +7530,16 @@ class JobQueryObject(msrest.serialization.Model):
     ):
         """
         :keyword status: Status of the job. Known values are: "Invalid", "InProgress", "Completed",
-         "Failed", "CompletedWithWarnings", "Cancelled", "Cancelling".
+         "Failed", "CompletedWithWarnings", "Cancelled", and "Cancelling".
         :paramtype status: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobStatus
         :keyword backup_management_type: Type of backup management for the job. Known values are:
          "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword operation: Type of operation. Known values are: "Invalid", "Register", "UnRegister",
          "ConfigureBackup", "Backup", "Restore", "DisableBackup", "DeleteBackupData",
-         "CrossRegionRestore", "Undelete", "UpdateCustomerManagedKey".
+         "CrossRegionRestore", "Undelete", and "UpdateCustomerManagedKey".
         :paramtype operation: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobOperationType
         :keyword job_id: JobID represents the job uniquely.
@@ -7234,7 +7549,7 @@ class JobQueryObject(msrest.serialization.Model):
         :keyword end_time: Job has ended at this time. Value is in UTC.
         :paramtype end_time: ~datetime.datetime
         """
-        super(JobQueryObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.backup_management_type = backup_management_type
         self.operation = operation
@@ -7257,7 +7572,7 @@ class JobResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -7266,19 +7581,19 @@ class JobResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Job'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "Job"},
     }
 
     def __init__(
@@ -7293,18 +7608,18 @@ class JobResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
         :keyword properties: JobResource properties.
         :paramtype properties: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.Job
         """
-        super(JobResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
-class ResourceList(msrest.serialization.Model):
+class ResourceList(_serialization.Model):
     """Base for all lists of resources.
 
     :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
@@ -7313,21 +7628,16 @@ class ResourceList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
          page of resources.
         :paramtype next_link: str
         """
-        super(ResourceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
 
 
@@ -7342,16 +7652,12 @@ class JobResourceList(ResourceList):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[JobResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[JobResource]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["_models.JobResource"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.JobResource"]] = None, **kwargs
     ):
         """
         :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
@@ -7360,11 +7666,11 @@ class JobResourceList(ResourceList):
         :keyword value: List of resources.
         :paramtype value: list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.JobResource]
         """
-        super(JobResourceList, self).__init__(next_link=next_link, **kwargs)
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
-class KEKDetails(msrest.serialization.Model):
+class KEKDetails(_serialization.Model):
     """KEK is encryption key for BEK.
 
     :ivar key_url: Key is KEK.
@@ -7376,9 +7682,9 @@ class KEKDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
-        'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
-        'key_backup_data': {'key': 'keyBackupData', 'type': 'str'},
+        "key_url": {"key": "keyUrl", "type": "str"},
+        "key_vault_id": {"key": "keyVaultId", "type": "str"},
+        "key_backup_data": {"key": "keyBackupData", "type": "str"},
     }
 
     def __init__(
@@ -7397,35 +7703,35 @@ class KEKDetails(msrest.serialization.Model):
         :keyword key_backup_data: KEK data.
         :paramtype key_backup_data: str
         """
-        super(KEKDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_url = key_url
         self.key_vault_id = key_vault_id
         self.key_backup_data = key_backup_data
 
 
-class KeyAndSecretDetails(msrest.serialization.Model):
+class KeyAndSecretDetails(_serialization.Model):
     """BEK is bitlocker key.
-KEK is encryption key for BEK
-If the VM was encrypted then we will store following details :
+    KEK is encryption key for BEK
+    If the VM was encrypted then we will store following details :
 
 
-#. Secret(BEK) - Url + Backup Data + vaultId.
-#. Key(KEK) - Url + Backup Data + vaultId.
-#. EncryptionMechanism
-   BEK and KEK can potentially have different vault ids.
+    #. Secret(BEK) - Url + Backup Data + vaultId.
+    #. Key(KEK) - Url + Backup Data + vaultId.
+    #. EncryptionMechanism
+       BEK and KEK can potentially have different vault ids.
 
-    :ivar kek_details: KEK is encryption key for BEK.
-    :vartype kek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KEKDetails
-    :ivar bek_details: BEK is bitlocker encryption key.
-    :vartype bek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BEKDetails
-    :ivar encryption_mechanism: Encryption mechanism: None/ SinglePass/ DoublePass.
-    :vartype encryption_mechanism: str
+        :ivar kek_details: KEK is encryption key for BEK.
+        :vartype kek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.KEKDetails
+        :ivar bek_details: BEK is bitlocker encryption key.
+        :vartype bek_details: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BEKDetails
+        :ivar encryption_mechanism: Encryption mechanism: None/ SinglePass/ DoublePass.
+        :vartype encryption_mechanism: str
     """
 
     _attribute_map = {
-        'kek_details': {'key': 'kekDetails', 'type': 'KEKDetails'},
-        'bek_details': {'key': 'bekDetails', 'type': 'BEKDetails'},
-        'encryption_mechanism': {'key': 'encryptionMechanism', 'type': 'str'},
+        "kek_details": {"key": "kekDetails", "type": "KEKDetails"},
+        "bek_details": {"key": "bekDetails", "type": "BEKDetails"},
+        "encryption_mechanism": {"key": "encryptionMechanism", "type": "str"},
     }
 
     def __init__(
@@ -7444,17 +7750,17 @@ If the VM was encrypted then we will store following details :
         :keyword encryption_mechanism: Encryption mechanism: None/ SinglePass/ DoublePass.
         :paramtype encryption_mechanism: str
         """
-        super(KeyAndSecretDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kek_details = kek_details
         self.bek_details = bek_details
         self.encryption_mechanism = encryption_mechanism
 
 
-class KPIResourceHealthDetails(msrest.serialization.Model):
+class KPIResourceHealthDetails(_serialization.Model):
     """KPI Resource Health Details.
 
     :ivar resource_health_status: Resource Health Status. Known values are: "Healthy",
-     "TransientDegraded", "PersistentDegraded", "TransientUnhealthy", "PersistentUnhealthy",
+     "TransientDegraded", "PersistentDegraded", "TransientUnhealthy", "PersistentUnhealthy", and
      "Invalid".
     :vartype resource_health_status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ResourceHealthStatus
@@ -7464,8 +7770,8 @@ class KPIResourceHealthDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_health_status': {'key': 'resourceHealthStatus', 'type': 'str'},
-        'resource_health_details': {'key': 'resourceHealthDetails', 'type': '[ResourceHealthDetails]'},
+        "resource_health_status": {"key": "resourceHealthStatus", "type": "str"},
+        "resource_health_details": {"key": "resourceHealthDetails", "type": "[ResourceHealthDetails]"},
     }
 
     def __init__(
@@ -7477,7 +7783,7 @@ class KPIResourceHealthDetails(msrest.serialization.Model):
     ):
         """
         :keyword resource_health_status: Resource Health Status. Known values are: "Healthy",
-         "TransientDegraded", "PersistentDegraded", "TransientUnhealthy", "PersistentUnhealthy",
+         "TransientDegraded", "PersistentDegraded", "TransientUnhealthy", "PersistentUnhealthy", and
          "Invalid".
         :paramtype resource_health_status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ResourceHealthStatus
@@ -7485,12 +7791,12 @@ class KPIResourceHealthDetails(msrest.serialization.Model):
         :paramtype resource_health_details:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.ResourceHealthDetails]
         """
-        super(KPIResourceHealthDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_health_status = resource_health_status
         self.resource_health_details = resource_health_details
 
 
-class MabErrorInfo(msrest.serialization.Model):
+class MabErrorInfo(_serialization.Model):
     """MAB workload-specific error information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7502,41 +7808,37 @@ class MabErrorInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'error_string': {'readonly': True},
-        'recommendations': {'readonly': True},
+        "error_string": {"readonly": True},
+        "recommendations": {"readonly": True},
     }
 
     _attribute_map = {
-        'error_string': {'key': 'errorString', 'type': 'str'},
-        'recommendations': {'key': 'recommendations', 'type': '[str]'},
+        "error_string": {"key": "errorString", "type": "str"},
+        "recommendations": {"key": "recommendations", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MabErrorInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.error_string = None
         self.recommendations = None
 
 
-class MabFileFolderProtectedItem(ProtectedItem):
+class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
     """MAB workload-specific backup item.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protected_item_type: Required. backup item type.Constant filled by server.
+    :ivar protected_item_type: backup item type. Required.
     :vartype protected_item_type: str
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -7552,7 +7854,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :ivar backup_set_name: Name of the backup set the backup item belongs to.
     :vartype backup_set_name: str
     :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
-     creation of new data source. Known values are: "Invalid", "Default", "Recover".
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
     :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
     :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
     :vartype deferred_delete_time_in_utc: ~datetime.datetime
@@ -7581,39 +7883,39 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :ivar protection_state: Protected, ProtectionStopped, IRPending or ProtectionError.
     :vartype protection_state: str
     :ivar deferred_delete_sync_time_in_utc: Sync time for deferred deletion in UTC.
-    :vartype deferred_delete_sync_time_in_utc: long
+    :vartype deferred_delete_sync_time_in_utc: int
     :ivar extended_info: Additional information with this backup item.
     :vartype extended_info:
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.MabFileFolderProtectedItemExtendedInfo
     """
 
     _validation = {
-        'protected_item_type': {'required': True},
+        "protected_item_type": {"required": True},
     }
 
     _attribute_map = {
-        'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'last_recovery_point': {'key': 'lastRecoveryPoint', 'type': 'iso-8601'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
-        'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
-        'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
-        'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
-        'resource_guard_operation_requests': {'key': 'resourceGuardOperationRequests', 'type': '[str]'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'computer_name': {'key': 'computerName', 'type': 'str'},
-        'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
-        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
-        'protection_state': {'key': 'protectionState', 'type': 'str'},
-        'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'MabFileFolderProtectedItemExtendedInfo'},
+        "protected_item_type": {"key": "protectedItemType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "last_recovery_point": {"key": "lastRecoveryPoint", "type": "iso-8601"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "deferred_delete_time_in_utc": {"key": "deferredDeleteTimeInUTC", "type": "iso-8601"},
+        "is_scheduled_for_deferred_delete": {"key": "isScheduledForDeferredDelete", "type": "bool"},
+        "deferred_delete_time_remaining": {"key": "deferredDeleteTimeRemaining", "type": "str"},
+        "is_deferred_delete_schedule_upcoming": {"key": "isDeferredDeleteScheduleUpcoming", "type": "bool"},
+        "is_rehydrate": {"key": "isRehydrate", "type": "bool"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "computer_name": {"key": "computerName", "type": "str"},
+        "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
+        "last_backup_time": {"key": "lastBackupTime", "type": "iso-8601"},
+        "protection_state": {"key": "protectionState", "type": "str"},
+        "deferred_delete_sync_time_in_utc": {"key": "deferredDeleteSyncTimeInUTC", "type": "int"},
+        "extended_info": {"key": "extendedInfo", "type": "MabFileFolderProtectedItemExtendedInfo"},
     }
 
     def __init__(
@@ -7645,12 +7947,12 @@ class MabFileFolderProtectedItem(ProtectedItem):
         """
         :keyword backup_management_type: Type of backup management for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword workload_type: Type of workload this item represents. Known values are: "Invalid",
          "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -7666,7 +7968,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         :keyword backup_set_name: Name of the backup set the backup item belongs to.
         :paramtype backup_set_name: str
         :keyword create_mode: Create mode to indicate recovery of existing soft deleted data source or
-         creation of new data source. Known values are: "Invalid", "Default", "Recover".
+         creation of new data source. Known values are: "Invalid", "Default", and "Recover".
         :paramtype create_mode: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CreateMode
         :keyword deferred_delete_time_in_utc: Time for deferred deletion in UTC.
@@ -7697,13 +7999,29 @@ class MabFileFolderProtectedItem(ProtectedItem):
         :keyword protection_state: Protected, ProtectionStopped, IRPending or ProtectionError.
         :paramtype protection_state: str
         :keyword deferred_delete_sync_time_in_utc: Sync time for deferred deletion in UTC.
-        :paramtype deferred_delete_sync_time_in_utc: long
+        :paramtype deferred_delete_sync_time_in_utc: int
         :keyword extended_info: Additional information with this backup item.
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.MabFileFolderProtectedItemExtendedInfo
         """
-        super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, resource_guard_operation_requests=resource_guard_operation_requests, **kwargs)
-        self.protected_item_type = 'MabFileFolderProtectedItem'  # type: str
+        super().__init__(
+            backup_management_type=backup_management_type,
+            workload_type=workload_type,
+            container_name=container_name,
+            source_resource_id=source_resource_id,
+            policy_id=policy_id,
+            last_recovery_point=last_recovery_point,
+            backup_set_name=backup_set_name,
+            create_mode=create_mode,
+            deferred_delete_time_in_utc=deferred_delete_time_in_utc,
+            is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete,
+            deferred_delete_time_remaining=deferred_delete_time_remaining,
+            is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming,
+            is_rehydrate=is_rehydrate,
+            resource_guard_operation_requests=resource_guard_operation_requests,
+            **kwargs
+        )
+        self.protected_item_type = "MabFileFolderProtectedItem"  # type: str
         self.friendly_name = friendly_name
         self.computer_name = computer_name
         self.last_backup_status = last_backup_status
@@ -7713,7 +8031,7 @@ class MabFileFolderProtectedItem(ProtectedItem):
         self.extended_info = extended_info
 
 
-class MabFileFolderProtectedItemExtendedInfo(msrest.serialization.Model):
+class MabFileFolderProtectedItemExtendedInfo(_serialization.Model):
     """Additional information on the backed up item.
 
     :ivar last_refreshed_at: Last time when the agent data synced to service.
@@ -7725,9 +8043,9 @@ class MabFileFolderProtectedItemExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'last_refreshed_at': {'key': 'lastRefreshedAt', 'type': 'iso-8601'},
-        'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
-        'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
+        "last_refreshed_at": {"key": "lastRefreshedAt", "type": "iso-8601"},
+        "oldest_recovery_point": {"key": "oldestRecoveryPoint", "type": "iso-8601"},
+        "recovery_point_count": {"key": "recoveryPointCount", "type": "int"},
     }
 
     def __init__(
@@ -7746,13 +8064,13 @@ class MabFileFolderProtectedItemExtendedInfo(msrest.serialization.Model):
         :keyword recovery_point_count: Number of backup copies associated with the backup item.
         :paramtype recovery_point_count: int
         """
-        super(MabFileFolderProtectedItemExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.last_refreshed_at = last_refreshed_at
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
 
 
-class MabJob(Job):
+class MabJob(Job):  # pylint: disable=too-many-instance-attributes
     """MAB workload-specific job.
 
     All required parameters must be populated in order to send to Azure.
@@ -7761,7 +8079,7 @@ class MabJob(Job):
     :vartype entity_friendly_name: str
     :ivar backup_management_type: Backup management type to execute the current job. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar operation: The operation name.
@@ -7774,8 +8092,8 @@ class MabJob(Job):
     :vartype end_time: ~datetime.datetime
     :ivar activity_id: ActivityId of job.
     :vartype activity_id: str
-    :ivar job_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar job_type: This property will be used as the discriminator for deciding the specific types
+     in the polymorphic chain of types. Required.
     :vartype job_type: str
     :ivar duration: Time taken by job to run.
     :vartype duration: ~datetime.timedelta
@@ -7787,12 +8105,12 @@ class MabJob(Job):
     :ivar mab_server_type: Server type of MAB container. Known values are: "Invalid", "Unknown",
      "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer", "AzureBackupServerContainer",
      "MABContainer", "Cluster", "AzureSqlContainer", "Windows", "VCenter", "VMAppContainer",
-     "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+     "SQLAGWorkLoadContainer", "StorageContainer", and "GenericContainer".
     :vartype mab_server_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.MabServerType
     :ivar workload_type: Workload type of backup item. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype workload_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.WorkloadType
@@ -7805,25 +8123,25 @@ class MabJob(Job):
     """
 
     _validation = {
-        'job_type': {'required': True},
+        "job_type": {"required": True},
     }
 
     _attribute_map = {
-        'entity_friendly_name': {'key': 'entityFriendlyName', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'activity_id': {'key': 'activityId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'actions_info': {'key': 'actionsInfo', 'type': '[str]'},
-        'mab_server_name': {'key': 'mabServerName', 'type': 'str'},
-        'mab_server_type': {'key': 'mabServerType', 'type': 'str'},
-        'workload_type': {'key': 'workloadType', 'type': 'str'},
-        'error_details': {'key': 'errorDetails', 'type': '[MabErrorInfo]'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'MabJobExtendedInfo'},
+        "entity_friendly_name": {"key": "entityFriendlyName", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "activity_id": {"key": "activityId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "actions_info": {"key": "actionsInfo", "type": "[str]"},
+        "mab_server_name": {"key": "mabServerName", "type": "str"},
+        "mab_server_type": {"key": "mabServerType", "type": "str"},
+        "workload_type": {"key": "workloadType", "type": "str"},
+        "error_details": {"key": "errorDetails", "type": "[MabErrorInfo]"},
+        "extended_info": {"key": "extendedInfo", "type": "MabJobExtendedInfo"},
     }
 
     def __init__(
@@ -7851,7 +8169,7 @@ class MabJob(Job):
         :paramtype entity_friendly_name: str
         :keyword backup_management_type: Backup management type to execute the current job. Known
          values are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql",
-         "AzureStorage", "AzureWorkload", "DefaultBackup".
+         "AzureStorage", "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword operation: The operation name.
@@ -7874,12 +8192,12 @@ class MabJob(Job):
         :keyword mab_server_type: Server type of MAB container. Known values are: "Invalid", "Unknown",
          "IaasVMContainer", "IaasVMServiceContainer", "DPMContainer", "AzureBackupServerContainer",
          "MABContainer", "Cluster", "AzureSqlContainer", "Windows", "VCenter", "VMAppContainer",
-         "SQLAGWorkLoadContainer", "StorageContainer", "GenericContainer".
+         "SQLAGWorkLoadContainer", "StorageContainer", and "GenericContainer".
         :paramtype mab_server_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.MabServerType
         :keyword workload_type: Workload type of backup item. Known values are: "Invalid", "VM",
          "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype workload_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.WorkloadType
@@ -7890,8 +8208,17 @@ class MabJob(Job):
         :paramtype extended_info:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.MabJobExtendedInfo
         """
-        super(MabJob, self).__init__(entity_friendly_name=entity_friendly_name, backup_management_type=backup_management_type, operation=operation, status=status, start_time=start_time, end_time=end_time, activity_id=activity_id, **kwargs)
-        self.job_type = 'MabJob'  # type: str
+        super().__init__(
+            entity_friendly_name=entity_friendly_name,
+            backup_management_type=backup_management_type,
+            operation=operation,
+            status=status,
+            start_time=start_time,
+            end_time=end_time,
+            activity_id=activity_id,
+            **kwargs
+        )
+        self.job_type = "MabJob"  # type: str
         self.duration = duration
         self.actions_info = actions_info
         self.mab_server_name = mab_server_name
@@ -7901,7 +8228,7 @@ class MabJob(Job):
         self.extended_info = extended_info
 
 
-class MabJobExtendedInfo(msrest.serialization.Model):
+class MabJobExtendedInfo(_serialization.Model):
     """Additional information for the MAB workload-specific job.
 
     :ivar tasks_list: List of tasks for this job.
@@ -7914,9 +8241,9 @@ class MabJobExtendedInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tasks_list': {'key': 'tasksList', 'type': '[MabJobTaskDetails]'},
-        'property_bag': {'key': 'propertyBag', 'type': '{str}'},
-        'dynamic_error_message': {'key': 'dynamicErrorMessage', 'type': 'str'},
+        "tasks_list": {"key": "tasksList", "type": "[MabJobTaskDetails]"},
+        "property_bag": {"key": "propertyBag", "type": "{str}"},
+        "dynamic_error_message": {"key": "dynamicErrorMessage", "type": "str"},
     }
 
     def __init__(
@@ -7936,13 +8263,13 @@ class MabJobExtendedInfo(msrest.serialization.Model):
         :keyword dynamic_error_message: Non localized error message specific to this job.
         :paramtype dynamic_error_message: str
         """
-        super(MabJobExtendedInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tasks_list = tasks_list
         self.property_bag = property_bag
         self.dynamic_error_message = dynamic_error_message
 
 
-class MabJobTaskDetails(msrest.serialization.Model):
+class MabJobTaskDetails(_serialization.Model):
     """MAB workload-specific job task details.
 
     :ivar task_id: The task display name.
@@ -7958,11 +8285,11 @@ class MabJobTaskDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'status': {'key': 'status', 'type': 'str'},
+        "task_id": {"key": "taskId", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "duration": {"key": "duration", "type": "duration"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -7987,7 +8314,7 @@ class MabJobTaskDetails(msrest.serialization.Model):
         :keyword status: The status.
         :paramtype status: str
         """
-        super(MabJobTaskDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_id = task_id
         self.start_time = start_time
         self.end_time = end_time
@@ -7995,7 +8322,7 @@ class MabJobTaskDetails(msrest.serialization.Model):
         self.status = status
 
 
-class NameInfo(msrest.serialization.Model):
+class NameInfo(_serialization.Model):
     """The name of usage.
 
     :ivar value: Value of usage.
@@ -8005,29 +8332,23 @@ class NameInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         """
         :keyword value: Value of usage.
         :paramtype value: str
         :keyword localized_value: Localized value of usage.
         :paramtype localized_value: str
         """
-        super(NameInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class NewErrorResponse(msrest.serialization.Model):
+class NewErrorResponse(_serialization.Model):
     """The resource management error response.
 
     :ivar error: The error object.
@@ -8035,24 +8356,19 @@ class NewErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'NewErrorResponseError'},
+        "error": {"key": "error", "type": "NewErrorResponseError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.NewErrorResponseError"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.NewErrorResponseError"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.NewErrorResponseError
         """
-        super(NewErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class NewErrorResponseError(msrest.serialization.Model):
+class NewErrorResponseError(_serialization.Model):
     """The error object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8071,28 +8387,24 @@ class NewErrorResponseError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[NewErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[NewErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(NewErrorResponseError, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -8100,7 +8412,7 @@ class NewErrorResponseError(msrest.serialization.Model):
         self.additional_info = None
 
 
-class OperationStatus(msrest.serialization.Model):
+class OperationStatus(_serialization.Model):
     """Operation status.
 
     :ivar id: ID of the operation.
@@ -8108,7 +8420,7 @@ class OperationStatus(msrest.serialization.Model):
     :ivar name: Name of the operation.
     :vartype name: str
     :ivar status: Operation status. Known values are: "Invalid", "InProgress", "Succeeded",
-     "Failed", "Canceled".
+     "Failed", and "Canceled".
     :vartype status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.OperationStatusValues
     :ivar start_time: Operation start time. Format: ISO-8601.
@@ -8123,19 +8435,19 @@ class OperationStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'OperationStatusError'},
-        'properties': {'key': 'properties', 'type': 'OperationStatusExtendedInfo'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "OperationStatusError"},
+        "properties": {"key": "properties", "type": "OperationStatusExtendedInfo"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         status: Optional[Union[str, "_models.OperationStatusValues"]] = None,
         start_time: Optional[datetime.datetime] = None,
@@ -8150,7 +8462,7 @@ class OperationStatus(msrest.serialization.Model):
         :keyword name: Name of the operation.
         :paramtype name: str
         :keyword status: Operation status. Known values are: "Invalid", "InProgress", "Succeeded",
-         "Failed", "Canceled".
+         "Failed", and "Canceled".
         :paramtype status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.OperationStatusValues
         :keyword start_time: Operation start time. Format: ISO-8601.
@@ -8163,7 +8475,7 @@ class OperationStatus(msrest.serialization.Model):
         :paramtype properties:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.OperationStatusExtendedInfo
         """
-        super(OperationStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.status = status
@@ -8173,7 +8485,7 @@ class OperationStatus(msrest.serialization.Model):
         self.properties = properties
 
 
-class OperationStatusError(msrest.serialization.Model):
+class OperationStatusError(_serialization.Model):
     """Error information associated with operation status call.
 
     :ivar code: Error code of the operation failure.
@@ -8183,60 +8495,56 @@ class OperationStatusError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code of the operation failure.
         :paramtype code: str
         :keyword message: Error message displayed if the operation failure.
         :paramtype message: str
         """
-        super(OperationStatusError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class OperationStatusExtendedInfo(msrest.serialization.Model):
+class OperationStatusExtendedInfo(_serialization.Model):
     """Base class for additional information of operation status.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: OperationStatusJobExtendedInfo, OperationStatusJobsExtendedInfo, OperationStatusProvisionILRExtendedInfo, OperationStatusRecoveryPointExtendedInfo.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OperationStatusJobExtendedInfo, OperationStatusJobsExtendedInfo,
+    OperationStatusProvisionILRExtendedInfo, OperationStatusRecoveryPointExtendedInfo
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'OperationStatusJobExtendedInfo': 'OperationStatusJobExtendedInfo', 'OperationStatusJobsExtendedInfo': 'OperationStatusJobsExtendedInfo', 'OperationStatusProvisionILRExtendedInfo': 'OperationStatusProvisionILRExtendedInfo', 'OperationStatusRecoveryPointExtendedInfo': 'OperationStatusRecoveryPointExtendedInfo'}
+        "object_type": {
+            "OperationStatusJobExtendedInfo": "OperationStatusJobExtendedInfo",
+            "OperationStatusJobsExtendedInfo": "OperationStatusJobsExtendedInfo",
+            "OperationStatusProvisionILRExtendedInfo": "OperationStatusProvisionILRExtendedInfo",
+            "OperationStatusRecoveryPointExtendedInfo": "OperationStatusRecoveryPointExtendedInfo",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationStatusExtendedInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -8245,34 +8553,29 @@ class OperationStatusJobExtendedInfo(OperationStatusExtendedInfo):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar job_id: ID of the job created for this protected item.
     :vartype job_id: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        job_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, job_id: Optional[str] = None, **kwargs):
         """
         :keyword job_id: ID of the job created for this protected item.
         :paramtype job_id: str
         """
-        super(OperationStatusJobExtendedInfo, self).__init__(**kwargs)
-        self.object_type = 'OperationStatusJobExtendedInfo'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "OperationStatusJobExtendedInfo"  # type: str
         self.job_id = job_id
 
 
@@ -8281,8 +8584,8 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar job_ids: IDs of the jobs created for the protected item.
     :vartype job_ids: list[str]
@@ -8291,21 +8594,17 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'job_ids': {'key': 'jobIds', 'type': '[str]'},
-        'failed_jobs_error': {'key': 'failedJobsError', 'type': '{str}'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "job_ids": {"key": "jobIds", "type": "[str]"},
+        "failed_jobs_error": {"key": "failedJobsError", "type": "{str}"},
     }
 
     def __init__(
-        self,
-        *,
-        job_ids: Optional[List[str]] = None,
-        failed_jobs_error: Optional[Dict[str, str]] = None,
-        **kwargs
+        self, *, job_ids: Optional[List[str]] = None, failed_jobs_error: Optional[Dict[str, str]] = None, **kwargs
     ):
         """
         :keyword job_ids: IDs of the jobs created for the protected item.
@@ -8314,8 +8613,8 @@ class OperationStatusJobsExtendedInfo(OperationStatusExtendedInfo):
          codes.
         :paramtype failed_jobs_error: dict[str, str]
         """
-        super(OperationStatusJobsExtendedInfo, self).__init__(**kwargs)
-        self.object_type = 'OperationStatusJobsExtendedInfo'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "OperationStatusJobsExtendedInfo"  # type: str
         self.job_ids = job_ids
         self.failed_jobs_error = failed_jobs_error
 
@@ -8325,8 +8624,8 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar recovery_target: Target details for file / folder restore.
     :vartype recovery_target:
@@ -8334,27 +8633,22 @@ class OperationStatusProvisionILRExtendedInfo(OperationStatusExtendedInfo):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_target': {'key': 'recoveryTarget', 'type': 'InstantItemRecoveryTarget'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_target": {"key": "recoveryTarget", "type": "InstantItemRecoveryTarget"},
     }
 
-    def __init__(
-        self,
-        *,
-        recovery_target: Optional["_models.InstantItemRecoveryTarget"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, recovery_target: Optional["_models.InstantItemRecoveryTarget"] = None, **kwargs):
         """
         :keyword recovery_target: Target details for file / folder restore.
         :paramtype recovery_target:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.InstantItemRecoveryTarget
         """
-        super(OperationStatusProvisionILRExtendedInfo, self).__init__(**kwargs)
-        self.object_type = 'OperationStatusProvisionILRExtendedInfo'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "OperationStatusProvisionILRExtendedInfo"  # type: str
         self.recovery_target = recovery_target
 
 
@@ -8363,8 +8657,8 @@ class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
     :vartype object_type: str
     :ivar updated_recovery_point: Recovery Point info with updated source snapshot URI.
     :vartype updated_recovery_point:
@@ -8375,13 +8669,13 @@ class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'updated_recovery_point': {'key': 'updatedRecoveryPoint', 'type': 'RecoveryPoint'},
-        'deleted_backup_item_version': {'key': 'deletedBackupItemVersion', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "updated_recovery_point": {"key": "updatedRecoveryPoint", "type": "RecoveryPoint"},
+        "deleted_backup_item_version": {"key": "deletedBackupItemVersion", "type": "str"},
     }
 
     def __init__(
@@ -8399,13 +8693,13 @@ class OperationStatusRecoveryPointExtendedInfo(OperationStatusExtendedInfo):
          field with deleted backup item.
         :paramtype deleted_backup_item_version: str
         """
-        super(OperationStatusRecoveryPointExtendedInfo, self).__init__(**kwargs)
-        self.object_type = 'OperationStatusRecoveryPointExtendedInfo'  # type: str
+        super().__init__(**kwargs)
+        self.object_type = "OperationStatusRecoveryPointExtendedInfo"  # type: str
         self.updated_recovery_point = updated_recovery_point
         self.deleted_backup_item_version = deleted_backup_item_version
 
 
-class PointInTimeRange(msrest.serialization.Model):
+class PointInTimeRange(_serialization.Model):
     """Provides details for log ranges.
 
     :ivar start_time: Start time of the time range for log recovery.
@@ -8415,16 +8709,12 @@ class PointInTimeRange(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
     def __init__(
-        self,
-        *,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        **kwargs
+        self, *, start_time: Optional[datetime.datetime] = None, end_time: Optional[datetime.datetime] = None, **kwargs
     ):
         """
         :keyword start_time: Start time of the time range for log recovery.
@@ -8432,26 +8722,26 @@ class PointInTimeRange(msrest.serialization.Model):
         :keyword end_time: End time of the time range for log recovery.
         :paramtype end_time: ~datetime.datetime
         """
-        super(PointInTimeRange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
 
 
-class ProtectedItemQueryObject(msrest.serialization.Model):
+class ProtectedItemQueryObject(_serialization.Model):
     """Filters to list backup items.
 
     :ivar health_state: Health State for the backed up item. Known values are: "Passed",
-     "ActionRequired", "ActionSuggested", "Invalid".
+     "ActionRequired", "ActionSuggested", and "Invalid".
     :vartype health_state: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthState
     :ivar backup_management_type: Backup management type for the backed up item. Known values are:
      "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-     "AzureWorkload", "DefaultBackup".
+     "AzureWorkload", and "DefaultBackup".
     :vartype backup_management_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
     :ivar item_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
      "SAPAseDatabase".
     :vartype item_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -8470,15 +8760,15 @@ class ProtectedItemQueryObject(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'health_state': {'key': 'healthState', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'item_type': {'key': 'itemType', 'type': 'str'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'backup_engine_name': {'key': 'backupEngineName', 'type': 'str'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'fabric_name': {'key': 'fabricName', 'type': 'str'},
-        'backup_set_name': {'key': 'backupSetName', 'type': 'str'},
+        "health_state": {"key": "healthState", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "item_type": {"key": "itemType", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "backup_engine_name": {"key": "backupEngineName", "type": "str"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "fabric_name": {"key": "fabricName", "type": "str"},
+        "backup_set_name": {"key": "backupSetName", "type": "str"},
     }
 
     def __init__(
@@ -8497,17 +8787,17 @@ class ProtectedItemQueryObject(msrest.serialization.Model):
     ):
         """
         :keyword health_state: Health State for the backed up item. Known values are: "Passed",
-         "ActionRequired", "ActionSuggested", "Invalid".
+         "ActionRequired", "ActionSuggested", and "Invalid".
         :paramtype health_state: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.HealthState
         :keyword backup_management_type: Backup management type for the backed up item. Known values
          are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
-         "AzureWorkload", "DefaultBackup".
+         "AzureWorkload", and "DefaultBackup".
         :paramtype backup_management_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.BackupManagementType
         :keyword item_type: Type of workload this item represents. Known values are: "Invalid", "VM",
          "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
-         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+         "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase", and
          "SAPAseDatabase".
         :paramtype item_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.DataSourceType
@@ -8524,7 +8814,7 @@ class ProtectedItemQueryObject(msrest.serialization.Model):
         :keyword backup_set_name: Name of the backup set.
         :paramtype backup_set_name: str
         """
-        super(ProtectedItemQueryObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.health_state = health_state
         self.backup_management_type = backup_management_type
         self.item_type = item_type
@@ -8550,7 +8840,7 @@ class ProtectedItemResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -8559,19 +8849,19 @@ class ProtectedItemResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ProtectedItem'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "ProtectedItem"},
     }
 
     def __init__(
@@ -8586,14 +8876,14 @@ class ProtectedItemResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
         :keyword properties: ProtectedItemResource properties.
         :paramtype properties: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItem
         """
-        super(ProtectedItemResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
@@ -8609,8 +8899,8 @@ class ProtectedItemResourceList(ResourceList):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ProtectedItemResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ProtectedItemResource]"},
     }
 
     def __init__(
@@ -8628,11 +8918,11 @@ class ProtectedItemResourceList(ResourceList):
         :paramtype value:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.ProtectedItemResource]
         """
-        super(ProtectedItemResourceList, self).__init__(next_link=next_link, **kwargs)
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
-class RecoveryPointDiskConfiguration(msrest.serialization.Model):
+class RecoveryPointDiskConfiguration(_serialization.Model):
     """Disk configuration.
 
     :ivar number_of_disks_included_in_backup: Number of disks included in backup.
@@ -8648,10 +8938,10 @@ class RecoveryPointDiskConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'number_of_disks_included_in_backup': {'key': 'numberOfDisksIncludedInBackup', 'type': 'int'},
-        'number_of_disks_attached_to_vm': {'key': 'numberOfDisksAttachedToVm', 'type': 'int'},
-        'included_disk_list': {'key': 'includedDiskList', 'type': '[DiskInformation]'},
-        'excluded_disk_list': {'key': 'excludedDiskList', 'type': '[DiskInformation]'},
+        "number_of_disks_included_in_backup": {"key": "numberOfDisksIncludedInBackup", "type": "int"},
+        "number_of_disks_attached_to_vm": {"key": "numberOfDisksAttachedToVm", "type": "int"},
+        "included_disk_list": {"key": "includedDiskList", "type": "[DiskInformation]"},
+        "excluded_disk_list": {"key": "excludedDiskList", "type": "[DiskInformation]"},
     }
 
     def __init__(
@@ -8675,14 +8965,14 @@ class RecoveryPointDiskConfiguration(msrest.serialization.Model):
         :paramtype excluded_disk_list:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.DiskInformation]
         """
-        super(RecoveryPointDiskConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.number_of_disks_included_in_backup = number_of_disks_included_in_backup
         self.number_of_disks_attached_to_vm = number_of_disks_attached_to_vm
         self.included_disk_list = included_disk_list
         self.excluded_disk_list = excluded_disk_list
 
 
-class RecoveryPointMoveReadinessInfo(msrest.serialization.Model):
+class RecoveryPointMoveReadinessInfo(_serialization.Model):
     """RecoveryPointMoveReadinessInfo.
 
     :ivar is_ready_for_move:
@@ -8692,24 +8982,18 @@ class RecoveryPointMoveReadinessInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_ready_for_move': {'key': 'isReadyForMove', 'type': 'bool'},
-        'additional_info': {'key': 'additionalInfo', 'type': 'str'},
+        "is_ready_for_move": {"key": "isReadyForMove", "type": "bool"},
+        "additional_info": {"key": "additionalInfo", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_ready_for_move: Optional[bool] = None,
-        additional_info: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, is_ready_for_move: Optional[bool] = None, additional_info: Optional[str] = None, **kwargs):
         """
         :keyword is_ready_for_move:
         :paramtype is_ready_for_move: bool
         :keyword additional_info:
         :paramtype additional_info: str
         """
-        super(RecoveryPointMoveReadinessInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_ready_for_move = is_ready_for_move
         self.additional_info = additional_info
 
@@ -8728,7 +9012,7 @@ class RecoveryPointResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -8737,19 +9021,19 @@ class RecoveryPointResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'RecoveryPoint'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "properties": {"key": "properties", "type": "RecoveryPoint"},
     }
 
     def __init__(
@@ -8764,14 +9048,14 @@ class RecoveryPointResource(Resource):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword e_tag: Optional ETag.
         :paramtype e_tag: str
         :keyword properties: RecoveryPointResource properties.
         :paramtype properties: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPoint
         """
-        super(RecoveryPointResource, self).__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
+        super().__init__(location=location, tags=tags, e_tag=e_tag, **kwargs)
         self.properties = properties
 
 
@@ -8787,8 +9071,8 @@ class RecoveryPointResourceList(ResourceList):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[RecoveryPointResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[RecoveryPointResource]"},
     }
 
     def __init__(
@@ -8806,19 +9090,19 @@ class RecoveryPointResourceList(ResourceList):
         :paramtype value:
          list[~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointResource]
         """
-        super(RecoveryPointResourceList, self).__init__(next_link=next_link, **kwargs)
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
-class RecoveryPointTierInformation(msrest.serialization.Model):
+class RecoveryPointTierInformation(_serialization.Model):
     """Recovery point tier information.
 
     :ivar type: Recovery point tier type. Known values are: "Invalid", "InstantRP", "HardenedRP",
-     "ArchivedRP".
+     and "ArchivedRP".
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointTierType
     :ivar status: Recovery point tier status. Known values are: "Invalid", "Valid", "Disabled",
-     "Deleted", "Rehydrated".
+     "Deleted", and "Rehydrated".
     :vartype status: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointTierStatus
     :ivar extended_info: Recovery point tier status.
@@ -8826,9 +9110,9 @@ class RecoveryPointTierInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': '{str}'},
+        "type": {"key": "type", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "{str}"},
     }
 
     def __init__(
@@ -8841,23 +9125,23 @@ class RecoveryPointTierInformation(msrest.serialization.Model):
     ):
         """
         :keyword type: Recovery point tier type. Known values are: "Invalid", "InstantRP",
-         "HardenedRP", "ArchivedRP".
+         "HardenedRP", and "ArchivedRP".
         :paramtype type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointTierType
         :keyword status: Recovery point tier status. Known values are: "Invalid", "Valid", "Disabled",
-         "Deleted", "Rehydrated".
+         "Deleted", and "Rehydrated".
         :paramtype status: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.RecoveryPointTierStatus
         :keyword extended_info: Recovery point tier status.
         :paramtype extended_info: dict[str, str]
         """
-        super(RecoveryPointTierInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.status = status
         self.extended_info = extended_info
 
 
-class RestoreFileSpecs(msrest.serialization.Model):
+class RestoreFileSpecs(_serialization.Model):
     """Restore file specs like file path, type and target folder path info.
 
     :ivar path: Source File/Folder path.
@@ -8869,9 +9153,9 @@ class RestoreFileSpecs(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'file_spec_type': {'key': 'fileSpecType', 'type': 'str'},
-        'target_folder_path': {'key': 'targetFolderPath', 'type': 'str'},
+        "path": {"key": "path", "type": "str"},
+        "file_spec_type": {"key": "fileSpecType", "type": "str"},
+        "target_folder_path": {"key": "targetFolderPath", "type": "str"},
     }
 
     def __init__(
@@ -8890,16 +9174,16 @@ class RestoreFileSpecs(msrest.serialization.Model):
         :keyword target_folder_path: Destination folder path in target FileShare.
         :paramtype target_folder_path: str
         """
-        super(RestoreFileSpecs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.file_spec_type = file_spec_type
         self.target_folder_path = target_folder_path
 
 
-class SQLDataDirectory(msrest.serialization.Model):
+class SQLDataDirectory(_serialization.Model):
     """SQLDataDirectory info.
 
-    :ivar type: Type of data directory mapping. Known values are: "Invalid", "Data", "Log".
+    :ivar type: Type of data directory mapping. Known values are: "Invalid", "Data", and "Log".
     :vartype type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.SQLDataDirectoryType
     :ivar path: File path.
@@ -8909,9 +9193,9 @@ class SQLDataDirectory(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'logical_name': {'key': 'logicalName', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "logical_name": {"key": "logicalName", "type": "str"},
     }
 
     def __init__(
@@ -8923,7 +9207,7 @@ class SQLDataDirectory(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Type of data directory mapping. Known values are: "Invalid", "Data", "Log".
+        :keyword type: Type of data directory mapping. Known values are: "Invalid", "Data", and "Log".
         :paramtype type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.SQLDataDirectoryType
         :keyword path: File path.
@@ -8931,16 +9215,17 @@ class SQLDataDirectory(msrest.serialization.Model):
         :keyword logical_name: Logical name of the file.
         :paramtype logical_name: str
         """
-        super(SQLDataDirectory, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.path = path
         self.logical_name = logical_name
 
 
-class SQLDataDirectoryMapping(msrest.serialization.Model):
+class SQLDataDirectoryMapping(_serialization.Model):
     """Encapsulates information regarding data directory.
 
-    :ivar mapping_type: Type of data directory mapping. Known values are: "Invalid", "Data", "Log".
+    :ivar mapping_type: Type of data directory mapping. Known values are: "Invalid", "Data", and
+     "Log".
     :vartype mapping_type: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.SQLDataDirectoryType
     :ivar source_logical_name: Restore source logical name path.
@@ -8952,10 +9237,10 @@ class SQLDataDirectoryMapping(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mapping_type': {'key': 'mappingType', 'type': 'str'},
-        'source_logical_name': {'key': 'sourceLogicalName', 'type': 'str'},
-        'source_path': {'key': 'sourcePath', 'type': 'str'},
-        'target_path': {'key': 'targetPath', 'type': 'str'},
+        "mapping_type": {"key": "mappingType", "type": "str"},
+        "source_logical_name": {"key": "sourceLogicalName", "type": "str"},
+        "source_path": {"key": "sourcePath", "type": "str"},
+        "target_path": {"key": "targetPath", "type": "str"},
     }
 
     def __init__(
@@ -8968,7 +9253,7 @@ class SQLDataDirectoryMapping(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword mapping_type: Type of data directory mapping. Known values are: "Invalid", "Data",
+        :keyword mapping_type: Type of data directory mapping. Known values are: "Invalid", "Data", and
          "Log".
         :paramtype mapping_type: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.SQLDataDirectoryType
@@ -8979,14 +9264,14 @@ class SQLDataDirectoryMapping(msrest.serialization.Model):
         :keyword target_path: Target path.
         :paramtype target_path: str
         """
-        super(SQLDataDirectoryMapping, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.mapping_type = mapping_type
         self.source_logical_name = source_logical_name
         self.source_path = source_path
         self.target_path = target_path
 
 
-class TargetAFSRestoreInfo(msrest.serialization.Model):
+class TargetAFSRestoreInfo(_serialization.Model):
     """Target Azure File Share Info.
 
     :ivar name: File share name.
@@ -8996,33 +9281,27 @@ class TargetAFSRestoreInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        target_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, target_resource_id: Optional[str] = None, **kwargs):
         """
         :keyword name: File share name.
         :paramtype name: str
         :keyword target_resource_id: Target file share resource ARM ID.
         :paramtype target_resource_id: str
         """
-        super(TargetAFSRestoreInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.target_resource_id = target_resource_id
 
 
-class TargetRestoreInfo(msrest.serialization.Model):
+class TargetRestoreInfo(_serialization.Model):
     """Details about target workload during restore operation.
 
     :ivar overwrite_option: Can Overwrite if Target DataBase already exists. Known values are:
-     "Invalid", "FailOnConflict", "Overwrite".
+     "Invalid", "FailOnConflict", and "Overwrite".
     :vartype overwrite_option: str or
      ~azure.mgmt.recoveryservicesbackup.passivestamp.models.OverwriteOptions
     :ivar container_id: Resource Id name of the container in which Target DataBase resides.
@@ -9035,10 +9314,10 @@ class TargetRestoreInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'overwrite_option': {'key': 'overwriteOption', 'type': 'str'},
-        'container_id': {'key': 'containerId', 'type': 'str'},
-        'database_name': {'key': 'databaseName', 'type': 'str'},
-        'target_directory_for_file_restore': {'key': 'targetDirectoryForFileRestore', 'type': 'str'},
+        "overwrite_option": {"key": "overwriteOption", "type": "str"},
+        "container_id": {"key": "containerId", "type": "str"},
+        "database_name": {"key": "databaseName", "type": "str"},
+        "target_directory_for_file_restore": {"key": "targetDirectoryForFileRestore", "type": "str"},
     }
 
     def __init__(
@@ -9052,7 +9331,7 @@ class TargetRestoreInfo(msrest.serialization.Model):
     ):
         """
         :keyword overwrite_option: Can Overwrite if Target DataBase already exists. Known values are:
-         "Invalid", "FailOnConflict", "Overwrite".
+         "Invalid", "FailOnConflict", and "Overwrite".
         :paramtype overwrite_option: str or
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.OverwriteOptions
         :keyword container_id: Resource Id name of the container in which Target DataBase resides.
@@ -9063,20 +9342,19 @@ class TargetRestoreInfo(msrest.serialization.Model):
         :keyword target_directory_for_file_restore: Target directory location for restore as files.
         :paramtype target_directory_for_file_restore: str
         """
-        super(TargetRestoreInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.overwrite_option = overwrite_option
         self.container_id = container_id
         self.database_name = database_name
         self.target_directory_for_file_restore = target_directory_for_file_restore
 
 
-class WorkloadCrrAccessToken(CrrAccessToken):
+class WorkloadCrrAccessToken(CrrAccessToken):  # pylint: disable=too-many-instance-attributes
     """WorkloadCrrAccessToken.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
     :ivar access_token_string: Access token used for authentication.
     :vartype access_token_string: str
@@ -9089,7 +9367,7 @@ class WorkloadCrrAccessToken(CrrAccessToken):
     :ivar resource_id: Resource Id of the source vault.
     :vartype resource_id: str
     :ivar protection_container_id: Protected item container id.
-    :vartype protection_container_id: long
+    :vartype protection_container_id: int
     :ivar recovery_point_id: Recovery Point Id.
     :vartype recovery_point_id: str
     :ivar recovery_point_time: Recovery Point Time.
@@ -9152,48 +9430,51 @@ class WorkloadCrrAccessToken(CrrAccessToken):
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'access_token_string': {'key': 'accessTokenString', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'protection_container_id': {'key': 'protectionContainerId', 'type': 'long'},
-        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'container_type': {'key': 'containerType', 'type': 'str'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'datasource_type': {'key': 'datasourceType', 'type': 'str'},
-        'datasource_name': {'key': 'datasourceName', 'type': 'str'},
-        'datasource_id': {'key': 'datasourceId', 'type': 'str'},
-        'datasource_container_name': {'key': 'datasourceContainerName', 'type': 'str'},
-        'coordinator_service_stamp_id': {'key': 'coordinatorServiceStampId', 'type': 'str'},
-        'coordinator_service_stamp_uri': {'key': 'coordinatorServiceStampUri', 'type': 'str'},
-        'protection_service_stamp_id': {'key': 'protectionServiceStampId', 'type': 'str'},
-        'protection_service_stamp_uri': {'key': 'protectionServiceStampUri', 'type': 'str'},
-        'token_extended_information': {'key': 'tokenExtendedInformation', 'type': 'str'},
-        'rp_tier_information': {'key': 'rpTierInformation', 'type': '{str}'},
-        'rp_original_sa_option': {'key': 'rpOriginalSAOption', 'type': 'bool'},
-        'rp_is_managed_virtual_machine': {'key': 'rpIsManagedVirtualMachine', 'type': 'bool'},
-        'rp_vm_size_description': {'key': 'rpVMSizeDescription', 'type': 'str'},
-        'b_ms_active_region': {'key': 'bMSActiveRegion', 'type': 'str'},
-        'protectable_object_unique_name': {'key': 'protectableObjectUniqueName', 'type': 'str'},
-        'protectable_object_friendly_name': {'key': 'protectableObjectFriendlyName', 'type': 'str'},
-        'protectable_object_workload_type': {'key': 'protectableObjectWorkloadType', 'type': 'str'},
-        'protectable_object_protection_state': {'key': 'protectableObjectProtectionState', 'type': 'str'},
-        'protectable_object_container_host_os_name': {'key': 'protectableObjectContainerHostOsName', 'type': 'str'},
-        'protectable_object_parent_logical_container_name': {'key': 'protectableObjectParentLogicalContainerName', 'type': 'str'},
-        'container_id': {'key': 'containerId', 'type': 'str'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "access_token_string": {"key": "accessTokenString", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "protection_container_id": {"key": "protectionContainerId", "type": "int"},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "container_type": {"key": "containerType", "type": "str"},
+        "backup_management_type": {"key": "backupManagementType", "type": "str"},
+        "datasource_type": {"key": "datasourceType", "type": "str"},
+        "datasource_name": {"key": "datasourceName", "type": "str"},
+        "datasource_id": {"key": "datasourceId", "type": "str"},
+        "datasource_container_name": {"key": "datasourceContainerName", "type": "str"},
+        "coordinator_service_stamp_id": {"key": "coordinatorServiceStampId", "type": "str"},
+        "coordinator_service_stamp_uri": {"key": "coordinatorServiceStampUri", "type": "str"},
+        "protection_service_stamp_id": {"key": "protectionServiceStampId", "type": "str"},
+        "protection_service_stamp_uri": {"key": "protectionServiceStampUri", "type": "str"},
+        "token_extended_information": {"key": "tokenExtendedInformation", "type": "str"},
+        "rp_tier_information": {"key": "rpTierInformation", "type": "{str}"},
+        "rp_original_sa_option": {"key": "rpOriginalSAOption", "type": "bool"},
+        "rp_is_managed_virtual_machine": {"key": "rpIsManagedVirtualMachine", "type": "bool"},
+        "rp_vm_size_description": {"key": "rpVMSizeDescription", "type": "str"},
+        "b_ms_active_region": {"key": "bMSActiveRegion", "type": "str"},
+        "protectable_object_unique_name": {"key": "protectableObjectUniqueName", "type": "str"},
+        "protectable_object_friendly_name": {"key": "protectableObjectFriendlyName", "type": "str"},
+        "protectable_object_workload_type": {"key": "protectableObjectWorkloadType", "type": "str"},
+        "protectable_object_protection_state": {"key": "protectableObjectProtectionState", "type": "str"},
+        "protectable_object_container_host_os_name": {"key": "protectableObjectContainerHostOsName", "type": "str"},
+        "protectable_object_parent_logical_container_name": {
+            "key": "protectableObjectParentLogicalContainerName",
+            "type": "str",
+        },
+        "container_id": {"key": "containerId", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         access_token_string: Optional[str] = None,
@@ -9244,7 +9525,7 @@ class WorkloadCrrAccessToken(CrrAccessToken):
         :keyword resource_id: Resource Id of the source vault.
         :paramtype resource_id: str
         :keyword protection_container_id: Protected item container id.
-        :paramtype protection_container_id: long
+        :paramtype protection_container_id: int
         :keyword recovery_point_id: Recovery Point Id.
         :paramtype recovery_point_id: str
         :keyword recovery_point_time: Recovery Point Time.
@@ -9306,8 +9587,35 @@ class WorkloadCrrAccessToken(CrrAccessToken):
         :keyword policy_id: Policy Id.
         :paramtype policy_id: str
         """
-        super(WorkloadCrrAccessToken, self).__init__(access_token_string=access_token_string, subscription_id=subscription_id, resource_group_name=resource_group_name, resource_name=resource_name, resource_id=resource_id, protection_container_id=protection_container_id, recovery_point_id=recovery_point_id, recovery_point_time=recovery_point_time, container_name=container_name, container_type=container_type, backup_management_type=backup_management_type, datasource_type=datasource_type, datasource_name=datasource_name, datasource_id=datasource_id, datasource_container_name=datasource_container_name, coordinator_service_stamp_id=coordinator_service_stamp_id, coordinator_service_stamp_uri=coordinator_service_stamp_uri, protection_service_stamp_id=protection_service_stamp_id, protection_service_stamp_uri=protection_service_stamp_uri, token_extended_information=token_extended_information, rp_tier_information=rp_tier_information, rp_original_sa_option=rp_original_sa_option, rp_is_managed_virtual_machine=rp_is_managed_virtual_machine, rp_vm_size_description=rp_vm_size_description, b_ms_active_region=b_ms_active_region, **kwargs)
-        self.object_type = 'WorkloadCrrAccessToken'  # type: str
+        super().__init__(
+            access_token_string=access_token_string,
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            resource_id=resource_id,
+            protection_container_id=protection_container_id,
+            recovery_point_id=recovery_point_id,
+            recovery_point_time=recovery_point_time,
+            container_name=container_name,
+            container_type=container_type,
+            backup_management_type=backup_management_type,
+            datasource_type=datasource_type,
+            datasource_name=datasource_name,
+            datasource_id=datasource_id,
+            datasource_container_name=datasource_container_name,
+            coordinator_service_stamp_id=coordinator_service_stamp_id,
+            coordinator_service_stamp_uri=coordinator_service_stamp_uri,
+            protection_service_stamp_id=protection_service_stamp_id,
+            protection_service_stamp_uri=protection_service_stamp_uri,
+            token_extended_information=token_extended_information,
+            rp_tier_information=rp_tier_information,
+            rp_original_sa_option=rp_original_sa_option,
+            rp_is_managed_virtual_machine=rp_is_managed_virtual_machine,
+            rp_vm_size_description=rp_vm_size_description,
+            b_ms_active_region=b_ms_active_region,
+            **kwargs
+        )
+        self.object_type = "WorkloadCrrAccessToken"  # type: str
         self.protectable_object_unique_name = protectable_object_unique_name
         self.protectable_object_friendly_name = protectable_object_friendly_name
         self.protectable_object_workload_type = protectable_object_workload_type

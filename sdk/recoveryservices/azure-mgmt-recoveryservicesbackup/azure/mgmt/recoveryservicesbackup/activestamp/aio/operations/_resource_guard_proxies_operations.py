@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -21,8 +29,10 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._resource_guard_proxies_operations import build_get_request
 from .._vendor import MixinABC
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ResourceGuardProxiesOperations:
     """
@@ -43,47 +53,47 @@ class ResourceGuardProxiesOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def get(
-        self,
-        vault_name: str,
-        resource_group_name: str,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.ResourceGuardProxyBaseResourceList]:
+        self, vault_name: str, resource_group_name: str, **kwargs: Any
+    ) -> AsyncIterable["_models.ResourceGuardProxyBaseResource"]:
         """List the ResourceGuardProxies under vault.
 
-        :param vault_name: The name of the recovery services vault.
+        :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param resource_group_name: The name of the resource group where the recovery services vault is
-         present.
+         present. Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ResourceGuardProxyBaseResourceList or the result
-         of cls(response)
+        :return: An iterator like instance of either ResourceGuardProxyBaseResource or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResourceList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicesbackup.activestamp.models.ResourceGuardProxyBaseResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-06-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ResourceGuardProxyBaseResourceList]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ResourceGuardProxyBaseResourceList]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_request(
                     vault_name=vault_name,
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.get.metadata['url'],
+                    template_url=self.get.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -91,16 +101,11 @@ class ResourceGuardProxiesOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_get_request(
-                    vault_name=vault_name,
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -116,10 +121,8 @@ class ResourceGuardProxiesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -129,8 +132,6 @@ class ResourceGuardProxiesOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies"}  # type: ignore
