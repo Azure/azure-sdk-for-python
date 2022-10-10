@@ -16,7 +16,6 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
-from ...entities._validation import MutableValidationResult
 from .._schema.component import NodeType
 from ._input_outputs import InternalInput
 

@@ -355,6 +355,12 @@ class TestComponent:
                 specified_code_path = Path(yaml_path).parent / yaml_dict.get("code", "./")
                 assert code_path.resolve() == specified_code_path.resolve()
 
+    def test_docker_file_in_additional_includes(self):
+        yaml_path = "./tests/test_configs/internal/component_with_docker_file_" \
+                    "in_additional_includes/helloworld_additional_includes.yml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, component._validate()._to_dict()
+
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
         [
