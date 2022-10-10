@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "382",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "SentimentAnalysis",
@@ -37,14 +37,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "07671bae-2c1b-472f-9db9-bee65750ad02",
-        "Content-Length": "1124",
+        "apim-request-id": "13a6aa70-b03d-4a79-a579-2cd161a6b038",
+        "Content-Length": "1112",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Wed, 08 Jun 2022 01:29:32 GMT",
+        "Date": "Mon, 10 Oct 2022 21:12:09 GMT",
+        "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "19"
+        "x-envoy-upstream-service-time": "32"
       },
       "ResponseBody": {
         "kind": "SentimentAnalysisResults",
@@ -54,7 +55,7 @@
               "id": "0",
               "sentiment": "positive",
               "confidenceScores": {
-                "positive": 0.99,
+                "positive": 1.0,
                 "neutral": 0.0,
                 "negative": 0.0
               },
@@ -62,7 +63,7 @@
                 {
                   "sentiment": "positive",
                   "confidenceScores": {
-                    "positive": 0.99,
+                    "positive": 1.0,
                     "neutral": 0.0,
                     "negative": 0.0
                   },
@@ -77,17 +78,17 @@
               "id": "1",
               "sentiment": "negative",
               "confidenceScores": {
-                "positive": 0.01,
-                "neutral": 0.01,
-                "negative": 0.98
+                "positive": 0.0,
+                "neutral": 0.0,
+                "negative": 1.0
               },
               "sentences": [
                 {
-                  "sentiment": "negative",
+                  "sentiment": "neutral",
                   "confidenceScores": {
                     "positive": 0.01,
-                    "neutral": 0.01,
-                    "negative": 0.98
+                    "neutral": 0.82,
+                    "negative": 0.17
                   },
                   "offset": 0,
                   "length": 39,
@@ -97,8 +98,8 @@
                   "sentiment": "negative",
                   "confidenceScores": {
                     "positive": 0.0,
-                    "neutral": 0.01,
-                    "negative": 0.99
+                    "neutral": 0.0,
+                    "negative": 1.0
                   },
                   "offset": 39,
                   "length": 21,
@@ -111,17 +112,17 @@
               "id": "2",
               "sentiment": "negative",
               "confidenceScores": {
-                "positive": 0.01,
+                "positive": 0.0,
                 "neutral": 0.0,
-                "negative": 0.99
+                "negative": 1.0
               },
               "sentences": [
                 {
                   "sentiment": "negative",
                   "confidenceScores": {
-                    "positive": 0.01,
+                    "positive": 0.0,
                     "neutral": 0.0,
-                    "negative": 0.99
+                    "negative": 1.0
                   },
                   "offset": 0,
                   "length": 42,
@@ -132,7 +133,7 @@
             }
           ],
           "errors": [],
-          "modelVersion": "2021-10-01"
+          "modelVersion": "2022-10-01"
         }
       }
     }

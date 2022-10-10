@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "233",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "EntityLinking",
@@ -27,10 +27,11 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1bf8b999-9924-4c6f-ac1b-61d32a5f4295",
-        "Content-Length": "393",
+        "apim-request-id": "25061318-e812-4676-859f-a3dd41ca7310",
+        "Content-Length": "408",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 08 Jun 2022 01:44:29 GMT",
+        "Date": "Mon, 10 Oct 2022 21:19:53 GMT",
+        "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "3"
@@ -47,7 +48,7 @@
                 "message": "Invalid Language Code.",
                 "innererror": {
                   "code": "UnsupportedLanguageCode",
-                  "message": "Invalid language code. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"
+                  "message": "Invalid language code \u0027notalanguage\u0027. Supported languages: en,es. For additional details see https://aka.ms/text-analytics/language-support?tabs=named-entity-recognition"
                 }
               }
             }

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "315",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "LanguageDetection",
@@ -36,14 +36,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3bf81bc5-0135-4195-91e1-ce2d9ce43e7f",
+        "apim-request-id": "9c80d6dd-4ddf-42e1-912a-64a1fb28ffd3",
         "Content-Length": "415",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Wed, 08 Jun 2022 01:33:24 GMT",
+        "Date": "Mon, 10 Oct 2022 21:15:13 GMT",
+        "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "12"
       },
       "ResponseBody": {
         "kind": "LanguageDetectionResults",
@@ -83,7 +84,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -91,7 +92,7 @@
         "Connection": "keep-alive",
         "Content-Length": "315",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "LanguageDetection",
@@ -118,10 +119,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "b53e76bb-4634-450e-9c79-4cc8cf61cc85",
+        "apim-request-id": "a8d5a40c-a9c1-42fe-8bfc-0acfa55dce67",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Wed, 08 Jun 2022 01:33:24 GMT"
+        "Date": "Mon, 10 Oct 2022 21:15:13 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -131,7 +132,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -139,7 +140,7 @@
         "Connection": "keep-alive",
         "Content-Length": "315",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "LanguageDetection",
@@ -166,14 +167,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3c81cb21-e405-402d-8b79-60fa17292084",
+        "apim-request-id": "59343f52-625a-48c4-8101-61caf0be39e9",
         "Content-Length": "415",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Wed, 08 Jun 2022 01:33:24 GMT",
+        "Date": "Mon, 10 Oct 2022 21:15:14 GMT",
+        "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "9"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "kind": "LanguageDetectionResults",

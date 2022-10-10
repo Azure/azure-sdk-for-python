@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "202",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "KeyPhraseExtraction",
@@ -25,10 +25,11 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "03061826-ac6c-4017-befc-61fc7e901cfe",
-        "Content-Length": "491",
+        "apim-request-id": "1133e68e-fc7d-4197-bae1-c636fd5d20ac",
+        "Content-Length": "704",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 08 Jun 2022 18:31:36 GMT",
+        "Date": "Mon, 10 Oct 2022 21:16:55 GMT",
+        "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "3"
@@ -45,12 +46,12 @@
                 "message": "Invalid Language Code.",
                 "innererror": {
                   "code": "UnsupportedLanguageCode",
-                  "message": "Invalid language code. Supported languages: af,bg,ca,da,de,el,en,es,et,fi,fr,hr,hu,id,it,ja,ko,lv,nl,no,pl,pt-BR,pt-PT,ro,ru,sk,sl,sv,tr,zh-Hans. For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"
+                  "message": "Invalid language code \u0027notalanguage\u0027. Supported languages: af,am,ar,as,az,be,bg,bn,br,bs,ca,cs,cy,da,de,el,en,eo,es,et,eu,fa,fi,fil,fr,fy,ga,gd,gl,gu,ha,he,hi,hr,hu,hy,id,it,ja,jv,ka,kk,km,kn,ko,ku,ky,la,lo,lt,lv,mg,mk,ml,mn,mr,ms,my,ne,nl,no,om,or,pa,pl,ps,pt-BR,pt-PT,ro,ru,sa,sd,si,sk,sl,so,sq,sr,su,sv,sw,ta,te,th,tr,ug,uk,ur,uz,vi,xh,yi,zh-Hans,zh-Hant. For additional details see https://aka.ms/text-analytics/language-support?tabs=key-phrase-extraction"
                 }
               }
             }
           ],
-          "modelVersion": "2021-06-01"
+          "modelVersion": "2022-10-01"
         }
       }
     }

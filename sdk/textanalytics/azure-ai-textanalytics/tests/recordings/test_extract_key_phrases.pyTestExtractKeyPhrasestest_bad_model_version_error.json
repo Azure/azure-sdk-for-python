@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "190",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "KeyPhraseExtraction",
@@ -28,13 +28,13 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "63191875-d444-45d3-95ea-6d4749bf3d93",
+        "apim-request-id": "bdce41d6-f15f-4276-9157-881750cb10b6",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 08 Jun 2022 18:30:30 GMT",
+        "Date": "Mon, 10 Oct 2022 21:16:36 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
+        "x-envoy-upstream-service-time": "6"
       },
       "ResponseBody": {
         "error": {
@@ -42,7 +42,7 @@
           "message": "Invalid Request.",
           "innererror": {
             "code": "ModelVersionIncorrect",
-            "message": "Invalid model version. Possible values are: latest,2019-10-01,2020-07-01,2021-06-01. For additional details see https://aka.ms/text-analytics-model-versioning"
+            "message": "Invalid model version. Possible values are: latest,2019-10-01,2020-07-01,2021-06-01,2022-07-01,2022-10-01. For additional details see https://aka.ms/text-analytics-model-versioning"
           }
         }
       }

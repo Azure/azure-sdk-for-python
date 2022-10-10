@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "1171",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -66,294 +66,40 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "86e3e7bd-051d-4dcd-80cf-8a84a769cbc7",
+        "apim-request-id": "2f93ee3d-265f-41fd-be89-b233eb0102d1",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:43:41 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/de9b3ed2-6768-442d-9a66-6b0554695f0d?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 20:48:12 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b5576fdf-1936-4cd1-9c85-7996c5e74fe4?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "310"
+        "x-envoy-upstream-service-time": "364"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/de9b3ed2-6768-442d-9a66-6b0554695f0d?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b5576fdf-1936-4cd1-9c85-7996c5e74fe4?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "8c44ddc3-7229-4ef0-a552-a4e26a6bd9c0",
-        "Content-Length": "3685",
+        "apim-request-id": "fc41b405-80d7-4539-ad56-1c3fd9f269f6",
+        "Content-Length": "8462",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:43:46 GMT",
+        "Date": "Mon, 10 Oct 2022 20:48:18 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "119"
+        "x-envoy-upstream-service-time": "323"
       },
       "ResponseBody": {
-        "jobId": "de9b3ed2-6768-442d-9a66-6b0554695f0d",
-        "lastUpdatedDateTime": "2022-06-09T17:43:43Z",
-        "createdDateTime": "2022-06-09T17:43:41Z",
-        "expirationDateTime": "2022-06-10T17:43:41Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 2,
-          "failed": 0,
-          "inProgress": 2,
-          "total": 4,
-          "items": [
-            {
-              "kind": "SentimentAnalysisLROResults",
-              "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:43:43.9513364Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 3,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 3
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.23,
-                      "neutral": 0.61,
-                      "negative": 0.16
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.23,
-                          "neutral": 0.61,
-                          "negative": 0.16
-                        },
-                        "offset": 0,
-                        "length": 295,
-                        "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "sentiment": "neutral",
-                    "statistics": {
-                      "charactersCount": 158,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 1.0,
-                      "negative": 0.0
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 1.0,
-                          "negative": 0.0
-                        },
-                        "offset": 0,
-                        "length": 158,
-                        "text": "David Schmidt, senior vice president--Food Safety, International Food Information Council (IFIC), Washington, D.C., discussed the physical activity component."
-                      }
-                    ],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "sentiment": "positive",
-                    "statistics": {
-                      "charactersCount": 121,
-                      "transactionsCount": 1
-                    },
-                    "confidenceScores": {
-                      "positive": 0.57,
-                      "neutral": 0.41,
-                      "negative": 0.02
-                    },
-                    "sentences": [
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.03,
-                          "neutral": 0.96,
-                          "negative": 0.01
-                        },
-                        "offset": 0,
-                        "length": 55,
-                        "text": "I need a reservation for an indoor restaurant in China."
-                      },
-                      {
-                        "sentiment": "neutral",
-                        "confidenceScores": {
-                          "positive": 0.12,
-                          "neutral": 0.78,
-                          "negative": 0.1
-                        },
-                        "offset": 56,
-                        "length": 28,
-                        "text": "Please don\u0027t stop the music."
-                      },
-                      {
-                        "sentiment": "positive",
-                        "confidenceScores": {
-                          "positive": 0.57,
-                          "neutral": 0.41,
-                          "negative": 0.02
-                        },
-                        "offset": 85,
-                        "length": 36,
-                        "text": "Play music and add it to my playlist"
-                      }
-                    ],
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "3",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid Document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2020-04-01"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:43:43.9048331Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 3,
-                  "erroneousDocumentsCount": 1,
-                  "transactionsCount": 3
-                },
-                "documents": [
-                  {
-                    "id": "1",
-                    "keyPhrases": [
-                      "Government Accountability Office",
-                      "natural gas development",
-                      "past six years",
-                      "environmental protection responsibilities",
-                      "recent report",
-                      "dramatic increase",
-                      "federal lands",
-                      "GAO",
-                      "oil",
-                      "staff",
-                      "BLM",
-                      "point"
-                    ],
-                    "statistics": {
-                      "charactersCount": 295,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "keyPhrases": [
-                      "International Food Information Council",
-                      "senior vice president",
-                      "physical activity component",
-                      "Food Safety",
-                      "David Schmidt",
-                      "D.C.",
-                      "IFIC",
-                      "Washington"
-                    ],
-                    "statistics": {
-                      "charactersCount": 158,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "keyPhrases": [
-                      "indoor restaurant",
-                      "reservation",
-                      "China",
-                      "music",
-                      "playlist"
-                    ],
-                    "statistics": {
-                      "charactersCount": 121,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  }
-                ],
-                "errors": [
-                  {
-                    "id": "3",
-                    "error": {
-                      "code": "InvalidArgument",
-                      "message": "Invalid Document in request.",
-                      "innererror": {
-                        "code": "InvalidDocument",
-                        "message": "Document text is empty."
-                      }
-                    }
-                  }
-                ],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/de9b3ed2-6768-442d-9a66-6b0554695f0d?api-version=2022-05-01\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "92ea4f3b-c7a9-4b63-be5b-fdb2ba1176a0",
-        "Content-Length": "8464",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:43:51 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "244"
-      },
-      "ResponseBody": {
-        "jobId": "de9b3ed2-6768-442d-9a66-6b0554695f0d",
-        "lastUpdatedDateTime": "2022-06-09T17:43:50Z",
-        "createdDateTime": "2022-06-09T17:43:41Z",
-        "expirationDateTime": "2022-06-10T17:43:41Z",
+        "jobId": "b5576fdf-1936-4cd1-9c85-7996c5e74fe4",
+        "lastUpdateDateTime": "2022-10-10T20:48:16Z",
+        "createdDateTime": "2022-10-10T20:48:13Z",
+        "expirationDateTime": "2022-10-11T20:48:13Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -365,7 +111,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:43:50.2252657Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:15.8371123Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -557,7 +303,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:43:50.3010754Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:15.7664327Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -676,7 +422,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:43:43.9513364Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:15.709307Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -694,17 +440,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.23,
-                      "neutral": 0.61,
-                      "negative": 0.16
+                      "positive": 0.0,
+                      "neutral": 0.59,
+                      "negative": 0.41
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.23,
-                          "neutral": 0.61,
-                          "negative": 0.16
+                          "positive": 0.0,
+                          "neutral": 0.59,
+                          "negative": 0.41
                         },
                         "offset": 0,
                         "length": 295,
@@ -721,16 +467,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 1.0,
+                      "positive": 0.01,
+                      "neutral": 0.99,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 1.0,
+                          "positive": 0.01,
+                          "neutral": 0.99,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -742,45 +488,45 @@
                   },
                   {
                     "id": "4",
-                    "sentiment": "positive",
+                    "sentiment": "neutral",
                     "statistics": {
                       "charactersCount": 121,
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.57,
-                      "neutral": 0.41,
-                      "negative": 0.02
+                      "positive": 0.07,
+                      "neutral": 0.86,
+                      "negative": 0.07
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.03,
-                          "neutral": 0.96,
-                          "negative": 0.01
+                          "positive": 0.01,
+                          "neutral": 0.99,
+                          "negative": 0.0
                         },
                         "offset": 0,
-                        "length": 55,
-                        "text": "I need a reservation for an indoor restaurant in China."
+                        "length": 56,
+                        "text": "I need a reservation for an indoor restaurant in China. "
                       },
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.12,
-                          "neutral": 0.78,
-                          "negative": 0.1
+                          "positive": 0.02,
+                          "neutral": 0.8,
+                          "negative": 0.19
                         },
                         "offset": 56,
-                        "length": 28,
-                        "text": "Please don\u0027t stop the music."
+                        "length": 29,
+                        "text": "Please don\u0027t stop the music. "
                       },
                       {
-                        "sentiment": "positive",
+                        "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.57,
-                          "neutral": 0.41,
-                          "negative": 0.02
+                          "positive": 0.2,
+                          "neutral": 0.79,
+                          "negative": 0.01
                         },
                         "offset": 85,
                         "length": 36,
@@ -803,13 +549,13 @@
                     }
                   }
                 ],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:43:43.9048331Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:16.7923026Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -888,7 +634,7 @@
                     }
                   }
                 ],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
@@ -896,29 +642,29 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/de9b3ed2-6768-442d-9a66-6b0554695f0d?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b5576fdf-1936-4cd1-9c85-7996c5e74fe4?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "83a6e6a7-2520-451c-97c5-f2eac16f9551",
-        "Content-Length": "8464",
+        "apim-request-id": "ee821caa-cf6b-4111-b7e3-d09763ac80f4",
+        "Content-Length": "8462",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:43:57 GMT",
+        "Date": "Mon, 10 Oct 2022 20:48:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "208"
+        "x-envoy-upstream-service-time": "260"
       },
       "ResponseBody": {
-        "jobId": "de9b3ed2-6768-442d-9a66-6b0554695f0d",
-        "lastUpdatedDateTime": "2022-06-09T17:43:50Z",
-        "createdDateTime": "2022-06-09T17:43:41Z",
-        "expirationDateTime": "2022-06-10T17:43:41Z",
+        "jobId": "b5576fdf-1936-4cd1-9c85-7996c5e74fe4",
+        "lastUpdateDateTime": "2022-10-10T20:48:16Z",
+        "createdDateTime": "2022-10-10T20:48:13Z",
+        "expirationDateTime": "2022-10-11T20:48:13Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -930,7 +676,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:43:50.2252657Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:15.8371123Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1122,7 +868,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:43:50.3010754Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:15.7664327Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1241,7 +987,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:43:43.9513364Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:15.709307Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1259,17 +1005,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.23,
-                      "neutral": 0.61,
-                      "negative": 0.16
+                      "positive": 0.0,
+                      "neutral": 0.59,
+                      "negative": 0.41
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.23,
-                          "neutral": 0.61,
-                          "negative": 0.16
+                          "positive": 0.0,
+                          "neutral": 0.59,
+                          "negative": 0.41
                         },
                         "offset": 0,
                         "length": 295,
@@ -1286,16 +1032,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 1.0,
+                      "positive": 0.01,
+                      "neutral": 0.99,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 1.0,
+                          "positive": 0.01,
+                          "neutral": 0.99,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -1307,45 +1053,45 @@
                   },
                   {
                     "id": "4",
-                    "sentiment": "positive",
+                    "sentiment": "neutral",
                     "statistics": {
                       "charactersCount": 121,
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.57,
-                      "neutral": 0.41,
-                      "negative": 0.02
+                      "positive": 0.07,
+                      "neutral": 0.86,
+                      "negative": 0.07
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.03,
-                          "neutral": 0.96,
-                          "negative": 0.01
+                          "positive": 0.01,
+                          "neutral": 0.99,
+                          "negative": 0.0
                         },
                         "offset": 0,
-                        "length": 55,
-                        "text": "I need a reservation for an indoor restaurant in China."
+                        "length": 56,
+                        "text": "I need a reservation for an indoor restaurant in China. "
                       },
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.12,
-                          "neutral": 0.78,
-                          "negative": 0.1
+                          "positive": 0.02,
+                          "neutral": 0.8,
+                          "negative": 0.19
                         },
                         "offset": 56,
-                        "length": 28,
-                        "text": "Please don\u0027t stop the music."
+                        "length": 29,
+                        "text": "Please don\u0027t stop the music. "
                       },
                       {
-                        "sentiment": "positive",
+                        "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.57,
-                          "neutral": 0.41,
-                          "negative": 0.02
+                          "positive": 0.2,
+                          "neutral": 0.79,
+                          "negative": 0.01
                         },
                         "offset": 85,
                         "length": 36,
@@ -1368,13 +1114,13 @@
                     }
                   }
                 ],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:43:43.9048331Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:16.7923026Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1453,7 +1199,7 @@
                     }
                   }
                 ],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]

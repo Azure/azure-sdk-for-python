@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "298",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -36,41 +36,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "4ca5dd76-5510-41cf-8d26-cdd7711eb1ef",
+        "apim-request-id": "310248be-9f0d-4127-8836-14813d427d15",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:08:45 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bb5edfd2-88ab-4218-b353-d1dd74515fc1?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 19:05:19 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1cf259b3-924c-411f-9af4-a6b09593af20?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "274"
+        "x-envoy-upstream-service-time": "263"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bb5edfd2-88ab-4218-b353-d1dd74515fc1?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1cf259b3-924c-411f-9af4-a6b09593af20?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "159ef567-c6f5-4b94-9d0e-4b2f65e5b197",
-        "Content-Length": "856",
+        "apim-request-id": "94b484ec-88ad-4cd2-aaa7-60b8c6e09d3e",
+        "Content-Length": "855",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:08:50 GMT",
+        "Date": "Mon, 10 Oct 2022 19:05:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "48"
+        "x-envoy-upstream-service-time": "67"
       },
       "ResponseBody": {
-        "jobId": "bb5edfd2-88ab-4218-b353-d1dd74515fc1",
-        "lastUpdatedDateTime": "2022-06-09T17:08:48Z",
-        "createdDateTime": "2022-06-09T17:08:45Z",
-        "expirationDateTime": "2022-06-10T17:08:45Z",
+        "jobId": "1cf259b3-924c-411f-9af4-a6b09593af20",
+        "lastUpdateDateTime": "2022-10-10T19:05:22Z",
+        "createdDateTime": "2022-10-10T19:05:19Z",
+        "expirationDateTime": "2022-10-11T19:05:19Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -82,7 +82,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:08:48.1006387Z",
+              "lastUpdateDateTime": "2022-10-10T19:05:22.1174434Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -120,7 +120,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
