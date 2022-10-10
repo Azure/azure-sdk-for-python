@@ -129,6 +129,7 @@ class TestWorkspaceOperation:
                 ],
             ),
             primary_user_assigned_identity="resource2",
+            customer_managed_key = CustomerManagedKey(key_uri="new_cmk_uri")
         )
 
         def outgoing_call(rg, name, params, polling, cls):
@@ -144,6 +145,7 @@ class TestWorkspaceOperation:
             assert params.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
             assert len(params.identity.user_assigned_identities) == 2
             assert params.primary_user_assigned_identity == "resource2"
+            assert params.customer_managed_key.key_uri == "new_cmk_uri"
             assert polling is True
             assert callable(cls)
             return DEFAULT
