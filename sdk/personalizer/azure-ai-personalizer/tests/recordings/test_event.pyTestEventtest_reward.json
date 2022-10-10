@@ -1,0 +1,33 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/events/event_id_returned_by_rank/reward?api-version=2022-09-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "14",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "value": 1.0
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "38f6f804-990f-4a10-afcf-f55a36e1dd86",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "0",
+        "Date": "Mon, 10 Oct 2022 18:04:41 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "803"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

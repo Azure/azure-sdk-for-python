@@ -56,8 +56,8 @@ class TestEvaluationsAsync(AzureRecordedTestCase):
 
     async def wait_for_evaluation_to_finish(self, client, evaluation_id, iso_start_time, iso_end_time):
         while not await self.is_evaluation_final(client, evaluation_id, iso_start_time, iso_end_time):
-            self.sleep(60)
+            await self.sleep(60)
 
     async def sleep(self, delay):
         if self.is_live:
-            asyncio.sleep(delay)
+            await asyncio.sleep(delay)

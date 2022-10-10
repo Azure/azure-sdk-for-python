@@ -39,7 +39,7 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         }
         updated_configuration = await client.service_configuration.update(configuration)
         configuration_equals(configuration, updated_configuration)
-        self.sleep(30)
+        await self.sleep(30)
         new_configuration = await client.service_configuration.get()
         configuration_equals(new_configuration, configuration)
 
@@ -54,7 +54,7 @@ class TestConfigurationAsync(AzureRecordedTestCase):
             "arguments": "--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic ME --quadratic OT --quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips --epsilon 0.2",
         }
         updated_policy = await client.policy.update(policy)
-        self.sleep(30)
+        await self.sleep(30)
         policy_equals(updated_policy, policy)
         new_policy = await client.policy.get()
         policy_equals(new_policy, policy)
@@ -70,9 +70,9 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
         new_policy = await client.policy.reset()
-        self.sleep(30)
+        await self.sleep(30)
         policy_equals(new_policy, default_policy)
 
     async def sleep(self, delay):
         if self.is_live:
-            asyncio.sleep(delay)
+            await asyncio.sleep(delay)

@@ -1,0 +1,94 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/configurations/service?api-version=2022-09-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "215",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "rewardAggregation": "average",
+        "modelExportFrequency": "PT3M",
+        "defaultReward": 1.0,
+        "modelRetrainDays": 0,
+        "rewardWaitTime": "PT4H",
+        "explorationPercentage": 0.3,
+        "logRetentionDays": -1,
+        "learningMode": "Online"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "48f3ff64-31ac-4bdb-af25-28e6655c5ae9",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "417",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 10 Oct 2022 18:01:34 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "419"
+      },
+      "ResponseBody": {
+        "rewardWaitTime": "PT4H",
+        "defaultReward": 1.0,
+        "rewardAggregation": "average",
+        "explorationPercentage": 0.3,
+        "modelExportFrequency": "PT3M",
+        "logRetentionDays": -1,
+        "lastConfigurationEditDate": "2022-10-07T23:24:56",
+        "learningMode": "Online",
+        "isAutoOptimizationEnabled": true,
+        "autoOptimizationFrequency": "P28D",
+        "autoOptimizationStartDate": "2022-09-01T21:02:42",
+        "modelRetrainDays": 0
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/configurations/service?api-version=2022-09-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "81ae761a-a12f-4411-aea0-6834aeb6f32a",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "417",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 10 Oct 2022 18:02:04 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "188"
+      },
+      "ResponseBody": {
+        "rewardWaitTime": "PT4H",
+        "defaultReward": 1.0,
+        "rewardAggregation": "average",
+        "explorationPercentage": 0.3,
+        "modelExportFrequency": "PT3M",
+        "logRetentionDays": -1,
+        "lastConfigurationEditDate": "2022-10-07T23:24:56",
+        "learningMode": "Online",
+        "isAutoOptimizationEnabled": true,
+        "autoOptimizationFrequency": "P28D",
+        "autoOptimizationStartDate": "2022-09-01T21:02:42",
+        "modelRetrainDays": 0
+      }
+    }
+  ],
+  "Variables": {}
+}
