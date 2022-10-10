@@ -1,5 +1,11 @@
 # Release History
 
+## 5.8.0b2 (2022-10-11)
+
+### Features Added
+
+- Updated the optional dependency for async transport using AMQP over WebSocket from `websocket-client` to `aiohttp`.
+
 ## 5.8.0b1 (2022-09-22)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
