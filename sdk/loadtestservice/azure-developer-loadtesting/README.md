@@ -33,7 +33,7 @@ Use the returned token credential to authenticate the client.
 
 #### Create the client
 
-The data plane URI should be provided as the endpoint to create the client. The data plane URI can be obtained by creating an Azure Load Testing resource as shown [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/loadtestservice/azure-mgmt-loadtestservice/samples).
+The data plane URI should be provided as the endpoint to create the client. 
 
 ```python
 from azure.developer.loadtesting import LoadTestingClient
