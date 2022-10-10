@@ -15,7 +15,7 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Sep 2022 03:19:35 GMT",
+        "Date": "Fri, 23 Sep 2022 16:33:28 GMT",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
@@ -23,7 +23,7 @@
         "x-aml-cluster": "vienna-eastus-01",
         "X-Content-Type-Options": "nosniff",
         "x-ms-response-type": "standard",
-        "x-request-time": "0.244"
+        "x-request-time": "0.352"
       },
       "ResponseBody": {
         "registryId": "3b513a6b-f110-4e7f-9ce3-472b5aa28170",
@@ -59,19 +59,19 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Sep 2022 03:19:39 GMT",
+        "Date": "Fri, 23 Sep 2022 16:33:39 GMT",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-d1c51ca80456c1422f7df9c46bc9f748-6f016a8fa47442b5-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-cdc4a8317948f6c167d6287db83209d3-613f756477ec74e2-00\u0022",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": [
           "nosniff",
           "nosniff"
         ],
         "x-ms-response-type": "standard",
-        "x-request-time": "0.695"
+        "x-request-time": "0.918"
       },
       "ResponseBody": {
         "id": "azureml://registries/testFeed/components/sample_command_component_basic/versions/1",
@@ -135,11 +135,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 21 Sep 2022 03:19:44 GMT",
+        "Date": "Fri, 23 Sep 2022 16:33:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-b48b6d18cc9a1edf0d27697f85de369f-9b56f7a758d73348-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-357b66444da24bcbd3a2f13126dea0ae-f5b88b55491f5956-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -148,11 +148,11 @@
         ],
         "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a7fe9000-3c1f-428a-9278-7fdf22fc906c",
-        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-correlation-request-id": "5036d05f-48b3-48d4-91c3-07493cb32b8b",
+        "x-ms-ratelimit-remaining-subscription-reads": "11911",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20220921T031944Z:a7fe9000-3c1f-428a-9278-7fdf22fc906c",
-        "x-request-time": "0.035"
+        "x-ms-routing-request-id": "KOREACENTRAL:20220923T163344Z:5036d05f-48b3-48d4-91c3-07493cb32b8b",
+        "x-request-time": "0.041"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
@@ -161,8 +161,8 @@
         "location": "eastus2",
         "tags": {},
         "properties": {
-          "createdOn": "2022-09-15T11:47:20.6013506\u002B00:00",
-          "modifiedOn": "2022-09-15T11:47:27.309088\u002B00:00",
+          "createdOn": "2022-09-22T03:07:49.0785672\u002B00:00",
+          "modifiedOn": "2022-09-22T03:11:33.0343741\u002B00:00",
           "disableLocalAuth": false,
           "description": null,
           "resourceId": null,
@@ -180,32 +180,19 @@
               "nodeIdleTimeBeforeScaleDown": "PT2M"
             },
             "subnet": null,
-            "currentNodeCount": 2,
-            "targetNodeCount": 3,
+            "currentNodeCount": 1,
+            "targetNodeCount": 4,
             "nodeStateCounts": {
               "preparingNodeCount": 0,
               "runningNodeCount": 1,
-              "idleNodeCount": 1,
+              "idleNodeCount": 0,
               "unusableNodeCount": 0,
               "leavingNodeCount": 0,
               "preemptedNodeCount": 0
             },
             "allocationState": "Resizing",
-            "allocationStateTransitionTime": "2022-09-21T03:15:09.363\u002B00:00",
-            "errors": [
-              {
-                "error": {
-                  "code": "DiskFull",
-                  "message": "ComputeNode.Id=tvmps_f2ed5044e5ef6d4cc6a1165242dbad63c6fe8feb2fac3841f0e0ff7ab92fae75_d: There is not enough disk space on the node",
-                  "details": [
-                    {
-                      "code": "Message",
-                      "message": "The VM disk is full. Delete jobs, tasks, or files on the node to free up space and then reboot the node."
-                    }
-                  ]
-                }
-              }
-            ],
+            "allocationStateTransitionTime": "2022-09-23T16:31:36.634\u002B00:00",
+            "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
             "virtualMachineImage": null,

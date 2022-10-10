@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
 
 from logger import get_logger
@@ -113,6 +113,8 @@ class StressTestRunner(object):
         )
         self.argument_parser.add_argument("--conn_str", help="EventHub connection string",
                                           default=os.environ.get('EVENT_HUB_CONN_STR'))
+        self.argument_parser.add_argument("--azure_identity", help="Use identity", type=bool,
+                                          default=False)
         parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
         self.argument_parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
         self.argument_parser.add_argument(
@@ -131,7 +133,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--proxy_port", type=str)
         self.argument_parser.add_argument("--proxy_username", type=str)
         self.argument_parser.add_argument("--proxy_password", type=str)
-        self.argument_parser.add_argument("--hostname", help="The fully qualified host name for the Event Hubs namespace.")
+        self.argument_parser.add_argument("--hostname", help="The fully qualified host name for the Event Hubs namespace.", default=os.environ.get("EVENT_HUB_HOSTNAME"))
         self.argument_parser.add_argument("--sas_policy", help="Name of the shared access policy to authenticate with")
         self.argument_parser.add_argument("--sas_key", help="Shared access key")
         self.argument_parser.add_argument("--aad_client_id", help="AAD client id")
@@ -169,7 +171,19 @@ class StressTestRunner(object):
                 "password": self.args.proxy_password,
             }
 
-        if self.args.conn_str:
+        if self.args.azure_identity:
+            print("Using Azure Identity")
+            client = client_class(
+                fully_qualified_namespace=self.args.hostname,
+                eventhub_name=self.args.eventhub,
+                credential=DefaultAzureCredential(),
+                auth_timeout=self.args.auth_timeout,
+                http_proxy=http_proxy,
+                transport_type=transport_type,
+                logging_enable=self.args.uamqp_logging_enable,
+                **retry_options 
+            )
+        elif self.args.conn_str:
             client = client_class.from_connection_string(
                 self.args.conn_str,
                 eventhub_name=self.args.eventhub,
@@ -181,15 +195,15 @@ class StressTestRunner(object):
             )
         elif self.args.hostname:
             client = client_class(
-                fully_qualified_namespace=self.args.hostname,
-                eventhub_name=self.args.eventhub,
-                credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
-                auth_timeout=self.args.auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable,
-                **retry_options
-            )
+                    fully_qualified_namespace=self.args.hostname,
+                    eventhub_name=self.args.eventhub,
+                    credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.uamqp_logging_enable,
+                    **retry_options
+                )
         elif self.args.aad_client_id:
             if is_async:
                 credential = ClientSecretCredentialAsync(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)

@@ -20,7 +20,7 @@ from azure.ai.ml._schema.component import (
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
 )
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField, NestedField, RegistryStr, UnionField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
@@ -54,10 +54,15 @@ class BaseNodeSchema(PathAwareSchema):
         keys=fields.Str(),
         values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
     )
+    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
+    comment = fields.Str()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        support_data_binding_expression_for_fields(self, ["type"])
+        # data binding expression is not supported inside component field, while validation error
+        # message will be very long when component is an object as error message will include
+        # str(component), so just add component to skip list. The same to trial in Sweep.
+        support_data_binding_expression_for_fields(self, ["type", "component", "trial"])
 
     @post_dump(pass_original=True)
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
@@ -70,7 +75,11 @@ class BaseNodeSchema(PathAwareSchema):
     # an alternative would be set schema property to be load_only, but sub-schemas like CommandSchema usually also
     # inherit from other schema classes which also have schema property. Set post dump here would be more efficient.
     @post_dump()
-    def remove_meaningless_key_for_node(self, data, **kwargs):
+    def remove_meaningless_key_for_node(
+        self,
+        data,
+        **kwargs, # pylint: disable=unused-argument
+    ):
         data.pop("$schema", None)
         return data
 

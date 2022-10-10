@@ -27,7 +27,6 @@ class TestPipelineComponentEntity:
             "display_name": "Hello World Pipeline Component",
             "description": "This is the basic pipeline component",
             "tags": {"tag": "tagvalue", "owner": "sdkteam"},
-            "is_deterministic": True,
             "inputs": {
                 "component_in_number": {
                     "type": "number",
@@ -42,6 +41,7 @@ class TestPipelineComponentEntity:
             "type": "pipeline",
             "jobs": {
                 "component_a_job": {
+                    "properties": {},
                     "component": {
                         "command": 'echo "hello" && echo ' '"world" > ' "${{outputs.world_output}}/world.txt",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
@@ -81,9 +81,9 @@ class TestPipelineComponentEntity:
                 },
                 "component_in_path": {"description": "A path", "type": "uri_folder"},
             },
-            "is_deterministic": True,
             "jobs": {
                 "component_a_job": {
+                    "properties": {},
                     "component": {
                         "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
                         "command": "echo Hello World & "
@@ -149,7 +149,6 @@ class TestPipelineComponentEntity:
                 },
                 "component_in_path": {"description": "A path for pipeline " "component", "type": "uri_folder"},
             },
-            "is_deterministic": True,
             "jobs": {
                 "pipeline_component": {
                     "component": {
@@ -167,7 +166,7 @@ class TestPipelineComponentEntity:
                             },
                             "component_in_path": {"description": "A " "path", "type": "uri_folder"},
                         },
-                        "is_deterministic": True,
+                        "is_deterministic": None,
                         "jobs": {
                             "component_a_job": {
                                 "component": {
@@ -211,6 +210,7 @@ class TestPipelineComponentEntity:
                                     "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                                 },
                                 "outputs": {"component_out_path": "${{parent.outputs.output_path}}"},
+                                "properties": {},
                                 "type": "command",
                             }
                         },
@@ -221,6 +221,7 @@ class TestPipelineComponentEntity:
                         "type": "pipeline",
                         "version": "1",
                     },
+                    "properties": {},
                     "inputs": {"component_in_path": {"path": "${{parent.inputs.component_in_path}}"}},
                     "outputs": {},
                     "type": "pipeline",
@@ -246,9 +247,9 @@ class TestPipelineComponentEntity:
                 "job_in_other_number": {"default": "15", "type": "integer"},
                 "job_in_path": {"type": "uri_folder", "mode": "ro_mount"},
             },
-            "is_deterministic": True,
             "jobs": {
                 "hello_world_component": {
+                    "properties": {},
                     "component": "azureml:microsoftsamplesCommandComponentBasic_second:1",
                     "compute": "azureml:cpu-cluster",
                     "environment_variables": {},
@@ -260,6 +261,7 @@ class TestPipelineComponentEntity:
                     "type": "command",
                 },
                 "hello_world_component_2": {
+                    "properties": {},
                     "component": "azureml:microsoftsamplesCommandComponentBasic_second:1",
                     "compute": "azureml:cpu-cluster",
                     "environment_variables": {},

@@ -5,7 +5,7 @@
 # ------------------------------------
 import pytest
 
-from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring.aio import AuthoringClient
 from azure.core.credentials import AzureKeyCredential
 
 from helpers import QnaAuthoringAsyncHelper
@@ -16,7 +16,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
 
     @pytest.mark.asyncio
     async def test_export_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"
@@ -25,7 +25,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
         # export project
         export_poller = await client.begin_export(
             project_name=project_name,
-            format="json",
+            file_format="json",
             **self.kwargs_for_polling
         )
         result = await export_poller.result()
@@ -34,7 +34,7 @@ class TestExportAndImportAsync(QuestionAnsweringTestCase):
 
     @pytest.mark.asyncio
     async def test_import_project(self, recorded_test, qna_creds):
-        client = QuestionAnsweringAuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
+        client = AuthoringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
 
         # create project
         project_name = "IssacNewton"

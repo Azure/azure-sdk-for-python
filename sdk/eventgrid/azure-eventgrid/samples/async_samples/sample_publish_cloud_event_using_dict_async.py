@@ -45,5 +45,4 @@ async def publish():
     # [END publish_cloud_event_dict_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(publish())
+    asyncio.run(publish())

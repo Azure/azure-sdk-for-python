@@ -10,7 +10,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData as FebRestJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
@@ -201,7 +201,7 @@ class TestPipelineJobEntity:
         rest_obj = FebRestJob.from_dict(json.loads(json.dumps(job_dict)))
         pipeline = PipelineJob._from_rest_object(rest_obj)
         pipeline_dict = pipeline._to_dict()
-        assert pipeline_dict["jobs"] == {
+        assert pydash.omit(pipeline_dict["jobs"], *["properties", "hello_python_world_job.properties"]) == {
             "hello_python_world_job": {
                 "environment_variables": {},
                 "inputs": {
@@ -362,7 +362,7 @@ class TestPipelineJobEntity:
 
         assert actual_dict == {
             "featurization": {"dataset_language": "eng"},
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -397,7 +397,7 @@ class TestPipelineJobEntity:
         )
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -426,7 +426,7 @@ class TestPipelineJobEntity:
         actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["automl_text_ner"], omit_fields)
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -760,7 +760,7 @@ class TestPipelineJobEntity:
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
-        omit_fields = []  # "name", "display_name", "experiment_name", "properties"
+        omit_fields = ["properties"]  # "name", "display_name", "experiment_name", "properties"
         actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["add_greeting_column"], omit_fields)
 
         expected_dict = {
@@ -827,6 +827,8 @@ class TestPipelineJobEntity:
         omit_fields = [
             "jobs.sample_word.componentId",
             "jobs.count_word.componentId",
+            "jobs.sample_word.properties",
+            "jobs.count_word.properties",
         ]
         actual_job = pydash.omit(job._to_rest_object().properties.as_dict(), *omit_fields)
         assert actual_job == {
@@ -1050,6 +1052,7 @@ class TestPipelineJobEntity:
             "jobs": {
                 "train_job": {
                     "type": "command",
+                    "properties": {},
                     "_source": "YAML.JOB",
                     "resources": None,
                     "distribution": None,
@@ -1107,6 +1110,7 @@ class TestPipelineJobEntity:
             },
             "jobs": {
                 "train_job": {
+                    "properties": {},
                     "type": "command",
                     "_source": "YAML.JOB",
                     "resources": None,
@@ -1151,8 +1155,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -1223,8 +1226,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -1292,8 +1294,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -1432,3 +1433,24 @@ class TestPipelineJobEntity:
             },
             "type": "command",
         }
+
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(
+            source="./tests/test_configs/pipeline_jobs/pipeline_job_with_properties.yml"
+        )
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]
+
+    def test_comment_in_pipeline(self) -> None:
+        pipeline_job = load_job(source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_comment.yml")
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
+        assert rest_pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"

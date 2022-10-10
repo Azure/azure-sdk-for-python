@@ -74,7 +74,6 @@
     "GoldHitRTADataType": {
       "type": "enum",
       "optional": true,
-      "default": null,
       "description": "gold hit rta data type",
       "enum": [
         "Gold",

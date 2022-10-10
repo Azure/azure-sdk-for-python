@@ -97,6 +97,7 @@ class Code(Artifact):
             description=rest_code_version.description,
             tags=rest_code_version.tags,
             properties=rest_code_version.properties,
+            # pylint: disable=protected-access
             creation_context=SystemData._from_rest_object(code_rest_object.system_data),
             is_anonymous=rest_code_version.is_anonymous,
         )

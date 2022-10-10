@@ -15,10 +15,9 @@ from azure.ai.ml import (
     load_job,
     spark,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import JobService as JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
 
@@ -122,7 +121,9 @@ class TestCommandFunction:
         }
         actual_command = pydash.omit(
             test_command._to_rest_object(),
-            ["componentId", "source_job_id"],
+            "componentId",
+            "source_job_id",
+            "properties",
         )
         assert actual_command == expected_command
 
@@ -250,18 +251,12 @@ class TestCommandFunction:
             "tags": {},
             "type": "command",
         }
-        actual_dict = pydash.omit(
-            node1_dict,
-            "componentId",
-        )
+        actual_dict = pydash.omit(node1_dict, "componentId", "properties")
         assert actual_dict == expected_dict
 
     def test_command_function_default_values(self, test_command):
         node1 = test_command()
-        node1_dict = pydash.omit(
-            node1._to_rest_object(),
-            "componentId",
-        )
+        node1_dict = pydash.omit(node1._to_rest_object(), "componentId", "properties")
         expected_dict = {
             "_source": "BUILDER",
             "type": "command",
@@ -294,10 +289,7 @@ class TestCommandFunction:
         node2.compute = "new-cluster"
         node2.limits = CommandJobLimits(timeout=10)
         node3 = node2()
-        node3_dict = pydash.omit(
-            node3._to_rest_object(),
-            "componentId",
-        )
+        node3_dict = pydash.omit(node3._to_rest_object(), "componentId", "properties")
         expected_dict = {
             "_source": "BUILDER",
             "type": "command",
@@ -371,6 +363,7 @@ class TestCommandFunction:
             "resources": None,
             "name": None,
             "tags": {},
+            "properties": {},
         }
         assert node1_dict == expected_dict
 
@@ -580,7 +573,7 @@ class TestCommandFunction:
 
         actual_node = pydash.omit(
             node1._to_rest_object(),
-            "componentId",
+            *["componentId", "properties"],
         )
         expected_node = {
             "_source": "BUILDER",
@@ -844,6 +837,41 @@ class TestCommandFunction:
         }
         assert node._to_rest_object()["conf"] == expected_conf
 
+    def test_command_services_nodes(self) -> None:
+        services = {
+            "my_jupyterlab": {"job_service_type": "JupyterLab", "nodes": "all"},
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+        }
+        command_obj = command(
+            name="interactive-command-job",
+            description="description",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            command="ls",
+            compute="testCompute",
+            services=services,
+        )
+
+        rest_obj = command_obj._to_rest_object()
+        assert rest_obj["services"]["my_jupyterlab"].get("nodes") == {"nodes_value_type": "All"}
+        assert rest_obj["services"]["my_tensorboard"].get("nodes") == None
+
+        services_invalid_nodes = {"my_service": {"nodes": "All"}}
+        with pytest.raises(ValidationException, match="nodes should be either 'all' or None"):
+            command_obj = command(
+                name="interactive-command-job",
+                description="description",
+                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                command="ls",
+                compute="testCompute",
+                services=services_invalid_nodes,
+            )
+            assert command_obj
+
     def test_command_services(self) -> None:
         services = {
             "my_jupyter": {"job_service_type": "Jupyter"},
@@ -872,8 +900,7 @@ class TestCommandFunction:
             assert isinstance(service, JobService)
 
         node_rest_obj = node._to_rest_object()
-        for name, service in node_rest_obj["services"].items():
-            assert isinstance(service, RestJobService)
+        assert node_rest_obj["services"] == services
 
         # test invalid services
         invalid_services_0 = "jupyter"
