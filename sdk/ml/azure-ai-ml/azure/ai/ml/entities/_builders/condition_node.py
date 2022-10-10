@@ -13,7 +13,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 
 class ConditionNode(ControlFlowNode):
@@ -39,10 +39,10 @@ class ConditionNode(ControlFlowNode):
     def _to_dict(self) -> Dict:
         return self._dump_for_validation()
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         return self._validate_params(raise_error=False)
 
-    def _validate_params(self, raise_error=True) -> ValidationResult:
+    def _validate_params(self, raise_error=True) -> MutableValidationResult:
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.condition, (str, bool, InputOutputBase)):
@@ -53,7 +53,9 @@ class ConditionNode(ControlFlowNode):
             )
 
         # Check if output is a control output.
+        # pylint: disable=protected-access
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
+            # pylint: disable=protected-access
             output_definition = self.condition._meta
             if output_definition and not output_definition.is_control:
                 validation_result.append_error(

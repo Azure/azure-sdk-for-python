@@ -1,20 +1,25 @@
 from typing import Callable
 
+import pydash
 import pytest
 
-from azure.ai.ml import AmlToken, MLClient
+from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
-from azure.ai.ml.entities import CronTrigger, PipelineJob
+from azure.ai.ml.entities import CronTrigger, PipelineJob, AmlTokenConfiguration
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
 
 from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_DICT
 
+from devtools_testutils import AzureRecordedTestCase
+
 
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
-@pytest.mark.unittest
-class TestSchedule:
+@pytest.mark.e2etest
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
+@pytest.mark.skip(reason="tests failing while recording. Re-enable once fixed.")
+class TestSchedule(AzureRecordedTestCase):
     def test_schedule_lifetime(self, client: MLClient, randstr: Callable[[], str]):
-        params_override = [{"name": randstr()}]
+        params_override = [{"name": randstr("name")}]
         params_override.extend(TRIGGER_ENDTIME_DICT)
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
         schedule = load_schedule(test_path, params_override=params_override)
@@ -28,13 +33,13 @@ class TestSchedule:
         assert rest_schedule_list != []
         # update
         schedule.create_job.experiment_name = "test_schedule_exp"
-        schedule.create_job.identity = AmlToken()
+        schedule.create_job.identity = AmlTokenConfiguration()
         rest_schedule = client.schedules.begin_create_or_update(schedule).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
         assert rest_schedule._is_enabled is True
         job: PipelineJob = rest_schedule.create_job
-        assert isinstance(job.identity, AmlToken)
+        assert isinstance(job.identity, AmlTokenConfiguration)
         # disable
         rest_schedule = client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert rest_schedule._is_enabled is False
@@ -43,7 +48,7 @@ class TestSchedule:
         assert rest_schedule._is_enabled is True
         # invalid delete
         with pytest.raises(Exception) as e:
-            client.schedules.begin_delete(schedule.name)
+            client.schedules.begin_delete(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert "Cannot delete an active trigger" in str(e)
         # delete
         rest_schedule = client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
@@ -62,13 +67,14 @@ class TestSchedule:
         client.schedules.begin_disable(schedule.name)
         # assert updates
         job: PipelineJob = rest_schedule.create_job
-        assert isinstance(job.identity, AmlToken)
+        assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
+    @pytest.mark.skip(reason="flaky test")
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr()}]
         pipeline_job = load_job(
-            path="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
             params_override=params_override,
         )
         pipeline_job = client.jobs.create_or_update(pipeline_job)
@@ -81,16 +87,18 @@ class TestSchedule:
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name)
         assert rest_schedule.create_job.id is not None
+        # Set to None to align with yaml as service will fill this
+        rest_schedule.trigger.start_time = None
         assert (
-            rest_schedule.trigger._to_rest_object()
-            == CronTrigger(time_zone="UTC", expression="15 10 * * 1")._to_rest_object()
+            pydash.omit(rest_schedule.trigger._to_rest_object().as_dict(), "start_time")
+            == CronTrigger(time_zone="UTC", expression="15 10 * * 1")._to_rest_object().as_dict()
         )
 
     def test_load_cron_schedule_with_arm_id_and_updates(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr()}]
         test_job_path = "./tests/test_configs/pipeline_jobs/hello-pipeline-abc.yml"
         pipeline_job = load_job(
-            path=test_job_path,
+            test_job_path,
             params_override=params_override,
         )
         pipeline_job = client.jobs.create_or_update(pipeline_job)

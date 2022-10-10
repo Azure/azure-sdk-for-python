@@ -6,60 +6,87 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Content-Length": "619",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "29c5d366-5e0d-11ec-a2f8-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022dataSourceType\u0022: \u0022PostgreSql\u0022, \u0022dataFeedName\u0022: \u0022postgresql2e6c9492-2ff9-45ff-a92a-5a0b718291a8\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022}], \u0022dataStartFrom\u0022: \u00222019-01-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: 0, \u0022maxConcurrency\u0022: -1, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022viewMode\u0022: \u0022Private\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022connectionString\u0022: \u0022postgresql_connection_string\u0022, \u0022query\u0022: \u0022\u0027select * from adsample2 where Timestamp = @StartTime\u0027\u0022}}",
+      "RequestBody": {
+        "dataSourceType": "PostgreSql",
+        "dataFeedName": "postgresql19d722fd-c01c-4fd6-8fa8-f757386295eb",
+        "granularityName": "Daily",
+        "metrics": [
+          {
+            "metricName": "cost"
+          },
+          {
+            "metricName": "revenue"
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category"
+          },
+          {
+            "dimensionName": "city"
+          }
+        ],
+        "dataStartFrom": "2019-01-01T00:00:00.000Z",
+        "startOffsetInSeconds": 0,
+        "maxConcurrency": -1,
+        "minRetryIntervalInSeconds": -1,
+        "stopRetryAfterInSeconds": -1,
+        "viewMode": "Private",
+        "authenticationType": "Basic",
+        "dataSourceParameter": {
+          "connectionString": "postgresql_connection_string",
+          "query": "\u0027select * from adsample2 where Timestamp = @StartTime\u0027"
+        }
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "4e9344fa-3614-4818-81f6-8d43835c6e88",
+        "apim-request-id": "1175973e-22a4-49ae-ba4e-bd2bc71bb23c",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:11:56 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/bc170576-be25-45c4-bed9-7f527e0a10f9",
+        "Date": "Thu, 29 Sep 2022 23:25:35 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/64282be4-f75d-4dc0-be2a-e25dff193922",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "439",
-        "X-Request-ID": "4e9344fa-3614-4818-81f6-8d43835c6e88"
+        "x-envoy-upstream-service-time": "433",
+        "X-Request-ID": "1175973e-22a4-49ae-ba4e-bd2bc71bb23c"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/bc170576-be25-45c4-bed9-7f527e0a10f9",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/64282be4-f75d-4dc0-be2a-e25dff193922",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2a2941c7-5e0d-11ec-9a4b-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9296e5b3-51e9-4224-ac6a-4d7dad31c1f8",
+        "apim-request-id": "cd3d132e-beaa-4601-800b-96d2f8ac0ab9",
         "Content-Length": "1240",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:11:57 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "102",
-        "X-Request-ID": "9296e5b3-51e9-4224-ac6a-4d7dad31c1f8"
+        "x-envoy-upstream-service-time": "112",
+        "X-Request-ID": "cd3d132e-beaa-4601-800b-96d2f8ac0ab9"
       },
       "ResponseBody": {
-        "dataFeedId": "bc170576-be25-45c4-bed9-7f527e0a10f9",
-        "dataFeedName": "postgresql2e6c9492-2ff9-45ff-a92a-5a0b718291a8",
+        "dataFeedId": "64282be4-f75d-4dc0-be2a-e25dff193922",
+        "dataFeedName": "postgresql19d722fd-c01c-4fd6-8fa8-f757386295eb",
         "metrics": [
           {
-            "metricId": "87eae269-01f2-49f3-a471-92df559d2fd9",
+            "metricId": "87cde398-0c2a-48a5-bc34-0e269ad2d698",
             "metricName": "cost",
             "metricDisplayName": "cost",
             "metricDescription": ""
           },
           {
-            "metricId": "e4975f20-3471-4526-8189-9af539ceb388",
+            "metricId": "1e40455a-28f1-4a2b-b2d9-a21d438d5c86",
             "metricName": "revenue",
             "metricDisplayName": "revenue",
             "metricDescription": ""
@@ -96,7 +123,7 @@
         "viewers": [],
         "creator": "f850650c-1fcf-4489-b46f-71af2e30d360",
         "status": "Active",
-        "createdTime": "2021-12-16T01:11:57Z",
+        "createdTime": "2022-09-29T23:25:36Z",
         "isAdmin": true,
         "actionLinkTemplate": "",
         "dataSourceParameter": {
@@ -106,32 +133,30 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/bc170576-be25-45c4-bed9-7f527e0a10f9",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/64282be4-f75d-4dc0-be2a-e25dff193922",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2a439b0b-5e0d-11ec-927e-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "1a7d18d5-317d-425a-b069-7195e44c9d29",
+        "apim-request-id": "93b02eea-1d63-4ca4-aa43-570f3b03c92c",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:11:57 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "239",
-        "X-Request-ID": "1a7d18d5-317d-425a-b069-7195e44c9d29"
+        "x-envoy-upstream-service-time": "225",
+        "X-Request-ID": "93b02eea-1d63-4ca4-aa43-570f3b03c92c"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "data_feed_id": "bc170576-be25-45c4-bed9-7f527e0a10f9",
-    "data_feed_name": "postgresql2e6c9492-2ff9-45ff-a92a-5a0b718291a8"
+    "data_feed_id": "64282be4-f75d-4dc0-be2a-e25dff193922",
+    "data_feed_name": "postgresql19d722fd-c01c-4fd6-8fa8-f757386295eb"
   }
 }

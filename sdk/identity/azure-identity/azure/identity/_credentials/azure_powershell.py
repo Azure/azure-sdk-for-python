@@ -52,12 +52,14 @@ class AzurePowerShellCredential(object):
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
 
-    :keyword List[str] additionally_allowed_tenants: optional additional tenant ids for which the credential
-        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-        any tenant the application is installed.
+    :keyword str tenant_id: Optional tenant to include in the token request.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, additionally_allowed_tenants: List[str] = None):
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
 
+        self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     def __enter__(self):
@@ -89,7 +91,7 @@ class AzurePowerShellCredential(object):
           receive an access token
         """
         tenant_id = resolve_tenant(
-            "",
+            default_tenant=self.tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
             **kwargs
         )

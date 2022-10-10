@@ -254,7 +254,7 @@ The following snippet describes how to request that a new rendering session be s
 
 ### Extend the lease time of a session
 
-If a session is approaching its maximum lease time, but you want to keep it alive, you will need to make a call to 
+If a session is approaching its maximum lease time, but you want to keep it alive, you will need to make a call to
 increase its maximum lease time.
 This example shows how to query the current properties and then extend the lease if it will expire soon.
 
@@ -336,7 +336,7 @@ The Remote Rendering client library will raise exceptions defined in [Azure Core
 
 ### Async APIs
 
-This library also includes a complete async API supported on Python 3.5+. To use it, you must
+This library also includes a complete async API supported on Python 3.7+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.mixedreality.remoterendering.aio` namespace.
 

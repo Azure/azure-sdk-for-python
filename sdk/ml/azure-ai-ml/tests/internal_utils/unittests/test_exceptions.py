@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ValidationException
@@ -24,10 +24,14 @@ class MockResponse:
 
 @pytest.fixture
 def mock_component_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock, mock_machinelearning_client: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_05_01: Mock,
+    mock_machinelearning_client: Mock,
 ) -> ComponentOperations:
     yield ComponentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
@@ -49,9 +53,15 @@ def operation_container(
 
 @pytest.fixture
 def operation_orchestrator(
-    mock_workspace_scope: OperationScope, operation_container: OperationsContainer
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    operation_container: OperationsContainer,
 ) -> OperationOrchestrator:
-    yield OperationOrchestrator(operation_container=operation_container, operation_scope=mock_workspace_scope)
+    yield OperationOrchestrator(
+        operation_container=operation_container,
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+    )
 
 
 @pytest.mark.unittest

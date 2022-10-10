@@ -35,7 +35,9 @@ class _CustomStackSummary(traceback.StackSummary):
         return result
 
 
+# pylint: disable=too-many-instance-attributes
 class _CustomTracebackException(traceback.TracebackException):
+    # pylint: disable=super-init-not-called
     def __init__(
         self, exc_type, exc_value, exc_traceback, *, limit=None, lookup_lines=True, capture_locals=False, _seen=None
     ):
@@ -141,7 +143,13 @@ def format_exc(limit=None, chain=True):
     return "".join(format_exception(*sys.exc_info(), limit=limit, chain=chain))
 
 
-def format_exception(etype, value, tb, limit=None, chain=True):
+def format_exception(
+    etype, # pylint: disable=unused-argument
+    value,
+    tb,
+    limit=None,
+    chain=True
+):
     """Format a stack trace and the exception information.
 
     The arguments have the same meaning as the corresponding arguments

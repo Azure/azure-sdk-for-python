@@ -17,7 +17,7 @@ from azure.data.tables import (
     TableRetentionPolicy,
     TableCorsRule
 )
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
@@ -138,8 +138,7 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
             cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        pytest.raises(HttpResponseError,
-                          tsc.set_service_properties, cors=cors)
+        pytest.raises(HttpResponseError, tsc.set_service_properties, cors=cors)
 
     @tables_decorator
     @recorded_by_proxy
@@ -150,9 +149,37 @@ class TestTableServiceProperties(AzureRecordedTestCase, TableTestCase):
                                  retention_policy=TableRetentionPolicy(enabled=True, days=366))
 
         # Assert
-        pytest.raises(HttpResponseError,
-                          tsc.set_service_properties,
-                          minute_metrics=minute_metrics)
+        pytest.raises(HttpResponseError, tsc.set_service_properties, minute_metrics=minute_metrics)
+
+    @tables_decorator
+    @recorded_by_proxy
+    def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
+        tsc = TableServiceClient(invalid_url, credential=tables_primary_storage_account_key)
+
+        with pytest.raises(ResourceNotFoundError) as exc:
+            tsc.create_table(table_name)
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        with pytest.raises(ResourceNotFoundError) as exc:
+            tsc.create_table_if_not_exists(table_name)
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        with pytest.raises(HttpResponseError) as exc:
+            tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
+        assert ("URI is invalid") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        with pytest.raises(HttpResponseError) as exc:
+            tsc.get_service_properties()
+        assert ("URI is invalid") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        tsc.delete_table(table_name)
 
 
 class TestTableUnitTest(TableTestCase):
