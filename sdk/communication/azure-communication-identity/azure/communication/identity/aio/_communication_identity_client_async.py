@@ -116,7 +116,7 @@ class CommunicationIdentityClient: # pylint: disable=client-accepts-api-version-
             'createTokenWithScopes': scopes,
             'expiresInMinutes': convert_timedelta_to_mins(token_expires_in)
         }
-        
+
         return await self._identity_service_client.communication_identity.create(
             body=request_body,
             cls=lambda pr, u, e: (CommunicationUserIdentifier(u['identity']['id'], raw_id=u['identity']['id']),

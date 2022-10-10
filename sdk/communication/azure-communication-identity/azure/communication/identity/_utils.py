@@ -11,8 +11,8 @@ def convert_timedelta_to_mins(
 ):
     # type: (...) -> int
     """
-    Returns body to pass to request for user and token creation or token creation.
-    : param duration: 
+    Returns the total number of minutes contained in the duration.
+    : param duration: Time duration
     : type duration: ~datetime.timedelta
     : rtype: int
     """
