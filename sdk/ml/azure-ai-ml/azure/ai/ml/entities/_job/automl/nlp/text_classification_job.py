@@ -35,9 +35,9 @@ class TextClassificationJob(AutoMLNLPJob):
     def __init__(
         self,
         *,
-        target_column_name: str = None,
-        training_data: Input = None,
-        validation_data: Input = None,
+        target_column_name: Optional[str] = None,
+        training_data: Optional[Input] = None,
+        validation_data: Optional[Input] = None,
         primary_metric: Optional[ClassificationPrimaryMetrics] = None,
         log_verbosity: Optional[str] = None,
         **kwargs

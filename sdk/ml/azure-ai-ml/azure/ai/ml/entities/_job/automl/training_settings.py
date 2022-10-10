@@ -4,7 +4,7 @@
 
 # pylint: disable=R0902
 
-from typing import List, Union
+from typing import List, Union, Optional
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationModels
 from azure.ai.ml._restclient.v2022_06_01_preview.models import (
@@ -30,15 +30,15 @@ class TrainingSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        enable_onnx_compatible_models: bool = None,
-        enable_dnn_training: bool = None,
-        enable_model_explainability: bool = None,
-        enable_stack_ensemble: bool = None,
-        enable_vote_ensemble: bool = None,
-        stack_ensemble_settings: StackEnsembleSettings = None,
-        ensemble_model_download_timeout: int = None,
-        allowed_training_algorithms: List[str] = None,
-        blocked_training_algorithms: List[str] = None,
+        enable_onnx_compatible_models: Optional[bool] = None,
+        enable_dnn_training: Optional[bool] = None,
+        enable_model_explainability: Optional[bool] = None,
+        enable_stack_ensemble: Optional[bool] = None,
+        enable_vote_ensemble: Optional[bool] = None,
+        stack_ensemble_settings: Optional[StackEnsembleSettings] = None,
+        ensemble_model_download_timeout: Optional[int] = None,
+        allowed_training_algorithms: Optional[List[str]] = None,
+        blocked_training_algorithms: Optional[List[str]] = None,
     ):
         """TrainingSettings class for Azure Machine Learning.
 

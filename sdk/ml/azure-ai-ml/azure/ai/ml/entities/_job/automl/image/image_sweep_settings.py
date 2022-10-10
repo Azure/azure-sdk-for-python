@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Union
+from typing import Union, Optional
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepLimitSettings
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageSweepSettings as RestImageSweepSettings
@@ -27,7 +27,7 @@ class ImageSweepSettings(RestTranslatableMixin):
         self,
         *,
         sampling_algorithm: Union[str, SamplingAlgorithmType],
-        early_termination: EarlyTerminationPolicy = None,
+        early_termination: Optional[EarlyTerminationPolicy] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination

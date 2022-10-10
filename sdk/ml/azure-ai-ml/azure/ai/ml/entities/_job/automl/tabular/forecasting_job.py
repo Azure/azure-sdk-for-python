@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import Forecasting as RestForecasting
@@ -37,8 +37,8 @@ class ForecastingJob(AutoMLTabular):
     def __init__(
         self,
         *,
-        primary_metric: str = None,
-        forecasting_settings: ForecastingSettings = None,
+        primary_metric: Optional[str] = None,
+        forecasting_settings: Optional[ForecastingSettings] = None,
         **kwargs,
     ) -> None:
         # Extract any task specific settings
@@ -83,19 +83,19 @@ class ForecastingJob(AutoMLTabular):
     def set_forecast_settings(
         self,
         *,
-        time_column_name: str = None,
-        forecast_horizon: Union[str, int] = None,
-        time_series_id_column_names: Union[str, List[str]] = None,
-        target_lags: Union[str, int, List[int]] = None,
-        feature_lags: str = None,
-        target_rolling_window_size: Union[str, int] = None,
-        country_or_region_for_holidays: str = None,
-        use_stl: str = None,
-        seasonality: Union[str, int] = None,
-        short_series_handling_config: str = None,
-        frequency: str = None,
-        target_aggregate_function: str = None,
-        cv_step_size: int = None,
+        time_column_name: Optional[str] = None,
+        forecast_horizon: Optional[Union[str, int]] = None,
+        time_series_id_column_names: Optional[Union[str, List[str]]] = None,
+        target_lags: Optional[Union[str, int, List[int]]] = None,
+        feature_lags: Optional[str] = None,
+        target_rolling_window_size: Optional[Union[str, int]] = None,
+        country_or_region_for_holidays: Optional[str] = None,
+        use_stl: Optional[str] = None,
+        seasonality: Optional[Union[str, int]] = None,
+        short_series_handling_config: Optional[str] = None,
+        frequency: Optional[str] = None,
+        target_aggregate_function: Optional[str] = None,
+        cv_step_size: Optional[int] = None,
     ) -> None:
         """Manage parameters used by forecasting tasks.
 
@@ -339,15 +339,15 @@ class ForecastingJob(AutoMLTabular):
     def set_training(
         self,
         *,
-        enable_onnx_compatible_models: bool = None,
-        enable_dnn_training: bool = None,
-        enable_model_explainability: bool = None,
-        enable_stack_ensemble: bool = None,
-        enable_vote_ensemble: bool = None,
-        stack_ensemble_settings: StackEnsembleSettings = None,
-        ensemble_model_download_timeout: int = None,
-        allowed_training_algorithms: List[str] = None,
-        blocked_training_algorithms: List[str] = None,
+        enable_onnx_compatible_models: Optional[bool] = None,
+        enable_dnn_training: Optional[bool] = None,
+        enable_model_explainability: Optional[bool] = None,
+        enable_stack_ensemble: Optional[bool] = None,
+        enable_vote_ensemble: Optional[bool] = None,
+        stack_ensemble_settings: Optional[StackEnsembleSettings] = None,
+        ensemble_model_download_timeout: Optional[int] = None,
+        allowed_training_algorithms: Optional[List[str]] = None,
+        blocked_training_algorithms: Optional[List[str]] = None,
     ) -> None:
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,

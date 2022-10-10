@@ -96,7 +96,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self.training_data = training_data
         self.validation_data = validation_data
 
-    def set_limits(self, *, max_concurrent_trials: Optional[int] = 1, timeout_minutes: int = None) -> None:
+    def set_limits(self, *, max_concurrent_trials: Optional[int] = 1, timeout_minutes: Optional[int] = None) -> None:
         self._limits = NlpLimitSettings(
             max_concurrent_trials=max_concurrent_trials,
             timeout_minutes=timeout_minutes,

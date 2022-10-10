@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageObjectDetection as RestImageObjectDetection
@@ -30,7 +30,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
     def __init__(
         self,
         *,
-        primary_metric: Union[str, ObjectDetectionPrimaryMetrics] = None,
+        primary_metric: Optional[Union[str, ObjectDetectionPrimaryMetrics]] = None,
         **kwargs,
     ) -> None:
         """Initialize a new AutoML Image Object Detection job.

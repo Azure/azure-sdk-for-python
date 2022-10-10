@@ -6,7 +6,7 @@
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -29,7 +29,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     def __init__(
         self,
         *,
-        resources: ResourceConfiguration = None,
+        resources: Optional[ResourceConfiguration] = None,
         identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
         **kwargs: Any,
     ) -> None:

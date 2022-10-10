@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 
 from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationPrimaryMetrics
@@ -31,7 +31,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
     def __init__(
         self,
         *,
-        primary_metric: Union[str, ClassificationPrimaryMetrics] = None,
+        primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]] = None,
         **kwargs,
     ) -> None:
         """Initialize a new AutoML multi-class Image Classification job.

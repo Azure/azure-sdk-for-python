@@ -35,8 +35,8 @@ class TextNerJob(AutoMLNLPJob):
     def __init__(
         self,
         *,
-        training_data: Input = None,
-        validation_data: Input = None,
+        training_data: Optional[Input] = None,
+        validation_data: Optional[Input] = None,
         primary_metric: Optional[str] = None,
         log_verbosity: Optional[str] = None,
         **kwargs
