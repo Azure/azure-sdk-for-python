@@ -41,9 +41,8 @@ def build_list_request(
     instance_id: str,
     subscription_id: str,
     *,
-    restorable_mongodb_database_rid: Optional[str] = None,
-    start_time: Optional[str] = None,
-    end_time: Optional[str] = None,
+    restore_location: Optional[str] = None,
+    restore_timestamp_in_utc: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -55,7 +54,7 @@ def build_list_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableMongodbCollections",
+        "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableGremlinResources",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -67,14 +66,12 @@ def build_list_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if restorable_mongodb_database_rid is not None:
-        _params["restorableMongodbDatabaseRid"] = _SERIALIZER.query(
-            "restorable_mongodb_database_rid", restorable_mongodb_database_rid, "str"
+    if restore_location is not None:
+        _params["restoreLocation"] = _SERIALIZER.query("restore_location", restore_location, "str")
+    if restore_timestamp_in_utc is not None:
+        _params["restoreTimestampInUtc"] = _SERIALIZER.query(
+            "restore_timestamp_in_utc", restore_timestamp_in_utc, "str"
         )
-    if start_time is not None:
-        _params["startTime"] = _SERIALIZER.query("start_time", start_time, "str")
-    if end_time is not None:
-        _params["endTime"] = _SERIALIZER.query("end_time", end_time, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -82,14 +79,14 @@ def build_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class RestorableMongodbCollectionsOperations:
+class RestorableGremlinResourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.cosmosdb.CosmosDBManagementClient`'s
-        :attr:`restorable_mongodb_collections` attribute.
+        :attr:`restorable_gremlin_resources` attribute.
     """
 
     models = _models
@@ -106,39 +103,38 @@ class RestorableMongodbCollectionsOperations:
         self,
         location: str,
         instance_id: str,
-        restorable_mongodb_database_rid: Optional[str] = None,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
+        restore_location: Optional[str] = None,
+        restore_timestamp_in_utc: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RestorableMongodbCollectionGetResult"]:
-        """Show the event feed of all mutations done on all the Azure Cosmos DB MongoDB collections under
-        a specific database.  This helps in scenario where container was accidentally deleted.  This
-        API requires 'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
+    ) -> Iterable["_models.RestorableGremlinResourcesGetResult"]:
+        """Return a list of gremlin database and graphs combo that exist on the account at the given
+        timestamp and location. This helps in scenarios to validate what resources exist at given
+        timestamp and location. This API requires
+        'Microsoft.DocumentDB/locations/restorableDatabaseAccounts/.../read' permission.
 
         :param location: Cosmos DB region, with spaces between words and each word capitalized.
          Required.
         :type location: str
         :param instance_id: The instanceId GUID of a restorable database account. Required.
         :type instance_id: str
-        :param restorable_mongodb_database_rid: The resource ID of the MongoDB database. Default value
+        :param restore_location: The location where the restorable resources are located. Default value
          is None.
-        :type restorable_mongodb_database_rid: str
-        :param start_time: Restorable MongoDB collections event feed start time. Default value is None.
-        :type start_time: str
-        :param end_time: Restorable MongoDB collections event feed end time. Default value is None.
-        :type end_time: str
+        :type restore_location: str
+        :param restore_timestamp_in_utc: The timestamp when the restorable resources existed. Default
+         value is None.
+        :type restore_timestamp_in_utc: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either RestorableMongodbCollectionGetResult or the result
+        :return: An iterator like instance of either RestorableGremlinResourcesGetResult or the result
          of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.RestorableMongodbCollectionGetResult]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.RestorableGremlinResourcesGetResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableMongodbCollectionsListResult]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RestorableGremlinResourcesListResult]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -155,9 +151,8 @@ class RestorableMongodbCollectionsOperations:
                     location=location,
                     instance_id=instance_id,
                     subscription_id=self._config.subscription_id,
-                    restorable_mongodb_database_rid=restorable_mongodb_database_rid,
-                    start_time=start_time,
-                    end_time=end_time,
+                    restore_location=restore_location,
+                    restore_timestamp_in_utc=restore_timestamp_in_utc,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -178,7 +173,7 @@ class RestorableMongodbCollectionsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("RestorableMongodbCollectionsListResult", pipeline_response)
+            deserialized = self._deserialize("RestorableGremlinResourcesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -200,4 +195,4 @@ class RestorableMongodbCollectionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableMongodbCollections"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DocumentDB/locations/{location}/restorableDatabaseAccounts/{instanceId}/restorableGremlinResources"}  # type: ignore
