@@ -1,0 +1,7 @@
+{{ imports }}
+from .operations import (
+    {% for operation_group in code_model.operation_groups %}
+    {{ operation_group.name }},
+    {% endfor %}
+)
+{{ client_initialization }}

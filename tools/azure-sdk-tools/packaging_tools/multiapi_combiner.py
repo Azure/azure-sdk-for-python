@@ -4,12 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import importlib
-import os
+import re
 import inspect
 import json
 import argparse
 from pathlib import Path
-from types import ModuleType
 from typing import Dict, Optional, List, Any, TypeVar, Callable
 
 from jinja2 import FileSystemLoader, Environment
@@ -253,20 +252,6 @@ class Serializer:
             lstrip_blocks=True,
         )
 
-    def _serialize_operations_folder_helper(self, async_mode: bool):
-        template = self.env.get_template("operation_groups.py.jinja2")
-        operations_folder_module = f"{self.code_model.module_name}.{self.code_model.default_api_version}.{'aio.' if async_mode else ''}operations"
-        operations_folder = self.code_model.root_of_code / Path(f"{'aio/' if async_mode else ''}operations")
-        operations_module = importlib.import_module(f"{operations_folder_module}._operations")
-        setup = inspect.getsource(operations_module).split("class ")[0]  # get all request builders and imports
-        Path(operations_folder).mkdir(parents=True, exist_ok=True)
-        with open(f"{operations_folder}/_operations.py", "w") as fd:
-            fd.write(template.render(code_model=self.code_model, setup=setup, async_mode=async_mode))
-
-    def serialize_operations_folder(self):
-        self._serialize_operations_folder_helper(async_mode=False)
-        self._serialize_operations_folder_helper(async_mode=True)
-
     def _copy_file_contents(self, filename: str, async_mode: bool):
         root_of_code = (self.code_model.root_of_code / Path("aio")) if async_mode else self.code_model.root_of_code
         default_api_version_folder = self.code_model.root_of_code / Path(self.code_model.default_api_version)
@@ -279,6 +264,51 @@ class Serializer:
         with open(default_api_version_filepath, "r") as rfd:
             with open(root_of_code / Path(f"{filename}.py"), "w") as wfd:
                 wfd.write(rfd.read())
+
+    def _get_file_path_from_module(self, module_name: str, strip_api_version: bool) -> Path:
+        module_stem = module_name.strip(f"{self.code_model.module_name}.")
+        if strip_api_version:
+            module_stem = module_stem.strip(f"{self.code_model.default_api_version}.")
+        return self.code_model.root_of_code / Path(module_stem.replace(".", "/") + ".py")
+
+    def serialize_operations_folder(self, async_mode: bool):
+        template = self.env.get_template("operation_groups.py.jinja2")
+        operations_folder_module = f"{self.code_model.module_name}.{self.code_model.default_api_version}.{'aio.' if async_mode else ''}operations"
+        operations_folder = self._get_file_path_from_module(operations_folder_module, strip_api_version=True)
+        operations_module = importlib.import_module(f"{operations_folder_module}._operations")
+        setup = inspect.getsource(operations_module).split("class ")[0]  # get all request builders and imports
+        Path(operations_folder).mkdir(parents=True, exist_ok=True)
+        with open(f"{operations_folder}/_operations.py", "w") as fd:
+            fd.write(template.render(code_model=self.code_model, setup=setup, async_mode=async_mode))
+
+
+    def serialize_client(self, async_mode: bool):
+        template = self.env.get_template("client.py.jinja2")
+        filename = self.code_model.api_version_to_metadata[
+            self.code_model.default_api_version
+        ]["client"]["filename"]
+        client_file_module = f"{self.code_model.module_name}.{'aio.' if async_mode else ''}{filename}"
+        client_module = importlib.import_module(client_file_module)
+
+        # do parsing on the source so we can build up our client
+        main_client_source = inspect.getsource(client_module)
+        imports = main_client_source.split("class")[0]
+
+        main_client_source = main_client_source[len(imports):]
+
+        client_initialization = re.search('.*class(.*)@classmethod', main_client_source)
+        a = re.search('class(.*)@classmethod', main_client_source)
+
+        b = "c"
+
+
+        # TODO: switch to current file path
+        with open(f"{self.code_model.root_of_code}/{'aio/' if async_mode else ''}_client.py", "w") as fd:
+            fd.write(template.render(
+                code_model=self.code_model,
+                imports=imports,
+                client_initialization=client_initialization,
+        ))
 
     def _serialize_general_helper(self, async_mode: bool):
         general_files = ["_configuration", "_patch", "__init__"]
@@ -299,8 +329,10 @@ class Serializer:
         self._serialize_general_helper(async_mode=True)
 
     def serialize(self):
-        self.serialize_operations_folder()
-        # self.serialize_client_file()
+        self.serialize_operations_folder(async_mode=False)
+        self.serialize_operations_folder(async_mode=True)
+        self.serialize_client(async_mode=False)
+        self.serialize_client(async_mode=True)
         # self.serialize_models_file()
         self.serialize_general()
 
