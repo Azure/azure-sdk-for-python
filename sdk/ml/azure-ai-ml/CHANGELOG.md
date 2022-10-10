@@ -1,4 +1,4 @@
-## 1.0.0 (In Progress)
+## 1.0.0 (2022-10-10)
 - GA release
 - Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
@@ -18,7 +18,7 @@
  - Updated batch deployment/endpoint invoke and list-jobs function signatures with curated BatchJob class.
 
 
-## 0.1.0b8 (In Progress)
+## 0.1.0b8 (2022-10-07)
 
 ### Features Added
  - Support passing JobService as argument to Command()
