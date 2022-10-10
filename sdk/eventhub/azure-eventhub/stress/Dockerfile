@@ -3,6 +3,7 @@
 ARG REGISTRY="mcr.microsoft.com/mirror/docker/library/"
 FROM ${REGISTRY}python:3.8-slim-buster
 # RUN apt-get -y update && apt-get -y install git
+# git+https://github.com/Azure/azure-sdk-for-python.git@feature/eventhub/pyproto#subdirectory=sdk/eventhub/azure-eventhub&egg=azure-eventhub
 
 WORKDIR /app
 
