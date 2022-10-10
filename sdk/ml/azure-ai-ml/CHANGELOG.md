@@ -1,4 +1,16 @@
-## 1.0.0 (2022-10-10)
+## Release History
+
+### 1.0.1 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 1.0.0 (2022-10-10)
 - GA release
 - Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
@@ -18,7 +30,7 @@
  - Updated batch deployment/endpoint invoke and list-jobs function signatures with curated BatchJob class.
 
 
-## 0.1.0b8 (2022-10-07)
+### 0.1.0b8 (2022-10-07)
 
 ### Features Added
  - Support passing JobService as argument to Command()
@@ -43,7 +55,7 @@
  - Added support for custom setup scripts on compute instances.
  - Updated dependencies upper bounds to be major versions.
 
-## 0.1.0b7 (2022-09-22)
+### 0.1.0b7 (2022-09-22)
 
 ### Features Added
  - Spark job submission.
@@ -71,7 +83,7 @@
  - Show 'properties' on data assets
 
 
-## 0.1.0b6 (2022-08-09)
+### 0.1.0b6 (2022-08-09)
 
 ### Features Added
 
@@ -90,7 +102,7 @@
 ### Other Changes
 
 
-## 0.1.0b5 (2022-07-15)
+### 0.1.0b5 (2022-07-15)
 
 ### Features Added
 
@@ -113,9 +125,9 @@
 - Reintroduced support for symlinks when uploading.
 - Hard coded registry base URL to eastus region to support preview.
 
-## 0.1.0b4 (2022-06-16)
+### 0.1.0b4 (2022-06-16)
 
-## 0.1.0b3 (2022-05-24)
+### 0.1.0b3 (2022-05-24)
 
 ### Features Added
 
