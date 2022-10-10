@@ -38,6 +38,7 @@ from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSe
 from ._deployment.online_deployment import KubernetesOnlineDeployment, ManagedOnlineDeployment, OnlineDeployment
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings
+from ._deployment.batch_job import BatchJob
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import KubernetesOnlineEndpoint, ManagedOnlineEndpoint, OnlineEndpoint,\
@@ -85,6 +86,13 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.customer_managed_key import CustomerManagedKey
+from ._workspace.diagnose import (
+    DiagnoseRequestProperties,
+    DiagnoseResponseResult,
+    DiagnoseResponseResultValue,
+    DiagnoseResult,
+    DiagnoseWorkspaceParameters,
+)
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import WorkspaceKeys, NotebookAccessKeys, ContainerRegistryCredential
@@ -122,6 +130,7 @@ __all__ = [
     "BatchEndpoint",
     "OnlineEndpoint",
     "BatchDeployment",
+    "BatchJob",
     "CodeConfiguration",
     "Endpoint",
     "OnlineDeployment",
@@ -144,6 +153,11 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "DiagnoseRequestProperties",
+    "DiagnoseResult",
+    "DiagnoseResponseResult",
+    "DiagnoseResponseResultValue",
+    "DiagnoseWorkspaceParameters",
     "PrivateEndpoint",
     "EndpointConnection",
     "CustomerManagedKey",

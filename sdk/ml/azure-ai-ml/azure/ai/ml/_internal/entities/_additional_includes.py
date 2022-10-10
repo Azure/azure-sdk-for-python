@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Union
 
 from azure.ai.ml.entities._util import _general_copy
-from azure.ai.ml.entities._validation import ValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
 
@@ -40,7 +40,7 @@ class _AdditionalIncludes:
         else:
             shutil.copytree(src, dst)
 
-    def validate(self) -> ValidationResult:
+    def _validate(self) -> MutableValidationResult:
         # pylint: disable=too-many-return-statements
         if self._includes is None:
             return _ValidationResultBuilder.success()

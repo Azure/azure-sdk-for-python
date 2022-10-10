@@ -10,7 +10,7 @@ from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
-from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
+from ._client import AuthoringClient as AuthoringClientGenerated
 from .._patch import POLLING_INTERVAL_DEFAULT
 
 
@@ -33,7 +33,7 @@ def _authentication_policy(credential, **kwargs):
     return authentication_policy
 
 
-class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated):
+class AuthoringClient(AuthoringClientGenerated):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -72,7 +72,7 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
 
 
 __all__: List[str] = [
-    "QuestionAnsweringAuthoringClient"
+    "AuthoringClient"
 ]  # Add all objects you want publicly available to users at this package level
 
 

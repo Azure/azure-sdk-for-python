@@ -1,13 +1,11 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
-
-### Features Added
+## 1.1.0 (Unreleased)
 
 ### Breaking Changes
-* `QuestionAnsweringProjectsClient` was renamed to `QuestionAnsweringAuthoringClient`.
+* `QuestionAnsweringProjectsClient` was renamed to `AuthoringClient`.
 * The `azure.ai.language.questionanswering.projects` namespace was renamed to `azure.ai.language.questionanswering.authoring`
-* Authoring client methods: `begin_deploy_project`, `begin_delete_project`, `begin_import_assets`, `begin_update_sources` 
+* Authoring client methods: `begin_deploy_project`, `begin_import_assets`, `begin_update_sources` 
   and `begin_update_qnas` now return a response upon completion of the long-running operation.
 * Keyword argument `format` renamed to `file_format` for `begin_export` and `begin_import_assets`.
 
@@ -16,6 +14,7 @@
 
 ### Other Changes
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Dropped dependency on `msrest`.
 
 ## 1.1.0b2 (2022-07-19)
 

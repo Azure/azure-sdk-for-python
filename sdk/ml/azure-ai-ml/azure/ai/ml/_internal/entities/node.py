@@ -16,7 +16,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
-from ...entities._validation import ValidationResult
+from ...entities._validation import MutableValidationResult
 from .._schema.component import NodeType
 from ._input_outputs import InternalInput
 
@@ -95,7 +95,7 @@ class InternalBaseNode(BaseNode):
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         raise RuntimeError("Internal components doesn't support load from dict")
 
-    def _schema_validate(self) -> ValidationResult:
+    def _schema_validate(self) -> MutableValidationResult:
         """Validate the resource with the schema.
 
         return type: ValidationResult
