@@ -116,15 +116,12 @@ synchronous_transport = RequestsTransport()
 For example if you would like to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`.
 
  ```Python
- from azure.cosmos import CosmosClient
  import requests
+ from azure.core.pipeline.transport import RequestsTransport
  session = requests.Session()
  adapter = requests.adapters.HTTPAdapter(pool_connections=42, pool_maxsize=42)
  session.mount('https://', adapter)
- cosmos_client = CosmosClient.from_connection_string(
-     COSMOS_CONNECTION_STRING,
-     transport=RequestsTransport(session=session, session_owner=False)
- )
+ client = FooServiceClient(endpoint, creds, transport=RequestsTransport(session=session, session_owner=False))
  
  # When using custom session, we need to manage the session by ourself. When we are done with the session:
  session.close()
