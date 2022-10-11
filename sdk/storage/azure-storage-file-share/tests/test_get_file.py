@@ -10,13 +10,10 @@ from io import BytesIO
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
-from azure.storage.fileshare import (
-    ShareFileClient,
-    ShareServiceClient
-)
-from devtools_testutils import recorded_by_proxy
+from azure.storage.fileshare import ShareFileClient, ShareServiceClient
 
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 from test_helpers import ProgressTracker
 
