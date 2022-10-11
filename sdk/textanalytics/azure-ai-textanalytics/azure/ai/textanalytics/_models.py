@@ -2711,7 +2711,7 @@ class ExtractSummaryResult(DictMixin):
             ),
             detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
                 summary.detected_language
-            )
+            ) if summary.detected_language else None
         )
 
 

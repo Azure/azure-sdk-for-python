@@ -1840,6 +1840,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert sentence.length is not None
                 assert result.id is not None
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15772270")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
