@@ -27,9 +27,9 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
 code: ./compare2_src
 command: >-
   python compare2.py
-  [--model1 ${{inputs.model1}}]
-  [--eval_result1 ${{inputs.eval_result1}}]
-  [--model2 ${{inputs.model2}}]
-  [--eval_result2 ${{inputs.eval_result2}}]
+  $[[--model1 ${{inputs.model1}}]]
+  $[[--eval_result1 ${{inputs.eval_result1}}]]
+  $[[--model2 ${{inputs.model2}}]]
+  $[[--eval_result2 ${{inputs.eval_result2}}]]
   --best_model ${{outputs.best_model}}
   --best_result ${{outputs.best_result}}

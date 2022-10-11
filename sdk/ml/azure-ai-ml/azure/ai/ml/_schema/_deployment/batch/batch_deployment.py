@@ -10,7 +10,6 @@ from typing import Any
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
-from azure.ai.ml._schema._utils.utils import exit_if_registry_assets
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -58,5 +57,4 @@ class BatchDeploymentSchema(DeploymentSchema):
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities import BatchDeployment
 
-        exit_if_registry_assets(data=data, caller="BatchDeployment")
         return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)

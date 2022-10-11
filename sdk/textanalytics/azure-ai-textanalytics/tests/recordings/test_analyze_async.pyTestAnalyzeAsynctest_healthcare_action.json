@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "391",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -43,40 +43,40 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "e07a54dd-4af3-436d-ae88-df4455a7afaf",
+        "apim-request-id": "07122ae2-d666-457e-bfe2-dee90345c9af",
         "Content-Length": "0",
-        "Date": "Thu, 23 Jun 2022 02:14:37 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0daedaae-603b-44b5-aec9-327e7da80d39?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 20:48:31 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bebf5b95-fc2a-40d5-8164-103e2d6c6edb?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "174"
+        "x-envoy-upstream-service-time": "248"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0daedaae-603b-44b5-aec9-327e7da80d39?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/bebf5b95-fc2a-40d5-8164-103e2d6c6edb?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6397d104-1145-4771-833f-0a605cea00ba",
-        "Content-Length": "4712",
+        "apim-request-id": "430792c3-772d-4056-a015-b79ee0144296",
+        "Content-Length": "4755",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 23 Jun 2022 02:14:42 GMT",
+        "Date": "Mon, 10 Oct 2022 20:48:37 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "131"
+        "x-envoy-upstream-service-time": "114"
       },
       "ResponseBody": {
-        "jobId": "0daedaae-603b-44b5-aec9-327e7da80d39",
-        "lastUpdatedDateTime": "2022-06-23T02:14:38Z",
-        "createdDateTime": "2022-06-23T02:14:37Z",
-        "expirationDateTime": "2022-06-24T02:14:37Z",
+        "jobId": "bebf5b95-fc2a-40d5-8164-103e2d6c6edb",
+        "lastUpdateDateTime": "2022-10-10T20:48:35Z",
+        "createdDateTime": "2022-10-10T20:48:31Z",
+        "expirationDateTime": "2022-10-11T20:48:31Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -88,7 +88,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-23T02:14:38.4697255Z",
+              "lastUpdateDateTime": "2022-10-10T20:48:35.5153595Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -460,6 +460,7 @@
                     ],
                     "relations": [
                       {
+                        "confidenceScore": 1.0,
                         "relationType": "DosageOfMedication",
                         "entities": [
                           {
@@ -473,6 +474,7 @@
                         ]
                       },
                       {
+                        "confidenceScore": 1.0,
                         "relationType": "FrequencyOfMedication",
                         "entities": [
                           {

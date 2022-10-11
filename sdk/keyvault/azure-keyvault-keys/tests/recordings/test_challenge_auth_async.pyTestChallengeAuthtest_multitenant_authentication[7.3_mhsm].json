@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key618c34e1/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestmultitenant-key618c34e1/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -26,7 +26,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key618c34e1/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestmultitenant-key618c34e1/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -70,14 +70,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key618c34e1/bb1e55e06623480d863b45482f4e097b",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestmultitenant-key618c34e1/bb1e55e06623480d863b45482f4e097b",
           "kty": "RSA-HSM",
           "n": "iBWjoCpoztzvh3RrjrBX-hSPtHwqIWQ0_9H4ENEIbaM3vIYvT7nd2emeMQ_yoMJ-av5IT8vRxqSaH5BcRFEnDaqsrkC2CRnuw2W3HPeifydnPdiL8J301aYGzgPP8fKmNDIaK9Kaoyi0HWNNXRHou6cPedPspioorf0UFfs8JVgnGKixdVxO4LqEMdTeANXcGNrFgmfbmS_NljtaSFUaNWx2Qly3z4LCknBA0NgnXsAHCUczlO5s_16NBW6CJFHh0HZXhCOYIL85UD7aInnZymCh6onQ9QBtiWVYcO3AiN1w1n8cswVclv6E5c08Jsd-NIWYeMsKpCqCfYcSVW96jw"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key618c34e1/?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestmultitenant-key618c34e1/?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -118,7 +118,7 @@
             "encrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestmultitenant-key618c34e1/bb1e55e06623480d863b45482f4e097b",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestmultitenant-key618c34e1/bb1e55e06623480d863b45482f4e097b",
           "kty": "RSA-HSM",
           "n": "iBWjoCpoztzvh3RrjrBX-hSPtHwqIWQ0_9H4ENEIbaM3vIYvT7nd2emeMQ_yoMJ-av5IT8vRxqSaH5BcRFEnDaqsrkC2CRnuw2W3HPeifydnPdiL8J301aYGzgPP8fKmNDIaK9Kaoyi0HWNNXRHou6cPedPspioorf0UFfs8JVgnGKixdVxO4LqEMdTeANXcGNrFgmfbmS_NljtaSFUaNWx2Qly3z4LCknBA0NgnXsAHCUczlO5s_16NBW6CJFHh0HZXhCOYIL85UD7aInnZymCh6onQ9QBtiWVYcO3AiN1w1n8cswVclv6E5c08Jsd-NIWYeMsKpCqCfYcSVW96jw"
         }

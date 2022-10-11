@@ -10,8 +10,8 @@ primary_metric: iou
 
 limits:
   timeout_minutes: 60
-  max_concurrent_trials: 1
-  max_trials: 1
+  max_concurrent_trials: 4
+  max_trials: 20
 
 target_column_name: label
 training_data:
@@ -22,9 +22,6 @@ validation_data:
   type: mltable
 
 sweep:
-  limits:
-    max_trials: 20
-    max_concurrent_trials: 4
   sampling_algorithm: Grid
   early_termination:
     type: bandit
@@ -52,6 +49,9 @@ search_space:
     gradient_accumulation_step:
       type: choice
       values: [1, 2]
+    ams_gradient:
+      type: choice
+      values: [true, false]
 
   - model_name:
       type: choice
@@ -69,3 +69,4 @@ search_space:
     training_crop_size:
       type: choice
       values: [224, 256]
+    ams_gradient: false

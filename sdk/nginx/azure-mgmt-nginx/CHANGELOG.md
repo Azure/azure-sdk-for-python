@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2022-09-20)
+
+### Features Added
+
+  - Model NginxConfigurationProperties has a new parameter protected_files
+
 ## 1.0.0 (2022-08-26)
 
 ### Features Added

@@ -1,5 +1,4 @@
 {
-  "name": "test_337321579812",
   "description": "Ads LR DNN Raw Keys Dummy sample.",
   "tags": {
     "category": "Component Tutorial",
@@ -12,15 +11,18 @@
   "inputs": {
     "TrainingDataDir": {
       "type": "path",
-      "optional": true
+      "optional": true,
+      "is_resource": true
     },
     "ValidationDataDir": {
       "type": "path",
-      "optional": true
+      "optional": true,
+      "is_resource": true
     },
     "InitialModelDir": {
       "type": "path",
-      "optional": true
+      "optional": true,
+      "is_resource": true
     },
     "YarnCluster": {
       "type": "string",
@@ -32,11 +34,11 @@
     },
     "WorkerCount": {
       "type": "string",
-      "default": "2"
+      "default": "2.0"
     },
     "Cpu": {
       "type": "string",
-      "default": "2"
+      "default": "2.0"
     },
     "Memory": {
       "type": "string",

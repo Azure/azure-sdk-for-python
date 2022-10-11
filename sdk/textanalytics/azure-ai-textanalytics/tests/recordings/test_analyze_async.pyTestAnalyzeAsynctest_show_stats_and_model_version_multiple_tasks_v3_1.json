@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "834",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "tasks": {
@@ -84,40 +84,40 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "5acf6e79-c214-4fee-aa80-aab205070525",
-        "Date": "Thu, 09 Jun 2022 17:41:39 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/4dc5c043-38b1-4307-9800-a91c69ad42bd",
+        "apim-request-id": "81d1324e-a49d-4046-97f9-b76e14b7a7dc",
+        "Date": "Mon, 10 Oct 2022 20:47:09 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/0e124956-4cf1-4400-ade5-0b8c4742af47",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "276"
+        "x-envoy-upstream-service-time": "793"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/4dc5c043-38b1-4307-9800-a91c69ad42bd?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/0e124956-4cf1-4400-ade5-0b8c4742af47?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e138f309-d2dc-4329-bd20-e6c963eceea4",
+        "apim-request-id": "d56fcdf3-e26f-42f3-b766-336d55d50811",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:41:44 GMT",
+        "Date": "Mon, 10 Oct 2022 20:47:15 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "252"
+        "x-envoy-upstream-service-time": "378"
       },
       "ResponseBody": {
-        "jobId": "4dc5c043-38b1-4307-9800-a91c69ad42bd",
-        "lastUpdateDateTime": "2022-06-09T17:41:44Z",
-        "createdDateTime": "2022-06-09T17:41:39Z",
-        "expirationDateTime": "2022-06-10T17:41:39Z",
+        "jobId": "0e124956-4cf1-4400-ade5-0b8c4742af47",
+        "lastUpdateDateTime": "2022-10-10T20:47:13Z",
+        "createdDateTime": "2022-10-10T20:47:08Z",
+        "expirationDateTime": "2022-10-11T20:47:08Z",
         "status": "succeeded",
         "errors": [],
         "statistics": {
@@ -133,7 +133,7 @@
           "total": 5,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2022-06-09T17:41:44.080423Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:12.0592838Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {
@@ -188,7 +188,7 @@
           ],
           "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2022-06-09T17:41:42.9640536Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:12.7010125Z",
               "taskName": "3",
               "state": "succeeded",
               "results": {
@@ -243,7 +243,7 @@
           ],
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2022-06-09T17:41:41.6017899Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:12.2199578Z",
               "taskName": "2",
               "state": "succeeded",
               "results": {
@@ -302,7 +302,7 @@
           ],
           "keyPhraseExtractionTasks": [
             {
-              "lastUpdateDateTime": "2022-06-09T17:41:41.8848201Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:13.4318369Z",
               "taskName": "1",
               "state": "succeeded",
               "results": {
@@ -351,13 +351,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ],
           "sentimentAnalysisTasks": [
             {
-              "lastUpdateDateTime": "2022-06-09T17:41:41.7036333Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:11.5663287Z",
               "taskName": "4",
               "state": "succeeded",
               "results": {
@@ -403,17 +403,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.02,
-                      "negative": 0.98
+                      "positive": 0.09,
+                      "neutral": 0.25,
+                      "negative": 0.65
                     },
                     "sentences": [
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.02,
-                          "negative": 0.98
+                          "positive": 0.09,
+                          "neutral": 0.25,
+                          "negative": 0.65
                         },
                         "offset": 0,
                         "length": 2,
@@ -424,23 +424,23 @@
                   },
                   {
                     "id": "19",
-                    "sentiment": "neutral",
+                    "sentiment": "positive",
                     "statistics": {
                       "charactersCount": 2,
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.3,
-                      "neutral": 0.67,
-                      "negative": 0.03
+                      "positive": 0.64,
+                      "neutral": 0.35,
+                      "negative": 0.01
                     },
                     "sentences": [
                       {
-                        "sentiment": "neutral",
+                        "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 0.3,
-                          "neutral": 0.67,
-                          "negative": 0.03
+                          "positive": 0.64,
+                          "neutral": 0.35,
+                          "negative": 0.01
                         },
                         "offset": 0,
                         "length": 2,
@@ -457,16 +457,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.89,
-                      "neutral": 0.1,
+                      "positive": 0.93,
+                      "neutral": 0.06,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 0.89,
-                          "neutral": 0.1,
+                          "positive": 0.93,
+                          "neutral": 0.06,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -478,7 +478,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]

@@ -6,23 +6,21 @@
 
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Classification as RestClassification
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ClassificationPrimaryMetrics, JobBase, TaskType
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Classification as RestClassification
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import ClassificationTrainingSettings
-from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class ClassificationJob(AutoMLTabular):
     """Configuration for AutoML Classification Job."""
 
@@ -32,12 +30,17 @@ class ClassificationJob(AutoMLTabular):
         self,
         *,
         primary_metric: str = None,
+        positive_label: str = None,
         **kwargs,
     ) -> None:
         """Initialize a new AutoML Classification task.
 
         :param primary_metric: The primary metric to use for optimization
+        :type primary_metric: str, optional
+        :param positive_label: Positive label for binary metrics calculation.
+        :type positive_label: str, optional
         :param kwargs: Job-specific arguments
+        :type kwargs: dict
         """
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
@@ -53,6 +56,7 @@ class ClassificationJob(AutoMLTabular):
         )
 
         self.primary_metric = primary_metric or ClassificationJob._DEFAULT_PRIMARY_METRIC
+        self.positive_label = positive_label
 
     @property
     def primary_metric(self):
@@ -89,6 +93,7 @@ class ClassificationJob(AutoMLTabular):
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             training_settings=self._training._to_rest_object() if self._training else None,
             primary_metric=self.primary_metric,
+            positive_label=self.positive_label,
             log_verbosity=self.log_verbosity,
         )
         self._resolve_data_inputs(classification_task)
@@ -107,7 +112,7 @@ class ClassificationJob(AutoMLTabular):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=classification_task,
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
         result = JobBase(properties=properties)
@@ -115,25 +120,26 @@ class ClassificationJob(AutoMLTabular):
         return result
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: JobBase) -> "ClassificationJob":
-        properties: RestAutoMLJob = job_rest_object.properties
+    def _from_rest_object(cls, obj: JobBase) -> "ClassificationJob":
+        properties: RestAutoMLJob = obj.properties
         task_details: RestClassification = properties.task_details
 
         job_args_dict = {
-            "id": job_rest_object.id,
-            "name": job_rest_object.name,
+            "id": obj.id,
+            "name": obj.name,
             "description": properties.description,
             "tags": properties.tags,
             "properties": properties.properties,
             "experiment_name": properties.experiment_name,
             "services": properties.services,
             "status": properties.status,
-            "creation_context": job_rest_object.system_data,
+            "creation_context": obj.system_data,
             "display_name": properties.display_name,
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": Identity._from_rest_object(properties.identity) if properties.identity else None,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(
+                properties.identity) if properties.identity else None,
         }
 
         classification_job = cls(
@@ -156,6 +162,7 @@ class ClassificationJob(AutoMLTabular):
             if task_details.training_settings
             else None,
             primary_metric=task_details.primary_metric,
+            positive_label=task_details.positive_label,
             log_verbosity=task_details.log_verbosity,
             **job_args_dict,
         )
@@ -171,13 +178,12 @@ class ClassificationJob(AutoMLTabular):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
     ) -> "ClassificationJob":
         from azure.ai.ml._schema.automl.table_vertical.classification import AutoMLClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             loaded_data = load_from_dict(
                 AutoMLClassificationNodeSchema,
                 data,
@@ -208,7 +214,7 @@ class ClassificationJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.classification import AutoMLClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLClassificationNodeSchema
 

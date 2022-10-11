@@ -151,6 +151,7 @@ class TestHealth(TextAnalyticsTest):
             assert not resp.statistics
         assert num_error == 1
 
+    @pytest.mark.skip("not running on PPE")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy
@@ -539,6 +540,7 @@ class TestHealth(TextAnalyticsTest):
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy

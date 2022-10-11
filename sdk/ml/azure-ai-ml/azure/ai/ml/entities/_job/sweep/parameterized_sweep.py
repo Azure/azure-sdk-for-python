@@ -1,10 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Callable, Dict, Optional, Union
+from typing import Dict, Optional, Type, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
 from .early_termination_policy import (
@@ -26,22 +25,35 @@ from .sampling_algorithm import (
     SamplingAlgorithm,
     SamplingAlgorithmType,
 )
-from .search_space import SweepDistribution
+from .search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    Uniform,
+)
 
-SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Callable[[], RestSamplingAlgorithm]] = {
-    SamplingAlgorithmType.RANDOM: lambda: RestRandomSamplingAlgorithm(),
-    SamplingAlgorithmType.GRID: lambda: RestGridSamplingAlgorithm(),
-    SamplingAlgorithmType.BAYESIAN: lambda: RestBayesianSamplingAlgorithm(),
+# pylint: disable=unnecessary-lambda
+SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[RestSamplingAlgorithm]] = {
+    SamplingAlgorithmType.RANDOM: RestRandomSamplingAlgorithm,
+    SamplingAlgorithmType.GRID: RestGridSamplingAlgorithm,
+    SamplingAlgorithmType.BAYESIAN: RestBayesianSamplingAlgorithm,
 }
 
-SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Callable[[], SamplingAlgorithm]] = {
-    SamplingAlgorithmType.RANDOM: lambda: RandomSamplingAlgorithm(),
-    SamplingAlgorithmType.GRID: lambda: GridSamplingAlgorithm(),
-    SamplingAlgorithmType.BAYESIAN: lambda: BayesianSamplingAlgorithm(),
+# pylint: disable=unnecessary-lambda
+SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[SamplingAlgorithm]] = {
+    SamplingAlgorithmType.RANDOM: RandomSamplingAlgorithm,
+    SamplingAlgorithmType.GRID: GridSamplingAlgorithm,
+    SamplingAlgorithmType.BAYESIAN: BayesianSamplingAlgorithm,
 }
 
 
-class ParameterizedSweep(LoadableMixin):
+class ParameterizedSweep:
     """Shared logic for standalone and pipeline sweep job."""
 
     def __init__(
@@ -49,8 +61,11 @@ class ParameterizedSweep(LoadableMixin):
         limits: SweepJobLimits = None,
         sampling_algorithm: Union[str, SamplingAlgorithm] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: EarlyTerminationPolicy = None,
-        search_space: Dict[str, SweepDistribution] = None,
+        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        search_space: Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
@@ -159,11 +174,13 @@ class ParameterizedSweep(LoadableMixin):
     def _get_rest_sampling_algorithm(self) -> RestSamplingAlgorithm:
         # TODO: self.sampling_algorithm will always return SamplingAlgorithm
         if isinstance(self.sampling_algorithm, SamplingAlgorithm):
-            return self.sampling_algorithm._to_rest_object()
-        elif isinstance(self.sampling_algorithm, str):
-            return SAMPLING_ALGORITHM_CONSTRUCTOR[
+            return self.sampling_algorithm._to_rest_object()  # pylint: disable=protected-access
+
+        if isinstance(self.sampling_algorithm, str):
+            return SAMPLING_ALGORITHM_CONSTRUCTOR[  # pylint: disable=protected-access
                 SamplingAlgorithmType(self.sampling_algorithm.lower().capitalize())
             ]()._to_rest_object()
+
         msg = f"Received unsupported value {self._sampling_algorithm} as the sampling algorithm"
         raise ValidationException(
             message=msg,
@@ -209,6 +226,3 @@ class ParameterizedSweep(LoadableMixin):
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-
-    def _override_missing_properties_from_trial(self):
-        return
