@@ -89,6 +89,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
     # -- Get test cases for files ----------------------------------------------
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_unicode_get_file_unicode_data(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -162,7 +163,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         assert file_data == file_output.readall()
         assert 0 == file_output.properties.size
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_bytes(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -185,7 +186,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # Assert
         assert self.byte_data == file_content
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_bytes_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -316,7 +317,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError):
             data += next(chunks)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_with_iter(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -348,7 +349,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_stream(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -376,7 +377,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_stream_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -495,7 +496,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_stream_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -534,7 +535,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_stream_with_progress_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -687,7 +688,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             progress)
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_ranged_get_file_to_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -716,7 +717,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert self.byte_data[1:end_range + 1] == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_ranged_get_file_to_path_with_single_byte(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -772,7 +773,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             file_client.download_file(offset=3, length=5).readall()
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_ranged_get_file_to_path_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -871,7 +872,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert self.byte_data[1:4] == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_ranged_get_file_to_path_invalid_range_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -940,7 +941,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert file_data[start:file_size] == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_text(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -966,7 +967,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # Assert
         assert text_data == file_content
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_to_text_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1167,7 +1168,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_non_seekable_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1232,7 +1233,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_non_seekable_parallel_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1304,7 +1305,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_exact_chunk_size(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1342,7 +1343,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_with_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -1365,7 +1366,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         # Assert
         assert self.byte_data == file_content.readall()
 
-    @pytest.mark.live_only_test
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     def test_get_file_range_with_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")

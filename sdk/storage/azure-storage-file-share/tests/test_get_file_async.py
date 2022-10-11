@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -20,7 +18,8 @@ from azure.storage.fileshare.aio import (
 )
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageTestCase, AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 from test_helpers_async import ProgressTracker
 
@@ -30,18 +29,7 @@ FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 # ------------------------------------------------------------------------------
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class StorageGetFileTest(AsyncStorageTestCase):
+class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self):
@@ -57,8 +45,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self.fsc = ShareServiceClient(
             url, credential=credential,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
-            transport=AiohttpTestTransport())
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE
+        )
 
         self.share_name = self.get_resource_name('utshare')
         self.directory_name = self.get_resource_name('utdir')
@@ -105,6 +93,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
     # -- Get test cases for files ----------------------------------------------
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_unicode_get_file_unicode_data(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -130,6 +119,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         assert file_content == file_data
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_unicode_get_file_binary_data(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -157,6 +147,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         assert file_content == binary_data
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_no_content(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -171,8 +162,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
                 file_path=self.directory_name + '/' + file_name,
                 credential=storage_account_key,
                 max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
-                transport=AiohttpTestTransport())
+                max_chunk_get_size=self.MAX_CHUNK_GET_SIZE
+        )
         await file_client.upload_file(file_data)
 
         # Act
@@ -183,14 +174,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
         assert file_data == file_content
         assert 0 == file_output.properties.size
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_bytes(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -209,14 +199,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         assert self.byte_data == file_content
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_bytes_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -248,6 +237,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_bytes_non_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -282,6 +272,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_bytes_small(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -319,6 +310,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_download_file_modified(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -344,14 +336,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
         with pytest.raises(ResourceModifiedError):
             data += await chunks.__anext__()
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_stream(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -376,14 +367,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_with_iter(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -412,14 +402,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_stream_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -456,6 +445,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_stream_non_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -495,6 +485,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_stream_small(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -536,14 +527,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_stream_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -578,14 +568,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_stream_with_progress_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -633,6 +622,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_stream_non_parallel_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -683,6 +673,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_stream_small_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -736,14 +727,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_ranged_get_file_to_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -769,14 +759,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert self.byte_data[start:end_range + 1] == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_ranged_get_file_to_path_with_single_byte(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -803,6 +792,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_ranged_get_file_to_bytes_with_zero_byte(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -817,8 +807,8 @@ class StorageGetFileTest(AsyncStorageTestCase):
             file_path=self.directory_name + '/' + file_name,
             credential=storage_account_key,
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
-            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE,
-            transport=AiohttpTestTransport())
+            max_chunk_get_size=self.MAX_CHUNK_GET_SIZE
+        )
         await file_client.upload_file(file_data)
 
         # Act
@@ -831,14 +821,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             props = await file_client.download_file(offset=3, length=5)
             await props.readall()
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_ranged_get_file_to_path_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -881,6 +870,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_ranged_get_file_to_path_small(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -908,6 +898,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_ranged_get_file_to_path_non_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -934,14 +925,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert self.byte_data[1:4] == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_ranged_get_file_to_path_invalid_range_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -971,6 +961,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_ranged_get_file_to_path_invalid_range_non_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1004,14 +995,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert file_data[start:file_size] == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_text(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1033,14 +1023,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         assert text_data == file_content
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_to_text_with_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1076,6 +1065,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_text_non_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1114,6 +1104,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_text_small(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1151,6 +1142,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_text_with_encoding(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1177,6 +1169,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         assert text == file_content
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_to_text_with_encoding_and_progress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1215,6 +1208,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
             progress)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_non_seekable(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1231,7 +1225,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
+            non_seekable_stream = TestStorageGetFileAsync.NonSeekableFile(stream)
             file_props = await file_client.download_file(max_concurrency=1)
             read_bytes = await file_props.readinto(non_seekable_stream)
 
@@ -1242,14 +1236,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_non_seekable_parallel(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1263,7 +1256,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
+            non_seekable_stream = TestStorageGetFileAsync.NonSeekableFile(stream)
 
             with pytest.raises(ValueError):
                 data = await file_client.download_file(max_concurrency=2)
@@ -1273,6 +1266,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_non_seekable_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1300,7 +1294,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
+            non_seekable_stream = TestStorageGetFileAsync.NonSeekableFile(stream)
             file_props = await snapshot_client.download_file(max_concurrency=1)
             read_bytes = await file_props.readinto(non_seekable_stream)
 
@@ -1311,14 +1305,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             assert self.byte_data == actual
         self._teardown(FILE_PATH)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_non_seekable_parallel_from_snapshot(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1343,7 +1336,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            non_seekable_stream = StorageGetFileTest.NonSeekableFile(stream)
+            non_seekable_stream = TestStorageGetFileAsync.NonSeekableFile(stream)
 
             with pytest.raises(ValueError):
                 data = await snapshot_client.download_file(max_concurrency=2)
@@ -1351,6 +1344,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         self._teardown(FILE_PATH)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_exact_get_size(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1387,14 +1381,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_exact_chunk_size(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1428,14 +1421,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
             self.MAX_SINGLE_GET_SIZE,
             progress)
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_with_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
@@ -1454,14 +1446,13 @@ class StorageGetFileTest(AsyncStorageTestCase):
         # Assert
         assert self.byte_data == file_bytes
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_get_file_range_with_md5(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        if not self.is_live:
-            return
 
         await self._setup(storage_account_name, storage_account_key)
         file_client = ShareFileClient(
@@ -1489,6 +1480,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         assert b'MDAwMDAwMDA=' == file_content.properties.content_settings.content_md5
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_server_encryption(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1511,6 +1503,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         assert file_content.properties.server_encrypted
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_properties_server_encryption(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1533,6 +1526,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         assert props.server_encrypted
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_progress_single_get(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1559,6 +1553,7 @@ class StorageGetFileTest(AsyncStorageTestCase):
         progress.assert_complete()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_get_file_progress_chunked(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
