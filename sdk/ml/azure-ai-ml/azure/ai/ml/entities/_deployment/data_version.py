@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from typing import Dict, Union
-# from azure.ai.ml._schema._deployment.batch.batch_job_property import OutputDataSchema
+from azure.ai.ml._schema._deployment.batch.batch_job_property import OutputDataSchema
 from azure.ai.ml._schema.core.fields import ArmStr
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
@@ -33,6 +33,6 @@ class DataVersion:
     ):  # pylint: disable=unused-argument
         self.datastore_id = datastore_id
         self.path = path
-    # def _to_dict(self) -> Dict:
-    #     # pylint: disable=no-member
-    #     return OutputDataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return OutputDataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

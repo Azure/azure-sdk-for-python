@@ -2,8 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Dict
+
 from azure.ai.ml._restclient.v2021_10_01.models import SystemData as RestSystemData
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._schema._deployment.batch.system_data_schema import SystemDataSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
 class SystemData(RestTranslatableMixin):
@@ -70,3 +74,7 @@ class SystemData(RestTranslatableMixin):
             last_modified_by_type=self.last_modified_by_type,
             last_modified_at=self.last_modified_at,
         )
+    
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return SystemDataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

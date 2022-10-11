@@ -200,9 +200,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             cls=lambda objs: [BatchDeployment._from_rest_object(obj) for obj in objs],
             **self._init_kwargs,
         )
-        # import debugpy
-        # debugpy.connect(('localhost', 5678))
-        # debugpy.breakpoint()
 
         return result
 
@@ -236,7 +233,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 cls=lambda objs: [BatchJob._from_rest_object(obj) for obj in objs],
                 **self._init_kwargs,
             )
-            
+
             return list(result)
 
     def _get_workspace_location(self) -> str:
