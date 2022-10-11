@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AbsoluteMarker(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AbsoluteMarker(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AbsoluteMarker."""
 
     ALL_BACKUP = "AllBackup"
     FIRST_OF_DAY = "FirstOfDay"
@@ -34,18 +19,25 @@ class AbsoluteMarker(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FIRST_OF_WEEK = "FirstOfWeek"
     FIRST_OF_YEAR = "FirstOfYear"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AlertsState."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class CurrentProtectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the current protection state of the resource
-    """
+
+class CurrentProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the current protection state of the resource."""
 
     INVALID = "Invalid"
     NOT_PROTECTED = "NotProtected"
@@ -60,15 +52,17 @@ class CurrentProtectionState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     SOFT_DELETED = "SoftDeleted"
     UPDATING_PROTECTION = "UpdatingProtection"
 
-class DataStoreTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """type of datastore; Operational/Vault/Archive
-    """
+
+class DataStoreTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """type of datastore; Operational/Vault/Archive."""
 
     OPERATIONAL_STORE = "OperationalStore"
     VAULT_STORE = "VaultStore"
     ARCHIVE_STORE = "ArchiveStore"
 
-class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DayOfWeek."""
 
     FRIDAY = "Friday"
     MONDAY = "Monday"
@@ -78,9 +72,9 @@ class DayOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TUESDAY = "Tuesday"
     WEDNESDAY = "Wednesday"
 
-class FeatureSupportStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """feature support status
-    """
+
+class FeatureSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """feature support status."""
 
     INVALID = "Invalid"
     NOT_SUPPORTED = "NotSupported"
@@ -89,14 +83,24 @@ class FeatureSupportStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PUBLIC_PREVIEW = "PublicPreview"
     GENERALLY_AVAILABLE = "GenerallyAvailable"
 
-class FeatureType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """backup support feature type.
-    """
+
+class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """backup support feature type."""
 
     INVALID = "Invalid"
     DATA_SOURCE_TYPE = "DataSourceType"
 
-class Month(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Immutability state."""
+
+    DISABLED = "Disabled"
+    UNLOCKED = "Unlocked"
+    LOCKED = "Locked"
+
+
+class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Month."""
 
     APRIL = "April"
     AUGUST = "August"
@@ -111,9 +115,9 @@ class Month(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OCTOBER = "October"
     SEPTEMBER = "September"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the BackupVault resource
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the BackupVault resource."""
 
     FAILED = "Failed"
     PROVISIONING = "Provisioning"
@@ -121,21 +125,23 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNKNOWN = "Unknown"
     UPDATING = "Updating"
 
-class RecoveryOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Recovery Option
-    """
+
+class RecoveryOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recovery Option."""
 
     FAIL_IF_EXISTS = "FailIfExists"
 
-class RehydrationPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Priority to be used for rehydration. Values High or Standard
-    """
+
+class RehydrationPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Priority to be used for rehydration. Values High or Standard."""
 
     INVALID = "Invalid"
     HIGH = "High"
     STANDARD = "Standard"
 
-class RehydrationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RehydrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RehydrationStatus."""
 
     CREATE_IN_PROGRESS = "CREATE_IN_PROGRESS"
     COMPLETED = "COMPLETED"
@@ -143,9 +149,19 @@ class RehydrationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETED = "DELETED"
     FAILED = "FAILED"
 
-class ResourceMoveState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Resource move state for backup vault
-    """
+
+class ResourceGuardProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the BackupVault resource."""
+
+    FAILED = "Failed"
+    PROVISIONING = "Provisioning"
+    SUCCEEDED = "Succeeded"
+    UNKNOWN = "Unknown"
+    UPDATING = "Updating"
+
+
+class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Resource move state for backup vault."""
 
     UNKNOWN = "Unknown"
     IN_PROGRESS = "InProgress"
@@ -158,42 +174,54 @@ class ResourceMoveState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PARTIAL_SUCCESS = "PartialSuccess"
     MOVE_SUCCEEDED = "MoveSucceeded"
 
-class RestoreSourceDataStoreType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type of the source data store.
-    """
+
+class RestoreSourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the type of the source data store."""
 
     OPERATIONAL_STORE = "OperationalStore"
     VAULT_STORE = "VaultStore"
     ARCHIVE_STORE = "ArchiveStore"
 
-class RestoreTargetLocationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RestoreTargetLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Denotes the target location where the data will be restored,
     string value for the enum
-    {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}
+    {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
     """
 
     INVALID = "Invalid"
     AZURE_BLOBS = "AzureBlobs"
     AZURE_FILES = "AzureFiles"
 
-class SecretStoreType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type of secret store
-    """
+
+class SecretStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the type of secret store."""
 
     INVALID = "Invalid"
     AZURE_KEY_VAULT = "AzureKeyVault"
 
-class SourceDataStoreType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type of the source data store.
-    """
+
+class SoftDeleteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of soft delete."""
+
+    #: Soft Delete is turned off for the BackupVault
+    OFF = "Off"
+    #: Soft Delete is enabled for the BackupVault but can be turned off
+    ON = "On"
+    #: Soft Delete is permanently enabled for the BackupVault and the setting cannot be changed
+    ALWAYS_ON = "AlwaysOn"
+
+
+class SourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the type of the source data store."""
 
     ARCHIVE_STORE = "ArchiveStore"
     SNAPSHOT_STORE = "SnapshotStore"
     VAULT_STORE = "VaultStore"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the protection status of the resource
-    """
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the protection status of the resource."""
 
     CONFIGURING_PROTECTION = "ConfiguringProtection"
     CONFIGURING_PROTECTION_FAILED = "ConfiguringProtectionFailed"
@@ -202,22 +230,41 @@ class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SOFT_DELETED = "SoftDeleted"
     SOFT_DELETING = "SoftDeleting"
 
-class StorageSettingStoreTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type of the datastore.
-    """
+
+class StorageSettingStoreTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the type of the datastore."""
 
     ARCHIVE_STORE = "ArchiveStore"
     SNAPSHOT_STORE = "SnapshotStore"
     VAULT_STORE = "VaultStore"
 
-class StorageSettingTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type.
-    """
+
+class StorageSettingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the type."""
 
     GEO_REDUNDANT = "GeoRedundant"
     LOCALLY_REDUNDANT = "LocallyRedundant"
+    ZONE_REDUNDANT = "ZoneRedundant"
 
-class WeekNumber(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class SyncType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Field indicating sync type e.g. to sync only in case of failure or in all cases."""
+
+    DEFAULT = "Default"
+    FORCE_RESYNC = "ForceResync"
+
+
+class ValidationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of validation. In case of DeepValidation, all validations from
+    /validateForBackup API will run again.
+    """
+
+    SHALLOW_VALIDATION = "ShallowValidation"
+    DEEP_VALIDATION = "DeepValidation"
+
+
+class WeekNumber(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WeekNumber."""
 
     FIRST = "First"
     FOURTH = "Fourth"

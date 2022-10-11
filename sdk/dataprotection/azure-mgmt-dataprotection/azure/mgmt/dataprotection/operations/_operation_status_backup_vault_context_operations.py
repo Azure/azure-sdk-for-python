@@ -17,47 +17,87 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
-from ..._vendor import _convert_request
-from ...operations._operation_status_operations import build_get_request
+from .. import models as _models
+from .._serialization import Serializer
+from .._vendor import _convert_request, _format_url_section
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
-class OperationStatusOperations:
+def build_get_request(
+    resource_group_name: str, vault_name: str, operation_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/operationStatus/{operationId}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class OperationStatusBackupVaultContextOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dataprotection.aio.DataProtectionClient`'s
-        :attr:`operation_status` attribute.
+        :class:`~azure.mgmt.dataprotection.DataProtectionClient`'s
+        :attr:`operation_status_backup_vault_context` attribute.
     """
 
     models = _models
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationResource:
-        """Gets the operation status for a resource.
+    @distributed_trace
+    def get(
+        self, resource_group_name: str, vault_name: str, operation_id: str, **kwargs: Any
+    ) -> _models.OperationResource:
+        """Gets the operation status for an operation over a BackupVault's context.
 
-        Gets the operation status for a resource.
+        Gets the operation status for an operation over a BackupVault's context.
 
-        :param location: Required.
-        :type location: str
+        :param resource_group_name: The name of the resource group where the backup vault is present.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
         :param operation_id: Required.
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -80,7 +120,8 @@ class OperationStatusOperations:
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationResource]
 
         request = build_get_request(
-            location=location,
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -91,7 +132,7 @@ class OperationStatusOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -108,4 +149,4 @@ class OperationStatusOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.DataProtection/locations/{location}/operationStatus/{operationId}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/operationStatus/{operationId}"}  # type: ignore
