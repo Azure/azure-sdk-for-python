@@ -11,17 +11,15 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import ResourceManagementClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -42,9 +40,9 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID.
+    :param subscription_id: The Microsoft Azure subscription ID. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -204,6 +202,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import DeploymentOperationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deployment_operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -259,6 +258,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import DeploymentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deployments'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -302,6 +302,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -321,6 +322,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import ProviderResourceTypesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'provider_resource_types'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -376,6 +378,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import ProvidersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'providers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -431,6 +434,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import ResourceGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -486,6 +490,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import ResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -541,6 +546,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_04_01.aio.operations import TagsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'tags'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

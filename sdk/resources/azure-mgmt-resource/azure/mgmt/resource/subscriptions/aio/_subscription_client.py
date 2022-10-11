@@ -11,18 +11,16 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import SubscriptionClientConfiguration
 from ._operations_mixin import SubscriptionClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -43,7 +41,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -129,6 +127,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
             from ..v2019_11_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -154,6 +153,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
             from ..v2021_01_01.aio.operations import SubscriptionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subscriptions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -179,6 +179,7 @@ class SubscriptionClient(SubscriptionClientOperationsMixin, MultiApiClientMixin,
             from ..v2021_01_01.aio.operations import TenantsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'tenants'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

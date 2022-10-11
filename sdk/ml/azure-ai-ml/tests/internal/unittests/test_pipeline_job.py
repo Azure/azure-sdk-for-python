@@ -580,3 +580,15 @@ class TestPipelineJob:
         assert str(rest_object["computeId"]) == "${{parent.inputs.compute_name}}"
         assert str(rest_object["environment"]) == "${{parent.inputs.environment_name}}"
 
+    def test_pipeline_with_setting_node_output_directly(self) -> None:
+        component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
+        copy_func = load_component(component_dir / "command-linux/copy/component.yaml")
+
+        copy_file = copy_func(
+            input_dir=None,
+            file_names=None,
+        )
+
+        copy_file.outputs.output_dir.path = "path_on_datastore"
+        assert copy_file.outputs.output_dir.path == "path_on_datastore"
+        assert copy_file.outputs.output_dir.type == "path"

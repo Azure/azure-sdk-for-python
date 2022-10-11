@@ -146,6 +146,7 @@ class SchemaRegistryClient(object):
     @distributed_trace_async
     async def get_schema(self, *args: str, **kwargs: Any) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
+
         1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
         keyword arguments. Azure Schema Registry guarantees that ID is unique within a namespace.
 
