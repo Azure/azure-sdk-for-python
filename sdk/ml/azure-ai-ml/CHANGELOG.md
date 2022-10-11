@@ -4,6 +4,8 @@
 
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
+ - Most configuration classes from the entity package now implement the standard mapping protocol.
+ - 
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -15,7 +17,7 @@
 - Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
 ### Features Added
-
+ 
 ### Breaking Changes
 - OnlineDeploymentOperations.delete has been renamed to begin_delete.
 - Datastore credentials are switched to use unified credential configuration classes.
@@ -24,6 +26,7 @@
 - Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
 ### Bugs Fixed
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
  - Switched Compute operations to use Oct preview API version.
