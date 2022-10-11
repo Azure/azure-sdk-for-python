@@ -5,44 +5,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
-import asyncio
+import os
 
 import pytest
-
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.fileshare import (
-    Metrics,
     CorsRule,
+    Metrics,
     RetentionPolicy,
     ShareProtocolSettings,
-    SmbMultichannel,
     ShareSmbSettings,
+    SmbMultichannel
 )
 from azure.storage.fileshare.aio import ShareServiceClient
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 
 # ------------------------------------------------------------------------------
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
 
 
-class FileServicePropertiesTest(AsyncStorageTestCase):
+class TestFileServicePropertiesAsync(AsyncStorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
-        self.fsc = ShareServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        self.fsc = ShareServiceClient(url, credential=credential)
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
@@ -82,13 +71,13 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         assert ret1.days == ret2.days
 
     # --Test cases per service ---------------------------------------
-    @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_file_service_properties(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
         protocol_properties1 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=False)))
         protocol_properties2 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=True)))
 
@@ -119,6 +108,7 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
 
     # --Test cases per feature ---------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_hour_metrics(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -134,6 +124,7 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_minute_metrics(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -150,6 +141,7 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_set_cors(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -179,9 +171,8 @@ class FileServicePropertiesTest(AsyncStorageTestCase):
         self._assert_cors_equal(received_props['cors'], cors)
 
     # --Test cases for errors ---------------------------------------
-
-
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_too_many_cors_rules(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

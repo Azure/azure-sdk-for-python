@@ -1,29 +1,24 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import os
-import unittest
 
 import pytest
-
 from azure.core.exceptions import HttpResponseError
-
 from azure.storage.fileshare import (
-    ShareServiceClient,
-    Metrics,
     CorsRule,
+    Metrics,
     RetentionPolicy,
-    ShareSmbSettings,
-    SmbMultichannel,
     ShareProtocolSettings,
+    ShareServiceClient,
+    ShareSmbSettings,
+    SmbMultichannel
 )
-from devtools_testutils import recorded_by_proxy
 
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
@@ -73,7 +68,6 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         assert ret1.days == ret2.days
 
     # --Test cases per service ---------------------------------------
-    # @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_file_service_properties(self, **kwargs):
