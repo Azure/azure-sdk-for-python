@@ -290,7 +290,7 @@ async def test_bearer_policy_redirect_different_domain():
                 response.status_code = 301
                 response.headers['location'] = "https://localhost1"
                 return response
-            assert "Authorization" not in request.headers
+            assert not request.headers.get("Authorization")
             response = Response()
             response.status_code = 200
             return response
