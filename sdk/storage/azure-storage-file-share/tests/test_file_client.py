@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 import unittest
 import platform
 import pytest
@@ -14,7 +15,9 @@ from azure.storage.fileshare import (
     ShareClient,
     ShareDirectoryClient,
     ShareFileClient)
-from devtools_testutils.storage import StorageTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from devtools_testutils.storage.testcase import generate_sas_token
 from settings.testcase import FileSharePreparer
 #from azure.storage.common import TokenCredential
 
@@ -30,11 +33,11 @@ _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
 
-class StorageFileClientTest(StorageTestCase):
+class TestStorageFileClient(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         self.account_name = storage_account_name
         self.account_key = storage_account_key
-        self.sas_token = self.generate_sas_token()
+        self.sas_token = generate_sas_token()
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
@@ -48,13 +51,14 @@ class StorageFileClientTest(StorageTestCase):
         assert service.account_name == self.account_name
         assert service.credential.account_name == self.account_name
         assert service.credential.account_key == self.account_key
-        self.assertTrue(service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)))
-        self.assertTrue(service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)))
+        assert service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(
+            protocol, self.account_name, service_type)) is True
+        assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(
+            protocol, self.account_name, service_type)) is True
 
     # --Direct Parameters Test Cases --------------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -72,6 +76,7 @@ class StorageFileClientTest(StorageTestCase):
             assert service.scheme == 'https'
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -91,6 +96,7 @@ class StorageFileClientTest(StorageTestCase):
             assert service.url.endswith(self.sas_token)
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -105,6 +111,7 @@ class StorageFileClientTest(StorageTestCase):
                              share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_china(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -122,12 +129,11 @@ class StorageFileClientTest(StorageTestCase):
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
             assert service.credential.account_key == self.account_key
-            self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(
-                self.account_name, service_type[1]))
-            self.assertEqual(service.secondary_hostname,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
+            assert service.primary_hostname == '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
+            assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -145,6 +151,7 @@ class StorageFileClientTest(StorageTestCase):
 
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_empty_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -157,11 +164,10 @@ class StorageFileClientTest(StorageTestCase):
                 service_type(
                     self.account_url(storage_account_name, "file"), share_name='foo', directory_path='bar', file_path='baz')
 
-            self.assertEqual(
-                str(e.exception),
-                'You need to provide either an account shared key or SAS token when creating a storage service.')
+            assert str(e.value.args[0]) == 'You need to provide either an account shared key or SAS token when creating a storage service.'
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_socket_timeout(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -185,6 +191,7 @@ class StorageFileClientTest(StorageTestCase):
     # --Connection String Test Cases --------------------------------------------
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_connection_string_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -202,6 +209,7 @@ class StorageFileClientTest(StorageTestCase):
             assert service.scheme == 'https'
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_connection_string_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -221,6 +229,7 @@ class StorageFileClientTest(StorageTestCase):
             assert service.url.endswith(self.sas_token)
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_connection_string_endpoint_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -240,11 +249,11 @@ class StorageFileClientTest(StorageTestCase):
             assert service.credential.account_name == self.account_name
             assert service.credential.account_key == self.account_key
             assert service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(self.account_name == service_type[1])
-            self.assertEqual(service.secondary_hostname,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
+            assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.scheme == 'http'
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_connection_string_emulated(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -259,6 +268,7 @@ class StorageFileClientTest(StorageTestCase):
                     conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_connection_string_fails_if_secondary_without_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -276,6 +286,7 @@ class StorageFileClientTest(StorageTestCase):
                     conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -300,6 +311,7 @@ class StorageFileClientTest(StorageTestCase):
             assert service.secondary_hostname == 'www-sec.mydomain.com'
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_service_with_custom_account_endpoint_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -374,15 +386,11 @@ class StorageFileClientTest(StorageTestCase):
         assert service.primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path/foo/file?')
 
+    @pytest.mark.skip(reason="Client Request ID is different for every request, needs further investigation: https://github.com/Azure/azure-sdk-for-python/issues/8098")
     @FileSharePreparer()
     def test_client_request_id_echo(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
-        # client request id is different for every request, so it will never match the recorded one
-        pytest.skip("Issue tracked here: https://github.com/Azure/azure-sdk-for-python/issues/8098")
-        if not self.is_live:
-            return
 
         self._setup(storage_account_name, storage_account_key)
         request_id_header_name = 'x-ms-client-request-id'
@@ -406,6 +414,7 @@ class StorageFileClientTest(StorageTestCase):
         service.get_service_properties(raw_response_hook=callback)
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_user_agent_default(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -420,6 +429,7 @@ class StorageFileClientTest(StorageTestCase):
         service.get_service_properties(raw_response_hook=callback)
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_user_agent_custom(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -448,6 +458,7 @@ class StorageFileClientTest(StorageTestCase):
         service.get_service_properties(raw_response_hook=callback2, user_agent="TestApp/v2.0")
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_user_agent_append(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -465,6 +476,7 @@ class StorageFileClientTest(StorageTestCase):
         service.get_service_properties(raw_response_hook=callback, user_agent='customer_user_agent')
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_error_with_malformed_conn_str(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -478,13 +490,12 @@ class StorageFileClientTest(StorageTestCase):
                     service = service_type[0].from_connection_string(conn_str, share_name="test", directory_path="foo/bar", file_path="temp/dat")
                 
                 if conn_str in("", "foobar", "foo;bar;baz", ";"):
-                    self.assertEqual(
-                        str(e.exception), "Connection string is either blank or malformed.")
+                    assert e.value.args[0] == "Connection string is either blank or malformed."
                 elif conn_str in ("foobar=baz=foo" , "foo=;bar=;", "=", "=;=="):
-                    self.assertEqual(
-                        str(e.exception), "Connection string missing required connection details.")
+                    assert e.value.args[0] == "Connection string missing required connection details."
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_closing_pipeline_client(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -502,6 +513,7 @@ class StorageFileClientTest(StorageTestCase):
                 service.close()
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_closing_pipeline_client_simple(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
