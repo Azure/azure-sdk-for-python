@@ -123,8 +123,11 @@ For example if you would like to alter connection pool you can initialise `Reque
  session.mount('https://', adapter)
  cosmos_client = CosmosClient.from_connection_string(
      COSMOS_CONNECTION_STRING,
-     transport=RequestsTransport(session=session)
+     transport=RequestsTransport(session=session, session_owner=False)
  )
+ 
+ # When using custom session, we need to manage the session by ourself. When we are done with the session:
+ session.close()
  ```
 
 For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
