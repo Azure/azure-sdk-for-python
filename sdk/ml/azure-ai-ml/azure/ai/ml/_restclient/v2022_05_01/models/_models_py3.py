@@ -1308,6 +1308,8 @@ class AssetBase(ResourceBase):
     :vartype is_anonymous: bool
     :ivar is_archived: Is the asset archived?.
     :vartype is_archived: bool
+    :ivar is_ip_protected: Is the asset IP?.
+    :vartype is_ip_protected: bool
     """
 
     _attribute_map = {
@@ -1316,7 +1318,7 @@ class AssetBase(ResourceBase):
         'tags': {'key': 'tags', 'type': '{str}'},
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
-        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
+        'is_ip_protected':{'key': 'IsIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -1341,6 +1343,8 @@ class AssetBase(ResourceBase):
         :paramtype is_anonymous: bool
         :keyword is_archived: Is the asset archived?.
         :paramtype is_archived: bool
+        :keyword is_ip_protected: Is the asset IP?.
+        :paramtype is_ip_protected: bool
         """
         super(AssetBase, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
         self.is_anonymous = is_anonymous
@@ -3481,6 +3485,8 @@ class CodeVersionDetails(AssetBase):
     :vartype is_archived: bool
     :ivar code_uri: Uri where code is located.
     :vartype code_uri: str
+    :ivar is_ip_protected: Is the asset IP?.
+    :vartype is_ip_protected: bool
     """
 
     _attribute_map = {
@@ -3490,7 +3496,7 @@ class CodeVersionDetails(AssetBase):
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'code_uri': {'key': 'codeUri', 'type': 'str'},
-        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
+        'is_ip_protected':{'key': 'IsIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -3518,6 +3524,8 @@ class CodeVersionDetails(AssetBase):
         :paramtype is_archived: bool
         :keyword code_uri: Uri where code is located.
         :paramtype code_uri: str
+        :keyword is_ip_protected: Is the asset IP?.
+        :paramtype is_ip_protected: bool
         """
         super(CodeVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.code_uri = code_uri
@@ -4147,6 +4155,8 @@ class ComponentVersionDetails(AssetBase):
      href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
      />.
     :vartype component_spec: any
+    :ivar is_ip_protected: Is the asset IP?.
+    :vartype is_ip_protected: bool
     """
 
     _attribute_map = {
@@ -4156,7 +4166,7 @@ class ComponentVersionDetails(AssetBase):
         'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'component_spec': {'key': 'componentSpec', 'type': 'object'},
-        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
+        'is_ip_protected':{'key': 'IsIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -4191,6 +4201,8 @@ class ComponentVersionDetails(AssetBase):
          href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
          />.
         :paramtype component_spec: any
+        :keyword is_ip_protected: Is the asset IP?.
+        :paramtype is_ip_protected: bool
         """
         super(ComponentVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.component_spec = component_spec
@@ -6417,6 +6429,8 @@ class DataVersionBaseDetails(AssetBase):
     :ivar data_uri: Required. [Required] Uri of the data. Usage/meaning depends on
      Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20220501.Assets.DataVersionBase.DataType.
     :vartype data_uri: str
+    :ivar is_ip_protected: Is the asset IP?.
+    :vartype is_ip_protected: bool
     """
 
     _validation = {
@@ -6432,7 +6446,7 @@ class DataVersionBaseDetails(AssetBase):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'data_type': {'key': 'dataType', 'type': 'str'},
         'data_uri': {'key': 'dataUri', 'type': 'str'},
-        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
+        'is_ip_protected':{'key': 'IsIPProtected','type': 'bool'},
     }
 
     _subtype_map = {
@@ -6465,6 +6479,8 @@ class DataVersionBaseDetails(AssetBase):
         :keyword data_uri: Required. [Required] Uri of the data. Usage/meaning depends on
          Microsoft.MachineLearning.ManagementFrontEnd.Contracts.V20220501.Assets.DataVersionBase.DataType.
         :paramtype data_uri: str
+        :keyword is_ip_protected: Is the asset IP?.
+        :paramtype is_ip_protected: bool
         """
         super(DataVersionBaseDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected,  **kwargs)
         self.data_type = 'DataVersionBaseDetails'  # type: str
@@ -7348,6 +7364,8 @@ class EnvironmentVersionDetails(AssetBase):
      ~azure.mgmt.machinelearningservices.models.InferenceContainerProperties
     :ivar os_type: The OS type of the environment. Possible values include: "Linux", "Windows".
     :vartype os_type: str or ~azure.mgmt.machinelearningservices.models.OperatingSystemType
+    :ivar is_ip_protected: Is the asset IP?.
+    :vartype is_ip_protected: bool
     """
 
     _validation = {
@@ -7366,7 +7384,7 @@ class EnvironmentVersionDetails(AssetBase):
         'image': {'key': 'image', 'type': 'str'},
         'inference_config': {'key': 'inferenceConfig', 'type': 'InferenceContainerProperties'},
         'os_type': {'key': 'osType', 'type': 'str'},
-        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
+        'is_ip_protected':{'key': 'IsIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -7422,6 +7440,8 @@ class EnvironmentVersionDetails(AssetBase):
          ~azure.mgmt.machinelearningservices.models.InferenceContainerProperties
         :keyword os_type: The OS type of the environment. Possible values include: "Linux", "Windows".
         :paramtype os_type: str or ~azure.mgmt.machinelearningservices.models.OperatingSystemType
+        :keyword is_ip_protected: Is the asset IP?.
+        :paramtype is_ip_protected: bool
         """
         super(EnvironmentVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.build = build
@@ -10000,6 +10020,8 @@ class ModelVersionDetails(AssetBase):
     :vartype model_type: str
     :ivar model_uri: The URI path to the model contents.
     :vartype model_uri: str
+    :ivar is_ip_protected: Is the asset IP?.
+    :vartype is_ip_protected: bool
     """
 
     _attribute_map = {
@@ -10012,7 +10034,7 @@ class ModelVersionDetails(AssetBase):
         'job_name': {'key': 'jobName', 'type': 'str'},
         'model_type': {'key': 'modelType', 'type': 'str'},
         'model_uri': {'key': 'modelUri', 'type': 'str'},
-        'is_ip_protected':{'key': 'isIPProtected','type': 'bool'},
+        'is_ip_protected':{'key': 'IsIPProtected','type': 'bool'},
     }
 
     def __init__(
@@ -10049,6 +10071,8 @@ class ModelVersionDetails(AssetBase):
         :paramtype model_type: str
         :keyword model_uri: The URI path to the model contents.
         :paramtype model_uri: str
+        :keyword is_ip_protected: Is the asset IP?.
+        :paramtype is_ip_protected: bool
         """
         super(ModelVersionDetails, self).__init__(description=description, properties=properties, tags=tags, is_anonymous=is_anonymous, is_archived=is_archived, is_ip_protected=is_ip_protected, **kwargs)
         self.flavors = flavors

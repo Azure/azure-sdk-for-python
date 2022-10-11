@@ -53,6 +53,8 @@ class Model(Artifact):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param is_ip_protected: Is Asset IP Protected?
+    :type is_ip_protected: bool
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

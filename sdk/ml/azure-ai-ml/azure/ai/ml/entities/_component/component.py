@@ -82,6 +82,8 @@ class Component(
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
+    :param is_ip_protected: Is Asset IP Protected?
+    :type is_ip_protected: bool
         Details will be provided in the error message.
     """
 

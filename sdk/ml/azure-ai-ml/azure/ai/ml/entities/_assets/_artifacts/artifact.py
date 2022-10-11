@@ -61,6 +61,8 @@ class Artifact(Asset):
     :type properties: dict[str, str]
     :param datastore: The datastore to upload the local artifact to.
     :type datastore: str
+    :param is_ip_protected: Is Asset IP Protected?
+    :type is_ip_protected: bool
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

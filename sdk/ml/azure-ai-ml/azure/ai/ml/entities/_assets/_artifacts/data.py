@@ -82,6 +82,8 @@ class Data(Artifact):
     :type path: str
     :param type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
     :type type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
+    :param is_ip_protected: Is Asset IP Protected?
+    :type is_ip_protected: bool
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
