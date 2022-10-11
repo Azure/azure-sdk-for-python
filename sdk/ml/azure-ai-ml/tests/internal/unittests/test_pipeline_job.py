@@ -19,6 +19,16 @@ from azure.ai.ml._internal import (
     ITPResourceConfiguration,
     ITPRetrySettings,
     TargetSelector,
+    Command,
+    Scope,
+    HDInsight,
+    Parallel,
+    Distributed,
+    DataTransfer,
+    Starlite,
+    Pipeline,
+    Hemera,
+    Ae365exepool,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
 from azure.ai.ml.constants._common import AssetTypes
@@ -58,6 +68,30 @@ class TestPipelineJob:
         result = dsl_pipeline._validate()
         assert result._to_dict() == {"result": "Succeeded"}
 
+        # check if node type is correct
+        node_in_pipeline = dsl_pipeline.jobs["node"]
+        if node_func.type == "CommandComponent":
+            assert isinstance(node_in_pipeline, Command)
+        elif node_func.type == "ScopeComponent":
+            assert isinstance(node_in_pipeline, Scope)
+        elif node_func.type == "HDInsightComponent":
+            assert isinstance(node_in_pipeline, HDInsight)
+        elif node_func.type == "ParallelComponent":
+            assert isinstance(node_in_pipeline, Parallel)
+        elif node_func.type == "DistributedComponent":
+            assert isinstance(node_in_pipeline, Distributed)
+        elif node_func.type == "DataTransferComponent":
+            assert isinstance(node_in_pipeline, DataTransfer)
+        elif node_func.type == "StarliteComponent":
+            assert isinstance(node_in_pipeline, Starlite)
+        elif node_func.type == "PipelineComponent":
+            assert isinstance(node_in_pipeline, Pipeline)
+        elif node_func.type == "HemeraComponent":
+            assert isinstance(node_in_pipeline, Hemera)
+        elif node_func.type == "Ae365exepoolComponent":
+            assert isinstance(node_in_pipeline, Ae365exepool)
+
+        # check if node's runsettings are set correctly
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
