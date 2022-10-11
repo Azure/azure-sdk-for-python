@@ -12,16 +12,16 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "085c38ff-ea09-49b8-a2f3-2dade2857b3a",
+        "apim-request-id": "477ac346-4977-4bda-a5a7-e4b4101a4218",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 18:04:44 GMT",
+        "Date": "Tue, 11 Oct 2022 20:26:20 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3"
+        "x-envoy-upstream-service-time": "2"
       },
       "ResponseBody": null
     },
@@ -36,17 +36,17 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e1fbc71e-b1e2-4d94-94ba-5a667cbb5ea5",
+        "apim-request-id": "af3bea5f-5ef7-4f58-a3ba-426648eab82c",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "2",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 18:04:44 GMT",
+        "Date": "Tue, 11 Oct 2022 20:26:20 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "33"
+        "x-envoy-upstream-service-time": "15"
       },
       "ResponseBody": {}
     }

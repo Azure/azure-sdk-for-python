@@ -12,15 +12,15 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "328db162-c2ba-465e-a22b-0e2ca393a5df",
+        "apim-request-id": "5b38a845-07b5-4614-9f2f-f767c6cb60ab",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 18:04:42 GMT",
+        "Date": "Tue, 11 Oct 2022 20:26:19 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3"
+        "x-envoy-upstream-service-time": "2"
       },
       "ResponseBody": null
     }

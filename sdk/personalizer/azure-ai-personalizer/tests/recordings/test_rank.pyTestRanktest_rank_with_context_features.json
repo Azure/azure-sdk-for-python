@@ -64,18 +64,18 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "299d16d5-caa8-4fe5-9a81-d8e0d7e72001",
+        "apim-request-id": "e8132e52-b0cd-4b5c-a3a6-0084f2db137b",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "200",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Mon, 10 Oct 2022 18:04:51 GMT",
+        "Date": "Tue, 11 Oct 2022 20:26:28 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "26"
+        "x-envoy-upstream-service-time": "32"
       },
       "ResponseBody": {
         "ranking": [
