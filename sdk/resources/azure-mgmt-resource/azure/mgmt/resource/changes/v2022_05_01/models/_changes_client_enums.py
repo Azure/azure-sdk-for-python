@@ -7,37 +7,35 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ChangeCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The entity that made the change
-    """
+class ChangeCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The entity that made the change."""
 
-    #: User initiated change.
+    #: User initiated change
     USER = "User"
-    #: System initiated change.
+    #: System initiated change
     SYSTEM = "System"
 
-class ChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of change that was captured in the resource
-    """
 
-    #: An existing resource underwent a change.
+class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of change that was captured in the resource."""
+
+    #: An existing resource underwent a change
     UPDATE = "Update"
-    #: An existing resource was deleted.
+    #: An existing resource was deleted
     DELETE = "Delete"
-    #: A newly created resource.
+    #: A newly created resource
     CREATE = "Create"
 
-class PropertyChangeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of change that occurred
-    """
 
-    #: An existing property underwent a change.
+class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of change that occurred."""
+
+    #: An existing property underwent a change
     UPDATE = "Update"
-    #: A property was newly created.
+    #: A property was newly created
     INSERT = "Insert"
-    #: An existing property was deleted.
+    #: An existing property was deleted
     REMOVE = "Remove"

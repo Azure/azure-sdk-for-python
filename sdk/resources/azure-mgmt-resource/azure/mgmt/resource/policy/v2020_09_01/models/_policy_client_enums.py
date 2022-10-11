@@ -7,22 +7,20 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AliasPathAttributes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The attributes of the token that the alias path is referring to.
-    """
+class AliasPathAttributes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The attributes of the token that the alias path is referring to."""
 
     #: The token that the alias path is referring to has no attributes.
     NONE = "None"
     #: The token that the alias path is referring to is modifiable by policies with 'modify' effect.
     MODIFIABLE = "Modifiable"
 
-class AliasPathTokenType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the token that the alias path is referring to.
-    """
+
+class AliasPathTokenType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the token that the alias path is referring to."""
 
     #: The token type is not specified.
     NOT_SPECIFIED = "NotSpecified"
@@ -41,18 +39,18 @@ class AliasPathTokenType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The token type is boolean.
     BOOLEAN = "Boolean"
 
-class AliasPatternType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of alias pattern
-    """
+
+class AliasPatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of alias pattern."""
 
     #: NotSpecified is not allowed.
     NOT_SPECIFIED = "NotSpecified"
     #: Extract is the only allowed value.
     EXTRACT = "Extract"
 
-class AliasType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the alias.
-    """
+
+class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the alias."""
 
     #: Alias type is unknown (same as not providing alias type).
     NOT_SPECIFIED = "NotSpecified"
@@ -61,27 +59,27 @@ class AliasType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Alias value is secret.
     MASK = "Mask"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class EnforcementMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce.
-    """
+
+class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce."""
 
     #: The policy effect is enforced during resource creation or update.
     DEFAULT = "Default"
     #: The policy effect is not enforced during resource creation or update.
     DO_NOT_ENFORCE = "DoNotEnforce"
 
-class ExemptionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The policy exemption category. Possible values are Waiver and Mitigated.
-    """
+
+class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy exemption category. Possible values are Waiver and Mitigated."""
 
     #: This category of exemptions usually means the scope is not applicable for the policy.
     WAIVER = "Waiver"
@@ -89,9 +87,9 @@ class ExemptionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: scope.
     MITIGATED = "Mitigated"
 
-class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The data type of the parameter.
-    """
+
+class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The data type of the parameter."""
 
     STRING = "String"
     ARRAY = "Array"
@@ -101,16 +99,17 @@ class ParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FLOAT = "Float"
     DATE_TIME = "DateTime"
 
-class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of policy definition. Possible values are NotSpecified, BuiltIn, Custom, and Static.
-    """
+
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of policy definition. Possible values are NotSpecified, BuiltIn, Custom, and Static."""
 
     NOT_SPECIFIED = "NotSpecified"
     BUILT_IN = "BuiltIn"
     CUSTOM = "Custom"
     STATIC = "Static"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type. This is the only required field when adding a system assigned identity to a
     resource.
     """
