@@ -16,11 +16,11 @@ interactions:
       User-Agent:
       - azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/me/environments/Dev_Environment?api-version=2022-03-01-preview
+    uri: https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/me/environments/Dev_Environment?api-version=2022-03-01-preview
   response:
     body:
       string: "{\n  \"name\": \"dev_environment\",\n  \"environmentType\": \"sdk-default-environment-type\",\n
-        \ \"owner\": \"df428e89-1bc2-4e72-b736-032c31a6cd97\",\n  \"provisioningState\":
+        \ \"owner\": \"11111111-1111-1111-1111-111111111111\",\n  \"provisioningState\":
         \"Creating\",\n  \"catalogName\": \"sdk-default-catalog\",\n  \"catalogItemName\":
         \"Empty\",\n  \"scheduledTasks\": {},\n  \"tags\": {}\n}"
     headers:
@@ -33,9 +33,9 @@ interactions:
       date:
       - Wed, 05 Oct 2022 16:23:40 GMT
       location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
       operation-location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-rate-limit-limit:
@@ -59,7 +59,7 @@ interactions:
       User-Agent:
       - azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
+    uri: https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
   response:
     body:
       string: "{\n  \"id\": \"/projects/sdk-default-project/operationStatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9\",\n
@@ -75,9 +75,9 @@ interactions:
       date:
       - Wed, 05 Oct 2022 16:24:10 GMT
       location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
       operation-location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-rate-limit-limit:
@@ -101,7 +101,7 @@ interactions:
       User-Agent:
       - azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
+    uri: https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
   response:
     body:
       string: "{\n  \"id\": \"/projects/sdk-default-project/operationStatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9\",\n
@@ -117,9 +117,9 @@ interactions:
       date:
       - Wed, 05 Oct 2022 16:24:41 GMT
       location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
       operation-location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-rate-limit-limit:
@@ -143,7 +143,7 @@ interactions:
       User-Agent:
       - azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
+    uri: https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
   response:
     body:
       string: "{\n  \"id\": \"/projects/sdk-default-project/operationStatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9\",\n
@@ -159,9 +159,9 @@ interactions:
       date:
       - Wed, 05 Oct 2022 16:25:11 GMT
       location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9?monitor=true
       operation-location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/8231f954-672d-40cb-88ae-4ce0140c7cb9
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       transfer-encoding:
@@ -187,11 +187,11 @@ interactions:
       User-Agent:
       - azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/me/environments/Dev_Environment?api-version=2022-03-01-preview
+    uri: https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/me/environments/Dev_Environment?api-version=2022-03-01-preview
   response:
     body:
       string: "{\n  \"name\": \"dev_environment\",\n  \"environmentType\": \"sdk-default-environment-type\",\n
-        \ \"owner\": \"df428e89-1bc2-4e72-b736-032c31a6cd97\",\n  \"provisioningState\":
+        \ \"owner\": \"11111111-1111-1111-1111-111111111111\",\n  \"provisioningState\":
         \"Succeeded\",\n  \"resourceGroupId\": \"/subscriptions/62e47139-66d0-4b0b-a000-1e8a412890c1/resourceGroups/sdk-default-project-dev_environment\",\n
         \ \"catalogName\": \"sdk-default-catalog\",\n  \"catalogItemName\": \"Empty\",\n
         \ \"scheduledTasks\": {},\n  \"tags\": {}\n}"
@@ -231,7 +231,7 @@ interactions:
       User-Agent:
       - azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)
     method: DELETE
-    uri: https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/me/environments/Dev_Environment?api-version=2022-03-01-preview
+    uri: https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/me/environments/Dev_Environment?api-version=2022-03-01-preview
   response:
     body:
       string: ''
@@ -243,9 +243,9 @@ interactions:
       date:
       - Wed, 05 Oct 2022 16:25:13 GMT
       location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e?monitor=true
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e?monitor=true
       operation-location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       x-rate-limit-limit:
@@ -269,7 +269,7 @@ interactions:
       User-Agent:
       - azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e
+    uri: https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e
   response:
     body:
       string: "{\n  \"id\": \"/projects/sdk-default-project/operationStatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e\",\n
@@ -285,9 +285,9 @@ interactions:
       date:
       - Wed, 05 Oct 2022 16:25:43 GMT
       location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e?monitor=true
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e?monitor=true
       operation-location:
-      - https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e
+      - https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b526ecdb-6ecc-4ce0-8775-1de99322604e
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       transfer-encoding:

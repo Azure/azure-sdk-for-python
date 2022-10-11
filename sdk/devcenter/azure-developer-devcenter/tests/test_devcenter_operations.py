@@ -30,14 +30,14 @@ class DevcenterTest(AzureTestCase):
     
     @DevcenterPowerShellPreparer()
     def test_devbox_operations(self):
-        dev_center_name = os.environ.get("DEFAULT_DEVCENTER_NAME")
-        tenant_id = os.environ["AZURE_TENANT_ID"]
+        dev_center_name = os.environ.get("DEFAULT_DEVCENTER_NAME", "sdk-default-dc")
+        tenant_id = os.environ.get("AZURE_TENANT_ID", "88888888-8888-8888-8888-888888888888")
         client = self.create_client(dev_center_name, tenant_id)
         
         # Fetch control plane resource dependencies
-        target_project_name = os.environ["DEFAULT_PROJECT_NAME"]
-        target_pool_name = os.environ["DEFAULT_POOL_NAME"]
-        target_user_id = os.environ["STATIC_TEST_USER_ID"]
+        target_project_name = os.environ.get("DEFAULT_PROJECT_NAME", "sdk-default-project")
+        target_pool_name = os.environ.get("DEFAULT_POOL_NAME", "sdk-default-pool")
+        target_user_id = os.environ.get("STATIC_TEST_USER_ID", "11111111-1111-1111-1111-111111111111")
 
         # Stand up a new dev box
         create_response = client.dev_boxes.begin_create_dev_box(target_project_name, "Test_DevBox", {"poolName": target_pool_name}, user_id=target_user_id)
@@ -53,15 +53,15 @@ class DevcenterTest(AzureTestCase):
 
     @DevcenterPowerShellPreparer()
     def test_environment_operations(self):
-        dev_center_name = os.environ["DEFAULT_DEVCENTER_NAME"]
-        tenant_id = os.environ["AZURE_TENANT_ID"]
+        dev_center_name = os.environ.get("DEFAULT_DEVCENTER_NAME", "sdk-default-dc")
+        tenant_id = os.environ.get("AZURE_TENANT_ID", "88888888-8888-8888-8888-888888888888")
         client = self.create_client(dev_center_name, tenant_id)
         
         # Fetch control plane resource dependencies
-        target_project_name = os.environ["DEFAULT_PROJECT_NAME"]
-        target_environment_type = os.environ["DEFAULT_ENVIRONMENT_TYPE_NAME"]
-        target_catalog_item = os.environ["DEFAULT_CATALOG_ITEM_NAME"]
-        target_catalog = os.environ["DEFAULT_CATALOG_NAME"]
+        target_project_name = os.environ.get("DEFAULT_PROJECT_NAME", "sdk-default-project")
+        target_environment_type = os.environ.get("DEFAULT_ENVIRONMENT_TYPE_NAME", "sdk-default-environment-type")
+        target_catalog_item = os.environ.get("DEFAULT_CATALOG_ITEM_NAME", "Empty")
+        target_catalog = os.environ.get("DEFAULT_CATALOG_NAME", "sdk-default-catalog")
 
         create_response = client.environments.begin_create_or_update_environment(target_project_name,
                                                            "Dev_Environment",

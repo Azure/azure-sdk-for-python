@@ -24,5 +24,5 @@ class DevcenterTest(AzureTestCase):
 
 
 DevcenterPowerShellPreparer = functools.partial(
-    PowerShellPreparer, "devcenter", dev_center=os.environ.get("DEVCENTER_NAME", "TestDevCenter"), tenant_id=os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    PowerShellPreparer, "devcenter", dev_center=os.environ.get("DEVCENTER_NAME", "sdk-default-dc"), tenant_id=os.environ.get("AZURE_TENANT_ID", "88888888-8888-8888-8888-888888888888")
 )

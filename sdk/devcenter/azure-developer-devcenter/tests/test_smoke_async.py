@@ -12,8 +12,8 @@ from testcase_async import DevcenterAsyncTest
 class DevcenterSmokeAsyncTest(DevcenterAsyncTest):
     @DevcenterPowerShellPreparer()
     async def test_smoke_async(self):
-        dev_center = "TestDevCenter"
-        tenant_id = "00000000-0000-0000-0000-000000000000"
+        dev_center = "sdk-default-dc"
+        tenant_id = "88888888-8888-8888-8888-888888888888"
         client = self.create_client(tenant_id=tenant_id, dev_center=dev_center)
         # test your code here, for example:
         # result = await client.xxx.xx(...)
