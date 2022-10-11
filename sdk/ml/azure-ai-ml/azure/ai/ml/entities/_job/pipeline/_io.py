@@ -155,6 +155,8 @@ class InputOutputBase(ABC):
 
     @path.setter
     def path(self, path):
+        # For un-configured input/output, we build a default data entry for them.
+        self._build_default_data()
         if hasattr(self._data, "path"):
             self._data.path = path
         else:
@@ -361,7 +363,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     def _build_default_data(self):
         """Build default data when output not configured."""
         if self._data is None:
-            self._data = Output()
+            # _meta will be None when node._component is not a Component object
+            # so we just leave the type inference work to backend
+            self._data = Output(type=None)
 
     def _build_data(self, data, key=None):
         """Build output data according to assigned input, eg: node.outputs.key = data"""
@@ -593,15 +597,13 @@ class _GroupAttrDict(InputsAttrDict):
 
     def __getattr__(self, name: K) -> V:
         if name not in self:
-            # pylint: disable=unnecessary-comprehension
-            raise UnexpectedAttributeError(keyword=name, keywords=[key for key in self])
+            raise UnexpectedAttributeError(keyword=name, keywords=list(self))
         return super().__getitem__(name)
 
     def __getitem__(self, item: K) -> V:
         # We raise this exception instead of KeyError
         if item not in self:
-            # pylint: disable=unnecessary-comprehension
-            raise UnexpectedKeywordError(func_name="ParameterGroup", keyword=item, keywords=[key for key in self])
+            raise UnexpectedKeywordError(func_name="ParameterGroup", keyword=item, keywords=list(self))
         return super().__getitem__(item)
 
     # For Jupyter Notebook auto-completion
@@ -653,6 +655,13 @@ class OutputsAttrDict(dict):
 
     def __getattr__(self, item) -> NodeOutput:
         return self.__getitem__(item)
+
+    def __getitem__(self, item) -> NodeOutput:
+        if item not in self:
+            # We raise this exception instead of KeyError as OutputsAttrDict doesn't support add new item after
+            # __init__.
+            raise UnexpectedAttributeError(keyword=item, keywords=list(self))
+        return super().__getitem__(item)
 
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):
