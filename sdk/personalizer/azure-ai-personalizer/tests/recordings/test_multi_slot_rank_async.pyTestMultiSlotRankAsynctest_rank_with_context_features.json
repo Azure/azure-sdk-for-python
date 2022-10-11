@@ -1,6 +1,34 @@
 {
   "Entries": [
     {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/configurations/policy?api-version=2022-09-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "96bc0d30-f989-45b5-8865-a15265698140",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "155",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 11 Oct 2022 20:26:27 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "11"
+      },
+      "ResponseBody": {
+        "name": "1f8622f33afb4845823480ac4aaa9a2d",
+        "arguments": "--ccb_explore_adf --epsilon 0.20000000298023224 --power_t 0 -l 0.001 --cb_type mtr -q ::"
+      }
+    },
+    {
       "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/multislot/rank?api-version=2022-09-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
@@ -96,12 +124,12 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "ebc873ec-62ec-4bf3-8202-3d959d0e5e68",
+        "apim-request-id": "39364b1b-42dd-49d6-817c-858e7a557583",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "201",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Mon, 10 Oct 2022 18:04:51 GMT",
+        "Date": "Tue, 11 Oct 2022 20:26:27 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",

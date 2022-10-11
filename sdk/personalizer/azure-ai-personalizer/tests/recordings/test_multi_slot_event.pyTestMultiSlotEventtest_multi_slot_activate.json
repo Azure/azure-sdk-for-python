@@ -1,6 +1,35 @@
 {
   "Entries": [
     {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/configurations/policy?api-version=2022-09-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "0e128209-4edf-42e1-8ed8-5fcac5391468",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "155",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 11 Oct 2022 20:26:23 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "11"
+      },
+      "ResponseBody": {
+        "name": "1f8622f33afb4845823480ac4aaa9a2d",
+        "arguments": "--ccb_explore_adf --epsilon 0.20000000298023224 --power_t 0 -l 0.001 --cb_type mtr -q ::"
+      }
+    },
+    {
       "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/multislot/events/123456789/activate?api-version=2022-09-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
@@ -13,15 +42,15 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "ef2bd35d-47b2-4a41-a92e-ac836cc74307",
+        "apim-request-id": "cabbc267-ff9c-43b8-8a47-3d6a071eb11a",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 18:04:48 GMT",
+        "Date": "Tue, 11 Oct 2022 20:26:23 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "936"
+        "x-envoy-upstream-service-time": "2"
       },
       "ResponseBody": null
     }

@@ -23,17 +23,17 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "48f3ff64-31ac-4bdb-af25-28e6655c5ae9",
+        "apim-request-id": "a178e717-9222-4453-9834-691b4e6037a7",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "417",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 18:01:34 GMT",
+        "Date": "Tue, 11 Oct 2022 20:23:10 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "419"
+        "x-envoy-upstream-service-time": "426"
       },
       "ResponseBody": {
         "rewardWaitTime": "PT4H",
@@ -42,7 +42,7 @@
         "explorationPercentage": 0.3,
         "modelExportFrequency": "PT3M",
         "logRetentionDays": -1,
-        "lastConfigurationEditDate": "2022-10-07T23:24:56",
+        "lastConfigurationEditDate": "2022-10-10T23:08:48",
         "learningMode": "Online",
         "isAutoOptimizationEnabled": true,
         "autoOptimizationFrequency": "P28D",
@@ -62,17 +62,17 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "81ae761a-a12f-4411-aea0-6834aeb6f32a",
+        "apim-request-id": "f1bab313-8341-496b-96a2-a345c3e154ca",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "417",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 18:02:04 GMT",
+        "Date": "Tue, 11 Oct 2022 20:23:40 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "188"
+        "x-envoy-upstream-service-time": "163"
       },
       "ResponseBody": {
         "rewardWaitTime": "PT4H",
@@ -81,7 +81,7 @@
         "explorationPercentage": 0.3,
         "modelExportFrequency": "PT3M",
         "logRetentionDays": -1,
-        "lastConfigurationEditDate": "2022-10-07T23:24:56",
+        "lastConfigurationEditDate": "2022-10-10T23:08:48",
         "learningMode": "Online",
         "isAutoOptimizationEnabled": true,
         "autoOptimizationFrequency": "P28D",
