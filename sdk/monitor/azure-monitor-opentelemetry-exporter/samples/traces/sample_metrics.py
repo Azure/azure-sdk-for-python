@@ -49,9 +49,8 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 
 @app.route("/")
 def test():
-    for i in range(10):
-        success_response = requests.get("https://httpstat.us/200", timeout=5)
-        failure_response = requests.get("https://httpstat.us/404", timeout=5)
+    success_response = requests.get("https://httpstat.us/200", timeout=5)
+    failure_response = requests.get("https://httpstat.us/404", timeout=5)
     return "Test flask request"
 
 if __name__ == "__main__":

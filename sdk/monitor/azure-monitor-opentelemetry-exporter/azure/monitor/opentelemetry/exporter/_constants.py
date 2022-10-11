@@ -101,6 +101,18 @@ _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(
 
 # Standard metrics
 
+# List of metric instrument names that are autocollected from instrumentations
+# TODO: switch to semconv constants
+_AUTOCOLLECTED_INSTRUMENT_NAMES = (
+    "http.server.duration",
+    "http.server.request.size",
+    "http.server.response.size",
+    "http.server.active_requests",
+    "http.client.duration",
+    "http.client.request.size",
+    "http.client.response.size",
+)
+
 # Temporary solution for checking which instrumentations support metric collection
 _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry.instrumentation.django",
