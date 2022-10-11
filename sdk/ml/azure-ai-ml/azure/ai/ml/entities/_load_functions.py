@@ -89,7 +89,7 @@ def load_common(
         return _load_common_raising_marshmallow_error(cls, yaml_dict, relative_origin, params_override, **kwargs)
     except ValidationError as e:
         if issubclass(cls, SchemaValidatableMixin):
-            validation_result = _ValidationResultBuilder.from_validation_error(e, relative_origin, )
+            validation_result = _ValidationResultBuilder.from_validation_error(e, source_path=relative_origin)
             validation_result.try_raise(
                 # pylint: disable=protected-access
                 error_target=cls._get_validation_error_target(),

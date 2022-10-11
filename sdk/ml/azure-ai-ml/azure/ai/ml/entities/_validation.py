@@ -483,7 +483,13 @@ class _ValidationResultBuilder:
         return obj
 
     @classmethod
-    def from_validation_error(cls, error: ValidationError, source_path: str = None, error_on_unknown_field=False):
+    def from_validation_error(
+        cls,
+        error: ValidationError,
+        *,
+        source_path: str = None,
+        error_on_unknown_field=False
+    ):
         """Create a validation result from a ValidationError, which will be
         raised in marshmallow.Schema.load. Please use this function only for
         exception in loading file.
@@ -507,6 +513,7 @@ class _ValidationResultBuilder:
         cls,
         errors: typing.Dict,
         data: typing.Dict,
+        *,
         error_on_unknown_field: bool = False
     ):
         """Create a validation result from error messages, which will be

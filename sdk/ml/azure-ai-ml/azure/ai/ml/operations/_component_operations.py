@@ -489,7 +489,7 @@ class ComponentOperations(_ScopeDependentOperations):
         def preprocess_job(node):
             """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
             # compute binding to pipeline input is supported on node.
-            supported_fields = ["compute"]
+            supported_fields = ["compute", "compute_name"]
             for field_name in supported_fields:
                 val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
                 if isinstance(val, PipelineInput):
