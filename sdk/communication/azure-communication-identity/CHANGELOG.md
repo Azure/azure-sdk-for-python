@@ -1,14 +1,12 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support to customize the Communication Identity access token's validity period:
+    - `create_user_and_token` and `get_token` methods in both sync and async clients can now accept keyword argument `token_expires_in: ~datetime.timedelta` that provides the ability to create a Communication Identity access token with custom expiration.
+- Added a new API version `ApiVersion.V2022_10_01` that is now the default API version.
 
 ## 1.2.0 (2022-08-24)
 
