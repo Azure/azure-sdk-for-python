@@ -1,5 +1,15 @@
 # Release History
 
+## 5.8.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 5.8.0b2 (2022-10-11)
 
 ### Features Added
@@ -91,16 +101,16 @@ This version and all future versions will require Python 3.7+. Python 3.6 is no 
 
 - Improved the performance of async sending and receiving.
 
+## 5.9.0b1 (2022-02-09)
+
+- The following features have been temporarily pulled out of async `EventHubProducerClient` and `EventHubConsumerClient` which will be added back in future previews as we work towards a stable release:
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
 ## 5.8.0a2 (2022-02-09)
 
 ### Features Added
 
 - Added support for async `EventHubProducerClient` and `EventHubConsumerClient`.
-
-## 5.9.0b1 (2022-02-09)
-
-- The following features have been temporarily pulled out of async `EventHubProducerClient` and `EventHubConsumerClient` which will be added back in future previews as we work towards a stable release:
-  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
 
 ## 5.8.0a1 (2022-01-13)
 
