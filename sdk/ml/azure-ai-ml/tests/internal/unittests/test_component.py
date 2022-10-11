@@ -319,7 +319,7 @@ class TestComponent:
             "./tests/test_configs/internal/component_with_additional_includes/helloworld_additional_includes.yml"
         )
         component: InternalComponent = load_component(source=yaml_path)
-        assert component._validate().passed, component._validate()._to_dict()
+        assert component._validate().passed, repr(component._validate())
         # resolve
         with component._resolve_local_code() as code_path:
             assert code_path.is_dir()
@@ -340,7 +340,7 @@ class TestComponent:
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
         yaml_path = os.path.join("./tests/test_configs/internal/component_with_additional_includes/", yaml_path)
         component: InternalComponent = load_component(source=yaml_path)
-        assert component._validate().passed, component._validate()._to_dict()
+        assert component._validate().passed, repr(component._validate())
         # resolve
         with component._resolve_local_code() as code_path:
             assert code_path.is_dir()
@@ -354,6 +354,12 @@ class TestComponent:
                 yaml_dict = load_yaml(yaml_path)
                 specified_code_path = Path(yaml_path).parent / yaml_dict.get("code", "./")
                 assert code_path.resolve() == specified_code_path.resolve()
+
+    def test_docker_file_in_additional_includes(self):
+        yaml_path = "./tests/test_configs/internal/component_with_docker_file_" \
+                    "in_additional_includes/helloworld_additional_includes.yml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
