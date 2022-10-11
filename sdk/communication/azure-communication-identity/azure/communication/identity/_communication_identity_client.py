@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any, List, Union, Tuple
+from typing import TYPE_CHECKING, Any, Tuple
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
