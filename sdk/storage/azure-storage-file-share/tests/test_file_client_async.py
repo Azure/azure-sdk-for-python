@@ -4,24 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-import unittest
 import platform
-import asyncio
 
 import pytest
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.fileshare import VERSION
-from azure.storage.fileshare.aio import (
-    ShareServiceClient,
-    ShareClient,
-    ShareDirectoryClient,
-    ShareFileClient)
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.testcase import generate_sas_token
+from azure.storage.fileshare.aio import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient
 
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from devtools_testutils.storage.testcase import generate_sas_token
 from settings.testcase import FileSharePreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase, AsyncStorageRecordedTestCase
+
 
 # ------------------------------------------------------------------------------
 SERVICES = {

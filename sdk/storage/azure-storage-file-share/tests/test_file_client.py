@@ -4,22 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-import unittest
 import platform
-import pytest
 
+import pytest
 from azure.core.exceptions import AzureError
-from azure.storage.fileshare import (
-    VERSION,
-    ShareServiceClient,
-    ShareClient,
-    ShareDirectoryClient,
-    ShareFileClient)
+from azure.storage.fileshare import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient, VERSION
+
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from devtools_testutils.storage.testcase import generate_sas_token
 from settings.testcase import FileSharePreparer
-#from azure.storage.common import TokenCredential
+
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -32,6 +27,7 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
+
 
 class TestStorageFileClient(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
