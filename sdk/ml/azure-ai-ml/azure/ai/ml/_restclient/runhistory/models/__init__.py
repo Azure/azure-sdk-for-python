@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AddOrModifyRunServiceInstancesRequest
     from ._models_py3 import Artifact
     from ._models_py3 import ArtifactContentInformation
     from ._models_py3 import ArtifactDataPath
@@ -80,8 +81,11 @@ try:
     from ._models_py3 import RunDetailsWarning
     from ._models_py3 import RunMetric
     from ._models_py3 import RunOptions
+    from ._models_py3 import RunServiceInstances
     from ._models_py3 import RunStatusSpans
     from ._models_py3 import RunTypeV2
+    from ._models_py3 import ServiceInstance
+    from ._models_py3 import ServiceInstanceResult
     from ._models_py3 import SpanContext
     from ._models_py3 import SpanDefinition1
     from ._models_py3 import SqlDataPath
@@ -89,6 +93,7 @@ try:
     from ._models_py3 import TypedAssetReference
     from ._models_py3 import User
 except (SyntaxError, ImportError):
+    from ._models import AddOrModifyRunServiceInstancesRequest  # type: ignore
     from ._models import Artifact  # type: ignore
     from ._models import ArtifactContentInformation  # type: ignore
     from ._models import ArtifactDataPath  # type: ignore
@@ -162,8 +167,11 @@ except (SyntaxError, ImportError):
     from ._models import RunDetailsWarning  # type: ignore
     from ._models import RunMetric  # type: ignore
     from ._models import RunOptions  # type: ignore
+    from ._models import RunServiceInstances  # type: ignore
     from ._models import RunStatusSpans  # type: ignore
     from ._models import RunTypeV2  # type: ignore
+    from ._models import ServiceInstance  # type: ignore
+    from ._models import ServiceInstanceResult  # type: ignore
     from ._models import SpanContext  # type: ignore
     from ._models import SpanDefinition1  # type: ignore
     from ._models import SqlDataPath  # type: ignore
@@ -183,6 +191,7 @@ from ._azure_machine_learning_workspaces_enums import (
 )
 
 __all__ = [
+    'AddOrModifyRunServiceInstancesRequest',
     'Artifact',
     'ArtifactContentInformation',
     'ArtifactDataPath',
@@ -256,8 +265,11 @@ __all__ = [
     'RunDetailsWarning',
     'RunMetric',
     'RunOptions',
+    'RunServiceInstances',
     'RunStatusSpans',
     'RunTypeV2',
+    'ServiceInstance',
+    'ServiceInstanceResult',
     'SpanContext',
     'SpanDefinition1',
     'SqlDataPath',

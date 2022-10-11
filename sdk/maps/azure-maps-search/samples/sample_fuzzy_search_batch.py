@@ -21,7 +21,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def fuzzy_search_batch():
-    # [START fuzzy_search_batch]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -37,7 +36,6 @@ def fuzzy_search_batch():
     print(result.summary)
     for item in result.items:
         print(item.response.results[0].address)
-    # [END fuzzy_search_batch]
 
 if __name__ == '__main__':
     fuzzy_search_batch()

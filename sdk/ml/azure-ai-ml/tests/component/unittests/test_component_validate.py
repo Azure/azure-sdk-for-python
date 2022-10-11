@@ -6,9 +6,9 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import MLClient, load_component
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.entities import CommandComponent, Environment
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -34,14 +34,14 @@ class TestComponentValidate:
         for invalid_name in invalid_component_names:
             params_override = [{"name": invalid_name}]
             with pytest.raises(ValidationError) as e:
-                load_component(path=test_path, params_override=params_override)
+                load_component(test_path, params_override=params_override)
             err_msg = "Component name should only contain lower letter, number, underscore"
             assert err_msg in str(e.value)
 
         valid_component_names = ["n", "name", "n_a_m_e", "name_1"]
         for valid_name in valid_component_names:
             params_override = [{"name": valid_name}]
-            load_component(path=test_path, params_override=params_override)
+            load_component(test_path, params_override=params_override)
 
     def test_component_input_name_validate(self):
         yaml_files = [
@@ -52,8 +52,9 @@ class TestComponentValidate:
             str(components_dir / "invalid/helloworld_component_with_start_number_input_names.yml"),
         ]
         for yaml_file in yaml_files:
+            component = load_component(yaml_file)
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(path=yaml_file)
+                component()
 
     def test_component_output_name_validate(self):
         yaml_files = [
@@ -64,8 +65,9 @@ class TestComponentValidate:
             str(components_dir / "invalid/helloworld_component_with_start_number_output_names.yml"),
         ]
         for yaml_file in yaml_files:
+            component = load_component(yaml_file)
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(path=yaml_file)
+                component()
 
     @pytest.mark.parametrize(
         "expected_location,asset_object",
@@ -86,21 +88,21 @@ class TestComponentValidate:
         asset_object: Union[Code, Environment],
     ) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
-        component = load_component(path=component_path)
+        component = load_component(component_path)
         assert component._validate().passed is True, json.dumps(component._to_dict(), indent=2)
 
         def _check_validation_result(new_asset, should_fail=False) -> None:
             setattr(component, expected_location, new_asset)
             validation_result = component._validate()
             if should_fail:
-                assert validation_result.passed is False and expected_location in validation_result.messages, (
+                assert validation_result.passed is False and expected_location in validation_result.error_messages, (
                     f"field {expected_location} with value {str(new_asset)} should be invalid, "
-                    f"but validation message is {json.dumps(validation_result._to_dict(), indent=2)}"
+                    f"but validation message is {repr(validation_result)}"
                 )
             else:
                 assert validation_result.passed, (
                     f"field {expected_location} with value {str(new_asset)} should be valid, "
-                    f"but met unexpected error: {json.dumps(validation_result._to_dict(), indent=2)}"
+                    f"but met unexpected error: {repr(validation_result)}"
                 )
 
         # object
@@ -123,7 +125,7 @@ class TestComponentValidate:
     def test_component_validate_multiple_invalid_fields(self, mock_machinelearning_client: MLClient) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
         location_str = str(Path(component_path).resolve().absolute())
-        component: CommandComponent = load_component(path=component_path)
+        component: CommandComponent = load_component(component_path)
         component.name = None
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
         validation_result = mock_machinelearning_client.components.validate(component)
@@ -141,7 +143,7 @@ class TestComponentValidate:
                     "message": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
                     "path": "command",
                     "value": "echo Hello World & echo "
-                    "[${{inputs.component_in_number}}] & echo "
+                    "$[[${{inputs.component_in_number}}]] & echo "
                     "${{inputs.component_in_path}} & echo "
                     "${{outputs.component_out_path}} > "
                     "${{outputs.component_out_path}}/component_in_number & "

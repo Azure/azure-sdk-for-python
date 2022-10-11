@@ -28,6 +28,7 @@ class ParallelSchema(CommandSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.PARALLEL], casing_transform=lambda x: x)
     max_concurrency_per_instance = fields.Int()
     error_threshold = fields.Int()
+    mini_batch_size = fields.Int()
     logging_level = StringTransformedEnum(
         allowed_values=["INFO", "WARNING", "DEBUG"], casing_transform=lambda x: x.upper()
     )

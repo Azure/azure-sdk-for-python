@@ -33,7 +33,7 @@ async def publish():
             attributes={
                 "type": "cloudevent",
                 "source": "/cncf/cloud/event/1.0",
-                "subject": "testingcncfevent"
+                "subject": "testing-cncf-event"
             },
             data=b'This is a cncf cloud event.',
         )

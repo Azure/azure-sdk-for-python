@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-2565fa430ea/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-2565fa430ea/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -201,7 +201,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-2565fa430ea/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-2565fa430ea/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -243,7 +243,7 @@
             "verify",
             "sign"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-2565fa430ea/95608ae5781d4723990516889a3280ab",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-2565fa430ea/95608ae5781d4723990516889a3280ab",
           "kty": "EC-HSM",
           "x": "mlmjt8q8YxJRMXrT3EjZxt3a6lPESqB_WNE-YuJnUm4",
           "y": "TQKcnRslkGBlQo8D6uXwBxsRijqx8oSdxx_a5k_5Mrg"
@@ -425,7 +425,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-2565fa430ea/95608ae5781d4723990516889a3280ab/sign?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-2565fa430ea/95608ae5781d4723990516889a3280ab/sign?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -454,12 +454,12 @@
       },
       "ResponseBody": {
         "alg": "ES256",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-2565fa430ea/95608ae5781d4723990516889a3280ab",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-2565fa430ea/95608ae5781d4723990516889a3280ab",
         "value": "wkJznnr83S-DNViLOigbF3IGLAp24ESTKr26080wHc7rR6Z0LfydiTyofCACThjJJyas6ZqWzfVW6bdZ6xcbuw"
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -501,7 +501,7 @@
             "verify",
             "sign"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/236afd7dc57f062fab34fe1c30a86b00",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/236afd7dc57f062fab34fe1c30a86b00",
           "kty": "EC-HSM",
           "x": "kJaP_19mp5mf3zgd7WbUGX3C3aDD0UtHyrXyK-Shwns",
           "y": "5NXnF5D-18e-Ot2Nvl55idUJ3TSBa8f9P4rRp9Wk7vI"
@@ -683,7 +683,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/236afd7dc57f062fab34fe1c30a86b00/sign?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/236afd7dc57f062fab34fe1c30a86b00/sign?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -712,12 +712,12 @@
       },
       "ResponseBody": {
         "alg": "ES256K",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/236afd7dc57f062fab34fe1c30a86b00",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-256K5fa430ea/236afd7dc57f062fab34fe1c30a86b00",
         "value": "dsnErSOeJ3co2Zs4T1sHeBCSs6vUt5hXFIYtvd1QiFzAFu2gLayJB_ggmjG6-G0Zi-zzyknd0unk-c5E94rU5A"
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-3845fa430ea/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-3845fa430ea/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -759,7 +759,7 @@
             "verify",
             "sign"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-3845fa430ea/4e3e3d5d7e74075b10173a4c3515b35a",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-3845fa430ea/4e3e3d5d7e74075b10173a4c3515b35a",
           "kty": "EC-HSM",
           "x": "OlZaych087ZCvWQxvBAUjTo-BOCxqm3j-tfSSxXuMxkt59VbLkNh0eXcu9j_10KG",
           "y": "dQbCaNWQVBncQhp0p4mIgAjwYyk0xCkHiecwnSv0xeZDBbz3HK_u1EvhoSgYz-CV"
@@ -941,7 +941,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-3845fa430ea/4e3e3d5d7e74075b10173a4c3515b35a/sign?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-3845fa430ea/4e3e3d5d7e74075b10173a4c3515b35a/sign?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -970,12 +970,12 @@
       },
       "ResponseBody": {
         "alg": "ES384",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-3845fa430ea/4e3e3d5d7e74075b10173a4c3515b35a",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-3845fa430ea/4e3e3d5d7e74075b10173a4c3515b35a",
         "value": "t0cBXkWPqa7x9FVPcmUlYVGE2YvzRlZzRTp2JRXV2WiFJMlW86yEqDOT5QqETlk45lHwsXoNAInznhjQBXkXmiVF-UUI0yJuMhag4qfvFDbaOG09qjPxOfqQkMTVQawl"
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-5215fa430ea/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-5215fa430ea/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1017,7 +1017,7 @@
             "verify",
             "sign"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-5215fa430ea/3e9a22098b0a4b052b419ba2dda17d0f",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-5215fa430ea/3e9a22098b0a4b052b419ba2dda17d0f",
           "kty": "EC-HSM",
           "x": "AM9fCO-W_lD96zy5ZCrHxvdp1RAcur-ZgblzTdxRH-um_JKclrNn6GV32iJM5fmvqzMLIIKnkRLYyWPEBZ9DEYsz",
           "y": "AMwECO5C_b7BNbFKnca7WfLCV6PjhfPGlbxwY-rOblpWYufZSJXsee0kW0G1ItmPlEpl3rUP7QoY1EiCxG914A9M"
@@ -1199,7 +1199,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-5215fa430ea/3e9a22098b0a4b052b419ba2dda17d0f/sign?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-5215fa430ea/3e9a22098b0a4b052b419ba2dda17d0f/sign?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1228,7 +1228,7 @@
       },
       "ResponseBody": {
         "alg": "ES512",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestec-verify-P-5215fa430ea/3e9a22098b0a4b052b419ba2dda17d0f",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestec-verify-P-5215fa430ea/3e9a22098b0a4b052b419ba2dda17d0f",
         "value": "ALLvC70uXjF1OMBR6cHKMa3-mIKhOX9_Dh9R8NudPPLMlNrgiJC-27jSWyGQBhMcVG7zDCwy8Nt78IcwkE59ir9aAVBl85VqZENgu-a7VaT9pjj87u34R93L-E8IOXN9NfcHpGepo_t2TmhYnUBx8bTKchpS_9AOpprwHZCemeeyOOvO"
       }
     }

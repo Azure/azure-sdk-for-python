@@ -10,7 +10,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
 class AmlComputeNodeInfo:
-    def __init__(self, **kwargs):
+    def __init__(self):
         """Compute node information related to a AmlCompute Variables are only
         populated by the server, and will be ignored when sending a request."""
 
