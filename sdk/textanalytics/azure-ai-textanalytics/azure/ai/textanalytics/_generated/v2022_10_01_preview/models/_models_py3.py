@@ -724,7 +724,7 @@ class PreBuiltTaskParameters(TaskParameters):
 class AbstractiveSummarizationTaskParametersBase(_serialization.Model):
     """Supported parameters for an Abstractive Summarization task.
 
-    :ivar sentence_count:
+    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
     :vartype sentence_count: int
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -752,7 +752,8 @@ class AbstractiveSummarizationTaskParametersBase(_serialization.Model):
         **kwargs
     ):
         """
-        :keyword sentence_count:
+        :keyword sentence_count: It controls the approximate number of sentences in the output
+         summaries.
         :paramtype sentence_count: int
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -777,7 +778,7 @@ class AbstractiveSummarizationTaskParameters(AbstractiveSummarizationTaskParamet
     :vartype logging_opt_out: bool
     :ivar model_version:
     :vartype model_version: str
-    :ivar sentence_count:
+    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
     :vartype sentence_count: int
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -813,7 +814,8 @@ class AbstractiveSummarizationTaskParameters(AbstractiveSummarizationTaskParamet
         :paramtype logging_opt_out: bool
         :keyword model_version:
         :paramtype model_version: str
-        :keyword sentence_count:
+        :keyword sentence_count: It controls the approximate number of sentences in the output
+         summaries.
         :paramtype sentence_count: int
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -4973,7 +4975,7 @@ class HealthcareEntity(_serialization.Model):
      "Gender", "ExaminationName", "Date", "Direction", "Frequency", "MeasurementValue",
      "MeasurementUnit", "RelationalOperator", "Time", "GeneOrProtein", "Variant",
      "AdministrativeEvent", "CareEnvironment", "HealthcareProfession", "Diagnosis", "SymptomOrSign",
-     "ConditionalQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
+     "ConditionQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
      "MedicationRoute", "FamilyRelation", and "TreatmentName".
     :vartype category: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntityCategory
@@ -5037,7 +5039,7 @@ class HealthcareEntity(_serialization.Model):
          "Age", "Gender", "ExaminationName", "Date", "Direction", "Frequency", "MeasurementValue",
          "MeasurementUnit", "RelationalOperator", "Time", "GeneOrProtein", "Variant",
          "AdministrativeEvent", "CareEnvironment", "HealthcareProfession", "Diagnosis", "SymptomOrSign",
-         "ConditionalQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
+         "ConditionQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
          "MedicationRoute", "FamilyRelation", and "TreatmentName".
         :paramtype category: str or
          ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntityCategory

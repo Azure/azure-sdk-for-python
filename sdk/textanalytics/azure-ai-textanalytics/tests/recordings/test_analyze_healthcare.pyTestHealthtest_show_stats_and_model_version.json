@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "393",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -54,41 +54,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "e4cbd6cb-c27e-4f9a-bbba-c3d14fe89a17",
+        "apim-request-id": "bb75e19d-fb12-46e4-a7f2-08899acecaa5",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 23:38:44 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/028680bc-2400-4ba6-b651-1e2c9b1774d1?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 20:51:27 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4c691bce-17ea-4b3e-9019-d62428a31cf9?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "371"
+        "x-envoy-upstream-service-time": "811"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/028680bc-2400-4ba6-b651-1e2c9b1774d1?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4c691bce-17ea-4b3e-9019-d62428a31cf9?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f1889bd8-e1a4-455d-8348-98bc71f0f8c1",
-        "Content-Length": "1184",
+        "apim-request-id": "c25025e8-3e48-4dd9-8a77-653eb6bbf845",
+        "Content-Length": "1183",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 23:38:48 GMT",
+        "Date": "Mon, 10 Oct 2022 20:51:32 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "86"
+        "x-envoy-upstream-service-time": "99"
       },
       "ResponseBody": {
-        "jobId": "028680bc-2400-4ba6-b651-1e2c9b1774d1",
-        "lastUpdatedDateTime": "2022-06-09T23:38:45Z",
-        "createdDateTime": "2022-06-09T23:38:44Z",
-        "expirationDateTime": "2022-06-10T23:38:44Z",
+        "jobId": "4c691bce-17ea-4b3e-9019-d62428a31cf9",
+        "lastUpdateDateTime": "2022-10-10T20:51:30Z",
+        "createdDateTime": "2022-10-10T20:51:26Z",
+        "expirationDateTime": "2022-10-11T20:51:26Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -100,7 +100,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T23:38:45.3494015Z",
+              "lastUpdateDateTime": "2022-10-10T20:51:30.4441583Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

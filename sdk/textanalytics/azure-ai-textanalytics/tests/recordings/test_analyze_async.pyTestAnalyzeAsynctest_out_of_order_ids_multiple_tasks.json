@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "706",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -73,108 +73,40 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "fb020bdb-4731-4e09-803b-bc868028fb7f",
+        "apim-request-id": "e1921654-7299-421a-ab8f-bd44c3e41008",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:41:28 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a0957e79-b001-493d-916e-e032ff215312?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 20:47:02 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f6296dba-d99b-4a69-b5df-517abd2e32ac?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "624"
+        "x-envoy-upstream-service-time": "333"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a0957e79-b001-493d-916e-e032ff215312?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f6296dba-d99b-4a69-b5df-517abd2e32ac?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ce43fba6-4213-482d-87c5-f21ebc0d2ea6",
-        "Content-Length": "626",
+        "apim-request-id": "e475c69f-cf24-4f49-b19f-6f5b320bfad3",
+        "Content-Length": "2994",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:41:33 GMT",
+        "Date": "Mon, 10 Oct 2022 20:47:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "65"
+        "x-envoy-upstream-service-time": "365"
       },
       "ResponseBody": {
-        "jobId": "a0957e79-b001-493d-916e-e032ff215312",
-        "lastUpdatedDateTime": "2022-06-09T17:41:33Z",
-        "createdDateTime": "2022-06-09T17:41:28Z",
-        "expirationDateTime": "2022-06-10T17:41:28Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 1,
-          "failed": 0,
-          "inProgress": 4,
-          "total": 5,
-          "items": [
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:41:33.2166426Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "56",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a0957e79-b001-493d-916e-e032ff215312?api-version=2022-05-01",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "21475e0d-16ab-46ae-931b-8dbdfb9ce33a",
-        "Content-Length": "2986",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:41:39 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "251"
-      },
-      "ResponseBody": {
-        "jobId": "a0957e79-b001-493d-916e-e032ff215312",
-        "lastUpdatedDateTime": "2022-06-09T17:41:38Z",
-        "createdDateTime": "2022-06-09T17:41:28Z",
-        "expirationDateTime": "2022-06-10T17:41:28Z",
+        "jobId": "f6296dba-d99b-4a69-b5df-517abd2e32ac",
+        "lastUpdateDateTime": "2022-10-10T20:47:06Z",
+        "createdDateTime": "2022-10-10T20:47:02Z",
+        "expirationDateTime": "2022-10-11T20:47:02Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -186,7 +118,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:41:36.445573Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:06.8746208Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -218,7 +150,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:41:36.9599861Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:06.3948819Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -244,13 +176,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:41:38.0749396Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:06.9069553Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -286,7 +218,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:41:33.2166426Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:06.2252957Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -318,7 +250,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-06-09T17:41:36.6770287Z",
+              "lastUpdateDateTime": "2022-10-10T20:47:06.1312271Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -349,17 +281,17 @@
                     "id": "0",
                     "sentiment": "negative",
                     "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 0.02,
-                      "negative": 0.98
+                      "positive": 0.09,
+                      "neutral": 0.25,
+                      "negative": 0.65
                     },
                     "sentences": [
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 0.02,
-                          "negative": 0.98
+                          "positive": 0.09,
+                          "neutral": 0.25,
+                          "negative": 0.65
                         },
                         "offset": 0,
                         "length": 2,
@@ -370,19 +302,19 @@
                   },
                   {
                     "id": "19",
-                    "sentiment": "neutral",
+                    "sentiment": "positive",
                     "confidenceScores": {
-                      "positive": 0.3,
-                      "neutral": 0.67,
-                      "negative": 0.03
+                      "positive": 0.64,
+                      "neutral": 0.35,
+                      "negative": 0.01
                     },
                     "sentences": [
                       {
-                        "sentiment": "neutral",
+                        "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 0.3,
-                          "neutral": 0.67,
-                          "negative": 0.03
+                          "positive": 0.64,
+                          "neutral": 0.35,
+                          "negative": 0.01
                         },
                         "offset": 0,
                         "length": 2,
@@ -395,16 +327,16 @@
                     "id": "1",
                     "sentiment": "positive",
                     "confidenceScores": {
-                      "positive": 0.89,
-                      "neutral": 0.1,
+                      "positive": 0.93,
+                      "neutral": 0.06,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "positive",
                         "confidenceScores": {
-                          "positive": 0.89,
-                          "neutral": 0.1,
+                          "positive": 0.93,
+                          "neutral": 0.06,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -416,7 +348,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]

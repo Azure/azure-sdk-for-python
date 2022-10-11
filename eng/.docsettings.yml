@@ -149,6 +149,7 @@ known_content_issues:
   - ['sdk/textanalytics/azure-ai-textanalytics/swagger/README.md', '#4554']
   - ['sdk/appconfiguration/azure-appconfiguration/swagger/README.md', '#4554']
   - ['sdk/core/azure-core/tests/testserver_tests/coretestserver/README.md', '#4554']
+  - ['sdk/core/azure-core-experimental/README.md', '#4554']
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
   - 'azure-template'

@@ -108,7 +108,7 @@ class EventGridSerializationTests(AzureMgmtTestCase):
                     data_version="2.0"
                     )
 
-    def test_import_from_sytem_events(self):
+    def test_import_from_system_events(self):
         var = SystemEventNames.AcsChatMemberAddedToThreadWithUserEventName 
         assert var == "Microsoft.Communication.ChatMemberAddedToThreadWithUser"
         assert SystemEventNames.KeyVaultKeyNearExpiryEventName == "Microsoft.KeyVault.KeyNearExpiry"

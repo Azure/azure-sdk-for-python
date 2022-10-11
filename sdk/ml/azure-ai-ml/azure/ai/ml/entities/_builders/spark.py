@@ -11,16 +11,13 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, IdentityConfiguration
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as JobBaseData
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as JobBaseData
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobEntry as RestSparkJobEntry
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
@@ -36,21 +33,25 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_inputs_to_dataset_literal,
     validate_inputs_for_args,
 )
-from azure.ai.ml.entities._job.identity import Identity
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    UserIdentityConfiguration,
+    ManagedIdentityConfiguration,
+    _BaseJobIdentityConfiguration
+)
 from azure.ai.ml.entities._job.spark_job import SparkJob
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
+from .._job.pipeline._io import NodeOutput
 from .._job.spark_helpers import (
     _validate_compute_or_resources,
     _validate_input_output_mode,
     _validate_spark_configurations,
 )
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
-from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
+from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -58,6 +59,9 @@ module_logger = logging.getLogger(__name__)
 
 class Spark(BaseNode, SparkJobEntryMixin):
     """Base class for spark node, used for spark component version consumption.
+
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: spark.
 
     :param component: Id or instance of the spark component/job to be run for the step
     :type component: SparkComponent
@@ -72,7 +76,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
     :param archives: List of archives to be extracted into the working directory of each executor.
     :type archives: Optional[typing.List[str]]
     :param identity: Identity that spark job will use while running on compute.
-    :type identity: Union[Dict, ManagedIdentity, AmlToken, UserIdentity]
+    :type identity: Union[
+        Dict,
+        ManagedIdentityConfiguration,
+        AmlTokenConfiguration,
+        UserIdentityConfiguration]
     :param driver_cores: Number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
     :param driver_memory: Amount of memory to use for the driver process.
@@ -109,7 +117,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
         self,
         *,
         component: Union[str, SparkComponent],
-        identity: Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            Dict[str, str],
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
         driver_cores: int = None,
         driver_memory: str = None,
         executor_cores: int = None,
@@ -122,8 +134,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
-                PipelineOutputBase,
+                NodeOutput,
                 Input,
                 str,
                 bool,
@@ -198,26 +209,10 @@ class Spark(BaseNode, SparkJobEntryMixin):
         self.args = component.args if is_spark_component else args
         self.environment = component.environment if is_spark_component else None
 
-        self.identity = identity
         self.resources = resources
+        self.identity = identity
         self._swept = False
         self._init = False
-
-    @classmethod
-    def _get_supported_inputs_types(cls):
-        # when spark node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
-        return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
-            SweepDistribution,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
-        )
 
     @classmethod
     def _get_supported_outputs_types(cls):
@@ -242,13 +237,24 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentity, AmlToken, UserIdentity]]:
+    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """Identity that spark job will use while running on compute."""
-
+        # If there is no identity from CLI/SDK input: for jobs running on synapse compute (MLCompute Clusters), the
+        # managed identity is the default; for jobs running on clusterless, the user identity should be the default,
+        # otherwise use user input identity.
+        if self._identity is None:
+            if self.compute is not None:
+                return ManagedIdentityConfiguration()
+            if self.resources is not None:
+                return UserIdentityConfiguration()
         return self._identity
 
     @identity.setter
-    def identity(self, value: Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity, None]):
+    def identity(self, value: Union[
+                                Dict[str, str],
+                                ManagedIdentityConfiguration,
+                                AmlTokenConfiguration,
+                                UserIdentityConfiguration, None]):
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
@@ -287,7 +293,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         if "identity" in obj and obj["identity"]:
             identity = IdentityConfiguration.from_dict(obj["identity"])
-            obj["identity"] = Identity._from_rest_object(identity)
+            obj["identity"] = _BaseJobIdentityConfiguration._from_rest_object(identity)
 
         if "entry" in obj and obj["entry"]:
             entry = RestSparkJobEntry.from_dict(obj["entry"])
@@ -349,7 +355,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=Identity._from_rest_object(rest_spark_job.identity) if rest_spark_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_spark_job.identity) if rest_spark_job.identity else None,
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(
@@ -437,16 +444,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def _to_rest_object(self, **kwargs) -> dict:
         self._validate_fields()
         rest_obj = super()._to_rest_object(**kwargs)
-        entry = self.entry._to_rest_object() if self.entry else None
-        identity = self.identity._to_rest_object() if self.identity else None
-        resources = self.resources._to_rest_object() if self.resources else None
         rest_obj.update(
             convert_ordered_dict_to_dict(
                 dict(
                     componentId=self._get_component_id(),
-                    identity=get_rest_dict(identity),
-                    resources=get_rest_dict(resources),
-                    entry=get_rest_dict(entry),
+                    identity=get_rest_dict_for_node_attrs(self.identity),
+                    resources=get_rest_dict_for_node_attrs(self.resources),
+                    entry=get_rest_dict_for_node_attrs(self.entry),
                 )
             )
         )
@@ -509,6 +513,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         msg = "Spark can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
             target=ErrorTarget.SPARK_JOB,
         )
