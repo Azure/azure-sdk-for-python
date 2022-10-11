@@ -1,5 +1,15 @@
 # Release History
 
+## 7.9.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 7.9.0a1 (2022-10-11)
 
 Version 7.9.0a1 is our first efforts to build an Azure Service Bus client library based on a pure Python implemented AMQP stack.
