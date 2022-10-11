@@ -9,7 +9,7 @@ import time
 import uuid
 from datetime import datetime
 import warnings
-from typing import Optional, Any, cast, Mapping, Union, Dict, Iterable
+from typing import Optional, Any, cast, Mapping, Union, Dict, Iterable, List, Tuple
 
 from msrest.serialization import TZ_UTC
 from .._pyamqp.message import Message, Header, Properties
