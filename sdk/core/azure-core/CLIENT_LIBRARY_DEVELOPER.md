@@ -125,6 +125,8 @@ For example if you would like to alter connection pool you can initialise `Reque
  
  # When using custom session, we need to manage the session by ourself. When we are done with the session:
  session.close()
+ 
+ # Note: `session_owner` gives the information of ownership of the requests sessions to the transport instance, to authorize it to close on customer's behalf. If you're ok that the client closes your session on your behalf as necessary, you don't need to pass a value.
  ```
 
 For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
