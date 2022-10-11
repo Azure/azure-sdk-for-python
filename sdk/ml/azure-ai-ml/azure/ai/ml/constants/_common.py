@@ -102,7 +102,7 @@ EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
 EXPERIMENTAL_LINK_MESSAGE = (
     "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 )
-REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "For a more detailed breakdown of the {} schema, please see: {}."
+REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "Visit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
