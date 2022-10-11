@@ -100,7 +100,7 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
     @distributed_trace
     def create_user_and_token(
             self,
-            scopes, # type: List[Union[str, CommunicationTokenScope]]
+            scopes, # List[Union[str, CommunicationTokenScope]]
             **kwargs # type: Any
         ):
         # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
@@ -148,7 +148,7 @@ class CommunicationIdentityClient(object): # pylint: disable=client-accepts-api-
     def get_token(
             self,
             user, # type: CommunicationUserIdentifier
-            scopes, # type: List[Union[str, CommunicationTokenScope]]
+            scopes, # List[Union[str, CommunicationTokenScope]]
             **kwargs # type: Any
         ):
         # type: (...) -> AccessToken
