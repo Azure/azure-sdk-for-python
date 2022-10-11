@@ -28,7 +28,7 @@ exporter = AzureMonitorMetricExporter.from_connection_string(
     instrumentation_collection=True,
 )
 # Metrics are reported every 1 minute
-reader = PeriodicExportingMetricReader(exporter, export_interval_millis=10000)
+reader = PeriodicExportingMetricReader(exporter)
 metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
 
 # Enable instrumentation in the requests library.

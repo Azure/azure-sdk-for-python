@@ -3,7 +3,7 @@
 """
 This example shows how to customize the metrics that are output by the SDK using Views. Metrics created
 and recorded using the sdk are tracked and telemetry is exported to application insights with the
-AzureMonitorMetricsExporter.
+AzureMonitorMetricExporter.
 """
 import os
 
@@ -24,8 +24,8 @@ change_metric_name_view = View(
     instrument_name="my.counter",
     name="my.counter.total",
 )
-
-reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
+# Metrics are reported every 1 minute
+reader = PeriodicExportingMetricReader(exporter)
 provider = MeterProvider(
     metric_readers=[
         reader,
