@@ -207,6 +207,8 @@ class Environment(Asset):
             environment_version.inference_config = self.inference_config
         if self.description:
             environment_version.description = self.description
+        if self.is_ip_protected:
+            environment_version.is_ip_protected = self.is_ip_protected
 
         environment_version_resource = EnvironmentVersionData(properties=environment_version)
 
