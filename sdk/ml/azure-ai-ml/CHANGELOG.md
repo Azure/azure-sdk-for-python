@@ -24,6 +24,7 @@
 - Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
 ### Bugs Fixed
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
  - Switched Compute operations to use Oct preview API version.
