@@ -160,6 +160,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
             if redirect_location and redirect_settings['allow']:
                 retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
+                request.http_request.headers.pop("Authorization", None)
                 continue
             return response
 
