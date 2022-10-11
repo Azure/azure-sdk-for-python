@@ -243,7 +243,7 @@ class StressTestRunner(object):
 
             method_name = self.args.method
             logger = get_logger(self.args.log_filename, method_name,
-                                level=logging.INFO, print_console=self.args.print_console)
+                                level=logging.ERROR, print_console=self.args.print_console)
             test_method = globals()[method_name]
             self.running = True
 
@@ -344,7 +344,7 @@ class StressTestRunner(object):
 
             method_name = self.args.method
             logger = get_logger(self.args.log_filename, method_name,
-                                level=logging.INFO, print_console=self.args.print_console)
+                                level=logging.ERROR, print_console=self.args.print_console)
             test_method = globals()[method_name]
             self.running = True
 

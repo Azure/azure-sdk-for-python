@@ -91,7 +91,7 @@ parser.add_argument("--log_filename", help="log file name", type=str)
 
 args = parser.parse_args()
 starting_position = parse_starting_position(args)
-LOGGER = get_logger(args.log_filename, "stress_receive_async", level=logging.INFO, print_console=args.print_console)
+LOGGER = get_logger(args.log_filename, "stress_receive_async", level=logging.ERROR, print_console=args.print_console)
 LOG_PER_COUNT = args.output_interval
 
 start_time = time.perf_counter()

@@ -94,7 +94,7 @@ print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
 LOGGER = get_logger(
     args.log_filename,
     "stress_receive_sync",
-    level=logging.INFO,
+    level=logging.ERROR,
     print_console=print_console
 )
 LOG_PER_COUNT = args.output_interval
