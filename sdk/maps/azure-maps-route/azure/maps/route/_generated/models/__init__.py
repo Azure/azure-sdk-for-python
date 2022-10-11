@@ -6,217 +6,168 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import BatchItem
-    from ._models_py3 import BatchRequestBody
-    from ._models_py3 import BatchRequestBodyBatchItemsItem
-    from ._models_py3 import BatchResponse
-    from ._models_py3 import BatchResponseSummary
-    from ._models_py3 import CoordinatesPair
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import GeoJsonFeature
-    from ._models_py3 import GeoJsonFeatureCollection
-    from ._models_py3 import GeoJsonFeatureCollectionData
-    from ._models_py3 import GeoJsonFeatureData
-    from ._models_py3 import GeoJsonGeometry
-    from ._models_py3 import GeoJsonGeometryCollection
-    from ._models_py3 import GeoJsonGeometryCollectionData
-    from ._models_py3 import GeoJsonLineString
-    from ._models_py3 import GeoJsonLineStringData
-    from ._models_py3 import GeoJsonMultiLineString
-    from ._models_py3 import GeoJsonMultiLineStringData
-    from ._models_py3 import GeoJsonMultiPoint
-    from ._models_py3 import GeoJsonMultiPointData
-    from ._models_py3 import GeoJsonMultiPolygon
-    from ._models_py3 import GeoJsonMultiPolygonData
-    from ._models_py3 import GeoJsonObject
-    from ._models_py3 import GeoJsonPoint
-    from ._models_py3 import GeoJsonPointData
-    from ._models_py3 import GeoJsonPolygon
-    from ._models_py3 import GeoJsonPolygonData
-    from ._models_py3 import GetRouteRangeResponse
-    from ._models_py3 import PostRouteDirectionsRequestBody
-    from ._models_py3 import PostRouteMatrixRequestBody
-    from ._models_py3 import RouteDirectionsBatchItem
-    from ._models_py3 import RouteDirectionsBatchItemResponse
-    from ._models_py3 import RouteDirectionsBatchResponse
-    from ._models_py3 import RouteDirectionsResponse
-    from ._models_py3 import RouteDirectionsResult
-    from ._models_py3 import RouteDirectionsSummary
-    from ._models_py3 import RouteMatrixResponse
-    from ._models_py3 import RouteMatrixResult
-    from ._models_py3 import RouteMatrixResultResponse
-    from ._models_py3 import RouteMatrixSummary
-    from ._models_py3 import RouteOptimizedWaypoint
-    from ._models_py3 import RouteRange
-    from ._models_py3 import RouteResponseReport
-    from ._models_py3 import RouteResponseReportEffectiveSetting
-    from ._models_py3 import RouteResultGuidance
-    from ._models_py3 import RouteResultInstruction
-    from ._models_py3 import RouteResultInstructionGroup
-    from ._models_py3 import RouteResultLeg
-    from ._models_py3 import RouteResultLegSummary
-    from ._models_py3 import RouteResultSection
-    from ._models_py3 import RouteResultSectionTec
-    from ._models_py3 import RouteResultSectionTecCause
-except (SyntaxError, ImportError):
-    from ._models import BatchItem  # type: ignore
-    from ._models import BatchRequestBody  # type: ignore
-    from ._models import BatchRequestBodyBatchItemsItem  # type: ignore
-    from ._models import BatchResponse  # type: ignore
-    from ._models import BatchResponseSummary  # type: ignore
-    from ._models import CoordinatesPair  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import GeoJsonFeature  # type: ignore
-    from ._models import GeoJsonFeatureCollection  # type: ignore
-    from ._models import GeoJsonFeatureCollectionData  # type: ignore
-    from ._models import GeoJsonFeatureData  # type: ignore
-    from ._models import GeoJsonGeometry  # type: ignore
-    from ._models import GeoJsonGeometryCollection  # type: ignore
-    from ._models import GeoJsonGeometryCollectionData  # type: ignore
-    from ._models import GeoJsonLineString  # type: ignore
-    from ._models import GeoJsonLineStringData  # type: ignore
-    from ._models import GeoJsonMultiLineString  # type: ignore
-    from ._models import GeoJsonMultiLineStringData  # type: ignore
-    from ._models import GeoJsonMultiPoint  # type: ignore
-    from ._models import GeoJsonMultiPointData  # type: ignore
-    from ._models import GeoJsonMultiPolygon  # type: ignore
-    from ._models import GeoJsonMultiPolygonData  # type: ignore
-    from ._models import GeoJsonObject  # type: ignore
-    from ._models import GeoJsonPoint  # type: ignore
-    from ._models import GeoJsonPointData  # type: ignore
-    from ._models import GeoJsonPolygon  # type: ignore
-    from ._models import GeoJsonPolygonData  # type: ignore
-    from ._models import GetRouteRangeResponse  # type: ignore
-    from ._models import PostRouteDirectionsRequestBody  # type: ignore
-    from ._models import PostRouteMatrixRequestBody  # type: ignore
-    from ._models import RouteDirectionsBatchItem  # type: ignore
-    from ._models import RouteDirectionsBatchItemResponse  # type: ignore
-    from ._models import RouteDirectionsBatchResponse  # type: ignore
-    from ._models import RouteDirectionsResponse  # type: ignore
-    from ._models import RouteDirectionsResult  # type: ignore
-    from ._models import RouteDirectionsSummary  # type: ignore
-    from ._models import RouteMatrixResponse  # type: ignore
-    from ._models import RouteMatrixResult  # type: ignore
-    from ._models import RouteMatrixResultResponse  # type: ignore
-    from ._models import RouteMatrixSummary  # type: ignore
-    from ._models import RouteOptimizedWaypoint  # type: ignore
-    from ._models import RouteRange  # type: ignore
-    from ._models import RouteResponseReport  # type: ignore
-    from ._models import RouteResponseReportEffectiveSetting  # type: ignore
-    from ._models import RouteResultGuidance  # type: ignore
-    from ._models import RouteResultInstruction  # type: ignore
-    from ._models import RouteResultInstructionGroup  # type: ignore
-    from ._models import RouteResultLeg  # type: ignore
-    from ._models import RouteResultLegSummary  # type: ignore
-    from ._models import RouteResultSection  # type: ignore
-    from ._models import RouteResultSectionTec  # type: ignore
-    from ._models import RouteResultSectionTecCause  # type: ignore
+from ._models import BatchRequest
+from ._models import BatchRequestItem
+from ._models import BatchResult
+from ._models import BatchResultItem
+from ._models import BatchResultSummary
+from ._models import EffectiveSetting
+from ._models import ErrorAdditionalInfo
+from ._models import ErrorDetail
+from ._models import ErrorResponse
+from ._models import GeoJsonFeature
+from ._models import GeoJsonFeatureCollection
+from ._models import GeoJsonFeatureCollectionData
+from ._models import GeoJsonFeatureData
+from ._models import GeoJsonGeometry
+from ._models import GeoJsonGeometryCollection
+from ._models import GeoJsonGeometryCollectionData
+from ._models import GeoJsonLineString
+from ._models import GeoJsonLineStringData
+from ._models import GeoJsonMultiLineString
+from ._models import GeoJsonMultiLineStringData
+from ._models import GeoJsonMultiPoint
+from ._models import GeoJsonMultiPointData
+from ._models import GeoJsonMultiPolygon
+from ._models import GeoJsonMultiPolygonData
+from ._models import GeoJsonObject
+from ._models import GeoJsonPoint
+from ._models import GeoJsonPointData
+from ._models import GeoJsonPolygon
+from ._models import GeoJsonPolygonData
+from ._models import LatLongPair
+from ._models import Route
+from ._models import RouteDirectionParameters
+from ._models import RouteDirections
+from ._models import RouteDirectionsBatchItem
+from ._models import RouteDirectionsBatchItemResponse
+from ._models import RouteDirectionsBatchResult
+from ._models import RouteGuidance
+from ._models import RouteInstruction
+from ._models import RouteInstructionGroup
+from ._models import RouteLeg
+from ._models import RouteLegSummary
+from ._models import RouteMatrix
+from ._models import RouteMatrixQuery
+from ._models import RouteMatrixResult
+from ._models import RouteMatrixResultResponse
+from ._models import RouteMatrixSummary
+from ._models import RouteOptimizedWaypoint
+from ._models import RouteRange
+from ._models import RouteRangeResult
+from ._models import RouteReport
+from ._models import RouteSection
+from ._models import RouteSectionTec
+from ._models import RouteSectionTecCause
+from ._models import RouteSummary
 
-from ._route_client_enums import (
-    AlternativeRouteType,
-    ComputeTravelTimeFor,
-    DrivingSide,
-    GeoJsonObjectType,
-    GeographicResourceLocation,
-    Geography,
-    GuidanceInstructionType,
-    GuidanceManeuver,
-    HillinessDegree,
-    JunctionType,
-    MagnitudeOfDelay,
-    ResponseFormat,
-    RouteAvoidType,
-    RouteInstructionsType,
-    RouteRepresentation,
-    RouteType,
-    SectionType,
-    TextFormat,
-    TravelMode,
-    VehicleEngineType,
-    VehicleLoadType,
-    WindingnessLevel,
-)
+from ._enums import AlternativeRouteType
+from ._enums import ComputeTravelTime
+from ._enums import DelayMagnitude
+from ._enums import DrivingSide
+from ._enums import GeoJsonObjectType
+from ._enums import GuidanceInstructionType
+from ._enums import GuidanceManeuver
+from ._enums import InclineLevel
+from ._enums import JsonFormat
+from ._enums import JunctionType
+from ._enums import Report
+from ._enums import ResponseFormat
+from ._enums import ResponseSectionType
+from ._enums import ResponseTravelMode
+from ._enums import RouteAvoidType
+from ._enums import RouteInstructionsType
+from ._enums import RouteRepresentationForBestOrder
+from ._enums import RouteType
+from ._enums import SectionType
+from ._enums import SimpleCategory
+from ._enums import TravelMode
+from ._enums import VehicleEngineType
+from ._enums import VehicleLoadType
+from ._enums import WindingnessLevel
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'BatchItem',
-    'BatchRequestBody',
-    'BatchRequestBodyBatchItemsItem',
-    'BatchResponse',
-    'BatchResponseSummary',
-    'CoordinatesPair',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'GeoJsonFeature',
-    'GeoJsonFeatureCollection',
-    'GeoJsonFeatureCollectionData',
-    'GeoJsonFeatureData',
-    'GeoJsonGeometry',
-    'GeoJsonGeometryCollection',
-    'GeoJsonGeometryCollectionData',
-    'GeoJsonLineString',
-    'GeoJsonLineStringData',
-    'GeoJsonMultiLineString',
-    'GeoJsonMultiLineStringData',
-    'GeoJsonMultiPoint',
-    'GeoJsonMultiPointData',
-    'GeoJsonMultiPolygon',
-    'GeoJsonMultiPolygonData',
-    'GeoJsonObject',
-    'GeoJsonPoint',
-    'GeoJsonPointData',
-    'GeoJsonPolygon',
-    'GeoJsonPolygonData',
-    'GetRouteRangeResponse',
-    'PostRouteDirectionsRequestBody',
-    'PostRouteMatrixRequestBody',
-    'RouteDirectionsBatchItem',
-    'RouteDirectionsBatchItemResponse',
-    'RouteDirectionsBatchResponse',
-    'RouteDirectionsResponse',
-    'RouteDirectionsResult',
-    'RouteDirectionsSummary',
-    'RouteMatrixResponse',
-    'RouteMatrixResult',
-    'RouteMatrixResultResponse',
-    'RouteMatrixSummary',
-    'RouteOptimizedWaypoint',
-    'RouteRange',
-    'RouteResponseReport',
-    'RouteResponseReportEffectiveSetting',
-    'RouteResultGuidance',
-    'RouteResultInstruction',
-    'RouteResultInstructionGroup',
-    'RouteResultLeg',
-    'RouteResultLegSummary',
-    'RouteResultSection',
-    'RouteResultSectionTec',
-    'RouteResultSectionTecCause',
-    'AlternativeRouteType',
-    'ComputeTravelTimeFor',
-    'DrivingSide',
-    'GeoJsonObjectType',
-    'GeographicResourceLocation',
-    'Geography',
-    'GuidanceInstructionType',
-    'GuidanceManeuver',
-    'HillinessDegree',
-    'JunctionType',
-    'MagnitudeOfDelay',
-    'ResponseFormat',
-    'RouteAvoidType',
-    'RouteInstructionsType',
-    'RouteRepresentation',
-    'RouteType',
-    'SectionType',
-    'TextFormat',
-    'TravelMode',
-    'VehicleEngineType',
-    'VehicleLoadType',
-    'WindingnessLevel',
+    "BatchRequest",
+    "BatchRequestItem",
+    "BatchResult",
+    "BatchResultItem",
+    "BatchResultSummary",
+    "EffectiveSetting",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "GeoJsonFeature",
+    "GeoJsonFeatureCollection",
+    "GeoJsonFeatureCollectionData",
+    "GeoJsonFeatureData",
+    "GeoJsonGeometry",
+    "GeoJsonGeometryCollection",
+    "GeoJsonGeometryCollectionData",
+    "GeoJsonLineString",
+    "GeoJsonLineStringData",
+    "GeoJsonMultiLineString",
+    "GeoJsonMultiLineStringData",
+    "GeoJsonMultiPoint",
+    "GeoJsonMultiPointData",
+    "GeoJsonMultiPolygon",
+    "GeoJsonMultiPolygonData",
+    "GeoJsonObject",
+    "GeoJsonPoint",
+    "GeoJsonPointData",
+    "GeoJsonPolygon",
+    "GeoJsonPolygonData",
+    "LatLongPair",
+    "Route",
+    "RouteDirectionParameters",
+    "RouteDirections",
+    "RouteDirectionsBatchItem",
+    "RouteDirectionsBatchItemResponse",
+    "RouteDirectionsBatchResult",
+    "RouteGuidance",
+    "RouteInstruction",
+    "RouteInstructionGroup",
+    "RouteLeg",
+    "RouteLegSummary",
+    "RouteMatrix",
+    "RouteMatrixQuery",
+    "RouteMatrixResult",
+    "RouteMatrixResultResponse",
+    "RouteMatrixSummary",
+    "RouteOptimizedWaypoint",
+    "RouteRange",
+    "RouteRangeResult",
+    "RouteReport",
+    "RouteSection",
+    "RouteSectionTec",
+    "RouteSectionTecCause",
+    "RouteSummary",
+    "AlternativeRouteType",
+    "ComputeTravelTime",
+    "DelayMagnitude",
+    "DrivingSide",
+    "GeoJsonObjectType",
+    "GuidanceInstructionType",
+    "GuidanceManeuver",
+    "InclineLevel",
+    "JsonFormat",
+    "JunctionType",
+    "Report",
+    "ResponseFormat",
+    "ResponseSectionType",
+    "ResponseTravelMode",
+    "RouteAvoidType",
+    "RouteInstructionsType",
+    "RouteRepresentationForBestOrder",
+    "RouteType",
+    "SectionType",
+    "SimpleCategory",
+    "TravelMode",
+    "VehicleEngineType",
+    "VehicleLoadType",
+    "WindingnessLevel",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

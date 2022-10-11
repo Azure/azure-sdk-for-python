@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://us.atlas.microsoft.com/route/directions/json?api-version=1.0\u0026query=52.50931%2C13.42936%3A52.50274%2C13.43872",
+      "RequestUri": "https://atlas.microsoft.com/route/directions/json?api-version=1.0.0b1\u0026query=52.50931%2C13.42936%3A52.50274%2C13.43872\u0026vehicleAxleWeight=0\u0026vehicleWidth=0.0\u0026vehicleHeight=0.0\u0026vehicleLength=0.0\u0026vehicleMaxSpeed=0\u0026vehicleWeight=0\u0026vehicleCommercial=false",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -16,14 +16,14 @@
         "Cache-Control": "no-transform, no-cache",
         "Content-Length": "1796",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Sep 2022 15:10:30 GMT",
+        "Date": "Tue, 11 Oct 2022 11:11:54 GMT",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-azuremaps-region": "West US 2",
-        "X-MSEdge-Ref": "Ref A: 61B6B9C55B6F4ABDB4C2CE6B5607B41D Ref B: TPE30EDGE0620 Ref C: 2022-09-26T15:10:30Z"
+        "X-MSEdge-Ref": "Ref A: 7B89DF8EBC8346149878C728309A3AD6 Ref B: TPE30EDGE0917 Ref C: 2022-10-11T11:11:55Z"
       },
       "ResponseBody": {
         "formatVersion": "0.0.12",
@@ -31,21 +31,21 @@
           {
             "summary": {
               "lengthInMeters": 1147,
-              "travelTimeInSeconds": 193,
+              "travelTimeInSeconds": 171,
               "trafficDelayInSeconds": 0,
               "trafficLengthInMeters": 0,
-              "departureTime": "2022-09-26T17:10:30\u002B02:00",
-              "arrivalTime": "2022-09-26T17:13:43\u002B02:00"
+              "departureTime": "2022-10-11T13:11:56\u002B02:00",
+              "arrivalTime": "2022-10-11T13:14:46\u002B02:00"
             },
             "legs": [
               {
                 "summary": {
                   "lengthInMeters": 1147,
-                  "travelTimeInSeconds": 193,
+                  "travelTimeInSeconds": 171,
                   "trafficDelayInSeconds": 0,
                   "trafficLengthInMeters": 0,
-                  "departureTime": "2022-09-26T17:10:30\u002B02:00",
-                  "arrivalTime": "2022-09-26T17:13:43\u002B02:00"
+                  "departureTime": "2022-10-11T13:11:56\u002B02:00",
+                  "arrivalTime": "2022-10-11T13:14:46\u002B02:00"
                 },
                 "points": [
                   {

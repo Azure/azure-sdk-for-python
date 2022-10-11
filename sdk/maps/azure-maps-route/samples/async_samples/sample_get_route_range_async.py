@@ -37,7 +37,8 @@ async def get_route_range():
         )
 
     print("Get Route Range with coordinates and time budget:")
-    print(result)
+    print(result.reachable_range.center)
+    print(result.reachable_range.boundary[0])
     # [END get_route_range_async]
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,100 +7,111 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+import sys
+from typing import Any, List, Optional, TYPE_CHECKING, Union
+
+from .. import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class BatchItem(msrest.serialization.Model):
+class BatchRequest(_serialization.Model):
+    """This type represents the request body for the Batch service.
+
+    :ivar batch_items: The list of queries to process.
+    :vartype batch_items: list[~azure.maps.route.models.BatchRequestItem]
+    """
+
+    _attribute_map = {
+        "batch_items": {"key": "batchItems", "type": "[BatchRequestItem]"},
+    }
+
+    def __init__(self, *, batch_items: Optional[List["_models.BatchRequestItem"]] = None, **kwargs):
+        """
+        :keyword batch_items: The list of queries to process.
+        :paramtype batch_items: list[~azure.maps.route.models.BatchRequestItem]
+        """
+        super().__init__(**kwargs)
+        self.batch_items = batch_items
+
+
+class BatchRequestItem(_serialization.Model):
+    """Batch request object.
+
+    :ivar query: This parameter contains a query string used to perform an unstructured geocoding
+     operation. The query string will be passed verbatim to the search API for processing.
+    :vartype query: str
+    """
+
+    _attribute_map = {
+        "query": {"key": "query", "type": "str"},
+    }
+
+    def __init__(self, *, query: Optional[str] = None, **kwargs):
+        """
+        :keyword query: This parameter contains a query string used to perform an unstructured
+         geocoding operation. The query string will be passed verbatim to the search API for processing.
+        :paramtype query: str
+        """
+        super().__init__(**kwargs)
+        self.query = query
+
+
+class BatchResult(_serialization.Model):
+    """This object is returned from a successful Batch service call. Extend with 'batchItems' property.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar batch_summary: Summary of the results for the batch request.
+    :vartype batch_summary: ~azure.maps.route.models.BatchResultSummary
+    """
+
+    _validation = {
+        "batch_summary": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "batch_summary": {"key": "summary", "type": "BatchResultSummary"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.batch_summary = None
+
+
+class BatchResultItem(_serialization.Model):
     """An item returned from Batch API. Extend with 'response' property.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar status_code: HTTP request status code.
-    :vartype status_code: float
+    :vartype status_code: int
     """
 
     _validation = {
-        'status_code': {'readonly': True},
+        "status_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'float'},
+        "status_code": {"key": "statusCode", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchItem, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status_code = None
 
 
-class BatchRequestBody(msrest.serialization.Model):
-    """This type represents the request body for the Batch service.
-
-    :param batch_items: The list of queries to process.
-    :type batch_items: list[~azure.maps.route.models.BatchRequestBodyBatchItemsItem]
-    """
-
-    _attribute_map = {
-        'batch_items': {'key': 'batchItems', 'type': '[BatchRequestBodyBatchItemsItem]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchRequestBody, self).__init__(**kwargs)
-        self.batch_items = kwargs.get('batch_items', None)
-
-
-class BatchRequestBodyBatchItemsItem(msrest.serialization.Model):
-    """Batch Query object.
-
-    :param query: Partial query string.
-    :type query: str
-    """
-
-    _attribute_map = {
-        'query': {'key': 'query', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchRequestBodyBatchItemsItem, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
-
-
-class BatchResponse(msrest.serialization.Model):
-    """This object is returned from a successful Batch service call. Extend with 'batchItems' property.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Summary for the batch request.
-    :vartype summary: ~azure.maps.route.models.BatchResponseSummary
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'BatchResponseSummary'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchResponse, self).__init__(**kwargs)
-        self.summary = None
-
-
-class BatchResponseSummary(msrest.serialization.Model):
-    """Summary for the batch request.
+class BatchResultSummary(_serialization.Model):
+    """Summary of the results for the batch request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -110,48 +122,51 @@ class BatchResponseSummary(msrest.serialization.Model):
     """
 
     _validation = {
-        'successful_requests': {'readonly': True},
-        'total_requests': {'readonly': True},
+        "successful_requests": {"readonly": True},
+        "total_requests": {"readonly": True},
     }
 
     _attribute_map = {
-        'successful_requests': {'key': 'successfulRequests', 'type': 'int'},
-        'total_requests': {'key': 'totalRequests', 'type': 'int'},
+        "successful_requests": {"key": "successfulRequests", "type": "int"},
+        "total_requests": {"key": "totalRequests", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BatchResponseSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.successful_requests = None
         self.total_requests = None
 
 
-class CoordinatesPair(msrest.serialization.Model):
-    """A location represented as a latitude and longitude.
+class EffectiveSetting(_serialization.Model):
+    """Effective parameter or data used when calling this Route API.
 
-    :param latitude: Latitude property.
-    :type latitude: float
-    :param longitude: Longitude property.
-    :type longitude: float
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar key: Name of the parameter used.
+    :vartype key: str
+    :ivar value: Value of the parameter used.
+    :vartype value: str
     """
 
-    _attribute_map = {
-        'latitude': {'key': 'latitude', 'type': 'float'},
-        'longitude': {'key': 'longitude', 'type': 'float'},
+    _validation = {
+        "key": {"readonly": True},
+        "value": {"readonly": True},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CoordinatesPair, self).__init__(**kwargs)
-        self.latitude = kwargs.get('latitude', None)
-        self.longitude = kwargs.get('longitude', None)
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.key = None
+        self.value = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -159,29 +174,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -199,26 +212,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -226,100 +237,123 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.maps.route.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.maps.route.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = kwargs.get('error', None)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.maps.route.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
-class GeoJsonFeatureData(msrest.serialization.Model):
+class GeoJsonFeatureData(_serialization.Model):
     """GeoJsonFeatureData.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param geometry: Required. A valid ``GeoJSON`` geometry object. The type must be one of the
-     seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon,
-     MultiPolygon and GeometryCollection. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
-    :type geometry: ~azure.maps.route.models.GeoJsonGeometry
-    :param properties: Properties can contain any additional metadata about the ``Feature``. Value
+    :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+     GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+     and GeometryCollection. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+    :vartype geometry: ~azure.maps.route.models.GeoJsonGeometry
+    :ivar properties: Properties can contain any additional metadata about the ``Feature``. Value
      can be any JSON object or a JSON null value.
-    :type properties: any
-    :param id: Identifier for the feature.
-    :type id: str
-    :param feature_type: The type of the feature. The value depends on the data model the current
+    :vartype properties: JSON
+    :ivar id: Identifier for the feature.
+    :vartype id: str
+    :ivar feature_type: The type of the feature. The value depends on the data model the current
      feature is part of. Some data models may have an empty value.
-    :type feature_type: str
+    :vartype feature_type: str
     """
 
     _validation = {
-        'geometry': {'required': True},
+        "geometry": {"required": True},
     }
 
     _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonGeometry'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'id': {'key': 'id', 'type': 'str'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
+        "geometry": {"key": "geometry", "type": "GeoJsonGeometry"},
+        "properties": {"key": "properties", "type": "object"},
+        "id": {"key": "id", "type": "str"},
+        "feature_type": {"key": "featureType", "type": "str"},
     }
 
     def __init__(
         self,
+        *,
+        geometry: "_models.GeoJsonGeometry",
+        properties: Optional[JSON] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        feature_type: Optional[str] = None,
         **kwargs
     ):
-        super(GeoJsonFeatureData, self).__init__(**kwargs)
-        self.geometry = kwargs['geometry']
-        self.properties = kwargs.get('properties', None)
-        self.id = kwargs.get('id', None)
-        self.feature_type = kwargs.get('feature_type', None)
+        """
+        :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+         GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+         and GeometryCollection. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+        :paramtype geometry: ~azure.maps.route.models.GeoJsonGeometry
+        :keyword properties: Properties can contain any additional metadata about the ``Feature``.
+         Value can be any JSON object or a JSON null value.
+        :paramtype properties: JSON
+        :keyword id: Identifier for the feature.
+        :paramtype id: str
+        :keyword feature_type: The type of the feature. The value depends on the data model the current
+         feature is part of. Some data models may have an empty value.
+        :paramtype feature_type: str
+        """
+        super().__init__(**kwargs)
+        self.geometry = geometry
+        self.properties = properties
+        self.id = id
+        self.feature_type = feature_type
 
 
-class GeoJsonObject(msrest.serialization.Model):
+class GeoJsonObject(_serialization.Model):
     """A valid ``GeoJSON`` object. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'Feature': 'GeoJsonFeature', 'FeatureCollection': 'GeoJsonFeatureCollection', 'GeoJsonGeometry': 'GeoJsonGeometry'}
+        "type": {
+            "Feature": "GeoJsonFeature",
+            "FeatureCollection": "GeoJsonFeatureCollection",
+            "GeoJsonGeometry": "GeoJsonGeometry",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonObject, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
 
@@ -328,76 +362,96 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param geometry: Required. A valid ``GeoJSON`` geometry object. The type must be one of the
-     seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon,
-     MultiPolygon and GeometryCollection. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
-    :type geometry: ~azure.maps.route.models.GeoJsonGeometry
-    :param properties: Properties can contain any additional metadata about the ``Feature``. Value
+    :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+     GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+     and GeometryCollection. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+    :vartype geometry: ~azure.maps.route.models.GeoJsonGeometry
+    :ivar properties: Properties can contain any additional metadata about the ``Feature``. Value
      can be any JSON object or a JSON null value.
-    :type properties: any
-    :param id: Identifier for the feature.
-    :type id: str
-    :param feature_type: The type of the feature. The value depends on the data model the current
+    :vartype properties: JSON
+    :ivar id: Identifier for the feature.
+    :vartype id: str
+    :ivar feature_type: The type of the feature. The value depends on the data model the current
      feature is part of. Some data models may have an empty value.
-    :type feature_type: str
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :vartype feature_type: str
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'geometry': {'required': True},
-        'type': {'required': True},
+        "geometry": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'geometry': {'key': 'geometry', 'type': 'GeoJsonGeometry'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'id': {'key': 'id', 'type': 'str'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "geometry": {"key": "geometry", "type": "GeoJsonGeometry"},
+        "properties": {"key": "properties", "type": "object"},
+        "id": {"key": "id", "type": "str"},
+        "feature_type": {"key": "featureType", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
+        *,
+        geometry: "_models.GeoJsonGeometry",
+        properties: Optional[JSON] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        feature_type: Optional[str] = None,
         **kwargs
     ):
-        super(GeoJsonFeature, self).__init__(**kwargs)
-        self.geometry = kwargs['geometry']
-        self.properties = kwargs.get('properties', None)
-        self.id = kwargs.get('id', None)
-        self.feature_type = kwargs.get('feature_type', None)
-        self.type = 'Feature'  # type: str
-        self.type = 'Feature'  # type: str
+        """
+        :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
+         GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
+         and GeometryCollection. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+        :paramtype geometry: ~azure.maps.route.models.GeoJsonGeometry
+        :keyword properties: Properties can contain any additional metadata about the ``Feature``.
+         Value can be any JSON object or a JSON null value.
+        :paramtype properties: JSON
+        :keyword id: Identifier for the feature.
+        :paramtype id: str
+        :keyword feature_type: The type of the feature. The value depends on the data model the current
+         feature is part of. Some data models may have an empty value.
+        :paramtype feature_type: str
+        """
+        super().__init__(geometry=geometry, properties=properties, id=id, feature_type=feature_type, **kwargs)
+        self.geometry = geometry
+        self.properties = properties
+        self.id = id
+        self.feature_type = feature_type
+        self.type = "Feature"  # type: str
 
 
-class GeoJsonFeatureCollectionData(msrest.serialization.Model):
+class GeoJsonFeatureCollectionData(_serialization.Model):
     """GeoJsonFeatureCollectionData.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param features: Required. Contains a list of valid ``GeoJSON Feature`` objects.
-    :type features: list[~azure.maps.route.models.GeoJsonFeature]
+    :ivar features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+    :vartype features: list[~azure.maps.route.models.GeoJsonFeature]
     """
 
     _validation = {
-        'features': {'required': True},
+        "features": {"required": True},
     }
 
     _attribute_map = {
-        'features': {'key': 'features', 'type': '[GeoJsonFeature]'},
+        "features": {"key": "features", "type": "[GeoJsonFeature]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonFeatureCollectionData, self).__init__(**kwargs)
-        self.features = kwargs['features']
+    def __init__(self, *, features: List["_models.GeoJsonFeature"], **kwargs):
+        """
+        :keyword features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+        :paramtype features: list[~azure.maps.route.models.GeoJsonFeature]
+        """
+        super().__init__(**kwargs)
+        self.features = features
 
 
 class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
@@ -405,96 +459,105 @@ class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param features: Required. Contains a list of valid ``GeoJSON Feature`` objects.
-    :type features: list[~azure.maps.route.models.GeoJsonFeature]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+    :vartype features: list[~azure.maps.route.models.GeoJsonFeature]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'features': {'required': True},
-        'type': {'required': True},
+        "features": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'features': {'key': 'features', 'type': '[GeoJsonFeature]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "features": {"key": "features", "type": "[GeoJsonFeature]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonFeatureCollection, self).__init__(**kwargs)
-        self.features = kwargs['features']
-        self.type = 'FeatureCollection'  # type: str
-        self.type = 'FeatureCollection'  # type: str
+    def __init__(self, *, features: List["_models.GeoJsonFeature"], **kwargs):
+        """
+        :keyword features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
+        :paramtype features: list[~azure.maps.route.models.GeoJsonFeature]
+        """
+        super().__init__(features=features, **kwargs)
+        self.features = features
+        self.type = "FeatureCollection"  # type: str
 
 
 class GeoJsonGeometry(GeoJsonObject):
     """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and GeometryCollection. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint, GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint,
+    GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'GeometryCollection': 'GeoJsonGeometryCollection', 'LineString': 'GeoJsonLineString', 'MultiLineString': 'GeoJsonMultiLineString', 'MultiPoint': 'GeoJsonMultiPoint', 'MultiPolygon': 'GeoJsonMultiPolygon', 'Point': 'GeoJsonPoint', 'Polygon': 'GeoJsonPolygon'}
+        "type": {
+            "GeometryCollection": "GeoJsonGeometryCollection",
+            "LineString": "GeoJsonLineString",
+            "MultiLineString": "GeoJsonMultiLineString",
+            "MultiPoint": "GeoJsonMultiPoint",
+            "MultiPolygon": "GeoJsonMultiPolygon",
+            "Point": "GeoJsonPoint",
+            "Polygon": "GeoJsonPolygon",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonGeometry, self).__init__(**kwargs)
-        self.type = 'GeoJsonGeometry'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type = "GeoJsonGeometry"  # type: str
 
 
-class GeoJsonGeometryCollectionData(msrest.serialization.Model):
+class GeoJsonGeometryCollectionData(_serialization.Model):
     """GeoJsonGeometryCollectionData.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param geometries: Required. Contains a list of valid ``GeoJSON`` geometry objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type geometries: list[~azure.maps.route.models.GeoJsonGeometry]
+    :ivar geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype geometries: list[~azure.maps.route.models.GeoJsonGeometry]
     """
 
     _validation = {
-        'geometries': {'required': True},
+        "geometries": {"required": True},
     }
 
     _attribute_map = {
-        'geometries': {'key': 'geometries', 'type': '[GeoJsonGeometry]'},
+        "geometries": {"key": "geometries", "type": "[GeoJsonGeometry]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonGeometryCollectionData, self).__init__(**kwargs)
-        self.geometries = kwargs['geometries']
+    def __init__(self, *, geometries: List["_models.GeoJsonGeometry"], **kwargs):
+        """
+        :keyword geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype geometries: list[~azure.maps.route.models.GeoJsonGeometry]
+        """
+        super().__init__(**kwargs)
+        self.geometries = geometries
 
 
 class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
@@ -502,60 +565,62 @@ class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param geometries: Required. Contains a list of valid ``GeoJSON`` geometry objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type geometries: list[~azure.maps.route.models.GeoJsonGeometry]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype geometries: list[~azure.maps.route.models.GeoJsonGeometry]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'geometries': {'required': True},
-        'type': {'required': True},
+        "geometries": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'geometries': {'key': 'geometries', 'type': '[GeoJsonGeometry]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "geometries": {"key": "geometries", "type": "[GeoJsonGeometry]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonGeometryCollection, self).__init__(**kwargs)
-        self.geometries = kwargs['geometries']
-        self.type = 'GeometryCollection'  # type: str
-        self.type = 'GeometryCollection'  # type: str
+    def __init__(self, *, geometries: List["_models.GeoJsonGeometry"], **kwargs):
+        """
+        :keyword geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype geometries: list[~azure.maps.route.models.GeoJsonGeometry]
+        """
+        super().__init__(geometries=geometries, **kwargs)
+        self.geometries = geometries
+        self.type = "GeometryCollection"  # type: str
 
 
-class GeoJsonLineStringData(msrest.serialization.Model):
+class GeoJsonLineStringData(_serialization.Model):
     """GeoJsonLineStringData.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson LineString`` geometry.
-    :type coordinates: list[list[float]]
+    :ivar coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+    :vartype coordinates: list[list[float]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonLineStringData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
 class GeoJsonLineString(GeoJsonGeometry, GeoJsonLineStringData):
@@ -563,59 +628,60 @@ class GeoJsonLineString(GeoJsonGeometry, GeoJsonLineStringData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson LineString`` geometry.
-    :type coordinates: list[list[float]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+    :vartype coordinates: list[list[float]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonLineString, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'LineString'  # type: str
-        self.type = 'LineString'  # type: str
+    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        """
+        super().__init__(coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type = "LineString"  # type: str
 
 
-class GeoJsonMultiLineStringData(msrest.serialization.Model):
+class GeoJsonMultiLineStringData(_serialization.Model):
     """GeoJsonMultiLineStringData.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiLineString`` geometry.
-    :type coordinates: list[list[list[float]]]
+    :ivar coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+    :vartype coordinates: list[list[list[float]]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiLineStringData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
 class GeoJsonMultiLineString(GeoJsonGeometry, GeoJsonMultiLineStringData):
@@ -623,59 +689,60 @@ class GeoJsonMultiLineString(GeoJsonGeometry, GeoJsonMultiLineStringData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiLineString`` geometry.
-    :type coordinates: list[list[list[float]]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+    :vartype coordinates: list[list[list[float]]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiLineString, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'MultiLineString'  # type: str
-        self.type = 'MultiLineString'  # type: str
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        """
+        super().__init__(coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type = "MultiLineString"  # type: str
 
 
-class GeoJsonMultiPointData(msrest.serialization.Model):
+class GeoJsonMultiPointData(_serialization.Model):
     """Data contained by a ``GeoJson MultiPoint``.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
-    :type coordinates: list[list[float]]
+    :ivar coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+    :vartype coordinates: list[list[float]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPointData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
 class GeoJsonMultiPoint(GeoJsonGeometry, GeoJsonMultiPointData):
@@ -683,60 +750,62 @@ class GeoJsonMultiPoint(GeoJsonGeometry, GeoJsonMultiPointData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
-    :type coordinates: list[list[float]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+    :vartype coordinates: list[list[float]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[float]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[float]]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPoint, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'MultiPoint'  # type: str
-        self.type = 'MultiPoint'  # type: str
+    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
+        :paramtype coordinates: list[list[float]]
+        """
+        super().__init__(coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type = "MultiPoint"  # type: str
 
 
-class GeoJsonMultiPolygonData(msrest.serialization.Model):
+class GeoJsonMultiPolygonData(_serialization.Model):
     """GeoJsonMultiPolygonData.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type coordinates: list[list[list[list[float]]]]
+    :ivar coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype coordinates: list[list[list[list[float]]]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[[float]]]]'},
+        "coordinates": {"key": "coordinates", "type": "[[[[float]]]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPolygonData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[List[List[float]]]], **kwargs):
+        """
+        :keyword coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype coordinates: list[list[list[list[float]]]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
 class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
@@ -744,63 +813,68 @@ class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type coordinates: list[list[list[list[float]]]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+     coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+    :vartype coordinates: list[list[list[list[float]]]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[[float]]]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[[[float]]]]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPolygon, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'MultiPolygon'  # type: str
-        self.type = 'MultiPolygon'  # type: str
+    def __init__(self, *, coordinates: List[List[List[List[float]]]], **kwargs):
+        """
+        :keyword coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
+         coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
+        :paramtype coordinates: list[list[list[list[float]]]]
+        """
+        super().__init__(coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type = "MultiPolygon"  # type: str
 
 
-class GeoJsonPointData(msrest.serialization.Model):
+class GeoJsonPointData(_serialization.Model):
     """Data contained by a ``GeoJson Point``.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. A ``Position`` is an array of numbers with two or more elements.
-     The first two elements are *longitude* and *latitude*\ , precisely in that order.
-     *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details.
-    :type coordinates: list[float]
+    :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
+     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
+     an optional third element. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+    :vartype coordinates: list[float]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[float]'},
+        "coordinates": {"key": "coordinates", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonPointData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[float], **kwargs):
+        """
+        :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
+         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+        :paramtype coordinates: list[float]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
 class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
@@ -808,62 +882,66 @@ class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. A ``Position`` is an array of numbers with two or more elements.
-     The first two elements are *longitude* and *latitude*\ , precisely in that order.
-     *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details.
-    :type coordinates: list[float]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
+     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
+     an optional third element. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+    :vartype coordinates: list[float]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[float]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[float]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonPoint, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'Point'  # type: str
-        self.type = 'Point'  # type: str
+    def __init__(self, *, coordinates: List[float], **kwargs):
+        """
+        :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
+         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+        :paramtype coordinates: list[float]
+        """
+        super().__init__(coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type = "Point"  # type: str
 
 
-class GeoJsonPolygonData(msrest.serialization.Model):
+class GeoJsonPolygonData(_serialization.Model):
     """GeoJsonPolygonData.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson Polygon`` geometry type.
-    :type coordinates: list[list[list[float]]]
+    :ivar coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+    :vartype coordinates: list[list[list[float]]]
     """
 
     _validation = {
-        'coordinates': {'required': True},
+        "coordinates": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonPolygonData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        """
+        super().__init__(**kwargs)
+        self.coordinates = coordinates
 
 
 class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
@@ -871,77 +949,109 @@ class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param coordinates: Required. Coordinates for the ``GeoJson Polygon`` geometry type.
-    :type coordinates: list[list[list[float]]]
-    :param type: Required. Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON
-     object types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
-     GeometryCollection, Feature and FeatureCollection.Constant filled by server.  Possible values
-     include: "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-     "GeometryCollection", "Feature", "FeatureCollection".
-    :type type: str or ~azure.maps.route.models.GeoJsonObjectType
+    :ivar coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+    :vartype coordinates: list[list[list[float]]]
+    :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
+     - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
+     Feature and FeatureCollection. Required. Known values are: "Point", "MultiPoint", "LineString",
+     "MultiLineString", "Polygon", "MultiPolygon", "GeometryCollection", "Feature", and
+     "FeatureCollection".
+    :vartype type: str or ~azure.maps.route.models.GeoJsonObjectType
     """
 
     _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
+        "coordinates": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[float]]]'},
-        'type': {'key': 'type', 'type': 'str'},
+        "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonPolygon, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-        self.type = 'Polygon'  # type: str
-        self.type = 'Polygon'  # type: str
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+        """
+        :keyword coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
+        :paramtype coordinates: list[list[list[float]]]
+        """
+        super().__init__(coordinates=coordinates, **kwargs)
+        self.coordinates = coordinates
+        self.type = "Polygon"  # type: str
 
 
-class GetRouteRangeResponse(msrest.serialization.Model):
-    """This object is returned from a successful Route Reachable Range call.
+class LatLongPair(_serialization.Model):
+    """A location represented as a latitude and longitude.
+
+    :ivar latitude: Latitude property.
+    :vartype latitude: float
+    :ivar longitude: Longitude property.
+    :vartype longitude: float
+    """
+
+    _attribute_map = {
+        "latitude": {"key": "latitude", "type": "float"},
+        "longitude": {"key": "longitude", "type": "float"},
+    }
+
+    def __init__(self, *, latitude: Optional[float] = None, longitude: Optional[float] = None, **kwargs):
+        """
+        :keyword latitude: Latitude property.
+        :paramtype latitude: float
+        :keyword longitude: Longitude property.
+        :paramtype longitude: float
+        """
+        super().__init__(**kwargs)
+        self.latitude = latitude
+        self.longitude = longitude
+
+
+class Route(_serialization.Model):
+    """Route.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar format_version: Format Version property.
-    :vartype format_version: str
-    :param reachable_range: Reachable Range.
-    :type reachable_range: ~azure.maps.route.models.RouteRange
-    :param report: Reports the effective settings used in the current call.
-    :type report: ~azure.maps.route.models.RouteResponseReport
+    :ivar summary: Summary object.
+    :vartype summary: ~azure.maps.route.models.RouteSummary
+    :ivar legs: Legs array.
+    :vartype legs: list[~azure.maps.route.models.RouteLeg]
+    :ivar sections: Sections array.
+    :vartype sections: list[~azure.maps.route.models.RouteSection]
+    :ivar guidance: Contains guidance related elements. This field is present only when guidance
+     was requested and is available.
+    :vartype guidance: ~azure.maps.route.models.RouteGuidance
     """
 
     _validation = {
-        'format_version': {'readonly': True},
+        "summary": {"readonly": True},
+        "legs": {"readonly": True},
+        "sections": {"readonly": True},
+        "guidance": {"readonly": True},
     }
 
     _attribute_map = {
-        'format_version': {'key': 'formatVersion', 'type': 'str'},
-        'reachable_range': {'key': 'reachableRange', 'type': 'RouteRange'},
-        'report': {'key': 'report', 'type': 'RouteResponseReport'},
+        "summary": {"key": "summary", "type": "RouteSummary"},
+        "legs": {"key": "legs", "type": "[RouteLeg]"},
+        "sections": {"key": "sections", "type": "[RouteSection]"},
+        "guidance": {"key": "guidance", "type": "RouteGuidance"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GetRouteRangeResponse, self).__init__(**kwargs)
-        self.format_version = None
-        self.reachable_range = kwargs.get('reachable_range', None)
-        self.report = kwargs.get('report', None)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.summary = None
+        self.legs = None
+        self.sections = None
+        self.guidance = None
 
 
-class PostRouteDirectionsRequestBody(msrest.serialization.Model):
+class RouteDirectionParameters(_serialization.Model):
     """Post body parameters for Route directions.
 
-    :param supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
+    :ivar supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
      used as input for route reconstruction and for calculating zero or more alternative routes to
      this reference route.
-    
-    
+
+
      * The provided sequence of supporting points is used as input for route reconstruction.
      * The alternative routes are calculated between the origin and destination points specified in
      the base path parameter locations.
@@ -952,100 +1062,91 @@ class PostRouteDirectionsRequestBody(msrest.serialization.Model):
      :code:`<_supportingPoints_>`.
      * The reference route may contain traffic incidents of type _ROAD\ *CLOSURE*\ , which are
        ignored for the calculation of the reference route's travel time and traffic delay.
-    :type supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
-    :param avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
+       Please refer to `Supporting Points
+     <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_
+     for details.
+    :vartype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
+    :ivar avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
      countries in which all toll roads with vignettes are to be avoided, e.g. "AUS,CHE". Toll roads
      with vignettes in countries not in the list are unaffected. Note: It is an error to specify
      both **avoidVignette** and **allowVignette**.
-    :type avoid_vignette: list[str]
-    :param allow_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
+    :vartype avoid_vignette: list[str]
+    :ivar allow_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
      countries in which toll roads with vignettes are allowed, e.g. "AUS,CHE". Specifying
      **allowVignette** with some countries X is equivalent to specifying **avoidVignette** with all
      countries but X. Specifying **allowVignette** with an empty list is the same as avoiding all
      toll roads with vignettes. Note: It is an error to specify both **avoidVignette** and
      **allowVignette**.
-    :type allow_vignette: list[str]
-    :param avoid_areas: A GeoJSON MultiPolygon representing list of areas to avoid. Only rectangle
+    :vartype allow_vignette: list[str]
+    :ivar avoid_areas: A GeoJSON MultiPolygon representing list of areas to avoid. Only rectangle
      polygons are supported. The maximum size of a rectangle is about 160x160 km. Maximum number of
      avoided areas is **10**. It cannot cross the 180th meridian. It must be between -80 and +80
      degrees of latitude.
-    :type avoid_areas: ~azure.maps.route.models.GeoJsonMultiPolygon
+    :vartype avoid_areas: ~azure.maps.route.models.GeoJsonMultiPolygon
     """
 
     _attribute_map = {
-        'supporting_points': {'key': 'supportingPoints', 'type': 'GeoJsonGeometryCollection'},
-        'avoid_vignette': {'key': 'avoidVignette', 'type': '[str]'},
-        'allow_vignette': {'key': 'allowVignette', 'type': '[str]'},
-        'avoid_areas': {'key': 'avoidAreas', 'type': 'GeoJsonMultiPolygon'},
+        "supporting_points": {"key": "supportingPoints", "type": "GeoJsonGeometryCollection"},
+        "avoid_vignette": {"key": "avoidVignette", "type": "[str]"},
+        "allow_vignette": {"key": "allowVignette", "type": "[str]"},
+        "avoid_areas": {"key": "avoidAreas", "type": "GeoJsonMultiPolygon"},
     }
 
     def __init__(
         self,
+        *,
+        supporting_points: Optional["_models.GeoJsonGeometryCollection"] = None,
+        avoid_vignette: Optional[List[str]] = None,
+        allow_vignette: Optional[List[str]] = None,
+        avoid_areas: Optional["_models.GeoJsonMultiPolygon"] = None,
         **kwargs
     ):
-        super(PostRouteDirectionsRequestBody, self).__init__(**kwargs)
-        self.supporting_points = kwargs.get('supporting_points', None)
-        self.avoid_vignette = kwargs.get('avoid_vignette', None)
-        self.allow_vignette = kwargs.get('allow_vignette', None)
-        self.avoid_areas = kwargs.get('avoid_areas', None)
+        """
+        :keyword supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
+         used as input for route reconstruction and for calculating zero or more alternative routes to
+         this reference route.
 
 
-class PostRouteMatrixRequestBody(msrest.serialization.Model):
-    """An object with a matrix of coordinates.
-
-    :param origins: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
-    :type origins: ~azure.maps.route.models.GeoJsonMultiPoint
-    :param destinations: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
-    :type destinations: ~azure.maps.route.models.GeoJsonMultiPoint
-    """
-
-    _attribute_map = {
-        'origins': {'key': 'origins', 'type': 'GeoJsonMultiPoint'},
-        'destinations': {'key': 'destinations', 'type': 'GeoJsonMultiPoint'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PostRouteMatrixRequestBody, self).__init__(**kwargs)
-        self.origins = kwargs.get('origins', None)
-        self.destinations = kwargs.get('destinations', None)
-
-
-class RouteDirectionsBatchItem(BatchItem):
-    """An item returned from Route Directions Batch service call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status_code: HTTP request status code.
-    :vartype status_code: float
-    :ivar response: The result of the query. RouteDirectionsResponse if the query completed
-     successfully, ErrorResponse otherwise.
-    :vartype response: ~azure.maps.route.models.RouteDirectionsBatchItemResponse
-    """
-
-    _validation = {
-        'status_code': {'readonly': True},
-        'response': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'float'},
-        'response': {'key': 'response', 'type': 'RouteDirectionsBatchItemResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteDirectionsBatchItem, self).__init__(**kwargs)
-        self.response = None
+         * The provided sequence of supporting points is used as input for route reconstruction.
+         * The alternative routes are calculated between the origin and destination points specified in
+         the base path parameter locations.
+         * If both *minDeviationDistance* and *minDeviationTime* are set to zero, then these origin and
+         destination points are
+           expected to be at (or very near) the beginning and end of the reference route, respectively.
+         * Intermediate locations (\ *waypoints*\ ) are not supported when using
+         :code:`<_supportingPoints_>`.
+         * The reference route may contain traffic incidents of type _ROAD\ *CLOSURE*\ , which are
+           ignored for the calculation of the reference route's travel time and traffic delay.
+           Please refer to `Supporting Points
+         <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_
+         for details.
+        :paramtype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
+        :keyword avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
+         countries in which all toll roads with vignettes are to be avoided, e.g. "AUS,CHE". Toll roads
+         with vignettes in countries not in the list are unaffected. Note: It is an error to specify
+         both **avoidVignette** and **allowVignette**.
+        :paramtype avoid_vignette: list[str]
+        :keyword allow_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
+         countries in which toll roads with vignettes are allowed, e.g. "AUS,CHE". Specifying
+         **allowVignette** with some countries X is equivalent to specifying **avoidVignette** with all
+         countries but X. Specifying **allowVignette** with an empty list is the same as avoiding all
+         toll roads with vignettes. Note: It is an error to specify both **avoidVignette** and
+         **allowVignette**.
+        :paramtype allow_vignette: list[str]
+        :keyword avoid_areas: A GeoJSON MultiPolygon representing list of areas to avoid. Only
+         rectangle polygons are supported. The maximum size of a rectangle is about 160x160 km. Maximum
+         number of avoided areas is **10**. It cannot cross the 180th meridian. It must be between -80
+         and +80 degrees of latitude.
+        :paramtype avoid_areas: ~azure.maps.route.models.GeoJsonMultiPolygon
+        """
+        super().__init__(**kwargs)
+        self.supporting_points = supporting_points
+        self.avoid_vignette = avoid_vignette
+        self.allow_vignette = allow_vignette
+        self.avoid_areas = avoid_areas
 
 
-class RouteDirectionsResponse(msrest.serialization.Model):
+class RouteDirections(_serialization.Model):
     """This object is returned from a successful Route Directions call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1053,493 +1154,197 @@ class RouteDirectionsResponse(msrest.serialization.Model):
     :ivar format_version: Format Version property.
     :vartype format_version: str
     :ivar routes: Routes array.
-    :vartype routes: list[~azure.maps.route.models.RouteDirectionsResult]
+    :vartype routes: list[~azure.maps.route.models.Route]
     :ivar optimized_waypoints: Optimized sequence of waypoints. It shows the index from the user
      provided waypoint sequence for the original and optimized list. For instance, a response:
-    
+
      .. code-block::
-    
+
         <optimizedWaypoints>
         <waypoint providedIndex="0" optimizedIndex="1"/>
         <waypoint providedIndex="1" optimizedIndex="2"/>
         <waypoint providedIndex="2" optimizedIndex="0"/>
         </optimizedWaypoints>
-    
+
      means that the original sequence is [0, 1, 2] and optimized sequence is [1, 2, 0]. Since the
      index starts by 0 the original is "first, second, third" while the optimized is "second, third,
      first".
     :vartype optimized_waypoints: list[~azure.maps.route.models.RouteOptimizedWaypoint]
-    :param report: Reports the effective settings used in the current call.
-    :type report: ~azure.maps.route.models.RouteResponseReport
+    :ivar report: Reports the effective settings used in the current call.
+    :vartype report: ~azure.maps.route.models.RouteReport
     """
 
     _validation = {
-        'format_version': {'readonly': True},
-        'routes': {'readonly': True},
-        'optimized_waypoints': {'readonly': True},
+        "format_version": {"readonly": True},
+        "routes": {"readonly": True},
+        "optimized_waypoints": {"readonly": True},
     }
 
     _attribute_map = {
-        'format_version': {'key': 'formatVersion', 'type': 'str'},
-        'routes': {'key': 'routes', 'type': '[RouteDirectionsResult]'},
-        'optimized_waypoints': {'key': 'optimizedWaypoints', 'type': '[RouteOptimizedWaypoint]'},
-        'report': {'key': 'report', 'type': 'RouteResponseReport'},
+        "format_version": {"key": "formatVersion", "type": "str"},
+        "routes": {"key": "routes", "type": "[Route]"},
+        "optimized_waypoints": {"key": "optimizedWaypoints", "type": "[RouteOptimizedWaypoint]"},
+        "report": {"key": "report", "type": "RouteReport"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteDirectionsResponse, self).__init__(**kwargs)
+    def __init__(self, *, report: Optional["_models.RouteReport"] = None, **kwargs):
+        """
+        :keyword report: Reports the effective settings used in the current call.
+        :paramtype report: ~azure.maps.route.models.RouteReport
+        """
+        super().__init__(**kwargs)
         self.format_version = None
         self.routes = None
         self.optimized_waypoints = None
-        self.report = kwargs.get('report', None)
+        self.report = report
 
 
-class RouteDirectionsBatchItemResponse(ErrorResponse, RouteDirectionsResponse):
-    """The result of the query. RouteDirectionsResponse if the query completed successfully, ErrorResponse otherwise.
+class RouteDirectionsBatchItem(BatchResultItem):
+    """An item returned from Route Directions Batch service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar status_code: HTTP request status code.
+    :vartype status_code: int
+    :ivar response: The result of the query. RouteDirections if the query completed successfully,
+     ErrorResponse otherwise.
+    :vartype response: ~azure.maps.route.models.RouteDirectionsBatchItemResponse
+    """
+
+    _validation = {
+        "status_code": {"readonly": True},
+        "response": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status_code": {"key": "statusCode", "type": "int"},
+        "response": {"key": "response", "type": "RouteDirectionsBatchItemResponse"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.response = None
+
+
+class RouteDirectionsBatchItemResponse(RouteDirections, ErrorResponse):
+    """The result of the query. RouteDirections if the query completed successfully, ErrorResponse otherwise.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar error: The error object.
+    :vartype error: ~azure.maps.route.models.ErrorDetail
     :ivar format_version: Format Version property.
     :vartype format_version: str
     :ivar routes: Routes array.
-    :vartype routes: list[~azure.maps.route.models.RouteDirectionsResult]
+    :vartype routes: list[~azure.maps.route.models.Route]
     :ivar optimized_waypoints: Optimized sequence of waypoints. It shows the index from the user
      provided waypoint sequence for the original and optimized list. For instance, a response:
-    
+
      .. code-block::
-    
+
         <optimizedWaypoints>
         <waypoint providedIndex="0" optimizedIndex="1"/>
         <waypoint providedIndex="1" optimizedIndex="2"/>
         <waypoint providedIndex="2" optimizedIndex="0"/>
         </optimizedWaypoints>
-    
+
      means that the original sequence is [0, 1, 2] and optimized sequence is [1, 2, 0]. Since the
      index starts by 0 the original is "first, second, third" while the optimized is "second, third,
      first".
     :vartype optimized_waypoints: list[~azure.maps.route.models.RouteOptimizedWaypoint]
-    :param report: Reports the effective settings used in the current call.
-    :type report: ~azure.maps.route.models.RouteResponseReport
-    :param error: The error object.
-    :type error: ~azure.maps.route.models.ErrorDetail
+    :ivar report: Reports the effective settings used in the current call.
+    :vartype report: ~azure.maps.route.models.RouteReport
     """
 
     _validation = {
-        'format_version': {'readonly': True},
-        'routes': {'readonly': True},
-        'optimized_waypoints': {'readonly': True},
+        "format_version": {"readonly": True},
+        "routes": {"readonly": True},
+        "optimized_waypoints": {"readonly": True},
     }
 
     _attribute_map = {
-        'format_version': {'key': 'formatVersion', 'type': 'str'},
-        'routes': {'key': 'routes', 'type': '[RouteDirectionsResult]'},
-        'optimized_waypoints': {'key': 'optimizedWaypoints', 'type': '[RouteOptimizedWaypoint]'},
-        'report': {'key': 'report', 'type': 'RouteResponseReport'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "format_version": {"key": "formatVersion", "type": "str"},
+        "routes": {"key": "routes", "type": "[Route]"},
+        "optimized_waypoints": {"key": "optimizedWaypoints", "type": "[RouteOptimizedWaypoint]"},
+        "report": {"key": "report", "type": "RouteReport"},
     }
 
     def __init__(
-        self,
-        **kwargs
+        self, *, error: Optional["_models.ErrorDetail"] = None, report: Optional["_models.RouteReport"] = None, **kwargs
     ):
-        super(RouteDirectionsBatchItemResponse, self).__init__(**kwargs)
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.maps.route.models.ErrorDetail
+        :keyword report: Reports the effective settings used in the current call.
+        :paramtype report: ~azure.maps.route.models.RouteReport
+        """
+        super().__init__(report=report, error=error, **kwargs)
+        self.error = error
         self.format_version = None
         self.routes = None
         self.optimized_waypoints = None
-        self.report = kwargs.get('report', None)
-        self.error = kwargs.get('error', None)
+        self.report = report
 
 
-class RouteDirectionsBatchResponse(BatchResponse):
+class RouteDirectionsBatchResult(BatchResult):
     """This object is returned from a successful Route Directions Batch service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar summary: Summary for the batch request.
-    :vartype summary: ~azure.maps.route.models.BatchResponseSummary
+    :ivar batch_summary: Summary of the results for the batch request.
+    :vartype batch_summary: ~azure.maps.route.models.BatchResultSummary
     :ivar batch_items: Array containing the batch results.
     :vartype batch_items: list[~azure.maps.route.models.RouteDirectionsBatchItem]
     """
 
     _validation = {
-        'summary': {'readonly': True},
-        'batch_items': {'readonly': True},
+        "batch_summary": {"readonly": True},
+        "batch_items": {"readonly": True},
     }
 
     _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'BatchResponseSummary'},
-        'batch_items': {'key': 'batchItems', 'type': '[RouteDirectionsBatchItem]'},
+        "batch_summary": {"key": "summary", "type": "BatchResultSummary"},
+        "batch_items": {"key": "batchItems", "type": "[RouteDirectionsBatchItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteDirectionsBatchResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.batch_items = None
 
 
-class RouteDirectionsResult(msrest.serialization.Model):
-    """RouteDirectionsResult.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar summary: Summary object.
-    :vartype summary: ~azure.maps.route.models.RouteDirectionsSummary
-    :ivar legs: Legs array.
-    :vartype legs: list[~azure.maps.route.models.RouteResultLeg]
-    :ivar sections: Sections array.
-    :vartype sections: list[~azure.maps.route.models.RouteResultSection]
-    :ivar guidance: Contains guidance related elements. This field is present only when guidance
-     was requested and is available.
-    :vartype guidance: ~azure.maps.route.models.RouteResultGuidance
-    """
-
-    _validation = {
-        'summary': {'readonly': True},
-        'legs': {'readonly': True},
-        'sections': {'readonly': True},
-        'guidance': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'RouteDirectionsSummary'},
-        'legs': {'key': 'legs', 'type': '[RouteResultLeg]'},
-        'sections': {'key': 'sections', 'type': '[RouteResultSection]'},
-        'guidance': {'key': 'guidance', 'type': 'RouteResultGuidance'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteDirectionsResult, self).__init__(**kwargs)
-        self.summary = None
-        self.legs = None
-        self.sections = None
-        self.guidance = None
-
-
-class RouteDirectionsSummary(msrest.serialization.Model):
-    """Summary object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar length_in_meters: Length In Meters property.
-    :vartype length_in_meters: int
-    :ivar travel_time_in_seconds: Estimated travel time in seconds property that includes the delay
-     due to real-time traffic. Note that even when traffic=false travelTimeInSeconds still includes
-     the delay due to traffic. If DepartAt is in the future, travel time is calculated using
-     time-dependent historic traffic data.
-    :vartype travel_time_in_seconds: int
-    :ivar traffic_delay_in_seconds: Estimated delay in seconds caused by the real-time incident(s)
-     according to traffic information. For routes planned with departure time in the future, delays
-     is always 0. To return additional travel times using different types of traffic information,
-     parameter computeTravelTimeFor=all needs to be added.
-    :vartype traffic_delay_in_seconds: int
-    :ivar departure_time: Departure Time property.
-    :vartype departure_time: str
-    :ivar arrival_time: Arrival Time property.
-    :vartype arrival_time: str
-    """
-
-    _validation = {
-        'length_in_meters': {'readonly': True},
-        'travel_time_in_seconds': {'readonly': True},
-        'traffic_delay_in_seconds': {'readonly': True},
-        'departure_time': {'readonly': True},
-        'arrival_time': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'length_in_meters': {'key': 'lengthInMeters', 'type': 'int'},
-        'travel_time_in_seconds': {'key': 'travelTimeInSeconds', 'type': 'int'},
-        'traffic_delay_in_seconds': {'key': 'trafficDelayInSeconds', 'type': 'int'},
-        'departure_time': {'key': 'departureTime', 'type': 'str'},
-        'arrival_time': {'key': 'arrivalTime', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteDirectionsSummary, self).__init__(**kwargs)
-        self.length_in_meters = None
-        self.travel_time_in_seconds = None
-        self.traffic_delay_in_seconds = None
-        self.departure_time = None
-        self.arrival_time = None
-
-
-class RouteMatrixResponse(msrest.serialization.Model):
-    """This object is returned from a successful Route Matrix call. For ex, if 2 origins and 3 destinations are provided, there are going to 2 arrays with 3 elements in each. Each element's content depends on the options provided in the query.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar format_version: Format Version property.
-    :vartype format_version: str
-    :ivar matrix: Results as a 2 dimensional array of route summaries.
-    :vartype matrix: list[list[~azure.maps.route.models.RouteMatrixResult]]
-    :ivar summary: Summary object.
-    :vartype summary: ~azure.maps.route.models.RouteMatrixSummary
-    """
-
-    _validation = {
-        'format_version': {'readonly': True},
-        'matrix': {'readonly': True},
-        'summary': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'format_version': {'key': 'formatVersion', 'type': 'str'},
-        'matrix': {'key': 'matrix', 'type': '[[RouteMatrixResult]]'},
-        'summary': {'key': 'summary', 'type': 'RouteMatrixSummary'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteMatrixResponse, self).__init__(**kwargs)
-        self.format_version = None
-        self.matrix = None
-        self.summary = None
-
-
-class RouteMatrixResult(msrest.serialization.Model):
-    """Matrix result object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status_code: StatusCode property for the current cell in the input matrix.
-    :vartype status_code: int
-    :ivar response: Response object of the current cell in the input matrix.
-    :vartype response: ~azure.maps.route.models.RouteMatrixResultResponse
-    """
-
-    _validation = {
-        'status_code': {'readonly': True},
-        'response': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'int'},
-        'response': {'key': 'response', 'type': 'RouteMatrixResultResponse'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteMatrixResult, self).__init__(**kwargs)
-        self.status_code = None
-        self.response = None
-
-
-class RouteMatrixResultResponse(msrest.serialization.Model):
-    """Response object of the current cell in the input matrix.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar route_summary: Summary object for route section.
-    :vartype route_summary: ~azure.maps.route.models.RouteResultLegSummary
-    """
-
-    _validation = {
-        'route_summary': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'route_summary': {'key': 'routeSummary', 'type': 'RouteResultLegSummary'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteMatrixResultResponse, self).__init__(**kwargs)
-        self.route_summary = None
-
-
-class RouteMatrixSummary(msrest.serialization.Model):
-    """Summary object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar successful_routes: Number of successful routes in the response.
-    :vartype successful_routes: int
-    :ivar total_routes: Total number of routes requested. Number of cells in the input matrix.
-    :vartype total_routes: int
-    """
-
-    _validation = {
-        'successful_routes': {'readonly': True},
-        'total_routes': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'successful_routes': {'key': 'successfulRoutes', 'type': 'int'},
-        'total_routes': {'key': 'totalRoutes', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteMatrixSummary, self).__init__(**kwargs)
-        self.successful_routes = None
-        self.total_routes = None
-
-
-class RouteOptimizedWaypoint(msrest.serialization.Model):
-    """Optimized way point object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar provided_index: Way point index provided by the user.
-    :vartype provided_index: int
-    :ivar optimized_index: Optimized way point index from the system.
-    :vartype optimized_index: int
-    """
-
-    _validation = {
-        'provided_index': {'readonly': True},
-        'optimized_index': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'provided_index': {'key': 'providedIndex', 'type': 'int'},
-        'optimized_index': {'key': 'optimizedIndex', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteOptimizedWaypoint, self).__init__(**kwargs)
-        self.provided_index = None
-        self.optimized_index = None
-
-
-class RouteRange(msrest.serialization.Model):
-    """Reachable Range.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param center: Center point of the reachable range.
-    :type center: ~azure.maps.route.models.CoordinatesPair
-    :ivar boundary: Polygon boundary of the reachable range represented as a list of points.
-    :vartype boundary: list[~azure.maps.route.models.CoordinatesPair]
-    """
-
-    _validation = {
-        'boundary': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'center': {'key': 'center', 'type': 'CoordinatesPair'},
-        'boundary': {'key': 'boundary', 'type': '[CoordinatesPair]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteRange, self).__init__(**kwargs)
-        self.center = kwargs.get('center', None)
-        self.boundary = None
-
-
-class RouteResponseReport(msrest.serialization.Model):
-    """Reports the effective settings used in the current call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar effective_settings: Effective parameters or data used when calling this Route API.
-    :vartype effective_settings: list[~azure.maps.route.models.RouteResponseReportEffectiveSetting]
-    """
-
-    _validation = {
-        'effective_settings': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'effective_settings': {'key': 'effectiveSettings', 'type': '[RouteResponseReportEffectiveSetting]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResponseReport, self).__init__(**kwargs)
-        self.effective_settings = None
-
-
-class RouteResponseReportEffectiveSetting(msrest.serialization.Model):
-    """Effective parameter or data used when calling this Route API.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar key: Name of the parameter used.
-    :vartype key: str
-    :ivar value: Value of the parameter used.
-    :vartype value: str
-    """
-
-    _validation = {
-        'key': {'readonly': True},
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResponseReportEffectiveSetting, self).__init__(**kwargs)
-        self.key = None
-        self.value = None
-
-
-class RouteResultGuidance(msrest.serialization.Model):
+class RouteGuidance(_serialization.Model):
     """Contains guidance related elements. This field is present only when guidance was requested and is available.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar instructions: A list of instructions describing maneuvers.
-    :vartype instructions: list[~azure.maps.route.models.RouteResultInstruction]
+    :vartype instructions: list[~azure.maps.route.models.RouteInstruction]
     :ivar instruction_groups: Groups a sequence of instruction elements which are related to each
      other.
-    :vartype instruction_groups: list[~azure.maps.route.models.RouteResultInstructionGroup]
+    :vartype instruction_groups: list[~azure.maps.route.models.RouteInstructionGroup]
     """
 
     _validation = {
-        'instructions': {'readonly': True},
-        'instruction_groups': {'readonly': True},
+        "instructions": {"readonly": True},
+        "instruction_groups": {"readonly": True},
     }
 
     _attribute_map = {
-        'instructions': {'key': 'instructions', 'type': '[RouteResultInstruction]'},
-        'instruction_groups': {'key': 'instructionGroups', 'type': '[RouteResultInstructionGroup]'},
+        "instructions": {"key": "instructions", "type": "[RouteInstruction]"},
+        "instruction_groups": {"key": "instructionGroups", "type": "[RouteInstructionGroup]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResultGuidance, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.instructions = None
         self.instruction_groups = None
 
 
-class RouteResultInstruction(msrest.serialization.Model):
+class RouteInstruction(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A set of attributes describing a maneuver, e.g. 'Turn right', 'Keep left', 'Take the ferry', 'Take the motorway', 'Arrive'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1550,15 +1355,15 @@ class RouteResultInstruction(msrest.serialization.Model):
     :ivar travel_time_in_seconds: Estimated travel time up to the point corresponding to
      routeOffsetInMeters.
     :vartype travel_time_in_seconds: int
-    :param point: A location represented as a latitude and longitude.
-    :type point: ~azure.maps.route.models.CoordinatesPair
+    :ivar point: A location represented as a latitude and longitude.
+    :vartype point: ~azure.maps.route.models.LatLongPair
     :ivar point_index: The index of the point in the list of polyline "points" corresponding to the
      point of the instruction.
     :vartype point_index: int
-    :param instruction_type: Type of the instruction, e.g., turn or change of road form. Possible
-     values include: "TURN", "ROAD_CHANGE", "LOCATION_DEPARTURE", "LOCATION_ARRIVAL",
-     "DIRECTION_INFO", "LOCATION_WAYPOINT".
-    :type instruction_type: str or ~azure.maps.route.models.GuidanceInstructionType
+    :ivar instruction_type: Type of the instruction, e.g., turn or change of road form. Known
+     values are: "TURN", "ROAD_CHANGE", "LOCATION_DEPARTURE", "LOCATION_ARRIVAL", "DIRECTION_INFO",
+     and "LOCATION_WAYPOINT".
+    :vartype instruction_type: str or ~azure.maps.route.models.GuidanceInstructionType
     :ivar road_numbers: The road number(s) of the next significant road segment(s) after the
      maneuver, or of the road(s) to be followed. Example: ["E34", "N205"].
     :vartype road_numbers: list[str]
@@ -1581,38 +1386,38 @@ class RouteResultInstruction(msrest.serialization.Model):
     :vartype state_code: str
     :ivar junction_type: The type of the junction where the maneuver takes place. For larger
      roundabouts, two separate instructions are generated for entering and leaving the roundabout.
-     Possible values include: "REGULAR", "ROUNDABOUT", "BIFURCATION".
+     Known values are: "REGULAR", "ROUNDABOUT", and "BIFURCATION".
     :vartype junction_type: str or ~azure.maps.route.models.JunctionType
-    :ivar turn_angle_in_decimal_degrees: Indicates the direction of an instruction. If junctionType
+    :ivar turn_angle_in_degrees: Indicates the direction of an instruction. If junctionType
      indicates a turn instruction:
-    
-    
+
+
      * 180 = U-turn
      * [-179, -1] = Left turn
      * 0 = Straight on (a '0 degree' turn)
      * [1, 179] = Right turn
-    
+
      If junctionType indicates a bifurcation instruction:
-    
-    
+
+
      * <0 - keep left
      * &gt;0 - keep right.
-    :vartype turn_angle_in_decimal_degrees: int
+    :vartype turn_angle_in_degrees: int
     :ivar roundabout_exit_number: This indicates which exit to take at a roundabout.
     :vartype roundabout_exit_number: str
     :ivar possible_combine_with_next: It is possible to optionally combine the instruction with the
      next one. This can be used to build messages like "Turn left and then turn right".
     :vartype possible_combine_with_next: bool
     :ivar driving_side: Indicates left-hand vs. right-hand side driving at the point of the
-     maneuver. Possible values include: "LEFT", "RIGHT".
+     maneuver. Known values are: "LEFT" and "RIGHT".
     :vartype driving_side: str or ~azure.maps.route.models.DrivingSide
-    :ivar maneuver: A code identifying the maneuver. Possible values include: "ARRIVE",
-     "ARRIVE_LEFT", "ARRIVE_RIGHT", "DEPART", "STRAIGHT", "KEEP_RIGHT", "BEAR_RIGHT", "TURN_RIGHT",
-     "SHARP_RIGHT", "KEEP_LEFT", "BEAR_LEFT", "TURN_LEFT", "SHARP_LEFT", "MAKE_UTURN",
-     "ENTER_MOTORWAY", "ENTER_FREEWAY", "ENTER_HIGHWAY", "TAKE_EXIT", "MOTORWAY_EXIT_LEFT",
-     "MOTORWAY_EXIT_RIGHT", "TAKE_FERRY", "ROUNDABOUT_CROSS", "ROUNDABOUT_RIGHT", "ROUNDABOUT_LEFT",
-     "ROUNDABOUT_BACK", "TRY_MAKE_UTURN", "FOLLOW", "SWITCH_PARALLEL_ROAD", "SWITCH_MAIN_ROAD",
-     "ENTRANCE_RAMP", "WAYPOINT_LEFT", "WAYPOINT_RIGHT", "WAYPOINT_REACHED".
+    :ivar maneuver: A code identifying the maneuver. Known values are: "ARRIVE", "ARRIVE_LEFT",
+     "ARRIVE_RIGHT", "DEPART", "STRAIGHT", "KEEP_RIGHT", "BEAR_RIGHT", "TURN_RIGHT", "SHARP_RIGHT",
+     "KEEP_LEFT", "BEAR_LEFT", "TURN_LEFT", "SHARP_LEFT", "MAKE_UTURN", "ENTER_MOTORWAY",
+     "ENTER_FREEWAY", "ENTER_HIGHWAY", "TAKE_EXIT", "MOTORWAY_EXIT_LEFT", "MOTORWAY_EXIT_RIGHT",
+     "TAKE_FERRY", "ROUNDABOUT_CROSS", "ROUNDABOUT_RIGHT", "ROUNDABOUT_LEFT", "ROUNDABOUT_BACK",
+     "TRY_MAKE_UTURN", "FOLLOW", "SWITCH_PARALLEL_ROAD", "SWITCH_MAIN_ROAD", "ENTRANCE_RAMP",
+     "WAYPOINT_LEFT", "WAYPOINT_RIGHT", and "WAYPOINT_REACHED".
     :vartype maneuver: str or ~azure.maps.route.models.GuidanceManeuver
     :ivar message: A human-readable message for the maneuver.
     :vartype message: str
@@ -1620,76 +1425,87 @@ class RouteResultInstruction(msrest.serialization.Model):
      from the next instruction. Sometimes it is possible to combine two successive instructions into
      a single instruction making it easier to follow. When this is the case the
      possibleCombineWithNext flag will be true. For example:
-    
+
      .. code-block::
-    
+
         10. Turn left onto Einsteinweg/A10/E22 towards Ring Amsterdam
         11. Follow Einsteinweg/A10/E22 towards Ring Amsterdam
-    
+
      The possibleCombineWithNext flag on instruction 10 is true. This indicates to the clients of
      coded guidance that it can be combined with instruction 11. The instructions will be combined
      automatically for clients requesting human-readable guidance. The combinedMessage field
      contains the combined message:
-    
+
      .. code-block::
-    
+
         Turn left onto Einsteinweg/A10/E22 towards Ring Amsterdam
         then follow Einsteinweg/A10/E22 towards Ring Amsterdam.
     :vartype combined_message: str
     """
 
     _validation = {
-        'route_offset_in_meters': {'readonly': True},
-        'travel_time_in_seconds': {'readonly': True},
-        'point_index': {'readonly': True},
-        'road_numbers': {'readonly': True},
-        'exit_number': {'readonly': True},
-        'street': {'readonly': True},
-        'signpost_text': {'readonly': True},
-        'country_code': {'readonly': True},
-        'state_code': {'readonly': True},
-        'junction_type': {'readonly': True},
-        'turn_angle_in_decimal_degrees': {'readonly': True},
-        'roundabout_exit_number': {'readonly': True},
-        'possible_combine_with_next': {'readonly': True},
-        'driving_side': {'readonly': True},
-        'maneuver': {'readonly': True},
-        'message': {'readonly': True},
-        'combined_message': {'readonly': True},
+        "route_offset_in_meters": {"readonly": True},
+        "travel_time_in_seconds": {"readonly": True},
+        "point_index": {"readonly": True},
+        "road_numbers": {"readonly": True},
+        "exit_number": {"readonly": True},
+        "street": {"readonly": True},
+        "signpost_text": {"readonly": True},
+        "country_code": {"readonly": True},
+        "state_code": {"readonly": True},
+        "junction_type": {"readonly": True},
+        "turn_angle_in_degrees": {"readonly": True},
+        "roundabout_exit_number": {"readonly": True},
+        "possible_combine_with_next": {"readonly": True},
+        "driving_side": {"readonly": True},
+        "maneuver": {"readonly": True},
+        "message": {"readonly": True},
+        "combined_message": {"readonly": True},
     }
 
     _attribute_map = {
-        'route_offset_in_meters': {'key': 'routeOffsetInMeters', 'type': 'int'},
-        'travel_time_in_seconds': {'key': 'travelTimeInSeconds', 'type': 'int'},
-        'point': {'key': 'point', 'type': 'CoordinatesPair'},
-        'point_index': {'key': 'pointIndex', 'type': 'int'},
-        'instruction_type': {'key': 'instructionType', 'type': 'str'},
-        'road_numbers': {'key': 'roadNumbers', 'type': '[str]'},
-        'exit_number': {'key': 'exitNumber', 'type': 'str'},
-        'street': {'key': 'street', 'type': 'str'},
-        'signpost_text': {'key': 'signpostText', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'state_code': {'key': 'stateCode', 'type': 'str'},
-        'junction_type': {'key': 'junctionType', 'type': 'str'},
-        'turn_angle_in_decimal_degrees': {'key': 'turnAngleInDecimalDegrees', 'type': 'int'},
-        'roundabout_exit_number': {'key': 'roundaboutExitNumber', 'type': 'str'},
-        'possible_combine_with_next': {'key': 'possibleCombineWithNext', 'type': 'bool'},
-        'driving_side': {'key': 'drivingSide', 'type': 'str'},
-        'maneuver': {'key': 'maneuver', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'combined_message': {'key': 'combinedMessage', 'type': 'str'},
+        "route_offset_in_meters": {"key": "routeOffsetInMeters", "type": "int"},
+        "travel_time_in_seconds": {"key": "travelTimeInSeconds", "type": "int"},
+        "point": {"key": "point", "type": "LatLongPair"},
+        "point_index": {"key": "pointIndex", "type": "int"},
+        "instruction_type": {"key": "instructionType", "type": "str"},
+        "road_numbers": {"key": "roadNumbers", "type": "[str]"},
+        "exit_number": {"key": "exitNumber", "type": "str"},
+        "street": {"key": "street", "type": "str"},
+        "signpost_text": {"key": "signpostText", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "state_code": {"key": "stateCode", "type": "str"},
+        "junction_type": {"key": "junctionType", "type": "str"},
+        "turn_angle_in_degrees": {"key": "turnAngleInDecimalDegrees", "type": "int"},
+        "roundabout_exit_number": {"key": "roundaboutExitNumber", "type": "str"},
+        "possible_combine_with_next": {"key": "possibleCombineWithNext", "type": "bool"},
+        "driving_side": {"key": "drivingSide", "type": "str"},
+        "maneuver": {"key": "maneuver", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "combined_message": {"key": "combinedMessage", "type": "str"},
     }
 
     def __init__(
         self,
+        *,
+        point: Optional["_models.LatLongPair"] = None,
+        instruction_type: Optional[Union[str, "_models.GuidanceInstructionType"]] = None,
         **kwargs
     ):
-        super(RouteResultInstruction, self).__init__(**kwargs)
+        """
+        :keyword point: A location represented as a latitude and longitude.
+        :paramtype point: ~azure.maps.route.models.LatLongPair
+        :keyword instruction_type: Type of the instruction, e.g., turn or change of road form. Known
+         values are: "TURN", "ROAD_CHANGE", "LOCATION_DEPARTURE", "LOCATION_ARRIVAL", "DIRECTION_INFO",
+         and "LOCATION_WAYPOINT".
+        :paramtype instruction_type: str or ~azure.maps.route.models.GuidanceInstructionType
+        """
+        super().__init__(**kwargs)
         self.route_offset_in_meters = None
         self.travel_time_in_seconds = None
-        self.point = kwargs.get('point', None)
+        self.point = point
         self.point_index = None
-        self.instruction_type = kwargs.get('instruction_type', None)
+        self.instruction_type = instruction_type
         self.road_numbers = None
         self.exit_number = None
         self.street = None
@@ -1697,7 +1513,7 @@ class RouteResultInstruction(msrest.serialization.Model):
         self.country_code = None
         self.state_code = None
         self.junction_type = None
-        self.turn_angle_in_decimal_degrees = None
+        self.turn_angle_in_degrees = None
         self.roundabout_exit_number = None
         self.possible_combine_with_next = None
         self.driving_side = None
@@ -1706,14 +1522,16 @@ class RouteResultInstruction(msrest.serialization.Model):
         self.combined_message = None
 
 
-class RouteResultInstructionGroup(msrest.serialization.Model):
+class RouteInstructionGroup(_serialization.Model):
     """Groups a sequence of instruction elements which are related to each other. The sequence range is constrained with firstInstructionIndex and lastInstructionIndex. When human-readable text messages are requested for guidance (instructionType=text or tagged), then the instructionGroup has a summary message returned when available.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar first_instruction_index: Index of the first instruction.
+    :ivar first_instruction_index: Index of the first instruction in the instructions and belonging
+     to this group.
     :vartype first_instruction_index: int
-    :ivar last_instruction_index: Index of the last instruction.
+    :ivar last_instruction_index: Index of the last instruction in the instructions and belonging
+     to this group.
     :vartype last_instruction_index: int
     :ivar group_length_in_meters: Length of the group.
     :vartype group_length_in_meters: int
@@ -1723,61 +1541,57 @@ class RouteResultInstructionGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'first_instruction_index': {'readonly': True},
-        'last_instruction_index': {'readonly': True},
-        'group_length_in_meters': {'readonly': True},
-        'group_message': {'readonly': True},
+        "first_instruction_index": {"readonly": True},
+        "last_instruction_index": {"readonly": True},
+        "group_length_in_meters": {"readonly": True},
+        "group_message": {"readonly": True},
     }
 
     _attribute_map = {
-        'first_instruction_index': {'key': 'firstInstructionIndex', 'type': 'int'},
-        'last_instruction_index': {'key': 'lastInstructionIndex', 'type': 'int'},
-        'group_length_in_meters': {'key': 'groupLengthInMeters', 'type': 'int'},
-        'group_message': {'key': 'groupMessage', 'type': 'str'},
+        "first_instruction_index": {"key": "firstInstructionIndex", "type": "int"},
+        "last_instruction_index": {"key": "lastInstructionIndex", "type": "int"},
+        "group_length_in_meters": {"key": "groupLengthInMeters", "type": "int"},
+        "group_message": {"key": "groupMessage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResultInstructionGroup, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.first_instruction_index = None
         self.last_instruction_index = None
         self.group_length_in_meters = None
         self.group_message = None
 
 
-class RouteResultLeg(msrest.serialization.Model):
-    """RouteResultLeg.
+class RouteLeg(_serialization.Model):
+    """A description of a part of a route, comprised of a list of points. Each additional waypoint provided in the request will result in an additional leg in the returned route.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar summary: Summary object for route section.
-    :vartype summary: ~azure.maps.route.models.RouteResultLegSummary
+    :vartype summary: ~azure.maps.route.models.RouteLegSummary
     :ivar points: Points array.
-    :vartype points: list[~azure.maps.route.models.CoordinatesPair]
+    :vartype points: list[~azure.maps.route.models.LatLongPair]
     """
 
     _validation = {
-        'summary': {'readonly': True},
-        'points': {'readonly': True},
+        "summary": {"readonly": True},
+        "points": {"readonly": True},
     }
 
     _attribute_map = {
-        'summary': {'key': 'summary', 'type': 'RouteResultLegSummary'},
-        'points': {'key': 'points', 'type': '[CoordinatesPair]'},
+        "summary": {"key": "summary", "type": "RouteLegSummary"},
+        "points": {"key": "points", "type": "[LatLongPair]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResultLeg, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.summary = None
         self.points = None
 
 
-class RouteResultLegSummary(msrest.serialization.Model):
+class RouteLegSummary(_serialization.Model):
     """Summary object for route section.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1794,10 +1608,10 @@ class RouteResultLegSummary(msrest.serialization.Model):
      is always 0. To return additional travel times using different types of traffic information,
      parameter computeTravelTimeFor=all needs to be added.
     :vartype traffic_delay_in_seconds: int
-    :ivar departure_time: Departure Time property.
-    :vartype departure_time: str
-    :ivar arrival_time: Arrival Time property.
-    :vartype arrival_time: str
+    :ivar departure_time: The estimated departure time for the route or leg.
+    :vartype departure_time: ~datetime.datetime
+    :ivar arrival_time: The estimated arrival time for the route or leg.
+    :vartype arrival_time: ~datetime.datetime
     :ivar no_traffic_travel_time_in_seconds: Estimated travel time calculated as if there are no
      delays on the route due to traffic conditions (e.g. congestion). Included only if
      computeTravelTimeFor = all is used in the query.
@@ -1813,48 +1627,49 @@ class RouteResultLegSummary(msrest.serialization.Model):
      Consumption Model. Included if vehicleEngineType is set to *combustion* and
      constantSpeedConsumptionInLitersPerHundredkm is specified. The value will be non-negative.
     :vartype fuel_consumption_in_liters: float
-    :ivar battery_consumption_ink_wh: Estimated electric energy consumption in kilowatt hours (kWh)
-     using the Electric Consumption Model. Included if vehicleEngineType is set to electric and
-     constantSpeedConsumptionInkWhPerHundredkm is specified. The value of batteryConsumptionInkWh
-     includes the recuperated electric energy and can therefore be negative (which indicates gaining
-     energy). If both maxChargeInkWh and currentChargeInkWh are specified, recuperation will be
-     capped to ensure that the battery charge level never exceeds maxChargeInkWh. If neither
-     maxChargeInkWh nor currentChargeInkWh are specified, unconstrained recuperation is assumed in
-     the consumption calculation.
-    :vartype battery_consumption_ink_wh: float
+    :ivar battery_consumption_in_kw_h: Estimated electric energy consumption in kilowatt hours
+     (kWh) using the Electric Consumption Model. Included if vehicleEngineType is set to electric
+     and constantSpeedConsumptionInkWhPerHundredkm is specified. The value of
+     batteryConsumptionInkWh includes the recuperated electric energy and can therefore be negative
+     (which indicates gaining energy). If both maxChargeInkWh and currentChargeInkWh are specified,
+     recuperation will be capped to ensure that the battery charge level never exceeds
+     maxChargeInkWh. If neither maxChargeInkWh nor currentChargeInkWh are specified, unconstrained
+     recuperation is assumed in the consumption calculation.
+    :vartype battery_consumption_in_kw_h: float
     """
 
     _validation = {
-        'length_in_meters': {'readonly': True},
-        'travel_time_in_seconds': {'readonly': True},
-        'traffic_delay_in_seconds': {'readonly': True},
-        'departure_time': {'readonly': True},
-        'arrival_time': {'readonly': True},
-        'no_traffic_travel_time_in_seconds': {'readonly': True},
-        'historic_traffic_travel_time_in_seconds': {'readonly': True},
-        'live_traffic_incidents_travel_time_in_seconds': {'readonly': True},
-        'fuel_consumption_in_liters': {'readonly': True},
-        'battery_consumption_ink_wh': {'readonly': True},
+        "length_in_meters": {"readonly": True},
+        "travel_time_in_seconds": {"readonly": True},
+        "traffic_delay_in_seconds": {"readonly": True},
+        "departure_time": {"readonly": True},
+        "arrival_time": {"readonly": True},
+        "no_traffic_travel_time_in_seconds": {"readonly": True},
+        "historic_traffic_travel_time_in_seconds": {"readonly": True},
+        "live_traffic_incidents_travel_time_in_seconds": {"readonly": True},
+        "fuel_consumption_in_liters": {"readonly": True},
+        "battery_consumption_in_kw_h": {"readonly": True},
     }
 
     _attribute_map = {
-        'length_in_meters': {'key': 'lengthInMeters', 'type': 'int'},
-        'travel_time_in_seconds': {'key': 'travelTimeInSeconds', 'type': 'int'},
-        'traffic_delay_in_seconds': {'key': 'trafficDelayInSeconds', 'type': 'int'},
-        'departure_time': {'key': 'departureTime', 'type': 'str'},
-        'arrival_time': {'key': 'arrivalTime', 'type': 'str'},
-        'no_traffic_travel_time_in_seconds': {'key': 'noTrafficTravelTimeInSeconds', 'type': 'int'},
-        'historic_traffic_travel_time_in_seconds': {'key': 'historicTrafficTravelTimeInSeconds', 'type': 'int'},
-        'live_traffic_incidents_travel_time_in_seconds': {'key': 'liveTrafficIncidentsTravelTimeInSeconds', 'type': 'int'},
-        'fuel_consumption_in_liters': {'key': 'fuelConsumptionInLiters', 'type': 'float'},
-        'battery_consumption_ink_wh': {'key': 'batteryConsumptionInkWh', 'type': 'float'},
+        "length_in_meters": {"key": "lengthInMeters", "type": "int"},
+        "travel_time_in_seconds": {"key": "travelTimeInSeconds", "type": "int"},
+        "traffic_delay_in_seconds": {"key": "trafficDelayInSeconds", "type": "int"},
+        "departure_time": {"key": "departureTime", "type": "iso-8601"},
+        "arrival_time": {"key": "arrivalTime", "type": "iso-8601"},
+        "no_traffic_travel_time_in_seconds": {"key": "noTrafficTravelTimeInSeconds", "type": "int"},
+        "historic_traffic_travel_time_in_seconds": {"key": "historicTrafficTravelTimeInSeconds", "type": "int"},
+        "live_traffic_incidents_travel_time_in_seconds": {
+            "key": "liveTrafficIncidentsTravelTimeInSeconds",
+            "type": "int",
+        },
+        "fuel_consumption_in_liters": {"key": "fuelConsumptionInLiters", "type": "float"},
+        "battery_consumption_in_kw_h": {"key": "batteryConsumptionInkWh", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResultLegSummary, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.length_in_meters = None
         self.travel_time_in_seconds = None
         self.traffic_delay_in_seconds = None
@@ -1864,69 +1679,349 @@ class RouteResultLegSummary(msrest.serialization.Model):
         self.historic_traffic_travel_time_in_seconds = None
         self.live_traffic_incidents_travel_time_in_seconds = None
         self.fuel_consumption_in_liters = None
-        self.battery_consumption_ink_wh = None
+        self.battery_consumption_in_kw_h = None
 
 
-class RouteResultSection(msrest.serialization.Model):
-    """RouteResultSection.
+class RouteMatrix(_serialization.Model):
+    """Matrix result object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar start_point_index: Start Point Index property.
+    :ivar status_code: StatusCode property for the current cell in the input matrix.
+    :vartype status_code: int
+    :ivar response: Response object of the current cell in the input matrix.
+    :vartype response: ~azure.maps.route.models.RouteMatrixResultResponse
+    """
+
+    _validation = {
+        "status_code": {"readonly": True},
+        "response": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status_code": {"key": "statusCode", "type": "int"},
+        "response": {"key": "response", "type": "RouteMatrixResultResponse"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.status_code = None
+        self.response = None
+
+
+class RouteMatrixQuery(_serialization.Model):
+    """An object with a matrix of coordinates.
+
+    :ivar origins: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+    :vartype origins: ~azure.maps.route.models.GeoJsonMultiPoint
+    :ivar destinations: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
+     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+    :vartype destinations: ~azure.maps.route.models.GeoJsonMultiPoint
+    """
+
+    _attribute_map = {
+        "origins": {"key": "origins", "type": "GeoJsonMultiPoint"},
+        "destinations": {"key": "destinations", "type": "GeoJsonMultiPoint"},
+    }
+
+    def __init__(
+        self,
+        *,
+        origins: Optional["_models.GeoJsonMultiPoint"] = None,
+        destinations: Optional["_models.GeoJsonMultiPoint"] = None,
+        **kwargs
+    ):
+        """
+        :keyword origins: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+        :paramtype origins: ~azure.maps.route.models.GeoJsonMultiPoint
+        :keyword destinations: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
+         <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+        :paramtype destinations: ~azure.maps.route.models.GeoJsonMultiPoint
+        """
+        super().__init__(**kwargs)
+        self.origins = origins
+        self.destinations = destinations
+
+
+class RouteMatrixResult(_serialization.Model):
+    """This object is returned from a successful Route Matrix call. For ex, if 2 origins and 3 destinations are provided, there are going to 2 arrays with 3 elements in each. Each element's content depends on the options provided in the query.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar format_version: Format Version property.
+    :vartype format_version: str
+    :ivar matrix: Results as a 2 dimensional array of route summaries.
+    :vartype matrix: list[list[~azure.maps.route.models.RouteMatrix]]
+    :ivar summary: Summary object.
+    :vartype summary: ~azure.maps.route.models.RouteMatrixSummary
+    """
+
+    _validation = {
+        "format_version": {"readonly": True},
+        "matrix": {"readonly": True},
+        "summary": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "format_version": {"key": "formatVersion", "type": "str"},
+        "matrix": {"key": "matrix", "type": "[[RouteMatrix]]"},
+        "summary": {"key": "summary", "type": "RouteMatrixSummary"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.format_version = None
+        self.matrix = None
+        self.summary = None
+
+
+class RouteMatrixResultResponse(_serialization.Model):
+    """Response object of the current cell in the input matrix.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar summary: Summary object for route section.
+    :vartype summary: ~azure.maps.route.models.RouteLegSummary
+    """
+
+    _validation = {
+        "summary": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "summary": {"key": "routeSummary", "type": "RouteLegSummary"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.summary = None
+
+
+class RouteMatrixSummary(_serialization.Model):
+    """Summary object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar successful_routes: Number of successful routes in the response.
+    :vartype successful_routes: int
+    :ivar total_routes: Total number of routes requested. Number of cells in the input matrix.
+    :vartype total_routes: int
+    """
+
+    _validation = {
+        "successful_routes": {"readonly": True},
+        "total_routes": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "successful_routes": {"key": "successfulRoutes", "type": "int"},
+        "total_routes": {"key": "totalRoutes", "type": "int"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.successful_routes = None
+        self.total_routes = None
+
+
+class RouteOptimizedWaypoint(_serialization.Model):
+    """Optimized way point object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provided_index: Way point index provided by the user.
+    :vartype provided_index: int
+    :ivar optimized_index: Optimized way point index from the system.
+    :vartype optimized_index: int
+    """
+
+    _validation = {
+        "provided_index": {"readonly": True},
+        "optimized_index": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provided_index": {"key": "providedIndex", "type": "int"},
+        "optimized_index": {"key": "optimizedIndex", "type": "int"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.provided_index = None
+        self.optimized_index = None
+
+
+class RouteRange(_serialization.Model):
+    """Reachable Range.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar center: Center point of the reachable range.
+    :vartype center: ~azure.maps.route.models.LatLongPair
+    :ivar boundary: Polygon boundary of the reachable range represented as a list of points.
+    :vartype boundary: list[~azure.maps.route.models.LatLongPair]
+    """
+
+    _validation = {
+        "boundary": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "center": {"key": "center", "type": "LatLongPair"},
+        "boundary": {"key": "boundary", "type": "[LatLongPair]"},
+    }
+
+    def __init__(self, *, center: Optional["_models.LatLongPair"] = None, **kwargs):
+        """
+        :keyword center: Center point of the reachable range.
+        :paramtype center: ~azure.maps.route.models.LatLongPair
+        """
+        super().__init__(**kwargs)
+        self.center = center
+        self.boundary = None
+
+
+class RouteRangeResult(_serialization.Model):
+    """This object is returned from a successful Route Reachable Range call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar format_version: Format Version property.
+    :vartype format_version: str
+    :ivar reachable_range: Reachable Range.
+    :vartype reachable_range: ~azure.maps.route.models.RouteRange
+    :ivar report: Reports the effective settings used in the current call.
+    :vartype report: ~azure.maps.route.models.RouteReport
+    """
+
+    _validation = {
+        "format_version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "format_version": {"key": "formatVersion", "type": "str"},
+        "reachable_range": {"key": "reachableRange", "type": "RouteRange"},
+        "report": {"key": "report", "type": "RouteReport"},
+    }
+
+    def __init__(
+        self,
+        *,
+        reachable_range: Optional["_models.RouteRange"] = None,
+        report: Optional["_models.RouteReport"] = None,
+        **kwargs
+    ):
+        """
+        :keyword reachable_range: Reachable Range.
+        :paramtype reachable_range: ~azure.maps.route.models.RouteRange
+        :keyword report: Reports the effective settings used in the current call.
+        :paramtype report: ~azure.maps.route.models.RouteReport
+        """
+        super().__init__(**kwargs)
+        self.format_version = None
+        self.reachable_range = reachable_range
+        self.report = report
+
+
+class RouteReport(_serialization.Model):
+    """Reports the effective settings used in the current call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar effective_settings: Effective parameters or data used when calling this Route API.
+    :vartype effective_settings: list[~azure.maps.route.models.EffectiveSetting]
+    """
+
+    _validation = {
+        "effective_settings": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "effective_settings": {"key": "effectiveSettings", "type": "[EffectiveSetting]"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.effective_settings = None
+
+
+class RouteSection(_serialization.Model):
+    """Route sections contain additional information about parts of a route. Each section contains at least the elements ``startPointIndex``\ , ``endPointIndex``\ , and ``sectionType``.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar start_point_index: Index of the first point (offset 0) in the route this section applies
+     to.
     :vartype start_point_index: int
-    :ivar end_point_index: End Point Index property.
+    :ivar end_point_index: Index of the last point (offset 0) in the route this section applies to.
     :vartype end_point_index: int
-    :ivar section_type: Section Type property.
-    :vartype section_type: str
-    :ivar travel_mode: Travel Mode property.
-    :vartype travel_mode: str
+    :ivar section_type: Section types of the reported route response. Known values are:
+     "CAR_TRAIN", "COUNTRY", "FERRY", "MOTORWAY", "PEDESTRIAN", "TOLL_ROAD", "TOLL_VIGNETTE",
+     "TRAFFIC", "TRAVEL_MODE", "TUNNEL", "CARPOOL", and "URBAN".
+    :vartype section_type: str or ~azure.maps.route.models.ResponseSectionType
+    :ivar travel_mode: Travel mode for the calculated route. The value will be set to ``other`` if
+     the requested mode of transport is not possible in this section. Known values are: "car",
+     "truck", "taxi", "bus", "van", "motorcycle", "bicycle", "pedestrian", and "other".
+    :vartype travel_mode: str or ~azure.maps.route.models.ResponseTravelMode
     :ivar simple_category: Type of the incident. Can currently be JAM, ROAD_WORK, ROAD_CLOSURE, or
-     OTHER. See "tec" for detailed information.
-    :vartype simple_category: str
+     OTHER. See "tec" for detailed information. Known values are: "JAM", "ROAD_WORK",
+     "ROAD_CLOSURE", and "OTHER".
+    :vartype simple_category: str or ~azure.maps.route.models.SimpleCategory
     :ivar effective_speed_in_kmh: Effective speed of the incident in km/h, averaged over its entire
      length.
     :vartype effective_speed_in_kmh: int
     :ivar delay_in_seconds: Delay in seconds caused by the incident.
     :vartype delay_in_seconds: int
-    :ivar magnitude_of_delay: The magnitude of delay caused by the incident. These values
-     correspond to the values of the response field ty of the `Get Traffic Incident Detail API
-     <https://docs.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_. Possible values
-     include: "0", "1", "2", "3", "4".
-    :vartype magnitude_of_delay: str or ~azure.maps.route.models.MagnitudeOfDelay
-    :param tec: Details of the traffic event, using definitions in the `TPEG2-TEC
+    :ivar delay_magnitude: The magnitude of delay caused by the incident. These values correspond
+     to the values of the response field ty of the `Get Traffic Incident Detail API
+     <https://docs.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_. Known values
+     are: "0", "1", "2", "3", and "4".
+    :vartype delay_magnitude: str or ~azure.maps.route.models.DelayMagnitude
+    :ivar tec: Details of the traffic event, using definitions in the `TPEG2-TEC
      <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes
      elements.
-    :type tec: ~azure.maps.route.models.RouteResultSectionTec
+    :vartype tec: ~azure.maps.route.models.RouteSectionTec
     """
 
     _validation = {
-        'start_point_index': {'readonly': True},
-        'end_point_index': {'readonly': True},
-        'section_type': {'readonly': True},
-        'travel_mode': {'readonly': True},
-        'simple_category': {'readonly': True},
-        'effective_speed_in_kmh': {'readonly': True},
-        'delay_in_seconds': {'readonly': True},
-        'magnitude_of_delay': {'readonly': True},
+        "start_point_index": {"readonly": True},
+        "end_point_index": {"readonly": True},
+        "section_type": {"readonly": True},
+        "travel_mode": {"readonly": True},
+        "simple_category": {"readonly": True},
+        "effective_speed_in_kmh": {"readonly": True},
+        "delay_in_seconds": {"readonly": True},
+        "delay_magnitude": {"readonly": True},
     }
 
     _attribute_map = {
-        'start_point_index': {'key': 'startPointIndex', 'type': 'int'},
-        'end_point_index': {'key': 'endPointIndex', 'type': 'int'},
-        'section_type': {'key': 'sectionType', 'type': 'str'},
-        'travel_mode': {'key': 'travelMode', 'type': 'str'},
-        'simple_category': {'key': 'simpleCategory', 'type': 'str'},
-        'effective_speed_in_kmh': {'key': 'effectiveSpeedInKmh', 'type': 'int'},
-        'delay_in_seconds': {'key': 'delayInSeconds', 'type': 'int'},
-        'magnitude_of_delay': {'key': 'magnitudeOfDelay', 'type': 'str'},
-        'tec': {'key': 'tec', 'type': 'RouteResultSectionTec'},
+        "start_point_index": {"key": "startPointIndex", "type": "int"},
+        "end_point_index": {"key": "endPointIndex", "type": "int"},
+        "section_type": {"key": "sectionType", "type": "str"},
+        "travel_mode": {"key": "travelMode", "type": "str"},
+        "simple_category": {"key": "simpleCategory", "type": "str"},
+        "effective_speed_in_kmh": {"key": "effectiveSpeedInKmh", "type": "int"},
+        "delay_in_seconds": {"key": "delayInSeconds", "type": "int"},
+        "delay_magnitude": {"key": "magnitudeOfDelay", "type": "str"},
+        "tec": {"key": "tec", "type": "RouteSectionTec"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResultSection, self).__init__(**kwargs)
+    def __init__(self, *, tec: Optional["_models.RouteSectionTec"] = None, **kwargs):
+        """
+        :keyword tec: Details of the traffic event, using definitions in the `TPEG2-TEC
+         <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes
+         elements.
+        :paramtype tec: ~azure.maps.route.models.RouteSectionTec
+        """
+        super().__init__(**kwargs)
         self.start_point_index = None
         self.end_point_index = None
         self.section_type = None
@@ -1934,11 +2029,11 @@ class RouteResultSection(msrest.serialization.Model):
         self.simple_category = None
         self.effective_speed_in_kmh = None
         self.delay_in_seconds = None
-        self.magnitude_of_delay = None
-        self.tec = kwargs.get('tec', None)
+        self.delay_magnitude = None
+        self.tec = tec
 
 
-class RouteResultSectionTec(msrest.serialization.Model):
+class RouteSectionTec(_serialization.Model):
     """Details of the traffic event, using definitions in the `TPEG2-TEC <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1947,29 +2042,30 @@ class RouteResultSectionTec(msrest.serialization.Model):
      table, as defined in the `TPEG2-TEC <https://www.iso.org/standard/63116.html>`_ standard. Can
      be used to color-code traffic events according to severity.
     :vartype effect_code: int
-    :param causes: Causes array.
-    :type causes: list[~azure.maps.route.models.RouteResultSectionTecCause]
+    :ivar causes: Causes array.
+    :vartype causes: list[~azure.maps.route.models.RouteSectionTecCause]
     """
 
     _validation = {
-        'effect_code': {'readonly': True},
+        "effect_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'effect_code': {'key': 'effectCode', 'type': 'int'},
-        'causes': {'key': 'causes', 'type': '[RouteResultSectionTecCause]'},
+        "effect_code": {"key": "effectCode", "type": "int"},
+        "causes": {"key": "causes", "type": "[RouteSectionTecCause]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResultSectionTec, self).__init__(**kwargs)
+    def __init__(self, *, causes: Optional[List["_models.RouteSectionTecCause"]] = None, **kwargs):
+        """
+        :keyword causes: Causes array.
+        :paramtype causes: list[~azure.maps.route.models.RouteSectionTecCause]
+        """
+        super().__init__(**kwargs)
         self.effect_code = None
-        self.causes = kwargs.get('causes', None)
+        self.causes = causes
 
 
-class RouteResultSectionTecCause(msrest.serialization.Model):
+class RouteSectionTecCause(_serialization.Model):
     """The cause of the traffic event. Can contain mainCauseCode and subCauseCode elements. Can be used to define iconography and descriptions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1985,19 +2081,66 @@ class RouteResultSectionTecCause(msrest.serialization.Model):
     """
 
     _validation = {
-        'main_cause_code': {'readonly': True},
-        'sub_cause_code': {'readonly': True},
+        "main_cause_code": {"readonly": True},
+        "sub_cause_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'main_cause_code': {'key': 'mainCauseCode', 'type': 'int'},
-        'sub_cause_code': {'key': 'subCauseCode', 'type': 'int'},
+        "main_cause_code": {"key": "mainCauseCode", "type": "int"},
+        "sub_cause_code": {"key": "subCauseCode", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RouteResultSectionTecCause, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.main_cause_code = None
         self.sub_cause_code = None
+
+
+class RouteSummary(_serialization.Model):
+    """Summary object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar length_in_meters: Length In Meters property.
+    :vartype length_in_meters: int
+    :ivar travel_time_in_seconds: Estimated travel time in seconds property that includes the delay
+     due to real-time traffic. Note that even when traffic=false travelTimeInSeconds still includes
+     the delay due to traffic. If DepartAt is in the future, travel time is calculated using
+     time-dependent historic traffic data.
+    :vartype travel_time_in_seconds: int
+    :ivar traffic_delay_in_seconds: Estimated delay in seconds caused by the real-time incident(s)
+     according to traffic information. For routes planned with departure time in the future, delays
+     is always 0. To return additional travel times using different types of traffic information,
+     parameter computeTravelTimeFor=all needs to be added.
+    :vartype traffic_delay_in_seconds: int
+    :ivar departure_time: The estimated departure time for the route or leg.
+    :vartype departure_time: ~datetime.datetime
+    :ivar arrival_time: The estimated arrival time for the route or leg.
+    :vartype arrival_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "length_in_meters": {"readonly": True},
+        "travel_time_in_seconds": {"readonly": True},
+        "traffic_delay_in_seconds": {"readonly": True},
+        "departure_time": {"readonly": True},
+        "arrival_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "length_in_meters": {"key": "lengthInMeters", "type": "int"},
+        "travel_time_in_seconds": {"key": "travelTimeInSeconds", "type": "int"},
+        "traffic_delay_in_seconds": {"key": "trafficDelayInSeconds", "type": "int"},
+        "departure_time": {"key": "departureTime", "type": "iso-8601"},
+        "arrival_time": {"key": "arrivalTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.length_in_meters = None
+        self.travel_time_in_seconds = None
+        self.traffic_delay_in_seconds = None
+        self.departure_time = None
+        self.arrival_time = None

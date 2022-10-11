@@ -6,7 +6,7 @@
 from typing import Union, Any
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-from ._generated import RouteClient as _MapsRouteClient
+from ._generated import MapsRouteClient as _MapsRouteClient
 from ._version import VERSION
 
 # To check the credential is either AzureKeyCredential or TokenCredential

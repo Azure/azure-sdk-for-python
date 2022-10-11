@@ -30,7 +30,8 @@ def get_route_range():
     result = maps_route_client.get_route_range(coordinates=(52.50931,13.42936), time_budget_in_sec=6000)
 
     print("Get Route Range with coordinates and time budget:")
-    print(result)
+    print(result.reachable_range.center)
+    print(result.reachable_range.boundary[0])
     # [END get_route_range]
 
 if __name__ == '__main__':

@@ -35,7 +35,8 @@ async def get_route_directions():
         )
 
     print("Get Route Directions with list of coordinates:")
-    print(result)
+    print(result.routes[0].summary)
+    print(result.routes[0].sections[0])
     # [END get_route_directions_async]
 
 if __name__ == '__main__':

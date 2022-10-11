@@ -40,7 +40,7 @@ class TestMapsRouteClient(AzureRecordedTestCase):
 
     @MapsRoutePreparer()
     @recorded_by_proxy
-    def request_route_matrix(self):
+    def get_route_matrix(self):
         request_obj = {
             "origins": {
                 "type": "MultiPoint",
@@ -69,8 +69,7 @@ class TestMapsRouteClient(AzureRecordedTestCase):
                 ]
             }
         }
-        result = self.client.post_route_matrix_sync(request_obj)
+        result = self.client.get_route_matrix(request_obj)
         assert len(result.matrix) > 0
-        assert len(result.matrix) == result.summary.total_routes
-        top_answer = result.matrix[0]
-        assert top_answer.response.route_summary.length_in_meters == 495
+        top_answer = result.matrix[0][0]
+        assert top_answer.response.summary.length_in_meters == 495

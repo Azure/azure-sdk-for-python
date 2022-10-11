@@ -6,7 +6,7 @@
 from typing import Union, TYPE_CHECKING
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.credentials import AzureKeyCredential
-from .._generated.aio import RouteClient as _MapsRouteClient
+from .._generated.aio import MapsRouteClient as _MapsRouteClient
 from .._version import VERSION
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential

@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AlternativeRouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AlternativeRouteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AlternativeRouteType."""
 
     #: Allow any alternative route to be returned irrespective of how it compares to the reference
     #: route in terms of optimality.
@@ -35,7 +20,9 @@ class AlternativeRouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: given planning criteria.
     BETTER_ROUTE = "betterRoute"
 
-class ComputeTravelTimeFor(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ComputeTravelTime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ComputeTravelTime."""
 
     #: Does not compute additional travel times.
     NONE = "none"
@@ -44,31 +31,35 @@ class ComputeTravelTimeFor(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: liveTrafficIncidentsTravelTimeInSeconds being included in the summaries in the route response.
     ALL = "all"
 
-class DrivingSide(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates left-hand vs. right-hand side driving at the point of the maneuver.
+
+class DelayMagnitude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The magnitude of delay caused by the incident. These values correspond to the values of the
+    response field ty of the `Get Traffic Incident Detail API
+    <https://docs.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_.
     """
+
+    #: Unknown.
+    UNKNOWN = "0"
+    #: Minor.
+    MINOR = "1"
+    #: Moderate.
+    MODERATE = "2"
+    #: Major.
+    MAJOR = "3"
+    #: Undefined, used for road closures and other indefinite delays.
+    UNDEFINED = "4"
+
+
+class DrivingSide(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates left-hand vs. right-hand side driving at the point of the maneuver."""
 
     #: Left side.
     LEFT = "LEFT"
     #: Right side.
     RIGHT = "RIGHT"
 
-class GeographicResourceLocation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Used to access an Azure Maps Creator resource in the United States.
-    US = "us"
-    #: Used to access an Azure Maps Creator resource in Europe.
-    EU = "eu"
-
-class Geography(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """This parameter specifies where the Azure Maps Creator resource is located.  Valid values are us
-    and eu.
-    """
-
-    US = "us"
-    EU = "eu"
-
-class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class GeoJsonObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types - Point,
     MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection, Feature and
     FeatureCollection.
@@ -93,9 +84,9 @@ class GeoJsonObjectType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: ``GeoJSON FeatureCollection`` object.
     GEO_JSON_FEATURE_COLLECTION = "FeatureCollection"
 
-class GuidanceInstructionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the instruction, e.g., turn or change of road form.
-    """
+
+class GuidanceInstructionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the instruction, e.g., turn or change of road form."""
 
     #: Turn.
     TURN = "TURN"
@@ -110,9 +101,9 @@ class GuidanceInstructionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: Way point location.
     LOCATION_WAYPOINT = "LOCATION_WAYPOINT"
 
-class GuidanceManeuver(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """A code identifying the maneuver.
-    """
+
+class GuidanceManeuver(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A code identifying the maneuver."""
 
     #: You have arrived.
     ARRIVE = "ARRIVE"
@@ -141,7 +132,7 @@ class GuidanceManeuver(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Turn sharp left.
     SHARP_LEFT = "SHARP_LEFT"
     #: Make a U-turn.
-    MAKE_UTURN = "MAKE_UTURN"
+    MAKE_U_TURN = "MAKE_UTURN"
     #: Take the motorway.
     ENTER_MOTORWAY = "ENTER_MOTORWAY"
     #: Take the freeway.
@@ -165,7 +156,7 @@ class GuidanceManeuver(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Go around the roundabout.
     ROUNDABOUT_BACK = "ROUNDABOUT_BACK"
     #: Try to make a U-turn.
-    TRY_MAKE_UTURN = "TRY_MAKE_UTURN"
+    TRY_MAKE_U_TURN = "TRY_MAKE_UTURN"
     #: Follow.
     FOLLOW = "FOLLOW"
     #: Switch to the parallel road.
@@ -181,59 +172,119 @@ class GuidanceManeuver(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: You have reached the waypoint.
     WAYPOINT_REACHED = "WAYPOINT_REACHED"
 
-class HillinessDegree(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: low.
+class InclineLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """InclineLevel."""
+
+    #: low
     LOW = "low"
-    #: normal.
+    #: normal
     NORMAL = "normal"
-    #: high.
+    #: high
     HIGH = "high"
 
-class JunctionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class JsonFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JsonFormat."""
+
+    #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_
+    JSON = "json"
+
+
+class JunctionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the junction where the maneuver takes place. For larger roundabouts, two separate
     instructions are generated for entering and leaving the roundabout.
     """
 
-    #: regular.
+    #: regular
     REGULAR = "REGULAR"
-    #: roundabout.
+    #: roundabout
     ROUNDABOUT = "ROUNDABOUT"
-    #: bifurcation.
+    #: bifurcation
     BIFURCATION = "BIFURCATION"
 
-class MagnitudeOfDelay(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The magnitude of delay caused by the incident. These values correspond to the values of the
-    response field ty of the `Get Traffic Incident Detail API
-    <https://docs.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_.
+
+class Report(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Report."""
+
+    #: Reports the effective parameters or data used when calling the API.
+    EFFECTIVE_SETTINGS = "effectiveSettings"
+
+
+class ResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResponseFormat."""
+
+    #: `The JavaScript Object Notation Data Interchange Format <https://tools.ietf.org/html/rfc8259>`_
+    JSON = "json"
+    #: `The Extensible Markup Language <https://www.w3.org/TR/xml/>`_
+    XML = "xml"
+
+
+class ResponseSectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Section types of the reported route response."""
+
+    #: Sections of the route that are cars or trains.
+    CAR_OR_TRAIN = "CAR_TRAIN"
+    #: Sections indicating which countries the route is in.
+    COUNTRY = "COUNTRY"
+    #: Sections of the route that are ferries.
+    FERRY = "FERRY"
+    #: Sections of the route that are motorways.
+    MOTORWAY = "MOTORWAY"
+    #: Sections of the route that are only suited for pedestrians.
+    PEDESTRIAN = "PEDESTRIAN"
+    #: Sections of the route that require a toll to be payed.
+    TOLL_ROAD = "TOLL_ROAD"
+    #: Sections of the route that require a toll vignette to be present.
+    TOLL_VIGNETTE = "TOLL_VIGNETTE"
+    #: Sections of the route that contain traffic information.
+    TRAFFIC = "TRAFFIC"
+    #: Sections in relation to the request parameter ``travelMode``.
+    TRAVEL_MODE = "TRAVEL_MODE"
+    #: Sections of the route that are tunnels.
+    TUNNEL = "TUNNEL"
+    #: Sections of the route that require use of carpool (HOV/High Occupancy Vehicle) lanes.
+    CARPOOL = "CARPOOL"
+    #: Sections of the route that are located within urban areas.
+    URBAN = "URBAN"
+
+
+class ResponseTravelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Travel mode for the calculated route. The value will be set to ``other`` if the requested mode
+    of transport is not possible in this section.
     """
 
-    #: Unknown.
-    ZERO = "0"
-    #: Minor.
-    ONE = "1"
-    #: Moderate.
-    TWO = "2"
-    #: Major.
-    THREE = "3"
-    #: Undefined, used for road closures and other indefinite delays.
-    FOUR = "4"
+    #: The returned routes are optimized for cars.
+    CAR = "car"
+    #: The returned routes are optimized for commercial vehicles, like for trucks.
+    TRUCK = "truck"
+    #: The returned routes are optimized for taxis. BETA functionality.
+    TAXI = "taxi"
+    #: The returned routes are optimized for buses, including the use of bus only lanes. BETA
+    #: functionality.
+    BUS = "bus"
+    #: The returned routes are optimized for vans. BETA functionality.
+    VAN = "van"
+    #: The returned routes are optimized for motorcycles. BETA functionality.
+    MOTORCYCLE = "motorcycle"
+    #: The returned routes are optimized for bicycles, including use of bicycle lanes.
+    BICYCLE = "bicycle"
+    #: The returned routes are optimized for pedestrians, including the use of sidewalks.
+    PEDESTRIAN = "pedestrian"
+    #: The given mode of transport is not possible in this section
+    OTHER = "other"
 
-class ResponseFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: `The JavaScript Object Notation Data Interchange Format
-    #: <https://tools.ietf.org/html/rfc8259>`_.
-    JSON = "json"
-
-class RouteAvoidType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RouteAvoidType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RouteAvoidType."""
 
     #: Avoids toll roads.
     TOLL_ROADS = "tollRoads"
-    #: Avoids motorways.
+    #: Avoids motorways
     MOTORWAYS = "motorways"
-    #: Avoids ferries.
+    #: Avoids ferries
     FERRIES = "ferries"
-    #: Avoids unpaved roads.
+    #: Avoids unpaved roads
     UNPAVED_ROADS = "unpavedRoads"
     #: Avoids routes that require the use of carpool (HOV/High Occupancy Vehicle) lanes.
     CARPOOLS = "carpools"
@@ -243,7 +294,9 @@ class RouteAvoidType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Avoids border crossings in route calculation.
     BORDER_CROSSINGS = "borderCrossings"
 
-class RouteInstructionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RouteInstructionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RouteInstructionsType."""
 
     #: Returns raw instruction data without human-readable messages.
     CODED = "coded"
@@ -254,16 +307,18 @@ class RouteInstructionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     #: allow client applications to format them correctly. The following message components are tagged
     #: when instructionsType=tagged: street, roadNumber, signpostText, exitNumber,
     #: roundaboutExitNumber.
-    #: 
+    #:
     #: Example of tagged 'Turn left' message:​
-    #: 
+    #:
     #: .. code-block::
-    #: 
+    #:
     #:    Turn left onto <roadNumber>A4</roadNumber>/<roadNumber>E19</roadNumber>
-    #:    towards <signpostText>Den Haag</signpostText>.
+    #:    towards <signpostText>Den Haag</signpostText>
     TAGGED = "tagged"
 
-class RouteRepresentation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RouteRepresentationForBestOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RouteRepresentationForBestOrder."""
 
     #: Includes route geometry in the response.
     POLYLINE = "polyline"
@@ -274,52 +329,69 @@ class RouteRepresentation(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: response.
     NONE = "none"
 
-class RouteType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RouteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RouteType."""
 
     #: The fastest route.
     FASTEST = "fastest"
     #: The shortest route by distance.
     SHORTEST = "shortest"
     #: A route balanced by economy and speed.
-    ECO = "eco"
+    ECONOMY = "eco"
     #: Includes interesting or challenging roads and uses as few motorways as possible. You can choose
     #: the level of turns included and also the degree of hilliness. See the hilliness and windingness
     #: parameters for how to set this. There is a limit of 900 km on routes planned with
-    #: ``routeType``\ =thrilling.
+    #: ``routeType``\ =thrilling
     THRILLING = "thrilling"
 
-class SectionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Get sections if the route includes car trains.
-    CAR_TRAIN = "carTrain"
-    #: Countries the route has parts in.
+class SectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SectionType."""
+
+    #: Sections of the route that are cars or trains.
+    CAR_OR_TRAIN = "carTrain"
+    #: Sections indicating which countries the route is in.
     COUNTRY = "country"
-    #: Get sections if the route includes ferries.
+    #: Sections of the route that are ferries.
     FERRY = "ferry"
-    #: Get sections if the route includes motorways.
+    #: Sections of the route that are motorways.
     MOTORWAY = "motorway"
-    #: Get sections which are suited for pedestrians.
+    #: Sections of the route that are only suited for pedestrians.
     PEDESTRIAN = "pedestrian"
-    #: Get sections which require a toll to be payed.
+    #: Sections of the route that require a toll to be payed.
     TOLL_ROAD = "tollRoad"
-    #: Get sections which require a toll vignette to be present.
+    #: Sections of the route that require a toll vignette to be present.
     TOLL_VIGNETTE = "tollVignette"
-    #: Get sections which contain traffic information.
+    #: Sections of the route that contain traffic information.
     TRAFFIC = "traffic"
-    #: Get sections in relation to the request parameter ``travelMode``.
+    #: Sections in relation to the request parameter ``travelMode``.
     TRAVEL_MODE = "travelMode"
-    #: Get sections if the route includes tunnels.
+    #: Sections of the route that are tunnels.
     TUNNEL = "tunnel"
+    #: Sections of the route that require use of carpool (HOV/High Occupancy Vehicle) lanes.
+    CARPOOL = "carpool"
+    #: Sections of the route that are located within urban areas.
+    URBAN = "urban"
 
-class TextFormat(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: `The JavaScript Object Notation Data Interchange Format
-    #: <https://tools.ietf.org/html/rfc8259>`_.
-    JSON = "json"
-    #: `The Extensible Markup Language <https://www.w3.org/TR/xml/>`_.
-    XML = "xml"
+class SimpleCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the incident. Can currently be JAM, ROAD_WORK, ROAD_CLOSURE, or OTHER. See "tec" for
+    detailed information.
+    """
 
-class TravelMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    #: Traffic jam.
+    JAM = "JAM"
+    #: Road work.
+    ROAD_WORK = "ROAD_WORK"
+    #: Road closure.
+    ROAD_CLOSURE = "ROAD_CLOSURE"
+    #: Other.
+    OTHER = "OTHER"
+
+
+class TravelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TravelMode."""
 
     #: The returned routes are optimized for cars.
     CAR = "car"
@@ -339,45 +411,51 @@ class TravelMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: The returned routes are optimized for pedestrians, including the use of sidewalks.
     PEDESTRIAN = "pedestrian"
 
-class VehicleEngineType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class VehicleEngineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VehicleEngineType."""
 
     #: Internal combustion engine.
     COMBUSTION = "combustion"
     #: Electric engine.
     ELECTRIC = "electric"
 
-class VehicleLoadType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Explosives.
+class VehicleLoadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VehicleLoadType."""
+
+    #: Explosives
     US_HAZMAT_CLASS1 = "USHazmatClass1"
-    #: Compressed gas.
+    #: Compressed gas
     US_HAZMAT_CLASS2 = "USHazmatClass2"
-    #: Flammable liquids.
+    #: Flammable liquids
     US_HAZMAT_CLASS3 = "USHazmatClass3"
-    #: Flammable solids.
+    #: Flammable solids
     US_HAZMAT_CLASS4 = "USHazmatClass4"
-    #: Oxidizers.
+    #: Oxidizers
     US_HAZMAT_CLASS5 = "USHazmatClass5"
-    #: Poisons.
+    #: Poisons
     US_HAZMAT_CLASS6 = "USHazmatClass6"
-    #: Radioactive.
+    #: Radioactive
     US_HAZMAT_CLASS7 = "USHazmatClass7"
-    #: Corrosives.
+    #: Corrosives
     US_HAZMAT_CLASS8 = "USHazmatClass8"
-    #: Miscellaneous.
+    #: Miscellaneous
     US_HAZMAT_CLASS9 = "USHazmatClass9"
-    #: Explosives.
+    #: Explosives
     OTHER_HAZMAT_EXPLOSIVE = "otherHazmatExplosive"
-    #: Miscellaneous.
+    #: Miscellaneous
     OTHER_HAZMAT_GENERAL = "otherHazmatGeneral"
-    #: Harmful to water.
+    #: Harmful to water
     OTHER_HAZMAT_HARMFUL_TO_WATER = "otherHazmatHarmfulToWater"
 
-class WindingnessLevel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: low.
+class WindingnessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WindingnessLevel."""
+
+    #: low
     LOW = "low"
-    #: normal.
+    #: normal
     NORMAL = "normal"
-    #: high.
+    #: high
     HIGH = "high"
