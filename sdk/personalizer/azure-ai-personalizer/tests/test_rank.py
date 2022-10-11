@@ -8,7 +8,7 @@ class TestRank(AzureRecordedTestCase):
     def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         actions = [
         {
             'id': "Person",
@@ -25,7 +25,7 @@ class TestRank(AzureRecordedTestCase):
     def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         actions = [
         {
             "id": "Person1",

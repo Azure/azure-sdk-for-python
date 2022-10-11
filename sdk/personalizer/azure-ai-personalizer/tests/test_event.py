@@ -8,7 +8,7 @@ class TestEvent(AzureRecordedTestCase):
     def test_reward(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         client.events.reward("event_id_returned_by_rank", {"value": 1.0})
 
     @personalizer_helpers.PersonalizerPreparer()
@@ -16,5 +16,5 @@ class TestEvent(AzureRecordedTestCase):
     def test_activate(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         client.events.activate("event_id_returned_by_rank")

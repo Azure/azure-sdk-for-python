@@ -9,8 +9,9 @@ class TestMultiSlotRank(AzureRecordedTestCase):
     def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
-        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
-        event_id = "123456789";
+        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        personalizer_helpers.enable_multi_slot(client, self.is_live)
+        event_id = "123456789"
         request = {"actions": get_actions(), "slots": get_slots(), "eventId": event_id}
         response = client.multi_slot.rank(request)
         assert event_id == response.get("eventId")
@@ -24,7 +25,8 @@ class TestMultiSlotRank(AzureRecordedTestCase):
     def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
-        client =  personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        personalizer_helpers.enable_multi_slot(client, self.is_live)
         event_id = "123456789"
         request = {
             "eventId": event_id,
