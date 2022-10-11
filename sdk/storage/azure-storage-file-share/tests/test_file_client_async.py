@@ -3,9 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 import unittest
 import platform
 import asyncio
+
+import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.fileshare import VERSION
@@ -14,9 +17,11 @@ from azure.storage.fileshare.aio import (
     ShareClient,
     ShareDirectoryClient,
     ShareFileClient)
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.testcase import generate_sas_token
 
 from settings.testcase import FileSharePreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase, AsyncStorageRecordedTestCase
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -31,22 +36,11 @@ _CONNECTION_ENDPOINTS = {'file': 'FileEndpoint'}
 _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class StorageFileClientTest(AsyncStorageTestCase):
+class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         self.account_name = storage_account_name
         self.account_key = storage_account_key
-        self.sas_token = self.generate_sas_token()
+        self.sas_token = generate_sas_token()
         self.token_credential = self.generate_oauth_token()
 
     def _teardown(self, FILE_PATH):
@@ -61,13 +55,12 @@ class StorageFileClientTest(AsyncStorageTestCase):
         assert service.account_name == self.account_name
         assert service.credential.account_name == self.account_name
         assert service.credential.account_key == self.account_key
-        self.assertTrue(service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)))
-        self.assertTrue(service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)))
+        assert service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
+        assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
 
     # --Direct Parameters Test Cases --------------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -85,6 +78,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
             assert service.scheme == 'https'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -104,6 +98,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
             assert service.url.endswith(self.sas_token)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -117,6 +112,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
                              share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_china(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -134,11 +130,11 @@ class StorageFileClientTest(AsyncStorageTestCase):
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
             assert service.credential.account_key == self.account_key
-            self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(
-                self.account_name, service_type[1]))
-            self.assertEqual(service.secondary_hostname,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
+            assert service.primary_hostname == '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
+            assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
+
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -155,6 +151,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
             assert service.scheme == 'http'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_empty_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -167,11 +164,10 @@ class StorageFileClientTest(AsyncStorageTestCase):
                 service_type(
                     self.account_url(storage_account_name, "file"), share_name='foo', directory_path='bar', file_path='baz')
 
-            self.assertEqual(
-                str(e.exception),
-                'You need to provide either an account shared key or SAS token when creating a storage service.')
+            assert str(e.value.args[0]) == 'You need to provide either an account shared key or SAS token when creating a storage service.'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_socket_timeout(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -195,6 +191,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
     # --Connection String Test Cases --------------------------------------------
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_connection_string_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -212,6 +209,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
             assert service.scheme == 'https'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_connection_string_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -222,7 +220,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                conn_string, share_name='foo', directory_path='bar', file_path='baz', transport=AiohttpTestTransport())
+                conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             assert service is not None
@@ -231,6 +229,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
             assert service.url.endswith(self.sas_token)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_connection_string_endpoint_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -241,20 +240,19 @@ class StorageFileClientTest(AsyncStorageTestCase):
 
         for service_type in SERVICES.items():
             # Act
-            service = service_type[0].from_connection_string(
-                conn_string, share_name='foo', directory_path='bar', file_path='baz', transport=AiohttpTestTransport())
+            service = service_type[0].from_connection_string(conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             assert service is not None
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
             assert service.credential.account_key == self.account_key
-            assert service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(self.account_name == service_type[1])
-            self.assertEqual(service.secondary_hostname,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
+            assert service.primary_hostname == '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
+            assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.scheme == 'http'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_connection_string_emulated(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -265,10 +263,10 @@ class StorageFileClientTest(AsyncStorageTestCase):
 
             # Act
             with pytest.raises(ValueError):
-                service_type[0].from_connection_string(
-                    conn_string, share_name='foo', directory_path='bar', file_path='baz', transport=AiohttpTestTransport())
+                service_type[0].from_connection_string(conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_connection_string_fails_if_secondary_without_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -286,6 +284,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
                     conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -310,6 +309,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
             assert service.secondary_hostname == 'www-sec.mydomain.com'
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     def test_create_service_with_custom_account_endpoint_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -385,12 +385,13 @@ class StorageFileClientTest(AsyncStorageTestCase):
         assert service.url.startswith('http://local-machine:11002/custom/account/path/foo/file?')
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_user_agent_default(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key, transport=AiohttpTestTransport())
+        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -399,6 +400,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback)
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_user_agent_custom(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -406,7 +408,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
         self._setup(storage_account_name, storage_account_key)
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
-            self.account_url(storage_account_name, "file"), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
+            self.account_url(storage_account_name, "file"), credential=self.account_key, user_agent=custom_app)
 
         def callback1(response):
             assert 'User-Agent' in response.http_request.headers
@@ -427,12 +429,13 @@ class StorageFileClientTest(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback2, user_agent="TestApp/v2.0")
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_user_agent_append(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key, transport=AiohttpTestTransport())
+        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -445,6 +448,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
 
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_closing_pipeline_client(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -462,6 +466,7 @@ class StorageFileClientTest(AsyncStorageTestCase):
                 await service.close()
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_closing_pipeline_client_simple(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

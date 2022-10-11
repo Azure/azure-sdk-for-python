@@ -51,10 +51,8 @@ class TestStorageFileClient(StorageRecordedTestCase):
         assert service.account_name == self.account_name
         assert service.credential.account_name == self.account_name
         assert service.credential.account_key == self.account_key
-        assert service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)) is True
-        assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)) is True
+        assert service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
+        assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
 
     # --Direct Parameters Test Cases --------------------------------------------
     @FileSharePreparer()
