@@ -17,15 +17,21 @@ from ._role_eligibility_schedule_requests_operations import RoleEligibilitySched
 from ._role_management_policies_operations import RoleManagementPoliciesOperations
 from ._role_management_policy_assignments_operations import RoleManagementPolicyAssignmentsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'RoleAssignmentsOperations',
-    'EligibleChildResourcesOperations',
-    'RoleAssignmentSchedulesOperations',
-    'RoleAssignmentScheduleInstancesOperations',
-    'RoleAssignmentScheduleRequestsOperations',
-    'RoleEligibilitySchedulesOperations',
-    'RoleEligibilityScheduleInstancesOperations',
-    'RoleEligibilityScheduleRequestsOperations',
-    'RoleManagementPoliciesOperations',
-    'RoleManagementPolicyAssignmentsOperations',
+    "RoleAssignmentsOperations",
+    "EligibleChildResourcesOperations",
+    "RoleAssignmentSchedulesOperations",
+    "RoleAssignmentScheduleInstancesOperations",
+    "RoleAssignmentScheduleRequestsOperations",
+    "RoleEligibilitySchedulesOperations",
+    "RoleEligibilityScheduleInstancesOperations",
+    "RoleEligibilityScheduleRequestsOperations",
+    "RoleManagementPoliciesOperations",
+    "RoleManagementPolicyAssignmentsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
