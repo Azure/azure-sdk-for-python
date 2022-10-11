@@ -22,32 +22,34 @@ from ._models_py3 import PolicySetDefinition
 from ._models_py3 import PolicySetDefinitionListResult
 from ._models_py3 import PolicySku
 
-
-from ._policy_client_enums import (
-    EnforcementMode,
-    ParameterType,
-    PolicyType,
-    ResourceIdentityType,
-)
+from ._policy_client_enums import EnforcementMode
+from ._policy_client_enums import ParameterType
+from ._policy_client_enums import PolicyType
+from ._policy_client_enums import ResourceIdentityType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
-    'Identity',
-    'ParameterDefinitionsValue',
-    'ParameterDefinitionsValueMetadata',
-    'ParameterValuesValue',
-    'PolicyAssignment',
-    'PolicyAssignmentListResult',
-    'PolicyDefinition',
-    'PolicyDefinitionGroup',
-    'PolicyDefinitionListResult',
-    'PolicyDefinitionReference',
-    'PolicySetDefinition',
-    'PolicySetDefinitionListResult',
-    'PolicySku',
-    'EnforcementMode',
-    'ParameterType',
-    'PolicyType',
-    'ResourceIdentityType',
+    "ErrorAdditionalInfo",
+    "ErrorResponse",
+    "Identity",
+    "ParameterDefinitionsValue",
+    "ParameterDefinitionsValueMetadata",
+    "ParameterValuesValue",
+    "PolicyAssignment",
+    "PolicyAssignmentListResult",
+    "PolicyDefinition",
+    "PolicyDefinitionGroup",
+    "PolicyDefinitionListResult",
+    "PolicyDefinitionReference",
+    "PolicySetDefinition",
+    "PolicySetDefinitionListResult",
+    "PolicySku",
+    "EnforcementMode",
+    "ParameterType",
+    "PolicyType",
+    "ResourceIdentityType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
