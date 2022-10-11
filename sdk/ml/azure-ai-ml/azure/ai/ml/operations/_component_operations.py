@@ -42,6 +42,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ..entities._job.pipeline._attr_dict import has_attr_safe
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -495,7 +496,7 @@ class ComponentOperations(_ScopeDependentOperations):
                     # Put binding string to field
                     setattr(node, field_name, val._data_binding())
 
-        def resolve_base_node(name, node):
+        def resolve_base_node(name, node: BaseNode):
             """Resolve node name, compute and component for base node."""
             # Set display name as node name
             if (
@@ -513,6 +514,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 if not is_data_binding_expression(node.compute):
                     # Get compute for each job
                     node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
+                if has_attr_safe(node, "compute_name") and not is_data_binding_expression(node.compute_name):
+                    node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
             # Get the component id for each job's component
             # Note: do not use node.component as Sweep don't have that
             node._component = resolver(

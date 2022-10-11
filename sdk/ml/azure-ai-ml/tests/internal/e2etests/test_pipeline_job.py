@@ -64,7 +64,7 @@ def create_internal_sample_dependent_datasets(client: MLClient):
 @pytest.mark.e2etest
 class TestPipelineJob(AzureRecordedTestCase):
     @classmethod
-    def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client):
+    def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client: MLClient):
         @pipeline()
         def pipeline_func():
             node = node_func(**inputs)
@@ -94,6 +94,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             # hack: timeout will be transformed into str
             if dot_key == "limits.timeout":
                 expected_value = "PT5M"
+            # hack: compute_name for hdinsight will be transformed into arm str
+            if dot_key == "compute_name":
+                expected_value = f"/subscriptions/{client.subscription_id}/" \
+                                 f"resourceGroups/{client.resource_group_name}/" \
+                                 f"providers/Microsoft.MachineLearningServices/" \
+                                 f"workspaces/{client.workspace_name}/" \
+                                 f"computes/{expected_value}"
+
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
