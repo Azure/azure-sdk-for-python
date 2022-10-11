@@ -123,7 +123,7 @@ For example if you would like to alter connection pool you can initialise `Reque
  session.mount('https://', adapter)
  client = FooServiceClient(endpoint, creds, transport=RequestsTransport(session=session, session_owner=False))
  
- # When using custom session, we need to manage the session by ourself. When we are done with the session:
+ # Here we want to manage the session by ourselves. When we are done with the session, we need to close the session.
  session.close()
  
  # Note: `session_owner` gives the information of ownership of the requests sessions to the transport instance, to authorize it to close on customer's behalf. If you're ok that the client closes your session on your behalf as necessary, you don't need to pass a value.
