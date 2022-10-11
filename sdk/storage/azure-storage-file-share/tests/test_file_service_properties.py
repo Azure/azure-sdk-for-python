@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 import unittest
 
 import pytest
@@ -20,14 +21,15 @@ from azure.storage.fileshare import (
     SmbMultichannel,
     ShareProtocolSettings,
 )
+from devtools_testutils import recorded_by_proxy
 
-from devtools_testutils.storage import StorageTestCase
+from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
 
 
-class FileServicePropertiesTest(StorageTestCase):
+class TestFileServiceProperties(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
@@ -71,13 +73,14 @@ class FileServicePropertiesTest(StorageTestCase):
         assert ret1.days == ret2.days
 
     # --Test cases per service ---------------------------------------
-    @pytest.mark.playback_test_only
+    # @pytest.mark.playback_test_only
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_file_service_properties(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
-        self._setup(storage_account_name, storage_account_key)
+        self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
 
         protocol_properties1 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=False)))
         protocol_properties2 = ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel(enabled=True)))
@@ -108,6 +111,7 @@ class FileServicePropertiesTest(StorageTestCase):
 
     # --Test cases per feature ---------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_set_hour_metrics(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -123,6 +127,7 @@ class FileServicePropertiesTest(StorageTestCase):
         self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_set_minute_metrics(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -139,6 +144,7 @@ class FileServicePropertiesTest(StorageTestCase):
         self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_set_cors(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -169,6 +175,7 @@ class FileServicePropertiesTest(StorageTestCase):
 
     # --Test cases for errors ---------------------------------------
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_retention_no_days(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -180,6 +187,7 @@ class FileServicePropertiesTest(StorageTestCase):
                           True, None)
 
     @FileSharePreparer()
+    @recorded_by_proxy
     def test_too_many_cors_rules(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
