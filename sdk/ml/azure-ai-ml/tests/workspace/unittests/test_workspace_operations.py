@@ -11,7 +11,10 @@ from azure.ai.ml.entities import CustomerManagedKey, Workspace, \
     IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.polling import LROPoller
-
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    EncryptionKeyVaultUpdateProperties,
+    EncryptionUpdateProperties,
+)
 
 @pytest.fixture
 def mock_credential() -> Mock:
@@ -145,7 +148,11 @@ class TestWorkspaceOperation:
             assert params.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
             assert len(params.identity.user_assigned_identities) == 2
             assert params.primary_user_assigned_identity == "resource2"
-            assert params.customer_managed_key.key_uri == "new_cmk_uri"
+            assert params.encryption == EncryptionUpdateProperties(
+                key_vault_properties=EncryptionKeyVaultUpdateProperties(
+                    key_identifier="new_cmk_uri",
+                )
+            )
             assert polling is True
             assert callable(cls)
             return DEFAULT
