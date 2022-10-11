@@ -10,6 +10,9 @@ from six import with_metaclass
 import msrest.serialization
 
 from azure.core import CaseInsensitiveEnumMeta
+from .._generated.models import (
+    BatchResult as GenBatchResult
+)
 
 class LatLon(NamedTuple):
     """Represents coordinate latitude and longitude
@@ -743,3 +746,52 @@ class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
         super(GeoJsonPolygon, self).__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
         self.type = 'Polygon'  # type: str
+
+class RouteDirectionsBatchResult(GenBatchResult):
+    """This object is returned from a successful Route Directions Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar batch_summary: Summary of the results for the batch request.
+    :vartype batch_summary: ~azure.maps.route.models.BatchResultSummary
+    :ivar batch_items: Array containing the batch results.
+    :vartype batch_items: list[RouteDirectionsBatchItem]
+    """
+
+    _validation = {
+        "batch_summary": {"readonly": True},
+        "batch_items": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "batch_summary": {"key": "summary", "type": "BatchResultSummary"},
+        "batch_items": {"key": "batchItems", "type": "[RouteDirectionsBatchItem]"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.batch_items = None
+
+class RouteDirectionsBatchItem(object):
+    """An item returned from Route Directions Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar response: The result of the query. RouteDirections if the query completed successfully,
+     ErrorResponse otherwise.
+    :vartype response: ~azure.maps.route.models.RouteDirectionsBatchItemResponse
+    """
+
+    _validation = {
+        "response": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "response": {"key": "response", "type": "RouteDirectionsBatchItemResponse"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.response = None

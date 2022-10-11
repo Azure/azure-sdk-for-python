@@ -21,7 +21,7 @@ Then for common Azure Maps Route operations:
 
 * Get Route Range: [sample_get_route_range.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_range.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/async_samples/sample_get_route_range_async.py))
 
-* Request Route Matrix: [sample_request_route_matrix.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_request_route_matrix.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/async_samples/sample_request_route_matrix_async.py))
+* Request Route Matrix: [sample_request_route_matrix.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_matrix.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/async_samples/sample_get_route_matrix_async.py))
 
 ## Prerequisites
 

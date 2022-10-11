@@ -16,7 +16,6 @@ from .models import (
     RouteRangeResult,
     RouteMatrixResult,
     RouteMatrixQuery,
-    BatchRequest,
     LatLon
 )
 
@@ -266,9 +265,6 @@ class MapsRouteClient(MapsRouteClientBase):
         :keyword auxiliary_power_in_kw: Specifies the amount of power consumed for sustaining auxiliary
          systems, in kilowatts (kW).
         :paramtype auxiliary_power_in_kw: float
-        :keyword content_type: Body Parameter content-type. Default value is "application/json". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype content_type: str
         :return: RouteDirections
         :rtype: ~azure.maps.route.models.RouteDirections
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -487,9 +483,6 @@ class MapsRouteClient(MapsRouteClientBase):
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version
          and must contain at least 1 query. Required.
         :type route_directions_batch_queries: List[str]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :return: RouteDirectionsBatchResult
         :rtype: ~azure.maps.route.models.RouteDirectionsBatchResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -498,7 +491,7 @@ class MapsRouteClient(MapsRouteClientBase):
                        in route_directions_batch_queries] if route_directions_batch_queries else []
         return self._route_client.request_route_directions_batch_sync(
             format=ResponseFormat.JSON,
-            route_directions_batch_queries=batch_items,
+            route_directions_batch_queries={"batch_items": batch_items},
             **kwargs
         )
 
@@ -679,9 +672,6 @@ class MapsRouteClient(MapsRouteClientBase):
          "otherHazmatExplosive", "otherHazmatGeneral", and "otherHazmatHarmfulToWater". Default value is
          None.
         :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: RouteMatrixResult
         :rtype: ~azure.maps.route.models.RouteMatrixResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -801,9 +791,6 @@ class MapsRouteClient(MapsRouteClientBase):
          "otherHazmatExplosive", "otherHazmatGeneral", and "otherHazmatHarmfulToWater". Default value is
          None.
         :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
