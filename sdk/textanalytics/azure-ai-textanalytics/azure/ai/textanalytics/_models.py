@@ -2551,7 +2551,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         The only acceptable values to pass in are None and "4.0.1". The default value is None.
     :keyword document_type: Document type that can be provided as input for Fhir Documents. Expect to
         have fhir_version provided when used. Behavior of using None enum is the same as not using the
-        documentType parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
         "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
     :paramtype document_type: Optional[str or ~azure.ai.textanalytics.DocumentType]
     :ivar Optional[str] model_version: The model version to use for the analysis.
@@ -2572,7 +2572,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         The only acceptable values to pass in are None and "4.0.1". The default value is None.
     :ivar Optional[str] document_type: Document type that can be provided as input for Fhir Documents. Expect to
         have fhir_version provided when used. Behavior of using None enum is the same as not using the
-        documentType parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
         "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
 
     .. versionadded:: 2022-05-01

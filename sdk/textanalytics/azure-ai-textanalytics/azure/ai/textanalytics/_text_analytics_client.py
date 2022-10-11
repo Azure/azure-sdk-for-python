@@ -672,7 +672,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             The only acceptable values to pass in are None and "4.0.1". The default value is None.
         :keyword document_type: Document type that can be provided as input for Fhir Documents. Expect to
             have fhir_version provided when used. Behavior of using None enum is the same as not using the
-            documentType parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+            document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
             "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
         :paramtype document_type: str or ~azure.ai.textanalytics.DocumentType
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
