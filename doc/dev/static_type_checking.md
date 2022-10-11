@@ -26,7 +26,7 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https:/
     - [Typing variadic arguments - *args and **kwargs](#typing-variadic-arguments---args-and-kwargs)
     - [Use TYPE_CHECKING to avoid circular imports](#use-type_checking-to-avoid-circular-imports)
     - [Passing a function or a class as a parameter or return type](#passing-a-function-or-a-class-as-a-parameter-or-return-type)
-    - [Use `from __future__ import annotations` for forward declarations](#use-from-__future__-import-annotations-for-forward-declarations)
+    - [Use forward references when a type does not exist yet](#use-forward-references-when-a-type-does-not-exist-yet)
     - [Use type aliases to create readable names for types](#use-type-aliases-to-create-readable-names-for-types)
     - [Use typing.overload to overload a function](#use-typingoverload-to-overload-a-function)
     - [Use typing.cast to help the type checker understand a type](#use-typingcast-to-help-the-type-checker-understand-a-type)
@@ -36,7 +36,7 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https:/
       - [Use runtime_checkable to do simple, runtime structural checks on Protocols](#use-runtime_checkable-to-do-simple-runtime-structural-checks-on-protocols)
     - [Use typing.Literal to restrict based on exact values](#use-typingliteral-to-restrict-based-on-exact-values)
     - [Use typing.NewType to restrict a type to a specific context](#use-typingnewtype-to-restrict-a-type-to-a-specific-context)
-    - [Use typing.Final to restrict a type from changing its value](#use-typingfinal-to-restrict-a-type-from-changing-its-value)
+    - [Use typing.Final and @final to restrict types from changes](#use-typingfinal-and-@final-to-restrict-types-from-changes)
     - [Debug type checking with reveal_type and reveal_locals](#debug-type-checking-with-reveal_type-and-reveal_locals)
   - [Additional Resources](#additional-resources)
 
@@ -619,7 +619,7 @@ def bar() -> None:
 ```
 
 Note that we also had to change Baz to a forward reference since it will not be defined at runtime under
-the `TYPE_CHECKING` conditional (or use `from __future__ import annotations`, see [here](#use-from-__future__-import-annotations-for-forward-declarations)).
+the `TYPE_CHECKING` conditional.
 
 Another reason to use `TYPE_CHECKING` is to hide importing types which are needed only for type annotations and are
 costly to load at runtime. That being said, types imported from `typing` or `typing_extensions` do not need to be put inside
@@ -692,7 +692,7 @@ main.py:17: error: Argument 1 to "make_quack" has incompatible type "Type[Duck]"
 Found 2 errors in 1 file (checked 1 source file)
 ```
 
-### Use `from __future__ import annotations` for forward declarations
+### Use forward references when a type does not exist yet
 
 Sometimes you might want to use a type in a type hint which hasn't been defined yet. This is commonly encountered when using `@classmethod` and we see Python complain at runtime.
 
@@ -712,7 +712,22 @@ class TreeHouse:
 NameError: name 'TreeHouse' is not defined
 ```
 
-Importing `from __future__ import annotations` can be used to fix this:
+You can fix this in a few ways, the most simple and recommended way is to use a forward reference which involves wrapping
+the return type in a string:
+
+```python
+class TreeHouse:
+    def __init__(self): ...
+
+    @classmethod
+    def build(cls) -> "TreeHouse":  # forward reference
+        return cls()
+```
+
+Type checkers understand forward references and will treat this as the actual type when type checking.
+
+
+A second way is with usage of the import `from __future__ import annotations`:
 
 ```python
 from __future__ import annotations
@@ -725,14 +740,17 @@ class TreeHouse:
         return cls()
 ```
 
+Since the behavior of this import is subject to change in the future (see [PEP 649](https://peps.python.org/pep-0649/),
+it is recommended to use a forward reference to solve this for now.
+
 At import time, the default behavior in Python is to read in all type hints and store them in `__annotations__` as their actual types.
 `from __future__ import annotations` changes this such that type hints don't get evaluated at runtime and are preserved as string literals in the `__annotations__` dictionary.
 There is no difference in behavior for the type checkers with using this import. Note that `from __future__ import annotations` must be imported at the top of the file before any other imports.
 
 It's also worth calling out that using this import also allows use of generic collection type hints like `dict` and `list` instead of `typing.Dict` and `typing.List`. 
 
-More details about this import and its behavior can be found in [PEP 563](https://peps.python.org/pep-0563/)/[649](https://peps.python.org/pep-0649/).
-
+More details about this import and its behavior can be found in [PEP 563](https://peps.python.org/pep-0563/). Information
+about the PEP which may supersede this can be found in [PEP 649](https://peps.python.org/pep-0649/).
 
 ### Use type aliases to create readable names for types
 
@@ -918,22 +936,6 @@ def pick(p: Sequence[T]) -> T:
 This leaves the type open for the caller to pass a `Sequence[int]`, `Sequence[float]`, `Sequence[str]`, etc. and
 promises to return the same `T` type passed in. A TypeVar can be constrained or bound to certain types.
 
-**Constrain TypeVars to certain types**
-
-You can restrict a `TypeVar` to several specific types by adding the types as positional arguments:
-
-```python
-from typing import Sequence, TypeVar
-
-T = TypeVar("T", int, str)
-
-
-def pick(p: Sequence[T]) -> T:
-    return random_pick(p)
-```
-
-Here the type checker will only expect types of `int` or `str` for `T`.
-
 **Set the upper bound on a TypeVar**
 
 Another way to narrow the type of a `TypeVar` is to provide the `bound` keyword argument with a type which should be
@@ -949,6 +951,17 @@ T = TypeVar("T", bound=SupportsFloat)
 def pick(p: Sequence[T]) -> T:
     return random_pick(p)
 ```
+
+Note that is recommended to use `bound` over constraining a `TypeVar` with several types:
+
+```python
+from typing import TypeVar, Union
+
+S = TypeVar("S", bound=Union[int, str])  # Yes
+
+T = TypeVar("T", int, str)  # No, can have unexpected behavior
+```
+
 
 **Use typing.TypeVar with typing.Generic to create a generic class**
 
@@ -1358,7 +1371,7 @@ Found 1 error in 1 file (checked 1 source file)
 
 At runtime, `NewType` will return an object that returns its argument when called. Note that `NewType` is not the same as a type alias. A type alias _is_ interchangeable with the type assigned and just provides another name for it.
 
-### Use typing.Final to restrict a type from changing its value
+### Use typing.Final and @final to restrict types from changes
 
 `Final` indicates to the type checker that a variable cannot be re-assigned to a different value (or overridden in a subclass).
 It is best used when a variable's scope spans a large amount of modules and you want to ensure that it stays immutable (i.e. no line of code tries to change it).
@@ -1376,6 +1389,18 @@ If `MAX_BLOB_SIZE` gets reassigned somewhere else in the code, the type checker 
 main.py:6: error: Cannot assign to final name "MAX_BLOB_SIZE"
 Found 1 error in 1 file (checked 1 source file)
 ```
+
+Additionally, If you have a method that should not be overridden or a class that should not be subclassed, consider decorating with `@final`.
+
+```python
+from typing_extensions import final
+
+class BlobClient:
+    @final
+    def download(self) -> None:
+        ...
+```
+
 
 ### Debug type checking with reveal_type and reveal_locals
 

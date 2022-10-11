@@ -5,7 +5,7 @@ This cheat sheet details guidance for typing as it relates to the Python SDK. Us
 ### General guidance
 
 - Do provide type annotations (per PEP 484) to public APIs in the client library.
-- You do not need to type annotate internal functions in a client library, but you should provide type hints where unit tests are worth writing or where type annotations will assist in understanding of the code.
+- You do not need to annotate internal functions in a client library, but you should provide type hints where unit tests are worth writing or where type annotations will assist in understanding of the code.
 - Do not use comment style type hints. Use inline, annotation style.
   
 ```python
@@ -21,7 +21,7 @@ def create_table(table_name: str) -> Table:
 
 - Do fully annotate function signatures - this includes type annotations for all parameters and the return type.
 - Do fully annotate function signatures in all samples - this ensures the type checks will check the sample code.
-- You should type annotate variables if the type in the code is different from expected, provides more value than what is already provided by Python itself, or if the type checker requires it.
+- You should annotate variables if the type in the code is different from expected, provides more value than what is already provided by Python itself, or if the type checker requires it.
 
 ```python
 # No:
@@ -33,7 +33,7 @@ table_map: dict[str, Table] = {}  # clarifies what the dictionary expects
 table_map[table_name] = create_table(table_name)
 ```
 
-- You do not need to type annotate `self` or `cls`.
+- You do not need to annotate `self` or `cls`.
 - Do return `None` from a constructor.
   
 ```python
@@ -48,6 +48,18 @@ class KeyCredential:
 
     def __init__(self) -> None:
         ...
+```
+
+- Do provide type annotations for all instance variables on a model. You can do this by typing the parameters in the 
+  `__init__` or by adding type hints directly to the instance variables.
+
+```python
+class Tree:
+
+    def __init__(self, *, location: str, num_branches: int) -> None:
+        self.kind: typing.Literal["oak"] = "oak"
+        self.location = location
+        self.num_branches = num_branches
 ```
 
 - Do use [mypy](https://mypy.readthedocs.io/en/stable/) and [pyright](https://github.com/microsoft/pyright) type checkers to statically type check your client library code.
@@ -81,32 +93,21 @@ if TYPE_CHECKING:
     from expensive import c  # avoiding runtime costs
 ```
 
-- Use `from __future__ import annotations` for forward declarations or when using built-in generic collection types, like `dict` or `list`.
-
-```python
-from __future__ import annotations  # must be first import in file
-
-class Triangle:
-
-    @classmethod
-    def from_shape(cls) -> Triangle: # Don't need to make Triangle a forward reference / string
-        ...
-
-    def get_points(self) -> list[float]:  # allows use of list instead of typing.List
-        ...
-```
-
 ### Ignoring type checkers
 
 - Do not silence the type checker with `type: ignore` unless other options are exhausted. Consider first using `typing.cast` or refactoring the code.
 - If you must use a `type: ignore`, try to be specific in what error code you're ignoring.
 
 ```python
-# type: ignore[misc]  # mypy ignores only the error code in brackets
+# mypy ignores only the error code in brackets
+ignore_me: int = 5 # type: ignore[misc] 
 
-# pyright: ignore[reportPrivateUsage]  # pyright ignores only the error code in brackets
+# pyright ignores only the error code in brackets
+ignored = result._private # pyright: ignore[reportPrivateUsage]
 
-# type: ignore  # all errors ignored by both mypy and pyright
+# all errors ignored by both mypy and pyright
+class Foo(Any): # type: ignore
+   ...
 ```
 
 - Do leave a comment with a link or explanation for the ignore so that it may be fixed later.
@@ -128,7 +129,7 @@ def begin_build_model(
     ...
 ```
 
-- Try to using `Union` as a return type since this typically makes the user need to do `isinstance` checks. See if `@overload` can be used to improve the typing experience.
+- Try not using `Union` as a return type since this typically makes the user need to do `isinstance` checks. See if `@overload` can be used to improve the typing experience.
 - Do mark a parameter as explicitly `Optional` if a value of `None` is allowed. `Optional` is the same as `Union[<type>, None]`.
 
 ```python
@@ -196,19 +197,18 @@ from typing import overload, Union
 def analyze(text: str, task: LanguageDetection) -> LanguageDetectionResult:
     ...
 
-
 @overload
 def analyze(text: str, task: EntityRecognition) -> EntityRecognitionResult:
     ...
-
 
 @overload
 def analyze(text: str, task: SentimentAnalysis) -> SentimentResult:
     ...
 
 # actual implementation
-def analyze(text: str, task: Union[SentimentAnalysis, EntityRecognition, LanguageDetection]) -> Union[
-    SentimentResult, EntityRecognitionResult, LanguageDetectionResult]:
+def analyze(
+    text: str, task: Union[SentimentAnalysis, EntityRecognition, LanguageDetection]
+) -> Union[SentimentResult, EntityRecognitionResult, LanguageDetectionResult]:
     return _analyze(text, task)
 ```
 
@@ -225,6 +225,18 @@ from typing import Any
 # kwargs seen as dict[str, Any] by type checker
 def begin_operation(*args: str, **kwargs: Any) -> None:
     ...
+```
+
+### Forward declarations
+
+- Prefer using a simple forward reference when you need to use a type that is not defined yet in a type hint.
+
+```python
+class Triangle:
+
+    @classmethod
+    def from_shape(cls) -> "Triangle":  # type checkers understand this as the actual type
+        ...
 ```
 
 ### Structural subtyping / Protocols
@@ -263,12 +275,11 @@ def choose(items: Sequence[T]) -> T:
     ...
 ```
 
-- Try to constrain your `TypeVar`'s by specifying types or using the `bound` keyword argument.
+- Try to constrain your `TypeVar`'s by using the `bound` keyword argument.
 
 ```python
 from typing import TypeVar
 
-T = TypeVar("T", int, str)  # limited to int or str
 S = TypeVar("S", bound=str)  # limited to str or any subtype of str
 ```
 
@@ -340,56 +351,34 @@ CredentialTypes = Union[AzureKeyCredential, TokenCredential, AzureSasCredential,
 ### Literals
 
 - You can use `typing.Literal` when you want to restrict based on exact values.
-- Consider tagging an attribute with the `Literal` type to discriminate between models in a returned Union. This avoids the need to do `isinstance` checks on the return type.
-
+  
 ```python
-from typing import Union
 from typing_extensions import Literal
 
-
-# client library code
-class SelectionMark:
-
-    def __init__(self):
-        self.kind: Literal["selectionMark"] = "selectionMark"
-        self.state = "selected"
-
-
-class FormWord:
-
-    def __init__(self):
-        self.kind: Literal["word"] = "word"
-        self.word = "hello"
-
-
-class FormLine:
-
-    def __init__(self):
-        self.kind: Literal["line"] = "line"
-        self.line = "hello world"
-
-
-def get_element() -> Union[SelectionMark, FormWord, FormLine]:
-    ...
-
-
-# user code
-ele = get_element()
-
-if ele.kind == "selectionMark":
-    print(ele.state)
-elif ele.kind == "word":
-    print(ele.word)
-elif ele.kind == "line":
-    print(ele.line)
+PrimaryColors = Literal["red", "yellow", "blue"]
 ```
 
-- If you have a `Literal` type that should not change or get re-assigned in the code, consider typing it as `typing.Final`.
+- Consider tagging an attribute with the `Literal` type to discriminate between models in a returned Union. This avoids the need to do `isinstance` checks on the return type.
+
+### Final
+
+- If you have a type that should not change or get re-assigned in the code, consider typing it as `typing.Final`.
 
 ```python
 from typing_extensions import Final
 
 MAX_BLOB_SIZE: Final = 4 * 1024 * 1024
+```
+
+- If you have a method that should not be overridden or a class that should not be subclassed, consider decorating with `@final`.
+
+```python
+from typing_extensions import final
+
+class BlobClient:
+    @final
+    def download(self) -> None:
+        ...
 ```
 
 
