@@ -113,6 +113,20 @@ from azure.core.pipeline.transport import RequestsTransport
 synchronous_transport = RequestsTransport()
 ```
 
+For example if you would like to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`.
+
+ ```Python
+ from azure.cosmos import CosmosClient
+ import requests
+ session = requests.Session()
+ adapter = requests.adapters.HTTPAdapter(pool_connections=42, pool_maxsize=42)
+ session.mount('https://', adapter)
+ cosmos_client = CosmosClient.from_connection_string(
+     COSMOS_CONNECTION_STRING,
+     transport=RequestsTransport(session=session)
+ )
+ ```
+
 For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
 should easily be able to specify their chosen transport. SDK developers should use the `aiohttp` transport as the default for asynchronous pipelines where the user has not specified an alternative.
 
