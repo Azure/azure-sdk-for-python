@@ -61,7 +61,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
     # --Direct Parameters Test Cases --------------------------------------------
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_key(self, **kwargs):
+    async def test_create_service_with_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -79,7 +79,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_sas(self, **kwargs):
+    async def test_create_service_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -99,7 +99,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_token(self, **kwargs):
+    async def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -113,7 +113,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_china(self, **kwargs):
+    async def test_create_service_china(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -135,7 +135,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_protocol(self, **kwargs):
+    async def test_create_service_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -152,7 +152,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_empty_key(self, **kwargs):
+    async def test_create_service_empty_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -168,7 +168,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_socket_timeout(self, **kwargs):
+    async def test_create_service_with_socket_timeout(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -192,7 +192,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_connection_string_key(self, **kwargs):
+    async def test_create_service_with_connection_string_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -210,7 +210,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_connection_string_sas(self, **kwargs):
+    async def test_create_service_with_connection_string_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -230,7 +230,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_connection_string_endpoint_protocol(self, **kwargs):
+    async def test_create_service_with_connection_string_endpoint_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -253,7 +253,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_connection_string_emulated(self, **kwargs):
+    async def test_create_service_with_connection_string_emulated(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -267,7 +267,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_connection_string_fails_if_secondary_without_primary(self, **kwargs):
+    async def test_create_service_with_connection_string_fails_if_secondary_without_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -285,7 +285,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self, **kwargs):
+    async def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -310,7 +310,7 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    def test_create_service_with_custom_account_endpoint_path(self, **kwargs):
+    async def test_create_service_with_custom_account_endpoint_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
