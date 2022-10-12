@@ -145,7 +145,7 @@ jobs:
 #  node7:  # internal command node with properties as a typical implement of internal base node.
 #    type: CommandComponent
 #    compute: azureml:cpu-cluster
-#    component: ../internal/helloworld_component_command.yml
+#    component: ../internal/helloworld/helloworld_component_command.yml
 #    inputs:
 #      training_data: ${{parent.inputs.input_data}}
 #      max_epochs: 10
