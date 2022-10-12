@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether the Pool is resizing.
-    """
+    """Whether the Pool is resizing."""
 
     #: The Pool is not resizing. There are no changes to the number of Compute Nodes in the Pool in
     #: progress. A Pool enters this state when it is created and when no operations are being
@@ -23,6 +22,7 @@ class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The Pool was resizing, but the user has requested that the resize be stopped, but the stop
     #: request has not yet been completed.
     STOPPING = "stopping"
+
 
 class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value is pool. If the pool is running Windows a value of Task should be specified
@@ -37,6 +37,7 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Node in a Pool.
     POOL = "pool"
 
+
 class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value for caching is none. For information about the caching options see:
     https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
@@ -49,18 +50,18 @@ class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: The caching mode for the disk is read and write.
     READ_WRITE = "readwrite"
 
+
 class CertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The format of the Certificate data.
-    """
+    """The format of the Certificate data."""
 
     #: The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain.
     PFX = "pfx"
     #: The Certificate is a base64-encoded X.509 Certificate.
     CER = "cer"
 
+
 class CertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the Certificate.
-    """
+    """The state of the Certificate."""
 
     #: The Certificate is available for use in Pools.
     ACTIVE = "active"
@@ -74,6 +75,7 @@ class CertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: cancel Certificate delete operation to cancel the delete, or the delete Certificate operation
     #: to retry the delete.
     DELETE_FAILED = "deletefailed"
+
 
 class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value is currentuser. This property is applicable only for Pools configured with
@@ -90,7 +92,9 @@ class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Certificates should be installed to the LocalMachine Certificate store.
     LOCAL_MACHINE = "localmachine"
 
+
 class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CertificateVisibility."""
 
     #: The Certificate should be visible to the user account under which the StartTask is run. Note
     #: that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
@@ -102,9 +106,9 @@ class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Compute Node.
     REMOTE_USER = "remoteuser"
 
+
 class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The default value is requeue.
-    """
+    """The default value is requeue."""
 
     #: Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
     #: Node is available. Remove Compute Nodes as soon as Tasks have been terminated.
@@ -120,9 +124,9 @@ class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta
     #: periods have expired.
     RETAINED_DATA = "retaineddata"
 
+
 class ComputeNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """If not specified, the default is spread.
-    """
+    """If not specified, the default is spread."""
 
     #: Tasks should be assigned evenly across all Compute Nodes in the Pool.
     SPREAD = "spread"
@@ -130,9 +134,9 @@ class ComputeNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Pool before any Tasks are assigned to the next Compute Node in the Pool.
     PACK = "pack"
 
+
 class ComputeNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The default value is requeue.
-    """
+    """The default value is requeue."""
 
     #: Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
     #: Node is available. Restart the Compute Node as soon as Tasks have been terminated.
@@ -149,9 +153,9 @@ class ComputeNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: periods have expired.
     RETAINED_DATA = "retaineddata"
 
+
 class ComputeNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The default value is requeue.
-    """
+    """The default value is requeue."""
 
     #: Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
     #: Node is available. Reimage the Compute Node as soon as Tasks have been terminated.
@@ -167,6 +171,7 @@ class ComputeNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: expire. Schedule no new Tasks while waiting. Reimage the Compute Node when all Task retention
     #: periods have expired.
     RETAINED_DATA = "retaineddata"
+
 
 class ComputeNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute
@@ -206,9 +211,9 @@ class ComputeNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Node when it was preempted will be rescheduled when another Compute Node becomes available.
     PREEMPTED = "preempted"
 
+
 class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The default is 'taskWorkingDirectory'.
-    """
+    """The default is 'taskWorkingDirectory'."""
 
     #: Use the standard Batch service Task working directory, which will contain the Task Resource
     #: Files populated by Batch.
@@ -216,6 +221,7 @@ class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Use the working directory defined in the container Image. Beware that this directory will not
     #: contain the Resource Files downloaded by Batch.
     CONTAINER_IMAGE_DEFAULT = "containerImageDefault"
+
 
 class DependencyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible values are 'satisfy' (allowing dependent tasks to progress) and 'block' (dependent
@@ -228,9 +234,9 @@ class DependencyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Blocks tasks waiting on this task, preventing them from being scheduled.
     BLOCK = "block"
 
+
 class DisableComputeNodeSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The default value is requeue.
-    """
+    """The default value is requeue."""
 
     #: Terminate running Task processes and requeue the Tasks. The Tasks may run again on other
     #: Compute Nodes, or when Task scheduling is re-enabled on this Compute Node. Enter offline state
@@ -243,9 +249,9 @@ class DisableComputeNodeSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnu
     #: state when all Tasks have completed.
     TASK_COMPLETION = "taskcompletion"
 
+
 class DisableJobOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """What to do with active Tasks associated with the Job.
-    """
+    """What to do with active Tasks associated with the Job."""
 
     #: Terminate running Tasks and requeue them. The Tasks will run again when the Job is enabled.
     REQUEUE = "requeue"
@@ -255,9 +261,9 @@ class DisableJobOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Allow currently running Tasks to complete.
     WAIT = "wait"
 
+
 class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A disk to encrypt.
-    """
+    """A disk to encrypt."""
 
     #: The OS Disk on the compute node is encrypted.
     OS_DISK = "osdisk"
@@ -265,45 +271,45 @@ class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: partitions (such as those on mounted data disks) when encryption occurs at boot time.
     TEMPORARY_DISK = "temporarydisk"
 
+
 class DynamicVNetAssignmentScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The scope of dynamic vnet assignment.
-    """
+    """The scope of dynamic vnet assignment."""
 
     #: No dynamic VNet assignment is enabled.
     NONE = "none"
     #: Dynamic VNet assignment is done per-job.
     JOB = "job"
 
+
 class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The elevation level of the user.
-    """
+    """The elevation level of the user."""
 
     #: The user is a standard user without elevated access.
     NON_ADMIN = "nonadmin"
     #: The user is a user with elevated access and operates with full Administrator permissions.
     ADMIN = "admin"
 
+
 class ErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The category of the error.
-    """
+    """The category of the error."""
 
     #: The error is due to a user issue, such as misconfiguration.
     USER_ERROR = "usererror"
     #: The error is due to an internal server issue.
     SERVER_ERROR = "servererror"
 
+
 class InboundEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The protocol of the endpoint.
-    """
+    """The protocol of the endpoint."""
 
     #: Use TCP for the endpoint.
     TCP = "tcp"
     #: Use UDP for the endpoint.
     UDP = "udp"
 
+
 class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning type for Public IP Addresses for the Pool.
-    """
+    """The provisioning type for Public IP Addresses for the Pool."""
 
     #: A public IP will be created and managed by Batch. There may be multiple public IPs depending on
     #: the size of the Pool.
@@ -312,6 +318,7 @@ class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_MANAGED = "usermanaged"
     #: No public IP Address will be created.
     NO_PUBLIC_IP_ADDRESSES = "nopublicipaddresses"
+
 
 class JobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default is none for exit code 0 and terminate for all other exit conditions. If the Job's
@@ -328,9 +335,9 @@ class JobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Terminate the Job. The terminateReason in the Job's executionInfo is set to "TaskFailed".
     TERMINATE = "terminate"
 
+
 class JobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the Job Preparation Task on the Compute Node.
-    """
+    """The current state of the Job Preparation Task on the Compute Node."""
 
     #: The Task is currently running (including retrying).
     RUNNING = "running"
@@ -338,10 +345,10 @@ class JobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: service was unable to start the Task due to Task preparation errors (such as resource file
     #: download failures).
     COMPLETED = "completed"
+
 
 class JobReleaseTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the Job Release Task on the Compute Node.
-    """
+    """The current state of the Job Release Task on the Compute Node."""
 
     #: The Task is currently running (including retrying).
     RUNNING = "running"
@@ -350,9 +357,9 @@ class JobReleaseTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: download failures).
     COMPLETED = "completed"
 
+
 class JobScheduleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the Job Schedule.
-    """
+    """The state of the Job Schedule."""
 
     #: The Job Schedule is active and will create Jobs as per its schedule.
     ACTIVE = "active"
@@ -372,9 +379,9 @@ class JobScheduleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: will be deleted when all Jobs and Tasks under the Job Schedule have been deleted.
     DELETING = "deleting"
 
+
 class JobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the Job.
-    """
+    """The state of the Job."""
 
     #: The Job is available to have Tasks scheduled.
     ACTIVE = "active"
@@ -396,6 +403,7 @@ class JobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: (for example, because the system is still terminating running Tasks).
     DELETING = "deleting"
 
+
 class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value for VirtualMachineConfiguration Pools is 'batch' and for
     CloudServiceConfiguration Pools is 'interactive'.
@@ -411,18 +419,18 @@ class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: privilege or to always require maximum privilege.
     INTERACTIVE = "interactive"
 
+
 class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The action that should be taken for a specified IP address, subnet range or tag.
-    """
+    """The action that should be taken for a specified IP address, subnet range or tag."""
 
     #: Allow access.
     ALLOW = "allow"
     #: Deny access.
     DENY = "deny"
 
+
 class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The default value is regional.
-    """
+    """The default value is regional."""
 
     #: All nodes in the pool will be allocated in the same region.
     REGIONAL = "regional"
@@ -430,14 +438,15 @@ class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: balancing.
     ZONAL = "zonal"
 
+
 class OnAllTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The action the Batch service should take when all Tasks in the Job are in the completed state.
-    """
+    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
 
     #: Do nothing. The Job remains active unless terminated or disabled by some other means.
     NO_ACTION = "noaction"
     #: Terminate the Job. The Job's terminateReason is set to 'AllTasksComplete'.
     TERMINATE_JOB = "terminatejob"
+
 
 class OnTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A Task is considered to have failed if has a failureInfo. A failureInfo is set if the Task
@@ -449,21 +458,21 @@ class OnTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NO_ACTION = "noaction"
     #: Take the action associated with the Task exit condition in the Task's exitConditions
     #: collection. (This may still result in no action being taken, if that is what the Task
-    #: specifies.).
+    #: specifies.)
     PERFORM_EXIT_OPTIONS_JOB_ACTION = "performexitoptionsjobaction"
 
+
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of operating system (e.g. Windows or Linux) of the Image.
-    """
+    """The type of operating system (e.g. Windows or Linux) of the Image."""
 
     #: The Linux operating system.
     LINUX = "linux"
     #: The Windows operating system.
     WINDOWS = "windows"
 
+
 class OutputFileUploadCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The conditions under which a Task output file or set of files should be uploaded.
-    """
+    """The conditions under which a Task output file or set of files should be uploaded."""
 
     #: Upload the file(s) only after the Task process exits with an exit code of 0.
     TASK_SUCCESS = "tasksuccess"
@@ -471,6 +480,7 @@ class OutputFileUploadCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TASK_FAILURE = "taskfailure"
     #: Upload the file(s) after the Task process exits, no matter what the exit code was.
     TASK_COMPLETION = "taskcompletion"
+
 
 class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The list of user identities associated with the Batch pool. The user identity dictionary key
@@ -483,6 +493,7 @@ class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Batch pool has no identity associated with it. Setting ``None`` in update pool will remove
     #: existing identities.
     NONE = "None"
+
 
 class PoolLifetimeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The minimum lifetime of created auto Pools, and how multiple Jobs on a schedule are assigned to
@@ -498,9 +509,9 @@ class PoolLifetimeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: service creates a new auto Pool for every Job created on the schedule.
     JOB = "job"
 
+
 class PoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the Pool.
-    """
+    """The current state of the Pool."""
 
     #: The Pool is available to run Tasks subject to the availability of Compute Nodes.
     ACTIVE = "active"
@@ -508,9 +519,9 @@ class PoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: completed.
     DELETING = "deleting"
 
+
 class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether the Compute Node is available for Task scheduling.
-    """
+    """Whether the Compute Node is available for Task scheduling."""
 
     #: Tasks can be scheduled on the Compute Node.
     ENABLED = "enabled"
@@ -518,9 +529,9 @@ class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: may still run to completion. All Compute Nodes start with scheduling enabled.
     DISABLED = "disabled"
 
+
 class StartTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the StartTask on the Compute Node.
-    """
+    """The state of the StartTask on the Compute Node."""
 
     #: The StartTask is currently running.
     RUNNING = "running"
@@ -529,26 +540,26 @@ class StartTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: file download failures).
     COMPLETED = "completed"
 
+
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Level code.
-    """
+    """Level code."""
 
     ERROR = "Error"
     INFO = "Info"
     WARNING = "Warning"
 
+
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The storage Account type for use in creating data disks.
-    """
+    """The storage Account type for use in creating data disks."""
 
     #: The data disk should use standard locally redundant storage.
     STANDARD_LRS = "standard_lrs"
     #: The data disk should use premium locally redundant storage.
     PREMIUM_LRS = "premium_lrs"
 
+
 class SubtaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the subtask.
-    """
+    """The state of the subtask."""
 
     #: The Task has been assigned to a Compute Node, but is waiting for a required Job Preparation
     #: Task to complete on the Compute Node. If the Job Preparation Task succeeds, the Task will move
@@ -564,9 +575,9 @@ class SubtaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: as completed if an error occurred launching the Task, or when the Task has been terminated.
     COMPLETED = "completed"
 
+
 class TaskAddStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the add Task request.
-    """
+    """The status of the add Task request."""
 
     #: The Task was added successfully.
     SUCCESS = "success"
@@ -576,9 +587,9 @@ class TaskAddStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Task failed to add due to a server error and can be retried without modification.
     SERVER_ERROR = "servererror"
 
+
 class TaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The result of Task execution.
-    """
+    """The result of Task execution."""
 
     #: The Task ran successfully.
     SUCCESS = "success"
@@ -586,9 +597,9 @@ class TaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: process was launched, while the Task process was executing, or after the Task process exited.
     FAILURE = "failure"
 
+
 class TaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the Task.
-    """
+    """The state of the Task."""
 
     #: The Task is queued and able to run, but is not currently assigned to a Compute Node. A Task
     #: enters this state when it is created, when it is enabled after being disabled, or when it is
@@ -607,6 +618,7 @@ class TaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: the Task has finished unsuccessfully and has exhausted its retry limit. A Task is also marked
     #: as completed if an error occurred launching the Task, or when the Task has been terminated.
     COMPLETED = "completed"
+
 
 class VerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the Azure Batch service actively verifies that the Image is compatible with the

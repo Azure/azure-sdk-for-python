@@ -10,11 +10,11 @@ from ._models_py3 import AccountListPoolNodeCountsOptions
 from ._models_py3 import AccountListSupportedImagesOptions
 from ._models_py3 import AccountListSupportedImagesResult
 from ._models_py3 import AffinityInformation
+from ._models_py3 import Application
 from ._models_py3 import ApplicationGetOptions
 from ._models_py3 import ApplicationListOptions
 from ._models_py3 import ApplicationListResult
 from ._models_py3 import ApplicationPackageReference
-from ._models_py3 import ApplicationSummary
 from ._models_py3 import AuthenticationTokenSettings
 from ._models_py3 import AutoPoolSpecification
 from ._models_py3 import AutoScaleRun
@@ -24,28 +24,36 @@ from ._models_py3 import AzureBlobFileSystemConfiguration
 from ._models_py3 import AzureFileShareConfiguration
 from ._models_py3 import BatchError
 from ._models_py3 import BatchErrorDetail
+from ._models_py3 import BatchJob
+from ._models_py3 import BatchJobDisableParameters
+from ._models_py3 import BatchJobListPreparationAndReleaseTaskStatusResult
+from ._models_py3 import BatchJobListResult
+from ._models_py3 import BatchJobSchedule
+from ._models_py3 import BatchJobScheduleListResult
+from ._models_py3 import BatchJobScheduleUpdate
+from ._models_py3 import BatchJobTerminateParameters
+from ._models_py3 import BatchJobUpdate
+from ._models_py3 import BatchPool
+from ._models_py3 import BatchPoolEnableAutoScaleParameters
+from ._models_py3 import BatchPoolEvaluateAutoScaleParameters
 from ._models_py3 import BatchPoolIdentity
+from ._models_py3 import BatchPoolListResult
+from ._models_py3 import BatchPoolResizeParameters
+from ._models_py3 import BatchPoolUpdate
+from ._models_py3 import BatchTask
+from ._models_py3 import BatchTaskCollection
+from ._models_py3 import BatchTaskListResult
+from ._models_py3 import BatchTaskListSubtasksResult
 from ._models_py3 import CIFSMountConfiguration
 from ._models_py3 import Certificate
 from ._models_py3 import CertificateAddOptions
-from ._models_py3 import CertificateAddParameter
 from ._models_py3 import CertificateCancelDeletionOptions
 from ._models_py3 import CertificateDeleteOptions
 from ._models_py3 import CertificateGetOptions
 from ._models_py3 import CertificateListOptions
 from ._models_py3 import CertificateListResult
 from ._models_py3 import CertificateReference
-from ._models_py3 import CloudJob
-from ._models_py3 import CloudJobListPreparationAndReleaseTaskStatusResult
-from ._models_py3 import CloudJobListResult
-from ._models_py3 import CloudJobSchedule
-from ._models_py3 import CloudJobScheduleListResult
-from ._models_py3 import CloudPool
-from ._models_py3 import CloudPoolListResult
 from ._models_py3 import CloudServiceConfiguration
-from ._models_py3 import CloudTask
-from ._models_py3 import CloudTaskListResult
-from ._models_py3 import CloudTaskListSubtasksResult
 from ._models_py3 import ComputeNode
 from ._models_py3 import ComputeNodeAddUserOptions
 from ._models_py3 import ComputeNodeDeleteUserOptions
@@ -96,11 +104,9 @@ from ._models_py3 import InboundEndpoint
 from ._models_py3 import InboundNATPool
 from ._models_py3 import InstanceViewStatus
 from ._models_py3 import JobAddOptions
-from ._models_py3 import JobAddParameter
 from ._models_py3 import JobConstraints
 from ._models_py3 import JobDeleteOptions
 from ._models_py3 import JobDisableOptions
-from ._models_py3 import JobDisableParameter
 from ._models_py3 import JobEnableOptions
 from ._models_py3 import JobExecutionInformation
 from ._models_py3 import JobGetAllLifetimeStatisticsOptions
@@ -112,14 +118,12 @@ from ._models_py3 import JobListPreparationAndReleaseTaskStatusOptions
 from ._models_py3 import JobManagerTask
 from ._models_py3 import JobNetworkConfiguration
 from ._models_py3 import JobPatchOptions
-from ._models_py3 import JobPatchParameter
 from ._models_py3 import JobPreparationAndReleaseTaskExecutionInformation
 from ._models_py3 import JobPreparationTask
 from ._models_py3 import JobPreparationTaskExecutionInformation
 from ._models_py3 import JobReleaseTask
 from ._models_py3 import JobReleaseTaskExecutionInformation
 from ._models_py3 import JobScheduleAddOptions
-from ._models_py3 import JobScheduleAddParameter
 from ._models_py3 import JobScheduleDeleteOptions
 from ._models_py3 import JobScheduleDisableOptions
 from ._models_py3 import JobScheduleEnableOptions
@@ -128,18 +132,14 @@ from ._models_py3 import JobScheduleExistsOptions
 from ._models_py3 import JobScheduleGetOptions
 from ._models_py3 import JobScheduleListOptions
 from ._models_py3 import JobSchedulePatchOptions
-from ._models_py3 import JobSchedulePatchParameter
 from ._models_py3 import JobScheduleStatistics
 from ._models_py3 import JobScheduleTerminateOptions
 from ._models_py3 import JobScheduleUpdateOptions
-from ._models_py3 import JobScheduleUpdateParameter
 from ._models_py3 import JobSchedulingError
 from ._models_py3 import JobSpecification
 from ._models_py3 import JobStatistics
 from ._models_py3 import JobTerminateOptions
-from ._models_py3 import JobTerminateParameter
 from ._models_py3 import JobUpdateOptions
-from ._models_py3 import JobUpdateParameter
 from ._models_py3 import LinuxUserConfiguration
 from ._models_py3 import MetadataItem
 from ._models_py3 import MountConfiguration
@@ -150,14 +150,14 @@ from ._models_py3 import NetworkConfiguration
 from ._models_py3 import NetworkSecurityGroupRule
 from ._models_py3 import NodeAgentInformation
 from ._models_py3 import NodeCounts
-from ._models_py3 import NodeDisableSchedulingParameter
+from ._models_py3 import NodeDisableSchedulingParameters
 from ._models_py3 import NodeFile
 from ._models_py3 import NodeFileListResult
 from ._models_py3 import NodePlacementConfiguration
-from ._models_py3 import NodeRebootParameter
-from ._models_py3 import NodeReimageParameter
-from ._models_py3 import NodeRemoveParameter
-from ._models_py3 import NodeUpdateUserParameter
+from ._models_py3 import NodeRebootParameters
+from ._models_py3 import NodeReimageParameters
+from ._models_py3 import NodeRemoveParameters
+from ._models_py3 import NodeUpdateUserParameters
 from ._models_py3 import NodeVMExtension
 from ._models_py3 import NodeVMExtensionList
 from ._models_py3 import OSDisk
@@ -166,14 +166,11 @@ from ._models_py3 import OutputFileBlobContainerDestination
 from ._models_py3 import OutputFileDestination
 from ._models_py3 import OutputFileUploadOptions
 from ._models_py3 import PoolAddOptions
-from ._models_py3 import PoolAddParameter
 from ._models_py3 import PoolDeleteOptions
 from ._models_py3 import PoolDisableAutoScaleOptions
 from ._models_py3 import PoolEnableAutoScaleOptions
-from ._models_py3 import PoolEnableAutoScaleParameter
 from ._models_py3 import PoolEndpointConfiguration
 from ._models_py3 import PoolEvaluateAutoScaleOptions
-from ._models_py3 import PoolEvaluateAutoScaleParameter
 from ._models_py3 import PoolExistsOptions
 from ._models_py3 import PoolGetAllLifetimeStatisticsOptions
 from ._models_py3 import PoolGetOptions
@@ -184,15 +181,12 @@ from ._models_py3 import PoolListUsageMetricsResult
 from ._models_py3 import PoolNodeCounts
 from ._models_py3 import PoolNodeCountsListResult
 from ._models_py3 import PoolPatchOptions
-from ._models_py3 import PoolPatchParameter
 from ._models_py3 import PoolRemoveNodesOptions
 from ._models_py3 import PoolResizeOptions
-from ._models_py3 import PoolResizeParameter
 from ._models_py3 import PoolSpecification
 from ._models_py3 import PoolStatistics
 from ._models_py3 import PoolStopResizeOptions
 from ._models_py3 import PoolUpdatePropertiesOptions
-from ._models_py3 import PoolUpdatePropertiesParameter
 from ._models_py3 import PoolUsageMetrics
 from ._models_py3 import PublicIPAddressConfiguration
 from ._models_py3 import RecentJob
@@ -204,10 +198,8 @@ from ._models_py3 import StartTask
 from ._models_py3 import StartTaskInformation
 from ._models_py3 import SubtaskInformation
 from ._models_py3 import TaskAddCollectionOptions
-from ._models_py3 import TaskAddCollectionParameter
 from ._models_py3 import TaskAddCollectionResult
 from ._models_py3 import TaskAddOptions
-from ._models_py3 import TaskAddParameter
 from ._models_py3 import TaskAddResult
 from ._models_py3 import TaskConstraints
 from ._models_py3 import TaskContainerExecutionInformation
@@ -229,7 +221,6 @@ from ._models_py3 import TaskSlotCounts
 from ._models_py3 import TaskStatistics
 from ._models_py3 import TaskTerminateOptions
 from ._models_py3 import TaskUpdateOptions
-from ._models_py3 import TaskUpdateParameter
 from ._models_py3 import UploadBatchServiceLogsConfiguration
 from ._models_py3 import UploadBatchServiceLogsResult
 from ._models_py3 import UsageStatistics
@@ -243,341 +234,330 @@ from ._models_py3 import VirtualMachineInfo
 from ._models_py3 import WindowsConfiguration
 from ._models_py3 import WindowsUserConfiguration
 
-
-from ._batch_service_client_enums import (
-    AllocationState,
-    AutoUserScope,
-    CachingType,
-    CertificateFormat,
-    CertificateState,
-    CertificateStoreLocation,
-    CertificateVisibility,
-    ComputeNodeDeallocationOption,
-    ComputeNodeFillType,
-    ComputeNodeRebootOption,
-    ComputeNodeReimageOption,
-    ComputeNodeState,
-    ContainerWorkingDirectory,
-    DependencyAction,
-    DisableComputeNodeSchedulingOption,
-    DisableJobOption,
-    DiskEncryptionTarget,
-    DynamicVNetAssignmentScope,
-    ElevationLevel,
-    ErrorCategory,
-    IPAddressProvisioningType,
-    InboundEndpointProtocol,
-    JobAction,
-    JobPreparationTaskState,
-    JobReleaseTaskState,
-    JobScheduleState,
-    JobState,
-    LoginMode,
-    NetworkSecurityGroupRuleAccess,
-    NodePlacementPolicyType,
-    OSType,
-    OnAllTasksComplete,
-    OnTaskFailure,
-    OutputFileUploadCondition,
-    PoolIdentityType,
-    PoolLifetimeOption,
-    PoolState,
-    SchedulingState,
-    StartTaskState,
-    StatusLevelTypes,
-    StorageAccountType,
-    SubtaskState,
-    TaskAddStatus,
-    TaskExecutionResult,
-    TaskState,
-    VerificationType,
-)
+from ._batch_service_client_enums import AllocationState
+from ._batch_service_client_enums import AutoUserScope
+from ._batch_service_client_enums import CachingType
+from ._batch_service_client_enums import CertificateFormat
+from ._batch_service_client_enums import CertificateState
+from ._batch_service_client_enums import CertificateStoreLocation
+from ._batch_service_client_enums import CertificateVisibility
+from ._batch_service_client_enums import ComputeNodeDeallocationOption
+from ._batch_service_client_enums import ComputeNodeFillType
+from ._batch_service_client_enums import ComputeNodeRebootOption
+from ._batch_service_client_enums import ComputeNodeReimageOption
+from ._batch_service_client_enums import ComputeNodeState
+from ._batch_service_client_enums import ContainerWorkingDirectory
+from ._batch_service_client_enums import DependencyAction
+from ._batch_service_client_enums import DisableComputeNodeSchedulingOption
+from ._batch_service_client_enums import DisableJobOption
+from ._batch_service_client_enums import DiskEncryptionTarget
+from ._batch_service_client_enums import DynamicVNetAssignmentScope
+from ._batch_service_client_enums import ElevationLevel
+from ._batch_service_client_enums import ErrorCategory
+from ._batch_service_client_enums import IPAddressProvisioningType
+from ._batch_service_client_enums import InboundEndpointProtocol
+from ._batch_service_client_enums import JobAction
+from ._batch_service_client_enums import JobPreparationTaskState
+from ._batch_service_client_enums import JobReleaseTaskState
+from ._batch_service_client_enums import JobScheduleState
+from ._batch_service_client_enums import JobState
+from ._batch_service_client_enums import LoginMode
+from ._batch_service_client_enums import NetworkSecurityGroupRuleAccess
+from ._batch_service_client_enums import NodePlacementPolicyType
+from ._batch_service_client_enums import OSType
+from ._batch_service_client_enums import OnAllTasksComplete
+from ._batch_service_client_enums import OnTaskFailure
+from ._batch_service_client_enums import OutputFileUploadCondition
+from ._batch_service_client_enums import PoolIdentityType
+from ._batch_service_client_enums import PoolLifetimeOption
+from ._batch_service_client_enums import PoolState
+from ._batch_service_client_enums import SchedulingState
+from ._batch_service_client_enums import StartTaskState
+from ._batch_service_client_enums import StatusLevelTypes
+from ._batch_service_client_enums import StorageAccountType
+from ._batch_service_client_enums import SubtaskState
+from ._batch_service_client_enums import TaskAddStatus
+from ._batch_service_client_enums import TaskExecutionResult
+from ._batch_service_client_enums import TaskState
+from ._batch_service_client_enums import VerificationType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccountListPoolNodeCountsOptions',
-    'AccountListSupportedImagesOptions',
-    'AccountListSupportedImagesResult',
-    'AffinityInformation',
-    'ApplicationGetOptions',
-    'ApplicationListOptions',
-    'ApplicationListResult',
-    'ApplicationPackageReference',
-    'ApplicationSummary',
-    'AuthenticationTokenSettings',
-    'AutoPoolSpecification',
-    'AutoScaleRun',
-    'AutoScaleRunError',
-    'AutoUserSpecification',
-    'AzureBlobFileSystemConfiguration',
-    'AzureFileShareConfiguration',
-    'BatchError',
-    'BatchErrorDetail',
-    'BatchPoolIdentity',
-    'CIFSMountConfiguration',
-    'Certificate',
-    'CertificateAddOptions',
-    'CertificateAddParameter',
-    'CertificateCancelDeletionOptions',
-    'CertificateDeleteOptions',
-    'CertificateGetOptions',
-    'CertificateListOptions',
-    'CertificateListResult',
-    'CertificateReference',
-    'CloudJob',
-    'CloudJobListPreparationAndReleaseTaskStatusResult',
-    'CloudJobListResult',
-    'CloudJobSchedule',
-    'CloudJobScheduleListResult',
-    'CloudPool',
-    'CloudPoolListResult',
-    'CloudServiceConfiguration',
-    'CloudTask',
-    'CloudTaskListResult',
-    'CloudTaskListSubtasksResult',
-    'ComputeNode',
-    'ComputeNodeAddUserOptions',
-    'ComputeNodeDeleteUserOptions',
-    'ComputeNodeDisableSchedulingOptions',
-    'ComputeNodeEnableSchedulingOptions',
-    'ComputeNodeEndpointConfiguration',
-    'ComputeNodeError',
-    'ComputeNodeExtensionGetOptions',
-    'ComputeNodeExtensionListOptions',
-    'ComputeNodeGetOptions',
-    'ComputeNodeGetRemoteDesktopOptions',
-    'ComputeNodeGetRemoteLoginSettingsOptions',
-    'ComputeNodeGetRemoteLoginSettingsResult',
-    'ComputeNodeIdentityReference',
-    'ComputeNodeInformation',
-    'ComputeNodeListOptions',
-    'ComputeNodeListResult',
-    'ComputeNodeRebootOptions',
-    'ComputeNodeReimageOptions',
-    'ComputeNodeUpdateUserOptions',
-    'ComputeNodeUploadBatchServiceLogsOptions',
-    'ComputeNodeUser',
-    'ContainerConfiguration',
-    'ContainerRegistry',
-    'DataDisk',
-    'DeleteCertificateError',
-    'DiffDiskSettings',
-    'DiskEncryptionConfiguration',
-    'EnvironmentSetting',
-    'ErrorMessage',
-    'ExitCodeMapping',
-    'ExitCodeRangeMapping',
-    'ExitConditions',
-    'ExitOptions',
-    'FileDeleteFromComputeNodeOptions',
-    'FileDeleteFromTaskOptions',
-    'FileGetFromComputeNodeOptions',
-    'FileGetFromTaskOptions',
-    'FileGetPropertiesFromComputeNodeOptions',
-    'FileGetPropertiesFromTaskOptions',
-    'FileListFromComputeNodeOptions',
-    'FileListFromTaskOptions',
-    'FileProperties',
-    'HttpHeader',
-    'ImageInformation',
-    'ImageReference',
-    'InboundEndpoint',
-    'InboundNATPool',
-    'InstanceViewStatus',
-    'JobAddOptions',
-    'JobAddParameter',
-    'JobConstraints',
-    'JobDeleteOptions',
-    'JobDisableOptions',
-    'JobDisableParameter',
-    'JobEnableOptions',
-    'JobExecutionInformation',
-    'JobGetAllLifetimeStatisticsOptions',
-    'JobGetOptions',
-    'JobGetTaskCountsOptions',
-    'JobListFromJobScheduleOptions',
-    'JobListOptions',
-    'JobListPreparationAndReleaseTaskStatusOptions',
-    'JobManagerTask',
-    'JobNetworkConfiguration',
-    'JobPatchOptions',
-    'JobPatchParameter',
-    'JobPreparationAndReleaseTaskExecutionInformation',
-    'JobPreparationTask',
-    'JobPreparationTaskExecutionInformation',
-    'JobReleaseTask',
-    'JobReleaseTaskExecutionInformation',
-    'JobScheduleAddOptions',
-    'JobScheduleAddParameter',
-    'JobScheduleDeleteOptions',
-    'JobScheduleDisableOptions',
-    'JobScheduleEnableOptions',
-    'JobScheduleExecutionInformation',
-    'JobScheduleExistsOptions',
-    'JobScheduleGetOptions',
-    'JobScheduleListOptions',
-    'JobSchedulePatchOptions',
-    'JobSchedulePatchParameter',
-    'JobScheduleStatistics',
-    'JobScheduleTerminateOptions',
-    'JobScheduleUpdateOptions',
-    'JobScheduleUpdateParameter',
-    'JobSchedulingError',
-    'JobSpecification',
-    'JobStatistics',
-    'JobTerminateOptions',
-    'JobTerminateParameter',
-    'JobUpdateOptions',
-    'JobUpdateParameter',
-    'LinuxUserConfiguration',
-    'MetadataItem',
-    'MountConfiguration',
-    'MultiInstanceSettings',
-    'NFSMountConfiguration',
-    'NameValuePair',
-    'NetworkConfiguration',
-    'NetworkSecurityGroupRule',
-    'NodeAgentInformation',
-    'NodeCounts',
-    'NodeDisableSchedulingParameter',
-    'NodeFile',
-    'NodeFileListResult',
-    'NodePlacementConfiguration',
-    'NodeRebootParameter',
-    'NodeReimageParameter',
-    'NodeRemoveParameter',
-    'NodeUpdateUserParameter',
-    'NodeVMExtension',
-    'NodeVMExtensionList',
-    'OSDisk',
-    'OutputFile',
-    'OutputFileBlobContainerDestination',
-    'OutputFileDestination',
-    'OutputFileUploadOptions',
-    'PoolAddOptions',
-    'PoolAddParameter',
-    'PoolDeleteOptions',
-    'PoolDisableAutoScaleOptions',
-    'PoolEnableAutoScaleOptions',
-    'PoolEnableAutoScaleParameter',
-    'PoolEndpointConfiguration',
-    'PoolEvaluateAutoScaleOptions',
-    'PoolEvaluateAutoScaleParameter',
-    'PoolExistsOptions',
-    'PoolGetAllLifetimeStatisticsOptions',
-    'PoolGetOptions',
-    'PoolInformation',
-    'PoolListOptions',
-    'PoolListUsageMetricsOptions',
-    'PoolListUsageMetricsResult',
-    'PoolNodeCounts',
-    'PoolNodeCountsListResult',
-    'PoolPatchOptions',
-    'PoolPatchParameter',
-    'PoolRemoveNodesOptions',
-    'PoolResizeOptions',
-    'PoolResizeParameter',
-    'PoolSpecification',
-    'PoolStatistics',
-    'PoolStopResizeOptions',
-    'PoolUpdatePropertiesOptions',
-    'PoolUpdatePropertiesParameter',
-    'PoolUsageMetrics',
-    'PublicIPAddressConfiguration',
-    'RecentJob',
-    'ResizeError',
-    'ResourceFile',
-    'ResourceStatistics',
-    'Schedule',
-    'StartTask',
-    'StartTaskInformation',
-    'SubtaskInformation',
-    'TaskAddCollectionOptions',
-    'TaskAddCollectionParameter',
-    'TaskAddCollectionResult',
-    'TaskAddOptions',
-    'TaskAddParameter',
-    'TaskAddResult',
-    'TaskConstraints',
-    'TaskContainerExecutionInformation',
-    'TaskContainerSettings',
-    'TaskCounts',
-    'TaskCountsResult',
-    'TaskDeleteOptions',
-    'TaskDependencies',
-    'TaskExecutionInformation',
-    'TaskFailureInformation',
-    'TaskGetOptions',
-    'TaskIdRange',
-    'TaskInformation',
-    'TaskListOptions',
-    'TaskListSubtasksOptions',
-    'TaskReactivateOptions',
-    'TaskSchedulingPolicy',
-    'TaskSlotCounts',
-    'TaskStatistics',
-    'TaskTerminateOptions',
-    'TaskUpdateOptions',
-    'TaskUpdateParameter',
-    'UploadBatchServiceLogsConfiguration',
-    'UploadBatchServiceLogsResult',
-    'UsageStatistics',
-    'UserAccount',
-    'UserAssignedIdentity',
-    'UserIdentity',
-    'VMExtension',
-    'VMExtensionInstanceView',
-    'VirtualMachineConfiguration',
-    'VirtualMachineInfo',
-    'WindowsConfiguration',
-    'WindowsUserConfiguration',
-    'AllocationState',
-    'AutoUserScope',
-    'CachingType',
-    'CertificateFormat',
-    'CertificateState',
-    'CertificateStoreLocation',
-    'CertificateVisibility',
-    'ComputeNodeDeallocationOption',
-    'ComputeNodeFillType',
-    'ComputeNodeRebootOption',
-    'ComputeNodeReimageOption',
-    'ComputeNodeState',
-    'ContainerWorkingDirectory',
-    'DependencyAction',
-    'DisableComputeNodeSchedulingOption',
-    'DisableJobOption',
-    'DiskEncryptionTarget',
-    'DynamicVNetAssignmentScope',
-    'ElevationLevel',
-    'ErrorCategory',
-    'IPAddressProvisioningType',
-    'InboundEndpointProtocol',
-    'JobAction',
-    'JobPreparationTaskState',
-    'JobReleaseTaskState',
-    'JobScheduleState',
-    'JobState',
-    'LoginMode',
-    'NetworkSecurityGroupRuleAccess',
-    'NodePlacementPolicyType',
-    'OSType',
-    'OnAllTasksComplete',
-    'OnTaskFailure',
-    'OutputFileUploadCondition',
-    'PoolIdentityType',
-    'PoolLifetimeOption',
-    'PoolState',
-    'SchedulingState',
-    'StartTaskState',
-    'StatusLevelTypes',
-    'StorageAccountType',
-    'SubtaskState',
-    'TaskAddStatus',
-    'TaskExecutionResult',
-    'TaskState',
-    'VerificationType',
+    "AccountListPoolNodeCountsOptions",
+    "AccountListSupportedImagesOptions",
+    "AccountListSupportedImagesResult",
+    "AffinityInformation",
+    "Application",
+    "ApplicationGetOptions",
+    "ApplicationListOptions",
+    "ApplicationListResult",
+    "ApplicationPackageReference",
+    "AuthenticationTokenSettings",
+    "AutoPoolSpecification",
+    "AutoScaleRun",
+    "AutoScaleRunError",
+    "AutoUserSpecification",
+    "AzureBlobFileSystemConfiguration",
+    "AzureFileShareConfiguration",
+    "BatchError",
+    "BatchErrorDetail",
+    "BatchJob",
+    "BatchJobDisableParameters",
+    "BatchJobListPreparationAndReleaseTaskStatusResult",
+    "BatchJobListResult",
+    "BatchJobSchedule",
+    "BatchJobScheduleListResult",
+    "BatchJobScheduleUpdate",
+    "BatchJobTerminateParameters",
+    "BatchJobUpdate",
+    "BatchPool",
+    "BatchPoolEnableAutoScaleParameters",
+    "BatchPoolEvaluateAutoScaleParameters",
+    "BatchPoolIdentity",
+    "BatchPoolListResult",
+    "BatchPoolResizeParameters",
+    "BatchPoolUpdate",
+    "BatchTask",
+    "BatchTaskCollection",
+    "BatchTaskListResult",
+    "BatchTaskListSubtasksResult",
+    "CIFSMountConfiguration",
+    "Certificate",
+    "CertificateAddOptions",
+    "CertificateCancelDeletionOptions",
+    "CertificateDeleteOptions",
+    "CertificateGetOptions",
+    "CertificateListOptions",
+    "CertificateListResult",
+    "CertificateReference",
+    "CloudServiceConfiguration",
+    "ComputeNode",
+    "ComputeNodeAddUserOptions",
+    "ComputeNodeDeleteUserOptions",
+    "ComputeNodeDisableSchedulingOptions",
+    "ComputeNodeEnableSchedulingOptions",
+    "ComputeNodeEndpointConfiguration",
+    "ComputeNodeError",
+    "ComputeNodeExtensionGetOptions",
+    "ComputeNodeExtensionListOptions",
+    "ComputeNodeGetOptions",
+    "ComputeNodeGetRemoteDesktopOptions",
+    "ComputeNodeGetRemoteLoginSettingsOptions",
+    "ComputeNodeGetRemoteLoginSettingsResult",
+    "ComputeNodeIdentityReference",
+    "ComputeNodeInformation",
+    "ComputeNodeListOptions",
+    "ComputeNodeListResult",
+    "ComputeNodeRebootOptions",
+    "ComputeNodeReimageOptions",
+    "ComputeNodeUpdateUserOptions",
+    "ComputeNodeUploadBatchServiceLogsOptions",
+    "ComputeNodeUser",
+    "ContainerConfiguration",
+    "ContainerRegistry",
+    "DataDisk",
+    "DeleteCertificateError",
+    "DiffDiskSettings",
+    "DiskEncryptionConfiguration",
+    "EnvironmentSetting",
+    "ErrorMessage",
+    "ExitCodeMapping",
+    "ExitCodeRangeMapping",
+    "ExitConditions",
+    "ExitOptions",
+    "FileDeleteFromComputeNodeOptions",
+    "FileDeleteFromTaskOptions",
+    "FileGetFromComputeNodeOptions",
+    "FileGetFromTaskOptions",
+    "FileGetPropertiesFromComputeNodeOptions",
+    "FileGetPropertiesFromTaskOptions",
+    "FileListFromComputeNodeOptions",
+    "FileListFromTaskOptions",
+    "FileProperties",
+    "HttpHeader",
+    "ImageInformation",
+    "ImageReference",
+    "InboundEndpoint",
+    "InboundNATPool",
+    "InstanceViewStatus",
+    "JobAddOptions",
+    "JobConstraints",
+    "JobDeleteOptions",
+    "JobDisableOptions",
+    "JobEnableOptions",
+    "JobExecutionInformation",
+    "JobGetAllLifetimeStatisticsOptions",
+    "JobGetOptions",
+    "JobGetTaskCountsOptions",
+    "JobListFromJobScheduleOptions",
+    "JobListOptions",
+    "JobListPreparationAndReleaseTaskStatusOptions",
+    "JobManagerTask",
+    "JobNetworkConfiguration",
+    "JobPatchOptions",
+    "JobPreparationAndReleaseTaskExecutionInformation",
+    "JobPreparationTask",
+    "JobPreparationTaskExecutionInformation",
+    "JobReleaseTask",
+    "JobReleaseTaskExecutionInformation",
+    "JobScheduleAddOptions",
+    "JobScheduleDeleteOptions",
+    "JobScheduleDisableOptions",
+    "JobScheduleEnableOptions",
+    "JobScheduleExecutionInformation",
+    "JobScheduleExistsOptions",
+    "JobScheduleGetOptions",
+    "JobScheduleListOptions",
+    "JobSchedulePatchOptions",
+    "JobScheduleStatistics",
+    "JobScheduleTerminateOptions",
+    "JobScheduleUpdateOptions",
+    "JobSchedulingError",
+    "JobSpecification",
+    "JobStatistics",
+    "JobTerminateOptions",
+    "JobUpdateOptions",
+    "LinuxUserConfiguration",
+    "MetadataItem",
+    "MountConfiguration",
+    "MultiInstanceSettings",
+    "NFSMountConfiguration",
+    "NameValuePair",
+    "NetworkConfiguration",
+    "NetworkSecurityGroupRule",
+    "NodeAgentInformation",
+    "NodeCounts",
+    "NodeDisableSchedulingParameters",
+    "NodeFile",
+    "NodeFileListResult",
+    "NodePlacementConfiguration",
+    "NodeRebootParameters",
+    "NodeReimageParameters",
+    "NodeRemoveParameters",
+    "NodeUpdateUserParameters",
+    "NodeVMExtension",
+    "NodeVMExtensionList",
+    "OSDisk",
+    "OutputFile",
+    "OutputFileBlobContainerDestination",
+    "OutputFileDestination",
+    "OutputFileUploadOptions",
+    "PoolAddOptions",
+    "PoolDeleteOptions",
+    "PoolDisableAutoScaleOptions",
+    "PoolEnableAutoScaleOptions",
+    "PoolEndpointConfiguration",
+    "PoolEvaluateAutoScaleOptions",
+    "PoolExistsOptions",
+    "PoolGetAllLifetimeStatisticsOptions",
+    "PoolGetOptions",
+    "PoolInformation",
+    "PoolListOptions",
+    "PoolListUsageMetricsOptions",
+    "PoolListUsageMetricsResult",
+    "PoolNodeCounts",
+    "PoolNodeCountsListResult",
+    "PoolPatchOptions",
+    "PoolRemoveNodesOptions",
+    "PoolResizeOptions",
+    "PoolSpecification",
+    "PoolStatistics",
+    "PoolStopResizeOptions",
+    "PoolUpdatePropertiesOptions",
+    "PoolUsageMetrics",
+    "PublicIPAddressConfiguration",
+    "RecentJob",
+    "ResizeError",
+    "ResourceFile",
+    "ResourceStatistics",
+    "Schedule",
+    "StartTask",
+    "StartTaskInformation",
+    "SubtaskInformation",
+    "TaskAddCollectionOptions",
+    "TaskAddCollectionResult",
+    "TaskAddOptions",
+    "TaskAddResult",
+    "TaskConstraints",
+    "TaskContainerExecutionInformation",
+    "TaskContainerSettings",
+    "TaskCounts",
+    "TaskCountsResult",
+    "TaskDeleteOptions",
+    "TaskDependencies",
+    "TaskExecutionInformation",
+    "TaskFailureInformation",
+    "TaskGetOptions",
+    "TaskIdRange",
+    "TaskInformation",
+    "TaskListOptions",
+    "TaskListSubtasksOptions",
+    "TaskReactivateOptions",
+    "TaskSchedulingPolicy",
+    "TaskSlotCounts",
+    "TaskStatistics",
+    "TaskTerminateOptions",
+    "TaskUpdateOptions",
+    "UploadBatchServiceLogsConfiguration",
+    "UploadBatchServiceLogsResult",
+    "UsageStatistics",
+    "UserAccount",
+    "UserAssignedIdentity",
+    "UserIdentity",
+    "VMExtension",
+    "VMExtensionInstanceView",
+    "VirtualMachineConfiguration",
+    "VirtualMachineInfo",
+    "WindowsConfiguration",
+    "WindowsUserConfiguration",
+    "AllocationState",
+    "AutoUserScope",
+    "CachingType",
+    "CertificateFormat",
+    "CertificateState",
+    "CertificateStoreLocation",
+    "CertificateVisibility",
+    "ComputeNodeDeallocationOption",
+    "ComputeNodeFillType",
+    "ComputeNodeRebootOption",
+    "ComputeNodeReimageOption",
+    "ComputeNodeState",
+    "ContainerWorkingDirectory",
+    "DependencyAction",
+    "DisableComputeNodeSchedulingOption",
+    "DisableJobOption",
+    "DiskEncryptionTarget",
+    "DynamicVNetAssignmentScope",
+    "ElevationLevel",
+    "ErrorCategory",
+    "IPAddressProvisioningType",
+    "InboundEndpointProtocol",
+    "JobAction",
+    "JobPreparationTaskState",
+    "JobReleaseTaskState",
+    "JobScheduleState",
+    "JobState",
+    "LoginMode",
+    "NetworkSecurityGroupRuleAccess",
+    "NodePlacementPolicyType",
+    "OSType",
+    "OnAllTasksComplete",
+    "OnTaskFailure",
+    "OutputFileUploadCondition",
+    "PoolIdentityType",
+    "PoolLifetimeOption",
+    "PoolState",
+    "SchedulingState",
+    "StartTaskState",
+    "StatusLevelTypes",
+    "StorageAccountType",
+    "SubtaskState",
+    "TaskAddStatus",
+    "TaskExecutionResult",
+    "TaskState",
+    "VerificationType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

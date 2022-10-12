@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +27,10 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._account_operations import build_list_pool_node_counts_request, build_list_supported_images_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class AccountOperations:
     """
@@ -41,13 +51,12 @@ class AccountOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_supported_images(
         self,
         account_list_supported_images_options: Optional[_models.AccountListSupportedImagesOptions] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.AccountListSupportedImagesResult]:
+    ) -> AsyncIterable["_models.ImageInformation"]:
         """Lists all Virtual Machine Images supported by the Azure Batch service.
 
         Lists all Virtual Machine Images supported by the Azure Batch service.
@@ -56,22 +65,24 @@ class AccountOperations:
         :type account_list_supported_images_options:
          ~azure-batch.models.AccountListSupportedImagesOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AccountListSupportedImagesResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.AccountListSupportedImagesResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either ImageInformation or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.ImageInformation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AccountListSupportedImagesResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AccountListSupportedImagesResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -81,67 +92,46 @@ class AccountOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if account_list_supported_images_options is not None:
+                    _client_request_id = account_list_supported_images_options.client_request_id
                     _filter = account_list_supported_images_options.filter
                     _max_results = account_list_supported_images_options.max_results
-                    _timeout = account_list_supported_images_options.timeout
-                    _client_request_id = account_list_supported_images_options.client_request_id
-                    _return_client_request_id = account_list_supported_images_options.return_client_request_id
                     _ocp_date = account_list_supported_images_options.ocp_date
-                
+                    _return_client_request_id = account_list_supported_images_options.return_client_request_id
+                    _timeout = account_list_supported_images_options.timeout
+
                 request = build_list_supported_images_request(
-                    api_version=api_version,
                     filter=_filter,
                     max_results=_max_results,
                     timeout=_timeout,
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list_supported_images.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list_supported_images.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if account_list_supported_images_options is not None:
-                    _filter = account_list_supported_images_options.filter
-                    _max_results = account_list_supported_images_options.max_results
-                    _timeout = account_list_supported_images_options.timeout
-                    _client_request_id = account_list_supported_images_options.client_request_id
-                    _return_client_request_id = account_list_supported_images_options.return_client_request_id
-                    _ocp_date = account_list_supported_images_options.ocp_date
-                
-                request = build_list_supported_images_request(
-                    api_version=api_version,
-                    filter=_filter,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
@@ -155,10 +145,8 @@ class AccountOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -169,18 +157,16 @@ class AccountOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_supported_images.metadata = {'url': "/supportedimages"}  # type: ignore
+    list_supported_images.metadata = {"url": "/supportedimages"}  # type: ignore
 
     @distributed_trace
     def list_pool_node_counts(
         self,
         account_list_pool_node_counts_options: Optional[_models.AccountListPoolNodeCountsOptions] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.PoolNodeCountsListResult]:
+    ) -> AsyncIterable["_models.PoolNodeCounts"]:
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the numbers returned
         may not always be up to date. If you need exact node counts, use a list query.
 
@@ -188,21 +174,24 @@ class AccountOperations:
         :type account_list_pool_node_counts_options:
          ~azure-batch.models.AccountListPoolNodeCountsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PoolNodeCountsListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.PoolNodeCountsListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either PoolNodeCounts or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.PoolNodeCounts]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PoolNodeCountsListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PoolNodeCountsListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -212,67 +201,46 @@ class AccountOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if account_list_pool_node_counts_options is not None:
+                    _client_request_id = account_list_pool_node_counts_options.client_request_id
                     _filter = account_list_pool_node_counts_options.filter
                     _max_results = account_list_pool_node_counts_options.max_results
-                    _timeout = account_list_pool_node_counts_options.timeout
-                    _client_request_id = account_list_pool_node_counts_options.client_request_id
-                    _return_client_request_id = account_list_pool_node_counts_options.return_client_request_id
                     _ocp_date = account_list_pool_node_counts_options.ocp_date
-                
+                    _return_client_request_id = account_list_pool_node_counts_options.return_client_request_id
+                    _timeout = account_list_pool_node_counts_options.timeout
+
                 request = build_list_pool_node_counts_request(
-                    api_version=api_version,
                     filter=_filter,
                     max_results=_max_results,
                     timeout=_timeout,
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list_pool_node_counts.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list_pool_node_counts.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if account_list_pool_node_counts_options is not None:
-                    _filter = account_list_pool_node_counts_options.filter
-                    _max_results = account_list_pool_node_counts_options.max_results
-                    _timeout = account_list_pool_node_counts_options.timeout
-                    _client_request_id = account_list_pool_node_counts_options.client_request_id
-                    _return_client_request_id = account_list_pool_node_counts_options.return_client_request_id
-                    _ocp_date = account_list_pool_node_counts_options.ocp_date
-                
-                request = build_list_pool_node_counts_request(
-                    api_version=api_version,
-                    filter=_filter,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
@@ -286,10 +254,8 @@ class AccountOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -300,8 +266,6 @@ class AccountOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_pool_node_counts.metadata = {'url': "/nodecounts"}  # type: ignore
+    list_pool_node_counts.metadata = {"url": "/nodecounts"}  # type: ignore

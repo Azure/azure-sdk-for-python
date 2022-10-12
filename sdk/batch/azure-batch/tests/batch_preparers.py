@@ -7,7 +7,7 @@ from azure.core.exceptions import HttpResponseError
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.batch
-from azure.batch import SharedKeyCredentials
+from azure.batch._patch import SharedKeyCredentials
 from azure.batch import BatchServiceClient
 
 from azure_devtools.scenario_tests.preparers import (
@@ -209,7 +209,7 @@ class PoolPreparer(AzureMgmtPreparer):
                             sku='18.04-LTS'
                         ),
                         node_agent_sku_id='batch.node.ubuntu 18.04'))
-            parameters = models.Pool(
+            parameters = models.BatchPool(
                 display_name="test_pool",
                 vm_size=vm_size,
                 user_accounts=[user],

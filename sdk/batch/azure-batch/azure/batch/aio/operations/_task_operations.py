@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,9 +27,21 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._task_operations import build_add_collection_request, build_add_request, build_delete_request, build_get_request, build_list_request, build_list_subtasks_request, build_reactivate_request, build_terminate_request, build_update_request
-T = TypeVar('T')
+from ...operations._task_operations import (
+    build_add_collection_request,
+    build_add_request,
+    build_delete_request,
+    build_get_request,
+    build_list_request,
+    build_list_subtasks_request,
+    build_reactivate_request,
+    build_terminate_request,
+    build_update_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class TaskOperations:
     """
@@ -42,12 +62,11 @@ class TaskOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def add(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        task: _models.TaskAddParameter,
+        task: _models.BatchTask,
         task_add_options: Optional[_models.TaskAddOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -57,64 +76,68 @@ class TaskOperations:
         completed within 180 days of being added it will be terminated by the Batch service and left in
         whatever state it was in at that time.
 
-        :param job_id: The ID of the Job to which the Task is to be added.
+        :param job_id: The ID of the Job to which the Task is to be added. Required.
         :type job_id: str
-        :param task: The Task to be added.
-        :type task: ~azure-batch.models.TaskAddParameter
+        :param task: The Task to be added. Required.
+        :type task: ~azure-batch.models.BatchTask
         :param task_add_options: Parameter group. Default value is None.
         :type task_add_options: ~azure-batch.models.TaskAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if task_add_options is not None:
-            _timeout = task_add_options.timeout
             _client_request_id = task_add_options.client_request_id
-            _return_client_request_id = task_add_options.return_client_request_id
             _ocp_date = task_add_options.ocp_date
-        _content = self._serialize.body(task, 'TaskAddParameter')
+            _return_client_request_id = task_add_options.return_client_request_id
+            _timeout = task_add_options.timeout
+        _json = self._serialize.body(task, "BatchTask")
 
         request = build_add_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.add.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.add.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -123,50 +146,49 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    add.metadata = {'url': "/jobs/{jobId}/tasks"}  # type: ignore
-
+    add.metadata = {"url": "/jobs/{jobId}/tasks"}  # type: ignore
 
     @distributed_trace
     def list(
-        self,
-        job_id: str,
-        task_list_options: Optional[_models.TaskListOptions] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.CloudTaskListResult]:
+        self, job_id: str, task_list_options: Optional[_models.TaskListOptions] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.BatchTask"]:
         """Lists all of the Tasks that are associated with the specified Job.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to
         the primary Task. Use the list subtasks API to retrieve information about subtasks.
 
-        :param job_id: The ID of the Job.
+        :param job_id: The ID of the Job. Required.
         :type job_id: str
         :param task_list_options: Parameter group. Default value is None.
         :type task_list_options: ~azure-batch.models.TaskListOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CloudTaskListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.CloudTaskListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either BatchTask or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.BatchTask]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudTaskListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchTaskListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -178,18 +200,17 @@ class TaskOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if task_list_options is not None:
-                    _filter = task_list_options.filter
-                    _select = task_list_options.select
-                    _expand = task_list_options.expand
-                    _max_results = task_list_options.max_results
-                    _timeout = task_list_options.timeout
                     _client_request_id = task_list_options.client_request_id
-                    _return_client_request_id = task_list_options.return_client_request_id
+                    _expand = task_list_options.expand
+                    _filter = task_list_options.filter
+                    _max_results = task_list_options.max_results
                     _ocp_date = task_list_options.ocp_date
-                
+                    _return_client_request_id = task_list_options.return_client_request_id
+                    _select = task_list_options.select
+                    _timeout = task_list_options.timeout
+
                 request = build_list_request(
                     job_id=job_id,
-                    api_version=api_version,
                     filter=_filter,
                     select=_select,
                     expand=_expand,
@@ -198,64 +219,37 @@ class TaskOperations:
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _select = None
-                _expand = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if task_list_options is not None:
-                    _filter = task_list_options.filter
-                    _select = task_list_options.select
-                    _expand = task_list_options.expand
-                    _max_results = task_list_options.max_results
-                    _timeout = task_list_options.timeout
-                    _client_request_id = task_list_options.client_request_id
-                    _return_client_request_id = task_list_options.return_client_request_id
-                    _ocp_date = task_list_options.ocp_date
-                
-                request = build_list_request(
-                    job_id=job_id,
-                    api_version=api_version,
-                    filter=_filter,
-                    select=_select,
-                    expand=_expand,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("CloudTaskListResult", pipeline_response)
+            deserialized = self._deserialize("BatchTaskListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -264,10 +258,8 @@ class TaskOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -278,17 +270,15 @@ class TaskOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/jobs/{jobId}/tasks"}  # type: ignore
+    list.metadata = {"url": "/jobs/{jobId}/tasks"}  # type: ignore
 
     @distributed_trace_async
     async def add_collection(
         self,
         job_id: str,
-        task_collection: _models.TaskAddCollectionParameter,
+        task_collection: _models.BatchTaskCollection,
         task_add_collection_options: Optional[_models.TaskAddCollectionOptions] = None,
         **kwargs: Any
     ) -> _models.TaskAddCollectionResult:
@@ -307,64 +297,68 @@ class TaskOperations:
         180 days of being added it will be terminated by the Batch service and left in whatever state
         it was in at that time.
 
-        :param job_id: The ID of the Job to which the Task collection is to be added.
+        :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
-        :param task_collection: The Tasks to be added.
-        :type task_collection: ~azure-batch.models.TaskAddCollectionParameter
+        :param task_collection: The Tasks to be added. Required.
+        :type task_collection: ~azure-batch.models.BatchTaskCollection
         :param task_add_collection_options: Parameter group. Default value is None.
         :type task_add_collection_options: ~azure-batch.models.TaskAddCollectionOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TaskAddCollectionResult, or the result of cls(response)
+        :return: TaskAddCollectionResult or the result of cls(response)
         :rtype: ~azure-batch.models.TaskAddCollectionResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TaskAddCollectionResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TaskAddCollectionResult]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if task_add_collection_options is not None:
-            _timeout = task_add_collection_options.timeout
             _client_request_id = task_add_collection_options.client_request_id
-            _return_client_request_id = task_add_collection_options.return_client_request_id
             _ocp_date = task_add_collection_options.ocp_date
-        _content = self._serialize.body(task_collection, 'TaskAddCollectionParameter')
+            _return_client_request_id = task_add_collection_options.return_client_request_id
+            _timeout = task_add_collection_options.timeout
+        _json = self._serialize.body(task_collection, "BatchTaskCollection")
 
         request = build_add_collection_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.add_collection.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.add_collection.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -373,26 +367,21 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
-        deserialized = self._deserialize('TaskAddCollectionResult', pipeline_response)
+        deserialized = self._deserialize("TaskAddCollectionResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    add_collection.metadata = {'url': "/jobs/{jobId}/addtaskcollection"}  # type: ignore
-
+    add_collection.metadata = {"url": "/jobs/{jobId}/addtaskcollection"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        task_id: str,
-        task_delete_options: Optional[_models.TaskDeleteOptions] = None,
-        **kwargs: Any
+        self, job_id: str, task_id: str, task_delete_options: Optional[_models.TaskDeleteOptions] = None, **kwargs: Any
     ) -> None:
         """Deletes a Task from the specified Job.
 
@@ -401,27 +390,30 @@ class TaskOperations:
         operation applies synchronously to the primary task; subtasks and their files are then deleted
         asynchronously in the background.
 
-        :param job_id: The ID of the Job from which to delete the Task.
+        :param job_id: The ID of the Job from which to delete the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to delete.
+        :param task_id: The ID of the Task to delete. Required.
         :type task_id: str
         :param task_delete_options: Parameter group. Default value is None.
         :type task_delete_options: ~azure-batch.models.TaskDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -432,19 +424,18 @@ class TaskOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if task_delete_options is not None:
-            _timeout = task_delete_options.timeout
             _client_request_id = task_delete_options.client_request_id
-            _return_client_request_id = task_delete_options.return_client_request_id
-            _ocp_date = task_delete_options.ocp_date
             _if_match = task_delete_options.if_match
-            _if_none_match = task_delete_options.if_none_match
             _if_modified_since = task_delete_options.if_modified_since
+            _if_none_match = task_delete_options.if_none_match
             _if_unmodified_since = task_delete_options.if_unmodified_since
+            _ocp_date = task_delete_options.ocp_date
+            _return_client_request_id = task_delete_options.return_client_request_id
+            _timeout = task_delete_options.timeout
 
         request = build_delete_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -453,21 +444,21 @@ class TaskOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.delete.metadata['url'],
+            api_version=api_version,
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -476,50 +467,47 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
-
+    delete.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self,
-        job_id: str,
-        task_id: str,
-        task_get_options: Optional[_models.TaskGetOptions] = None,
-        **kwargs: Any
-    ) -> _models.CloudTask:
+        self, job_id: str, task_id: str, task_get_options: Optional[_models.TaskGetOptions] = None, **kwargs: Any
+    ) -> _models.BatchTask:
         """Gets information about the specified Task.
 
         For multi-instance Tasks, information such as affinityId, executionInfo and nodeInfo refer to
         the primary Task. Use the list subtasks API to retrieve information about subtasks.
 
-        :param job_id: The ID of the Job that contains the Task.
+        :param job_id: The ID of the Job that contains the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to get information about.
+        :param task_id: The ID of the Task to get information about. Required.
         :type task_id: str
         :param task_get_options: Parameter group. Default value is None.
         :type task_get_options: ~azure-batch.models.TaskGetOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CloudTask, or the result of cls(response)
-        :rtype: ~azure-batch.models.CloudTask
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: BatchTask or the result of cls(response)
+        :rtype: ~azure-batch.models.BatchTask
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudTask]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchTask]
 
         _select = None
         _expand = None
@@ -532,21 +520,20 @@ class TaskOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if task_get_options is not None:
-            _select = task_get_options.select
-            _expand = task_get_options.expand
-            _timeout = task_get_options.timeout
             _client_request_id = task_get_options.client_request_id
-            _return_client_request_id = task_get_options.return_client_request_id
-            _ocp_date = task_get_options.ocp_date
+            _expand = task_get_options.expand
             _if_match = task_get_options.if_match
-            _if_none_match = task_get_options.if_none_match
             _if_modified_since = task_get_options.if_modified_since
+            _if_none_match = task_get_options.if_none_match
             _if_unmodified_since = task_get_options.if_unmodified_since
+            _ocp_date = task_get_options.ocp_date
+            _return_client_request_id = task_get_options.return_client_request_id
+            _select = task_get_options.select
+            _timeout = task_get_options.timeout
 
         request = build_get_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             select=_select,
             expand=_expand,
             timeout=_timeout,
@@ -557,21 +544,21 @@ class TaskOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -580,57 +567,61 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
-        deserialized = self._deserialize('CloudTask', pipeline_response)
+        deserialized = self._deserialize("BatchTask", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
-
+    get.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
 
     @distributed_trace_async
     async def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         task_id: str,
-        task_update_parameter: _models.TaskUpdateParameter,
+        task: _models.BatchTask,
         task_update_options: Optional[_models.TaskUpdateOptions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Task.
 
-        :param job_id: The ID of the Job containing the Task.
+        :param job_id: The ID of the Job containing the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to update.
+        :param task_id: The ID of the Task to update. Required.
         :type task_id: str
-        :param task_update_parameter: The parameters for the request.
-        :type task_update_parameter: ~azure-batch.models.TaskUpdateParameter
+        :param task: The parameters for the request. Required.
+        :type task: ~azure-batch.models.BatchTask
         :param task_update_options: Parameter group. Default value is None.
         :type task_update_options: ~azure-batch.models.TaskUpdateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -641,22 +632,19 @@ class TaskOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if task_update_options is not None:
-            _timeout = task_update_options.timeout
             _client_request_id = task_update_options.client_request_id
-            _return_client_request_id = task_update_options.return_client_request_id
-            _ocp_date = task_update_options.ocp_date
             _if_match = task_update_options.if_match
-            _if_none_match = task_update_options.if_none_match
             _if_modified_since = task_update_options.if_modified_since
+            _if_none_match = task_update_options.if_none_match
             _if_unmodified_since = task_update_options.if_unmodified_since
-        _content = self._serialize.body(task_update_parameter, 'TaskUpdateParameter')
+            _ocp_date = task_update_options.ocp_date
+            _return_client_request_id = task_update_options.return_client_request_id
+            _timeout = task_update_options.timeout
+        _json = self._serialize.body(task, "BatchTask")
 
         request = build_update_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -665,21 +653,23 @@ class TaskOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.update.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -688,18 +678,16 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
-
+    update.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}"}  # type: ignore
 
     @distributed_trace_async
     async def list_subtasks(
@@ -708,32 +696,35 @@ class TaskOperations:
         task_id: str,
         task_list_subtasks_options: Optional[_models.TaskListSubtasksOptions] = None,
         **kwargs: Any
-    ) -> _models.CloudTaskListSubtasksResult:
+    ) -> _models.BatchTaskListSubtasksResult:
         """Lists all of the subtasks that are associated with the specified multi-instance Task.
 
         If the Task is not a multi-instance Task then this returns an empty collection.
 
-        :param job_id: The ID of the Job.
+        :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :param task_id: The ID of the Task.
+        :param task_id: The ID of the Task. Required.
         :type task_id: str
         :param task_list_subtasks_options: Parameter group. Default value is None.
         :type task_list_subtasks_options: ~azure-batch.models.TaskListSubtasksOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CloudTaskListSubtasksResult, or the result of cls(response)
-        :rtype: ~azure-batch.models.CloudTaskListSubtasksResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: BatchTaskListSubtasksResult or the result of cls(response)
+        :rtype: ~azure-batch.models.BatchTaskListSubtasksResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudTaskListSubtasksResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchTaskListSubtasksResult]
 
         _select = None
         _timeout = None
@@ -741,36 +732,35 @@ class TaskOperations:
         _return_client_request_id = None
         _ocp_date = None
         if task_list_subtasks_options is not None:
+            _client_request_id = task_list_subtasks_options.client_request_id
+            _ocp_date = task_list_subtasks_options.ocp_date
+            _return_client_request_id = task_list_subtasks_options.return_client_request_id
             _select = task_list_subtasks_options.select
             _timeout = task_list_subtasks_options.timeout
-            _client_request_id = task_list_subtasks_options.client_request_id
-            _return_client_request_id = task_list_subtasks_options.return_client_request_id
-            _ocp_date = task_list_subtasks_options.ocp_date
 
         request = build_list_subtasks_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             select=_select,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.list_subtasks.metadata['url'],
+            api_version=api_version,
+            template_url=self.list_subtasks.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -779,20 +769,19 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = self._deserialize('CloudTaskListSubtasksResult', pipeline_response)
+        deserialized = self._deserialize("BatchTaskListSubtasksResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    list_subtasks.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/subtasksinfo"}  # type: ignore
-
+    list_subtasks.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/subtasksinfo"}  # type: ignore
 
     @distributed_trace_async
     async def terminate(  # pylint: disable=inconsistent-return-statements
@@ -808,27 +797,30 @@ class TaskOperations:
         the terminate Task operation applies synchronously to the primary task; subtasks are then
         terminated asynchronously in the background.
 
-        :param job_id: The ID of the Job containing the Task.
+        :param job_id: The ID of the Job containing the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to terminate.
+        :param task_id: The ID of the Task to terminate. Required.
         :type task_id: str
         :param task_terminate_options: Parameter group. Default value is None.
         :type task_terminate_options: ~azure-batch.models.TaskTerminateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -839,19 +831,18 @@ class TaskOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if task_terminate_options is not None:
-            _timeout = task_terminate_options.timeout
             _client_request_id = task_terminate_options.client_request_id
-            _return_client_request_id = task_terminate_options.return_client_request_id
-            _ocp_date = task_terminate_options.ocp_date
             _if_match = task_terminate_options.if_match
-            _if_none_match = task_terminate_options.if_none_match
             _if_modified_since = task_terminate_options.if_modified_since
+            _if_none_match = task_terminate_options.if_none_match
             _if_unmodified_since = task_terminate_options.if_unmodified_since
+            _ocp_date = task_terminate_options.ocp_date
+            _return_client_request_id = task_terminate_options.return_client_request_id
+            _timeout = task_terminate_options.timeout
 
         request = build_terminate_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -860,21 +851,21 @@ class TaskOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.terminate.metadata['url'],
+            api_version=api_version,
+            template_url=self.terminate.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -883,18 +874,16 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    terminate.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/terminate"}  # type: ignore
-
+    terminate.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/terminate"}  # type: ignore
 
     @distributed_trace_async
     async def reactivate(  # pylint: disable=inconsistent-return-statements
@@ -913,27 +902,30 @@ class TaskOperations:
         not completed or that previously completed successfully (with an exit code of 0). Additionally,
         it will fail if the Job has completed (or is terminating or deleting).
 
-        :param job_id: The ID of the Job containing the Task.
+        :param job_id: The ID of the Job containing the Task. Required.
         :type job_id: str
-        :param task_id: The ID of the Task to reactivate.
+        :param task_id: The ID of the Task to reactivate. Required.
         :type task_id: str
         :param task_reactivate_options: Parameter group. Default value is None.
         :type task_reactivate_options: ~azure-batch.models.TaskReactivateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -944,19 +936,18 @@ class TaskOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if task_reactivate_options is not None:
-            _timeout = task_reactivate_options.timeout
             _client_request_id = task_reactivate_options.client_request_id
-            _return_client_request_id = task_reactivate_options.return_client_request_id
-            _ocp_date = task_reactivate_options.ocp_date
             _if_match = task_reactivate_options.if_match
-            _if_none_match = task_reactivate_options.if_none_match
             _if_modified_since = task_reactivate_options.if_modified_since
+            _if_none_match = task_reactivate_options.if_none_match
             _if_unmodified_since = task_reactivate_options.if_unmodified_since
+            _ocp_date = task_reactivate_options.ocp_date
+            _return_client_request_id = task_reactivate_options.return_client_request_id
+            _timeout = task_reactivate_options.timeout
 
         request = build_reactivate_request(
             job_id=job_id,
             task_id=task_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -965,21 +956,21 @@ class TaskOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.reactivate.metadata['url'],
+            api_version=api_version,
+            template_url=self.reactivate.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -988,15 +979,13 @@ class TaskOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    reactivate.metadata = {'url': "/jobs/{jobId}/tasks/{taskId}/reactivate"}  # type: ignore
-
+    reactivate.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/reactivate"}  # type: ignore

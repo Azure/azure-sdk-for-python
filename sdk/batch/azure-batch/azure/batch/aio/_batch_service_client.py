@@ -9,16 +9,28 @@
 from copy import deepcopy
 from typing import Any, Awaitable
 
-from msrest import Deserializer, Serializer
-
 from azure.core import AsyncPipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import BatchServiceClientConfiguration
-from .operations import AccountOperations, ApplicationOperations, CertificateOperations, ComputeNodeExtensionOperations, ComputeNodeOperations, FileOperations, JobOperations, JobScheduleOperations, PoolOperations, TaskOperations
+from .operations import (
+    AccountOperations,
+    ApplicationOperations,
+    CertificateOperations,
+    ComputeNodeExtensionOperations,
+    ComputeNodeOperations,
+    FileOperations,
+    JobOperations,
+    JobScheduleOperations,
+    PoolOperations,
+    TaskOperations,
+)
 
-class BatchServiceClient:    # pylint: disable=too-many-instance-attributes
+
+class BatchServiceClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """A client for issuing REST requests to the Azure Batch service.
 
     :ivar application: ApplicationOperations operations
@@ -41,63 +53,38 @@ class BatchServiceClient:    # pylint: disable=too-many-instance-attributes
     :vartype compute_node: azure-batch.aio.operations.ComputeNodeOperations
     :ivar compute_node_extension: ComputeNodeExtensionOperations operations
     :vartype compute_node_extension: azure-batch.aio.operations.ComputeNodeExtensionOperations
-    :param batch_url: The base URL for all Azure Batch service requests.
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param batch_url: The base URL for all Azure Batch service requests. Required.
     :type batch_url: str
     :keyword api_version: Api Version. Default value is "2022-01-01.15.0". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        batch_url: str,
-        **kwargs: Any
-    ) -> None:
-        _base_url = '{batchUrl}'
-        self._config = BatchServiceClientConfiguration(batch_url=batch_url, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+    def __init__(self, credential: AzureKeyCredential, batch_url: str, **kwargs: Any) -> None:
+        _endpoint = "{batchUrl}"
+        self._config = BatchServiceClientConfiguration(credential=credential, batch_url=batch_url, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.application = ApplicationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.pool = PoolOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.account = AccountOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.job = JobOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.certificate = CertificateOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.file = FileOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.job_schedule = JobScheduleOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.task = TaskOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.compute_node = ComputeNodeOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.application = ApplicationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.pool = PoolOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.account = AccountOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job = JobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.certificate = CertificateOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_schedule = JobScheduleOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.task = TaskOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.compute_node = ComputeNodeOperations(self._client, self._config, self._serialize, self._deserialize)
         self.compute_node_extension = ComputeNodeExtensionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -106,7 +93,7 @@ class BatchServiceClient:    # pylint: disable=too-many-instance-attributes
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -117,7 +104,7 @@ class BatchServiceClient:    # pylint: disable=too-many-instance-attributes
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

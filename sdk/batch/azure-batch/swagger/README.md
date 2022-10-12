@@ -14,7 +14,7 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: BatchServiceClient
-version-tolerant: true
+version-tolerant: false
 api-version: 2022-01-01.15.0
 package-version: 13.0.0
 add-credential: false

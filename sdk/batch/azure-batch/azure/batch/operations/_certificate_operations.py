@@ -8,10 +8,16 @@
 # --------------------------------------------------------------------------
 import datetime
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
-from msrest import Serializer
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -20,203 +26,191 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
+from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_add_request(
     *,
-    json: Optional[_models.CertificateAddParameter] = None,
-    content: Any = None,
-    timeout: Optional[int] = 30,
+    json: _models.Certificate,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/certificates")
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_list_request(
     *,
     filter: Optional[str] = None,
     select: Optional[str] = None,
-    max_results: Optional[int] = 1000,
-    timeout: Optional[int] = 30,
+    max_results: int = 1000,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/certificates")
 
     # Construct parameters
     if filter is not None:
-        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if select is not None:
-        _params['$select'] = _SERIALIZER.query("select", select, 'str')
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
     if max_results is not None:
-        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
+        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_cancel_deletion_request(
     thumbprint_algorithm: str,
     thumbprint: str,
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete")  # pylint: disable=line-too-long
+    _url = kwargs.pop(
+        "template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
-        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, 'str'),
+        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
+        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_delete_request(
     thumbprint_algorithm: str,
     thumbprint: str,
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})")
+    _url = kwargs.pop(
+        "template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
+    )
     path_format_arguments = {
-        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
-        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, 'str'),
+        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
+        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_request(
@@ -224,50 +218,49 @@ def build_get_request(
     thumbprint: str,
     *,
     select: Optional[str] = None,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})")
+    _url = kwargs.pop(
+        "template_url", "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
+    )
     path_format_arguments = {
-        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, 'str'),
-        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, 'str'),
+        "thumbprintAlgorithm": _SERIALIZER.url("thumbprint_algorithm", thumbprint_algorithm, "str"),
+        "thumbprint": _SERIALIZER.url("thumbprint", thumbprint, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if select is not None:
-        _params['$select'] = _SERIALIZER.query("select", select, 'str')
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class CertificateOperations:
     """
@@ -288,11 +281,10 @@ class CertificateOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def add(  # pylint: disable=inconsistent-return-statements
         self,
-        certificate: _models.CertificateAddParameter,
+        certificate: _models.Certificate,
         certificate_add_options: Optional[_models.CertificateAddOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -300,61 +292,65 @@ class CertificateOperations:
 
         Adds a Certificate to the specified Account.
 
-        :param certificate: The Certificate to be added.
-        :type certificate: ~azure-batch.models.CertificateAddParameter
+        :param certificate: The Certificate to be added. Required.
+        :type certificate: ~azure-batch.models.Certificate
         :param certificate_add_options: Parameter group. Default value is None.
         :type certificate_add_options: ~azure-batch.models.CertificateAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if certificate_add_options is not None:
-            _timeout = certificate_add_options.timeout
             _client_request_id = certificate_add_options.client_request_id
-            _return_client_request_id = certificate_add_options.return_client_request_id
             _ocp_date = certificate_add_options.ocp_date
-        _content = self._serialize.body(certificate, 'CertificateAddParameter')
+            _return_client_request_id = certificate_add_options.return_client_request_id
+            _timeout = certificate_add_options.timeout
+        _json = self._serialize.body(certificate, "Certificate")
 
         request = build_add_request(
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.add.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.add.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -363,25 +359,21 @@ class CertificateOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    add.metadata = {'url': "/certificates"}  # type: ignore
-
+    add.metadata = {"url": "/certificates"}  # type: ignore
 
     @distributed_trace
     def list(
-        self,
-        certificate_list_options: Optional[_models.CertificateListOptions] = None,
-        **kwargs: Any
-    ) -> Iterable[_models.CertificateListResult]:
+        self, certificate_list_options: Optional[_models.CertificateListOptions] = None, **kwargs: Any
+    ) -> Iterable["_models.Certificate"]:
         """Lists all of the Certificates that have been added to the specified Account.
 
         Lists all of the Certificates that have been added to the specified Account.
@@ -389,21 +381,24 @@ class CertificateOperations:
         :param certificate_list_options: Parameter group. Default value is None.
         :type certificate_list_options: ~azure-batch.models.CertificateListOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CertificateListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.CertificateListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either Certificate or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.Certificate]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CertificateListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CertificateListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -414,16 +409,15 @@ class CertificateOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if certificate_list_options is not None:
-                    _filter = certificate_list_options.filter
-                    _select = certificate_list_options.select
-                    _max_results = certificate_list_options.max_results
-                    _timeout = certificate_list_options.timeout
                     _client_request_id = certificate_list_options.client_request_id
-                    _return_client_request_id = certificate_list_options.return_client_request_id
+                    _filter = certificate_list_options.filter
+                    _max_results = certificate_list_options.max_results
                     _ocp_date = certificate_list_options.ocp_date
-                
+                    _return_client_request_id = certificate_list_options.return_client_request_id
+                    _select = certificate_list_options.select
+                    _timeout = certificate_list_options.timeout
+
                 request = build_list_request(
-                    api_version=api_version,
                     filter=_filter,
                     select=_select,
                     max_results=_max_results,
@@ -431,55 +425,32 @@ class CertificateOperations:
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _select = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if certificate_list_options is not None:
-                    _filter = certificate_list_options.filter
-                    _select = certificate_list_options.select
-                    _max_results = certificate_list_options.max_results
-                    _timeout = certificate_list_options.timeout
-                    _client_request_id = certificate_list_options.client_request_id
-                    _return_client_request_id = certificate_list_options.return_client_request_id
-                    _ocp_date = certificate_list_options.ocp_date
-                
-                request = build_list_request(
-                    api_version=api_version,
-                    filter=_filter,
-                    select=_select,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
@@ -493,10 +464,8 @@ class CertificateOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -507,11 +476,9 @@ class CertificateOperations:
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/certificates"}  # type: ignore
+    list.metadata = {"url": "/certificates"}  # type: ignore
 
     @distributed_trace
     def cancel_deletion(  # pylint: disable=inconsistent-return-statements
@@ -531,61 +498,63 @@ class CertificateOperations:
         you can try again to delete the Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1.
+         be sha1. Required.
         :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate being deleted.
+        :param thumbprint: The thumbprint of the Certificate being deleted. Required.
         :type thumbprint: str
         :param certificate_cancel_deletion_options: Parameter group. Default value is None.
         :type certificate_cancel_deletion_options: ~azure-batch.models.CertificateCancelDeletionOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if certificate_cancel_deletion_options is not None:
-            _timeout = certificate_cancel_deletion_options.timeout
             _client_request_id = certificate_cancel_deletion_options.client_request_id
-            _return_client_request_id = certificate_cancel_deletion_options.return_client_request_id
             _ocp_date = certificate_cancel_deletion_options.ocp_date
+            _return_client_request_id = certificate_cancel_deletion_options.return_client_request_id
+            _timeout = certificate_cancel_deletion_options.timeout
 
         request = build_cancel_deletion_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.cancel_deletion.metadata['url'],
+            api_version=api_version,
+            template_url=self.cancel_deletion.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -594,18 +563,16 @@ class CertificateOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    cancel_deletion.metadata = {'url': "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"}  # type: ignore
-
+    cancel_deletion.metadata = {"url": "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})/canceldelete"}  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -627,61 +594,63 @@ class CertificateOperations:
         continue using the Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1.
+         be sha1. Required.
         :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to be deleted.
+        :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
         :type thumbprint: str
         :param certificate_delete_options: Parameter group. Default value is None.
         :type certificate_delete_options: ~azure-batch.models.CertificateDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if certificate_delete_options is not None:
-            _timeout = certificate_delete_options.timeout
             _client_request_id = certificate_delete_options.client_request_id
-            _return_client_request_id = certificate_delete_options.return_client_request_id
             _ocp_date = certificate_delete_options.ocp_date
+            _return_client_request_id = certificate_delete_options.return_client_request_id
+            _timeout = certificate_delete_options.timeout
 
         request = build_delete_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.delete.metadata['url'],
+            api_version=api_version,
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -690,17 +659,15 @@ class CertificateOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"}  # type: ignore
-
+    delete.metadata = {"url": "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -713,27 +680,30 @@ class CertificateOperations:
         """Gets information about the specified Certificate.
 
         :param thumbprint_algorithm: The algorithm used to derive the thumbprint parameter. This must
-         be sha1.
+         be sha1. Required.
         :type thumbprint_algorithm: str
-        :param thumbprint: The thumbprint of the Certificate to get.
+        :param thumbprint: The thumbprint of the Certificate to get. Required.
         :type thumbprint: str
         :param certificate_get_options: Parameter group. Default value is None.
         :type certificate_get_options: ~azure-batch.models.CertificateGetOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Certificate, or the result of cls(response)
+        :return: Certificate or the result of cls(response)
         :rtype: ~azure-batch.models.Certificate
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Certificate]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Certificate]
 
         _select = None
         _timeout = None
@@ -741,36 +711,35 @@ class CertificateOperations:
         _return_client_request_id = None
         _ocp_date = None
         if certificate_get_options is not None:
+            _client_request_id = certificate_get_options.client_request_id
+            _ocp_date = certificate_get_options.ocp_date
+            _return_client_request_id = certificate_get_options.return_client_request_id
             _select = certificate_get_options.select
             _timeout = certificate_get_options.timeout
-            _client_request_id = certificate_get_options.client_request_id
-            _return_client_request_id = certificate_get_options.return_client_request_id
-            _ocp_date = certificate_get_options.ocp_date
 
         request = build_get_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            api_version=api_version,
             select=_select,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -779,17 +748,16 @@ class CertificateOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = self._deserialize('Certificate', pipeline_response)
+        deserialized = self._deserialize("Certificate", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get.metadata = {'url': "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"}  # type: ignore
-
+    get.metadata = {"url": "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"}  # type: ignore

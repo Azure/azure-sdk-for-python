@@ -8,10 +8,16 @@
 # --------------------------------------------------------------------------
 import datetime
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
-from msrest import Serializer
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -20,59 +26,58 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
+from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 def build_get_all_lifetime_statistics_request(
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/lifetimejobstats")
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_delete_request(
     job_id: str,
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -83,46 +88,49 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    #_headers["Accept-Encoding"] = _SERIALIZER.header("accept-encoding", 'gzip,deflate', "str")
+    #_headers["Connection"] = _SERIALIZER.header("connection", 'keep-alive', "str")
+    
+    #_headers["Content-Length"] = _SERIALIZER.header("content-length", '0', "str")
+    #_headers["accept-language"] = _SERIALIZER.header("accept-language", 'en-US', "str")
+   
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_request(
@@ -130,9 +138,9 @@ def build_get_request(
     *,
     select: Optional[str] = None,
     expand: Optional[str] = None,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -143,60 +151,55 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if select is not None:
-        _params['$select'] = _SERIALIZER.query("select", select, 'str')
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
     if expand is not None:
-        _params['$expand'] = _SERIALIZER.query("expand", expand, 'str')
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_patch_request(
     job_id: str,
     *,
-    json: Optional[_models.JobPatchParameter] = None,
-    content: Any = None,
-    timeout: Optional[int] = 30,
+    json: _models.BatchJobUpdate,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -207,61 +210,54 @@ def build_patch_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PATCH",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_update_request(
     job_id: str,
     *,
-    json: Optional[_models.JobUpdateParameter] = None,
-    content: Any = None,
-    timeout: Optional[int] = 30,
+    json: _models.BatchJob,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -272,61 +268,54 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_disable_request(
     job_id: str,
     *,
-    json: Optional[_models.JobDisableParameter] = None,
-    content: Any = None,
-    timeout: Optional[int] = 30,
+    json: _models.BatchJobDisableParameters,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -337,59 +326,53 @@ def build_disable_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}/disable")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_enable_request(
     job_id: str,
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
@@ -400,158 +383,140 @@ def build_enable_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}/enable")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_terminate_request(
     job_id: str,
     *,
-    json: Optional[_models.JobTerminateParameter] = None,
-    content: Any = None,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
+    json: Optional[_models.BatchJobTerminateParameters] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}/terminate")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
     if if_modified_since is not None:
-        _headers['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
     if if_unmodified_since is not None:
-        _headers['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_add_request(
     *,
-    json: Optional[_models.JobAddParameter] = None,
-    content: Any = None,
-    timeout: Optional[int] = 30,
+    json: _models.BatchJob,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs")
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_list_request(
@@ -559,51 +524,47 @@ def build_list_request(
     filter: Optional[str] = None,
     select: Optional[str] = None,
     expand: Optional[str] = None,
-    max_results: Optional[int] = 1000,
-    timeout: Optional[int] = 30,
+    max_results: int = 1000,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs")
 
     # Construct parameters
     if filter is not None:
-        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if select is not None:
-        _params['$select'] = _SERIALIZER.query("select", select, 'str')
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
     if expand is not None:
-        _params['$expand'] = _SERIALIZER.query("expand", expand, 'str')
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
     if max_results is not None:
-        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
+        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_from_job_schedule_request(
@@ -612,56 +573,52 @@ def build_list_from_job_schedule_request(
     filter: Optional[str] = None,
     select: Optional[str] = None,
     expand: Optional[str] = None,
-    max_results: Optional[int] = 1000,
-    timeout: Optional[int] = 30,
+    max_results: int = 1000,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobschedules/{jobScheduleId}/jobs")
     path_format_arguments = {
-        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, 'str'),
+        "jobScheduleId": _SERIALIZER.url("job_schedule_id", job_schedule_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if filter is not None:
-        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if select is not None:
-        _params['$select'] = _SERIALIZER.query("select", select, 'str')
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
     if expand is not None:
-        _params['$expand'] = _SERIALIZER.query("expand", expand, 'str')
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
     if max_results is not None:
-        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
+        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_preparation_and_release_task_status_request(
@@ -669,100 +626,93 @@ def build_list_preparation_and_release_task_status_request(
     *,
     filter: Optional[str] = None,
     select: Optional[str] = None,
-    max_results: Optional[int] = 1000,
-    timeout: Optional[int] = 30,
+    max_results: int = 1000,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}/jobpreparationandreleasetaskstatus")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if filter is not None:
-        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if select is not None:
-        _params['$select'] = _SERIALIZER.query("select", select, 'str')
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
     if max_results is not None:
-        _params['maxresults'] = _SERIALIZER.query("max_results", max_results, 'int', maximum=1000, minimum=1)
+        _params["maxresults"] = _SERIALIZER.query("max_results", max_results, "int", maximum=1000, minimum=1)
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_task_counts_request(
     job_id: str,
     *,
-    timeout: Optional[int] = 30,
+    timeout: int = 30,
     client_request_id: Optional[str] = None,
-    return_client_request_id: Optional[bool] = False,
+    return_client_request_id: bool = False,
     ocp_date: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-01-01.15.0"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/jobs/{jobId}/taskcounts")
     path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, 'str'),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
-        _params['timeout'] = _SERIALIZER.query("timeout", timeout, 'int')
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if client_request_id is not None:
-        _headers['client-request-id'] = _SERIALIZER.header("client_request_id", client_request_id, 'str')
+        _headers["client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if return_client_request_id is not None:
-        _headers['return-client-request-id'] = _SERIALIZER.header("return_client_request_id", return_client_request_id, 'bool')
+        _headers["return-client-request-id"] = _SERIALIZER.header(
+            "return_client_request_id", return_client_request_id, "bool"
+        )
     if ocp_date is not None:
-        _headers['ocp-date'] = _SERIALIZER.header("ocp_date", ocp_date, 'rfc-1123')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "rfc-1123")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class JobOperations:
     """
@@ -783,7 +733,6 @@ class JobOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def get_all_lifetime_statistics(
         self,
@@ -801,52 +750,54 @@ class JobOperations:
         :type job_get_all_lifetime_statistics_options:
          ~azure-batch.models.JobGetAllLifetimeStatisticsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobStatistics, or the result of cls(response)
+        :return: JobStatistics or the result of cls(response)
         :rtype: ~azure-batch.models.JobStatistics
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.JobStatistics]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.JobStatistics]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if job_get_all_lifetime_statistics_options is not None:
-            _timeout = job_get_all_lifetime_statistics_options.timeout
             _client_request_id = job_get_all_lifetime_statistics_options.client_request_id
-            _return_client_request_id = job_get_all_lifetime_statistics_options.return_client_request_id
             _ocp_date = job_get_all_lifetime_statistics_options.ocp_date
+            _return_client_request_id = job_get_all_lifetime_statistics_options.return_client_request_id
+            _timeout = job_get_all_lifetime_statistics_options.timeout
 
         request = build_get_all_lifetime_statistics_request(
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.get_all_lifetime_statistics.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_all_lifetime_statistics.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -855,27 +806,23 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = self._deserialize('JobStatistics', pipeline_response)
+        deserialized = self._deserialize("JobStatistics", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_all_lifetime_statistics.metadata = {'url': "/lifetimejobstats"}  # type: ignore
-
+    get_all_lifetime_statistics.metadata = {"url": "/lifetimejobstats"}  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job_delete_options: Optional[_models.JobDeleteOptions] = None,
-        **kwargs: Any
+        self, job_id: str, job_delete_options: Optional[_models.JobDeleteOptions] = None, **kwargs: Any
     ) -> None:
         """Deletes a Job.
 
@@ -887,25 +834,28 @@ class JobOperations:
         status code 409 (Conflict), with additional information indicating that the Job is being
         deleted.
 
-        :param job_id: The ID of the Job to delete.
+        :param job_id: The ID of the Job to delete. Required.
         :type job_id: str
         :param job_delete_options: Parameter group. Default value is None.
         :type job_delete_options: ~azure-batch.models.JobDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -916,18 +866,17 @@ class JobOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if job_delete_options is not None:
-            _timeout = job_delete_options.timeout
             _client_request_id = job_delete_options.client_request_id
-            _return_client_request_id = job_delete_options.return_client_request_id
-            _ocp_date = job_delete_options.ocp_date
             _if_match = job_delete_options.if_match
-            _if_none_match = job_delete_options.if_none_match
             _if_modified_since = job_delete_options.if_modified_since
+            _if_none_match = job_delete_options.if_none_match
             _if_unmodified_since = job_delete_options.if_unmodified_since
+            _ocp_date = job_delete_options.ocp_date
+            _return_client_request_id = job_delete_options.return_client_request_id
+            _timeout = job_delete_options.timeout
 
         request = build_delete_request(
             job_id=job_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -936,21 +885,21 @@ class JobOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.delete.metadata['url'],
+            api_version=api_version,
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -959,46 +908,44 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': "/jobs/{jobId}"}  # type: ignore
-
+    delete.metadata = {"url": "/jobs/{jobId}"}  # type: ignore
 
     @distributed_trace
     def get(
-        self,
-        job_id: str,
-        job_get_options: Optional[_models.JobGetOptions] = None,
-        **kwargs: Any
-    ) -> _models.CloudJob:
+        self, job_id: str, job_get_options: Optional[_models.JobGetOptions] = None, **kwargs: Any
+    ) -> _models.BatchJob:
         """Gets information about the specified Job.
 
         Gets information about the specified Job.
 
-        :param job_id: The ID of the Job.
+        :param job_id: The ID of the Job. Required.
         :type job_id: str
         :param job_get_options: Parameter group. Default value is None.
         :type job_get_options: ~azure-batch.models.JobGetOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CloudJob, or the result of cls(response)
-        :rtype: ~azure-batch.models.CloudJob
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: BatchJob or the result of cls(response)
+        :rtype: ~azure-batch.models.BatchJob
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudJob]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchJob]
 
         _select = None
         _expand = None
@@ -1011,20 +958,19 @@ class JobOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if job_get_options is not None:
-            _select = job_get_options.select
-            _expand = job_get_options.expand
-            _timeout = job_get_options.timeout
             _client_request_id = job_get_options.client_request_id
-            _return_client_request_id = job_get_options.return_client_request_id
-            _ocp_date = job_get_options.ocp_date
+            _expand = job_get_options.expand
             _if_match = job_get_options.if_match
-            _if_none_match = job_get_options.if_none_match
             _if_modified_since = job_get_options.if_modified_since
+            _if_none_match = job_get_options.if_none_match
             _if_unmodified_since = job_get_options.if_unmodified_since
+            _ocp_date = job_get_options.ocp_date
+            _return_client_request_id = job_get_options.return_client_request_id
+            _select = job_get_options.select
+            _timeout = job_get_options.timeout
 
         request = build_get_request(
             job_id=job_id,
-            api_version=api_version,
             select=_select,
             expand=_expand,
             timeout=_timeout,
@@ -1035,21 +981,21 @@ class JobOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1058,26 +1004,25 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = self._deserialize('CloudJob', pipeline_response)
+        deserialized = self._deserialize("BatchJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get.metadata = {'url': "/jobs/{jobId}"}  # type: ignore
-
+    get.metadata = {"url": "/jobs/{jobId}"}  # type: ignore
 
     @distributed_trace
     def patch(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        job_patch_parameter: _models.JobPatchParameter,
+        job_update: _models.BatchJobUpdate,
         job_patch_options: Optional[_models.JobPatchOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -1087,28 +1032,33 @@ class JobOperations:
         constraints, and a request does not specify the constraints element, then the Job keeps the
         existing constraints.
 
-        :param job_id: The ID of the Job whose properties you want to update.
+        :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param job_patch_parameter: The parameters for the request.
-        :type job_patch_parameter: ~azure-batch.models.JobPatchParameter
+        :param job_update: The parameters for the request. Required.
+        :type job_update: ~azure-batch.models.BatchJobUpdate
         :param job_patch_options: Parameter group. Default value is None.
         :type job_patch_options: ~azure-batch.models.JobPatchOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1119,21 +1069,18 @@ class JobOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if job_patch_options is not None:
-            _timeout = job_patch_options.timeout
             _client_request_id = job_patch_options.client_request_id
-            _return_client_request_id = job_patch_options.return_client_request_id
-            _ocp_date = job_patch_options.ocp_date
             _if_match = job_patch_options.if_match
-            _if_none_match = job_patch_options.if_none_match
             _if_modified_since = job_patch_options.if_modified_since
+            _if_none_match = job_patch_options.if_none_match
             _if_unmodified_since = job_patch_options.if_unmodified_since
-        _content = self._serialize.body(job_patch_parameter, 'JobPatchParameter')
+            _ocp_date = job_patch_options.ocp_date
+            _return_client_request_id = job_patch_options.return_client_request_id
+            _timeout = job_patch_options.timeout
+        _json = self._serialize.body(job_update, "BatchJobUpdate")
 
         request = build_patch_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1142,21 +1089,23 @@ class JobOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.patch.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.patch.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1165,24 +1114,22 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    patch.metadata = {'url': "/jobs/{jobId}"}  # type: ignore
-
+    patch.metadata = {"url": "/jobs/{jobId}"}  # type: ignore
 
     @distributed_trace
     def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        job_update_parameter: _models.JobUpdateParameter,
+        job: _models.BatchJob,
         job_update_options: Optional[_models.JobUpdateOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -1192,28 +1139,33 @@ class JobOperations:
         constraints associated with it and if constraints is not specified with this request, then the
         Batch service will remove the existing constraints.
 
-        :param job_id: The ID of the Job whose properties you want to update.
+        :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param job_update_parameter: The parameters for the request.
-        :type job_update_parameter: ~azure-batch.models.JobUpdateParameter
+        :param job: The parameters for the request. Required.
+        :type job: ~azure-batch.models.BatchJob
         :param job_update_options: Parameter group. Default value is None.
         :type job_update_options: ~azure-batch.models.JobUpdateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1224,21 +1176,18 @@ class JobOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if job_update_options is not None:
-            _timeout = job_update_options.timeout
             _client_request_id = job_update_options.client_request_id
-            _return_client_request_id = job_update_options.return_client_request_id
-            _ocp_date = job_update_options.ocp_date
             _if_match = job_update_options.if_match
-            _if_none_match = job_update_options.if_none_match
             _if_modified_since = job_update_options.if_modified_since
+            _if_none_match = job_update_options.if_none_match
             _if_unmodified_since = job_update_options.if_unmodified_since
-        _content = self._serialize.body(job_update_parameter, 'JobUpdateParameter')
+            _ocp_date = job_update_options.ocp_date
+            _return_client_request_id = job_update_options.return_client_request_id
+            _timeout = job_update_options.timeout
+        _json = self._serialize.body(job, "BatchJob")
 
         request = build_update_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1247,21 +1196,23 @@ class JobOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.update.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1270,24 +1221,22 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update.metadata = {'url': "/jobs/{jobId}"}  # type: ignore
-
+    update.metadata = {"url": "/jobs/{jobId}"}  # type: ignore
 
     @distributed_trace
     def disable(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        job_disable_parameter: _models.JobDisableParameter,
+        parameters: _models.BatchJobDisableParameters,
         job_disable_options: Optional[_models.JobDisableOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -1301,28 +1250,33 @@ class JobOperations:
         disable a Job that is in any state other than active, disabling, or disabled, the request fails
         with status code 409.
 
-        :param job_id: The ID of the Job to disable.
+        :param job_id: The ID of the Job to disable. Required.
         :type job_id: str
-        :param job_disable_parameter: The parameters for the request.
-        :type job_disable_parameter: ~azure-batch.models.JobDisableParameter
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure-batch.models.BatchJobDisableParameters
         :param job_disable_options: Parameter group. Default value is None.
         :type job_disable_options: ~azure-batch.models.JobDisableOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1333,21 +1287,18 @@ class JobOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if job_disable_options is not None:
-            _timeout = job_disable_options.timeout
             _client_request_id = job_disable_options.client_request_id
-            _return_client_request_id = job_disable_options.return_client_request_id
-            _ocp_date = job_disable_options.ocp_date
             _if_match = job_disable_options.if_match
-            _if_none_match = job_disable_options.if_none_match
             _if_modified_since = job_disable_options.if_modified_since
+            _if_none_match = job_disable_options.if_none_match
             _if_unmodified_since = job_disable_options.if_unmodified_since
-        _content = self._serialize.body(job_disable_parameter, 'JobDisableParameter')
+            _ocp_date = job_disable_options.ocp_date
+            _return_client_request_id = job_disable_options.return_client_request_id
+            _timeout = job_disable_options.timeout
+        _json = self._serialize.body(parameters, "BatchJobDisableParameters")
 
         request = build_disable_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1356,21 +1307,23 @@ class JobOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.disable.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.disable.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1379,25 +1332,20 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    disable.metadata = {'url': "/jobs/{jobId}/disable"}  # type: ignore
-
+    disable.metadata = {"url": "/jobs/{jobId}/disable"}  # type: ignore
 
     @distributed_trace
     def enable(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job_enable_options: Optional[_models.JobEnableOptions] = None,
-        **kwargs: Any
+        self, job_id: str, job_enable_options: Optional[_models.JobEnableOptions] = None, **kwargs: Any
     ) -> None:
         """Enables the specified Job, allowing new Tasks to run.
 
@@ -1407,25 +1355,28 @@ class JobOperations:
         for more than 180 days. Therefore, if you enable a Job containing active Tasks which were added
         more than 180 days ago, those Tasks will not run.
 
-        :param job_id: The ID of the Job to enable.
+        :param job_id: The ID of the Job to enable. Required.
         :type job_id: str
         :param job_enable_options: Parameter group. Default value is None.
         :type job_enable_options: ~azure-batch.models.JobEnableOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1436,18 +1387,17 @@ class JobOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if job_enable_options is not None:
-            _timeout = job_enable_options.timeout
             _client_request_id = job_enable_options.client_request_id
-            _return_client_request_id = job_enable_options.return_client_request_id
-            _ocp_date = job_enable_options.ocp_date
             _if_match = job_enable_options.if_match
-            _if_none_match = job_enable_options.if_none_match
             _if_modified_since = job_enable_options.if_modified_since
+            _if_none_match = job_enable_options.if_none_match
             _if_unmodified_since = job_enable_options.if_unmodified_since
+            _ocp_date = job_enable_options.ocp_date
+            _return_client_request_id = job_enable_options.return_client_request_id
+            _timeout = job_enable_options.timeout
 
         request = build_enable_request(
             job_id=job_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1456,21 +1406,21 @@ class JobOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.enable.metadata['url'],
+            api_version=api_version,
+            template_url=self.enable.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1479,25 +1429,23 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    enable.metadata = {'url': "/jobs/{jobId}/enable"}  # type: ignore
-
+    enable.metadata = {"url": "/jobs/{jobId}/enable"}  # type: ignore
 
     @distributed_trace
     def terminate(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        job_terminate_parameter: Optional[_models.JobTerminateParameter] = None,
         job_terminate_options: Optional[_models.JobTerminateOptions] = None,
+        parameters: Optional[_models.BatchJobTerminateParameters] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Job, marking it as completed.
@@ -1508,28 +1456,33 @@ class JobOperations:
         in the Job in the active state, they will remain in the active state. Once a Job is terminated,
         new Tasks cannot be added and any remaining active Tasks will not be scheduled.
 
-        :param job_id: The ID of the Job to terminate.
+        :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
-        :param job_terminate_parameter: The parameters for the request. Default value is None.
-        :type job_terminate_parameter: ~azure-batch.models.JobTerminateParameter
         :param job_terminate_options: Parameter group. Default value is None.
         :type job_terminate_options: ~azure-batch.models.JobTerminateOptions
+        :param parameters: The parameters for the request. Default value is None.
+        :type parameters: ~azure-batch.models.BatchJobTerminateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1540,24 +1493,21 @@ class JobOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if job_terminate_options is not None:
-            _timeout = job_terminate_options.timeout
             _client_request_id = job_terminate_options.client_request_id
-            _return_client_request_id = job_terminate_options.return_client_request_id
-            _ocp_date = job_terminate_options.ocp_date
             _if_match = job_terminate_options.if_match
-            _if_none_match = job_terminate_options.if_none_match
             _if_modified_since = job_terminate_options.if_modified_since
+            _if_none_match = job_terminate_options.if_none_match
             _if_unmodified_since = job_terminate_options.if_unmodified_since
-        if job_terminate_parameter is not None:
-            _content = self._serialize.body(job_terminate_parameter, 'JobTerminateParameter')
+            _ocp_date = job_terminate_options.ocp_date
+            _return_client_request_id = job_terminate_options.return_client_request_id
+            _timeout = job_terminate_options.timeout
+        if parameters is not None:
+            _json = self._serialize.body(parameters, "BatchJobTerminateParameters")
         else:
-            _content = None
+            _json = None
 
         request = build_terminate_request(
             job_id=job_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1566,21 +1516,23 @@ class JobOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.terminate.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.terminate.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1589,25 +1541,20 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    terminate.metadata = {'url': "/jobs/{jobId}/terminate"}  # type: ignore
-
+    terminate.metadata = {"url": "/jobs/{jobId}/terminate"}  # type: ignore
 
     @distributed_trace
     def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        job: _models.JobAddParameter,
-        job_add_options: Optional[_models.JobAddOptions] = None,
-        **kwargs: Any
+        self, job: _models.BatchJob, job_add_options: Optional[_models.JobAddOptions] = None, **kwargs: Any
     ) -> None:
         """Adds a Job to the specified Account.
 
@@ -1619,61 +1566,65 @@ class JobOperations:
         including sensitive information such as user names or secret project names. This information
         may appear in telemetry logs accessible to Microsoft Support engineers.
 
-        :param job: The Job to be added.
-        :type job: ~azure-batch.models.JobAddParameter
+        :param job: The Job to be added. Required.
+        :type job: ~azure-batch.models.BatchJob
         :param job_add_options: Parameter group. Default value is None.
         :type job_add_options: ~azure-batch.models.JobAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if job_add_options is not None:
-            _timeout = job_add_options.timeout
             _client_request_id = job_add_options.client_request_id
-            _return_client_request_id = job_add_options.return_client_request_id
             _ocp_date = job_add_options.ocp_date
-        _content = self._serialize.body(job, 'JobAddParameter')
+            _return_client_request_id = job_add_options.return_client_request_id
+            _timeout = job_add_options.timeout
+        _json = self._serialize.body(job, "BatchJob")
 
         request = build_add_request(
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.add.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.add.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1682,25 +1633,21 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    add.metadata = {'url': "/jobs"}  # type: ignore
-
+    add.metadata = {"url": "/jobs"}  # type: ignore
 
     @distributed_trace
     def list(
-        self,
-        job_list_options: Optional[_models.JobListOptions] = None,
-        **kwargs: Any
-    ) -> Iterable[_models.CloudJobListResult]:
+        self, job_list_options: Optional[_models.JobListOptions] = None, **kwargs: Any
+    ) -> Iterable["_models.BatchJob"]:
         """Lists all of the Jobs in the specified Account.
 
         Lists all of the Jobs in the specified Account.
@@ -1708,20 +1655,24 @@ class JobOperations:
         :param job_list_options: Parameter group. Default value is None.
         :type job_list_options: ~azure-batch.models.JobListOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CloudJobListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.CloudJobListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either BatchJob or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.BatchJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudJobListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchJobListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -1733,17 +1684,16 @@ class JobOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if job_list_options is not None:
-                    _filter = job_list_options.filter
-                    _select = job_list_options.select
-                    _expand = job_list_options.expand
-                    _max_results = job_list_options.max_results
-                    _timeout = job_list_options.timeout
                     _client_request_id = job_list_options.client_request_id
-                    _return_client_request_id = job_list_options.return_client_request_id
+                    _expand = job_list_options.expand
+                    _filter = job_list_options.filter
+                    _max_results = job_list_options.max_results
                     _ocp_date = job_list_options.ocp_date
-                
+                    _return_client_request_id = job_list_options.return_client_request_id
+                    _select = job_list_options.select
+                    _timeout = job_list_options.timeout
+
                 request = build_list_request(
-                    api_version=api_version,
                     filter=_filter,
                     select=_select,
                     expand=_expand,
@@ -1752,63 +1702,37 @@ class JobOperations:
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _select = None
-                _expand = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if job_list_options is not None:
-                    _filter = job_list_options.filter
-                    _select = job_list_options.select
-                    _expand = job_list_options.expand
-                    _max_results = job_list_options.max_results
-                    _timeout = job_list_options.timeout
-                    _client_request_id = job_list_options.client_request_id
-                    _return_client_request_id = job_list_options.return_client_request_id
-                    _ocp_date = job_list_options.ocp_date
-                
-                request = build_list_request(
-                    api_version=api_version,
-                    filter=_filter,
-                    select=_select,
-                    expand=_expand,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("CloudJobListResult", pipeline_response)
+            deserialized = self._deserialize("BatchJobListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1817,10 +1741,8 @@ class JobOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1831,11 +1753,9 @@ class JobOperations:
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/jobs"}  # type: ignore
+    list.metadata = {"url": "/jobs"}  # type: ignore
 
     @distributed_trace
     def list_from_job_schedule(
@@ -1843,30 +1763,35 @@ class JobOperations:
         job_schedule_id: str,
         job_list_from_job_schedule_options: Optional[_models.JobListFromJobScheduleOptions] = None,
         **kwargs: Any
-    ) -> Iterable[_models.CloudJobListResult]:
+    ) -> Iterable["_models.BatchJob"]:
         """Lists the Jobs that have been created under the specified Job Schedule.
 
         Lists the Jobs that have been created under the specified Job Schedule.
 
         :param job_schedule_id: The ID of the Job Schedule from which you want to get a list of Jobs.
+         Required.
         :type job_schedule_id: str
         :param job_list_from_job_schedule_options: Parameter group. Default value is None.
         :type job_list_from_job_schedule_options: ~azure-batch.models.JobListFromJobScheduleOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CloudJobListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.CloudJobListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either BatchJob or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure-batch.models.BatchJob]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudJobListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchJobListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -1878,18 +1803,17 @@ class JobOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if job_list_from_job_schedule_options is not None:
-                    _filter = job_list_from_job_schedule_options.filter
-                    _select = job_list_from_job_schedule_options.select
-                    _expand = job_list_from_job_schedule_options.expand
-                    _max_results = job_list_from_job_schedule_options.max_results
-                    _timeout = job_list_from_job_schedule_options.timeout
                     _client_request_id = job_list_from_job_schedule_options.client_request_id
-                    _return_client_request_id = job_list_from_job_schedule_options.return_client_request_id
+                    _expand = job_list_from_job_schedule_options.expand
+                    _filter = job_list_from_job_schedule_options.filter
+                    _max_results = job_list_from_job_schedule_options.max_results
                     _ocp_date = job_list_from_job_schedule_options.ocp_date
-                
+                    _return_client_request_id = job_list_from_job_schedule_options.return_client_request_id
+                    _select = job_list_from_job_schedule_options.select
+                    _timeout = job_list_from_job_schedule_options.timeout
+
                 request = build_list_from_job_schedule_request(
                     job_schedule_id=job_schedule_id,
-                    api_version=api_version,
                     filter=_filter,
                     select=_select,
                     expand=_expand,
@@ -1898,64 +1822,37 @@ class JobOperations:
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list_from_job_schedule.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list_from_job_schedule.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _select = None
-                _expand = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if job_list_from_job_schedule_options is not None:
-                    _filter = job_list_from_job_schedule_options.filter
-                    _select = job_list_from_job_schedule_options.select
-                    _expand = job_list_from_job_schedule_options.expand
-                    _max_results = job_list_from_job_schedule_options.max_results
-                    _timeout = job_list_from_job_schedule_options.timeout
-                    _client_request_id = job_list_from_job_schedule_options.client_request_id
-                    _return_client_request_id = job_list_from_job_schedule_options.return_client_request_id
-                    _ocp_date = job_list_from_job_schedule_options.ocp_date
-                
-                request = build_list_from_job_schedule_request(
-                    job_schedule_id=job_schedule_id,
-                    api_version=api_version,
-                    filter=_filter,
-                    select=_select,
-                    expand=_expand,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("CloudJobListResult", pipeline_response)
+            deserialized = self._deserialize("BatchJobListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -1964,10 +1861,8 @@ class JobOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1978,19 +1873,19 @@ class JobOperations:
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_from_job_schedule.metadata = {'url': "/jobschedules/{jobScheduleId}/jobs"}  # type: ignore
+    list_from_job_schedule.metadata = {"url": "/jobschedules/{jobScheduleId}/jobs"}  # type: ignore
 
     @distributed_trace
     def list_preparation_and_release_task_status(
         self,
         job_id: str,
-        job_list_preparation_and_release_task_status_options: Optional[_models.JobListPreparationAndReleaseTaskStatusOptions] = None,
+        job_list_preparation_and_release_task_status_options: Optional[
+            _models.JobListPreparationAndReleaseTaskStatusOptions
+        ] = None,
         **kwargs: Any
-    ) -> Iterable[_models.CloudJobListPreparationAndReleaseTaskStatusResult]:
+    ) -> Iterable["_models.JobPreparationAndReleaseTaskExecutionInformation"]:
         """Lists the execution status of the Job Preparation and Job Release Task for the specified Job
         across the Compute Nodes where the Job has run.
 
@@ -2000,29 +1895,33 @@ class JobOperations:
         Release Task, the Batch service returns HTTP status code 409 (Conflict) with an error code of
         JobPreparationTaskNotSpecified.
 
-        :param job_id: The ID of the Job.
+        :param job_id: The ID of the Job. Required.
         :type job_id: str
         :param job_list_preparation_and_release_task_status_options: Parameter group. Default value is
          None.
         :type job_list_preparation_and_release_task_status_options:
          ~azure-batch.models.JobListPreparationAndReleaseTaskStatusOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CloudJobListPreparationAndReleaseTaskStatusResult
+        :return: An iterator like instance of either JobPreparationAndReleaseTaskExecutionInformation
          or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure-batch.models.CloudJobListPreparationAndReleaseTaskStatusResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.paging.ItemPaged[~azure-batch.models.JobPreparationAndReleaseTaskExecutionInformation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudJobListPreparationAndReleaseTaskStatusResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchJobListPreparationAndReleaseTaskStatusResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -2033,17 +1932,18 @@ class JobOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if job_list_preparation_and_release_task_status_options is not None:
-                    _filter = job_list_preparation_and_release_task_status_options.filter
-                    _select = job_list_preparation_and_release_task_status_options.select
-                    _max_results = job_list_preparation_and_release_task_status_options.max_results
-                    _timeout = job_list_preparation_and_release_task_status_options.timeout
                     _client_request_id = job_list_preparation_and_release_task_status_options.client_request_id
-                    _return_client_request_id = job_list_preparation_and_release_task_status_options.return_client_request_id
+                    _filter = job_list_preparation_and_release_task_status_options.filter
+                    _max_results = job_list_preparation_and_release_task_status_options.max_results
                     _ocp_date = job_list_preparation_and_release_task_status_options.ocp_date
-                
+                    _return_client_request_id = (
+                        job_list_preparation_and_release_task_status_options.return_client_request_id
+                    )
+                    _select = job_list_preparation_and_release_task_status_options.select
+                    _timeout = job_list_preparation_and_release_task_status_options.timeout
+
                 request = build_list_preparation_and_release_task_status_request(
                     job_id=job_id,
-                    api_version=api_version,
                     filter=_filter,
                     select=_select,
                     max_results=_max_results,
@@ -2051,61 +1951,37 @@ class JobOperations:
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list_preparation_and_release_task_status.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list_preparation_and_release_task_status.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _select = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if job_list_preparation_and_release_task_status_options is not None:
-                    _filter = job_list_preparation_and_release_task_status_options.filter
-                    _select = job_list_preparation_and_release_task_status_options.select
-                    _max_results = job_list_preparation_and_release_task_status_options.max_results
-                    _timeout = job_list_preparation_and_release_task_status_options.timeout
-                    _client_request_id = job_list_preparation_and_release_task_status_options.client_request_id
-                    _return_client_request_id = job_list_preparation_and_release_task_status_options.return_client_request_id
-                    _ocp_date = job_list_preparation_and_release_task_status_options.ocp_date
-                
-                request = build_list_preparation_and_release_task_status_request(
-                    job_id=job_id,
-                    api_version=api_version,
-                    filter=_filter,
-                    select=_select,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("CloudJobListPreparationAndReleaseTaskStatusResult", pipeline_response)
+            deserialized = self._deserialize("BatchJobListPreparationAndReleaseTaskStatusResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -2114,10 +1990,8 @@ class JobOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2128,18 +2002,13 @@ class JobOperations:
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_preparation_and_release_task_status.metadata = {'url': "/jobs/{jobId}/jobpreparationandreleasetaskstatus"}  # type: ignore
+    list_preparation_and_release_task_status.metadata = {"url": "/jobs/{jobId}/jobpreparationandreleasetaskstatus"}  # type: ignore
 
     @distributed_trace
     def get_task_counts(
-        self,
-        job_id: str,
-        job_get_task_counts_options: Optional[_models.JobGetTaskCountsOptions] = None,
-        **kwargs: Any
+        self, job_id: str, job_get_task_counts_options: Optional[_models.JobGetTaskCountsOptions] = None, **kwargs: Any
     ) -> _models.TaskCountsResult:
         """Gets the Task counts for the specified Job.
 
@@ -2148,58 +2017,60 @@ class JobOperations:
         Note that the numbers returned may not always be up to date. If you need exact task counts, use
         a list query.
 
-        :param job_id: The ID of the Job.
+        :param job_id: The ID of the Job. Required.
         :type job_id: str
         :param job_get_task_counts_options: Parameter group. Default value is None.
         :type job_get_task_counts_options: ~azure-batch.models.JobGetTaskCountsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: TaskCountsResult, or the result of cls(response)
+        :return: TaskCountsResult or the result of cls(response)
         :rtype: ~azure-batch.models.TaskCountsResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TaskCountsResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TaskCountsResult]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if job_get_task_counts_options is not None:
-            _timeout = job_get_task_counts_options.timeout
             _client_request_id = job_get_task_counts_options.client_request_id
-            _return_client_request_id = job_get_task_counts_options.return_client_request_id
             _ocp_date = job_get_task_counts_options.ocp_date
+            _return_client_request_id = job_get_task_counts_options.return_client_request_id
+            _timeout = job_get_task_counts_options.timeout
 
         request = build_get_task_counts_request(
             job_id=job_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.get_task_counts.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_task_counts.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -2208,15 +2079,14 @@ class JobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
-        deserialized = self._deserialize('TaskCountsResult', pipeline_response)
+        deserialized = self._deserialize("TaskCountsResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_task_counts.metadata = {'url': "/jobs/{jobId}/taskcounts"}  # type: ignore
-
+    get_task_counts.metadata = {"url": "/jobs/{jobId}/taskcounts"}  # type: ignore

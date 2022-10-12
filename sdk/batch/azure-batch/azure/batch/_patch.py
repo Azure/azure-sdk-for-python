@@ -137,6 +137,10 @@ class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
         # get headers to sign
         request_header_dict = {key.lower(): val for key, val in request.http_request.headers.items() if val}
 
+        if request.http_request.method not in ['GET', 'HEAD']:
+            if 'content-length' not in request_header_dict:
+                request_header_dict['content-length'] = '0'
+
         request_headers = [str(request_header_dict.get(x, "")) for x in self.headers_to_sign]
 
         string_to_sign += "\n".join(request_headers) + "\n"

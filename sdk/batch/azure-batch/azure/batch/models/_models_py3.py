@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,17 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AccountListPoolNodeCountsOptions(msrest.serialization.Model):
+class AccountListPoolNodeCountsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -40,26 +46,26 @@ class AccountListPoolNodeCountsOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 10, 'minimum': 1},
+        "max_results": {"maximum": 10, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
-        max_results: Optional[int] = 10,
-        timeout: Optional[int] = 30,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        max_results: int = 10,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -82,7 +88,7 @@ class AccountListPoolNodeCountsOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(AccountListPoolNodeCountsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.max_results = max_results
         self.timeout = timeout
@@ -91,7 +97,7 @@ class AccountListPoolNodeCountsOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class AccountListSupportedImagesOptions(msrest.serialization.Model):
+class AccountListSupportedImagesOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -115,26 +121,26 @@ class AccountListSupportedImagesOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -158,7 +164,7 @@ class AccountListSupportedImagesOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(AccountListSupportedImagesOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.max_results = max_results
         self.timeout = timeout
@@ -167,7 +173,7 @@ class AccountListSupportedImagesOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class AccountListSupportedImagesResult(msrest.serialization.Model):
+class AccountListSupportedImagesResult(_serialization.Model):
     """The result of listing the supported Virtual Machine Images.
 
     :ivar value: The list of supported Virtual Machine Images.
@@ -177,8 +183,8 @@ class AccountListSupportedImagesResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ImageInformation]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ImageInformation]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -194,49 +200,86 @@ class AccountListSupportedImagesResult(msrest.serialization.Model):
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(AccountListSupportedImagesResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class AffinityInformation(msrest.serialization.Model):
+class AffinityInformation(_serialization.Model):
     """A locality hint that can be used by the Batch service to select a Compute Node on which to start a Task.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar affinity_id: Required. You can pass the affinityId of a Node to indicate that this Task
-     needs to run on that Compute Node. Note that this is just a soft affinity. If the target
-     Compute Node is busy or unavailable at the time the Task is scheduled, then the Task will be
-     scheduled elsewhere.
+    :ivar affinity_id: You can pass the affinityId of a Node to indicate that this Task needs to
+     run on that Compute Node. Note that this is just a soft affinity. If the target Compute Node is
+     busy or unavailable at the time the Task is scheduled, then the Task will be scheduled
+     elsewhere. Required.
     :vartype affinity_id: str
     """
 
     _validation = {
-        'affinity_id': {'required': True},
+        "affinity_id": {"required": True},
     }
 
     _attribute_map = {
-        'affinity_id': {'key': 'affinityId', 'type': 'str'},
+        "affinity_id": {"key": "affinityId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        affinity_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, affinity_id: str, **kwargs):
         """
-        :keyword affinity_id: Required. You can pass the affinityId of a Node to indicate that this
-         Task needs to run on that Compute Node. Note that this is just a soft affinity. If the target
-         Compute Node is busy or unavailable at the time the Task is scheduled, then the Task will be
-         scheduled elsewhere.
+        :keyword affinity_id: You can pass the affinityId of a Node to indicate that this Task needs to
+         run on that Compute Node. Note that this is just a soft affinity. If the target Compute Node is
+         busy or unavailable at the time the Task is scheduled, then the Task will be scheduled
+         elsewhere. Required.
         :paramtype affinity_id: str
         """
-        super(AffinityInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.affinity_id = affinity_id
 
 
-class ApplicationGetOptions(msrest.serialization.Model):
+class Application(_serialization.Model):
+    """Contains information about an application in an Azure Batch Account.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: A string that uniquely identifies the application within the Account. Required.
+    :vartype id: str
+    :ivar display_name: The display name for the application. Required.
+    :vartype display_name: str
+    :ivar versions: The list of available versions of the application. Required.
+    :vartype versions: list[str]
+    """
+
+    _validation = {
+        "id": {"required": True},
+        "display_name": {"required": True},
+        "versions": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "versions": {"key": "versions", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, id: str, display_name: str, versions: List[str], **kwargs  # pylint: disable=redefined-builtin
+    ):
+        """
+        :keyword id: A string that uniquely identifies the application within the Account. Required.
+        :paramtype id: str
+        :keyword display_name: The display name for the application. Required.
+        :paramtype display_name: str
+        :keyword versions: The list of available versions of the application. Required.
+        :paramtype versions: list[str]
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.display_name = display_name
+        self.versions = versions
+
+
+class ApplicationGetOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -254,18 +297,18 @@ class ApplicationGetOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -283,14 +326,14 @@ class ApplicationGetOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ApplicationGetOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ApplicationListOptions(msrest.serialization.Model):
+class ApplicationListOptions(_serialization.Model):
     """Parameter group.
 
     :ivar max_results: The maximum number of items to return in the response. A maximum of 1000
@@ -311,24 +354,24 @@ class ApplicationListOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -349,7 +392,7 @@ class ApplicationListOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ApplicationListOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_results = max_results
         self.timeout = timeout
         self.client_request_id = client_request_id
@@ -357,44 +400,40 @@ class ApplicationListOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class ApplicationListResult(msrest.serialization.Model):
+class ApplicationListResult(_serialization.Model):
     """The result of listing the applications available in an Account.
 
     :ivar value: The list of applications available in the Account.
-    :vartype value: list[~azure-batch.models.ApplicationSummary]
+    :vartype value: list[~azure-batch.models.Application]
     :ivar odata_next_link: The URL to get the next set of results.
     :vartype odata_next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationSummary]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Application]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ApplicationSummary"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Application"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of applications available in the Account.
-        :paramtype value: list[~azure-batch.models.ApplicationSummary]
+        :paramtype value: list[~azure-batch.models.Application]
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(ApplicationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class ApplicationPackageReference(msrest.serialization.Model):
+class ApplicationPackageReference(_serialization.Model):
     """A reference to an Package to be deployed to Compute Nodes.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar application_id: Required. The ID of the application to deploy.
+    :ivar application_id: The ID of the application to deploy. Required.
     :vartype application_id: str
     :ivar version: If this is omitted on a Pool, and no default version is specified for this
      application, the request fails with the error code InvalidApplicationPackageReferences and HTTP
@@ -404,23 +443,17 @@ class ApplicationPackageReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'application_id': {'required': True},
+        "application_id": {"required": True},
     }
 
     _attribute_map = {
-        'application_id': {'key': 'applicationId', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "application_id": {"key": "applicationId", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        application_id: str,
-        version: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, application_id: str, version: Optional[str] = None, **kwargs):
         """
-        :keyword application_id: Required. The ID of the application to deploy.
+        :keyword application_id: The ID of the application to deploy. Required.
         :paramtype application_id: str
         :keyword version: If this is omitted on a Pool, and no default version is specified for this
          application, the request fails with the error code InvalidApplicationPackageReferences and HTTP
@@ -428,59 +461,12 @@ class ApplicationPackageReference(msrest.serialization.Model):
          application, the Task fails with a pre-processing error.
         :paramtype version: str
         """
-        super(ApplicationPackageReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.application_id = application_id
         self.version = version
 
 
-class ApplicationSummary(msrest.serialization.Model):
-    """Contains information about an application in an Azure Batch Account.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. A string that uniquely identifies the application within the Account.
-    :vartype id: str
-    :ivar display_name: Required. The display name for the application.
-    :vartype display_name: str
-    :ivar versions: Required. The list of available versions of the application.
-    :vartype versions: list[str]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'display_name': {'required': True},
-        'versions': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'versions': {'key': 'versions', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        display_name: str,
-        versions: List[str],
-        **kwargs
-    ):
-        """
-        :keyword id: Required. A string that uniquely identifies the application within the Account.
-        :paramtype id: str
-        :keyword display_name: Required. The display name for the application.
-        :paramtype display_name: str
-        :keyword versions: Required. The list of available versions of the application.
-        :paramtype versions: list[str]
-        """
-        super(ApplicationSummary, self).__init__(**kwargs)
-        self.id = id
-        self.display_name = display_name
-        self.versions = versions
-
-
-class AuthenticationTokenSettings(msrest.serialization.Model):
+class AuthenticationTokenSettings(_serialization.Model):
     """The settings for an authentication token that the Task can use to perform Batch service operations.
 
     :ivar access: The authentication token grants access to a limited set of Batch service
@@ -490,26 +476,21 @@ class AuthenticationTokenSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access': {'key': 'access', 'type': '[str]'},
+        "access": {"key": "access", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        access: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, access: Optional[List[str]] = None, **kwargs):
         """
         :keyword access: The authentication token grants access to a limited set of Batch service
          operations. Currently the only supported value for the access property is 'job', which grants
          access to all operations related to the Job which contains the Task.
         :paramtype access: list[str]
         """
-        super(AuthenticationTokenSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access = access
 
 
-class AutoPoolSpecification(msrest.serialization.Model):
+class AutoPoolSpecification(_serialization.Model):
     """Specifies characteristics for a temporary 'auto pool'. The Batch service will create this auto Pool when the Job is submitted.
 
     All required parameters must be populated in order to send to Azure.
@@ -518,8 +499,8 @@ class AutoPoolSpecification(msrest.serialization.Model):
      creation. To distinguish between Pools created for different purposes, you can specify this
      element to add a prefix to the ID that is assigned. The prefix can be up to 20 characters long.
     :vartype auto_pool_id_prefix: str
-    :ivar pool_lifetime_option: Required. The minimum lifetime of created auto Pools, and how
-     multiple Jobs on a schedule are assigned to Pools. Known values are: "jobschedule", "job".
+    :ivar pool_lifetime_option: The minimum lifetime of created auto Pools, and how multiple Jobs
+     on a schedule are assigned to Pools. Required. Known values are: "jobschedule" and "job".
     :vartype pool_lifetime_option: str or ~azure-batch.models.PoolLifetimeOption
     :ivar keep_alive: If false, the Batch service deletes the Pool once its lifetime (as determined
      by the poolLifetimeOption setting) expires; that is, when the Job or Job Schedule completes. If
@@ -531,14 +512,14 @@ class AutoPoolSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'pool_lifetime_option': {'required': True},
+        "pool_lifetime_option": {"required": True},
     }
 
     _attribute_map = {
-        'auto_pool_id_prefix': {'key': 'autoPoolIdPrefix', 'type': 'str'},
-        'pool_lifetime_option': {'key': 'poolLifetimeOption', 'type': 'str'},
-        'keep_alive': {'key': 'keepAlive', 'type': 'bool'},
-        'pool': {'key': 'pool', 'type': 'PoolSpecification'},
+        "auto_pool_id_prefix": {"key": "autoPoolIdPrefix", "type": "str"},
+        "pool_lifetime_option": {"key": "poolLifetimeOption", "type": "str"},
+        "keep_alive": {"key": "keepAlive", "type": "bool"},
+        "pool": {"key": "pool", "type": "PoolSpecification"},
     }
 
     def __init__(
@@ -555,8 +536,8 @@ class AutoPoolSpecification(msrest.serialization.Model):
          creation. To distinguish between Pools created for different purposes, you can specify this
          element to add a prefix to the ID that is assigned. The prefix can be up to 20 characters long.
         :paramtype auto_pool_id_prefix: str
-        :keyword pool_lifetime_option: Required. The minimum lifetime of created auto Pools, and how
-         multiple Jobs on a schedule are assigned to Pools. Known values are: "jobschedule", "job".
+        :keyword pool_lifetime_option: The minimum lifetime of created auto Pools, and how multiple
+         Jobs on a schedule are assigned to Pools. Required. Known values are: "jobschedule" and "job".
         :paramtype pool_lifetime_option: str or ~azure-batch.models.PoolLifetimeOption
         :keyword keep_alive: If false, the Batch service deletes the Pool once its lifetime (as
          determined by the poolLifetimeOption setting) expires; that is, when the Job or Job Schedule
@@ -566,19 +547,19 @@ class AutoPoolSpecification(msrest.serialization.Model):
         :keyword pool: Specification for creating a new Pool.
         :paramtype pool: ~azure-batch.models.PoolSpecification
         """
-        super(AutoPoolSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.auto_pool_id_prefix = auto_pool_id_prefix
         self.pool_lifetime_option = pool_lifetime_option
         self.keep_alive = keep_alive
         self.pool = pool
 
 
-class AutoScaleRun(msrest.serialization.Model):
+class AutoScaleRun(_serialization.Model):
     """The results and errors from an execution of a Pool autoscale formula.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar timestamp: Required. The time at which the autoscale formula was last evaluated.
+    :ivar timestamp: The time at which the autoscale formula was last evaluated. Required.
     :vartype timestamp: ~datetime.datetime
     :ivar results: Each variable value is returned in the form $variable=value, and variables are
      separated by semicolons.
@@ -588,13 +569,13 @@ class AutoScaleRun(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'required': True},
+        "timestamp": {"required": True},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'results': {'key': 'results', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'AutoScaleRunError'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "results": {"key": "results", "type": "str"},
+        "error": {"key": "error", "type": "AutoScaleRunError"},
     }
 
     def __init__(
@@ -606,7 +587,7 @@ class AutoScaleRun(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword timestamp: Required. The time at which the autoscale formula was last evaluated.
+        :keyword timestamp: The time at which the autoscale formula was last evaluated. Required.
         :paramtype timestamp: ~datetime.datetime
         :keyword results: Each variable value is returned in the form $variable=value, and variables
          are separated by semicolons.
@@ -614,13 +595,13 @@ class AutoScaleRun(msrest.serialization.Model):
         :keyword error: An error that occurred when executing or evaluating a Pool autoscale formula.
         :paramtype error: ~azure-batch.models.AutoScaleRunError
         """
-        super(AutoScaleRun, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timestamp = timestamp
         self.results = results
         self.error = error
 
 
-class AutoScaleRunError(msrest.serialization.Model):
+class AutoScaleRunError(_serialization.Model):
     """An error that occurred when executing or evaluating a Pool autoscale formula.
 
     :ivar code: An identifier for the autoscale error. Codes are invariant and are intended to be
@@ -634,9 +615,9 @@ class AutoScaleRunError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[NameValuePair]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "values": {"key": "values", "type": "[NameValuePair]"},
     }
 
     def __init__(
@@ -657,28 +638,28 @@ class AutoScaleRunError(msrest.serialization.Model):
         :keyword values: A list of additional error details related to the autoscale error.
         :paramtype values: list[~azure-batch.models.NameValuePair]
         """
-        super(AutoScaleRunError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.values = values
 
 
-class AutoUserSpecification(msrest.serialization.Model):
+class AutoUserSpecification(_serialization.Model):
     """Specifies the parameters for the auto user that runs a Task on the Batch service.
 
     :ivar scope: The default value is pool. If the pool is running Windows a value of Task should
      be specified if stricter isolation between tasks is required. For example, if the task mutates
      the registry in a way which could impact other tasks, or if certificates have been specified on
      the pool which should not be accessible by normal tasks but should be accessible by StartTasks.
-     Known values are: "task", "pool".
+     Known values are: "task" and "pool".
     :vartype scope: str or ~azure-batch.models.AutoUserScope
-    :ivar elevation_level: The default value is nonAdmin. Known values are: "nonadmin", "admin".
+    :ivar elevation_level: The default value is nonAdmin. Known values are: "nonadmin" and "admin".
     :vartype elevation_level: str or ~azure-batch.models.ElevationLevel
     """
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'str'},
-        'elevation_level': {'key': 'elevationLevel', 'type': 'str'},
+        "scope": {"key": "scope", "type": "str"},
+        "elevation_level": {"key": "elevationLevel", "type": "str"},
     }
 
     def __init__(
@@ -693,24 +674,25 @@ class AutoUserSpecification(msrest.serialization.Model):
          should be specified if stricter isolation between tasks is required. For example, if the task
          mutates the registry in a way which could impact other tasks, or if certificates have been
          specified on the pool which should not be accessible by normal tasks but should be accessible
-         by StartTasks. Known values are: "task", "pool".
+         by StartTasks. Known values are: "task" and "pool".
         :paramtype scope: str or ~azure-batch.models.AutoUserScope
-        :keyword elevation_level: The default value is nonAdmin. Known values are: "nonadmin", "admin".
+        :keyword elevation_level: The default value is nonAdmin. Known values are: "nonadmin" and
+         "admin".
         :paramtype elevation_level: str or ~azure-batch.models.ElevationLevel
         """
-        super(AutoUserSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.scope = scope
         self.elevation_level = elevation_level
 
 
-class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
+class AzureBlobFileSystemConfiguration(_serialization.Model):
     """Information used to connect to an Azure Storage Container using Blobfuse.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar account_name: Required. The Azure Storage Account name.
+    :ivar account_name: The Azure Storage Account name. Required.
     :vartype account_name: str
-    :ivar container_name: Required. The Azure Blob Storage Container name.
+    :ivar container_name: The Azure Blob Storage Container name. Required.
     :vartype container_name: str
     :ivar account_key: This property is mutually exclusive with both sasKey and identity; exactly
      one must be specified.
@@ -720,8 +702,8 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
     :vartype sas_key: str
     :ivar blobfuse_options: These are 'net use' options in Windows and 'mount' options in Linux.
     :vartype blobfuse_options: str
-    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
-     directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :ivar relative_mount_path: All file systems are mounted relative to the Batch mounts directory,
+     accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
     :vartype relative_mount_path: str
     :ivar identity_reference: This property is mutually exclusive with both accountKey and sasKey;
      exactly one must be specified.
@@ -729,19 +711,19 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'account_name': {'required': True},
-        'container_name': {'required': True},
-        'relative_mount_path': {'required': True},
+        "account_name": {"required": True},
+        "container_name": {"required": True},
+        "relative_mount_path": {"required": True},
     }
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'container_name': {'key': 'containerName', 'type': 'str'},
-        'account_key': {'key': 'accountKey', 'type': 'str'},
-        'sas_key': {'key': 'sasKey', 'type': 'str'},
-        'blobfuse_options': {'key': 'blobfuseOptions', 'type': 'str'},
-        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
-        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "container_name": {"key": "containerName", "type": "str"},
+        "account_key": {"key": "accountKey", "type": "str"},
+        "sas_key": {"key": "sasKey", "type": "str"},
+        "blobfuse_options": {"key": "blobfuseOptions", "type": "str"},
+        "relative_mount_path": {"key": "relativeMountPath", "type": "str"},
+        "identity_reference": {"key": "identityReference", "type": "ComputeNodeIdentityReference"},
     }
 
     def __init__(
@@ -757,9 +739,9 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword account_name: Required. The Azure Storage Account name.
+        :keyword account_name: The Azure Storage Account name. Required.
         :paramtype account_name: str
-        :keyword container_name: Required. The Azure Blob Storage Container name.
+        :keyword container_name: The Azure Blob Storage Container name. Required.
         :paramtype container_name: str
         :keyword account_key: This property is mutually exclusive with both sasKey and identity;
          exactly one must be specified.
@@ -769,14 +751,14 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
         :paramtype sas_key: str
         :keyword blobfuse_options: These are 'net use' options in Windows and 'mount' options in Linux.
         :paramtype blobfuse_options: str
-        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
-         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+        :keyword relative_mount_path: All file systems are mounted relative to the Batch mounts
+         directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
         :paramtype relative_mount_path: str
         :keyword identity_reference: This property is mutually exclusive with both accountKey and
          sasKey; exactly one must be specified.
         :paramtype identity_reference: ~azure-batch.models.ComputeNodeIdentityReference
         """
-        super(AzureBlobFileSystemConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.account_name = account_name
         self.container_name = container_name
         self.account_key = account_key
@@ -786,37 +768,37 @@ class AzureBlobFileSystemConfiguration(msrest.serialization.Model):
         self.identity_reference = identity_reference
 
 
-class AzureFileShareConfiguration(msrest.serialization.Model):
+class AzureFileShareConfiguration(_serialization.Model):
     """Information used to connect to an Azure Fileshare.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar account_name: Required. The Azure Storage account name.
+    :ivar account_name: The Azure Storage account name. Required.
     :vartype account_name: str
-    :ivar azure_file_url: Required. This is of the form 'https://{account}.file.core.windows.net/'.
+    :ivar azure_file_url: This is of the form 'https://{account}.file.core.windows.net/'. Required.
     :vartype azure_file_url: str
-    :ivar account_key: Required. The Azure Storage account key.
+    :ivar account_key: The Azure Storage account key. Required.
     :vartype account_key: str
-    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
-     directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :ivar relative_mount_path: All file systems are mounted relative to the Batch mounts directory,
+     accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
     :vartype relative_mount_path: str
     :ivar mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
     :vartype mount_options: str
     """
 
     _validation = {
-        'account_name': {'required': True},
-        'azure_file_url': {'required': True},
-        'account_key': {'required': True},
-        'relative_mount_path': {'required': True},
+        "account_name": {"required": True},
+        "azure_file_url": {"required": True},
+        "account_key": {"required": True},
+        "relative_mount_path": {"required": True},
     }
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'azure_file_url': {'key': 'azureFileUrl', 'type': 'str'},
-        'account_key': {'key': 'accountKey', 'type': 'str'},
-        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
-        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "azure_file_url": {"key": "azureFileUrl", "type": "str"},
+        "account_key": {"key": "accountKey", "type": "str"},
+        "relative_mount_path": {"key": "relativeMountPath", "type": "str"},
+        "mount_options": {"key": "mountOptions", "type": "str"},
     }
 
     def __init__(
@@ -830,20 +812,20 @@ class AzureFileShareConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword account_name: Required. The Azure Storage account name.
+        :keyword account_name: The Azure Storage account name. Required.
         :paramtype account_name: str
-        :keyword azure_file_url: Required. This is of the form
-         'https://{account}.file.core.windows.net/'.
+        :keyword azure_file_url: This is of the form 'https://{account}.file.core.windows.net/'.
+         Required.
         :paramtype azure_file_url: str
-        :keyword account_key: Required. The Azure Storage account key.
+        :keyword account_key: The Azure Storage account key. Required.
         :paramtype account_key: str
-        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
-         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+        :keyword relative_mount_path: All file systems are mounted relative to the Batch mounts
+         directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
         :paramtype relative_mount_path: str
         :keyword mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
         :paramtype mount_options: str
         """
-        super(AzureFileShareConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.account_name = account_name
         self.azure_file_url = azure_file_url
         self.account_key = account_key
@@ -851,7 +833,7 @@ class AzureFileShareConfiguration(msrest.serialization.Model):
         self.mount_options = mount_options
 
 
-class BatchError(msrest.serialization.Model):
+class BatchError(_serialization.Model):
     """An error response received from the Azure Batch service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -864,9 +846,9 @@ class BatchError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'ErrorMessage'},
-        'values': {'key': 'values', 'type': '[BatchErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "ErrorMessage"},
+        "values": {"key": "values", "type": "[BatchErrorDetail]"},
     }
 
     def __init__(
@@ -886,13 +868,13 @@ class BatchError(msrest.serialization.Model):
         :keyword values: A collection of key-value pairs containing additional details about the error.
         :paramtype values: list[~azure-batch.models.BatchErrorDetail]
         """
-        super(BatchError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.values = values
 
 
-class BatchErrorDetail(msrest.serialization.Model):
+class BatchErrorDetail(_serialization.Model):
     """An item of additional information included in an Azure Batch error response.
 
     :ivar key: An identifier specifying the meaning of the Value property.
@@ -902,725 +884,26 @@ class BatchErrorDetail(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword key: An identifier specifying the meaning of the Value property.
         :paramtype key: str
         :keyword value: The additional information included with the error response.
         :paramtype value: str
         """
-        super(BatchErrorDetail, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.value = value
 
 
-class BatchPoolIdentity(msrest.serialization.Model):
-    """The identity of the Batch pool, if configured.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar type: Required. The list of user identities associated with the Batch pool. The user
-     identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-     Known values are: "UserAssigned", "None".
-    :vartype type: str or ~azure-batch.models.PoolIdentityType
-    :ivar user_assigned_identities: The user identity dictionary key references will be ARM
-     resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identities: list[~azure-batch.models.UserAssignedIdentity]
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '[UserAssignedIdentity]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.PoolIdentityType"],
-        user_assigned_identities: Optional[List["_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword type: Required. The list of user identities associated with the Batch pool. The user
-         identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-         Known values are: "UserAssigned", "None".
-        :paramtype type: str or ~azure-batch.models.PoolIdentityType
-        :keyword user_assigned_identities: The user identity dictionary key references will be ARM
-         resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-        :paramtype user_assigned_identities: list[~azure-batch.models.UserAssignedIdentity]
-        """
-        super(BatchPoolIdentity, self).__init__(**kwargs)
-        self.type = type
-        self.user_assigned_identities = user_assigned_identities
-
-
-class Certificate(msrest.serialization.Model):
-    """A Certificate that can be installed on Compute Nodes and can be used to authenticate operations on the machine.
-
-    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint.
-    :vartype thumbprint_algorithm: str
-    :ivar url: The URL of the Certificate.
-    :vartype url: str
-    :ivar state: The state of the Certificate. Known values are: "active", "deleting",
-     "deletefailed".
-    :vartype state: str or ~azure-batch.models.CertificateState
-    :ivar state_transition_time: The time at which the Certificate entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: This property is not set if the Certificate is in its initial active
-     state. Known values are: "active", "deleting", "deletefailed".
-    :vartype previous_state: str or ~azure-batch.models.CertificateState
-    :ivar previous_state_transition_time: This property is not set if the Certificate is in its
-     initial Active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
-    :vartype public_data: str
-    :ivar delete_certificate_error: This property is set only if the Certificate is in the
-     DeleteFailed state.
-    :vartype delete_certificate_error: ~azure-batch.models.DeleteCertificateError
-    """
-
-    _attribute_map = {
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'thumbprint_algorithm': {'key': 'thumbprintAlgorithm', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'previous_state': {'key': 'previousState', 'type': 'str'},
-        'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
-        'public_data': {'key': 'publicData', 'type': 'str'},
-        'delete_certificate_error': {'key': 'deleteCertificateError', 'type': 'DeleteCertificateError'},
-    }
-
-    def __init__(
-        self,
-        *,
-        thumbprint: Optional[str] = None,
-        thumbprint_algorithm: Optional[str] = None,
-        url: Optional[str] = None,
-        state: Optional[Union[str, "_models.CertificateState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.CertificateState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
-        public_data: Optional[str] = None,
-        delete_certificate_error: Optional["_models.DeleteCertificateError"] = None,
-        **kwargs
-    ):
-        """
-        :keyword thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40
-         hex digits.
-        :paramtype thumbprint: str
-        :keyword thumbprint_algorithm: The algorithm used to derive the thumbprint.
-        :paramtype thumbprint_algorithm: str
-        :keyword url: The URL of the Certificate.
-        :paramtype url: str
-        :keyword state: The state of the Certificate. Known values are: "active", "deleting",
-         "deletefailed".
-        :paramtype state: str or ~azure-batch.models.CertificateState
-        :keyword state_transition_time: The time at which the Certificate entered its current state.
-        :paramtype state_transition_time: ~datetime.datetime
-        :keyword previous_state: This property is not set if the Certificate is in its initial active
-         state. Known values are: "active", "deleting", "deletefailed".
-        :paramtype previous_state: str or ~azure-batch.models.CertificateState
-        :keyword previous_state_transition_time: This property is not set if the Certificate is in its
-         initial Active state.
-        :paramtype previous_state_transition_time: ~datetime.datetime
-        :keyword public_data: The public part of the Certificate as a base-64 encoded .cer file.
-        :paramtype public_data: str
-        :keyword delete_certificate_error: This property is set only if the Certificate is in the
-         DeleteFailed state.
-        :paramtype delete_certificate_error: ~azure-batch.models.DeleteCertificateError
-        """
-        super(Certificate, self).__init__(**kwargs)
-        self.thumbprint = thumbprint
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.url = url
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
-        self.public_data = public_data
-        self.delete_certificate_error = delete_certificate_error
-
-
-class CertificateAddOptions(msrest.serialization.Model):
-    """Parameter group.
-
-    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
-     The default is 30 seconds.
-    :vartype timeout: int
-    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
-     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :vartype client_request_id: str
-    :ivar return_client_request_id: Whether the server should return the client-request-id in the
-     response.
-    :vartype return_client_request_id: bool
-    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
-     current system clock time; set it explicitly if you are calling the REST API directly.
-    :vartype ocp_date: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-    }
-
-    def __init__(
-        self,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        """
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly.
-        :paramtype ocp_date: ~datetime.datetime
-        """
-        super(CertificateAddOptions, self).__init__(**kwargs)
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
-
-
-class CertificateAddParameter(msrest.serialization.Model):
-    """A Certificate that can be installed on Compute Nodes and can be used to authenticate operations on the machine.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar thumbprint: Required. The X.509 thumbprint of the Certificate. This is a sequence of up
-     to 40 hex digits (it may include spaces but these are removed).
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: Required. The algorithm used to derive the thumbprint. This must be
-     sha1.
-    :vartype thumbprint_algorithm: str
-    :ivar data: Required. The base64-encoded contents of the Certificate. The maximum size is 10KB.
-    :vartype data: str
-    :ivar certificate_format: The format of the Certificate data. Known values are: "pfx", "cer".
-    :vartype certificate_format: str or ~azure-batch.models.CertificateFormat
-    :ivar password: This must be omitted if the Certificate format is cer.
-    :vartype password: str
-    """
-
-    _validation = {
-        'thumbprint': {'required': True},
-        'thumbprint_algorithm': {'required': True},
-        'data': {'required': True},
-    }
-
-    _attribute_map = {
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'thumbprint_algorithm': {'key': 'thumbprintAlgorithm', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'str'},
-        'certificate_format': {'key': 'certificateFormat', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        thumbprint: str,
-        thumbprint_algorithm: str,
-        data: str,
-        certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = None,
-        password: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword thumbprint: Required. The X.509 thumbprint of the Certificate. This is a sequence of
-         up to 40 hex digits (it may include spaces but these are removed).
-        :paramtype thumbprint: str
-        :keyword thumbprint_algorithm: Required. The algorithm used to derive the thumbprint. This must
-         be sha1.
-        :paramtype thumbprint_algorithm: str
-        :keyword data: Required. The base64-encoded contents of the Certificate. The maximum size is
-         10KB.
-        :paramtype data: str
-        :keyword certificate_format: The format of the Certificate data. Known values are: "pfx",
-         "cer".
-        :paramtype certificate_format: str or ~azure-batch.models.CertificateFormat
-        :keyword password: This must be omitted if the Certificate format is cer.
-        :paramtype password: str
-        """
-        super(CertificateAddParameter, self).__init__(**kwargs)
-        self.thumbprint = thumbprint
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.data = data
-        self.certificate_format = certificate_format
-        self.password = password
-
-
-class CertificateCancelDeletionOptions(msrest.serialization.Model):
-    """Parameter group.
-
-    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
-     The default is 30 seconds.
-    :vartype timeout: int
-    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
-     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :vartype client_request_id: str
-    :ivar return_client_request_id: Whether the server should return the client-request-id in the
-     response.
-    :vartype return_client_request_id: bool
-    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
-     current system clock time; set it explicitly if you are calling the REST API directly.
-    :vartype ocp_date: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-    }
-
-    def __init__(
-        self,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        """
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly.
-        :paramtype ocp_date: ~datetime.datetime
-        """
-        super(CertificateCancelDeletionOptions, self).__init__(**kwargs)
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
-
-
-class CertificateDeleteOptions(msrest.serialization.Model):
-    """Parameter group.
-
-    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
-     The default is 30 seconds.
-    :vartype timeout: int
-    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
-     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :vartype client_request_id: str
-    :ivar return_client_request_id: Whether the server should return the client-request-id in the
-     response.
-    :vartype return_client_request_id: bool
-    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
-     current system clock time; set it explicitly if you are calling the REST API directly.
-    :vartype ocp_date: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-    }
-
-    def __init__(
-        self,
-        *,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        """
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly.
-        :paramtype ocp_date: ~datetime.datetime
-        """
-        super(CertificateDeleteOptions, self).__init__(**kwargs)
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
-
-
-class CertificateGetOptions(msrest.serialization.Model):
-    """Parameter group.
-
-    :ivar select: An OData $select clause.
-    :vartype select: str
-    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
-     The default is 30 seconds.
-    :vartype timeout: int
-    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
-     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :vartype client_request_id: str
-    :ivar return_client_request_id: Whether the server should return the client-request-id in the
-     response.
-    :vartype return_client_request_id: bool
-    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
-     current system clock time; set it explicitly if you are calling the REST API directly.
-    :vartype ocp_date: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-    }
-
-    def __init__(
-        self,
-        *,
-        select: Optional[str] = None,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        """
-        :keyword select: An OData $select clause.
-        :paramtype select: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly.
-        :paramtype ocp_date: ~datetime.datetime
-        """
-        super(CertificateGetOptions, self).__init__(**kwargs)
-        self.select = select
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
-
-
-class CertificateListOptions(msrest.serialization.Model):
-    """Parameter group.
-
-    :ivar filter: An OData $filter clause. For more information on constructing this filter, see
-     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
-    :vartype filter: str
-    :ivar select: An OData $select clause.
-    :vartype select: str
-    :ivar max_results: The maximum number of items to return in the response. A maximum of 1000
-     Certificates can be returned.
-    :vartype max_results: int
-    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
-     The default is 30 seconds.
-    :vartype timeout: int
-    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
-     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-    :vartype client_request_id: str
-    :ivar return_client_request_id: Whether the server should return the client-request-id in the
-     response.
-    :vartype return_client_request_id: bool
-    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
-     current system clock time; set it explicitly if you are calling the REST API directly.
-    :vartype ocp_date: ~datetime.datetime
-    """
-
-    _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
-    }
-
-    _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-    }
-
-    def __init__(
-        self,
-        *,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
-        ocp_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        """
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
-        :paramtype filter: str
-        :keyword select: An OData $select clause.
-        :paramtype select: str
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         Certificates can be returned.
-        :paramtype max_results: int
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds.
-        :paramtype timeout: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API directly.
-        :paramtype ocp_date: ~datetime.datetime
-        """
-        super(CertificateListOptions, self).__init__(**kwargs)
-        self.filter = filter
-        self.select = select
-        self.max_results = max_results
-        self.timeout = timeout
-        self.client_request_id = client_request_id
-        self.return_client_request_id = return_client_request_id
-        self.ocp_date = ocp_date
-
-
-class CertificateListResult(msrest.serialization.Model):
-    """The result of listing the Certificates in the Account.
-
-    :ivar value: The list of Certificates.
-    :vartype value: list[~azure-batch.models.Certificate]
-    :ivar odata_next_link: The URL to get the next set of results.
-    :vartype odata_next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[Certificate]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Certificate"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword value: The list of Certificates.
-        :paramtype value: list[~azure-batch.models.Certificate]
-        :keyword odata_next_link: The URL to get the next set of results.
-        :paramtype odata_next_link: str
-        """
-        super(CertificateListResult, self).__init__(**kwargs)
-        self.value = value
-        self.odata_next_link = odata_next_link
-
-
-class CertificateReference(msrest.serialization.Model):
-    """A reference to a Certificate to be installed on Compute Nodes in a Pool.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar thumbprint: Required. The thumbprint of the Certificate.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: Required. The algorithm with which the thumbprint is associated.
-     This must be sha1.
-    :vartype thumbprint_algorithm: str
-    :ivar store_location: The default value is currentuser. This property is applicable only for
-     Pools configured with Windows Compute Nodes (that is, created with cloudServiceConfiguration,
-     or with virtualMachineConfiguration using a Windows Image reference). For Linux Compute Nodes,
-     the Certificates are stored in a directory inside the Task working directory and an environment
-     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For
-     Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
-     directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory. Known
-     values are: "currentuser", "localmachine".
-    :vartype store_location: str or ~azure-batch.models.CertificateStoreLocation
-    :ivar store_name: This property is applicable only for Pools configured with Windows Compute
-     Nodes (that is, created with cloudServiceConfiguration, or with virtualMachineConfiguration
-     using a Windows Image reference). Common store names include: My, Root, CA, Trust, Disallowed,
-     TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be
-     used. The default value is My.
-    :vartype store_name: str
-    :ivar visibility: You can specify more than one visibility in this collection. The default is
-     all Accounts.
-    :vartype visibility: list[str or ~azure-batch.models.CertificateVisibility]
-    """
-
-    _validation = {
-        'thumbprint': {'required': True},
-        'thumbprint_algorithm': {'required': True},
-    }
-
-    _attribute_map = {
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'thumbprint_algorithm': {'key': 'thumbprintAlgorithm', 'type': 'str'},
-        'store_location': {'key': 'storeLocation', 'type': 'str'},
-        'store_name': {'key': 'storeName', 'type': 'str'},
-        'visibility': {'key': 'visibility', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        thumbprint: str,
-        thumbprint_algorithm: str,
-        store_location: Optional[Union[str, "_models.CertificateStoreLocation"]] = None,
-        store_name: Optional[str] = None,
-        visibility: Optional[List[Union[str, "_models.CertificateVisibility"]]] = None,
-        **kwargs
-    ):
-        """
-        :keyword thumbprint: Required. The thumbprint of the Certificate.
-        :paramtype thumbprint: str
-        :keyword thumbprint_algorithm: Required. The algorithm with which the thumbprint is associated.
-         This must be sha1.
-        :paramtype thumbprint_algorithm: str
-        :keyword store_location: The default value is currentuser. This property is applicable only for
-         Pools configured with Windows Compute Nodes (that is, created with cloudServiceConfiguration,
-         or with virtualMachineConfiguration using a Windows Image reference). For Linux Compute Nodes,
-         the Certificates are stored in a directory inside the Task working directory and an environment
-         variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For
-         Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
-         directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory. Known
-         values are: "currentuser", "localmachine".
-        :paramtype store_location: str or ~azure-batch.models.CertificateStoreLocation
-        :keyword store_name: This property is applicable only for Pools configured with Windows Compute
-         Nodes (that is, created with cloudServiceConfiguration, or with virtualMachineConfiguration
-         using a Windows Image reference). Common store names include: My, Root, CA, Trust, Disallowed,
-         TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be
-         used. The default value is My.
-        :paramtype store_name: str
-        :keyword visibility: You can specify more than one visibility in this collection. The default
-         is all Accounts.
-        :paramtype visibility: list[str or ~azure-batch.models.CertificateVisibility]
-        """
-        super(CertificateReference, self).__init__(**kwargs)
-        self.thumbprint = thumbprint
-        self.thumbprint_algorithm = thumbprint_algorithm
-        self.store_location = store_location
-        self.store_name = store_name
-        self.visibility = visibility
-
-
-class CIFSMountConfiguration(msrest.serialization.Model):
-    """Information used to connect to a CIFS file system.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar username: Required. The user to use for authentication against the CIFS file system.
-    :vartype username: str
-    :ivar source: Required. The URI of the file system to mount.
-    :vartype source: str
-    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
-     directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
-    :vartype relative_mount_path: str
-    :ivar mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
-    :vartype mount_options: str
-    :ivar password: Required. The password to use for authentication against the CIFS file system.
-    :vartype password: str
-    """
-
-    _validation = {
-        'username': {'required': True},
-        'source': {'required': True},
-        'relative_mount_path': {'required': True},
-        'password': {'required': True},
-    }
-
-    _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
-        'mount_options': {'key': 'mountOptions', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        username: str,
-        source: str,
-        relative_mount_path: str,
-        password: str,
-        mount_options: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword username: Required. The user to use for authentication against the CIFS file system.
-        :paramtype username: str
-        :keyword source: Required. The URI of the file system to mount.
-        :paramtype source: str
-        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
-         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
-        :paramtype relative_mount_path: str
-        :keyword mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
-        :paramtype mount_options: str
-        :keyword password: Required. The password to use for authentication against the CIFS file
-         system.
-        :paramtype password: str
-        """
-        super(CIFSMountConfiguration, self).__init__(**kwargs)
-        self.username = username
-        self.source = source
-        self.relative_mount_path = relative_mount_path
-        self.mount_options = mount_options
-        self.password = password
-
-
-class CloudJob(msrest.serialization.Model):
+class BatchJob(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An Azure Batch Job.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: The ID is case-preserving and case-insensitive (that is, you may not have two IDs
      within an Account that differ only by case).
@@ -1643,12 +926,12 @@ class CloudJob(msrest.serialization.Model):
     :ivar creation_time: The creation time of the Job.
     :vartype creation_time: ~datetime.datetime
     :ivar state: The state of the Job. Known values are: "active", "disabling", "disabled",
-     "enabling", "terminating", "completed", "deleting".
+     "enabling", "terminating", "completed", and "deleting".
     :vartype state: str or ~azure-batch.models.JobState
     :ivar state_transition_time: The time at which the Job entered its current state.
     :vartype state_transition_time: ~datetime.datetime
     :ivar previous_state: This property is not set if the Job is in its initial Active state. Known
-     values are: "active", "disabling", "disabled", "enabling", "terminating", "completed",
+     values are: "active", "disabling", "disabled", "enabling", "terminating", "completed", and
      "deleting".
     :vartype previous_state: str or ~azure-batch.models.JobState
     :ivar previous_state_transition_time: This property is not set if the Job is in its initial
@@ -1698,13 +981,13 @@ class CloudJob(msrest.serialization.Model):
     :vartype common_environment_settings: list[~azure-batch.models.EnvironmentSetting]
     :ivar pool_info: Specifies how a Job should be assigned to a Pool.
     :vartype pool_info: ~azure-batch.models.PoolInformation
-    :ivar on_all_tasks_complete: The default is noaction. Known values are: "noaction",
+    :ivar on_all_tasks_complete: The default is noaction. Known values are: "noaction" and
      "terminatejob".
     :vartype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
     :ivar on_task_failure: A Task is considered to have failed if has a failureInfo. A failureInfo
      is set if the Task completes with a non-zero exit code after exhausting its retry count, or if
      there was an error starting the Task, for example due to a resource file download error. The
-     default is noaction. Known values are: "noaction", "performexitoptionsjobaction".
+     default is noaction. Known values are: "noaction" and "performexitoptionsjobaction".
     :vartype on_task_failure: str or ~azure-batch.models.OnTaskFailure
     :ivar network_configuration: The network configuration for the Job.
     :vartype network_configuration: ~azure-batch.models.JobNetworkConfiguration
@@ -1721,52 +1004,57 @@ class CloudJob(msrest.serialization.Model):
     :vartype stats: ~azure-batch.models.JobStatistics
     """
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
-        'url': {'key': 'url', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'str'},
-        'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'previous_state': {'key': 'previousState', 'type': 'str'},
-        'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
-        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
-        'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
-        'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
-        'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
-        'job_release_task': {'key': 'jobReleaseTask', 'type': 'JobReleaseTask'},
-        'common_environment_settings': {'key': 'commonEnvironmentSettings', 'type': '[EnvironmentSetting]'},
-        'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
-        'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'str'},
-        'on_task_failure': {'key': 'onTaskFailure', 'type': 'str'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-        'execution_info': {'key': 'executionInfo', 'type': 'JobExecutionInformation'},
-        'stats': {'key': 'stats', 'type': 'JobStatistics'},
+    _validation = {
+        "url": {"readonly": True},
+        "e_tag": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "state": {"readonly": True},
+        "state_transition_time": {"readonly": True},
+        "previous_state": {"readonly": True},
+        "previous_state_transition_time": {"readonly": True},
+        "execution_info": {"readonly": True},
+        "stats": {"readonly": True},
     }
 
-    def __init__(
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "uses_task_dependencies": {"key": "usesTaskDependencies", "type": "bool"},
+        "url": {"key": "url", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "state": {"key": "state", "type": "str"},
+        "state_transition_time": {"key": "stateTransitionTime", "type": "iso-8601"},
+        "previous_state": {"key": "previousState", "type": "str"},
+        "previous_state_transition_time": {"key": "previousStateTransitionTime", "type": "iso-8601"},
+        "priority": {"key": "priority", "type": "int"},
+        "allow_task_preemption": {"key": "allowTaskPreemption", "type": "bool"},
+        "max_parallel_tasks": {"key": "maxParallelTasks", "type": "int"},
+        "constraints": {"key": "constraints", "type": "JobConstraints"},
+        "job_manager_task": {"key": "jobManagerTask", "type": "JobManagerTask"},
+        "job_preparation_task": {"key": "jobPreparationTask", "type": "JobPreparationTask"},
+        "job_release_task": {"key": "jobReleaseTask", "type": "JobReleaseTask"},
+        "common_environment_settings": {"key": "commonEnvironmentSettings", "type": "[EnvironmentSetting]"},
+        "pool_info": {"key": "poolInfo", "type": "PoolInformation"},
+        "on_all_tasks_complete": {"key": "onAllTasksComplete", "type": "str"},
+        "on_task_failure": {"key": "onTaskFailure", "type": "str"},
+        "network_configuration": {"key": "networkConfiguration", "type": "JobNetworkConfiguration"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
+        "execution_info": {"key": "executionInfo", "type": "JobExecutionInformation"},
+        "stats": {"key": "stats", "type": "JobStatistics"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         uses_task_dependencies: Optional[bool] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
-        state: Optional[Union[str, "_models.JobState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.JobState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
         priority: Optional[int] = None,
         allow_task_preemption: Optional[bool] = None,
-        max_parallel_tasks: Optional[int] = -1,
+        max_parallel_tasks: int = -1,
         constraints: Optional["_models.JobConstraints"] = None,
         job_manager_task: Optional["_models.JobManagerTask"] = None,
         job_preparation_task: Optional["_models.JobPreparationTask"] = None,
@@ -1777,8 +1065,6 @@ class CloudJob(msrest.serialization.Model):
         on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = None,
         network_configuration: Optional["_models.JobNetworkConfiguration"] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        execution_info: Optional["_models.JobExecutionInformation"] = None,
-        stats: Optional["_models.JobStatistics"] = None,
         **kwargs
     ):
         """
@@ -1790,30 +1076,6 @@ class CloudJob(msrest.serialization.Model):
         :keyword uses_task_dependencies: Whether Tasks in the Job can define dependencies on each
          other. The default is false.
         :paramtype uses_task_dependencies: bool
-        :keyword url: The URL of the Job.
-        :paramtype url: str
-        :keyword e_tag: This is an opaque string. You can use it to detect whether the Job has changed
-         between requests. In particular, you can be pass the ETag when updating a Job to specify that
-         your changes should take effect only if nobody else has modified the Job in the meantime.
-        :paramtype e_tag: str
-        :keyword last_modified: This is the last time at which the Job level data, such as the Job
-         state or priority, changed. It does not factor in task-level changes such as adding new Tasks
-         or Tasks changing state.
-        :paramtype last_modified: ~datetime.datetime
-        :keyword creation_time: The creation time of the Job.
-        :paramtype creation_time: ~datetime.datetime
-        :keyword state: The state of the Job. Known values are: "active", "disabling", "disabled",
-         "enabling", "terminating", "completed", "deleting".
-        :paramtype state: str or ~azure-batch.models.JobState
-        :keyword state_transition_time: The time at which the Job entered its current state.
-        :paramtype state_transition_time: ~datetime.datetime
-        :keyword previous_state: This property is not set if the Job is in its initial Active state.
-         Known values are: "active", "disabling", "disabled", "enabling", "terminating", "completed",
-         "deleting".
-        :paramtype previous_state: str or ~azure-batch.models.JobState
-        :keyword previous_state_transition_time: This property is not set if the Job is in its initial
-         Active state.
-        :paramtype previous_state_transition_time: ~datetime.datetime
         :keyword priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
          priority and 1000 being the highest priority. The default value is 0.
         :paramtype priority: int
@@ -1858,40 +1120,32 @@ class CloudJob(msrest.serialization.Model):
         :paramtype common_environment_settings: list[~azure-batch.models.EnvironmentSetting]
         :keyword pool_info: Specifies how a Job should be assigned to a Pool.
         :paramtype pool_info: ~azure-batch.models.PoolInformation
-        :keyword on_all_tasks_complete: The default is noaction. Known values are: "noaction",
+        :keyword on_all_tasks_complete: The default is noaction. Known values are: "noaction" and
          "terminatejob".
         :paramtype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
         :keyword on_task_failure: A Task is considered to have failed if has a failureInfo. A
          failureInfo is set if the Task completes with a non-zero exit code after exhausting its retry
          count, or if there was an error starting the Task, for example due to a resource file download
-         error. The default is noaction. Known values are: "noaction", "performexitoptionsjobaction".
+         error. The default is noaction. Known values are: "noaction" and "performexitoptionsjobaction".
         :paramtype on_task_failure: str or ~azure-batch.models.OnTaskFailure
         :keyword network_configuration: The network configuration for the Job.
         :paramtype network_configuration: ~azure-batch.models.JobNetworkConfiguration
         :keyword metadata: The Batch service does not assign any meaning to metadata; it is solely for
          the use of user code.
         :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        :keyword execution_info: Contains information about the execution of a Job in the Azure Batch
-         service.
-        :paramtype execution_info: ~azure-batch.models.JobExecutionInformation
-        :keyword stats: This property is populated only if the CloudJob was retrieved with an expand
-         clause including the 'stats' attribute; otherwise it is null. The statistics may not be
-         immediately available. The Batch service performs periodic roll-up of statistics. The typical
-         delay is about 30 minutes.
-        :paramtype stats: ~azure-batch.models.JobStatistics
         """
-        super(CloudJob, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.display_name = display_name
         self.uses_task_dependencies = uses_task_dependencies
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
+        self.url = None
+        self.e_tag = None
+        self.last_modified = None
+        self.creation_time = None
+        self.state = None
+        self.state_transition_time = None
+        self.previous_state = None
+        self.previous_state_transition_time = None
         self.priority = priority
         self.allow_task_preemption = allow_task_preemption
         self.max_parallel_tasks = max_parallel_tasks
@@ -1905,11 +1159,39 @@ class CloudJob(msrest.serialization.Model):
         self.on_task_failure = on_task_failure
         self.network_configuration = network_configuration
         self.metadata = metadata
-        self.execution_info = execution_info
-        self.stats = stats
+        self.execution_info = None
+        self.stats = None
 
 
-class CloudJobListPreparationAndReleaseTaskStatusResult(msrest.serialization.Model):
+class BatchJobDisableParameters(_serialization.Model):
+    """Options when disabling a Job.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar disable_tasks: What to do with active Tasks associated with the Job. Required. Known
+     values are: "requeue", "terminate", and "wait".
+    :vartype disable_tasks: str or ~azure-batch.models.DisableJobOption
+    """
+
+    _validation = {
+        "disable_tasks": {"required": True},
+    }
+
+    _attribute_map = {
+        "disable_tasks": {"key": "disableTasks", "type": "str"},
+    }
+
+    def __init__(self, *, disable_tasks: Union[str, "_models.DisableJobOption"], **kwargs):
+        """
+        :keyword disable_tasks: What to do with active Tasks associated with the Job. Required. Known
+         values are: "requeue", "terminate", and "wait".
+        :paramtype disable_tasks: str or ~azure-batch.models.DisableJobOption
+        """
+        super().__init__(**kwargs)
+        self.disable_tasks = disable_tasks
+
+
+class BatchJobListPreparationAndReleaseTaskStatusResult(_serialization.Model):
     """The result of listing the status of the Job Preparation and Job Release Tasks for a Job.
 
     :ivar value: A list of Job Preparation and Job Release Task execution information.
@@ -1919,8 +1201,8 @@ class CloudJobListPreparationAndReleaseTaskStatusResult(msrest.serialization.Mod
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobPreparationAndReleaseTaskExecutionInformation]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobPreparationAndReleaseTaskExecutionInformation]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1936,45 +1218,43 @@ class CloudJobListPreparationAndReleaseTaskStatusResult(msrest.serialization.Mod
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(CloudJobListPreparationAndReleaseTaskStatusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class CloudJobListResult(msrest.serialization.Model):
+class BatchJobListResult(_serialization.Model):
     """The result of listing the Jobs in an Account.
 
     :ivar value: The list of Jobs.
-    :vartype value: list[~azure-batch.models.CloudJob]
+    :vartype value: list[~azure-batch.models.BatchJob]
     :ivar odata_next_link: The URL to get the next set of results.
     :vartype odata_next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudJob]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BatchJob]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.CloudJob"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.BatchJob"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of Jobs.
-        :paramtype value: list[~azure-batch.models.CloudJob]
+        :paramtype value: list[~azure-batch.models.BatchJob]
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(CloudJobListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class CloudJobSchedule(msrest.serialization.Model):
+class BatchJobSchedule(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a specification used to create each Job.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: A string that uniquely identifies the schedule within the Account.
     :vartype id: str
@@ -1994,12 +1274,12 @@ class CloudJobSchedule(msrest.serialization.Model):
     :ivar creation_time: The creation time of the Job Schedule.
     :vartype creation_time: ~datetime.datetime
     :ivar state: The state of the Job Schedule. Known values are: "active", "completed",
-     "disabled", "terminating", "deleting".
+     "disabled", "terminating", and "deleting".
     :vartype state: str or ~azure-batch.models.JobScheduleState
     :ivar state_transition_time: The time at which the Job Schedule entered the current state.
     :vartype state_transition_time: ~datetime.datetime
     :ivar previous_state: This property is not present if the Job Schedule is in its initial active
-     state. Known values are: "active", "completed", "disabled", "terminating", "deleting".
+     state. Known values are: "active", "completed", "disabled", "terminating", and "deleting".
     :vartype previous_state: str or ~azure-batch.models.JobScheduleState
     :ivar previous_state_transition_time: This property is not present if the Job Schedule is in
      its initial active state.
@@ -2019,42 +1299,45 @@ class CloudJobSchedule(msrest.serialization.Model):
     :vartype stats: ~azure-batch.models.JobScheduleStatistics
     """
 
+    _validation = {
+        "url": {"readonly": True},
+        "e_tag": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "state": {"readonly": True},
+        "state_transition_time": {"readonly": True},
+        "previous_state": {"readonly": True},
+        "previous_state_transition_time": {"readonly": True},
+        "execution_info": {"readonly": True},
+        "stats": {"readonly": True},
+    }
+
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'str'},
-        'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'previous_state': {'key': 'previousState', 'type': 'str'},
-        'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
-        'schedule': {'key': 'schedule', 'type': 'Schedule'},
-        'job_specification': {'key': 'jobSpecification', 'type': 'JobSpecification'},
-        'execution_info': {'key': 'executionInfo', 'type': 'JobScheduleExecutionInformation'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-        'stats': {'key': 'stats', 'type': 'JobScheduleStatistics'},
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "state": {"key": "state", "type": "str"},
+        "state_transition_time": {"key": "stateTransitionTime", "type": "iso-8601"},
+        "previous_state": {"key": "previousState", "type": "str"},
+        "previous_state_transition_time": {"key": "previousStateTransitionTime", "type": "iso-8601"},
+        "schedule": {"key": "schedule", "type": "Schedule"},
+        "job_specification": {"key": "jobSpecification", "type": "JobSpecification"},
+        "execution_info": {"key": "executionInfo", "type": "JobScheduleExecutionInformation"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
+        "stats": {"key": "stats", "type": "JobScheduleStatistics"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
-        state: Optional[Union[str, "_models.JobScheduleState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.JobScheduleState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
         schedule: Optional["_models.Schedule"] = None,
         job_specification: Optional["_models.JobSpecification"] = None,
-        execution_info: Optional["_models.JobScheduleExecutionInformation"] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        stats: Optional["_models.JobScheduleStatistics"] = None,
         **kwargs
     ):
         """
@@ -2062,96 +1345,233 @@ class CloudJobSchedule(msrest.serialization.Model):
         :paramtype id: str
         :keyword display_name: The display name for the schedule.
         :paramtype display_name: str
-        :keyword url: The URL of the Job Schedule.
-        :paramtype url: str
-        :keyword e_tag: This is an opaque string. You can use it to detect whether the Job Schedule has
-         changed between requests. In particular, you can be pass the ETag with an Update Job Schedule
-         request to specify that your changes should take effect only if nobody else has modified the
-         schedule in the meantime.
-        :paramtype e_tag: str
-        :keyword last_modified: This is the last time at which the schedule level data, such as the Job
-         specification or recurrence information, changed. It does not factor in job-level changes such
-         as new Jobs being created or Jobs changing state.
-        :paramtype last_modified: ~datetime.datetime
-        :keyword creation_time: The creation time of the Job Schedule.
-        :paramtype creation_time: ~datetime.datetime
-        :keyword state: The state of the Job Schedule. Known values are: "active", "completed",
-         "disabled", "terminating", "deleting".
-        :paramtype state: str or ~azure-batch.models.JobScheduleState
-        :keyword state_transition_time: The time at which the Job Schedule entered the current state.
-        :paramtype state_transition_time: ~datetime.datetime
-        :keyword previous_state: This property is not present if the Job Schedule is in its initial
-         active state. Known values are: "active", "completed", "disabled", "terminating", "deleting".
-        :paramtype previous_state: str or ~azure-batch.models.JobScheduleState
-        :keyword previous_state_transition_time: This property is not present if the Job Schedule is in
-         its initial active state.
-        :paramtype previous_state_transition_time: ~datetime.datetime
         :keyword schedule: All times are fixed respective to UTC and are not impacted by daylight
          saving time.
         :paramtype schedule: ~azure-batch.models.Schedule
         :keyword job_specification: Specifies details of the Jobs to be created on a schedule.
         :paramtype job_specification: ~azure-batch.models.JobSpecification
-        :keyword execution_info: Contains information about Jobs that have been and will be run under a
-         Job Schedule.
-        :paramtype execution_info: ~azure-batch.models.JobScheduleExecutionInformation
         :keyword metadata: The Batch service does not assign any meaning to metadata; it is solely for
          the use of user code.
         :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        :keyword stats: Resource usage statistics for a Job Schedule.
-        :paramtype stats: ~azure-batch.models.JobScheduleStatistics
         """
-        super(CloudJobSchedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.display_name = display_name
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
+        self.url = None
+        self.e_tag = None
+        self.last_modified = None
+        self.creation_time = None
+        self.state = None
+        self.state_transition_time = None
+        self.previous_state = None
+        self.previous_state_transition_time = None
         self.schedule = schedule
         self.job_specification = job_specification
-        self.execution_info = execution_info
+        self.execution_info = None
         self.metadata = metadata
-        self.stats = stats
+        self.stats = None
 
 
-class CloudJobScheduleListResult(msrest.serialization.Model):
+class BatchJobScheduleListResult(_serialization.Model):
     """The result of listing the Job Schedules in an Account.
 
     :ivar value: The list of Job Schedules.
-    :vartype value: list[~azure-batch.models.CloudJobSchedule]
+    :vartype value: list[~azure-batch.models.BatchJobSchedule]
     :ivar odata_next_link: The URL to get the next set of results.
     :vartype odata_next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudJobSchedule]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BatchJobSchedule]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.CloudJobSchedule"]] = None,
+        value: Optional[List["_models.BatchJobSchedule"]] = None,
         odata_next_link: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword value: The list of Job Schedules.
-        :paramtype value: list[~azure-batch.models.CloudJobSchedule]
+        :paramtype value: list[~azure-batch.models.BatchJobSchedule]
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(CloudJobScheduleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class CloudPool(msrest.serialization.Model):
+class BatchJobScheduleUpdate(_serialization.Model):
+    """The set of changes to be made to a Job Schedule.
+
+    :ivar schedule: All times are fixed respective to UTC and are not impacted by daylight saving
+     time. If you do not specify this element, the existing schedule is left unchanged.
+    :vartype schedule: ~azure-batch.models.Schedule
+    :ivar job_specification: Updates affect only Jobs that are started after the update has taken
+     place. Any currently active Job continues with the older specification.
+    :vartype job_specification: ~azure-batch.models.JobSpecification
+    :ivar metadata: If you do not specify this element, existing metadata is left unchanged.
+    :vartype metadata: list[~azure-batch.models.MetadataItem]
+    """
+
+    _attribute_map = {
+        "schedule": {"key": "schedule", "type": "Schedule"},
+        "job_specification": {"key": "jobSpecification", "type": "JobSpecification"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        schedule: Optional["_models.Schedule"] = None,
+        job_specification: Optional["_models.JobSpecification"] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword schedule: All times are fixed respective to UTC and are not impacted by daylight
+         saving time. If you do not specify this element, the existing schedule is left unchanged.
+        :paramtype schedule: ~azure-batch.models.Schedule
+        :keyword job_specification: Updates affect only Jobs that are started after the update has
+         taken place. Any currently active Job continues with the older specification.
+        :paramtype job_specification: ~azure-batch.models.JobSpecification
+        :keyword metadata: If you do not specify this element, existing metadata is left unchanged.
+        :paramtype metadata: list[~azure-batch.models.MetadataItem]
+        """
+        super().__init__(**kwargs)
+        self.schedule = schedule
+        self.job_specification = job_specification
+        self.metadata = metadata
+
+
+class BatchJobTerminateParameters(_serialization.Model):
+    """Options when terminating a Job.
+
+    :ivar terminate_reason: The text you want to appear as the Job's TerminateReason. The default
+     is 'UserTerminate'.
+    :vartype terminate_reason: str
+    """
+
+    _attribute_map = {
+        "terminate_reason": {"key": "terminateReason", "type": "str"},
+    }
+
+    def __init__(self, *, terminate_reason: Optional[str] = None, **kwargs):
+        """
+        :keyword terminate_reason: The text you want to appear as the Job's TerminateReason. The
+         default is 'UserTerminate'.
+        :paramtype terminate_reason: str
+        """
+        super().__init__(**kwargs)
+        self.terminate_reason = terminate_reason
+
+
+class BatchJobUpdate(_serialization.Model):
+    """The set of changes to be made to a Job.
+
+    :ivar priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
+     priority and 1000 being the highest priority. If omitted, the priority of the Job is left
+     unchanged.
+    :vartype priority: int
+    :ivar max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
+     specified. If not specified, the default value is -1, which means there's no limit to the
+     number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
+     been created using the update job API.
+    :vartype max_parallel_tasks: int
+    :ivar allow_task_preemption: If the value is set to True, other high priority jobs submitted to
+     the system will take precedence and will be able requeue tasks from this job. You can update a
+     job's allowTaskPreemption after it has been created using the update job API.
+    :vartype allow_task_preemption: bool
+    :ivar on_all_tasks_complete: If omitted, the completion behavior is left unchanged. You may not
+     change the value from terminatejob to noaction - that is, once you have engaged automatic Job
+     termination, you cannot turn it off again. If you try to do this, the request fails with an
+     'invalid property value' error response; if you are calling the REST API directly, the HTTP
+     status code is 400 (Bad Request). Known values are: "noaction" and "terminatejob".
+    :vartype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
+    :ivar constraints: If omitted, the existing execution constraints are left unchanged.
+    :vartype constraints: ~azure-batch.models.JobConstraints
+    :ivar pool_info: You may change the Pool for a Job only when the Job is disabled. The Patch Job
+     call will fail if you include the poolInfo element and the Job is not disabled. If you specify
+     an autoPoolSpecification in the poolInfo, only the keepAlive property of the
+     autoPoolSpecification can be updated, and then only if the autoPoolSpecification has a
+     poolLifetimeOption of Job (other job properties can be updated as normal). If omitted, the Job
+     continues to run on its current Pool.
+    :vartype pool_info: ~azure-batch.models.PoolInformation
+    :ivar metadata: If omitted, the existing Job metadata is left unchanged.
+    :vartype metadata: list[~azure-batch.models.MetadataItem]
+    """
+
+    _attribute_map = {
+        "priority": {"key": "priority", "type": "int"},
+        "max_parallel_tasks": {"key": "maxParallelTasks", "type": "int"},
+        "allow_task_preemption": {"key": "allowTaskPreemption", "type": "bool"},
+        "on_all_tasks_complete": {"key": "onAllTasksComplete", "type": "str"},
+        "constraints": {"key": "constraints", "type": "JobConstraints"},
+        "pool_info": {"key": "poolInfo", "type": "PoolInformation"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        priority: Optional[int] = None,
+        max_parallel_tasks: Optional[int] = None,
+        allow_task_preemption: Optional[bool] = None,
+        on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
+        constraints: Optional["_models.JobConstraints"] = None,
+        pool_info: Optional["_models.PoolInformation"] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
+         priority and 1000 being the highest priority. If omitted, the priority of the Job is left
+         unchanged.
+        :paramtype priority: int
+        :keyword max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
+         specified. If not specified, the default value is -1, which means there's no limit to the
+         number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
+         been created using the update job API.
+        :paramtype max_parallel_tasks: int
+        :keyword allow_task_preemption: If the value is set to True, other high priority jobs submitted
+         to the system will take precedence and will be able requeue tasks from this job. You can update
+         a job's allowTaskPreemption after it has been created using the update job API.
+        :paramtype allow_task_preemption: bool
+        :keyword on_all_tasks_complete: If omitted, the completion behavior is left unchanged. You may
+         not change the value from terminatejob to noaction - that is, once you have engaged automatic
+         Job termination, you cannot turn it off again. If you try to do this, the request fails with an
+         'invalid property value' error response; if you are calling the REST API directly, the HTTP
+         status code is 400 (Bad Request). Known values are: "noaction" and "terminatejob".
+        :paramtype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
+        :keyword constraints: If omitted, the existing execution constraints are left unchanged.
+        :paramtype constraints: ~azure-batch.models.JobConstraints
+        :keyword pool_info: You may change the Pool for a Job only when the Job is disabled. The Patch
+         Job call will fail if you include the poolInfo element and the Job is not disabled. If you
+         specify an autoPoolSpecification in the poolInfo, only the keepAlive property of the
+         autoPoolSpecification can be updated, and then only if the autoPoolSpecification has a
+         poolLifetimeOption of Job (other job properties can be updated as normal). If omitted, the Job
+         continues to run on its current Pool.
+        :paramtype pool_info: ~azure-batch.models.PoolInformation
+        :keyword metadata: If omitted, the existing Job metadata is left unchanged.
+        :paramtype metadata: list[~azure-batch.models.MetadataItem]
+        """
+        super().__init__(**kwargs)
+        self.priority = priority
+        self.max_parallel_tasks = max_parallel_tasks
+        self.allow_task_preemption = allow_task_preemption
+        self.on_all_tasks_complete = on_all_tasks_complete
+        self.constraints = constraints
+        self.pool_info = pool_info
+        self.metadata = metadata
+
+
+class BatchPool(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A Pool in the Azure Batch service.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters. The ID is case-preserving and
@@ -2173,12 +1593,12 @@ class CloudPool(msrest.serialization.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar creation_time: The creation time of the Pool.
     :vartype creation_time: ~datetime.datetime
-    :ivar state: The current state of the Pool. Known values are: "active", "deleting".
+    :ivar state: The current state of the Pool. Known values are: "active" and "deleting".
     :vartype state: str or ~azure-batch.models.PoolState
     :ivar state_transition_time: The time at which the Pool entered its current state.
     :vartype state_transition_time: ~datetime.datetime
     :ivar allocation_state: Whether the Pool is resizing. Known values are: "steady", "resizing",
-     "stopping".
+     and "stopping".
     :vartype allocation_state: str or ~azure-batch.models.AllocationState
     :ivar allocation_state_transition_time: The time at which the Pool entered its current
      allocation state.
@@ -2278,71 +1698,79 @@ class CloudPool(msrest.serialization.Model):
     :vartype identity: ~azure-batch.models.BatchPoolIdentity
     """
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'str'},
-        'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'allocation_state': {'key': 'allocationState', 'type': 'str'},
-        'allocation_state_transition_time': {'key': 'allocationStateTransitionTime', 'type': 'iso-8601'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'cloud_service_configuration': {'key': 'cloudServiceConfiguration', 'type': 'CloudServiceConfiguration'},
-        'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
-        'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
-        'resize_errors': {'key': 'resizeErrors', 'type': '[ResizeError]'},
-        'current_dedicated_nodes': {'key': 'currentDedicatedNodes', 'type': 'int'},
-        'current_low_priority_nodes': {'key': 'currentLowPriorityNodes', 'type': 'int'},
-        'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
-        'target_low_priority_nodes': {'key': 'targetLowPriorityNodes', 'type': 'int'},
-        'enable_auto_scale': {'key': 'enableAutoScale', 'type': 'bool'},
-        'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
-        'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
-        'auto_scale_run': {'key': 'autoScaleRun', 'type': 'AutoScaleRun'},
-        'enable_inter_node_communication': {'key': 'enableInterNodeCommunication', 'type': 'bool'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
-        'start_task': {'key': 'startTask', 'type': 'StartTask'},
-        'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
-        'task_slots_per_node': {'key': 'taskSlotsPerNode', 'type': 'int'},
-        'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
-        'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-        'stats': {'key': 'stats', 'type': 'PoolStatistics'},
-        'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
-        'identity': {'key': 'identity', 'type': 'BatchPoolIdentity'},
+    _validation = {
+        "url": {"readonly": True},
+        "e_tag": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "state": {"readonly": True},
+        "state_transition_time": {"readonly": True},
+        "allocation_state": {"readonly": True},
+        "allocation_state_transition_time": {"readonly": True},
+        "resize_errors": {"readonly": True},
+        "current_dedicated_nodes": {"readonly": True},
+        "current_low_priority_nodes": {"readonly": True},
+        "auto_scale_run": {"readonly": True},
+        "stats": {"readonly": True},
+        "identity": {"readonly": True},
     }
 
-    def __init__(
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "state": {"key": "state", "type": "str"},
+        "state_transition_time": {"key": "stateTransitionTime", "type": "iso-8601"},
+        "allocation_state": {"key": "allocationState", "type": "str"},
+        "allocation_state_transition_time": {"key": "allocationStateTransitionTime", "type": "iso-8601"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "cloud_service_configuration": {"key": "cloudServiceConfiguration", "type": "CloudServiceConfiguration"},
+        "virtual_machine_configuration": {"key": "virtualMachineConfiguration", "type": "VirtualMachineConfiguration"},
+        "resize_timeout": {"key": "resizeTimeout", "type": "duration"},
+        "resize_errors": {"key": "resizeErrors", "type": "[ResizeError]"},
+        "current_dedicated_nodes": {"key": "currentDedicatedNodes", "type": "int"},
+        "current_low_priority_nodes": {"key": "currentLowPriorityNodes", "type": "int"},
+        "target_dedicated_nodes": {"key": "targetDedicatedNodes", "type": "int"},
+        "target_low_priority_nodes": {"key": "targetLowPriorityNodes", "type": "int"},
+        "enable_auto_scale": {"key": "enableAutoScale", "type": "bool"},
+        "auto_scale_formula": {"key": "autoScaleFormula", "type": "str"},
+        "auto_scale_evaluation_interval": {"key": "autoScaleEvaluationInterval", "type": "duration"},
+        "auto_scale_run": {"key": "autoScaleRun", "type": "AutoScaleRun"},
+        "enable_inter_node_communication": {"key": "enableInterNodeCommunication", "type": "bool"},
+        "network_configuration": {"key": "networkConfiguration", "type": "NetworkConfiguration"},
+        "start_task": {"key": "startTask", "type": "StartTask"},
+        "certificate_references": {"key": "certificateReferences", "type": "[CertificateReference]"},
+        "application_package_references": {
+            "key": "applicationPackageReferences",
+            "type": "[ApplicationPackageReference]",
+        },
+        "application_licenses": {"key": "applicationLicenses", "type": "[str]"},
+        "task_slots_per_node": {"key": "taskSlotsPerNode", "type": "int"},
+        "task_scheduling_policy": {"key": "taskSchedulingPolicy", "type": "TaskSchedulingPolicy"},
+        "user_accounts": {"key": "userAccounts", "type": "[UserAccount]"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
+        "stats": {"key": "stats", "type": "PoolStatistics"},
+        "mount_configuration": {"key": "mountConfiguration", "type": "[MountConfiguration]"},
+        "identity": {"key": "identity", "type": "BatchPoolIdentity"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
-        state: Optional[Union[str, "_models.PoolState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        allocation_state: Optional[Union[str, "_models.AllocationState"]] = None,
-        allocation_state_transition_time: Optional[datetime.datetime] = None,
         vm_size: Optional[str] = None,
         cloud_service_configuration: Optional["_models.CloudServiceConfiguration"] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
         resize_timeout: Optional[datetime.timedelta] = None,
-        resize_errors: Optional[List["_models.ResizeError"]] = None,
-        current_dedicated_nodes: Optional[int] = None,
-        current_low_priority_nodes: Optional[int] = None,
         target_dedicated_nodes: Optional[int] = None,
         target_low_priority_nodes: Optional[int] = None,
         enable_auto_scale: Optional[bool] = None,
         auto_scale_formula: Optional[str] = None,
         auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
-        auto_scale_run: Optional["_models.AutoScaleRun"] = None,
         enable_inter_node_communication: Optional[bool] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
         start_task: Optional["_models.StartTask"] = None,
@@ -2353,9 +1781,7 @@ class CloudPool(msrest.serialization.Model):
         task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = None,
         user_accounts: Optional[List["_models.UserAccount"]] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        stats: Optional["_models.PoolStatistics"] = None,
         mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
-        identity: Optional["_models.BatchPoolIdentity"] = None,
         **kwargs
     ):
         """
@@ -2367,28 +1793,6 @@ class CloudPool(msrest.serialization.Model):
         :keyword display_name: The display name need not be unique and can contain any Unicode
          characters up to a maximum length of 1024.
         :paramtype display_name: str
-        :keyword url: The URL of the Pool.
-        :paramtype url: str
-        :keyword e_tag: This is an opaque string. You can use it to detect whether the Pool has changed
-         between requests. In particular, you can be pass the ETag when updating a Pool to specify that
-         your changes should take effect only if nobody else has modified the Pool in the meantime.
-        :paramtype e_tag: str
-        :keyword last_modified: This is the last time at which the Pool level data, such as the
-         targetDedicatedNodes or enableAutoscale settings, changed. It does not factor in node-level
-         changes such as a Compute Node changing state.
-        :paramtype last_modified: ~datetime.datetime
-        :keyword creation_time: The creation time of the Pool.
-        :paramtype creation_time: ~datetime.datetime
-        :keyword state: The current state of the Pool. Known values are: "active", "deleting".
-        :paramtype state: str or ~azure-batch.models.PoolState
-        :keyword state_transition_time: The time at which the Pool entered its current state.
-        :paramtype state_transition_time: ~datetime.datetime
-        :keyword allocation_state: Whether the Pool is resizing. Known values are: "steady",
-         "resizing", "stopping".
-        :paramtype allocation_state: str or ~azure-batch.models.AllocationState
-        :keyword allocation_state_transition_time: The time at which the Pool entered its current
-         allocation state.
-        :paramtype allocation_state_transition_time: ~datetime.datetime
         :keyword vm_size: For information about available sizes of virtual machines in Pools, see
          Choose a VM size for Compute Nodes in an Azure Batch Pool
          (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
@@ -2404,14 +1808,6 @@ class CloudPool(msrest.serialization.Model):
         :keyword resize_timeout: This is the timeout for the most recent resize operation. (The initial
          sizing when the Pool is created counts as a resize.) The default value is 15 minutes.
         :paramtype resize_timeout: ~datetime.timedelta
-        :keyword resize_errors: This property is set only if one or more errors occurred during the
-         last Pool resize, and only when the Pool allocationState is Steady.
-        :paramtype resize_errors: list[~azure-batch.models.ResizeError]
-        :keyword current_dedicated_nodes: The number of dedicated Compute Nodes currently in the Pool.
-        :paramtype current_dedicated_nodes: int
-        :keyword current_low_priority_nodes: Spot/Low-priority Compute Nodes which have been preempted
-         are included in this count.
-        :paramtype current_low_priority_nodes: int
         :keyword target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
         :paramtype target_dedicated_nodes: int
         :keyword target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in
@@ -2427,9 +1823,6 @@ class CloudPool(msrest.serialization.Model):
         :keyword auto_scale_evaluation_interval: This property is set only if the Pool automatically
          scales, i.e. enableAutoScale is true.
         :paramtype auto_scale_evaluation_interval: ~datetime.timedelta
-        :keyword auto_scale_run: This property is set only if the Pool automatically scales, i.e.
-         enableAutoScale is true.
-        :paramtype auto_scale_run: ~azure-batch.models.AutoScaleRun
         :keyword enable_inter_node_communication: This imposes restrictions on which Compute Nodes can
          be assigned to the Pool. Specifying this value can reduce the chance of the requested number of
          Compute Nodes to be allocated in the Pool.
@@ -2474,42 +1867,33 @@ class CloudPool(msrest.serialization.Model):
         :paramtype user_accounts: list[~azure-batch.models.UserAccount]
         :keyword metadata: A list of name-value pairs associated with the Pool as metadata.
         :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        :keyword stats: This property is populated only if the CloudPool was retrieved with an expand
-         clause including the 'stats' attribute; otherwise it is null. The statistics may not be
-         immediately available. The Batch service performs periodic roll-up of statistics. The typical
-         delay is about 30 minutes.
-        :paramtype stats: ~azure-batch.models.PoolStatistics
         :keyword mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
         :paramtype mount_configuration: list[~azure-batch.models.MountConfiguration]
-        :keyword identity: The list of user identities associated with the Batch pool. The user
-         identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-        :paramtype identity: ~azure-batch.models.BatchPoolIdentity
         """
-        super(CloudPool, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.display_name = display_name
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.allocation_state = allocation_state
-        self.allocation_state_transition_time = allocation_state_transition_time
+        self.url = None
+        self.e_tag = None
+        self.last_modified = None
+        self.creation_time = None
+        self.state = None
+        self.state_transition_time = None
+        self.allocation_state = None
+        self.allocation_state_transition_time = None
         self.vm_size = vm_size
         self.cloud_service_configuration = cloud_service_configuration
         self.virtual_machine_configuration = virtual_machine_configuration
         self.resize_timeout = resize_timeout
-        self.resize_errors = resize_errors
-        self.current_dedicated_nodes = current_dedicated_nodes
-        self.current_low_priority_nodes = current_low_priority_nodes
+        self.resize_errors = None
+        self.current_dedicated_nodes = None
+        self.current_low_priority_nodes = None
         self.target_dedicated_nodes = target_dedicated_nodes
         self.target_low_priority_nodes = target_low_priority_nodes
         self.enable_auto_scale = enable_auto_scale
         self.auto_scale_formula = auto_scale_formula
         self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
-        self.auto_scale_run = auto_scale_run
+        self.auto_scale_run = None
         self.enable_inter_node_communication = enable_inter_node_communication
         self.network_configuration = network_configuration
         self.start_task = start_task
@@ -2520,99 +1904,309 @@ class CloudPool(msrest.serialization.Model):
         self.task_scheduling_policy = task_scheduling_policy
         self.user_accounts = user_accounts
         self.metadata = metadata
-        self.stats = stats
+        self.stats = None
         self.mount_configuration = mount_configuration
-        self.identity = identity
+        self.identity = None
 
 
-class CloudPoolListResult(msrest.serialization.Model):
+class BatchPoolEnableAutoScaleParameters(_serialization.Model):
+    """Options for enabling automatic scaling on a Pool.
+
+    :ivar auto_scale_formula: The formula is checked for validity before it is applied to the Pool.
+     If the formula is not valid, the Batch service rejects the request with detailed error
+     information. For more information about specifying this formula, see Automatically scale
+     Compute Nodes in an Azure Batch Pool
+     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
+    :vartype auto_scale_formula: str
+    :ivar auto_scale_evaluation_interval: The default value is 15 minutes. The minimum and maximum
+     value are 5 minutes and 168 hours respectively. If you specify a value less than 5 minutes or
+     greater than 168 hours, the Batch service rejects the request with an invalid property value
+     error; if you are calling the REST API directly, the HTTP status code is 400 (Bad Request). If
+     you specify a new interval, then the existing autoscale evaluation schedule will be stopped and
+     a new autoscale evaluation schedule will be started, with its starting time being the time when
+     this request was issued.
+    :vartype auto_scale_evaluation_interval: ~datetime.timedelta
+    """
+
+    _attribute_map = {
+        "auto_scale_formula": {"key": "autoScaleFormula", "type": "str"},
+        "auto_scale_evaluation_interval": {"key": "autoScaleEvaluationInterval", "type": "duration"},
+    }
+
+    def __init__(
+        self,
+        *,
+        auto_scale_formula: Optional[str] = None,
+        auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
+        **kwargs
+    ):
+        """
+        :keyword auto_scale_formula: The formula is checked for validity before it is applied to the
+         Pool. If the formula is not valid, the Batch service rejects the request with detailed error
+         information. For more information about specifying this formula, see Automatically scale
+         Compute Nodes in an Azure Batch Pool
+         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
+        :paramtype auto_scale_formula: str
+        :keyword auto_scale_evaluation_interval: The default value is 15 minutes. The minimum and
+         maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
+         minutes or greater than 168 hours, the Batch service rejects the request with an invalid
+         property value error; if you are calling the REST API directly, the HTTP status code is 400
+         (Bad Request). If you specify a new interval, then the existing autoscale evaluation schedule
+         will be stopped and a new autoscale evaluation schedule will be started, with its starting time
+         being the time when this request was issued.
+        :paramtype auto_scale_evaluation_interval: ~datetime.timedelta
+        """
+        super().__init__(**kwargs)
+        self.auto_scale_formula = auto_scale_formula
+        self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
+
+
+class BatchPoolEvaluateAutoScaleParameters(_serialization.Model):
+    """Options for evaluating an automatic scaling formula on a Pool.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar auto_scale_formula: The formula is validated and its results calculated, but it is not
+     applied to the Pool. To apply the formula to the Pool, 'Enable automatic scaling on a Pool'.
+     For more information about specifying this formula, see Automatically scale Compute Nodes in an
+     Azure Batch Pool
+     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling). Required.
+    :vartype auto_scale_formula: str
+    """
+
+    _validation = {
+        "auto_scale_formula": {"required": True},
+    }
+
+    _attribute_map = {
+        "auto_scale_formula": {"key": "autoScaleFormula", "type": "str"},
+    }
+
+    def __init__(self, *, auto_scale_formula: str, **kwargs):
+        """
+        :keyword auto_scale_formula: The formula is validated and its results calculated, but it is not
+         applied to the Pool. To apply the formula to the Pool, 'Enable automatic scaling on a Pool'.
+         For more information about specifying this formula, see Automatically scale Compute Nodes in an
+         Azure Batch Pool
+         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling). Required.
+        :paramtype auto_scale_formula: str
+        """
+        super().__init__(**kwargs)
+        self.auto_scale_formula = auto_scale_formula
+
+
+class BatchPoolIdentity(_serialization.Model):
+    """The identity of the Batch pool, if configured.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: The list of user identities associated with the Batch pool. The user identity
+     dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     Required. Known values are: "UserAssigned" and "None".
+    :vartype type: str or ~azure-batch.models.PoolIdentityType
+    :ivar user_assigned_identities: The user identity dictionary key references will be ARM
+     resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :vartype user_assigned_identities: list[~azure-batch.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "[UserAssignedIdentity]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.PoolIdentityType"],
+        user_assigned_identities: Optional[List["_models.UserAssignedIdentity"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword type: The list of user identities associated with the Batch pool. The user identity
+         dictionary key references will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         Required. Known values are: "UserAssigned" and "None".
+        :paramtype type: str or ~azure-batch.models.PoolIdentityType
+        :keyword user_assigned_identities: The user identity dictionary key references will be ARM
+         resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :paramtype user_assigned_identities: list[~azure-batch.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
+class BatchPoolListResult(_serialization.Model):
     """The result of listing the Pools in an Account.
 
     :ivar value: The list of Pools.
-    :vartype value: list[~azure-batch.models.CloudPool]
+    :vartype value: list[~azure-batch.models.BatchPool]
     :ivar odata_next_link: The URL to get the next set of results.
     :vartype odata_next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudPool]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BatchPool]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.CloudPool"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.BatchPool"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of Pools.
-        :paramtype value: list[~azure-batch.models.CloudPool]
+        :paramtype value: list[~azure-batch.models.BatchPool]
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(CloudPoolListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class CloudServiceConfiguration(msrest.serialization.Model):
-    """The configuration for Compute Nodes in a Pool based on the Azure Cloud Services platform.
+class BatchPoolResizeParameters(_serialization.Model):
+    """Options for changing the size of a Pool.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar os_family: Required. Possible values are:
-     2 - OS Family 2, equivalent to Windows Server 2008 R2 SP1.
-     3 - OS Family 3, equivalent to Windows Server 2012.
-     4 - OS Family 4, equivalent to Windows Server 2012 R2.
-     5 - OS Family 5, equivalent to Windows Server 2016.
-     6 - OS Family 6, equivalent to Windows Server 2019. For more information, see Azure Guest OS
-     Releases
-     (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
-    :vartype os_family: str
-    :ivar os_version: The default value is * which specifies the latest operating system version
-     for the specified OS family.
-    :vartype os_version: str
+    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
+    :vartype target_dedicated_nodes: int
+    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
+     Pool.
+    :vartype target_low_priority_nodes: int
+    :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
+     specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
+     REST API directly, the HTTP status code is 400 (Bad Request).
+    :vartype resize_timeout: ~datetime.timedelta
+    :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
+     "terminate", "taskcompletion", and "retaineddata".
+    :vartype node_deallocation_option: str or ~azure-batch.models.ComputeNodeDeallocationOption
     """
 
-    _validation = {
-        'os_family': {'required': True},
-    }
-
     _attribute_map = {
-        'os_family': {'key': 'osFamily', 'type': 'str'},
-        'os_version': {'key': 'osVersion', 'type': 'str'},
+        "target_dedicated_nodes": {"key": "targetDedicatedNodes", "type": "int"},
+        "target_low_priority_nodes": {"key": "targetLowPriorityNodes", "type": "int"},
+        "resize_timeout": {"key": "resizeTimeout", "type": "duration"},
+        "node_deallocation_option": {"key": "nodeDeallocationOption", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        os_family: str,
-        os_version: Optional[str] = None,
+        target_dedicated_nodes: Optional[int] = None,
+        target_low_priority_nodes: Optional[int] = None,
+        resize_timeout: Optional[datetime.timedelta] = None,
+        node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = None,
         **kwargs
     ):
         """
-        :keyword os_family: Required. Possible values are:
-         2 - OS Family 2, equivalent to Windows Server 2008 R2 SP1.
-         3 - OS Family 3, equivalent to Windows Server 2012.
-         4 - OS Family 4, equivalent to Windows Server 2012 R2.
-         5 - OS Family 5, equivalent to Windows Server 2016.
-         6 - OS Family 6, equivalent to Windows Server 2019. For more information, see Azure Guest OS
-         Releases
-         (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
-        :paramtype os_family: str
-        :keyword os_version: The default value is * which specifies the latest operating system version
-         for the specified OS family.
-        :paramtype os_version: str
+        :keyword target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
+        :paramtype target_dedicated_nodes: int
+        :keyword target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in
+         the Pool.
+        :paramtype target_low_priority_nodes: int
+        :keyword resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If
+         you specify a value less than 5 minutes, the Batch service returns an error; if you are calling
+         the REST API directly, the HTTP status code is 400 (Bad Request).
+        :paramtype resize_timeout: ~datetime.timedelta
+        :keyword node_deallocation_option: The default value is requeue. Known values are: "requeue",
+         "terminate", "taskcompletion", and "retaineddata".
+        :paramtype node_deallocation_option: str or ~azure-batch.models.ComputeNodeDeallocationOption
         """
-        super(CloudServiceConfiguration, self).__init__(**kwargs)
-        self.os_family = os_family
-        self.os_version = os_version
+        super().__init__(**kwargs)
+        self.target_dedicated_nodes = target_dedicated_nodes
+        self.target_low_priority_nodes = target_low_priority_nodes
+        self.resize_timeout = resize_timeout
+        self.node_deallocation_option = node_deallocation_option
 
 
-class CloudTask(msrest.serialization.Model):
+class BatchPoolUpdate(_serialization.Model):
+    """The set of changes to be made to a Pool.
+
+    :ivar start_task: If this element is present, it overwrites any existing StartTask. If omitted,
+     any existing StartTask is left unchanged.
+    :vartype start_task: ~azure-batch.models.StartTask
+    :ivar certificate_references: If this element is present, it replaces any existing Certificate
+     references configured on the Pool. If omitted, any existing Certificate references are left
+     unchanged. For Windows Nodes, the Batch service installs the Certificates to the specified
+     Certificate store and location. For Linux Compute Nodes, the Certificates are stored in a
+     directory inside the Task working directory and an environment variable
+     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
+     with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
+     (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+    :vartype certificate_references: list[~azure-batch.models.CertificateReference]
+    :ivar application_package_references: Changes to Package references affect all new Nodes
+     joining the Pool, but do not affect Compute Nodes that are already in the Pool until they are
+     rebooted or reimaged. If this element is present, it replaces any existing Package references.
+     If you specify an empty collection, then all Package references are removed from the Pool. If
+     omitted, any existing Package references are left unchanged.
+    :vartype application_package_references: list[~azure-batch.models.ApplicationPackageReference]
+    :ivar metadata: If this element is present, it replaces any existing metadata configured on the
+     Pool. If you specify an empty collection, any metadata is removed from the Pool. If omitted,
+     any existing metadata is left unchanged.
+    :vartype metadata: list[~azure-batch.models.MetadataItem]
+    """
+
+    _attribute_map = {
+        "start_task": {"key": "startTask", "type": "StartTask"},
+        "certificate_references": {"key": "certificateReferences", "type": "[CertificateReference]"},
+        "application_package_references": {
+            "key": "applicationPackageReferences",
+            "type": "[ApplicationPackageReference]",
+        },
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_task: Optional["_models.StartTask"] = None,
+        certificate_references: Optional[List["_models.CertificateReference"]] = None,
+        application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword start_task: If this element is present, it overwrites any existing StartTask. If
+         omitted, any existing StartTask is left unchanged.
+        :paramtype start_task: ~azure-batch.models.StartTask
+        :keyword certificate_references: If this element is present, it replaces any existing
+         Certificate references configured on the Pool. If omitted, any existing Certificate references
+         are left unchanged. For Windows Nodes, the Batch service installs the Certificates to the
+         specified Certificate store and location. For Linux Compute Nodes, the Certificates are stored
+         in a directory inside the Task working directory and an environment variable
+         AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
+         with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
+         (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
+        :paramtype certificate_references: list[~azure-batch.models.CertificateReference]
+        :keyword application_package_references: Changes to Package references affect all new Nodes
+         joining the Pool, but do not affect Compute Nodes that are already in the Pool until they are
+         rebooted or reimaged. If this element is present, it replaces any existing Package references.
+         If you specify an empty collection, then all Package references are removed from the Pool. If
+         omitted, any existing Package references are left unchanged.
+        :paramtype application_package_references:
+         list[~azure-batch.models.ApplicationPackageReference]
+        :keyword metadata: If this element is present, it replaces any existing metadata configured on
+         the Pool. If you specify an empty collection, any metadata is removed from the Pool. If
+         omitted, any existing metadata is left unchanged.
+        :paramtype metadata: list[~azure-batch.models.MetadataItem]
+        """
+        super().__init__(**kwargs)
+        self.start_task = start_task
+        self.certificate_references = certificate_references
+        self.application_package_references = application_package_references
+        self.metadata = metadata
+
+
+class BatchTask(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute Node disappeared due to host failure. Retries due to recovery operations are independent of and are not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to a recovery operation may occur. Because of this, all Tasks should be idempotent. This means Tasks need to tolerate being interrupted and restarted without causing any corruption or duplicate data. The best practice for long running Tasks is to use some form of checkpointing.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: The ID can contain any combination of alphanumeric characters including hyphens and
      underscores, and cannot contain more than 64 characters.
@@ -2632,13 +2226,13 @@ class CloudTask(msrest.serialization.Model):
     :vartype creation_time: ~datetime.datetime
     :ivar exit_conditions: How the Batch service should respond when the Task completes.
     :vartype exit_conditions: ~azure-batch.models.ExitConditions
-    :ivar state: The state of the Task. Known values are: "active", "preparing", "running",
+    :ivar state: The state of the Task. Known values are: "active", "preparing", "running", and
      "completed".
     :vartype state: str or ~azure-batch.models.TaskState
     :ivar state_transition_time: The time at which the Task entered its current state.
     :vartype state_transition_time: ~datetime.datetime
     :ivar previous_state: This property is not set if the Task is in its initial Active state.
-     Known values are: "active", "preparing", "running", "completed".
+     Known values are: "active", "preparing", "running", and "completed".
     :vartype previous_state: str or ~azure-batch.models.TaskState
     :ivar previous_state_transition_time: This property is not set if the Task is in its initial
      Active state.
@@ -2716,50 +2310,59 @@ class CloudTask(msrest.serialization.Model):
     :vartype authentication_token_settings: ~azure-batch.models.AuthenticationTokenSettings
     """
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'exit_conditions': {'key': 'exitConditions', 'type': 'ExitConditions'},
-        'state': {'key': 'state', 'type': 'str'},
-        'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'previous_state': {'key': 'previousState', 'type': 'str'},
-        'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
-        'command_line': {'key': 'commandLine', 'type': 'str'},
-        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
-        'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
-        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
-        'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
-        'affinity_info': {'key': 'affinityInfo', 'type': 'AffinityInformation'},
-        'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
-        'required_slots': {'key': 'requiredSlots', 'type': 'int'},
-        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
-        'execution_info': {'key': 'executionInfo', 'type': 'TaskExecutionInformation'},
-        'node_info': {'key': 'nodeInfo', 'type': 'ComputeNodeInformation'},
-        'multi_instance_settings': {'key': 'multiInstanceSettings', 'type': 'MultiInstanceSettings'},
-        'stats': {'key': 'stats', 'type': 'TaskStatistics'},
-        'depends_on': {'key': 'dependsOn', 'type': 'TaskDependencies'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
+    _validation = {
+        "url": {"readonly": True},
+        "e_tag": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "state": {"readonly": True},
+        "state_transition_time": {"readonly": True},
+        "previous_state": {"readonly": True},
+        "previous_state_transition_time": {"readonly": True},
+        "execution_info": {"readonly": True},
+        "node_info": {"readonly": True},
+        "stats": {"readonly": True},
     }
 
-    def __init__(
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "exit_conditions": {"key": "exitConditions", "type": "ExitConditions"},
+        "state": {"key": "state", "type": "str"},
+        "state_transition_time": {"key": "stateTransitionTime", "type": "iso-8601"},
+        "previous_state": {"key": "previousState", "type": "str"},
+        "previous_state_transition_time": {"key": "previousStateTransitionTime", "type": "iso-8601"},
+        "command_line": {"key": "commandLine", "type": "str"},
+        "container_settings": {"key": "containerSettings", "type": "TaskContainerSettings"},
+        "resource_files": {"key": "resourceFiles", "type": "[ResourceFile]"},
+        "output_files": {"key": "outputFiles", "type": "[OutputFile]"},
+        "environment_settings": {"key": "environmentSettings", "type": "[EnvironmentSetting]"},
+        "affinity_info": {"key": "affinityInfo", "type": "AffinityInformation"},
+        "constraints": {"key": "constraints", "type": "TaskConstraints"},
+        "required_slots": {"key": "requiredSlots", "type": "int"},
+        "user_identity": {"key": "userIdentity", "type": "UserIdentity"},
+        "execution_info": {"key": "executionInfo", "type": "TaskExecutionInformation"},
+        "node_info": {"key": "nodeInfo", "type": "ComputeNodeInformation"},
+        "multi_instance_settings": {"key": "multiInstanceSettings", "type": "MultiInstanceSettings"},
+        "stats": {"key": "stats", "type": "TaskStatistics"},
+        "depends_on": {"key": "dependsOn", "type": "TaskDependencies"},
+        "application_package_references": {
+            "key": "applicationPackageReferences",
+            "type": "[ApplicationPackageReference]",
+        },
+        "authentication_token_settings": {"key": "authenticationTokenSettings", "type": "AuthenticationTokenSettings"},
+    }
+
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
-        url: Optional[str] = None,
-        e_tag: Optional[str] = None,
-        last_modified: Optional[datetime.datetime] = None,
-        creation_time: Optional[datetime.datetime] = None,
         exit_conditions: Optional["_models.ExitConditions"] = None,
-        state: Optional[Union[str, "_models.TaskState"]] = None,
-        state_transition_time: Optional[datetime.datetime] = None,
-        previous_state: Optional[Union[str, "_models.TaskState"]] = None,
-        previous_state_transition_time: Optional[datetime.datetime] = None,
         command_line: Optional[str] = None,
         container_settings: Optional["_models.TaskContainerSettings"] = None,
         resource_files: Optional[List["_models.ResourceFile"]] = None,
@@ -2769,10 +2372,7 @@ class CloudTask(msrest.serialization.Model):
         constraints: Optional["_models.TaskConstraints"] = None,
         required_slots: Optional[int] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
-        execution_info: Optional["_models.TaskExecutionInformation"] = None,
-        node_info: Optional["_models.ComputeNodeInformation"] = None,
         multi_instance_settings: Optional["_models.MultiInstanceSettings"] = None,
-        stats: Optional["_models.TaskStatistics"] = None,
         depends_on: Optional["_models.TaskDependencies"] = None,
         application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
         authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = None,
@@ -2785,29 +2385,8 @@ class CloudTask(msrest.serialization.Model):
         :keyword display_name: The display name need not be unique and can contain any Unicode
          characters up to a maximum length of 1024.
         :paramtype display_name: str
-        :keyword url: The URL of the Task.
-        :paramtype url: str
-        :keyword e_tag: This is an opaque string. You can use it to detect whether the Task has changed
-         between requests. In particular, you can be pass the ETag when updating a Task to specify that
-         your changes should take effect only if nobody else has modified the Task in the meantime.
-        :paramtype e_tag: str
-        :keyword last_modified: The last modified time of the Task.
-        :paramtype last_modified: ~datetime.datetime
-        :keyword creation_time: The creation time of the Task.
-        :paramtype creation_time: ~datetime.datetime
         :keyword exit_conditions: How the Batch service should respond when the Task completes.
         :paramtype exit_conditions: ~azure-batch.models.ExitConditions
-        :keyword state: The state of the Task. Known values are: "active", "preparing", "running",
-         "completed".
-        :paramtype state: str or ~azure-batch.models.TaskState
-        :keyword state_transition_time: The time at which the Task entered its current state.
-        :paramtype state_transition_time: ~datetime.datetime
-        :keyword previous_state: This property is not set if the Task is in its initial Active state.
-         Known values are: "active", "preparing", "running", "completed".
-        :paramtype previous_state: str or ~azure-batch.models.TaskState
-        :keyword previous_state_transition_time: This property is not set if the Task is in its initial
-         Active state.
-        :paramtype previous_state_transition_time: ~datetime.datetime
         :keyword command_line: For multi-instance Tasks, the command line is executed as the primary
          Task, after the primary Task and all subtasks have finished executing the coordination command
          line. The command line does not run under a shell, and therefore cannot take advantage of shell
@@ -2851,17 +2430,11 @@ class CloudTask(msrest.serialization.Model):
         :keyword user_identity: If omitted, the Task runs as a non-administrative user unique to the
          Task.
         :paramtype user_identity: ~azure-batch.models.UserIdentity
-        :keyword execution_info: Information about the execution of a Task.
-        :paramtype execution_info: ~azure-batch.models.TaskExecutionInformation
-        :keyword node_info: Information about the Compute Node on which a Task ran.
-        :paramtype node_info: ~azure-batch.models.ComputeNodeInformation
         :keyword multi_instance_settings: Multi-instance Tasks are commonly used to support MPI Tasks.
          In the MPI case, if any of the subtasks fail (for example due to exiting with a non-zero exit
          code) the entire multi-instance Task fails. The multi-instance Task is then terminated and
          retried, up to its retry limit.
         :paramtype multi_instance_settings: ~azure-batch.models.MultiInstanceSettings
-        :keyword stats: Resource usage statistics for a Task.
-        :paramtype stats: ~azure-batch.models.TaskStatistics
         :keyword depends_on: This Task will not be scheduled until all Tasks that it depends on have
          completed successfully. If any of those Tasks fail and exhaust their retry counts, this Task
          will never be scheduled.
@@ -2882,18 +2455,18 @@ class CloudTask(msrest.serialization.Model):
          Job.
         :paramtype authentication_token_settings: ~azure-batch.models.AuthenticationTokenSettings
         """
-        super(CloudTask, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.display_name = display_name
-        self.url = url
-        self.e_tag = e_tag
-        self.last_modified = last_modified
-        self.creation_time = creation_time
+        self.url = None
+        self.e_tag = None
+        self.last_modified = None
+        self.creation_time = None
         self.exit_conditions = exit_conditions
-        self.state = state
-        self.state_transition_time = state_transition_time
-        self.previous_state = previous_state
-        self.previous_state_transition_time = previous_state_transition_time
+        self.state = None
+        self.state_transition_time = None
+        self.previous_state = None
+        self.previous_state_transition_time = None
         self.command_line = command_line
         self.container_settings = container_settings
         self.resource_files = resource_files
@@ -2903,48 +2476,76 @@ class CloudTask(msrest.serialization.Model):
         self.constraints = constraints
         self.required_slots = required_slots
         self.user_identity = user_identity
-        self.execution_info = execution_info
-        self.node_info = node_info
+        self.execution_info = None
+        self.node_info = None
         self.multi_instance_settings = multi_instance_settings
-        self.stats = stats
+        self.stats = None
         self.depends_on = depends_on
         self.application_package_references = application_package_references
         self.authentication_token_settings = authentication_token_settings
 
 
-class CloudTaskListResult(msrest.serialization.Model):
+class BatchTaskCollection(_serialization.Model):
+    """A collection of Azure Batch Tasks to add.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The total serialized size of this collection must be less than 1MB. If it is
+     greater than 1MB (for example if each Task has 100's of resource files or environment
+     variables), the request will fail with code 'RequestBodyTooLarge' and should be retried again
+     with fewer Tasks. Required.
+    :vartype value: list[~azure-batch.models.BatchTask]
+    """
+
+    _validation = {
+        "value": {"required": True, "max_items": 100, "min_items": 0},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[BatchTask]"},
+    }
+
+    def __init__(self, *, value: List["_models.BatchTask"], **kwargs):
+        """
+        :keyword value: The total serialized size of this collection must be less than 1MB. If it is
+         greater than 1MB (for example if each Task has 100's of resource files or environment
+         variables), the request will fail with code 'RequestBodyTooLarge' and should be retried again
+         with fewer Tasks. Required.
+        :paramtype value: list[~azure-batch.models.BatchTask]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class BatchTaskListResult(_serialization.Model):
     """The result of listing the Tasks in a Job.
 
     :ivar value: The list of Tasks.
-    :vartype value: list[~azure-batch.models.CloudTask]
+    :vartype value: list[~azure-batch.models.BatchTask]
     :ivar odata_next_link: The URL to get the next set of results.
     :vartype odata_next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudTask]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BatchTask]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.CloudTask"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.BatchTask"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of Tasks.
-        :paramtype value: list[~azure-batch.models.CloudTask]
+        :paramtype value: list[~azure-batch.models.BatchTask]
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(CloudTaskListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class CloudTaskListSubtasksResult(msrest.serialization.Model):
+class BatchTaskListSubtasksResult(_serialization.Model):
     """The result of listing the subtasks of a Task.
 
     :ivar value: The list of subtasks.
@@ -2952,24 +2553,655 @@ class CloudTaskListSubtasksResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SubtaskInformation]'},
+        "value": {"key": "value", "type": "[SubtaskInformation]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.SubtaskInformation"]] = None, **kwargs):
+        """
+        :keyword value: The list of subtasks.
+        :paramtype value: list[~azure-batch.models.SubtaskInformation]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class Certificate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """A Certificate that can be installed on Compute Nodes and can be used to authenticate operations on the machine.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
+     digits.
+    :vartype thumbprint: str
+    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint.
+    :vartype thumbprint_algorithm: str
+    :ivar url: The URL of the Certificate.
+    :vartype url: str
+    :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
+     "deletefailed".
+    :vartype state: str or ~azure-batch.models.CertificateState
+    :ivar state_transition_time: The time at which the Certificate entered its current state.
+    :vartype state_transition_time: ~datetime.datetime
+    :ivar previous_state: This property is not set if the Certificate is in its initial active
+     state. Known values are: "active", "deleting", and "deletefailed".
+    :vartype previous_state: str or ~azure-batch.models.CertificateState
+    :ivar previous_state_transition_time: This property is not set if the Certificate is in its
+     initial Active state.
+    :vartype previous_state_transition_time: ~datetime.datetime
+    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
+    :vartype public_data: str
+    :ivar delete_certificate_error: This property is set only if the Certificate is in the
+     DeleteFailed state.
+    :vartype delete_certificate_error: ~azure-batch.models.DeleteCertificateError
+    :ivar data: The base64-encoded contents of the Certificate. The maximum size is 10KB.
+    :vartype data: str
+    :ivar certificate_format: The format of the Certificate data. Known values are: "pfx" and
+     "cer".
+    :vartype certificate_format: str or ~azure-batch.models.CertificateFormat
+    :ivar password: This must be omitted if the Certificate format is cer.
+    :vartype password: str
+    """
+
+    _validation = {
+        "url": {"readonly": True},
+        "state": {"readonly": True},
+        "state_transition_time": {"readonly": True},
+        "previous_state": {"readonly": True},
+        "previous_state_transition_time": {"readonly": True},
+        "public_data": {"readonly": True},
+        "delete_certificate_error": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "thumbprint_algorithm": {"key": "thumbprintAlgorithm", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "state_transition_time": {"key": "stateTransitionTime", "type": "iso-8601"},
+        "previous_state": {"key": "previousState", "type": "str"},
+        "previous_state_transition_time": {"key": "previousStateTransitionTime", "type": "iso-8601"},
+        "public_data": {"key": "publicData", "type": "str"},
+        "delete_certificate_error": {"key": "deleteCertificateError", "type": "DeleteCertificateError"},
+        "data": {"key": "data", "type": "str"},
+        "certificate_format": {"key": "certificateFormat", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.SubtaskInformation"]] = None,
+        thumbprint: Optional[str] = None,
+        thumbprint_algorithm: Optional[str] = None,
+        data: Optional[str] = None,
+        certificate_format: Optional[Union[str, "_models.CertificateFormat"]] = None,
+        password: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword value: The list of subtasks.
-        :paramtype value: list[~azure-batch.models.SubtaskInformation]
+        :keyword thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40
+         hex digits.
+        :paramtype thumbprint: str
+        :keyword thumbprint_algorithm: The algorithm used to derive the thumbprint.
+        :paramtype thumbprint_algorithm: str
+        :keyword data: The base64-encoded contents of the Certificate. The maximum size is 10KB.
+        :paramtype data: str
+        :keyword certificate_format: The format of the Certificate data. Known values are: "pfx" and
+         "cer".
+        :paramtype certificate_format: str or ~azure-batch.models.CertificateFormat
+        :keyword password: This must be omitted if the Certificate format is cer.
+        :paramtype password: str
         """
-        super(CloudTaskListSubtasksResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.thumbprint = thumbprint
+        self.thumbprint_algorithm = thumbprint_algorithm
+        self.url = None
+        self.state = None
+        self.state_transition_time = None
+        self.previous_state = None
+        self.previous_state_transition_time = None
+        self.public_data = None
+        self.delete_certificate_error = None
+        self.data = data
+        self.certificate_format = certificate_format
+        self.password = password
+
+
+class CertificateAddOptions(_serialization.Model):
+    """Parameter group.
+
+    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
+     The default is 30 seconds.
+    :vartype timeout: int
+    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
+     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+    :vartype client_request_id: str
+    :ivar return_client_request_id: Whether the server should return the client-request-id in the
+     response.
+    :vartype return_client_request_id: bool
+    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
+     current system clock time; set it explicitly if you are calling the REST API directly.
+    :vartype ocp_date: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+    }
+
+    def __init__(
+        self,
+        *,
+        timeout: int = 30,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: bool = False,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds.
+        :paramtype timeout: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API directly.
+        :paramtype ocp_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.timeout = timeout
+        self.client_request_id = client_request_id
+        self.return_client_request_id = return_client_request_id
+        self.ocp_date = ocp_date
+
+
+class CertificateCancelDeletionOptions(_serialization.Model):
+    """Parameter group.
+
+    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
+     The default is 30 seconds.
+    :vartype timeout: int
+    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
+     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+    :vartype client_request_id: str
+    :ivar return_client_request_id: Whether the server should return the client-request-id in the
+     response.
+    :vartype return_client_request_id: bool
+    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
+     current system clock time; set it explicitly if you are calling the REST API directly.
+    :vartype ocp_date: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+    }
+
+    def __init__(
+        self,
+        *,
+        timeout: int = 30,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: bool = False,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds.
+        :paramtype timeout: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API directly.
+        :paramtype ocp_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.timeout = timeout
+        self.client_request_id = client_request_id
+        self.return_client_request_id = return_client_request_id
+        self.ocp_date = ocp_date
+
+
+class CertificateDeleteOptions(_serialization.Model):
+    """Parameter group.
+
+    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
+     The default is 30 seconds.
+    :vartype timeout: int
+    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
+     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+    :vartype client_request_id: str
+    :ivar return_client_request_id: Whether the server should return the client-request-id in the
+     response.
+    :vartype return_client_request_id: bool
+    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
+     current system clock time; set it explicitly if you are calling the REST API directly.
+    :vartype ocp_date: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+    }
+
+    def __init__(
+        self,
+        *,
+        timeout: int = 30,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: bool = False,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds.
+        :paramtype timeout: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API directly.
+        :paramtype ocp_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.timeout = timeout
+        self.client_request_id = client_request_id
+        self.return_client_request_id = return_client_request_id
+        self.ocp_date = ocp_date
+
+
+class CertificateGetOptions(_serialization.Model):
+    """Parameter group.
+
+    :ivar select: An OData $select clause.
+    :vartype select: str
+    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
+     The default is 30 seconds.
+    :vartype timeout: int
+    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
+     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+    :vartype client_request_id: str
+    :ivar return_client_request_id: Whether the server should return the client-request-id in the
+     response.
+    :vartype return_client_request_id: bool
+    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
+     current system clock time; set it explicitly if you are calling the REST API directly.
+    :vartype ocp_date: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "select": {"key": "$select", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+    }
+
+    def __init__(
+        self,
+        *,
+        select: Optional[str] = None,
+        timeout: int = 30,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: bool = False,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword select: An OData $select clause.
+        :paramtype select: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds.
+        :paramtype timeout: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API directly.
+        :paramtype ocp_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.select = select
+        self.timeout = timeout
+        self.client_request_id = client_request_id
+        self.return_client_request_id = return_client_request_id
+        self.ocp_date = ocp_date
+
+
+class CertificateListOptions(_serialization.Model):
+    """Parameter group.
+
+    :ivar filter: An OData $filter clause. For more information on constructing this filter, see
+     https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
+    :vartype filter: str
+    :ivar select: An OData $select clause.
+    :vartype select: str
+    :ivar max_results: The maximum number of items to return in the response. A maximum of 1000
+     Certificates can be returned.
+    :vartype max_results: int
+    :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
+     The default is 30 seconds.
+    :vartype timeout: int
+    :ivar client_request_id: The caller-generated request identity, in the form of a GUID with no
+     decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+    :vartype client_request_id: str
+    :ivar return_client_request_id: Whether the server should return the client-request-id in the
+     response.
+    :vartype return_client_request_id: bool
+    :ivar ocp_date: The time the request was issued. Client libraries typically set this to the
+     current system clock time; set it explicitly if you are calling the REST API directly.
+    :vartype ocp_date: ~datetime.datetime
+    """
+
+    _validation = {
+        "max_results": {"maximum": 1000, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+    }
+
+    def __init__(
+        self,
+        *,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        select: Optional[str] = None,
+        max_results: int = 1000,
+        timeout: int = 30,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: bool = False,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
+        :paramtype filter: str
+        :keyword select: An OData $select clause.
+        :paramtype select: str
+        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
+         Certificates can be returned.
+        :paramtype max_results: int
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds.
+        :paramtype timeout: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API directly.
+        :paramtype ocp_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.filter = filter
+        self.select = select
+        self.max_results = max_results
+        self.timeout = timeout
+        self.client_request_id = client_request_id
+        self.return_client_request_id = return_client_request_id
+        self.ocp_date = ocp_date
+
+
+class CertificateListResult(_serialization.Model):
+    """The result of listing the Certificates in the Account.
+
+    :ivar value: The list of Certificates.
+    :vartype value: list[~azure-batch.models.Certificate]
+    :ivar odata_next_link: The URL to get the next set of results.
+    :vartype odata_next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Certificate]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Certificate"]] = None, odata_next_link: Optional[str] = None, **kwargs
+    ):
+        """
+        :keyword value: The list of Certificates.
+        :paramtype value: list[~azure-batch.models.Certificate]
+        :keyword odata_next_link: The URL to get the next set of results.
+        :paramtype odata_next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
+        self.odata_next_link = odata_next_link
 
 
-class ComputeNode(msrest.serialization.Model):
+class CertificateReference(_serialization.Model):
+    """A reference to a Certificate to be installed on Compute Nodes in a Pool.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar thumbprint: The thumbprint of the Certificate. Required.
+    :vartype thumbprint: str
+    :ivar thumbprint_algorithm: The algorithm with which the thumbprint is associated. This must be
+     sha1. Required.
+    :vartype thumbprint_algorithm: str
+    :ivar store_location: The default value is currentuser. This property is applicable only for
+     Pools configured with Windows Compute Nodes (that is, created with cloudServiceConfiguration,
+     or with virtualMachineConfiguration using a Windows Image reference). For Linux Compute Nodes,
+     the Certificates are stored in a directory inside the Task working directory and an environment
+     variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For
+     Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
+     directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory. Known
+     values are: "currentuser" and "localmachine".
+    :vartype store_location: str or ~azure-batch.models.CertificateStoreLocation
+    :ivar store_name: This property is applicable only for Pools configured with Windows Compute
+     Nodes (that is, created with cloudServiceConfiguration, or with virtualMachineConfiguration
+     using a Windows Image reference). Common store names include: My, Root, CA, Trust, Disallowed,
+     TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be
+     used. The default value is My.
+    :vartype store_name: str
+    :ivar visibility: You can specify more than one visibility in this collection. The default is
+     all Accounts.
+    :vartype visibility: list[str or ~azure-batch.models.CertificateVisibility]
+    """
+
+    _validation = {
+        "thumbprint": {"required": True},
+        "thumbprint_algorithm": {"required": True},
+    }
+
+    _attribute_map = {
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "thumbprint_algorithm": {"key": "thumbprintAlgorithm", "type": "str"},
+        "store_location": {"key": "storeLocation", "type": "str"},
+        "store_name": {"key": "storeName", "type": "str"},
+        "visibility": {"key": "visibility", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        thumbprint: str,
+        thumbprint_algorithm: str,
+        store_location: Optional[Union[str, "_models.CertificateStoreLocation"]] = None,
+        store_name: Optional[str] = None,
+        visibility: Optional[List[Union[str, "_models.CertificateVisibility"]]] = None,
+        **kwargs
+    ):
+        """
+        :keyword thumbprint: The thumbprint of the Certificate. Required.
+        :paramtype thumbprint: str
+        :keyword thumbprint_algorithm: The algorithm with which the thumbprint is associated. This must
+         be sha1. Required.
+        :paramtype thumbprint_algorithm: str
+        :keyword store_location: The default value is currentuser. This property is applicable only for
+         Pools configured with Windows Compute Nodes (that is, created with cloudServiceConfiguration,
+         or with virtualMachineConfiguration using a Windows Image reference). For Linux Compute Nodes,
+         the Certificates are stored in a directory inside the Task working directory and an environment
+         variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For
+         Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
+         directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory. Known
+         values are: "currentuser" and "localmachine".
+        :paramtype store_location: str or ~azure-batch.models.CertificateStoreLocation
+        :keyword store_name: This property is applicable only for Pools configured with Windows Compute
+         Nodes (that is, created with cloudServiceConfiguration, or with virtualMachineConfiguration
+         using a Windows Image reference). Common store names include: My, Root, CA, Trust, Disallowed,
+         TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be
+         used. The default value is My.
+        :paramtype store_name: str
+        :keyword visibility: You can specify more than one visibility in this collection. The default
+         is all Accounts.
+        :paramtype visibility: list[str or ~azure-batch.models.CertificateVisibility]
+        """
+        super().__init__(**kwargs)
+        self.thumbprint = thumbprint
+        self.thumbprint_algorithm = thumbprint_algorithm
+        self.store_location = store_location
+        self.store_name = store_name
+        self.visibility = visibility
+
+
+class CIFSMountConfiguration(_serialization.Model):
+    """Information used to connect to a CIFS file system.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar username: The user to use for authentication against the CIFS file system. Required.
+    :vartype username: str
+    :ivar source: The URI of the file system to mount. Required.
+    :vartype source: str
+    :ivar relative_mount_path: All file systems are mounted relative to the Batch mounts directory,
+     accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
+    :vartype relative_mount_path: str
+    :ivar mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+    :vartype mount_options: str
+    :ivar password: The password to use for authentication against the CIFS file system. Required.
+    :vartype password: str
+    """
+
+    _validation = {
+        "username": {"required": True},
+        "source": {"required": True},
+        "relative_mount_path": {"required": True},
+        "password": {"required": True},
+    }
+
+    _attribute_map = {
+        "username": {"key": "username", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "relative_mount_path": {"key": "relativeMountPath", "type": "str"},
+        "mount_options": {"key": "mountOptions", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        username: str,
+        source: str,
+        relative_mount_path: str,
+        password: str,
+        mount_options: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword username: The user to use for authentication against the CIFS file system. Required.
+        :paramtype username: str
+        :keyword source: The URI of the file system to mount. Required.
+        :paramtype source: str
+        :keyword relative_mount_path: All file systems are mounted relative to the Batch mounts
+         directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
+        :paramtype relative_mount_path: str
+        :keyword mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
+        :paramtype mount_options: str
+        :keyword password: The password to use for authentication against the CIFS file system.
+         Required.
+        :paramtype password: str
+        """
+        super().__init__(**kwargs)
+        self.username = username
+        self.source = source
+        self.relative_mount_path = relative_mount_path
+        self.mount_options = mount_options
+        self.password = password
+
+
+class CloudServiceConfiguration(_serialization.Model):
+    """The configuration for Compute Nodes in a Pool based on the Azure Cloud Services platform.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar os_family: Possible values are:
+     2 - OS Family 2, equivalent to Windows Server 2008 R2 SP1.
+     3 - OS Family 3, equivalent to Windows Server 2012.
+     4 - OS Family 4, equivalent to Windows Server 2012 R2.
+     5 - OS Family 5, equivalent to Windows Server 2016.
+     6 - OS Family 6, equivalent to Windows Server 2019. For more information, see Azure Guest OS
+     Releases
+     (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
+     Required.
+    :vartype os_family: str
+    :ivar os_version: The default value is * which specifies the latest operating system version
+     for the specified OS family.
+    :vartype os_version: str
+    """
+
+    _validation = {
+        "os_family": {"required": True},
+    }
+
+    _attribute_map = {
+        "os_family": {"key": "osFamily", "type": "str"},
+        "os_version": {"key": "osVersion", "type": "str"},
+    }
+
+    def __init__(self, *, os_family: str, os_version: Optional[str] = None, **kwargs):
+        """
+        :keyword os_family: Possible values are:
+         2 - OS Family 2, equivalent to Windows Server 2008 R2 SP1.
+         3 - OS Family 3, equivalent to Windows Server 2012.
+         4 - OS Family 4, equivalent to Windows Server 2012 R2.
+         5 - OS Family 5, equivalent to Windows Server 2016.
+         6 - OS Family 6, equivalent to Windows Server 2019. For more information, see Azure Guest OS
+         Releases
+         (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
+         Required.
+        :paramtype os_family: str
+        :keyword os_version: The default value is * which specifies the latest operating system version
+         for the specified OS family.
+        :paramtype os_version: str
+        """
+        super().__init__(**kwargs)
+        self.os_family = os_family
+        self.os_version = os_version
+
+
+class ComputeNode(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A Compute Node in the Batch service.
 
     :ivar id: Every Compute Node that is added to a Pool is assigned a unique ID. Whenever a
@@ -2982,10 +3214,10 @@ class ComputeNode(msrest.serialization.Model):
      the Compute Node when it was preempted will be rescheduled when another Compute Node becomes
      available. Known values are: "idle", "rebooting", "reimaging", "running", "unusable",
      "creating", "starting", "waitingforstarttask", "starttaskfailed", "unknown", "leavingpool",
-     "offline", "preempted".
+     "offline", and "preempted".
     :vartype state: str or ~azure-batch.models.ComputeNodeState
     :ivar scheduling_state: Whether the Compute Node is available for Task scheduling. Known values
-     are: "enabled", "disabled".
+     are: "enabled" and "disabled".
     :vartype scheduling_state: str or ~azure-batch.models.SchedulingState
     :ivar state_transition_time: The time at which the Compute Node entered its current state.
     :vartype state_transition_time: ~datetime.datetime
@@ -3061,35 +3293,35 @@ class ComputeNode(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'scheduling_state': {'key': 'schedulingState', 'type': 'str'},
-        'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'last_boot_time': {'key': 'lastBootTime', 'type': 'iso-8601'},
-        'allocation_time': {'key': 'allocationTime', 'type': 'iso-8601'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'affinity_id': {'key': 'affinityId', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'total_tasks_run': {'key': 'totalTasksRun', 'type': 'int'},
-        'running_tasks_count': {'key': 'runningTasksCount', 'type': 'int'},
-        'running_task_slots_count': {'key': 'runningTaskSlotsCount', 'type': 'int'},
-        'total_tasks_succeeded': {'key': 'totalTasksSucceeded', 'type': 'int'},
-        'recent_tasks': {'key': 'recentTasks', 'type': '[TaskInformation]'},
-        'start_task': {'key': 'startTask', 'type': 'StartTask'},
-        'start_task_info': {'key': 'startTaskInfo', 'type': 'StartTaskInformation'},
-        'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
-        'errors': {'key': 'errors', 'type': '[ComputeNodeError]'},
-        'is_dedicated': {'key': 'isDedicated', 'type': 'bool'},
-        'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'ComputeNodeEndpointConfiguration'},
-        'node_agent_info': {'key': 'nodeAgentInfo', 'type': 'NodeAgentInformation'},
-        'virtual_machine_info': {'key': 'virtualMachineInfo', 'type': 'VirtualMachineInfo'},
+        "id": {"key": "id", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "scheduling_state": {"key": "schedulingState", "type": "str"},
+        "state_transition_time": {"key": "stateTransitionTime", "type": "iso-8601"},
+        "last_boot_time": {"key": "lastBootTime", "type": "iso-8601"},
+        "allocation_time": {"key": "allocationTime", "type": "iso-8601"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "affinity_id": {"key": "affinityId", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "total_tasks_run": {"key": "totalTasksRun", "type": "int"},
+        "running_tasks_count": {"key": "runningTasksCount", "type": "int"},
+        "running_task_slots_count": {"key": "runningTaskSlotsCount", "type": "int"},
+        "total_tasks_succeeded": {"key": "totalTasksSucceeded", "type": "int"},
+        "recent_tasks": {"key": "recentTasks", "type": "[TaskInformation]"},
+        "start_task": {"key": "startTask", "type": "StartTask"},
+        "start_task_info": {"key": "startTaskInfo", "type": "StartTaskInformation"},
+        "certificate_references": {"key": "certificateReferences", "type": "[CertificateReference]"},
+        "errors": {"key": "errors", "type": "[ComputeNodeError]"},
+        "is_dedicated": {"key": "isDedicated", "type": "bool"},
+        "endpoint_configuration": {"key": "endpointConfiguration", "type": "ComputeNodeEndpointConfiguration"},
+        "node_agent_info": {"key": "nodeAgentInfo", "type": "NodeAgentInformation"},
+        "virtual_machine_info": {"key": "virtualMachineInfo", "type": "VirtualMachineInfo"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         url: Optional[str] = None,
         state: Optional[Union[str, "_models.ComputeNodeState"]] = None,
         scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = None,
@@ -3125,10 +3357,10 @@ class ComputeNode(msrest.serialization.Model):
          on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes
          available. Known values are: "idle", "rebooting", "reimaging", "running", "unusable",
          "creating", "starting", "waitingforstarttask", "starttaskfailed", "unknown", "leavingpool",
-         "offline", "preempted".
+         "offline", and "preempted".
         :paramtype state: str or ~azure-batch.models.ComputeNodeState
         :keyword scheduling_state: Whether the Compute Node is available for Task scheduling. Known
-         values are: "enabled", "disabled".
+         values are: "enabled" and "disabled".
         :paramtype scheduling_state: str or ~azure-batch.models.SchedulingState
         :keyword state_transition_time: The time at which the Compute Node entered its current state.
         :paramtype state_transition_time: ~datetime.datetime
@@ -3204,7 +3436,7 @@ class ComputeNode(msrest.serialization.Model):
         :keyword virtual_machine_info: Info about the current state of the virtual machine.
         :paramtype virtual_machine_info: ~azure-batch.models.VirtualMachineInfo
         """
-        super(ComputeNode, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.url = url
         self.state = state
@@ -3230,7 +3462,7 @@ class ComputeNode(msrest.serialization.Model):
         self.virtual_machine_info = virtual_machine_info
 
 
-class ComputeNodeAddUserOptions(msrest.serialization.Model):
+class ComputeNodeAddUserOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -3248,18 +3480,18 @@ class ComputeNodeAddUserOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3277,14 +3509,14 @@ class ComputeNodeAddUserOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeAddUserOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeDeleteUserOptions(msrest.serialization.Model):
+class ComputeNodeDeleteUserOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -3302,18 +3534,18 @@ class ComputeNodeDeleteUserOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3331,14 +3563,14 @@ class ComputeNodeDeleteUserOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeDeleteUserOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeDisableSchedulingOptions(msrest.serialization.Model):
+class ComputeNodeDisableSchedulingOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -3356,18 +3588,18 @@ class ComputeNodeDisableSchedulingOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3385,14 +3617,14 @@ class ComputeNodeDisableSchedulingOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeDisableSchedulingOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeEnableSchedulingOptions(msrest.serialization.Model):
+class ComputeNodeEnableSchedulingOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -3410,18 +3642,18 @@ class ComputeNodeEnableSchedulingOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3439,47 +3671,42 @@ class ComputeNodeEnableSchedulingOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeEnableSchedulingOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeEndpointConfiguration(msrest.serialization.Model):
+class ComputeNodeEndpointConfiguration(_serialization.Model):
     """The endpoint configuration for the Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar inbound_endpoints: Required. The list of inbound endpoints that are accessible on the
-     Compute Node.
+    :ivar inbound_endpoints: The list of inbound endpoints that are accessible on the Compute Node.
+     Required.
     :vartype inbound_endpoints: list[~azure-batch.models.InboundEndpoint]
     """
 
     _validation = {
-        'inbound_endpoints': {'required': True},
+        "inbound_endpoints": {"required": True},
     }
 
     _attribute_map = {
-        'inbound_endpoints': {'key': 'inboundEndpoints', 'type': '[InboundEndpoint]'},
+        "inbound_endpoints": {"key": "inboundEndpoints", "type": "[InboundEndpoint]"},
     }
 
-    def __init__(
-        self,
-        *,
-        inbound_endpoints: List["_models.InboundEndpoint"],
-        **kwargs
-    ):
+    def __init__(self, *, inbound_endpoints: List["_models.InboundEndpoint"], **kwargs):
         """
-        :keyword inbound_endpoints: Required. The list of inbound endpoints that are accessible on the
-         Compute Node.
+        :keyword inbound_endpoints: The list of inbound endpoints that are accessible on the Compute
+         Node. Required.
         :paramtype inbound_endpoints: list[~azure-batch.models.InboundEndpoint]
         """
-        super(ComputeNodeEndpointConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.inbound_endpoints = inbound_endpoints
 
 
-class ComputeNodeError(msrest.serialization.Model):
+class ComputeNodeError(_serialization.Model):
     """An error encountered by a Compute Node.
 
     :ivar code: An identifier for the Compute Node error. Codes are invariant and are intended to
@@ -3493,9 +3720,9 @@ class ComputeNodeError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'error_details': {'key': 'errorDetails', 'type': '[NameValuePair]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "error_details": {"key": "errorDetails", "type": "[NameValuePair]"},
     }
 
     def __init__(
@@ -3516,13 +3743,13 @@ class ComputeNodeError(msrest.serialization.Model):
         :keyword error_details: The list of additional error details related to the Compute Node error.
         :paramtype error_details: list[~azure-batch.models.NameValuePair]
         """
-        super(ComputeNodeError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.error_details = error_details
 
 
-class ComputeNodeExtensionGetOptions(msrest.serialization.Model):
+class ComputeNodeExtensionGetOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -3542,20 +3769,20 @@ class ComputeNodeExtensionGetOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
         select: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3575,7 +3802,7 @@ class ComputeNodeExtensionGetOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeExtensionGetOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.timeout = timeout
         self.client_request_id = client_request_id
@@ -3583,7 +3810,7 @@ class ComputeNodeExtensionGetOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class ComputeNodeExtensionListOptions(msrest.serialization.Model):
+class ComputeNodeExtensionListOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -3606,26 +3833,26 @@ class ComputeNodeExtensionListOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
         select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3648,7 +3875,7 @@ class ComputeNodeExtensionListOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeExtensionListOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.max_results = max_results
         self.timeout = timeout
@@ -3657,7 +3884,7 @@ class ComputeNodeExtensionListOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class ComputeNodeGetOptions(msrest.serialization.Model):
+class ComputeNodeGetOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -3677,20 +3904,20 @@ class ComputeNodeGetOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
         select: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3710,7 +3937,7 @@ class ComputeNodeGetOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeGetOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.timeout = timeout
         self.client_request_id = client_request_id
@@ -3718,7 +3945,7 @@ class ComputeNodeGetOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class ComputeNodeGetRemoteDesktopOptions(msrest.serialization.Model):
+class ComputeNodeGetRemoteDesktopOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -3736,18 +3963,18 @@ class ComputeNodeGetRemoteDesktopOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3765,14 +3992,14 @@ class ComputeNodeGetRemoteDesktopOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeGetRemoteDesktopOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeGetRemoteLoginSettingsOptions(msrest.serialization.Model):
+class ComputeNodeGetRemoteLoginSettingsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -3790,18 +4017,18 @@ class ComputeNodeGetRemoteLoginSettingsOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -3819,55 +4046,49 @@ class ComputeNodeGetRemoteLoginSettingsOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeGetRemoteLoginSettingsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeGetRemoteLoginSettingsResult(msrest.serialization.Model):
+class ComputeNodeGetRemoteLoginSettingsResult(_serialization.Model):
     """The remote login settings for a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar remote_login_ip_address: Required. The IP address used for remote login to the Compute
-     Node.
+    :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
+     Required.
     :vartype remote_login_ip_address: str
-    :ivar remote_login_port: Required. The port used for remote login to the Compute Node.
+    :ivar remote_login_port: The port used for remote login to the Compute Node. Required.
     :vartype remote_login_port: int
     """
 
     _validation = {
-        'remote_login_ip_address': {'required': True},
-        'remote_login_port': {'required': True},
+        "remote_login_ip_address": {"required": True},
+        "remote_login_port": {"required": True},
     }
 
     _attribute_map = {
-        'remote_login_ip_address': {'key': 'remoteLoginIPAddress', 'type': 'str'},
-        'remote_login_port': {'key': 'remoteLoginPort', 'type': 'int'},
+        "remote_login_ip_address": {"key": "remoteLoginIPAddress", "type": "str"},
+        "remote_login_port": {"key": "remoteLoginPort", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        remote_login_ip_address: str,
-        remote_login_port: int,
-        **kwargs
-    ):
+    def __init__(self, *, remote_login_ip_address: str, remote_login_port: int, **kwargs):
         """
-        :keyword remote_login_ip_address: Required. The IP address used for remote login to the Compute
-         Node.
+        :keyword remote_login_ip_address: The IP address used for remote login to the Compute Node.
+         Required.
         :paramtype remote_login_ip_address: str
-        :keyword remote_login_port: Required. The port used for remote login to the Compute Node.
+        :keyword remote_login_port: The port used for remote login to the Compute Node. Required.
         :paramtype remote_login_port: int
         """
-        super(ComputeNodeGetRemoteLoginSettingsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.remote_login_ip_address = remote_login_ip_address
         self.remote_login_port = remote_login_port
 
 
-class ComputeNodeIdentityReference(msrest.serialization.Model):
+class ComputeNodeIdentityReference(_serialization.Model):
     """The reference to a user assigned identity associated with the Batch pool which a compute node will use.
 
     :ivar resource_id: The ARM resource id of the user assigned identity.
@@ -3875,24 +4096,19 @@ class ComputeNodeIdentityReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
         """
         :keyword resource_id: The ARM resource id of the user assigned identity.
         :paramtype resource_id: str
         """
-        super(ComputeNodeIdentityReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
 
 
-class ComputeNodeInformation(msrest.serialization.Model):
+class ComputeNodeInformation(_serialization.Model):
     """Information about the Compute Node on which a Task ran.
 
     :ivar affinity_id: An identifier for the Node on which the Task ran, which can be passed when
@@ -3911,12 +4127,12 @@ class ComputeNodeInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'affinity_id': {'key': 'affinityId', 'type': 'str'},
-        'node_url': {'key': 'nodeUrl', 'type': 'str'},
-        'pool_id': {'key': 'poolId', 'type': 'str'},
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'task_root_directory': {'key': 'taskRootDirectory', 'type': 'str'},
-        'task_root_directory_url': {'key': 'taskRootDirectoryUrl', 'type': 'str'},
+        "affinity_id": {"key": "affinityId", "type": "str"},
+        "node_url": {"key": "nodeUrl", "type": "str"},
+        "pool_id": {"key": "poolId", "type": "str"},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "task_root_directory": {"key": "taskRootDirectory", "type": "str"},
+        "task_root_directory_url": {"key": "taskRootDirectoryUrl", "type": "str"},
     }
 
     def __init__(
@@ -3946,7 +4162,7 @@ class ComputeNodeInformation(msrest.serialization.Model):
          Node.
         :paramtype task_root_directory_url: str
         """
-        super(ComputeNodeInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.affinity_id = affinity_id
         self.node_url = node_url
         self.pool_id = pool_id
@@ -3955,7 +4171,7 @@ class ComputeNodeInformation(msrest.serialization.Model):
         self.task_root_directory_url = task_root_directory_url
 
 
-class ComputeNodeListOptions(msrest.serialization.Model):
+class ComputeNodeListOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -3981,28 +4197,28 @@ class ComputeNodeListOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -4028,7 +4244,7 @@ class ComputeNodeListOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeListOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.select = select
         self.max_results = max_results
@@ -4038,7 +4254,7 @@ class ComputeNodeListOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class ComputeNodeListResult(msrest.serialization.Model):
+class ComputeNodeListResult(_serialization.Model):
     """The result of listing the Compute Nodes in a Pool.
 
     :ivar value: The list of Compute Nodes.
@@ -4048,16 +4264,12 @@ class ComputeNodeListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ComputeNode]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ComputeNode]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ComputeNode"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ComputeNode"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of Compute Nodes.
@@ -4065,12 +4277,12 @@ class ComputeNodeListResult(msrest.serialization.Model):
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(ComputeNodeListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class ComputeNodeRebootOptions(msrest.serialization.Model):
+class ComputeNodeRebootOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -4088,18 +4300,18 @@ class ComputeNodeRebootOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -4117,14 +4329,14 @@ class ComputeNodeRebootOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeRebootOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeReimageOptions(msrest.serialization.Model):
+class ComputeNodeReimageOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -4142,18 +4354,18 @@ class ComputeNodeReimageOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -4171,14 +4383,14 @@ class ComputeNodeReimageOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeReimageOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeUpdateUserOptions(msrest.serialization.Model):
+class ComputeNodeUpdateUserOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -4196,18 +4408,18 @@ class ComputeNodeUpdateUserOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -4225,14 +4437,14 @@ class ComputeNodeUpdateUserOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeUpdateUserOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeUploadBatchServiceLogsOptions(msrest.serialization.Model):
+class ComputeNodeUploadBatchServiceLogsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -4250,18 +4462,18 @@ class ComputeNodeUploadBatchServiceLogsOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -4279,19 +4491,19 @@ class ComputeNodeUploadBatchServiceLogsOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(ComputeNodeUploadBatchServiceLogsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class ComputeNodeUser(msrest.serialization.Model):
+class ComputeNodeUser(_serialization.Model):
     """A user Account for RDP or SSH access on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The user name of the Account.
+    :ivar name: The user name of the Account. Required.
     :vartype name: str
     :ivar is_admin: The default value is false.
     :vartype is_admin: bool
@@ -4311,15 +4523,15 @@ class ComputeNodeUser(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'password': {'key': 'password', 'type': 'str'},
-        'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "expiry_time": {"key": "expiryTime", "type": "iso-8601"},
+        "password": {"key": "password", "type": "str"},
+        "ssh_public_key": {"key": "sshPublicKey", "type": "str"},
     }
 
     def __init__(
@@ -4333,7 +4545,7 @@ class ComputeNodeUser(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The user name of the Account.
+        :keyword name: The user name of the Account. Required.
         :paramtype name: str
         :keyword is_admin: The default value is false.
         :paramtype is_admin: bool
@@ -4351,7 +4563,7 @@ class ComputeNodeUser(msrest.serialization.Model):
          calling the REST API directly, the HTTP status code is 400 (Bad Request).
         :paramtype ssh_public_key: str
         """
-        super(ComputeNodeUser, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.is_admin = is_admin
         self.expiry_time = expiry_time
@@ -4359,14 +4571,14 @@ class ComputeNodeUser(msrest.serialization.Model):
         self.ssh_public_key = ssh_public_key
 
 
-class ContainerConfiguration(msrest.serialization.Model):
+class ContainerConfiguration(_serialization.Model):
     """The configuration for container-enabled Pools.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: The container technology to be used. Has constant value: "dockerCompatible".
+    :ivar type: The container technology to be used. Required. Default value is "dockerCompatible".
     :vartype type: str
     :ivar container_image_names: This is the full Image reference, as would be specified to "docker
      pull". An Image will be sourced from the default Docker registry unless the Image is fully
@@ -4378,13 +4590,13 @@ class ContainerConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
+        "type": {"required": True, "constant": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'container_image_names': {'key': 'containerImageNames', 'type': '[str]'},
-        'container_registries': {'key': 'containerRegistries', 'type': '[ContainerRegistry]'},
+        "type": {"key": "type", "type": "str"},
+        "container_image_names": {"key": "containerImageNames", "type": "[str]"},
+        "container_registries": {"key": "containerRegistries", "type": "[ContainerRegistry]"},
     }
 
     type = "dockerCompatible"
@@ -4405,12 +4617,12 @@ class ContainerConfiguration(msrest.serialization.Model):
          requires credentials, then those credentials must be provided here.
         :paramtype container_registries: list[~azure-batch.models.ContainerRegistry]
         """
-        super(ContainerConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.container_image_names = container_image_names
         self.container_registries = container_registries
 
 
-class ContainerRegistry(msrest.serialization.Model):
+class ContainerRegistry(_serialization.Model):
     """A private container registry.
 
     :ivar user_name: The user name to log into the registry server.
@@ -4425,10 +4637,10 @@ class ContainerRegistry(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_name': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'registry_server': {'key': 'registryServer', 'type': 'str'},
-        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
+        "user_name": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "registry_server": {"key": "registryServer", "type": "str"},
+        "identity_reference": {"key": "identityReference", "type": "ComputeNodeIdentityReference"},
     }
 
     def __init__(
@@ -4451,43 +4663,43 @@ class ContainerRegistry(msrest.serialization.Model):
          Batch pool which a compute node will use.
         :paramtype identity_reference: ~azure-batch.models.ComputeNodeIdentityReference
         """
-        super(ContainerRegistry, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_name = user_name
         self.password = password
         self.registry_server = registry_server
         self.identity_reference = identity_reference
 
 
-class DataDisk(msrest.serialization.Model):
+class DataDisk(_serialization.Model):
     """Settings which will be used by the data disks associated to Compute Nodes in the Pool. When using attached data disks, you need to mount and format the disks from within a VM to use them.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar lun: Required. The lun is used to uniquely identify each data disk. If attaching multiple
-     disks, each should have a distinct lun. The value must be between 0 and 63, inclusive.
+    :ivar lun: The lun is used to uniquely identify each data disk. If attaching multiple disks,
+     each should have a distinct lun. The value must be between 0 and 63, inclusive. Required.
     :vartype lun: int
     :ivar caching: The default value for caching is readwrite. For information about the caching
      options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
-     Known values are: "none", "readonly", "readwrite".
+     Known values are: "none", "readonly", and "readwrite".
     :vartype caching: str or ~azure-batch.models.CachingType
-    :ivar disk_size_gb: Required. The initial disk size in gigabytes.
+    :ivar disk_size_gb: The initial disk size in gigabytes. Required.
     :vartype disk_size_gb: int
     :ivar storage_account_type: If omitted, the default is "standard_lrs". Known values are:
-     "standard_lrs", "premium_lrs".
+     "standard_lrs" and "premium_lrs".
     :vartype storage_account_type: str or ~azure-batch.models.StorageAccountType
     """
 
     _validation = {
-        'lun': {'required': True},
-        'disk_size_gb': {'required': True},
+        "lun": {"required": True},
+        "disk_size_gb": {"required": True},
     }
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'int'},
-        'caching': {'key': 'caching', 'type': 'str'},
-        'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
-        'storage_account_type': {'key': 'storageAccountType', 'type': 'str'},
+        "lun": {"key": "lun", "type": "int"},
+        "caching": {"key": "caching", "type": "str"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
     }
 
     def __init__(
@@ -4500,28 +4712,28 @@ class DataDisk(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword lun: Required. The lun is used to uniquely identify each data disk. If attaching
-         multiple disks, each should have a distinct lun. The value must be between 0 and 63, inclusive.
+        :keyword lun: The lun is used to uniquely identify each data disk. If attaching multiple disks,
+         each should have a distinct lun. The value must be between 0 and 63, inclusive. Required.
         :paramtype lun: int
         :keyword caching: The default value for caching is readwrite. For information about the caching
          options see:
          https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
-         Known values are: "none", "readonly", "readwrite".
+         Known values are: "none", "readonly", and "readwrite".
         :paramtype caching: str or ~azure-batch.models.CachingType
-        :keyword disk_size_gb: Required. The initial disk size in gigabytes.
+        :keyword disk_size_gb: The initial disk size in gigabytes. Required.
         :paramtype disk_size_gb: int
         :keyword storage_account_type: If omitted, the default is "standard_lrs". Known values are:
-         "standard_lrs", "premium_lrs".
+         "standard_lrs" and "premium_lrs".
         :paramtype storage_account_type: str or ~azure-batch.models.StorageAccountType
         """
-        super(DataDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.lun = lun
         self.caching = caching
         self.disk_size_gb = disk_size_gb
         self.storage_account_type = storage_account_type
 
 
-class DeleteCertificateError(msrest.serialization.Model):
+class DeleteCertificateError(_serialization.Model):
     """An error encountered by the Batch service when deleting a Certificate.
 
     :ivar code: An identifier for the Certificate deletion error. Codes are invariant and are
@@ -4537,9 +4749,9 @@ class DeleteCertificateError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[NameValuePair]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "values": {"key": "values", "type": "[NameValuePair]"},
     }
 
     def __init__(
@@ -4562,13 +4774,13 @@ class DeleteCertificateError(msrest.serialization.Model):
          Certificate, the list contains only about the first hundred.
         :paramtype values: list[~azure-batch.models.NameValuePair]
         """
-        super(DeleteCertificateError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.values = values
 
 
-class DiffDiskSettings(msrest.serialization.Model):
+class DiffDiskSettings(_serialization.Model):
     """Specifies the ephemeral Disk Settings for the operating system disk used by the compute node (VM).
 
     :ivar placement: This property can be used by user in the request to choose the location e.g.,
@@ -4577,20 +4789,15 @@ class DiffDiskSettings(msrest.serialization.Model):
      https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
      and Linux VMs at
      https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements.
-     The only acceptable values to pass in are None and "CacheDisk". The default value is None.
+     Default value is "CacheDisk".
     :vartype placement: str
     """
 
     _attribute_map = {
-        'placement': {'key': 'placement', 'type': 'str'},
+        "placement": {"key": "placement", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        placement: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, placement: Optional[str] = None, **kwargs):
         """
         :keyword placement: This property can be used by user in the request to choose the location
          e.g., cache disk space for Ephemeral OS disk provisioning. For more information on Ephemeral OS
@@ -4598,14 +4805,14 @@ class DiffDiskSettings(msrest.serialization.Model):
          https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
          and Linux VMs at
          https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements.
-         The only acceptable values to pass in are None and "CacheDisk". The default value is None.
+         Default value is "CacheDisk".
         :paramtype placement: str
         """
-        super(DiffDiskSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.placement = placement
 
 
-class DiskEncryptionConfiguration(msrest.serialization.Model):
+class DiskEncryptionConfiguration(_serialization.Model):
     """The disk encryption configuration applied on compute nodes in the pool. Disk encryption configuration is not supported on Linux pool created with Shared Image Gallery Image.
 
     :ivar targets: If omitted, no disks on the compute nodes in the pool will be encrypted. On
@@ -4615,64 +4822,53 @@ class DiskEncryptionConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'targets': {'key': 'targets', 'type': '[str]'},
+        "targets": {"key": "targets", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = None, **kwargs):
         """
         :keyword targets: If omitted, no disks on the compute nodes in the pool will be encrypted. On
          Linux pool, only "TemporaryDisk" is supported; on Windows pool, "OsDisk" and "TemporaryDisk"
          must be specified.
         :paramtype targets: list[str or ~azure-batch.models.DiskEncryptionTarget]
         """
-        super(DiskEncryptionConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.targets = targets
 
 
-class EnvironmentSetting(msrest.serialization.Model):
+class EnvironmentSetting(_serialization.Model):
     """An environment variable to be set on a Task process.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the environment variable.
+    :ivar name: The name of the environment variable. Required.
     :vartype name: str
     :ivar value: The value of the environment variable.
     :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. The name of the environment variable.
+        :keyword name: The name of the environment variable. Required.
         :paramtype name: str
         :keyword value: The value of the environment variable.
         :paramtype value: str
         """
-        super(EnvironmentSetting, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class ErrorMessage(msrest.serialization.Model):
+class ErrorMessage(_serialization.Model):
     """An error message received in an Azure Batch error response.
 
     :ivar lang: The language code of the error message.
@@ -4682,119 +4878,100 @@ class ErrorMessage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lang': {'key': 'lang', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "lang": {"key": "lang", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        lang: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, lang: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword lang: The language code of the error message.
         :paramtype lang: str
         :keyword value: The text of the message.
         :paramtype value: str
         """
-        super(ErrorMessage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.lang = lang
         self.value = value
 
 
-class ExitCodeMapping(msrest.serialization.Model):
+class ExitCodeMapping(_serialization.Model):
     """How the Batch service should respond if a Task exits with a particular exit code.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. A process exit code.
+    :ivar code: A process exit code. Required.
     :vartype code: int
-    :ivar exit_options: Required. Specifies how the Batch service responds to a particular exit
-     condition.
+    :ivar exit_options: Specifies how the Batch service responds to a particular exit condition.
+     Required.
     :vartype exit_options: ~azure-batch.models.ExitOptions
     """
 
     _validation = {
-        'code': {'required': True},
-        'exit_options': {'required': True},
+        "code": {"required": True},
+        "exit_options": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'int'},
-        'exit_options': {'key': 'exitOptions', 'type': 'ExitOptions'},
+        "code": {"key": "code", "type": "int"},
+        "exit_options": {"key": "exitOptions", "type": "ExitOptions"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: int,
-        exit_options: "_models.ExitOptions",
-        **kwargs
-    ):
+    def __init__(self, *, code: int, exit_options: "_models.ExitOptions", **kwargs):
         """
-        :keyword code: Required. A process exit code.
+        :keyword code: A process exit code. Required.
         :paramtype code: int
-        :keyword exit_options: Required. Specifies how the Batch service responds to a particular exit
-         condition.
+        :keyword exit_options: Specifies how the Batch service responds to a particular exit condition.
+         Required.
         :paramtype exit_options: ~azure-batch.models.ExitOptions
         """
-        super(ExitCodeMapping, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.exit_options = exit_options
 
 
-class ExitCodeRangeMapping(msrest.serialization.Model):
+class ExitCodeRangeMapping(_serialization.Model):
     """A range of exit codes and how the Batch service should respond to exit codes within that range.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start: Required. The first exit code in the range.
+    :ivar start: The first exit code in the range. Required.
     :vartype start: int
-    :ivar end: Required. The last exit code in the range.
+    :ivar end: The last exit code in the range. Required.
     :vartype end: int
-    :ivar exit_options: Required. Specifies how the Batch service responds to a particular exit
-     condition.
+    :ivar exit_options: Specifies how the Batch service responds to a particular exit condition.
+     Required.
     :vartype exit_options: ~azure-batch.models.ExitOptions
     """
 
     _validation = {
-        'start': {'required': True},
-        'end': {'required': True},
-        'exit_options': {'required': True},
+        "start": {"required": True},
+        "end": {"required": True},
+        "exit_options": {"required": True},
     }
 
     _attribute_map = {
-        'start': {'key': 'start', 'type': 'int'},
-        'end': {'key': 'end', 'type': 'int'},
-        'exit_options': {'key': 'exitOptions', 'type': 'ExitOptions'},
+        "start": {"key": "start", "type": "int"},
+        "end": {"key": "end", "type": "int"},
+        "exit_options": {"key": "exitOptions", "type": "ExitOptions"},
     }
 
-    def __init__(
-        self,
-        *,
-        start: int,
-        end: int,
-        exit_options: "_models.ExitOptions",
-        **kwargs
-    ):
+    def __init__(self, *, start: int, end: int, exit_options: "_models.ExitOptions", **kwargs):
         """
-        :keyword start: Required. The first exit code in the range.
+        :keyword start: The first exit code in the range. Required.
         :paramtype start: int
-        :keyword end: Required. The last exit code in the range.
+        :keyword end: The last exit code in the range. Required.
         :paramtype end: int
-        :keyword exit_options: Required. Specifies how the Batch service responds to a particular exit
-         condition.
+        :keyword exit_options: Specifies how the Batch service responds to a particular exit condition.
+         Required.
         :paramtype exit_options: ~azure-batch.models.ExitOptions
         """
-        super(ExitCodeRangeMapping, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start = start
         self.end = end
         self.exit_options = exit_options
 
 
-class ExitConditions(msrest.serialization.Model):
+class ExitConditions(_serialization.Model):
     """Specifies how the Batch service should respond when the Task completes.
 
     :ivar exit_codes: A list of individual Task exit codes and how the Batch service should respond
@@ -4819,11 +4996,11 @@ class ExitConditions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exit_codes': {'key': 'exitCodes', 'type': '[ExitCodeMapping]'},
-        'exit_code_ranges': {'key': 'exitCodeRanges', 'type': '[ExitCodeRangeMapping]'},
-        'pre_processing_error': {'key': 'preProcessingError', 'type': 'ExitOptions'},
-        'file_upload_error': {'key': 'fileUploadError', 'type': 'ExitOptions'},
-        'default': {'key': 'default', 'type': 'ExitOptions'},
+        "exit_codes": {"key": "exitCodes", "type": "[ExitCodeMapping]"},
+        "exit_code_ranges": {"key": "exitCodeRanges", "type": "[ExitCodeRangeMapping]"},
+        "pre_processing_error": {"key": "preProcessingError", "type": "ExitOptions"},
+        "file_upload_error": {"key": "fileUploadError", "type": "ExitOptions"},
+        "default": {"key": "default", "type": "ExitOptions"},
     }
 
     def __init__(
@@ -4857,7 +5034,7 @@ class ExitConditions(msrest.serialization.Model):
          explicitly using the exitCodes or exitCodeRanges collection.
         :paramtype default: ~azure-batch.models.ExitOptions
         """
-        super(ExitConditions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.exit_codes = exit_codes
         self.exit_code_ranges = exit_code_ranges
         self.pre_processing_error = pre_processing_error
@@ -4865,24 +5042,24 @@ class ExitConditions(msrest.serialization.Model):
         self.default = default
 
 
-class ExitOptions(msrest.serialization.Model):
+class ExitOptions(_serialization.Model):
     """Specifies how the Batch service responds to a particular exit condition.
 
     :ivar job_action: The default is none for exit code 0 and terminate for all other exit
      conditions. If the Job's onTaskFailed property is noaction, then specifying this property
      returns an error and the add Task request fails with an invalid property value error; if you
      are calling the REST API directly, the HTTP status code is 400 (Bad Request). Known values are:
-     "none", "disable", "terminate".
+     "none", "disable", and "terminate".
     :vartype job_action: str or ~azure-batch.models.JobAction
     :ivar dependency_action: Possible values are 'satisfy' (allowing dependent tasks to progress)
      and 'block' (dependent tasks continue to wait). Batch does not yet support cancellation of
-     dependent tasks. Known values are: "satisfy", "block".
+     dependent tasks. Known values are: "satisfy" and "block".
     :vartype dependency_action: str or ~azure-batch.models.DependencyAction
     """
 
     _attribute_map = {
-        'job_action': {'key': 'jobAction', 'type': 'str'},
-        'dependency_action': {'key': 'dependencyAction', 'type': 'str'},
+        "job_action": {"key": "jobAction", "type": "str"},
+        "dependency_action": {"key": "dependencyAction", "type": "str"},
     }
 
     def __init__(
@@ -4897,19 +5074,19 @@ class ExitOptions(msrest.serialization.Model):
          conditions. If the Job's onTaskFailed property is noaction, then specifying this property
          returns an error and the add Task request fails with an invalid property value error; if you
          are calling the REST API directly, the HTTP status code is 400 (Bad Request). Known values are:
-         "none", "disable", "terminate".
+         "none", "disable", and "terminate".
         :paramtype job_action: str or ~azure-batch.models.JobAction
         :keyword dependency_action: Possible values are 'satisfy' (allowing dependent tasks to
          progress) and 'block' (dependent tasks continue to wait). Batch does not yet support
-         cancellation of dependent tasks. Known values are: "satisfy", "block".
+         cancellation of dependent tasks. Known values are: "satisfy" and "block".
         :paramtype dependency_action: str or ~azure-batch.models.DependencyAction
         """
-        super(ExitOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.job_action = job_action
         self.dependency_action = dependency_action
 
 
-class FileDeleteFromComputeNodeOptions(msrest.serialization.Model):
+class FileDeleteFromComputeNodeOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -4927,18 +5104,18 @@ class FileDeleteFromComputeNodeOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -4956,14 +5133,14 @@ class FileDeleteFromComputeNodeOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(FileDeleteFromComputeNodeOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class FileDeleteFromTaskOptions(msrest.serialization.Model):
+class FileDeleteFromTaskOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -4981,18 +5158,18 @@ class FileDeleteFromTaskOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -5010,14 +5187,14 @@ class FileDeleteFromTaskOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(FileDeleteFromTaskOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class FileGetFromComputeNodeOptions(msrest.serialization.Model):
+class FileGetFromComputeNodeOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -5046,21 +5223,21 @@ class FileGetFromComputeNodeOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'ocp_range': {'key': 'ocp-range', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "ocp_range": {"key": "ocp-range", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
@@ -5092,7 +5269,7 @@ class FileGetFromComputeNodeOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(FileGetFromComputeNodeOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -5102,7 +5279,7 @@ class FileGetFromComputeNodeOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class FileGetFromTaskOptions(msrest.serialization.Model):
+class FileGetFromTaskOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -5131,21 +5308,21 @@ class FileGetFromTaskOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'ocp_range': {'key': 'ocp-range', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "ocp_range": {"key": "ocp-range", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
@@ -5177,7 +5354,7 @@ class FileGetFromTaskOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(FileGetFromTaskOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -5187,7 +5364,7 @@ class FileGetFromTaskOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class FileGetPropertiesFromComputeNodeOptions(msrest.serialization.Model):
+class FileGetPropertiesFromComputeNodeOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -5213,20 +5390,20 @@ class FileGetPropertiesFromComputeNodeOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5254,7 +5431,7 @@ class FileGetPropertiesFromComputeNodeOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(FileGetPropertiesFromComputeNodeOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -5263,7 +5440,7 @@ class FileGetPropertiesFromComputeNodeOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class FileGetPropertiesFromTaskOptions(msrest.serialization.Model):
+class FileGetPropertiesFromTaskOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -5289,20 +5466,20 @@ class FileGetPropertiesFromTaskOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5330,7 +5507,7 @@ class FileGetPropertiesFromTaskOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(FileGetPropertiesFromTaskOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -5339,7 +5516,7 @@ class FileGetPropertiesFromTaskOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class FileListFromComputeNodeOptions(msrest.serialization.Model):
+class FileListFromComputeNodeOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -5363,26 +5540,26 @@ class FileListFromComputeNodeOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -5406,7 +5583,7 @@ class FileListFromComputeNodeOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(FileListFromComputeNodeOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.max_results = max_results
         self.timeout = timeout
@@ -5415,7 +5592,7 @@ class FileListFromComputeNodeOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class FileListFromTaskOptions(msrest.serialization.Model):
+class FileListFromTaskOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -5439,26 +5616,26 @@ class FileListFromTaskOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -5482,7 +5659,7 @@ class FileListFromTaskOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(FileListFromTaskOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.max_results = max_results
         self.timeout = timeout
@@ -5491,17 +5668,17 @@ class FileListFromTaskOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class FileProperties(msrest.serialization.Model):
+class FileProperties(_serialization.Model):
     """The properties of a file on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar creation_time: The creation time is not returned for files on Linux Compute Nodes.
     :vartype creation_time: ~datetime.datetime
-    :ivar last_modified: Required. The time at which the file was last modified.
+    :ivar last_modified: The time at which the file was last modified. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar content_length: Required. The length of the file.
-    :vartype content_length: long
+    :ivar content_length: The length of the file. Required.
+    :vartype content_length: int
     :ivar content_type: The content type of the file.
     :vartype content_type: str
     :ivar file_mode: The file mode is returned only for files on Linux Compute Nodes.
@@ -5509,16 +5686,16 @@ class FileProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'last_modified': {'required': True},
-        'content_length': {'required': True},
+        "last_modified": {"required": True},
+        "content_length": {"required": True},
     }
 
     _attribute_map = {
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'content_length': {'key': 'contentLength', 'type': 'long'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'file_mode': {'key': 'fileMode', 'type': 'str'},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "content_length": {"key": "contentLength", "type": "int"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "file_mode": {"key": "fileMode", "type": "str"},
     }
 
     def __init__(
@@ -5534,16 +5711,16 @@ class FileProperties(msrest.serialization.Model):
         """
         :keyword creation_time: The creation time is not returned for files on Linux Compute Nodes.
         :paramtype creation_time: ~datetime.datetime
-        :keyword last_modified: Required. The time at which the file was last modified.
+        :keyword last_modified: The time at which the file was last modified. Required.
         :paramtype last_modified: ~datetime.datetime
-        :keyword content_length: Required. The length of the file.
-        :paramtype content_length: long
+        :keyword content_length: The length of the file. Required.
+        :paramtype content_length: int
         :keyword content_type: The content type of the file.
         :paramtype content_type: str
         :keyword file_mode: The file mode is returned only for files on Linux Compute Nodes.
         :paramtype file_mode: str
         """
-        super(FileProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.creation_time = creation_time
         self.last_modified = last_modified
         self.content_length = content_length
@@ -5551,60 +5728,54 @@ class FileProperties(msrest.serialization.Model):
         self.file_mode = file_mode
 
 
-class HttpHeader(msrest.serialization.Model):
+class HttpHeader(_serialization.Model):
     """An HTTP header name-value pair.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The case-insensitive name of the header to be used while uploading output
-     files.
+    :ivar name: The case-insensitive name of the header to be used while uploading output files.
+     Required.
     :vartype name: str
     :ivar value: The value of the header to be used while uploading output files.
     :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. The case-insensitive name of the header to be used while uploading
-         output files.
+        :keyword name: The case-insensitive name of the header to be used while uploading output files.
+         Required.
         :paramtype name: str
         :keyword value: The value of the header to be used while uploading output files.
         :paramtype value: str
         """
-        super(HttpHeader, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class ImageInformation(msrest.serialization.Model):
+class ImageInformation(_serialization.Model):
     """A reference to the Azure Virtual Machines Marketplace Image and additional information about the Image.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar node_agent_sku_id: Required. The ID of the Compute Node agent SKU which the Image
-     supports.
+    :ivar node_agent_sku_id: The ID of the Compute Node agent SKU which the Image supports.
+     Required.
     :vartype node_agent_sku_id: str
-    :ivar image_reference: Required. A reference to an Azure Virtual Machines Marketplace Image or
-     a Shared Image Gallery Image. To get the list of all Azure Marketplace Image references
-     verified by Azure Batch, see the 'List Supported Images' operation.
+    :ivar image_reference: A reference to an Azure Virtual Machines Marketplace Image or a Shared
+     Image Gallery Image. To get the list of all Azure Marketplace Image references verified by
+     Azure Batch, see the 'List Supported Images' operation. Required.
     :vartype image_reference: ~azure-batch.models.ImageReference
-    :ivar os_type: Required. The type of operating system (e.g. Windows or Linux) of the Image.
-     Known values are: "linux", "windows".
+    :ivar os_type: The type of operating system (e.g. Windows or Linux) of the Image. Required.
+     Known values are: "linux" and "windows".
     :vartype os_type: str or ~azure-batch.models.OSType
     :ivar capabilities: Not every capability of the Image is listed. Capabilities in this list are
      considered of special interest and are generally related to integration with other features in
@@ -5613,26 +5784,26 @@ class ImageInformation(msrest.serialization.Model):
     :ivar batch_support_end_of_life: The time when the Azure Batch service will stop accepting
      create Pool requests for the Image.
     :vartype batch_support_end_of_life: ~datetime.datetime
-    :ivar verification_type: Required. Whether the Azure Batch service actively verifies that the
-     Image is compatible with the associated Compute Node agent SKU. Known values are: "verified",
-     "unverified".
+    :ivar verification_type: Whether the Azure Batch service actively verifies that the Image is
+     compatible with the associated Compute Node agent SKU. Required. Known values are: "verified"
+     and "unverified".
     :vartype verification_type: str or ~azure-batch.models.VerificationType
     """
 
     _validation = {
-        'node_agent_sku_id': {'required': True},
-        'image_reference': {'required': True},
-        'os_type': {'required': True},
-        'verification_type': {'required': True},
+        "node_agent_sku_id": {"required": True},
+        "image_reference": {"required": True},
+        "os_type": {"required": True},
+        "verification_type": {"required": True},
     }
 
     _attribute_map = {
-        'node_agent_sku_id': {'key': 'nodeAgentSKUId', 'type': 'str'},
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'capabilities': {'key': 'capabilities', 'type': '[str]'},
-        'batch_support_end_of_life': {'key': 'batchSupportEndOfLife', 'type': 'iso-8601'},
-        'verification_type': {'key': 'verificationType', 'type': 'str'},
+        "node_agent_sku_id": {"key": "nodeAgentSKUId", "type": "str"},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "os_type": {"key": "osType", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "[str]"},
+        "batch_support_end_of_life": {"key": "batchSupportEndOfLife", "type": "iso-8601"},
+        "verification_type": {"key": "verificationType", "type": "str"},
     }
 
     def __init__(
@@ -5647,15 +5818,15 @@ class ImageInformation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword node_agent_sku_id: Required. The ID of the Compute Node agent SKU which the Image
-         supports.
+        :keyword node_agent_sku_id: The ID of the Compute Node agent SKU which the Image supports.
+         Required.
         :paramtype node_agent_sku_id: str
-        :keyword image_reference: Required. A reference to an Azure Virtual Machines Marketplace Image
-         or a Shared Image Gallery Image. To get the list of all Azure Marketplace Image references
-         verified by Azure Batch, see the 'List Supported Images' operation.
+        :keyword image_reference: A reference to an Azure Virtual Machines Marketplace Image or a
+         Shared Image Gallery Image. To get the list of all Azure Marketplace Image references verified
+         by Azure Batch, see the 'List Supported Images' operation. Required.
         :paramtype image_reference: ~azure-batch.models.ImageReference
-        :keyword os_type: Required. The type of operating system (e.g. Windows or Linux) of the Image.
-         Known values are: "linux", "windows".
+        :keyword os_type: The type of operating system (e.g. Windows or Linux) of the Image. Required.
+         Known values are: "linux" and "windows".
         :paramtype os_type: str or ~azure-batch.models.OSType
         :keyword capabilities: Not every capability of the Image is listed. Capabilities in this list
          are considered of special interest and are generally related to integration with other features
@@ -5664,12 +5835,12 @@ class ImageInformation(msrest.serialization.Model):
         :keyword batch_support_end_of_life: The time when the Azure Batch service will stop accepting
          create Pool requests for the Image.
         :paramtype batch_support_end_of_life: ~datetime.datetime
-        :keyword verification_type: Required. Whether the Azure Batch service actively verifies that
-         the Image is compatible with the associated Compute Node agent SKU. Known values are:
-         "verified", "unverified".
+        :keyword verification_type: Whether the Azure Batch service actively verifies that the Image is
+         compatible with the associated Compute Node agent SKU. Required. Known values are: "verified"
+         and "unverified".
         :paramtype verification_type: str or ~azure-batch.models.VerificationType
         """
-        super(ImageInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_agent_sku_id = node_agent_sku_id
         self.image_reference = image_reference
         self.os_type = os_type
@@ -5678,7 +5849,7 @@ class ImageInformation(msrest.serialization.Model):
         self.verification_type = verification_type
 
 
-class ImageReference(msrest.serialization.Model):
+class ImageReference(_serialization.Model):
     """A reference to an Azure Virtual Machines Marketplace Image or a Shared Image Gallery Image. To get the list of all Azure Marketplace Image references verified by Azure Batch, see the 'List Supported Images' operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5706,16 +5877,16 @@ class ImageReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'exact_version': {'readonly': True},
+        "exact_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'str'},
-        'exact_version': {'key': 'exactVersion', 'type': 'str'},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "virtual_machine_image_id": {"key": "virtualMachineImageId", "type": "str"},
+        "exact_version": {"key": "exactVersion", "type": "str"},
     }
 
     def __init__(
@@ -5746,7 +5917,7 @@ class ImageReference(msrest.serialization.Model):
          https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
         :paramtype virtual_machine_image_id: str
         """
-        super(ImageReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
@@ -5755,41 +5926,41 @@ class ImageReference(msrest.serialization.Model):
         self.exact_version = None
 
 
-class InboundEndpoint(msrest.serialization.Model):
+class InboundEndpoint(_serialization.Model):
     """An inbound endpoint on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the endpoint.
+    :ivar name: The name of the endpoint. Required.
     :vartype name: str
-    :ivar protocol: Required. The protocol of the endpoint. Known values are: "tcp", "udp".
+    :ivar protocol: The protocol of the endpoint. Required. Known values are: "tcp" and "udp".
     :vartype protocol: str or ~azure-batch.models.InboundEndpointProtocol
-    :ivar public_ip_address: Required. The public IP address of the Compute Node.
+    :ivar public_ip_address: The public IP address of the Compute Node. Required.
     :vartype public_ip_address: str
-    :ivar public_fqdn: Required. The public fully qualified domain name for the Compute Node.
+    :ivar public_fqdn: The public fully qualified domain name for the Compute Node. Required.
     :vartype public_fqdn: str
-    :ivar frontend_port: Required. The public port number of the endpoint.
+    :ivar frontend_port: The public port number of the endpoint. Required.
     :vartype frontend_port: int
-    :ivar backend_port: Required. The backend port number of the endpoint.
+    :ivar backend_port: The backend port number of the endpoint. Required.
     :vartype backend_port: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'protocol': {'required': True},
-        'public_ip_address': {'required': True},
-        'public_fqdn': {'required': True},
-        'frontend_port': {'required': True},
-        'backend_port': {'required': True},
+        "name": {"required": True},
+        "protocol": {"required": True},
+        "public_ip_address": {"required": True},
+        "public_fqdn": {"required": True},
+        "frontend_port": {"required": True},
+        "backend_port": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIPAddress', 'type': 'str'},
-        'public_fqdn': {'key': 'publicFQDN', 'type': 'str'},
-        'frontend_port': {'key': 'frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "public_ip_address": {"key": "publicIPAddress", "type": "str"},
+        "public_fqdn": {"key": "publicFQDN", "type": "str"},
+        "frontend_port": {"key": "frontendPort", "type": "int"},
+        "backend_port": {"key": "backendPort", "type": "int"},
     }
 
     def __init__(
@@ -5804,20 +5975,20 @@ class InboundEndpoint(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the endpoint.
+        :keyword name: The name of the endpoint. Required.
         :paramtype name: str
-        :keyword protocol: Required. The protocol of the endpoint. Known values are: "tcp", "udp".
+        :keyword protocol: The protocol of the endpoint. Required. Known values are: "tcp" and "udp".
         :paramtype protocol: str or ~azure-batch.models.InboundEndpointProtocol
-        :keyword public_ip_address: Required. The public IP address of the Compute Node.
+        :keyword public_ip_address: The public IP address of the Compute Node. Required.
         :paramtype public_ip_address: str
-        :keyword public_fqdn: Required. The public fully qualified domain name for the Compute Node.
+        :keyword public_fqdn: The public fully qualified domain name for the Compute Node. Required.
         :paramtype public_fqdn: str
-        :keyword frontend_port: Required. The public port number of the endpoint.
+        :keyword frontend_port: The public port number of the endpoint. Required.
         :paramtype frontend_port: int
-        :keyword backend_port: Required. The backend port number of the endpoint.
+        :keyword backend_port: The backend port number of the endpoint. Required.
         :paramtype backend_port: int
         """
-        super(InboundEndpoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.protocol = protocol
         self.public_ip_address = public_ip_address
@@ -5826,31 +5997,31 @@ class InboundEndpoint(msrest.serialization.Model):
         self.backend_port = backend_port
 
 
-class InboundNATPool(msrest.serialization.Model):
+class InboundNATPool(_serialization.Model):
     """A inbound NAT Pool that can be used to address specific ports on Compute Nodes in a Batch Pool externally.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name must be unique within a Batch Pool, can contain letters,
-     numbers, underscores, periods, and hyphens. Names must start with a letter or number, must end
-     with a letter, number, or underscore, and cannot exceed 77 characters.  If any invalid values
-     are provided the request fails with HTTP status code 400.
+    :ivar name: The name must be unique within a Batch Pool, can contain letters, numbers,
+     underscores, periods, and hyphens. Names must start with a letter or number, must end with a
+     letter, number, or underscore, and cannot exceed 77 characters.  If any invalid values are
+     provided the request fails with HTTP status code 400. Required.
     :vartype name: str
-    :ivar protocol: Required. The protocol of the endpoint. Known values are: "tcp", "udp".
+    :ivar protocol: The protocol of the endpoint. Required. Known values are: "tcp" and "udp".
     :vartype protocol: str or ~azure-batch.models.InboundEndpointProtocol
-    :ivar backend_port: Required. This must be unique within a Batch Pool. Acceptable values are
-     between 1 and 65535 except for 22, 3389, 29876 and 29877 as these are reserved. If any reserved
-     values are provided the request fails with HTTP status code 400.
+    :ivar backend_port: This must be unique within a Batch Pool. Acceptable values are between 1
+     and 65535 except for 22, 3389, 29876 and 29877 as these are reserved. If any reserved values
+     are provided the request fails with HTTP status code 400. Required.
     :vartype backend_port: int
-    :ivar frontend_port_range_start: Required. Acceptable values range between 1 and 65534 except
-     ports from 50000 to 55000 which are reserved. All ranges within a Pool must be distinct and
-     cannot overlap. Each range must contain at least 40 ports. If any reserved or overlapping
-     values are provided the request fails with HTTP status code 400.
+    :ivar frontend_port_range_start: Acceptable values range between 1 and 65534 except ports from
+     50000 to 55000 which are reserved. All ranges within a Pool must be distinct and cannot
+     overlap. Each range must contain at least 40 ports. If any reserved or overlapping values are
+     provided the request fails with HTTP status code 400. Required.
     :vartype frontend_port_range_start: int
-    :ivar frontend_port_range_end: Required. Acceptable values range between 1 and 65534 except
-     ports from 50000 to 55000 which are reserved by the Batch service. All ranges within a Pool
-     must be distinct and cannot overlap. Each range must contain at least 40 ports. If any reserved
-     or overlapping values are provided the request fails with HTTP status code 400.
+    :ivar frontend_port_range_end: Acceptable values range between 1 and 65534 except ports from
+     50000 to 55000 which are reserved by the Batch service. All ranges within a Pool must be
+     distinct and cannot overlap. Each range must contain at least 40 ports. If any reserved or
+     overlapping values are provided the request fails with HTTP status code 400. Required.
     :vartype frontend_port_range_end: int
     :ivar network_security_group_rules: The maximum number of rules that can be specified across
      all the endpoints on a Batch Pool is 25. If no network security group rules are specified, a
@@ -5861,20 +6032,20 @@ class InboundNATPool(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'protocol': {'required': True},
-        'backend_port': {'required': True},
-        'frontend_port_range_start': {'required': True},
-        'frontend_port_range_end': {'required': True},
+        "name": {"required": True},
+        "protocol": {"required": True},
+        "backend_port": {"required": True},
+        "frontend_port_range_start": {"required": True},
+        "frontend_port_range_end": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-        'frontend_port_range_start': {'key': 'frontendPortRangeStart', 'type': 'int'},
-        'frontend_port_range_end': {'key': 'frontendPortRangeEnd', 'type': 'int'},
-        'network_security_group_rules': {'key': 'networkSecurityGroupRules', 'type': '[NetworkSecurityGroupRule]'},
+        "name": {"key": "name", "type": "str"},
+        "protocol": {"key": "protocol", "type": "str"},
+        "backend_port": {"key": "backendPort", "type": "int"},
+        "frontend_port_range_start": {"key": "frontendPortRangeStart", "type": "int"},
+        "frontend_port_range_end": {"key": "frontendPortRangeEnd", "type": "int"},
+        "network_security_group_rules": {"key": "networkSecurityGroupRules", "type": "[NetworkSecurityGroupRule]"},
     }
 
     def __init__(
@@ -5889,26 +6060,26 @@ class InboundNATPool(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The name must be unique within a Batch Pool, can contain letters,
-         numbers, underscores, periods, and hyphens. Names must start with a letter or number, must end
-         with a letter, number, or underscore, and cannot exceed 77 characters.  If any invalid values
-         are provided the request fails with HTTP status code 400.
+        :keyword name: The name must be unique within a Batch Pool, can contain letters, numbers,
+         underscores, periods, and hyphens. Names must start with a letter or number, must end with a
+         letter, number, or underscore, and cannot exceed 77 characters.  If any invalid values are
+         provided the request fails with HTTP status code 400. Required.
         :paramtype name: str
-        :keyword protocol: Required. The protocol of the endpoint. Known values are: "tcp", "udp".
+        :keyword protocol: The protocol of the endpoint. Required. Known values are: "tcp" and "udp".
         :paramtype protocol: str or ~azure-batch.models.InboundEndpointProtocol
-        :keyword backend_port: Required. This must be unique within a Batch Pool. Acceptable values are
-         between 1 and 65535 except for 22, 3389, 29876 and 29877 as these are reserved. If any reserved
-         values are provided the request fails with HTTP status code 400.
+        :keyword backend_port: This must be unique within a Batch Pool. Acceptable values are between 1
+         and 65535 except for 22, 3389, 29876 and 29877 as these are reserved. If any reserved values
+         are provided the request fails with HTTP status code 400. Required.
         :paramtype backend_port: int
-        :keyword frontend_port_range_start: Required. Acceptable values range between 1 and 65534
-         except ports from 50000 to 55000 which are reserved. All ranges within a Pool must be distinct
-         and cannot overlap. Each range must contain at least 40 ports. If any reserved or overlapping
-         values are provided the request fails with HTTP status code 400.
+        :keyword frontend_port_range_start: Acceptable values range between 1 and 65534 except ports
+         from 50000 to 55000 which are reserved. All ranges within a Pool must be distinct and cannot
+         overlap. Each range must contain at least 40 ports. If any reserved or overlapping values are
+         provided the request fails with HTTP status code 400. Required.
         :paramtype frontend_port_range_start: int
-        :keyword frontend_port_range_end: Required. Acceptable values range between 1 and 65534 except
-         ports from 50000 to 55000 which are reserved by the Batch service. All ranges within a Pool
-         must be distinct and cannot overlap. Each range must contain at least 40 ports. If any reserved
-         or overlapping values are provided the request fails with HTTP status code 400.
+        :keyword frontend_port_range_end: Acceptable values range between 1 and 65534 except ports from
+         50000 to 55000 which are reserved by the Batch service. All ranges within a Pool must be
+         distinct and cannot overlap. Each range must contain at least 40 ports. If any reserved or
+         overlapping values are provided the request fails with HTTP status code 400. Required.
         :paramtype frontend_port_range_end: int
         :keyword network_security_group_rules: The maximum number of rules that can be specified across
          all the endpoints on a Batch Pool is 25. If no network security group rules are specified, a
@@ -5917,7 +6088,7 @@ class InboundNATPool(msrest.serialization.Model):
          code 400.
         :paramtype network_security_group_rules: list[~azure-batch.models.NetworkSecurityGroupRule]
         """
-        super(InboundNATPool, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.protocol = protocol
         self.backend_port = backend_port
@@ -5926,14 +6097,14 @@ class InboundNATPool(msrest.serialization.Model):
         self.network_security_group_rules = network_security_group_rules
 
 
-class InstanceViewStatus(msrest.serialization.Model):
+class InstanceViewStatus(_serialization.Model):
     """The instance view status.
 
     :ivar code: The status code.
     :vartype code: str
     :ivar display_status: The localized label for the status.
     :vartype display_status: str
-    :ivar level: Level code. Known values are: "Error", "Info", "Warning".
+    :ivar level: Level code. Known values are: "Error", "Info", and "Warning".
     :vartype level: str or ~azure-batch.models.StatusLevelTypes
     :ivar message: The detailed status message.
     :vartype message: str
@@ -5942,11 +6113,11 @@ class InstanceViewStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "str"},
     }
 
     def __init__(
@@ -5964,14 +6135,14 @@ class InstanceViewStatus(msrest.serialization.Model):
         :paramtype code: str
         :keyword display_status: The localized label for the status.
         :paramtype display_status: str
-        :keyword level: Level code. Known values are: "Error", "Info", "Warning".
+        :keyword level: Level code. Known values are: "Error", "Info", and "Warning".
         :paramtype level: str or ~azure-batch.models.StatusLevelTypes
         :keyword message: The detailed status message.
         :paramtype message: str
         :keyword time: The time of the status.
         :paramtype time: str
         """
-        super(InstanceViewStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.display_status = display_status
         self.level = level
@@ -5979,7 +6150,7 @@ class InstanceViewStatus(msrest.serialization.Model):
         self.time = time
 
 
-class JobAddOptions(msrest.serialization.Model):
+class JobAddOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -5997,18 +6168,18 @@ class JobAddOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -6026,221 +6197,14 @@ class JobAddOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobAddOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class JobAddParameter(msrest.serialization.Model):
-    """An Azure Batch Job to add.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-     and case-insensitive (that is, you may not have two IDs within an Account that differ only by
-     case).
-    :vartype id: str
-    :ivar display_name: The display name need not be unique and can contain any Unicode characters
-     up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
-     priority and 1000 being the highest priority. The default value is 0.
-    :vartype priority: int
-    :ivar max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
-     specified. If not specified, the default value is -1, which means there's no limit to the
-     number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
-     been created using the update job API.
-    :vartype max_parallel_tasks: int
-    :ivar allow_task_preemption: If the value is set to True, other high priority jobs submitted to
-     the system will take precedence and will be able requeue tasks from this job. You can update a
-     job's allowTaskPreemption after it has been created using the update job API.
-    :vartype allow_task_preemption: bool
-    :ivar constraints: The execution constraints for the Job.
-    :vartype constraints: ~azure-batch.models.JobConstraints
-    :ivar job_manager_task: If the Job does not specify a Job Manager Task, the user must
-     explicitly add Tasks to the Job. If the Job does specify a Job Manager Task, the Batch service
-     creates the Job Manager Task when the Job is created, and will try to schedule the Job Manager
-     Task before scheduling other Tasks in the Job. The Job Manager Task's typical purpose is to
-     control and/or monitor Job execution, for example by deciding what additional Tasks to run,
-     determining when the work is complete, etc. (However, a Job Manager Task is not restricted to
-     these activities - it is a fully-fledged Task in the system and perform whatever actions are
-     required for the Job.) For example, a Job Manager Task might download a file specified as a
-     parameter, analyze the contents of that file and submit additional Tasks based on those
-     contents.
-    :vartype job_manager_task: ~azure-batch.models.JobManagerTask
-    :ivar job_preparation_task: If a Job has a Job Preparation Task, the Batch service will run the
-     Job Preparation Task on a Node before starting any Tasks of that Job on that Compute Node.
-    :vartype job_preparation_task: ~azure-batch.models.JobPreparationTask
-    :ivar job_release_task: A Job Release Task cannot be specified without also specifying a Job
-     Preparation Task for the Job. The Batch service runs the Job Release Task on the Nodes that
-     have run the Job Preparation Task. The primary purpose of the Job Release Task is to undo
-     changes to Compute Nodes made by the Job Preparation Task. Example activities include deleting
-     local files, or shutting down services that were started as part of Job preparation.
-    :vartype job_release_task: ~azure-batch.models.JobReleaseTask
-    :ivar common_environment_settings: Individual Tasks can override an environment setting
-     specified here by specifying the same setting name with a different value.
-    :vartype common_environment_settings: list[~azure-batch.models.EnvironmentSetting]
-    :ivar pool_info: Required. Specifies how a Job should be assigned to a Pool.
-    :vartype pool_info: ~azure-batch.models.PoolInformation
-    :ivar on_all_tasks_complete: Note that if a Job contains no Tasks, then all Tasks are
-     considered complete. This option is therefore most commonly used with a Job Manager task; if
-     you want to use automatic Job termination without a Job Manager, you should initially set
-     onAllTasksComplete to noaction and update the Job properties to set onAllTasksComplete to
-     terminatejob once you have finished adding Tasks. The default is noaction. Known values are:
-     "noaction", "terminatejob".
-    :vartype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-    :ivar on_task_failure: A Task is considered to have failed if has a failureInfo. A failureInfo
-     is set if the Task completes with a non-zero exit code after exhausting its retry count, or if
-     there was an error starting the Task, for example due to a resource file download error. The
-     default is noaction. Known values are: "noaction", "performexitoptionsjobaction".
-    :vartype on_task_failure: str or ~azure-batch.models.OnTaskFailure
-    :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
-     use of user code.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    :ivar uses_task_dependencies: Whether Tasks in the Job can define dependencies on each other.
-     The default is false.
-    :vartype uses_task_dependencies: bool
-    :ivar network_configuration: The network configuration for the Job.
-    :vartype network_configuration: ~azure-batch.models.JobNetworkConfiguration
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'pool_info': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
-        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
-        'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
-        'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
-        'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
-        'job_release_task': {'key': 'jobReleaseTask', 'type': 'JobReleaseTask'},
-        'common_environment_settings': {'key': 'commonEnvironmentSettings', 'type': '[EnvironmentSetting]'},
-        'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
-        'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'str'},
-        'on_task_failure': {'key': 'onTaskFailure', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-        'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        pool_info: "_models.PoolInformation",
-        display_name: Optional[str] = None,
-        priority: Optional[int] = None,
-        max_parallel_tasks: Optional[int] = -1,
-        allow_task_preemption: Optional[bool] = None,
-        constraints: Optional["_models.JobConstraints"] = None,
-        job_manager_task: Optional["_models.JobManagerTask"] = None,
-        job_preparation_task: Optional["_models.JobPreparationTask"] = None,
-        job_release_task: Optional["_models.JobReleaseTask"] = None,
-        common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
-        on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
-        on_task_failure: Optional[Union[str, "_models.OnTaskFailure"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        uses_task_dependencies: Optional[bool] = None,
-        network_configuration: Optional["_models.JobNetworkConfiguration"] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Required. The ID can contain any combination of alphanumeric characters including
-         hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-         and case-insensitive (that is, you may not have two IDs within an Account that differ only by
-         case).
-        :paramtype id: str
-        :keyword display_name: The display name need not be unique and can contain any Unicode
-         characters up to a maximum length of 1024.
-        :paramtype display_name: str
-        :keyword priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
-         priority and 1000 being the highest priority. The default value is 0.
-        :paramtype priority: int
-        :keyword max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
-         specified. If not specified, the default value is -1, which means there's no limit to the
-         number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
-         been created using the update job API.
-        :paramtype max_parallel_tasks: int
-        :keyword allow_task_preemption: If the value is set to True, other high priority jobs submitted
-         to the system will take precedence and will be able requeue tasks from this job. You can update
-         a job's allowTaskPreemption after it has been created using the update job API.
-        :paramtype allow_task_preemption: bool
-        :keyword constraints: The execution constraints for the Job.
-        :paramtype constraints: ~azure-batch.models.JobConstraints
-        :keyword job_manager_task: If the Job does not specify a Job Manager Task, the user must
-         explicitly add Tasks to the Job. If the Job does specify a Job Manager Task, the Batch service
-         creates the Job Manager Task when the Job is created, and will try to schedule the Job Manager
-         Task before scheduling other Tasks in the Job. The Job Manager Task's typical purpose is to
-         control and/or monitor Job execution, for example by deciding what additional Tasks to run,
-         determining when the work is complete, etc. (However, a Job Manager Task is not restricted to
-         these activities - it is a fully-fledged Task in the system and perform whatever actions are
-         required for the Job.) For example, a Job Manager Task might download a file specified as a
-         parameter, analyze the contents of that file and submit additional Tasks based on those
-         contents.
-        :paramtype job_manager_task: ~azure-batch.models.JobManagerTask
-        :keyword job_preparation_task: If a Job has a Job Preparation Task, the Batch service will run
-         the Job Preparation Task on a Node before starting any Tasks of that Job on that Compute Node.
-        :paramtype job_preparation_task: ~azure-batch.models.JobPreparationTask
-        :keyword job_release_task: A Job Release Task cannot be specified without also specifying a Job
-         Preparation Task for the Job. The Batch service runs the Job Release Task on the Nodes that
-         have run the Job Preparation Task. The primary purpose of the Job Release Task is to undo
-         changes to Compute Nodes made by the Job Preparation Task. Example activities include deleting
-         local files, or shutting down services that were started as part of Job preparation.
-        :paramtype job_release_task: ~azure-batch.models.JobReleaseTask
-        :keyword common_environment_settings: Individual Tasks can override an environment setting
-         specified here by specifying the same setting name with a different value.
-        :paramtype common_environment_settings: list[~azure-batch.models.EnvironmentSetting]
-        :keyword pool_info: Required. Specifies how a Job should be assigned to a Pool.
-        :paramtype pool_info: ~azure-batch.models.PoolInformation
-        :keyword on_all_tasks_complete: Note that if a Job contains no Tasks, then all Tasks are
-         considered complete. This option is therefore most commonly used with a Job Manager task; if
-         you want to use automatic Job termination without a Job Manager, you should initially set
-         onAllTasksComplete to noaction and update the Job properties to set onAllTasksComplete to
-         terminatejob once you have finished adding Tasks. The default is noaction. Known values are:
-         "noaction", "terminatejob".
-        :paramtype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-        :keyword on_task_failure: A Task is considered to have failed if has a failureInfo. A
-         failureInfo is set if the Task completes with a non-zero exit code after exhausting its retry
-         count, or if there was an error starting the Task, for example due to a resource file download
-         error. The default is noaction. Known values are: "noaction", "performexitoptionsjobaction".
-        :paramtype on_task_failure: str or ~azure-batch.models.OnTaskFailure
-        :keyword metadata: The Batch service does not assign any meaning to metadata; it is solely for
-         the use of user code.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        :keyword uses_task_dependencies: Whether Tasks in the Job can define dependencies on each
-         other. The default is false.
-        :paramtype uses_task_dependencies: bool
-        :keyword network_configuration: The network configuration for the Job.
-        :paramtype network_configuration: ~azure-batch.models.JobNetworkConfiguration
-        """
-        super(JobAddParameter, self).__init__(**kwargs)
-        self.id = id
-        self.display_name = display_name
-        self.priority = priority
-        self.max_parallel_tasks = max_parallel_tasks
-        self.allow_task_preemption = allow_task_preemption
-        self.constraints = constraints
-        self.job_manager_task = job_manager_task
-        self.job_preparation_task = job_preparation_task
-        self.job_release_task = job_release_task
-        self.common_environment_settings = common_environment_settings
-        self.pool_info = pool_info
-        self.on_all_tasks_complete = on_all_tasks_complete
-        self.on_task_failure = on_task_failure
-        self.metadata = metadata
-        self.uses_task_dependencies = uses_task_dependencies
-        self.network_configuration = network_configuration
-
-
-class JobConstraints(msrest.serialization.Model):
+class JobConstraints(_serialization.Model):
     """The execution constraints for a Job.
 
     :ivar max_wall_clock_time: If the Job does not complete within the time limit, the Batch
@@ -6258,8 +6222,8 @@ class JobConstraints(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_wall_clock_time': {'key': 'maxWallClockTime', 'type': 'duration'},
-        'max_task_retry_count': {'key': 'maxTaskRetryCount', 'type': 'int'},
+        "max_wall_clock_time": {"key": "maxWallClockTime", "type": "duration"},
+        "max_task_retry_count": {"key": "maxTaskRetryCount", "type": "int"},
     }
 
     def __init__(
@@ -6283,12 +6247,12 @@ class JobConstraints(msrest.serialization.Model):
          not recommended for a start task or any task. The default value is 0 (no retries).
         :paramtype max_task_retry_count: int
         """
-        super(JobConstraints, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_wall_clock_time = max_wall_clock_time
         self.max_task_retry_count = max_task_retry_count
 
 
-class JobDeleteOptions(msrest.serialization.Model):
+class JobDeleteOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -6322,22 +6286,22 @@ class JobDeleteOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -6375,7 +6339,7 @@ class JobDeleteOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobDeleteOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -6386,7 +6350,7 @@ class JobDeleteOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobDisableOptions(msrest.serialization.Model):
+class JobDisableOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -6420,22 +6384,22 @@ class JobDisableOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -6473,7 +6437,7 @@ class JobDisableOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobDisableOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -6484,40 +6448,7 @@ class JobDisableOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobDisableParameter(msrest.serialization.Model):
-    """Options when disabling a Job.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar disable_tasks: Required. What to do with active Tasks associated with the Job. Known
-     values are: "requeue", "terminate", "wait".
-    :vartype disable_tasks: str or ~azure-batch.models.DisableJobOption
-    """
-
-    _validation = {
-        'disable_tasks': {'required': True},
-    }
-
-    _attribute_map = {
-        'disable_tasks': {'key': 'disableTasks', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        disable_tasks: Union[str, "_models.DisableJobOption"],
-        **kwargs
-    ):
-        """
-        :keyword disable_tasks: Required. What to do with active Tasks associated with the Job. Known
-         values are: "requeue", "terminate", "wait".
-        :paramtype disable_tasks: str or ~azure-batch.models.DisableJobOption
-        """
-        super(JobDisableParameter, self).__init__(**kwargs)
-        self.disable_tasks = disable_tasks
-
-
-class JobEnableOptions(msrest.serialization.Model):
+class JobEnableOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -6551,22 +6482,22 @@ class JobEnableOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -6604,7 +6535,7 @@ class JobEnableOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobEnableOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -6615,12 +6546,12 @@ class JobEnableOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobExecutionInformation(msrest.serialization.Model):
+class JobExecutionInformation(_serialization.Model):
     """Contains information about the execution of a Job in the Azure Batch service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start_time: Required. This is the time at which the Job was created.
+    :ivar start_time: This is the time at which the Job was created. Required.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: This property is set only if the Job is in the completed state.
     :vartype end_time: ~datetime.datetime
@@ -6645,15 +6576,15 @@ class JobExecutionInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
+        "start_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'pool_id': {'key': 'poolId', 'type': 'str'},
-        'scheduling_error': {'key': 'schedulingError', 'type': 'JobSchedulingError'},
-        'terminate_reason': {'key': 'terminateReason', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "pool_id": {"key": "poolId", "type": "str"},
+        "scheduling_error": {"key": "schedulingError", "type": "JobSchedulingError"},
+        "terminate_reason": {"key": "terminateReason", "type": "str"},
     }
 
     def __init__(
@@ -6667,7 +6598,7 @@ class JobExecutionInformation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword start_time: Required. This is the time at which the Job was created.
+        :keyword start_time: This is the time at which the Job was created. Required.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: This property is set only if the Job is in the completed state.
         :paramtype end_time: ~datetime.datetime
@@ -6690,7 +6621,7 @@ class JobExecutionInformation(msrest.serialization.Model):
          user-defined reason specified in a call to the 'Terminate a Job' operation.
         :paramtype terminate_reason: str
         """
-        super(JobExecutionInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.pool_id = pool_id
@@ -6698,7 +6629,7 @@ class JobExecutionInformation(msrest.serialization.Model):
         self.terminate_reason = terminate_reason
 
 
-class JobGetAllLifetimeStatisticsOptions(msrest.serialization.Model):
+class JobGetAllLifetimeStatisticsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -6716,18 +6647,18 @@ class JobGetAllLifetimeStatisticsOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -6745,14 +6676,14 @@ class JobGetAllLifetimeStatisticsOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobGetAllLifetimeStatisticsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class JobGetOptions(msrest.serialization.Model):
+class JobGetOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -6790,16 +6721,16 @@ class JobGetOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
@@ -6807,9 +6738,9 @@ class JobGetOptions(msrest.serialization.Model):
         *,
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -6851,7 +6782,7 @@ class JobGetOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobGetOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.expand = expand
         self.timeout = timeout
@@ -6864,7 +6795,7 @@ class JobGetOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobGetTaskCountsOptions(msrest.serialization.Model):
+class JobGetTaskCountsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -6882,18 +6813,18 @@ class JobGetTaskCountsOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -6911,14 +6842,14 @@ class JobGetTaskCountsOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobGetTaskCountsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class JobListFromJobScheduleOptions(msrest.serialization.Model):
+class JobListFromJobScheduleOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -6946,30 +6877,30 @@ class JobListFromJobScheduleOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -6997,7 +6928,7 @@ class JobListFromJobScheduleOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobListFromJobScheduleOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.select = select
         self.expand = expand
@@ -7008,7 +6939,7 @@ class JobListFromJobScheduleOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class JobListOptions(msrest.serialization.Model):
+class JobListOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -7036,30 +6967,30 @@ class JobListOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -7087,7 +7018,7 @@ class JobListOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobListOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.select = select
         self.expand = expand
@@ -7098,7 +7029,7 @@ class JobListOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class JobListPreparationAndReleaseTaskStatusOptions(msrest.serialization.Model):
+class JobListPreparationAndReleaseTaskStatusOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -7124,28 +7055,28 @@ class JobListPreparationAndReleaseTaskStatusOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         select: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -7171,7 +7102,7 @@ class JobListPreparationAndReleaseTaskStatusOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobListPreparationAndReleaseTaskStatusOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.select = select
         self.max_results = max_results
@@ -7181,24 +7112,25 @@ class JobListPreparationAndReleaseTaskStatusOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class JobManagerTask(msrest.serialization.Model):
+class JobManagerTask(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The Job Manager Task is automatically started when the Job is created. The Batch service tries to schedule the Job Manager Task before any other Tasks in the Job. When shrinking a Pool, the Batch service tries to preserve Nodes where Job Manager Tasks are running for as long as possible (that is, Compute Nodes running 'normal' Tasks are removed before Compute Nodes running Job Manager Tasks). When a Job Manager Task fails and needs to be restarted, the system tries to schedule it at the highest priority. If there are no idle Compute Nodes available, the system may terminate one of the running Tasks in the Pool and return it to the queue in order to make room for the Job Manager Task to restart. Note that a Job Manager Task in one Job does not have priority over Tasks in other Jobs. Across Jobs, only Job level priorities are observed. For example, if a Job Manager in a priority 0 Job needs to be restarted, it will not displace Tasks of a priority 1 Job. Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute Node disappeared due to host failure. Retries due to recovery operations are independent of and are not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to a recovery operation may occur. Because of this, all Tasks should be idempotent. This means Tasks need to tolerate being interrupted and restarted without causing any corruption or duplicate data. The best practice for long running Tasks is to use some form of checkpointing.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores and cannot contain more than 64 characters.
+    :ivar id: The ID can contain any combination of alphanumeric characters including hyphens and
+     underscores and cannot contain more than 64 characters. Required.
     :vartype id: str
     :ivar display_name: It need not be unique and can contain any Unicode characters up to a
      maximum length of 1024.
     :vartype display_name: str
-    :ivar command_line: Required. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion. If you want to take
+    :ivar command_line: The command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you want to take
      advantage of such features, you should invoke the shell in the command line, for example using
      "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
      file paths, it should use a relative path (relative to the Task working directory), or use the
      Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     Required.
     :vartype command_line: str
     :ivar container_settings: If the Pool that will run this Task has containerConfiguration set,
      this must be set as well. If the Pool that will run this Task doesn't have
@@ -7264,32 +7196,35 @@ class JobManagerTask(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'command_line': {'required': True},
+        "id": {"required": True},
+        "command_line": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'command_line': {'key': 'commandLine', 'type': 'str'},
-        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
-        'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
-        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
-        'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
-        'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
-        'required_slots': {'key': 'requiredSlots', 'type': 'int'},
-        'kill_job_on_completion': {'key': 'killJobOnCompletion', 'type': 'bool'},
-        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
-        'run_exclusive': {'key': 'runExclusive', 'type': 'bool'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
-        'allow_low_priority_node': {'key': 'allowLowPriorityNode', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "command_line": {"key": "commandLine", "type": "str"},
+        "container_settings": {"key": "containerSettings", "type": "TaskContainerSettings"},
+        "resource_files": {"key": "resourceFiles", "type": "[ResourceFile]"},
+        "output_files": {"key": "outputFiles", "type": "[OutputFile]"},
+        "environment_settings": {"key": "environmentSettings", "type": "[EnvironmentSetting]"},
+        "constraints": {"key": "constraints", "type": "TaskConstraints"},
+        "required_slots": {"key": "requiredSlots", "type": "int"},
+        "kill_job_on_completion": {"key": "killJobOnCompletion", "type": "bool"},
+        "user_identity": {"key": "userIdentity", "type": "UserIdentity"},
+        "run_exclusive": {"key": "runExclusive", "type": "bool"},
+        "application_package_references": {
+            "key": "applicationPackageReferences",
+            "type": "[ApplicationPackageReference]",
+        },
+        "authentication_token_settings": {"key": "authenticationTokenSettings", "type": "AuthenticationTokenSettings"},
+        "allow_low_priority_node": {"key": "allowLowPriorityNode", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        id: str,
+        id: str,  # pylint: disable=redefined-builtin
         command_line: str,
         display_name: Optional[str] = None,
         container_settings: Optional["_models.TaskContainerSettings"] = None,
@@ -7307,19 +7242,20 @@ class JobManagerTask(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Required. The ID can contain any combination of alphanumeric characters including
-         hyphens and underscores and cannot contain more than 64 characters.
+        :keyword id: The ID can contain any combination of alphanumeric characters including hyphens
+         and underscores and cannot contain more than 64 characters. Required.
         :paramtype id: str
         :keyword display_name: It need not be unique and can contain any Unicode characters up to a
          maximum length of 1024.
         :paramtype display_name: str
-        :keyword command_line: Required. The command line does not run under a shell, and therefore
-         cannot take advantage of shell features such as environment variable expansion. If you want to
-         take advantage of such features, you should invoke the shell in the command line, for example
-         using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
-         refers to file paths, it should use a relative path (relative to the Task working directory),
-         or use the Batch provided environment variable
+        :keyword command_line: The command line does not run under a shell, and therefore cannot take
+         advantage of shell features such as environment variable expansion. If you want to take
+         advantage of such features, you should invoke the shell in the command line, for example using
+         "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
+         file paths, it should use a relative path (relative to the Task working directory), or use the
+         Batch provided environment variable
          (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+         Required.
         :paramtype command_line: str
         :keyword container_settings: If the Pool that will run this Task has containerConfiguration
          set, this must be set as well. If the Pool that will run this Task doesn't have
@@ -7386,7 +7322,7 @@ class JobManagerTask(msrest.serialization.Model):
         :keyword allow_low_priority_node: The default value is true.
         :paramtype allow_low_priority_node: bool
         """
-        super(JobManagerTask, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.display_name = display_name
         self.command_line = command_line
@@ -7404,20 +7340,20 @@ class JobManagerTask(msrest.serialization.Model):
         self.allow_low_priority_node = allow_low_priority_node
 
 
-class JobNetworkConfiguration(msrest.serialization.Model):
+class JobNetworkConfiguration(_serialization.Model):
     """The network configuration for the Job.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar subnet_id: Required. The virtual network must be in the same region and subscription as
-     the Azure Batch Account. The specified subnet should have enough free IP addresses to
-     accommodate the number of Compute Nodes which will run Tasks from the Job. This can be up to
-     the number of Compute Nodes in the Pool. The 'MicrosoftAzureBatch' service principal must have
-     the 'Classic Virtual Machine Contributor' Role-Based Access Control (RBAC) role for the
-     specified VNet so that Azure Batch service can schedule Tasks on the Nodes. This can be
-     verified by checking if the specified VNet has any associated Network Security Groups (NSG). If
-     communication to the Nodes in the specified subnet is denied by an NSG, then the Batch service
-     will set the state of the Compute Nodes to unusable. This is of the form
+    :ivar subnet_id: The virtual network must be in the same region and subscription as the Azure
+     Batch Account. The specified subnet should have enough free IP addresses to accommodate the
+     number of Compute Nodes which will run Tasks from the Job. This can be up to the number of
+     Compute Nodes in the Pool. The 'MicrosoftAzureBatch' service principal must have the 'Classic
+     Virtual Machine Contributor' Role-Based Access Control (RBAC) role for the specified VNet so
+     that Azure Batch service can schedule Tasks on the Nodes. This can be verified by checking if
+     the specified VNet has any associated Network Security Groups (NSG). If communication to the
+     Nodes in the specified subnet is denied by an NSG, then the Batch service will set the state of
+     the Compute Nodes to unusable. This is of the form
      /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
      If the specified VNet has any associated Network Security Groups (NSG), then a few reserved
      system ports must be enabled for inbound communication from the Azure Batch service. For Pools
@@ -7425,33 +7361,29 @@ class JobNetworkConfiguration(msrest.serialization.Model):
      for Linux and port 3389 for Windows. Port 443 is also required to be open for outbound
      connections for communications to Azure Storage. For more details see:
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+     Required.
     :vartype subnet_id: str
     """
 
     _validation = {
-        'subnet_id': {'required': True},
+        "subnet_id": {"required": True},
     }
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        subnet_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, subnet_id: str, **kwargs):
         """
-        :keyword subnet_id: Required. The virtual network must be in the same region and subscription
-         as the Azure Batch Account. The specified subnet should have enough free IP addresses to
-         accommodate the number of Compute Nodes which will run Tasks from the Job. This can be up to
-         the number of Compute Nodes in the Pool. The 'MicrosoftAzureBatch' service principal must have
-         the 'Classic Virtual Machine Contributor' Role-Based Access Control (RBAC) role for the
-         specified VNet so that Azure Batch service can schedule Tasks on the Nodes. This can be
-         verified by checking if the specified VNet has any associated Network Security Groups (NSG). If
-         communication to the Nodes in the specified subnet is denied by an NSG, then the Batch service
-         will set the state of the Compute Nodes to unusable. This is of the form
+        :keyword subnet_id: The virtual network must be in the same region and subscription as the
+         Azure Batch Account. The specified subnet should have enough free IP addresses to accommodate
+         the number of Compute Nodes which will run Tasks from the Job. This can be up to the number of
+         Compute Nodes in the Pool. The 'MicrosoftAzureBatch' service principal must have the 'Classic
+         Virtual Machine Contributor' Role-Based Access Control (RBAC) role for the specified VNet so
+         that Azure Batch service can schedule Tasks on the Nodes. This can be verified by checking if
+         the specified VNet has any associated Network Security Groups (NSG). If communication to the
+         Nodes in the specified subnet is denied by an NSG, then the Batch service will set the state of
+         the Compute Nodes to unusable. This is of the form
          /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
          If the specified VNet has any associated Network Security Groups (NSG), then a few reserved
          system ports must be enabled for inbound communication from the Azure Batch service. For Pools
@@ -7459,13 +7391,14 @@ class JobNetworkConfiguration(msrest.serialization.Model):
          for Linux and port 3389 for Windows. Port 443 is also required to be open for outbound
          connections for communications to Azure Storage. For more details see:
          https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
+         Required.
         :paramtype subnet_id: str
         """
-        super(JobNetworkConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
 
 
-class JobPatchOptions(msrest.serialization.Model):
+class JobPatchOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -7499,22 +7432,22 @@ class JobPatchOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -7552,7 +7485,7 @@ class JobPatchOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobPatchOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -7563,106 +7496,7 @@ class JobPatchOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobPatchParameter(msrest.serialization.Model):
-    """The set of changes to be made to a Job.
-
-    :ivar priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
-     priority and 1000 being the highest priority. If omitted, the priority of the Job is left
-     unchanged.
-    :vartype priority: int
-    :ivar max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
-     specified. If not specified, the default value is -1, which means there's no limit to the
-     number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
-     been created using the update job API.
-    :vartype max_parallel_tasks: int
-    :ivar allow_task_preemption: If the value is set to True, other high priority jobs submitted to
-     the system will take precedence and will be able requeue tasks from this job. You can update a
-     job's allowTaskPreemption after it has been created using the update job API.
-    :vartype allow_task_preemption: bool
-    :ivar on_all_tasks_complete: If omitted, the completion behavior is left unchanged. You may not
-     change the value from terminatejob to noaction - that is, once you have engaged automatic Job
-     termination, you cannot turn it off again. If you try to do this, the request fails with an
-     'invalid property value' error response; if you are calling the REST API directly, the HTTP
-     status code is 400 (Bad Request). Known values are: "noaction", "terminatejob".
-    :vartype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-    :ivar constraints: If omitted, the existing execution constraints are left unchanged.
-    :vartype constraints: ~azure-batch.models.JobConstraints
-    :ivar pool_info: You may change the Pool for a Job only when the Job is disabled. The Patch Job
-     call will fail if you include the poolInfo element and the Job is not disabled. If you specify
-     an autoPoolSpecification in the poolInfo, only the keepAlive property of the
-     autoPoolSpecification can be updated, and then only if the autoPoolSpecification has a
-     poolLifetimeOption of Job (other job properties can be updated as normal). If omitted, the Job
-     continues to run on its current Pool.
-    :vartype pool_info: ~azure-batch.models.PoolInformation
-    :ivar metadata: If omitted, the existing Job metadata is left unchanged.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    """
-
-    _attribute_map = {
-        'priority': {'key': 'priority', 'type': 'int'},
-        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
-        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
-        'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'str'},
-        'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
-        'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        priority: Optional[int] = None,
-        max_parallel_tasks: Optional[int] = None,
-        allow_task_preemption: Optional[bool] = None,
-        on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
-        constraints: Optional["_models.JobConstraints"] = None,
-        pool_info: Optional["_models.PoolInformation"] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
-         priority and 1000 being the highest priority. If omitted, the priority of the Job is left
-         unchanged.
-        :paramtype priority: int
-        :keyword max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
-         specified. If not specified, the default value is -1, which means there's no limit to the
-         number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
-         been created using the update job API.
-        :paramtype max_parallel_tasks: int
-        :keyword allow_task_preemption: If the value is set to True, other high priority jobs submitted
-         to the system will take precedence and will be able requeue tasks from this job. You can update
-         a job's allowTaskPreemption after it has been created using the update job API.
-        :paramtype allow_task_preemption: bool
-        :keyword on_all_tasks_complete: If omitted, the completion behavior is left unchanged. You may
-         not change the value from terminatejob to noaction - that is, once you have engaged automatic
-         Job termination, you cannot turn it off again. If you try to do this, the request fails with an
-         'invalid property value' error response; if you are calling the REST API directly, the HTTP
-         status code is 400 (Bad Request). Known values are: "noaction", "terminatejob".
-        :paramtype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-        :keyword constraints: If omitted, the existing execution constraints are left unchanged.
-        :paramtype constraints: ~azure-batch.models.JobConstraints
-        :keyword pool_info: You may change the Pool for a Job only when the Job is disabled. The Patch
-         Job call will fail if you include the poolInfo element and the Job is not disabled. If you
-         specify an autoPoolSpecification in the poolInfo, only the keepAlive property of the
-         autoPoolSpecification can be updated, and then only if the autoPoolSpecification has a
-         poolLifetimeOption of Job (other job properties can be updated as normal). If omitted, the Job
-         continues to run on its current Pool.
-        :paramtype pool_info: ~azure-batch.models.PoolInformation
-        :keyword metadata: If omitted, the existing Job metadata is left unchanged.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        """
-        super(JobPatchParameter, self).__init__(**kwargs)
-        self.priority = priority
-        self.max_parallel_tasks = max_parallel_tasks
-        self.allow_task_preemption = allow_task_preemption
-        self.on_all_tasks_complete = on_all_tasks_complete
-        self.constraints = constraints
-        self.pool_info = pool_info
-        self.metadata = metadata
-
-
-class JobPreparationAndReleaseTaskExecutionInformation(msrest.serialization.Model):
+class JobPreparationAndReleaseTaskExecutionInformation(_serialization.Model):
     """The status of the Job Preparation and Job Release Tasks on a Compute Node.
 
     :ivar pool_id: The ID of the Pool containing the Compute Node to which this entry refers.
@@ -7682,11 +7516,17 @@ class JobPreparationAndReleaseTaskExecutionInformation(msrest.serialization.Mode
     """
 
     _attribute_map = {
-        'pool_id': {'key': 'poolId', 'type': 'str'},
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'node_url': {'key': 'nodeUrl', 'type': 'str'},
-        'job_preparation_task_execution_info': {'key': 'jobPreparationTaskExecutionInfo', 'type': 'JobPreparationTaskExecutionInformation'},
-        'job_release_task_execution_info': {'key': 'jobReleaseTaskExecutionInfo', 'type': 'JobReleaseTaskExecutionInformation'},
+        "pool_id": {"key": "poolId", "type": "str"},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "node_url": {"key": "nodeUrl", "type": "str"},
+        "job_preparation_task_execution_info": {
+            "key": "jobPreparationTaskExecutionInfo",
+            "type": "JobPreparationTaskExecutionInformation",
+        },
+        "job_release_task_execution_info": {
+            "key": "jobReleaseTaskExecutionInfo",
+            "type": "JobReleaseTaskExecutionInformation",
+        },
     }
 
     def __init__(
@@ -7715,7 +7555,7 @@ class JobPreparationAndReleaseTaskExecutionInformation(msrest.serialization.Mode
         :paramtype job_release_task_execution_info:
          ~azure-batch.models.JobReleaseTaskExecutionInformation
         """
-        super(JobPreparationAndReleaseTaskExecutionInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pool_id = pool_id
         self.node_id = node_id
         self.node_url = node_url
@@ -7723,7 +7563,7 @@ class JobPreparationAndReleaseTaskExecutionInformation(msrest.serialization.Mode
         self.job_release_task_execution_info = job_release_task_execution_info
 
 
-class JobPreparationTask(msrest.serialization.Model):
+class JobPreparationTask(_serialization.Model):
     """You can use Job Preparation to prepare a Node to run Tasks for the Job. Activities commonly performed in Job Preparation include: Downloading common resource files used by all the Tasks in the Job. The Job Preparation Task can download these common resource files to the shared location on the Node. (AZ_BATCH_NODE_ROOT_DIR\shared), or starting a local service on the Node so that all Tasks of that Job can communicate with it. If the Job Preparation Task fails (that is, exhausts its retry count before exiting with exit code 0), Batch will not run Tasks of this Job on the Node. The Compute Node remains ineligible to run Tasks of this Job until it is reimaged. The Compute Node remains active and can be used for other Jobs. The Job Preparation Task can run multiple times on the same Node. Therefore, you should write the Job Preparation Task to handle re-execution. If the Node is rebooted, the Job Preparation Task is run again on the Compute Node before scheduling any other Task of the Job, if rerunOnNodeRebootAfterSuccess is true or if the Job Preparation Task did not previously complete. If the Node is reimaged, the Job Preparation Task is run again before scheduling any Task of the Job. Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute Node disappeared due to host failure. Retries due to recovery operations are independent of and are not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to a recovery operation may occur. Because of this, all Tasks should be idempotent. This means Tasks need to tolerate being interrupted and restarted without causing any corruption or duplicate data. The best practice for long running Tasks is to use some form of checkpointing.
 
     All required parameters must be populated in order to send to Azure.
@@ -7735,13 +7575,14 @@ class JobPreparationTask(msrest.serialization.Model):
      Batch service rejects the request with error code TaskIdSameAsJobPreparationTask; if you are
      calling the REST API directly, the HTTP status code is 409 (Conflict).
     :vartype id: str
-    :ivar command_line: Required. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion. If you want to take
+    :ivar command_line: The command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you want to take
      advantage of such features, you should invoke the shell in the command line, for example using
      "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
      file paths, it should use a relative path (relative to the Task working directory), or use the
      Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     Required.
     :vartype command_line: str
     :ivar container_settings: When this is specified, all directories recursively below the
      AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
@@ -7782,26 +7623,26 @@ class JobPreparationTask(msrest.serialization.Model):
     """
 
     _validation = {
-        'command_line': {'required': True},
+        "command_line": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'command_line': {'key': 'commandLine', 'type': 'str'},
-        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
-        'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
-        'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
-        'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
-        'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
-        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
-        'rerun_on_node_reboot_after_success': {'key': 'rerunOnNodeRebootAfterSuccess', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "command_line": {"key": "commandLine", "type": "str"},
+        "container_settings": {"key": "containerSettings", "type": "TaskContainerSettings"},
+        "resource_files": {"key": "resourceFiles", "type": "[ResourceFile]"},
+        "environment_settings": {"key": "environmentSettings", "type": "[EnvironmentSetting]"},
+        "constraints": {"key": "constraints", "type": "TaskConstraints"},
+        "wait_for_success": {"key": "waitForSuccess", "type": "bool"},
+        "user_identity": {"key": "userIdentity", "type": "UserIdentity"},
+        "rerun_on_node_reboot_after_success": {"key": "rerunOnNodeRebootAfterSuccess", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         command_line: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         container_settings: Optional["_models.TaskContainerSettings"] = None,
         resource_files: Optional[List["_models.ResourceFile"]] = None,
         environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
@@ -7819,13 +7660,14 @@ class JobPreparationTask(msrest.serialization.Model):
          id, the Batch service rejects the request with error code TaskIdSameAsJobPreparationTask; if
          you are calling the REST API directly, the HTTP status code is 409 (Conflict).
         :paramtype id: str
-        :keyword command_line: Required. The command line does not run under a shell, and therefore
-         cannot take advantage of shell features such as environment variable expansion. If you want to
-         take advantage of such features, you should invoke the shell in the command line, for example
-         using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
-         refers to file paths, it should use a relative path (relative to the Task working directory),
-         or use the Batch provided environment variable
+        :keyword command_line: The command line does not run under a shell, and therefore cannot take
+         advantage of shell features such as environment variable expansion. If you want to take
+         advantage of such features, you should invoke the shell in the command line, for example using
+         "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
+         file paths, it should use a relative path (relative to the Task working directory), or use the
+         Batch provided environment variable
          (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+         Required.
         :paramtype command_line: str
         :keyword container_settings: When this is specified, all directories recursively below the
          AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
@@ -7866,7 +7708,7 @@ class JobPreparationTask(msrest.serialization.Model):
          value is true.
         :paramtype rerun_on_node_reboot_after_success: bool
         """
-        super(JobPreparationTask, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.command_line = command_line
         self.container_settings = container_settings
@@ -7878,18 +7720,18 @@ class JobPreparationTask(msrest.serialization.Model):
         self.rerun_on_node_reboot_after_success = rerun_on_node_reboot_after_success
 
 
-class JobPreparationTaskExecutionInformation(msrest.serialization.Model):
+class JobPreparationTaskExecutionInformation(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Contains information about the execution of a Job Preparation Task on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start_time: Required. If the Task has been restarted or retried, this is the most recent
-     time at which the Task started running.
+    :ivar start_time: If the Task has been restarted or retried, this is the most recent time at
+     which the Task started running. Required.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: This property is set only if the Task is in the Completed state.
     :vartype end_time: ~datetime.datetime
-    :ivar state: Required. The current state of the Job Preparation Task on the Compute Node. Known
-     values are: "running", "completed".
+    :ivar state: The current state of the Job Preparation Task on the Compute Node. Required. Known
+     values are: "running" and "completed".
     :vartype state: str or ~azure-batch.models.JobPreparationTaskState
     :ivar task_root_directory: The root directory of the Job Preparation Task on the Compute Node.
      You can use this path to retrieve files created by the Task, such as log files.
@@ -7909,9 +7751,9 @@ class JobPreparationTaskExecutionInformation(msrest.serialization.Model):
     :ivar failure_info: This property is set only if the Task is in the completed state and
      encountered a failure.
     :vartype failure_info: ~azure-batch.models.TaskFailureInformation
-    :ivar retry_count: Required. Task application failures (non-zero exit code) are retried,
-     pre-processing errors (the Task could not be run) and file upload errors are not retried. The
-     Batch service will retry the Task up to the limit specified by the constraints.
+    :ivar retry_count: Task application failures (non-zero exit code) are retried, pre-processing
+     errors (the Task could not be run) and file upload errors are not retried. The Batch service
+     will retry the Task up to the limit specified by the constraints. Required.
     :vartype retry_count: int
     :ivar last_retry_time: This property is set only if the Task was retried (i.e. retryCount is
      nonzero). If present, this is typically the same as startTime, but may be different if the Task
@@ -7919,28 +7761,28 @@ class JobPreparationTaskExecutionInformation(msrest.serialization.Model):
      during a retry, then the startTime is updated but the lastRetryTime is not.
     :vartype last_retry_time: ~datetime.datetime
     :ivar result: If the value is 'failed', then the details of the failure can be found in the
-     failureInfo property. Known values are: "success", "failure".
+     failureInfo property. Known values are: "success" and "failure".
     :vartype result: str or ~azure-batch.models.TaskExecutionResult
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'state': {'required': True},
-        'retry_count': {'required': True},
+        "start_time": {"required": True},
+        "state": {"required": True},
+        "retry_count": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'str'},
-        'task_root_directory': {'key': 'taskRootDirectory', 'type': 'str'},
-        'task_root_directory_url': {'key': 'taskRootDirectoryUrl', 'type': 'str'},
-        'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'container_info': {'key': 'containerInfo', 'type': 'TaskContainerExecutionInformation'},
-        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
-        'retry_count': {'key': 'retryCount', 'type': 'int'},
-        'last_retry_time': {'key': 'lastRetryTime', 'type': 'iso-8601'},
-        'result': {'key': 'result', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "state": {"key": "state", "type": "str"},
+        "task_root_directory": {"key": "taskRootDirectory", "type": "str"},
+        "task_root_directory_url": {"key": "taskRootDirectoryUrl", "type": "str"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "container_info": {"key": "containerInfo", "type": "TaskContainerExecutionInformation"},
+        "failure_info": {"key": "failureInfo", "type": "TaskFailureInformation"},
+        "retry_count": {"key": "retryCount", "type": "int"},
+        "last_retry_time": {"key": "lastRetryTime", "type": "iso-8601"},
+        "result": {"key": "result", "type": "str"},
     }
 
     def __init__(
@@ -7960,13 +7802,13 @@ class JobPreparationTaskExecutionInformation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword start_time: Required. If the Task has been restarted or retried, this is the most
-         recent time at which the Task started running.
+        :keyword start_time: If the Task has been restarted or retried, this is the most recent time at
+         which the Task started running. Required.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: This property is set only if the Task is in the Completed state.
         :paramtype end_time: ~datetime.datetime
-        :keyword state: Required. The current state of the Job Preparation Task on the Compute Node.
-         Known values are: "running", "completed".
+        :keyword state: The current state of the Job Preparation Task on the Compute Node. Required.
+         Known values are: "running" and "completed".
         :paramtype state: str or ~azure-batch.models.JobPreparationTaskState
         :keyword task_root_directory: The root directory of the Job Preparation Task on the Compute
          Node. You can use this path to retrieve files created by the Task, such as log files.
@@ -7986,9 +7828,9 @@ class JobPreparationTaskExecutionInformation(msrest.serialization.Model):
         :keyword failure_info: This property is set only if the Task is in the completed state and
          encountered a failure.
         :paramtype failure_info: ~azure-batch.models.TaskFailureInformation
-        :keyword retry_count: Required. Task application failures (non-zero exit code) are retried,
+        :keyword retry_count: Task application failures (non-zero exit code) are retried,
          pre-processing errors (the Task could not be run) and file upload errors are not retried. The
-         Batch service will retry the Task up to the limit specified by the constraints.
+         Batch service will retry the Task up to the limit specified by the constraints. Required.
         :paramtype retry_count: int
         :keyword last_retry_time: This property is set only if the Task was retried (i.e. retryCount is
          nonzero). If present, this is typically the same as startTime, but may be different if the Task
@@ -7996,10 +7838,10 @@ class JobPreparationTaskExecutionInformation(msrest.serialization.Model):
          during a retry, then the startTime is updated but the lastRetryTime is not.
         :paramtype last_retry_time: ~datetime.datetime
         :keyword result: If the value is 'failed', then the details of the failure can be found in the
-         failureInfo property. Known values are: "success", "failure".
+         failureInfo property. Known values are: "success" and "failure".
         :paramtype result: str or ~azure-batch.models.TaskExecutionResult
         """
-        super(JobPreparationTaskExecutionInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.state = state
@@ -8013,7 +7855,7 @@ class JobPreparationTaskExecutionInformation(msrest.serialization.Model):
         self.result = result
 
 
-class JobReleaseTask(msrest.serialization.Model):
+class JobReleaseTask(_serialization.Model):
     """The Job Release Task runs when the Job ends, because of one of the following: The user calls the Terminate Job API, or the Delete Job API while the Job is still active, the Job's maximum wall clock time constraint is reached, and the Job is still active, or the Job's Job Manager Task completed, and the Job is configured to terminate when the Job Manager completes. The Job Release Task runs on each Node where Tasks of the Job have run and the Job Preparation Task ran and completed. If you reimage a Node after it has run the Job Preparation Task, and the Job ends without any further Tasks of the Job running on that Node (and hence the Job Preparation Task does not re-run), then the Job Release Task does not run on that Compute Node. If a Node reboots while the Job Release Task is still running, the Job Release Task runs again when the Compute Node starts up. The Job is not marked as complete until all Job Release Tasks have completed. The Job Release Task runs in the background. It does not occupy a scheduling slot; that is, it does not count towards the taskSlotsPerNode limit specified on the Pool.
 
     All required parameters must be populated in order to send to Azure.
@@ -8025,13 +7867,14 @@ class JobReleaseTask(msrest.serialization.Model):
      service rejects the request with error code TaskIdSameAsJobReleaseTask; if you are calling the
      REST API directly, the HTTP status code is 409 (Conflict).
     :vartype id: str
-    :ivar command_line: Required. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion. If you want to take
+    :ivar command_line: The command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you want to take
      advantage of such features, you should invoke the shell in the command line, for example using
      "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
      file paths, it should use a relative path (relative to the Task working directory), or use the
      Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     Required.
     :vartype command_line: str
     :ivar container_settings: When this is specified, all directories recursively below the
      AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
@@ -8059,25 +7902,25 @@ class JobReleaseTask(msrest.serialization.Model):
     """
 
     _validation = {
-        'command_line': {'required': True},
+        "command_line": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'command_line': {'key': 'commandLine', 'type': 'str'},
-        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
-        'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
-        'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
-        'max_wall_clock_time': {'key': 'maxWallClockTime', 'type': 'duration'},
-        'retention_time': {'key': 'retentionTime', 'type': 'duration'},
-        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
+        "id": {"key": "id", "type": "str"},
+        "command_line": {"key": "commandLine", "type": "str"},
+        "container_settings": {"key": "containerSettings", "type": "TaskContainerSettings"},
+        "resource_files": {"key": "resourceFiles", "type": "[ResourceFile]"},
+        "environment_settings": {"key": "environmentSettings", "type": "[EnvironmentSetting]"},
+        "max_wall_clock_time": {"key": "maxWallClockTime", "type": "duration"},
+        "retention_time": {"key": "retentionTime", "type": "duration"},
+        "user_identity": {"key": "userIdentity", "type": "UserIdentity"},
     }
 
     def __init__(
         self,
         *,
         command_line: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         container_settings: Optional["_models.TaskContainerSettings"] = None,
         resource_files: Optional[List["_models.ResourceFile"]] = None,
         environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
@@ -8094,13 +7937,14 @@ class JobReleaseTask(msrest.serialization.Model):
          Batch service rejects the request with error code TaskIdSameAsJobReleaseTask; if you are
          calling the REST API directly, the HTTP status code is 409 (Conflict).
         :paramtype id: str
-        :keyword command_line: Required. The command line does not run under a shell, and therefore
-         cannot take advantage of shell features such as environment variable expansion. If you want to
-         take advantage of such features, you should invoke the shell in the command line, for example
-         using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
-         refers to file paths, it should use a relative path (relative to the Task working directory),
-         or use the Batch provided environment variable
+        :keyword command_line: The command line does not run under a shell, and therefore cannot take
+         advantage of shell features such as environment variable expansion. If you want to take
+         advantage of such features, you should invoke the shell in the command line, for example using
+         "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
+         file paths, it should use a relative path (relative to the Task working directory), or use the
+         Batch provided environment variable
          (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+         Required.
         :paramtype command_line: str
         :keyword container_settings: When this is specified, all directories recursively below the
          AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
@@ -8128,7 +7972,7 @@ class JobReleaseTask(msrest.serialization.Model):
          Task.
         :paramtype user_identity: ~azure-batch.models.UserIdentity
         """
-        super(JobReleaseTask, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.command_line = command_line
         self.container_settings = container_settings
@@ -8139,18 +7983,18 @@ class JobReleaseTask(msrest.serialization.Model):
         self.user_identity = user_identity
 
 
-class JobReleaseTaskExecutionInformation(msrest.serialization.Model):
+class JobReleaseTaskExecutionInformation(_serialization.Model):
     """Contains information about the execution of a Job Release Task on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start_time: Required. If the Task has been restarted or retried, this is the most recent
-     time at which the Task started running.
+    :ivar start_time: If the Task has been restarted or retried, this is the most recent time at
+     which the Task started running. Required.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: This property is set only if the Task is in the Completed state.
     :vartype end_time: ~datetime.datetime
-    :ivar state: Required. The current state of the Job Release Task on the Compute Node. Known
-     values are: "running", "completed".
+    :ivar state: The current state of the Job Release Task on the Compute Node. Required. Known
+     values are: "running" and "completed".
     :vartype state: str or ~azure-batch.models.JobReleaseTaskState
     :ivar task_root_directory: The root directory of the Job Release Task on the Compute Node. You
      can use this path to retrieve files created by the Task, such as log files.
@@ -8171,25 +8015,25 @@ class JobReleaseTaskExecutionInformation(msrest.serialization.Model):
      encountered a failure.
     :vartype failure_info: ~azure-batch.models.TaskFailureInformation
     :ivar result: If the value is 'failed', then the details of the failure can be found in the
-     failureInfo property. Known values are: "success", "failure".
+     failureInfo property. Known values are: "success" and "failure".
     :vartype result: str or ~azure-batch.models.TaskExecutionResult
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'state': {'required': True},
+        "start_time": {"required": True},
+        "state": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'state': {'key': 'state', 'type': 'str'},
-        'task_root_directory': {'key': 'taskRootDirectory', 'type': 'str'},
-        'task_root_directory_url': {'key': 'taskRootDirectoryUrl', 'type': 'str'},
-        'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'container_info': {'key': 'containerInfo', 'type': 'TaskContainerExecutionInformation'},
-        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
-        'result': {'key': 'result', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "state": {"key": "state", "type": "str"},
+        "task_root_directory": {"key": "taskRootDirectory", "type": "str"},
+        "task_root_directory_url": {"key": "taskRootDirectoryUrl", "type": "str"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "container_info": {"key": "containerInfo", "type": "TaskContainerExecutionInformation"},
+        "failure_info": {"key": "failureInfo", "type": "TaskFailureInformation"},
+        "result": {"key": "result", "type": "str"},
     }
 
     def __init__(
@@ -8207,13 +8051,13 @@ class JobReleaseTaskExecutionInformation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword start_time: Required. If the Task has been restarted or retried, this is the most
-         recent time at which the Task started running.
+        :keyword start_time: If the Task has been restarted or retried, this is the most recent time at
+         which the Task started running. Required.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: This property is set only if the Task is in the Completed state.
         :paramtype end_time: ~datetime.datetime
-        :keyword state: Required. The current state of the Job Release Task on the Compute Node. Known
-         values are: "running", "completed".
+        :keyword state: The current state of the Job Release Task on the Compute Node. Required. Known
+         values are: "running" and "completed".
         :paramtype state: str or ~azure-batch.models.JobReleaseTaskState
         :keyword task_root_directory: The root directory of the Job Release Task on the Compute Node.
          You can use this path to retrieve files created by the Task, such as log files.
@@ -8234,10 +8078,10 @@ class JobReleaseTaskExecutionInformation(msrest.serialization.Model):
          encountered a failure.
         :paramtype failure_info: ~azure-batch.models.TaskFailureInformation
         :keyword result: If the value is 'failed', then the details of the failure can be found in the
-         failureInfo property. Known values are: "success", "failure".
+         failureInfo property. Known values are: "success" and "failure".
         :paramtype result: str or ~azure-batch.models.TaskExecutionResult
         """
-        super(JobReleaseTaskExecutionInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.state = state
@@ -8249,7 +8093,7 @@ class JobReleaseTaskExecutionInformation(msrest.serialization.Model):
         self.result = result
 
 
-class JobScheduleAddOptions(msrest.serialization.Model):
+class JobScheduleAddOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -8267,18 +8111,18 @@ class JobScheduleAddOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -8296,88 +8140,14 @@ class JobScheduleAddOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobScheduleAddOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class JobScheduleAddParameter(msrest.serialization.Model):
-    """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a specification used to create each Job.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-     and case-insensitive (that is, you may not have two IDs within an Account that differ only by
-     case).
-    :vartype id: str
-    :ivar display_name: The display name need not be unique and can contain any Unicode characters
-     up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar schedule: Required. All times are fixed respective to UTC and are not impacted by
-     daylight saving time.
-    :vartype schedule: ~azure-batch.models.Schedule
-    :ivar job_specification: Required. Specifies details of the Jobs to be created on a schedule.
-    :vartype job_specification: ~azure-batch.models.JobSpecification
-    :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
-     use of user code.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'schedule': {'required': True},
-        'job_specification': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': 'Schedule'},
-        'job_specification': {'key': 'jobSpecification', 'type': 'JobSpecification'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        schedule: "_models.Schedule",
-        job_specification: "_models.JobSpecification",
-        display_name: Optional[str] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Required. The ID can contain any combination of alphanumeric characters including
-         hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-         and case-insensitive (that is, you may not have two IDs within an Account that differ only by
-         case).
-        :paramtype id: str
-        :keyword display_name: The display name need not be unique and can contain any Unicode
-         characters up to a maximum length of 1024.
-        :paramtype display_name: str
-        :keyword schedule: Required. All times are fixed respective to UTC and are not impacted by
-         daylight saving time.
-        :paramtype schedule: ~azure-batch.models.Schedule
-        :keyword job_specification: Required. Specifies details of the Jobs to be created on a
-         schedule.
-        :paramtype job_specification: ~azure-batch.models.JobSpecification
-        :keyword metadata: The Batch service does not assign any meaning to metadata; it is solely for
-         the use of user code.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        """
-        super(JobScheduleAddParameter, self).__init__(**kwargs)
-        self.id = id
-        self.display_name = display_name
-        self.schedule = schedule
-        self.job_specification = job_specification
-        self.metadata = metadata
-
-
-class JobScheduleDeleteOptions(msrest.serialization.Model):
+class JobScheduleDeleteOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -8411,22 +8181,22 @@ class JobScheduleDeleteOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -8464,7 +8234,7 @@ class JobScheduleDeleteOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobScheduleDeleteOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -8475,7 +8245,7 @@ class JobScheduleDeleteOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobScheduleDisableOptions(msrest.serialization.Model):
+class JobScheduleDisableOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -8509,22 +8279,22 @@ class JobScheduleDisableOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -8562,7 +8332,7 @@ class JobScheduleDisableOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobScheduleDisableOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -8573,7 +8343,7 @@ class JobScheduleDisableOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobScheduleEnableOptions(msrest.serialization.Model):
+class JobScheduleEnableOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -8607,22 +8377,22 @@ class JobScheduleEnableOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -8660,7 +8430,7 @@ class JobScheduleEnableOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobScheduleEnableOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -8671,7 +8441,7 @@ class JobScheduleEnableOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobScheduleExecutionInformation(msrest.serialization.Model):
+class JobScheduleExecutionInformation(_serialization.Model):
     """Contains information about Jobs that have been and will be run under a Job Schedule.
 
     :ivar next_run_time: This property is meaningful only if the schedule is in the active state
@@ -8686,9 +8456,9 @@ class JobScheduleExecutionInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_run_time': {'key': 'nextRunTime', 'type': 'iso-8601'},
-        'recent_job': {'key': 'recentJob', 'type': 'RecentJob'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "next_run_time": {"key": "nextRunTime", "type": "iso-8601"},
+        "recent_job": {"key": "recentJob", "type": "RecentJob"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -8710,13 +8480,13 @@ class JobScheduleExecutionInformation(msrest.serialization.Model):
         :keyword end_time: This property is set only if the Job Schedule is in the completed state.
         :paramtype end_time: ~datetime.datetime
         """
-        super(JobScheduleExecutionInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_run_time = next_run_time
         self.recent_job = recent_job
         self.end_time = end_time
 
 
-class JobScheduleExistsOptions(msrest.serialization.Model):
+class JobScheduleExistsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -8750,22 +8520,22 @@ class JobScheduleExistsOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -8803,7 +8573,7 @@ class JobScheduleExistsOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobScheduleExistsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -8814,7 +8584,7 @@ class JobScheduleExistsOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobScheduleGetOptions(msrest.serialization.Model):
+class JobScheduleGetOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -8852,16 +8622,16 @@ class JobScheduleGetOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
@@ -8869,9 +8639,9 @@ class JobScheduleGetOptions(msrest.serialization.Model):
         *,
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -8913,7 +8683,7 @@ class JobScheduleGetOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobScheduleGetOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.expand = expand
         self.timeout = timeout
@@ -8926,7 +8696,7 @@ class JobScheduleGetOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobScheduleListOptions(msrest.serialization.Model):
+class JobScheduleListOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -8954,30 +8724,30 @@ class JobScheduleListOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -9005,7 +8775,7 @@ class JobScheduleListOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(JobScheduleListOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.select = select
         self.expand = expand
@@ -9016,7 +8786,7 @@ class JobScheduleListOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class JobSchedulePatchOptions(msrest.serialization.Model):
+class JobSchedulePatchOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -9050,22 +8820,22 @@ class JobSchedulePatchOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -9103,7 +8873,7 @@ class JobSchedulePatchOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobSchedulePatchOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -9114,132 +8884,89 @@ class JobSchedulePatchOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobSchedulePatchParameter(msrest.serialization.Model):
-    """The set of changes to be made to a Job Schedule.
-
-    :ivar schedule: All times are fixed respective to UTC and are not impacted by daylight saving
-     time. If you do not specify this element, the existing schedule is left unchanged.
-    :vartype schedule: ~azure-batch.models.Schedule
-    :ivar job_specification: Updates affect only Jobs that are started after the update has taken
-     place. Any currently active Job continues with the older specification.
-    :vartype job_specification: ~azure-batch.models.JobSpecification
-    :ivar metadata: If you do not specify this element, existing metadata is left unchanged.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    """
-
-    _attribute_map = {
-        'schedule': {'key': 'schedule', 'type': 'Schedule'},
-        'job_specification': {'key': 'jobSpecification', 'type': 'JobSpecification'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        schedule: Optional["_models.Schedule"] = None,
-        job_specification: Optional["_models.JobSpecification"] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword schedule: All times are fixed respective to UTC and are not impacted by daylight
-         saving time. If you do not specify this element, the existing schedule is left unchanged.
-        :paramtype schedule: ~azure-batch.models.Schedule
-        :keyword job_specification: Updates affect only Jobs that are started after the update has
-         taken place. Any currently active Job continues with the older specification.
-        :paramtype job_specification: ~azure-batch.models.JobSpecification
-        :keyword metadata: If you do not specify this element, existing metadata is left unchanged.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        """
-        super(JobSchedulePatchParameter, self).__init__(**kwargs)
-        self.schedule = schedule
-        self.job_specification = job_specification
-        self.metadata = metadata
-
-
-class JobScheduleStatistics(msrest.serialization.Model):
+class JobScheduleStatistics(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Resource usage statistics for a Job Schedule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar url: Required. The URL of the statistics.
+    :ivar url: The URL of the statistics. Required.
     :vartype url: str
-    :ivar start_time: Required. The start time of the time range covered by the statistics.
+    :ivar start_time: The start time of the time range covered by the statistics. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar last_update_time: Required. The time at which the statistics were last updated. All
-     statistics are limited to the range between startTime and lastUpdateTime.
+    :ivar last_update_time: The time at which the statistics were last updated. All statistics are
+     limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
-    :ivar user_cpu_time: Required. The total user mode CPU time (summed across all cores and all
-     Compute Nodes) consumed by all Tasks in all Jobs created under the schedule.
+    :ivar user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
+     Nodes) consumed by all Tasks in all Jobs created under the schedule. Required.
     :vartype user_cpu_time: ~datetime.timedelta
-    :ivar kernel_cpu_time: Required. The total kernel mode CPU time (summed across all cores and
-     all Compute Nodes) consumed by all Tasks in all Jobs created under the schedule.
+    :ivar kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all Compute
+     Nodes) consumed by all Tasks in all Jobs created under the schedule. Required.
     :vartype kernel_cpu_time: ~datetime.timedelta
-    :ivar wall_clock_time: Required. The wall clock time is the elapsed time from when the Task
-     started running on a Compute Node to when it finished (or to the last time the statistics were
-     updated, if the Task had not finished by then). If a Task was retried, this includes the wall
-     clock time of all the Task retries.
+    :ivar wall_clock_time: The wall clock time is the elapsed time from when the Task started
+     running on a Compute Node to when it finished (or to the last time the statistics were updated,
+     if the Task had not finished by then). If a Task was retried, this includes the wall clock time
+     of all the Task retries. Required.
     :vartype wall_clock_time: ~datetime.timedelta
-    :ivar read_i_ops: Required. The total number of disk read operations made by all Tasks in all
-     Jobs created under the schedule.
-    :vartype read_i_ops: long
-    :ivar write_i_ops: Required. The total number of disk write operations made by all Tasks in all
-     Jobs created under the schedule.
-    :vartype write_i_ops: long
-    :ivar read_io_gi_b: Required. The total gibibytes read from disk by all Tasks in all Jobs
-     created under the schedule.
+    :ivar read_i_ops: The total number of disk read operations made by all Tasks in all Jobs
+     created under the schedule. Required.
+    :vartype read_i_ops: int
+    :ivar write_i_ops: The total number of disk write operations made by all Tasks in all Jobs
+     created under the schedule. Required.
+    :vartype write_i_ops: int
+    :ivar read_io_gi_b: The total gibibytes read from disk by all Tasks in all Jobs created under
+     the schedule. Required.
     :vartype read_io_gi_b: float
-    :ivar write_io_gi_b: Required. The total gibibytes written to disk by all Tasks in all Jobs
-     created under the schedule.
+    :ivar write_io_gi_b: The total gibibytes written to disk by all Tasks in all Jobs created under
+     the schedule. Required.
     :vartype write_io_gi_b: float
-    :ivar num_succeeded_tasks: Required. The total number of Tasks successfully completed during
-     the given time range in Jobs created under the schedule. A Task completes successfully if it
-     returns exit code 0.
-    :vartype num_succeeded_tasks: long
-    :ivar num_failed_tasks: Required. The total number of Tasks that failed during the given time
-     range in Jobs created under the schedule. A Task fails if it exhausts its maximum retry count
-     without returning exit code 0.
-    :vartype num_failed_tasks: long
-    :ivar num_task_retries: Required. The total number of retries during the given time range on
-     all Tasks in all Jobs created under the schedule.
-    :vartype num_task_retries: long
-    :ivar wait_time: Required. This value is only reported in the Account lifetime statistics; it
-     is not included in the Job statistics.
+    :ivar num_succeeded_tasks: The total number of Tasks successfully completed during the given
+     time range in Jobs created under the schedule. A Task completes successfully if it returns exit
+     code 0. Required.
+    :vartype num_succeeded_tasks: int
+    :ivar num_failed_tasks: The total number of Tasks that failed during the given time range in
+     Jobs created under the schedule. A Task fails if it exhausts its maximum retry count without
+     returning exit code 0. Required.
+    :vartype num_failed_tasks: int
+    :ivar num_task_retries: The total number of retries during the given time range on all Tasks in
+     all Jobs created under the schedule. Required.
+    :vartype num_task_retries: int
+    :ivar wait_time: This value is only reported in the Account lifetime statistics; it is not
+     included in the Job statistics. Required.
     :vartype wait_time: ~datetime.timedelta
     """
 
     _validation = {
-        'url': {'required': True},
-        'start_time': {'required': True},
-        'last_update_time': {'required': True},
-        'user_cpu_time': {'required': True},
-        'kernel_cpu_time': {'required': True},
-        'wall_clock_time': {'required': True},
-        'read_i_ops': {'required': True},
-        'write_i_ops': {'required': True},
-        'read_io_gi_b': {'required': True},
-        'write_io_gi_b': {'required': True},
-        'num_succeeded_tasks': {'required': True},
-        'num_failed_tasks': {'required': True},
-        'num_task_retries': {'required': True},
-        'wait_time': {'required': True},
+        "url": {"required": True},
+        "start_time": {"required": True},
+        "last_update_time": {"required": True},
+        "user_cpu_time": {"required": True},
+        "kernel_cpu_time": {"required": True},
+        "wall_clock_time": {"required": True},
+        "read_i_ops": {"required": True},
+        "write_i_ops": {"required": True},
+        "read_io_gi_b": {"required": True},
+        "write_io_gi_b": {"required": True},
+        "num_succeeded_tasks": {"required": True},
+        "num_failed_tasks": {"required": True},
+        "num_task_retries": {"required": True},
+        "wait_time": {"required": True},
     }
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'user_cpu_time': {'key': 'userCPUTime', 'type': 'duration'},
-        'kernel_cpu_time': {'key': 'kernelCPUTime', 'type': 'duration'},
-        'wall_clock_time': {'key': 'wallClockTime', 'type': 'duration'},
-        'read_i_ops': {'key': 'readIOps', 'type': 'long'},
-        'write_i_ops': {'key': 'writeIOps', 'type': 'long'},
-        'read_io_gi_b': {'key': 'readIOGiB', 'type': 'float'},
-        'write_io_gi_b': {'key': 'writeIOGiB', 'type': 'float'},
-        'num_succeeded_tasks': {'key': 'numSucceededTasks', 'type': 'long'},
-        'num_failed_tasks': {'key': 'numFailedTasks', 'type': 'long'},
-        'num_task_retries': {'key': 'numTaskRetries', 'type': 'long'},
-        'wait_time': {'key': 'waitTime', 'type': 'duration'},
+        "url": {"key": "url", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
+        "user_cpu_time": {"key": "userCPUTime", "type": "duration"},
+        "kernel_cpu_time": {"key": "kernelCPUTime", "type": "duration"},
+        "wall_clock_time": {"key": "wallClockTime", "type": "duration"},
+        "read_i_ops": {"key": "readIOps", "type": "int"},
+        "write_i_ops": {"key": "writeIOps", "type": "int"},
+        "read_io_gi_b": {"key": "readIOGiB", "type": "float"},
+        "write_io_gi_b": {"key": "writeIOGiB", "type": "float"},
+        "num_succeeded_tasks": {"key": "numSucceededTasks", "type": "int"},
+        "num_failed_tasks": {"key": "numFailedTasks", "type": "int"},
+        "num_task_retries": {"key": "numTaskRetries", "type": "int"},
+        "wait_time": {"key": "waitTime", "type": "duration"},
     }
 
     def __init__(
@@ -9262,52 +8989,52 @@ class JobScheduleStatistics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword url: Required. The URL of the statistics.
+        :keyword url: The URL of the statistics. Required.
         :paramtype url: str
-        :keyword start_time: Required. The start time of the time range covered by the statistics.
+        :keyword start_time: The start time of the time range covered by the statistics. Required.
         :paramtype start_time: ~datetime.datetime
-        :keyword last_update_time: Required. The time at which the statistics were last updated. All
-         statistics are limited to the range between startTime and lastUpdateTime.
+        :keyword last_update_time: The time at which the statistics were last updated. All statistics
+         are limited to the range between startTime and lastUpdateTime. Required.
         :paramtype last_update_time: ~datetime.datetime
-        :keyword user_cpu_time: Required. The total user mode CPU time (summed across all cores and all
-         Compute Nodes) consumed by all Tasks in all Jobs created under the schedule.
+        :keyword user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
+         Nodes) consumed by all Tasks in all Jobs created under the schedule. Required.
         :paramtype user_cpu_time: ~datetime.timedelta
-        :keyword kernel_cpu_time: Required. The total kernel mode CPU time (summed across all cores and
-         all Compute Nodes) consumed by all Tasks in all Jobs created under the schedule.
+        :keyword kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all
+         Compute Nodes) consumed by all Tasks in all Jobs created under the schedule. Required.
         :paramtype kernel_cpu_time: ~datetime.timedelta
-        :keyword wall_clock_time: Required. The wall clock time is the elapsed time from when the Task
-         started running on a Compute Node to when it finished (or to the last time the statistics were
-         updated, if the Task had not finished by then). If a Task was retried, this includes the wall
-         clock time of all the Task retries.
+        :keyword wall_clock_time: The wall clock time is the elapsed time from when the Task started
+         running on a Compute Node to when it finished (or to the last time the statistics were updated,
+         if the Task had not finished by then). If a Task was retried, this includes the wall clock time
+         of all the Task retries. Required.
         :paramtype wall_clock_time: ~datetime.timedelta
-        :keyword read_i_ops: Required. The total number of disk read operations made by all Tasks in
-         all Jobs created under the schedule.
-        :paramtype read_i_ops: long
-        :keyword write_i_ops: Required. The total number of disk write operations made by all Tasks in
-         all Jobs created under the schedule.
-        :paramtype write_i_ops: long
-        :keyword read_io_gi_b: Required. The total gibibytes read from disk by all Tasks in all Jobs
-         created under the schedule.
+        :keyword read_i_ops: The total number of disk read operations made by all Tasks in all Jobs
+         created under the schedule. Required.
+        :paramtype read_i_ops: int
+        :keyword write_i_ops: The total number of disk write operations made by all Tasks in all Jobs
+         created under the schedule. Required.
+        :paramtype write_i_ops: int
+        :keyword read_io_gi_b: The total gibibytes read from disk by all Tasks in all Jobs created
+         under the schedule. Required.
         :paramtype read_io_gi_b: float
-        :keyword write_io_gi_b: Required. The total gibibytes written to disk by all Tasks in all Jobs
-         created under the schedule.
+        :keyword write_io_gi_b: The total gibibytes written to disk by all Tasks in all Jobs created
+         under the schedule. Required.
         :paramtype write_io_gi_b: float
-        :keyword num_succeeded_tasks: Required. The total number of Tasks successfully completed during
-         the given time range in Jobs created under the schedule. A Task completes successfully if it
-         returns exit code 0.
-        :paramtype num_succeeded_tasks: long
-        :keyword num_failed_tasks: Required. The total number of Tasks that failed during the given
-         time range in Jobs created under the schedule. A Task fails if it exhausts its maximum retry
-         count without returning exit code 0.
-        :paramtype num_failed_tasks: long
-        :keyword num_task_retries: Required. The total number of retries during the given time range on
-         all Tasks in all Jobs created under the schedule.
-        :paramtype num_task_retries: long
-        :keyword wait_time: Required. This value is only reported in the Account lifetime statistics;
-         it is not included in the Job statistics.
+        :keyword num_succeeded_tasks: The total number of Tasks successfully completed during the given
+         time range in Jobs created under the schedule. A Task completes successfully if it returns exit
+         code 0. Required.
+        :paramtype num_succeeded_tasks: int
+        :keyword num_failed_tasks: The total number of Tasks that failed during the given time range in
+         Jobs created under the schedule. A Task fails if it exhausts its maximum retry count without
+         returning exit code 0. Required.
+        :paramtype num_failed_tasks: int
+        :keyword num_task_retries: The total number of retries during the given time range on all Tasks
+         in all Jobs created under the schedule. Required.
+        :paramtype num_task_retries: int
+        :keyword wait_time: This value is only reported in the Account lifetime statistics; it is not
+         included in the Job statistics. Required.
         :paramtype wait_time: ~datetime.timedelta
         """
-        super(JobScheduleStatistics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time
@@ -9324,7 +9051,7 @@ class JobScheduleStatistics(msrest.serialization.Model):
         self.wait_time = wait_time
 
 
-class JobScheduleTerminateOptions(msrest.serialization.Model):
+class JobScheduleTerminateOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -9358,22 +9085,22 @@ class JobScheduleTerminateOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -9411,7 +9138,7 @@ class JobScheduleTerminateOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobScheduleTerminateOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -9422,7 +9149,7 @@ class JobScheduleTerminateOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobScheduleUpdateOptions(msrest.serialization.Model):
+class JobScheduleUpdateOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -9456,22 +9183,22 @@ class JobScheduleUpdateOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -9509,7 +9236,7 @@ class JobScheduleUpdateOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobScheduleUpdateOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -9520,66 +9247,12 @@ class JobScheduleUpdateOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobScheduleUpdateParameter(msrest.serialization.Model):
-    """The set of changes to be made to a Job Schedule.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar schedule: Required. All times are fixed respective to UTC and are not impacted by
-     daylight saving time. If you do not specify this element, it is equivalent to passing the
-     default schedule: that is, a single Job scheduled to run immediately.
-    :vartype schedule: ~azure-batch.models.Schedule
-    :ivar job_specification: Required. Updates affect only Jobs that are started after the update
-     has taken place. Any currently active Job continues with the older specification.
-    :vartype job_specification: ~azure-batch.models.JobSpecification
-    :ivar metadata: If you do not specify this element, it takes the default value of an empty
-     list; in effect, any existing metadata is deleted.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    """
-
-    _validation = {
-        'schedule': {'required': True},
-        'job_specification': {'required': True},
-    }
-
-    _attribute_map = {
-        'schedule': {'key': 'schedule', 'type': 'Schedule'},
-        'job_specification': {'key': 'jobSpecification', 'type': 'JobSpecification'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        schedule: "_models.Schedule",
-        job_specification: "_models.JobSpecification",
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword schedule: Required. All times are fixed respective to UTC and are not impacted by
-         daylight saving time. If you do not specify this element, it is equivalent to passing the
-         default schedule: that is, a single Job scheduled to run immediately.
-        :paramtype schedule: ~azure-batch.models.Schedule
-        :keyword job_specification: Required. Updates affect only Jobs that are started after the
-         update has taken place. Any currently active Job continues with the older specification.
-        :paramtype job_specification: ~azure-batch.models.JobSpecification
-        :keyword metadata: If you do not specify this element, it takes the default value of an empty
-         list; in effect, any existing metadata is deleted.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        """
-        super(JobScheduleUpdateParameter, self).__init__(**kwargs)
-        self.schedule = schedule
-        self.job_specification = job_specification
-        self.metadata = metadata
-
-
-class JobSchedulingError(msrest.serialization.Model):
+class JobSchedulingError(_serialization.Model):
     """An error encountered by the Batch service when scheduling a Job.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar category: Required. The category of the error. Known values are: "usererror",
+    :ivar category: The category of the error. Required. Known values are: "usererror" and
      "servererror".
     :vartype category: str or ~azure-batch.models.ErrorCategory
     :ivar code: An identifier for the Job scheduling error. Codes are invariant and are intended to
@@ -9593,14 +9266,14 @@ class JobSchedulingError(msrest.serialization.Model):
     """
 
     _validation = {
-        'category': {'required': True},
+        "category": {"required": True},
     }
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[NameValuePair]'},
+        "category": {"key": "category", "type": "str"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[NameValuePair]"},
     }
 
     def __init__(
@@ -9613,7 +9286,7 @@ class JobSchedulingError(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword category: Required. The category of the error. Known values are: "usererror",
+        :keyword category: The category of the error. Required. Known values are: "usererror" and
          "servererror".
         :paramtype category: str or ~azure-batch.models.ErrorCategory
         :keyword code: An identifier for the Job scheduling error. Codes are invariant and are intended
@@ -9625,14 +9298,14 @@ class JobSchedulingError(msrest.serialization.Model):
         :keyword details: A list of additional error details related to the scheduling error.
         :paramtype details: list[~azure-batch.models.NameValuePair]
         """
-        super(JobSchedulingError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.category = category
         self.code = code
         self.message = message
         self.details = details
 
 
-class JobSpecification(msrest.serialization.Model):
+class JobSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Specifies details of the Jobs to be created on a schedule.
 
     All required parameters must be populated in order to send to Azure.
@@ -9662,9 +9335,9 @@ class JobSpecification(msrest.serialization.Model):
      you want to use automatic Job termination without a Job Manager, you should initially set
      onAllTasksComplete to noaction and update the Job properties to set onAllTasksComplete to
      terminatejob once you have finished adding Tasks. The default is noaction. Known values are:
-     "noaction", "terminatejob".
+     "noaction" and "terminatejob".
     :vartype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-    :ivar on_task_failure: The default is noaction. Known values are: "noaction",
+    :ivar on_task_failure: The default is noaction. Known values are: "noaction" and
      "performexitoptionsjobaction".
     :vartype on_task_failure: str or ~azure-batch.models.OnTaskFailure
     :ivar network_configuration: The network configuration for the Job.
@@ -9688,7 +9361,7 @@ class JobSpecification(msrest.serialization.Model):
     :ivar common_environment_settings: Individual Tasks can override an environment setting
      specified here by specifying the same setting name with a different value.
     :vartype common_environment_settings: list[~azure-batch.models.EnvironmentSetting]
-    :ivar pool_info: Required. Specifies how a Job should be assigned to a Pool.
+    :ivar pool_info: Specifies how a Job should be assigned to a Pool. Required.
     :vartype pool_info: ~azure-batch.models.PoolInformation
     :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
      use of user code.
@@ -9696,25 +9369,25 @@ class JobSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'pool_info': {'required': True},
+        "pool_info": {"required": True},
     }
 
     _attribute_map = {
-        'priority': {'key': 'priority', 'type': 'int'},
-        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
-        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
-        'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'str'},
-        'on_task_failure': {'key': 'onTaskFailure', 'type': 'str'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
-        'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
-        'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
-        'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
-        'job_release_task': {'key': 'jobReleaseTask', 'type': 'JobReleaseTask'},
-        'common_environment_settings': {'key': 'commonEnvironmentSettings', 'type': '[EnvironmentSetting]'},
-        'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
+        "priority": {"key": "priority", "type": "int"},
+        "allow_task_preemption": {"key": "allowTaskPreemption", "type": "bool"},
+        "max_parallel_tasks": {"key": "maxParallelTasks", "type": "int"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "uses_task_dependencies": {"key": "usesTaskDependencies", "type": "bool"},
+        "on_all_tasks_complete": {"key": "onAllTasksComplete", "type": "str"},
+        "on_task_failure": {"key": "onTaskFailure", "type": "str"},
+        "network_configuration": {"key": "networkConfiguration", "type": "JobNetworkConfiguration"},
+        "constraints": {"key": "constraints", "type": "JobConstraints"},
+        "job_manager_task": {"key": "jobManagerTask", "type": "JobManagerTask"},
+        "job_preparation_task": {"key": "jobPreparationTask", "type": "JobPreparationTask"},
+        "job_release_task": {"key": "jobReleaseTask", "type": "JobReleaseTask"},
+        "common_environment_settings": {"key": "commonEnvironmentSettings", "type": "[EnvironmentSetting]"},
+        "pool_info": {"key": "poolInfo", "type": "PoolInformation"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     def __init__(
@@ -9723,7 +9396,7 @@ class JobSpecification(msrest.serialization.Model):
         pool_info: "_models.PoolInformation",
         priority: Optional[int] = None,
         allow_task_preemption: Optional[bool] = None,
-        max_parallel_tasks: Optional[int] = -1,
+        max_parallel_tasks: int = -1,
         display_name: Optional[str] = None,
         uses_task_dependencies: Optional[bool] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
@@ -9763,9 +9436,9 @@ class JobSpecification(msrest.serialization.Model):
          you want to use automatic Job termination without a Job Manager, you should initially set
          onAllTasksComplete to noaction and update the Job properties to set onAllTasksComplete to
          terminatejob once you have finished adding Tasks. The default is noaction. Known values are:
-         "noaction", "terminatejob".
+         "noaction" and "terminatejob".
         :paramtype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-        :keyword on_task_failure: The default is noaction. Known values are: "noaction",
+        :keyword on_task_failure: The default is noaction. Known values are: "noaction" and
          "performexitoptionsjobaction".
         :paramtype on_task_failure: str or ~azure-batch.models.OnTaskFailure
         :keyword network_configuration: The network configuration for the Job.
@@ -9789,13 +9462,13 @@ class JobSpecification(msrest.serialization.Model):
         :keyword common_environment_settings: Individual Tasks can override an environment setting
          specified here by specifying the same setting name with a different value.
         :paramtype common_environment_settings: list[~azure-batch.models.EnvironmentSetting]
-        :keyword pool_info: Required. Specifies how a Job should be assigned to a Pool.
+        :keyword pool_info: Specifies how a Job should be assigned to a Pool. Required.
         :paramtype pool_info: ~azure-batch.models.PoolInformation
         :keyword metadata: The Batch service does not assign any meaning to metadata; it is solely for
          the use of user code.
         :paramtype metadata: list[~azure-batch.models.MetadataItem]
         """
-        super(JobSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.priority = priority
         self.allow_task_preemption = allow_task_preemption
         self.max_parallel_tasks = max_parallel_tasks
@@ -9813,88 +9486,88 @@ class JobSpecification(msrest.serialization.Model):
         self.metadata = metadata
 
 
-class JobStatistics(msrest.serialization.Model):
+class JobStatistics(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Resource usage statistics for a Job.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar url: Required. The URL of the statistics.
+    :ivar url: The URL of the statistics. Required.
     :vartype url: str
-    :ivar start_time: Required. The start time of the time range covered by the statistics.
+    :ivar start_time: The start time of the time range covered by the statistics. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar last_update_time: Required. The time at which the statistics were last updated. All
-     statistics are limited to the range between startTime and lastUpdateTime.
+    :ivar last_update_time: The time at which the statistics were last updated. All statistics are
+     limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
-    :ivar user_cpu_time: Required. The total user mode CPU time (summed across all cores and all
-     Compute Nodes) consumed by all Tasks in the Job.
+    :ivar user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
+     Nodes) consumed by all Tasks in the Job. Required.
     :vartype user_cpu_time: ~datetime.timedelta
-    :ivar kernel_cpu_time: Required. The total kernel mode CPU time (summed across all cores and
-     all Compute Nodes) consumed by all Tasks in the Job.
+    :ivar kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all Compute
+     Nodes) consumed by all Tasks in the Job. Required.
     :vartype kernel_cpu_time: ~datetime.timedelta
-    :ivar wall_clock_time: Required. The wall clock time is the elapsed time from when the Task
-     started running on a Compute Node to when it finished (or to the last time the statistics were
-     updated, if the Task had not finished by then). If a Task was retried, this includes the wall
-     clock time of all the Task retries.
+    :ivar wall_clock_time: The wall clock time is the elapsed time from when the Task started
+     running on a Compute Node to when it finished (or to the last time the statistics were updated,
+     if the Task had not finished by then). If a Task was retried, this includes the wall clock time
+     of all the Task retries. Required.
     :vartype wall_clock_time: ~datetime.timedelta
-    :ivar read_i_ops: Required. The total number of disk read operations made by all Tasks in the
-     Job.
-    :vartype read_i_ops: long
-    :ivar write_i_ops: Required. The total number of disk write operations made by all Tasks in the
-     Job.
-    :vartype write_i_ops: long
-    :ivar read_io_gi_b: Required. The total amount of data in GiB read from disk by all Tasks in
-     the Job.
+    :ivar read_i_ops: The total number of disk read operations made by all Tasks in the Job.
+     Required.
+    :vartype read_i_ops: int
+    :ivar write_i_ops: The total number of disk write operations made by all Tasks in the Job.
+     Required.
+    :vartype write_i_ops: int
+    :ivar read_io_gi_b: The total amount of data in GiB read from disk by all Tasks in the Job.
+     Required.
     :vartype read_io_gi_b: float
-    :ivar write_io_gi_b: Required. The total amount of data in GiB written to disk by all Tasks in
-     the Job.
+    :ivar write_io_gi_b: The total amount of data in GiB written to disk by all Tasks in the Job.
+     Required.
     :vartype write_io_gi_b: float
-    :ivar num_succeeded_tasks: Required. A Task completes successfully if it returns exit code 0.
-    :vartype num_succeeded_tasks: long
-    :ivar num_failed_tasks: Required. A Task fails if it exhausts its maximum retry count without
-     returning exit code 0.
-    :vartype num_failed_tasks: long
-    :ivar num_task_retries: Required. The total number of retries on all the Tasks in the Job
-     during the given time range.
-    :vartype num_task_retries: long
-    :ivar wait_time: Required. The wait time for a Task is defined as the elapsed time between the
-     creation of the Task and the start of Task execution. (If the Task is retried due to failures,
-     the wait time is the time to the most recent Task execution.) This value is only reported in
-     the Account lifetime statistics; it is not included in the Job statistics.
+    :ivar num_succeeded_tasks: A Task completes successfully if it returns exit code 0. Required.
+    :vartype num_succeeded_tasks: int
+    :ivar num_failed_tasks: A Task fails if it exhausts its maximum retry count without returning
+     exit code 0. Required.
+    :vartype num_failed_tasks: int
+    :ivar num_task_retries: The total number of retries on all the Tasks in the Job during the
+     given time range. Required.
+    :vartype num_task_retries: int
+    :ivar wait_time: The wait time for a Task is defined as the elapsed time between the creation
+     of the Task and the start of Task execution. (If the Task is retried due to failures, the wait
+     time is the time to the most recent Task execution.) This value is only reported in the Account
+     lifetime statistics; it is not included in the Job statistics. Required.
     :vartype wait_time: ~datetime.timedelta
     """
 
     _validation = {
-        'url': {'required': True},
-        'start_time': {'required': True},
-        'last_update_time': {'required': True},
-        'user_cpu_time': {'required': True},
-        'kernel_cpu_time': {'required': True},
-        'wall_clock_time': {'required': True},
-        'read_i_ops': {'required': True},
-        'write_i_ops': {'required': True},
-        'read_io_gi_b': {'required': True},
-        'write_io_gi_b': {'required': True},
-        'num_succeeded_tasks': {'required': True},
-        'num_failed_tasks': {'required': True},
-        'num_task_retries': {'required': True},
-        'wait_time': {'required': True},
+        "url": {"required": True},
+        "start_time": {"required": True},
+        "last_update_time": {"required": True},
+        "user_cpu_time": {"required": True},
+        "kernel_cpu_time": {"required": True},
+        "wall_clock_time": {"required": True},
+        "read_i_ops": {"required": True},
+        "write_i_ops": {"required": True},
+        "read_io_gi_b": {"required": True},
+        "write_io_gi_b": {"required": True},
+        "num_succeeded_tasks": {"required": True},
+        "num_failed_tasks": {"required": True},
+        "num_task_retries": {"required": True},
+        "wait_time": {"required": True},
     }
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'user_cpu_time': {'key': 'userCPUTime', 'type': 'duration'},
-        'kernel_cpu_time': {'key': 'kernelCPUTime', 'type': 'duration'},
-        'wall_clock_time': {'key': 'wallClockTime', 'type': 'duration'},
-        'read_i_ops': {'key': 'readIOps', 'type': 'long'},
-        'write_i_ops': {'key': 'writeIOps', 'type': 'long'},
-        'read_io_gi_b': {'key': 'readIOGiB', 'type': 'float'},
-        'write_io_gi_b': {'key': 'writeIOGiB', 'type': 'float'},
-        'num_succeeded_tasks': {'key': 'numSucceededTasks', 'type': 'long'},
-        'num_failed_tasks': {'key': 'numFailedTasks', 'type': 'long'},
-        'num_task_retries': {'key': 'numTaskRetries', 'type': 'long'},
-        'wait_time': {'key': 'waitTime', 'type': 'duration'},
+        "url": {"key": "url", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
+        "user_cpu_time": {"key": "userCPUTime", "type": "duration"},
+        "kernel_cpu_time": {"key": "kernelCPUTime", "type": "duration"},
+        "wall_clock_time": {"key": "wallClockTime", "type": "duration"},
+        "read_i_ops": {"key": "readIOps", "type": "int"},
+        "write_i_ops": {"key": "writeIOps", "type": "int"},
+        "read_io_gi_b": {"key": "readIOGiB", "type": "float"},
+        "write_io_gi_b": {"key": "writeIOGiB", "type": "float"},
+        "num_succeeded_tasks": {"key": "numSucceededTasks", "type": "int"},
+        "num_failed_tasks": {"key": "numFailedTasks", "type": "int"},
+        "num_task_retries": {"key": "numTaskRetries", "type": "int"},
+        "wait_time": {"key": "waitTime", "type": "duration"},
     }
 
     def __init__(
@@ -9917,52 +9590,52 @@ class JobStatistics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword url: Required. The URL of the statistics.
+        :keyword url: The URL of the statistics. Required.
         :paramtype url: str
-        :keyword start_time: Required. The start time of the time range covered by the statistics.
+        :keyword start_time: The start time of the time range covered by the statistics. Required.
         :paramtype start_time: ~datetime.datetime
-        :keyword last_update_time: Required. The time at which the statistics were last updated. All
-         statistics are limited to the range between startTime and lastUpdateTime.
+        :keyword last_update_time: The time at which the statistics were last updated. All statistics
+         are limited to the range between startTime and lastUpdateTime. Required.
         :paramtype last_update_time: ~datetime.datetime
-        :keyword user_cpu_time: Required. The total user mode CPU time (summed across all cores and all
-         Compute Nodes) consumed by all Tasks in the Job.
+        :keyword user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
+         Nodes) consumed by all Tasks in the Job. Required.
         :paramtype user_cpu_time: ~datetime.timedelta
-        :keyword kernel_cpu_time: Required. The total kernel mode CPU time (summed across all cores and
-         all Compute Nodes) consumed by all Tasks in the Job.
+        :keyword kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all
+         Compute Nodes) consumed by all Tasks in the Job. Required.
         :paramtype kernel_cpu_time: ~datetime.timedelta
-        :keyword wall_clock_time: Required. The wall clock time is the elapsed time from when the Task
-         started running on a Compute Node to when it finished (or to the last time the statistics were
-         updated, if the Task had not finished by then). If a Task was retried, this includes the wall
-         clock time of all the Task retries.
+        :keyword wall_clock_time: The wall clock time is the elapsed time from when the Task started
+         running on a Compute Node to when it finished (or to the last time the statistics were updated,
+         if the Task had not finished by then). If a Task was retried, this includes the wall clock time
+         of all the Task retries. Required.
         :paramtype wall_clock_time: ~datetime.timedelta
-        :keyword read_i_ops: Required. The total number of disk read operations made by all Tasks in
-         the Job.
-        :paramtype read_i_ops: long
-        :keyword write_i_ops: Required. The total number of disk write operations made by all Tasks in
-         the Job.
-        :paramtype write_i_ops: long
-        :keyword read_io_gi_b: Required. The total amount of data in GiB read from disk by all Tasks in
-         the Job.
+        :keyword read_i_ops: The total number of disk read operations made by all Tasks in the Job.
+         Required.
+        :paramtype read_i_ops: int
+        :keyword write_i_ops: The total number of disk write operations made by all Tasks in the Job.
+         Required.
+        :paramtype write_i_ops: int
+        :keyword read_io_gi_b: The total amount of data in GiB read from disk by all Tasks in the Job.
+         Required.
         :paramtype read_io_gi_b: float
-        :keyword write_io_gi_b: Required. The total amount of data in GiB written to disk by all Tasks
-         in the Job.
+        :keyword write_io_gi_b: The total amount of data in GiB written to disk by all Tasks in the
+         Job. Required.
         :paramtype write_io_gi_b: float
-        :keyword num_succeeded_tasks: Required. A Task completes successfully if it returns exit code
-         0.
-        :paramtype num_succeeded_tasks: long
-        :keyword num_failed_tasks: Required. A Task fails if it exhausts its maximum retry count
-         without returning exit code 0.
-        :paramtype num_failed_tasks: long
-        :keyword num_task_retries: Required. The total number of retries on all the Tasks in the Job
-         during the given time range.
-        :paramtype num_task_retries: long
-        :keyword wait_time: Required. The wait time for a Task is defined as the elapsed time between
-         the creation of the Task and the start of Task execution. (If the Task is retried due to
-         failures, the wait time is the time to the most recent Task execution.) This value is only
-         reported in the Account lifetime statistics; it is not included in the Job statistics.
+        :keyword num_succeeded_tasks: A Task completes successfully if it returns exit code 0.
+         Required.
+        :paramtype num_succeeded_tasks: int
+        :keyword num_failed_tasks: A Task fails if it exhausts its maximum retry count without
+         returning exit code 0. Required.
+        :paramtype num_failed_tasks: int
+        :keyword num_task_retries: The total number of retries on all the Tasks in the Job during the
+         given time range. Required.
+        :paramtype num_task_retries: int
+        :keyword wait_time: The wait time for a Task is defined as the elapsed time between the
+         creation of the Task and the start of Task execution. (If the Task is retried due to failures,
+         the wait time is the time to the most recent Task execution.) This value is only reported in
+         the Account lifetime statistics; it is not included in the Job statistics. Required.
         :paramtype wait_time: ~datetime.timedelta
         """
-        super(JobStatistics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time
@@ -9979,7 +9652,7 @@ class JobStatistics(msrest.serialization.Model):
         self.wait_time = wait_time
 
 
-class JobTerminateOptions(msrest.serialization.Model):
+class JobTerminateOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -10013,22 +9686,22 @@ class JobTerminateOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -10066,7 +9739,7 @@ class JobTerminateOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobTerminateOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -10077,34 +9750,7 @@ class JobTerminateOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobTerminateParameter(msrest.serialization.Model):
-    """Options when terminating a Job.
-
-    :ivar terminate_reason: The text you want to appear as the Job's TerminateReason. The default
-     is 'UserTerminate'.
-    :vartype terminate_reason: str
-    """
-
-    _attribute_map = {
-        'terminate_reason': {'key': 'terminateReason', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        terminate_reason: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword terminate_reason: The text you want to appear as the Job's TerminateReason. The
-         default is 'UserTerminate'.
-        :paramtype terminate_reason: str
-        """
-        super(JobTerminateParameter, self).__init__(**kwargs)
-        self.terminate_reason = terminate_reason
-
-
-class JobUpdateOptions(msrest.serialization.Model):
+class JobUpdateOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -10138,22 +9784,22 @@ class JobUpdateOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -10191,7 +9837,7 @@ class JobUpdateOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(JobUpdateOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -10202,116 +9848,7 @@ class JobUpdateOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class JobUpdateParameter(msrest.serialization.Model):
-    """The set of changes to be made to a Job.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
-     priority and 1000 being the highest priority. If omitted, it is set to the default value 0.
-    :vartype priority: int
-    :ivar max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
-     specified. If not specified, the default value is -1, which means there's no limit to the
-     number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
-     been created using the update job API.
-    :vartype max_parallel_tasks: int
-    :ivar allow_task_preemption: If the value is set to True, other high priority jobs submitted to
-     the system will take precedence and will be able requeue tasks from this job. You can update a
-     job's allowTaskPreemption after it has been created using the update job API.
-    :vartype allow_task_preemption: bool
-    :ivar constraints: If omitted, the constraints are cleared.
-    :vartype constraints: ~azure-batch.models.JobConstraints
-    :ivar pool_info: Required. You may change the Pool for a Job only when the Job is disabled. The
-     Update Job call will fail if you include the poolInfo element and the Job is not disabled. If
-     you specify an autoPoolSpecification in the poolInfo, only the keepAlive property of the
-     autoPoolSpecification can be updated, and then only if the autoPoolSpecification has a
-     poolLifetimeOption of Job (other job properties can be updated as normal).
-    :vartype pool_info: ~azure-batch.models.PoolInformation
-    :ivar metadata: If omitted, it takes the default value of an empty list; in effect, any
-     existing metadata is deleted.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    :ivar on_all_tasks_complete: If omitted, the completion behavior is set to noaction. If the
-     current value is terminatejob, this is an error because a Job's completion behavior may not be
-     changed from terminatejob to noaction. You may not change the value from terminatejob to
-     noaction - that is, once you have engaged automatic Job termination, you cannot turn it off
-     again. If you try to do this, the request fails and Batch returns status code 400 (Bad Request)
-     and an 'invalid property value' error response. If you do not specify this element in a PUT
-     request, it is equivalent to passing noaction. This is an error if the current value is
-     terminatejob. Known values are: "noaction", "terminatejob".
-    :vartype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-    """
-
-    _validation = {
-        'pool_info': {'required': True},
-    }
-
-    _attribute_map = {
-        'priority': {'key': 'priority', 'type': 'int'},
-        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
-        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
-        'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
-        'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-        'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        pool_info: "_models.PoolInformation",
-        priority: Optional[int] = None,
-        max_parallel_tasks: Optional[int] = -1,
-        allow_task_preemption: Optional[bool] = None,
-        constraints: Optional["_models.JobConstraints"] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        on_all_tasks_complete: Optional[Union[str, "_models.OnAllTasksComplete"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword priority: Priority values can range from -1000 to 1000, with -1000 being the lowest
-         priority and 1000 being the highest priority. If omitted, it is set to the default value 0.
-        :paramtype priority: int
-        :keyword max_parallel_tasks: The value of maxParallelTasks must be -1 or greater than 0 if
-         specified. If not specified, the default value is -1, which means there's no limit to the
-         number of tasks that can be run at once. You can update a job's maxParallelTasks after it has
-         been created using the update job API.
-        :paramtype max_parallel_tasks: int
-        :keyword allow_task_preemption: If the value is set to True, other high priority jobs submitted
-         to the system will take precedence and will be able requeue tasks from this job. You can update
-         a job's allowTaskPreemption after it has been created using the update job API.
-        :paramtype allow_task_preemption: bool
-        :keyword constraints: If omitted, the constraints are cleared.
-        :paramtype constraints: ~azure-batch.models.JobConstraints
-        :keyword pool_info: Required. You may change the Pool for a Job only when the Job is disabled.
-         The Update Job call will fail if you include the poolInfo element and the Job is not disabled.
-         If you specify an autoPoolSpecification in the poolInfo, only the keepAlive property of the
-         autoPoolSpecification can be updated, and then only if the autoPoolSpecification has a
-         poolLifetimeOption of Job (other job properties can be updated as normal).
-        :paramtype pool_info: ~azure-batch.models.PoolInformation
-        :keyword metadata: If omitted, it takes the default value of an empty list; in effect, any
-         existing metadata is deleted.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        :keyword on_all_tasks_complete: If omitted, the completion behavior is set to noaction. If the
-         current value is terminatejob, this is an error because a Job's completion behavior may not be
-         changed from terminatejob to noaction. You may not change the value from terminatejob to
-         noaction - that is, once you have engaged automatic Job termination, you cannot turn it off
-         again. If you try to do this, the request fails and Batch returns status code 400 (Bad Request)
-         and an 'invalid property value' error response. If you do not specify this element in a PUT
-         request, it is equivalent to passing noaction. This is an error if the current value is
-         terminatejob. Known values are: "noaction", "terminatejob".
-        :paramtype on_all_tasks_complete: str or ~azure-batch.models.OnAllTasksComplete
-        """
-        super(JobUpdateParameter, self).__init__(**kwargs)
-        self.priority = priority
-        self.max_parallel_tasks = max_parallel_tasks
-        self.allow_task_preemption = allow_task_preemption
-        self.constraints = constraints
-        self.pool_info = pool_info
-        self.metadata = metadata
-        self.on_all_tasks_complete = on_all_tasks_complete
-
-
-class LinuxUserConfiguration(msrest.serialization.Model):
+class LinuxUserConfiguration(_serialization.Model):
     """Properties used to create a user Account on a Linux Compute Node.
 
     :ivar uid: The uid and gid properties must be specified together or not at all. If not
@@ -10330,18 +9867,13 @@ class LinuxUserConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'uid': {'key': 'uid', 'type': 'int'},
-        'gid': {'key': 'gid', 'type': 'int'},
-        'ssh_private_key': {'key': 'sshPrivateKey', 'type': 'str'},
+        "uid": {"key": "uid", "type": "int"},
+        "gid": {"key": "gid", "type": "int"},
+        "ssh_private_key": {"key": "sshPrivateKey", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        uid: Optional[int] = None,
-        gid: Optional[int] = None,
-        ssh_private_key: Optional[str] = None,
-        **kwargs
+        self, *, uid: Optional[int] = None, gid: Optional[int] = None, ssh_private_key: Optional[str] = None, **kwargs
     ):
         """
         :keyword uid: The uid and gid properties must be specified together or not at all. If not
@@ -10358,52 +9890,46 @@ class LinuxUserConfiguration(msrest.serialization.Model):
          Compute Nodes (no modification of the user's .ssh directory is done).
         :paramtype ssh_private_key: str
         """
-        super(LinuxUserConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.uid = uid
         self.gid = gid
         self.ssh_private_key = ssh_private_key
 
 
-class MetadataItem(msrest.serialization.Model):
+class MetadataItem(_serialization.Model):
     """The Batch service does not assign any meaning to this metadata; it is solely for the use of user code.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the metadata item.
+    :ivar name: The name of the metadata item. Required.
     :vartype name: str
-    :ivar value: Required. The value of the metadata item.
+    :ivar value: The value of the metadata item. Required.
     :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: str, **kwargs):
         """
-        :keyword name: Required. The name of the metadata item.
+        :keyword name: The name of the metadata item. Required.
         :paramtype name: str
-        :keyword value: Required. The value of the metadata item.
+        :keyword value: The value of the metadata item. Required.
         :paramtype value: str
         """
-        super(MetadataItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class MountConfiguration(msrest.serialization.Model):
+class MountConfiguration(_serialization.Model):
     """The file system to mount on each node.
 
     :ivar azure_blob_file_system_configuration: This property is mutually exclusive with all other
@@ -10420,10 +9946,13 @@ class MountConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'azure_blob_file_system_configuration': {'key': 'azureBlobFileSystemConfiguration', 'type': 'AzureBlobFileSystemConfiguration'},
-        'nfs_mount_configuration': {'key': 'nfsMountConfiguration', 'type': 'NFSMountConfiguration'},
-        'cifs_mount_configuration': {'key': 'cifsMountConfiguration', 'type': 'CIFSMountConfiguration'},
-        'azure_file_share_configuration': {'key': 'azureFileShareConfiguration', 'type': 'AzureFileShareConfiguration'},
+        "azure_blob_file_system_configuration": {
+            "key": "azureBlobFileSystemConfiguration",
+            "type": "AzureBlobFileSystemConfiguration",
+        },
+        "nfs_mount_configuration": {"key": "nfsMountConfiguration", "type": "NFSMountConfiguration"},
+        "cifs_mount_configuration": {"key": "cifsMountConfiguration", "type": "CIFSMountConfiguration"},
+        "azure_file_share_configuration": {"key": "azureFileShareConfiguration", "type": "AzureFileShareConfiguration"},
     }
 
     def __init__(
@@ -10450,22 +9979,22 @@ class MountConfiguration(msrest.serialization.Model):
          properties.
         :paramtype azure_file_share_configuration: ~azure-batch.models.AzureFileShareConfiguration
         """
-        super(MountConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.azure_blob_file_system_configuration = azure_blob_file_system_configuration
         self.nfs_mount_configuration = nfs_mount_configuration
         self.cifs_mount_configuration = cifs_mount_configuration
         self.azure_file_share_configuration = azure_file_share_configuration
 
 
-class MultiInstanceSettings(msrest.serialization.Model):
+class MultiInstanceSettings(_serialization.Model):
     """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case, if any of the subtasks fail (for example due to exiting with a non-zero exit code) the entire multi-instance Task fails. The multi-instance Task is then terminated and retried, up to its retry limit.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar number_of_instances: If omitted, the default is 1.
     :vartype number_of_instances: int
-    :ivar coordination_command_line: Required. A typical coordination command line launches a
-     background service and verifies that the service is ready to process inter-node messages.
+    :ivar coordination_command_line: A typical coordination command line launches a background
+     service and verifies that the service is ready to process inter-node messages. Required.
     :vartype coordination_command_line: str
     :ivar common_resource_files: The difference between common resource files and Task resource
      files is that common resource files are downloaded for all subtasks including the primary,
@@ -10480,13 +10009,13 @@ class MultiInstanceSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'coordination_command_line': {'required': True},
+        "coordination_command_line": {"required": True},
     }
 
     _attribute_map = {
-        'number_of_instances': {'key': 'numberOfInstances', 'type': 'int'},
-        'coordination_command_line': {'key': 'coordinationCommandLine', 'type': 'str'},
-        'common_resource_files': {'key': 'commonResourceFiles', 'type': '[ResourceFile]'},
+        "number_of_instances": {"key": "numberOfInstances", "type": "int"},
+        "coordination_command_line": {"key": "coordinationCommandLine", "type": "str"},
+        "common_resource_files": {"key": "commonResourceFiles", "type": "[ResourceFile]"},
     }
 
     def __init__(
@@ -10500,8 +10029,8 @@ class MultiInstanceSettings(msrest.serialization.Model):
         """
         :keyword number_of_instances: If omitted, the default is 1.
         :paramtype number_of_instances: int
-        :keyword coordination_command_line: Required. A typical coordination command line launches a
-         background service and verifies that the service is ready to process inter-node messages.
+        :keyword coordination_command_line: A typical coordination command line launches a background
+         service and verifies that the service is ready to process inter-node messages. Required.
         :paramtype coordination_command_line: str
         :keyword common_resource_files: The difference between common resource files and Task resource
          files is that common resource files are downloaded for all subtasks including the primary,
@@ -10514,13 +10043,13 @@ class MultiInstanceSettings(msrest.serialization.Model):
          Containers.
         :paramtype common_resource_files: list[~azure-batch.models.ResourceFile]
         """
-        super(MultiInstanceSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.number_of_instances = number_of_instances
         self.coordination_command_line = coordination_command_line
         self.common_resource_files = common_resource_files
 
 
-class NameValuePair(msrest.serialization.Model):
+class NameValuePair(_serialization.Model):
     """Represents a name-value pair.
 
     :ivar name: The name in the name-value pair.
@@ -10530,29 +10059,23 @@ class NameValuePair(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: The name in the name-value pair.
         :paramtype name: str
         :keyword value: The value in the name-value pair.
         :paramtype value: str
         """
-        super(NameValuePair, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class NetworkConfiguration(msrest.serialization.Model):
+class NetworkConfiguration(_serialization.Model):
     """The network configuration for a Pool.
 
     :ivar subnet_id: The virtual network must be in the same region and subscription as the Azure
@@ -10575,7 +10098,7 @@ class NetworkConfiguration(msrest.serialization.Model):
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :vartype subnet_id: str
     :ivar dynamic_v_net_assignment_scope: The scope of dynamic vnet assignment. Known values are:
-     "none", "job".
+     "none" and "job".
     :vartype dynamic_v_net_assignment_scope: str or ~azure-batch.models.DynamicVNetAssignmentScope
     :ivar endpoint_configuration: Pool endpoint configuration is only supported on Pools with the
      virtualMachineConfiguration property.
@@ -10586,10 +10109,13 @@ class NetworkConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'dynamic_v_net_assignment_scope': {'key': 'dynamicVNetAssignmentScope', 'type': 'str'},
-        'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'PoolEndpointConfiguration'},
-        'public_ip_address_configuration': {'key': 'publicIPAddressConfiguration', 'type': 'PublicIPAddressConfiguration'},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "dynamic_v_net_assignment_scope": {"key": "dynamicVNetAssignmentScope", "type": "str"},
+        "endpoint_configuration": {"key": "endpointConfiguration", "type": "PoolEndpointConfiguration"},
+        "public_ip_address_configuration": {
+            "key": "publicIPAddressConfiguration",
+            "type": "PublicIPAddressConfiguration",
+        },
     }
 
     def __init__(
@@ -10622,7 +10148,7 @@ class NetworkConfiguration(msrest.serialization.Model):
          https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
         :paramtype subnet_id: str
         :keyword dynamic_v_net_assignment_scope: The scope of dynamic vnet assignment. Known values
-         are: "none", "job".
+         are: "none" and "job".
         :paramtype dynamic_v_net_assignment_scope: str or
          ~azure-batch.models.DynamicVNetAssignmentScope
         :keyword endpoint_configuration: Pool endpoint configuration is only supported on Pools with
@@ -10632,30 +10158,30 @@ class NetworkConfiguration(msrest.serialization.Model):
          Pools with the virtualMachineConfiguration property.
         :paramtype public_ip_address_configuration: ~azure-batch.models.PublicIPAddressConfiguration
         """
-        super(NetworkConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet_id = subnet_id
         self.dynamic_v_net_assignment_scope = dynamic_v_net_assignment_scope
         self.endpoint_configuration = endpoint_configuration
         self.public_ip_address_configuration = public_ip_address_configuration
 
 
-class NetworkSecurityGroupRule(msrest.serialization.Model):
+class NetworkSecurityGroupRule(_serialization.Model):
     """A network security group rule to apply to an inbound endpoint.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar priority: Required. Priorities within a Pool must be unique and are evaluated in order of
-     priority. The lower the number the higher the priority. For example, rules could be specified
-     with order numbers of 150, 250, and 350. The rule with the order number of 150 takes precedence
-     over the rule that has an order of 250. Allowed priorities are 150 to 4096. If any reserved or
-     duplicate values are provided the request fails with HTTP status code 400.
+    :ivar priority: Priorities within a Pool must be unique and are evaluated in order of priority.
+     The lower the number the higher the priority. For example, rules could be specified with order
+     numbers of 150, 250, and 350. The rule with the order number of 150 takes precedence over the
+     rule that has an order of 250. Allowed priorities are 150 to 4096. If any reserved or duplicate
+     values are provided the request fails with HTTP status code 400. Required.
     :vartype priority: int
-    :ivar access: Required. The action that should be taken for a specified IP address, subnet
-     range or tag. Known values are: "allow", "deny".
+    :ivar access: The action that should be taken for a specified IP address, subnet range or tag.
+     Required. Known values are: "allow" and "deny".
     :vartype access: str or ~azure-batch.models.NetworkSecurityGroupRuleAccess
-    :ivar source_address_prefix: Required. Valid values are a single IP address (i.e. 10.10.10.10),
-     IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If any other values
-     are provided the request fails with HTTP status code 400.
+    :ivar source_address_prefix: Valid values are a single IP address (i.e. 10.10.10.10), IP subnet
+     (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If any other values are provided
+     the request fails with HTTP status code 400. Required.
     :vartype source_address_prefix: str
     :ivar source_port_ranges: Valid values are '\ *' (for all ports 0 - 65535), a specific port
      (i.e. 22), or a port range (i.e. 100-200). The ports must be in the range of 0 to 65535. Each
@@ -10666,16 +10192,16 @@ class NetworkSecurityGroupRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'priority': {'required': True},
-        'access': {'required': True},
-        'source_address_prefix': {'required': True},
+        "priority": {"required": True},
+        "access": {"required": True},
+        "source_address_prefix": {"required": True},
     }
 
     _attribute_map = {
-        'priority': {'key': 'priority', 'type': 'int'},
-        'access': {'key': 'access', 'type': 'str'},
-        'source_address_prefix': {'key': 'sourceAddressPrefix', 'type': 'str'},
-        'source_port_ranges': {'key': 'sourcePortRanges', 'type': '[str]'},
+        "priority": {"key": "priority", "type": "int"},
+        "access": {"key": "access", "type": "str"},
+        "source_address_prefix": {"key": "sourceAddressPrefix", "type": "str"},
+        "source_port_ranges": {"key": "sourcePortRanges", "type": "[str]"},
     }
 
     def __init__(
@@ -10688,18 +10214,18 @@ class NetworkSecurityGroupRule(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword priority: Required. Priorities within a Pool must be unique and are evaluated in order
-         of priority. The lower the number the higher the priority. For example, rules could be
-         specified with order numbers of 150, 250, and 350. The rule with the order number of 150 takes
-         precedence over the rule that has an order of 250. Allowed priorities are 150 to 4096. If any
-         reserved or duplicate values are provided the request fails with HTTP status code 400.
+        :keyword priority: Priorities within a Pool must be unique and are evaluated in order of
+         priority. The lower the number the higher the priority. For example, rules could be specified
+         with order numbers of 150, 250, and 350. The rule with the order number of 150 takes precedence
+         over the rule that has an order of 250. Allowed priorities are 150 to 4096. If any reserved or
+         duplicate values are provided the request fails with HTTP status code 400. Required.
         :paramtype priority: int
-        :keyword access: Required. The action that should be taken for a specified IP address, subnet
-         range or tag. Known values are: "allow", "deny".
+        :keyword access: The action that should be taken for a specified IP address, subnet range or
+         tag. Required. Known values are: "allow" and "deny".
         :paramtype access: str or ~azure-batch.models.NetworkSecurityGroupRuleAccess
-        :keyword source_address_prefix: Required. Valid values are a single IP address (i.e.
-         10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If any
-         other values are provided the request fails with HTTP status code 400.
+        :keyword source_address_prefix: Valid values are a single IP address (i.e. 10.10.10.10), IP
+         subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If any other values are
+         provided the request fails with HTTP status code 400. Required.
         :paramtype source_address_prefix: str
         :keyword source_port_ranges: Valid values are '\ *' (for all ports 0 - 65535), a specific port
          (i.e. 22), or a port range (i.e. 100-200). The ports must be in the range of 0 to 65535. Each
@@ -10708,174 +10234,161 @@ class NetworkSecurityGroupRule(msrest.serialization.Model):
          default value is '*\ '.
         :paramtype source_port_ranges: list[str]
         """
-        super(NetworkSecurityGroupRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.priority = priority
         self.access = access
         self.source_address_prefix = source_address_prefix
         self.source_port_ranges = source_port_ranges
 
 
-class NFSMountConfiguration(msrest.serialization.Model):
+class NFSMountConfiguration(_serialization.Model):
     """Information used to connect to an NFS file system.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar source: Required. The URI of the file system to mount.
+    :ivar source: The URI of the file system to mount. Required.
     :vartype source: str
-    :ivar relative_mount_path: Required. All file systems are mounted relative to the Batch mounts
-     directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+    :ivar relative_mount_path: All file systems are mounted relative to the Batch mounts directory,
+     accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
     :vartype relative_mount_path: str
     :ivar mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
     :vartype mount_options: str
     """
 
     _validation = {
-        'source': {'required': True},
-        'relative_mount_path': {'required': True},
+        "source": {"required": True},
+        "relative_mount_path": {"required": True},
     }
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'str'},
-        'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
-        'mount_options': {'key': 'mountOptions', 'type': 'str'},
+        "source": {"key": "source", "type": "str"},
+        "relative_mount_path": {"key": "relativeMountPath", "type": "str"},
+        "mount_options": {"key": "mountOptions", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source: str,
-        relative_mount_path: str,
-        mount_options: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, source: str, relative_mount_path: str, mount_options: Optional[str] = None, **kwargs):
         """
-        :keyword source: Required. The URI of the file system to mount.
+        :keyword source: The URI of the file system to mount. Required.
         :paramtype source: str
-        :keyword relative_mount_path: Required. All file systems are mounted relative to the Batch
-         mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable.
+        :keyword relative_mount_path: All file systems are mounted relative to the Batch mounts
+         directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR environment variable. Required.
         :paramtype relative_mount_path: str
         :keyword mount_options: These are 'net use' options in Windows and 'mount' options in Linux.
         :paramtype mount_options: str
         """
-        super(NFSMountConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source = source
         self.relative_mount_path = relative_mount_path
         self.mount_options = mount_options
 
 
-class NodeAgentInformation(msrest.serialization.Model):
+class NodeAgentInformation(_serialization.Model):
     """The Batch Compute Node agent is a program that runs on each Compute Node in the Pool and provides Batch capability on the Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar version: Required. This version number can be checked against the Compute Node agent
-     release notes located at
-     https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md.
+    :ivar version: This version number can be checked against the Compute Node agent release notes
+     located at https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md.
+     Required.
     :vartype version: str
-    :ivar last_update_time: Required. This is the most recent time that the Compute Node agent was
-     updated to a new version.
+    :ivar last_update_time: This is the most recent time that the Compute Node agent was updated to
+     a new version. Required.
     :vartype last_update_time: ~datetime.datetime
     """
 
     _validation = {
-        'version': {'required': True},
-        'last_update_time': {'required': True},
+        "version": {"required": True},
+        "last_update_time": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
+        "version": {"key": "version", "type": "str"},
+        "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        version: str,
-        last_update_time: datetime.datetime,
-        **kwargs
-    ):
+    def __init__(self, *, version: str, last_update_time: datetime.datetime, **kwargs):
         """
-        :keyword version: Required. This version number can be checked against the Compute Node agent
-         release notes located at
-         https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md.
+        :keyword version: This version number can be checked against the Compute Node agent release
+         notes located at https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md.
+         Required.
         :paramtype version: str
-        :keyword last_update_time: Required. This is the most recent time that the Compute Node agent
-         was updated to a new version.
+        :keyword last_update_time: This is the most recent time that the Compute Node agent was updated
+         to a new version. Required.
         :paramtype last_update_time: ~datetime.datetime
         """
-        super(NodeAgentInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.version = version
         self.last_update_time = last_update_time
 
 
-class NodeCounts(msrest.serialization.Model):
+class NodeCounts(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The number of Compute Nodes in each Compute Node state.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar creating: Required. The number of Compute Nodes in the creating state.
+    :ivar creating: The number of Compute Nodes in the creating state. Required.
     :vartype creating: int
-    :ivar idle: Required. The number of Compute Nodes in the idle state.
+    :ivar idle: The number of Compute Nodes in the idle state. Required.
     :vartype idle: int
-    :ivar offline: Required. The number of Compute Nodes in the offline state.
+    :ivar offline: The number of Compute Nodes in the offline state. Required.
     :vartype offline: int
-    :ivar preempted: Required. The number of Compute Nodes in the preempted state.
+    :ivar preempted: The number of Compute Nodes in the preempted state. Required.
     :vartype preempted: int
-    :ivar rebooting: Required. The count of Compute Nodes in the rebooting state.
+    :ivar rebooting: The count of Compute Nodes in the rebooting state. Required.
     :vartype rebooting: int
-    :ivar reimaging: Required. The number of Compute Nodes in the reimaging state.
+    :ivar reimaging: The number of Compute Nodes in the reimaging state. Required.
     :vartype reimaging: int
-    :ivar running: Required. The number of Compute Nodes in the running state.
+    :ivar running: The number of Compute Nodes in the running state. Required.
     :vartype running: int
-    :ivar starting: Required. The number of Compute Nodes in the starting state.
+    :ivar starting: The number of Compute Nodes in the starting state. Required.
     :vartype starting: int
-    :ivar start_task_failed: Required. The number of Compute Nodes in the startTaskFailed state.
+    :ivar start_task_failed: The number of Compute Nodes in the startTaskFailed state. Required.
     :vartype start_task_failed: int
-    :ivar leaving_pool: Required. The number of Compute Nodes in the leavingPool state.
+    :ivar leaving_pool: The number of Compute Nodes in the leavingPool state. Required.
     :vartype leaving_pool: int
-    :ivar unknown: Required. The number of Compute Nodes in the unknown state.
+    :ivar unknown: The number of Compute Nodes in the unknown state. Required.
     :vartype unknown: int
-    :ivar unusable: Required. The number of Compute Nodes in the unusable state.
+    :ivar unusable: The number of Compute Nodes in the unusable state. Required.
     :vartype unusable: int
-    :ivar waiting_for_start_task: Required. The number of Compute Nodes in the waitingForStartTask
-     state.
+    :ivar waiting_for_start_task: The number of Compute Nodes in the waitingForStartTask state.
+     Required.
     :vartype waiting_for_start_task: int
-    :ivar total: Required. The total number of Compute Nodes.
+    :ivar total: The total number of Compute Nodes. Required.
     :vartype total: int
     """
 
     _validation = {
-        'creating': {'required': True},
-        'idle': {'required': True},
-        'offline': {'required': True},
-        'preempted': {'required': True},
-        'rebooting': {'required': True},
-        'reimaging': {'required': True},
-        'running': {'required': True},
-        'starting': {'required': True},
-        'start_task_failed': {'required': True},
-        'leaving_pool': {'required': True},
-        'unknown': {'required': True},
-        'unusable': {'required': True},
-        'waiting_for_start_task': {'required': True},
-        'total': {'required': True},
+        "creating": {"required": True},
+        "idle": {"required": True},
+        "offline": {"required": True},
+        "preempted": {"required": True},
+        "rebooting": {"required": True},
+        "reimaging": {"required": True},
+        "running": {"required": True},
+        "starting": {"required": True},
+        "start_task_failed": {"required": True},
+        "leaving_pool": {"required": True},
+        "unknown": {"required": True},
+        "unusable": {"required": True},
+        "waiting_for_start_task": {"required": True},
+        "total": {"required": True},
     }
 
     _attribute_map = {
-        'creating': {'key': 'creating', 'type': 'int'},
-        'idle': {'key': 'idle', 'type': 'int'},
-        'offline': {'key': 'offline', 'type': 'int'},
-        'preempted': {'key': 'preempted', 'type': 'int'},
-        'rebooting': {'key': 'rebooting', 'type': 'int'},
-        'reimaging': {'key': 'reimaging', 'type': 'int'},
-        'running': {'key': 'running', 'type': 'int'},
-        'starting': {'key': 'starting', 'type': 'int'},
-        'start_task_failed': {'key': 'startTaskFailed', 'type': 'int'},
-        'leaving_pool': {'key': 'leavingPool', 'type': 'int'},
-        'unknown': {'key': 'unknown', 'type': 'int'},
-        'unusable': {'key': 'unusable', 'type': 'int'},
-        'waiting_for_start_task': {'key': 'waitingForStartTask', 'type': 'int'},
-        'total': {'key': 'total', 'type': 'int'},
+        "creating": {"key": "creating", "type": "int"},
+        "idle": {"key": "idle", "type": "int"},
+        "offline": {"key": "offline", "type": "int"},
+        "preempted": {"key": "preempted", "type": "int"},
+        "rebooting": {"key": "rebooting", "type": "int"},
+        "reimaging": {"key": "reimaging", "type": "int"},
+        "running": {"key": "running", "type": "int"},
+        "starting": {"key": "starting", "type": "int"},
+        "start_task_failed": {"key": "startTaskFailed", "type": "int"},
+        "leaving_pool": {"key": "leavingPool", "type": "int"},
+        "unknown": {"key": "unknown", "type": "int"},
+        "unusable": {"key": "unusable", "type": "int"},
+        "waiting_for_start_task": {"key": "waitingForStartTask", "type": "int"},
+        "total": {"key": "total", "type": "int"},
     }
 
     def __init__(
@@ -10898,37 +10411,37 @@ class NodeCounts(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword creating: Required. The number of Compute Nodes in the creating state.
+        :keyword creating: The number of Compute Nodes in the creating state. Required.
         :paramtype creating: int
-        :keyword idle: Required. The number of Compute Nodes in the idle state.
+        :keyword idle: The number of Compute Nodes in the idle state. Required.
         :paramtype idle: int
-        :keyword offline: Required. The number of Compute Nodes in the offline state.
+        :keyword offline: The number of Compute Nodes in the offline state. Required.
         :paramtype offline: int
-        :keyword preempted: Required. The number of Compute Nodes in the preempted state.
+        :keyword preempted: The number of Compute Nodes in the preempted state. Required.
         :paramtype preempted: int
-        :keyword rebooting: Required. The count of Compute Nodes in the rebooting state.
+        :keyword rebooting: The count of Compute Nodes in the rebooting state. Required.
         :paramtype rebooting: int
-        :keyword reimaging: Required. The number of Compute Nodes in the reimaging state.
+        :keyword reimaging: The number of Compute Nodes in the reimaging state. Required.
         :paramtype reimaging: int
-        :keyword running: Required. The number of Compute Nodes in the running state.
+        :keyword running: The number of Compute Nodes in the running state. Required.
         :paramtype running: int
-        :keyword starting: Required. The number of Compute Nodes in the starting state.
+        :keyword starting: The number of Compute Nodes in the starting state. Required.
         :paramtype starting: int
-        :keyword start_task_failed: Required. The number of Compute Nodes in the startTaskFailed state.
+        :keyword start_task_failed: The number of Compute Nodes in the startTaskFailed state. Required.
         :paramtype start_task_failed: int
-        :keyword leaving_pool: Required. The number of Compute Nodes in the leavingPool state.
+        :keyword leaving_pool: The number of Compute Nodes in the leavingPool state. Required.
         :paramtype leaving_pool: int
-        :keyword unknown: Required. The number of Compute Nodes in the unknown state.
+        :keyword unknown: The number of Compute Nodes in the unknown state. Required.
         :paramtype unknown: int
-        :keyword unusable: Required. The number of Compute Nodes in the unusable state.
+        :keyword unusable: The number of Compute Nodes in the unusable state. Required.
         :paramtype unusable: int
-        :keyword waiting_for_start_task: Required. The number of Compute Nodes in the
-         waitingForStartTask state.
+        :keyword waiting_for_start_task: The number of Compute Nodes in the waitingForStartTask state.
+         Required.
         :paramtype waiting_for_start_task: int
-        :keyword total: Required. The total number of Compute Nodes.
+        :keyword total: The total number of Compute Nodes. Required.
         :paramtype total: int
         """
-        super(NodeCounts, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.creating = creating
         self.idle = idle
         self.offline = offline
@@ -10945,17 +10458,17 @@ class NodeCounts(msrest.serialization.Model):
         self.total = total
 
 
-class NodeDisableSchedulingParameter(msrest.serialization.Model):
+class NodeDisableSchedulingParameters(_serialization.Model):
     """Options for disabling scheduling on a Compute Node.
 
     :ivar node_disable_scheduling_option: The default value is requeue. Known values are:
-     "requeue", "terminate", "taskcompletion".
+     "requeue", "terminate", and "taskcompletion".
     :vartype node_disable_scheduling_option: str or
      ~azure-batch.models.DisableComputeNodeSchedulingOption
     """
 
     _attribute_map = {
-        'node_disable_scheduling_option': {'key': 'nodeDisableSchedulingOption', 'type': 'str'},
+        "node_disable_scheduling_option": {"key": "nodeDisableSchedulingOption", "type": "str"},
     }
 
     def __init__(
@@ -10966,15 +10479,15 @@ class NodeDisableSchedulingParameter(msrest.serialization.Model):
     ):
         """
         :keyword node_disable_scheduling_option: The default value is requeue. Known values are:
-         "requeue", "terminate", "taskcompletion".
+         "requeue", "terminate", and "taskcompletion".
         :paramtype node_disable_scheduling_option: str or
          ~azure-batch.models.DisableComputeNodeSchedulingOption
         """
-        super(NodeDisableSchedulingParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_disable_scheduling_option = node_disable_scheduling_option
 
 
-class NodeFile(msrest.serialization.Model):
+class NodeFile(_serialization.Model):
     """Information about a file or directory on a Compute Node.
 
     :ivar name: The file path.
@@ -10988,10 +10501,10 @@ class NodeFile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
-        'is_directory': {'key': 'isDirectory', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': 'FileProperties'},
+        "name": {"key": "name", "type": "str"},
+        "url": {"key": "url", "type": "str"},
+        "is_directory": {"key": "isDirectory", "type": "bool"},
+        "properties": {"key": "properties", "type": "FileProperties"},
     }
 
     def __init__(
@@ -11013,14 +10526,14 @@ class NodeFile(msrest.serialization.Model):
         :keyword properties: The properties of a file on a Compute Node.
         :paramtype properties: ~azure-batch.models.FileProperties
         """
-        super(NodeFile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.url = url
         self.is_directory = is_directory
         self.properties = properties
 
 
-class NodeFileListResult(msrest.serialization.Model):
+class NodeFileListResult(_serialization.Model):
     """The result of listing the files on a Compute Node, or the files associated with a Task on a Compute Node.
 
     :ivar value: The list of files.
@@ -11030,16 +10543,12 @@ class NodeFileListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NodeFile]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NodeFile]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NodeFile"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NodeFile"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of files.
@@ -11047,116 +10556,103 @@ class NodeFileListResult(msrest.serialization.Model):
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(NodeFileListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class NodePlacementConfiguration(msrest.serialization.Model):
+class NodePlacementConfiguration(_serialization.Model):
     """For regional placement, nodes in the pool will be allocated in the same region. For zonal placement, nodes in the pool will be spread across different zones with best effort balancing.
 
     :ivar policy: Allocation policy used by Batch Service to provision the nodes. If not specified,
-     Batch will use the regional policy. Known values are: "regional", "zonal".
+     Batch will use the regional policy. Known values are: "regional" and "zonal".
     :vartype policy: str or ~azure-batch.models.NodePlacementPolicyType
     """
 
     _attribute_map = {
-        'policy': {'key': 'policy', 'type': 'str'},
+        "policy": {"key": "policy", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        policy: Optional[Union[str, "_models.NodePlacementPolicyType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, policy: Optional[Union[str, "_models.NodePlacementPolicyType"]] = None, **kwargs):
         """
         :keyword policy: Allocation policy used by Batch Service to provision the nodes. If not
-         specified, Batch will use the regional policy. Known values are: "regional", "zonal".
+         specified, Batch will use the regional policy. Known values are: "regional" and "zonal".
         :paramtype policy: str or ~azure-batch.models.NodePlacementPolicyType
         """
-        super(NodePlacementConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.policy = policy
 
 
-class NodeRebootParameter(msrest.serialization.Model):
+class NodeRebootParameters(_serialization.Model):
     """Options for rebooting a Compute Node.
 
     :ivar node_reboot_option: The default value is requeue. Known values are: "requeue",
-     "terminate", "taskcompletion", "retaineddata".
+     "terminate", "taskcompletion", and "retaineddata".
     :vartype node_reboot_option: str or ~azure-batch.models.ComputeNodeRebootOption
     """
 
     _attribute_map = {
-        'node_reboot_option': {'key': 'nodeRebootOption', 'type': 'str'},
+        "node_reboot_option": {"key": "nodeRebootOption", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        node_reboot_option: Optional[Union[str, "_models.ComputeNodeRebootOption"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, node_reboot_option: Optional[Union[str, "_models.ComputeNodeRebootOption"]] = None, **kwargs):
         """
         :keyword node_reboot_option: The default value is requeue. Known values are: "requeue",
-         "terminate", "taskcompletion", "retaineddata".
+         "terminate", "taskcompletion", and "retaineddata".
         :paramtype node_reboot_option: str or ~azure-batch.models.ComputeNodeRebootOption
         """
-        super(NodeRebootParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_reboot_option = node_reboot_option
 
 
-class NodeReimageParameter(msrest.serialization.Model):
+class NodeReimageParameters(_serialization.Model):
     """Options for reimaging a Compute Node.
 
     :ivar node_reimage_option: The default value is requeue. Known values are: "requeue",
-     "terminate", "taskcompletion", "retaineddata".
+     "terminate", "taskcompletion", and "retaineddata".
     :vartype node_reimage_option: str or ~azure-batch.models.ComputeNodeReimageOption
     """
 
     _attribute_map = {
-        'node_reimage_option': {'key': 'nodeReimageOption', 'type': 'str'},
+        "node_reimage_option": {"key": "nodeReimageOption", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        node_reimage_option: Optional[Union[str, "_models.ComputeNodeReimageOption"]] = None,
-        **kwargs
+        self, *, node_reimage_option: Optional[Union[str, "_models.ComputeNodeReimageOption"]] = None, **kwargs
     ):
         """
         :keyword node_reimage_option: The default value is requeue. Known values are: "requeue",
-         "terminate", "taskcompletion", "retaineddata".
+         "terminate", "taskcompletion", and "retaineddata".
         :paramtype node_reimage_option: str or ~azure-batch.models.ComputeNodeReimageOption
         """
-        super(NodeReimageParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_reimage_option = node_reimage_option
 
 
-class NodeRemoveParameter(msrest.serialization.Model):
+class NodeRemoveParameters(_serialization.Model):
     """Options for removing Compute Nodes from a Pool.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar node_list: Required. A maximum of 100 nodes may be removed per request.
+    :ivar node_list: A maximum of 100 nodes may be removed per request. Required.
     :vartype node_list: list[str]
     :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
      specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
      REST API directly, the HTTP status code is 400 (Bad Request).
     :vartype resize_timeout: ~datetime.timedelta
     :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
-     "terminate", "taskcompletion", "retaineddata".
+     "terminate", "taskcompletion", and "retaineddata".
     :vartype node_deallocation_option: str or ~azure-batch.models.ComputeNodeDeallocationOption
     """
 
     _validation = {
-        'node_list': {'required': True, 'max_items': 100, 'min_items': 0},
+        "node_list": {"required": True, "max_items": 100, "min_items": 0},
     }
 
     _attribute_map = {
-        'node_list': {'key': 'nodeList', 'type': '[str]'},
-        'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
-        'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'str'},
+        "node_list": {"key": "nodeList", "type": "[str]"},
+        "resize_timeout": {"key": "resizeTimeout", "type": "duration"},
+        "node_deallocation_option": {"key": "nodeDeallocationOption", "type": "str"},
     }
 
     def __init__(
@@ -11168,23 +10664,23 @@ class NodeRemoveParameter(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword node_list: Required. A maximum of 100 nodes may be removed per request.
+        :keyword node_list: A maximum of 100 nodes may be removed per request. Required.
         :paramtype node_list: list[str]
         :keyword resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If
          you specify a value less than 5 minutes, the Batch service returns an error; if you are calling
          the REST API directly, the HTTP status code is 400 (Bad Request).
         :paramtype resize_timeout: ~datetime.timedelta
         :keyword node_deallocation_option: The default value is requeue. Known values are: "requeue",
-         "terminate", "taskcompletion", "retaineddata".
+         "terminate", "taskcompletion", and "retaineddata".
         :paramtype node_deallocation_option: str or ~azure-batch.models.ComputeNodeDeallocationOption
         """
-        super(NodeRemoveParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_list = node_list
         self.resize_timeout = resize_timeout
         self.node_deallocation_option = node_deallocation_option
 
 
-class NodeUpdateUserParameter(msrest.serialization.Model):
+class NodeUpdateUserParameters(_serialization.Model):
     """The set of changes to be made to a user Account on a Compute Node.
 
     :ivar password: The password is required for Windows Compute Nodes (those created with
@@ -11204,9 +10700,9 @@ class NodeUpdateUserParameter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'password': {'key': 'password', 'type': 'str'},
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
+        "password": {"key": "password", "type": "str"},
+        "expiry_time": {"key": "expiryTime", "type": "iso-8601"},
+        "ssh_public_key": {"key": "sshPublicKey", "type": "str"},
     }
 
     def __init__(
@@ -11233,13 +10729,13 @@ class NodeUpdateUserParameter(msrest.serialization.Model):
          existing SSH public key is removed.
         :paramtype ssh_public_key: str
         """
-        super(NodeUpdateUserParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.password = password
         self.expiry_time = expiry_time
         self.ssh_public_key = ssh_public_key
 
 
-class NodeVMExtension(msrest.serialization.Model):
+class NodeVMExtension(_serialization.Model):
     """The configuration for virtual machine extension instance view.
 
     :ivar provisioning_state: The provisioning state of the virtual machine extension.
@@ -11251,9 +10747,9 @@ class NodeVMExtension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'vm_extension': {'key': 'vmExtension', 'type': 'VMExtension'},
-        'instance_view': {'key': 'instanceView', 'type': 'VMExtensionInstanceView'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "vm_extension": {"key": "vmExtension", "type": "VMExtension"},
+        "instance_view": {"key": "instanceView", "type": "VMExtensionInstanceView"},
     }
 
     def __init__(
@@ -11272,13 +10768,13 @@ class NodeVMExtension(msrest.serialization.Model):
         :keyword instance_view: The vm extension instance view.
         :paramtype instance_view: ~azure-batch.models.VMExtensionInstanceView
         """
-        super(NodeVMExtension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.vm_extension = vm_extension
         self.instance_view = instance_view
 
 
-class NodeVMExtensionList(msrest.serialization.Model):
+class NodeVMExtensionList(_serialization.Model):
     """The result of listing the Compute Node extensions in a Node.
 
     :ivar value: The list of Compute Node extensions.
@@ -11288,8 +10784,8 @@ class NodeVMExtensionList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NodeVMExtension]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NodeVMExtension]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -11305,12 +10801,12 @@ class NodeVMExtensionList(msrest.serialization.Model):
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(NodeVMExtensionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class OSDisk(msrest.serialization.Model):
+class OSDisk(_serialization.Model):
     """Settings for the operating system disk of the compute node (VM).
 
     :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
@@ -11319,60 +10815,55 @@ class OSDisk(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ephemeral_os_disk_settings': {'key': 'ephemeralOSDiskSettings', 'type': 'DiffDiskSettings'},
+        "ephemeral_os_disk_settings": {"key": "ephemeralOSDiskSettings", "type": "DiffDiskSettings"},
     }
 
-    def __init__(
-        self,
-        *,
-        ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = None, **kwargs):
         """
         :keyword ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
          system disk used by the compute node (VM).
         :paramtype ephemeral_os_disk_settings: ~azure-batch.models.DiffDiskSettings
         """
-        super(OSDisk, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ephemeral_os_disk_settings = ephemeral_os_disk_settings
 
 
-class OutputFile(msrest.serialization.Model):
+class OutputFile(_serialization.Model):
     """On every file uploads, Batch service writes two log files to the compute node, 'fileuploadout.txt' and 'fileuploaderr.txt'. These log files are used to learn more about a specific failure.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar file_pattern: Required. Both relative and absolute paths are supported. Relative paths
-     are relative to the Task working directory. The following wildcards are supported: * matches 0
-     or more characters (for example pattern abc* would match abc or abcdef), ** matches any
-     directory, ? matches any single character, [abc] matches one character in the brackets, and
-     [a-c] matches one character in the range. Brackets can include a negation to match any
-     character not specified (for example [!abc] matches any character but a, b, or c). If a file
-     name starts with "." it is ignored by default but may be matched by specifying it explicitly
-     (for example *.gif will not match .a.gif, but .*.gif will). A simple example: **\ *.txt matches
-     any file that does not start in '.' and ends with .txt in the Task working directory or any
-     subdirectory. If the filename contains a wildcard character it can be escaped using brackets
-     (for example abc[\ *] would match a file named abc*\ ). Note that both and / are treated as
-     directory separators on Windows, but only / is on Linux. Environment variables (%var% on
-     Windows or $var on Linux) are expanded prior to the pattern being applied.
+    :ivar file_pattern: Both relative and absolute paths are supported. Relative paths are relative
+     to the Task working directory. The following wildcards are supported: * matches 0 or more
+     characters (for example pattern abc* would match abc or abcdef), ** matches any directory, ?
+     matches any single character, [abc] matches one character in the brackets, and [a-c] matches
+     one character in the range. Brackets can include a negation to match any character not
+     specified (for example [!abc] matches any character but a, b, or c). If a file name starts with
+     "." it is ignored by default but may be matched by specifying it explicitly (for example *.gif
+     will not match .a.gif, but .*.gif will). A simple example: **\ *.txt matches any file that does
+     not start in '.' and ends with .txt in the Task working directory or any subdirectory. If the
+     filename contains a wildcard character it can be escaped using brackets (for example abc[\ *]
+     would match a file named abc*\ ). Note that both and / are treated as directory separators on
+     Windows, but only / is on Linux. Environment variables (%var% on Windows or $var on Linux) are
+     expanded prior to the pattern being applied. Required.
     :vartype file_pattern: str
-    :ivar destination: Required. The destination to which a file should be uploaded.
+    :ivar destination: The destination to which a file should be uploaded. Required.
     :vartype destination: ~azure-batch.models.OutputFileDestination
-    :ivar upload_options: Required. Details about an output file upload operation, including under
-     what conditions to perform the upload.
+    :ivar upload_options: Details about an output file upload operation, including under what
+     conditions to perform the upload. Required.
     :vartype upload_options: ~azure-batch.models.OutputFileUploadOptions
     """
 
     _validation = {
-        'file_pattern': {'required': True},
-        'destination': {'required': True},
-        'upload_options': {'required': True},
+        "file_pattern": {"required": True},
+        "destination": {"required": True},
+        "upload_options": {"required": True},
     }
 
     _attribute_map = {
-        'file_pattern': {'key': 'filePattern', 'type': 'str'},
-        'destination': {'key': 'destination', 'type': 'OutputFileDestination'},
-        'upload_options': {'key': 'uploadOptions', 'type': 'OutputFileUploadOptions'},
+        "file_pattern": {"key": "filePattern", "type": "str"},
+        "destination": {"key": "destination", "type": "OutputFileDestination"},
+        "upload_options": {"key": "uploadOptions", "type": "OutputFileUploadOptions"},
     }
 
     def __init__(
@@ -11384,33 +10875,33 @@ class OutputFile(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword file_pattern: Required. Both relative and absolute paths are supported. Relative paths
-         are relative to the Task working directory. The following wildcards are supported: * matches 0
-         or more characters (for example pattern abc* would match abc or abcdef), ** matches any
-         directory, ? matches any single character, [abc] matches one character in the brackets, and
-         [a-c] matches one character in the range. Brackets can include a negation to match any
-         character not specified (for example [!abc] matches any character but a, b, or c). If a file
-         name starts with "." it is ignored by default but may be matched by specifying it explicitly
-         (for example *.gif will not match .a.gif, but .*.gif will). A simple example: **\ *.txt matches
-         any file that does not start in '.' and ends with .txt in the Task working directory or any
-         subdirectory. If the filename contains a wildcard character it can be escaped using brackets
-         (for example abc[\ *] would match a file named abc*\ ). Note that both and / are treated as
-         directory separators on Windows, but only / is on Linux. Environment variables (%var% on
-         Windows or $var on Linux) are expanded prior to the pattern being applied.
+        :keyword file_pattern: Both relative and absolute paths are supported. Relative paths are
+         relative to the Task working directory. The following wildcards are supported: * matches 0 or
+         more characters (for example pattern abc* would match abc or abcdef), ** matches any directory,
+         ? matches any single character, [abc] matches one character in the brackets, and [a-c] matches
+         one character in the range. Brackets can include a negation to match any character not
+         specified (for example [!abc] matches any character but a, b, or c). If a file name starts with
+         "." it is ignored by default but may be matched by specifying it explicitly (for example *.gif
+         will not match .a.gif, but .*.gif will). A simple example: **\ *.txt matches any file that does
+         not start in '.' and ends with .txt in the Task working directory or any subdirectory. If the
+         filename contains a wildcard character it can be escaped using brackets (for example abc[\ *]
+         would match a file named abc*\ ). Note that both and / are treated as directory separators on
+         Windows, but only / is on Linux. Environment variables (%var% on Windows or $var on Linux) are
+         expanded prior to the pattern being applied. Required.
         :paramtype file_pattern: str
-        :keyword destination: Required. The destination to which a file should be uploaded.
+        :keyword destination: The destination to which a file should be uploaded. Required.
         :paramtype destination: ~azure-batch.models.OutputFileDestination
-        :keyword upload_options: Required. Details about an output file upload operation, including
-         under what conditions to perform the upload.
+        :keyword upload_options: Details about an output file upload operation, including under what
+         conditions to perform the upload. Required.
         :paramtype upload_options: ~azure-batch.models.OutputFileUploadOptions
         """
-        super(OutputFile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.file_pattern = file_pattern
         self.destination = destination
         self.upload_options = upload_options
 
 
-class OutputFileBlobContainerDestination(msrest.serialization.Model):
+class OutputFileBlobContainerDestination(_serialization.Model):
     """Specifies a file upload destination within an Azure blob storage container.
 
     All required parameters must be populated in order to send to Azure.
@@ -11421,8 +10912,8 @@ class OutputFileBlobContainerDestination(msrest.serialization.Model):
      directory (which is prepended to each blob name) to which to upload the file(s). If omitted,
      file(s) are uploaded to the root of the container with a blob name matching their file name.
     :vartype path: str
-    :ivar container_url: Required. If not using a managed identity, the URL must include a Shared
-     Access Signature (SAS) granting write permissions to the container.
+    :ivar container_url: If not using a managed identity, the URL must include a Shared Access
+     Signature (SAS) granting write permissions to the container. Required.
     :vartype container_url: str
     :ivar identity_reference: The identity must have write access to the Azure Blob Storage
      container.
@@ -11434,14 +10925,14 @@ class OutputFileBlobContainerDestination(msrest.serialization.Model):
     """
 
     _validation = {
-        'container_url': {'required': True},
+        "container_url": {"required": True},
     }
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'container_url': {'key': 'containerUrl', 'type': 'str'},
-        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
-        'upload_headers': {'key': 'uploadHeaders', 'type': '[HttpHeader]'},
+        "path": {"key": "path", "type": "str"},
+        "container_url": {"key": "containerUrl", "type": "str"},
+        "identity_reference": {"key": "identityReference", "type": "ComputeNodeIdentityReference"},
+        "upload_headers": {"key": "uploadHeaders", "type": "[HttpHeader]"},
     }
 
     def __init__(
@@ -11460,8 +10951,8 @@ class OutputFileBlobContainerDestination(msrest.serialization.Model):
          directory (which is prepended to each blob name) to which to upload the file(s). If omitted,
          file(s) are uploaded to the root of the container with a blob name matching their file name.
         :paramtype path: str
-        :keyword container_url: Required. If not using a managed identity, the URL must include a
-         Shared Access Signature (SAS) granting write permissions to the container.
+        :keyword container_url: If not using a managed identity, the URL must include a Shared Access
+         Signature (SAS) granting write permissions to the container. Required.
         :paramtype container_url: str
         :keyword identity_reference: The identity must have write access to the Azure Blob Storage
          container.
@@ -11471,14 +10962,14 @@ class OutputFileBlobContainerDestination(msrest.serialization.Model):
          <https://docs.microsoft.com/rest/api/storageservices/put-blob#request-headers-all-blob-types>`_.
         :paramtype upload_headers: list[~azure-batch.models.HttpHeader]
         """
-        super(OutputFileBlobContainerDestination, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.container_url = container_url
         self.identity_reference = identity_reference
         self.upload_headers = upload_headers
 
 
-class OutputFileDestination(msrest.serialization.Model):
+class OutputFileDestination(_serialization.Model):
     """The destination to which a file should be uploaded.
 
     :ivar container: Specifies a file upload destination within an Azure blob storage container.
@@ -11486,57 +10977,47 @@ class OutputFileDestination(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'container': {'key': 'container', 'type': 'OutputFileBlobContainerDestination'},
+        "container": {"key": "container", "type": "OutputFileBlobContainerDestination"},
     }
 
-    def __init__(
-        self,
-        *,
-        container: Optional["_models.OutputFileBlobContainerDestination"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, container: Optional["_models.OutputFileBlobContainerDestination"] = None, **kwargs):
         """
         :keyword container: Specifies a file upload destination within an Azure blob storage container.
         :paramtype container: ~azure-batch.models.OutputFileBlobContainerDestination
         """
-        super(OutputFileDestination, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.container = container
 
 
-class OutputFileUploadOptions(msrest.serialization.Model):
+class OutputFileUploadOptions(_serialization.Model):
     """Details about an output file upload operation, including under what conditions to perform the upload.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar upload_condition: Required. The default is taskcompletion. Known values are:
-     "tasksuccess", "taskfailure", "taskcompletion".
+    :ivar upload_condition: The default is taskcompletion. Required. Known values are:
+     "tasksuccess", "taskfailure", and "taskcompletion".
     :vartype upload_condition: str or ~azure-batch.models.OutputFileUploadCondition
     """
 
     _validation = {
-        'upload_condition': {'required': True},
+        "upload_condition": {"required": True},
     }
 
     _attribute_map = {
-        'upload_condition': {'key': 'uploadCondition', 'type': 'str'},
+        "upload_condition": {"key": "uploadCondition", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        upload_condition: Union[str, "_models.OutputFileUploadCondition"],
-        **kwargs
-    ):
+    def __init__(self, *, upload_condition: Union[str, "_models.OutputFileUploadCondition"], **kwargs):
         """
-        :keyword upload_condition: Required. The default is taskcompletion. Known values are:
-         "tasksuccess", "taskfailure", "taskcompletion".
+        :keyword upload_condition: The default is taskcompletion. Required. Known values are:
+         "tasksuccess", "taskfailure", and "taskcompletion".
         :paramtype upload_condition: str or ~azure-batch.models.OutputFileUploadCondition
         """
-        super(OutputFileUploadOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.upload_condition = upload_condition
 
 
-class PoolAddOptions(msrest.serialization.Model):
+class PoolAddOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -11554,18 +11035,18 @@ class PoolAddOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -11583,294 +11064,14 @@ class PoolAddOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(PoolAddOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class PoolAddParameter(msrest.serialization.Model):
-    """A Pool in the Azure Batch service to add.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-     and case-insensitive (that is, you may not have two Pool IDs within an Account that differ only
-     by case).
-    :vartype id: str
-    :ivar display_name: The display name need not be unique and can contain any Unicode characters
-     up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar vm_size: Required. For information about available sizes of virtual machines for Cloud
-     Services Pools (pools created with cloudServiceConfiguration), see Sizes for Cloud Services
-     (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/). Batch
-     supports all Cloud Services VM sizes except ExtraSmall, A1V2 and A2V2. For information about
-     available VM sizes for Pools using Images from the Virtual Machines Marketplace (pools created
-     with virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/) or Sizes for
-     Virtual Machines (Windows)
-     (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/). Batch
-     supports all Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS,
-     STANDARD_DS, and STANDARD_DSV2 series).
-    :vartype vm_size: str
-    :ivar cloud_service_configuration: This property and virtualMachineConfiguration are mutually
-     exclusive and one of the properties must be specified. This property cannot be specified if the
-     Batch Account was created with its poolAllocationMode property set to 'UserSubscription'.
-    :vartype cloud_service_configuration: ~azure-batch.models.CloudServiceConfiguration
-    :ivar virtual_machine_configuration: This property and cloudServiceConfiguration are mutually
-     exclusive and one of the properties must be specified.
-    :vartype virtual_machine_configuration: ~azure-batch.models.VirtualMachineConfiguration
-    :ivar resize_timeout: This timeout applies only to manual scaling; it has no effect when
-     enableAutoScale is set to true. The default value is 15 minutes. The minimum value is 5
-     minutes. If you specify a value less than 5 minutes, the Batch service returns an error; if you
-     are calling the REST API directly, the HTTP status code is 400 (Bad Request).
-    :vartype resize_timeout: ~datetime.timedelta
-    :ivar target_dedicated_nodes: This property must not be specified if enableAutoScale is set to
-     true. If enableAutoScale is set to false, then you must set either targetDedicatedNodes,
-     targetLowPriorityNodes, or both.
-    :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: This property must not be specified if enableAutoScale is set
-     to true. If enableAutoScale is set to false, then you must set either targetDedicatedNodes,
-     targetLowPriorityNodes, or both.
-    :vartype target_low_priority_nodes: int
-    :ivar enable_auto_scale: If false, at least one of targetDedicatedNodes and
-     targetLowPriorityNodes must be specified. If true, the autoScaleFormula property is required
-     and the Pool automatically resizes according to the formula. The default value is false.
-    :vartype enable_auto_scale: bool
-    :ivar auto_scale_formula: This property must not be specified if enableAutoScale is set to
-     false. It is required if enableAutoScale is set to true. The formula is checked for validity
-     before the Pool is created. If the formula is not valid, the Batch service rejects the request
-     with detailed error information. For more information about specifying this formula, see
-     'Automatically scale Compute Nodes in an Azure Batch Pool'
-     (https://azure.microsoft.com/documentation/articles/batch-automatic-scaling/).
-    :vartype auto_scale_formula: str
-    :ivar auto_scale_evaluation_interval: The default value is 15 minutes. The minimum and maximum
-     value are 5 minutes and 168 hours respectively. If you specify a value less than 5 minutes or
-     greater than 168 hours, the Batch service returns an error; if you are calling the REST API
-     directly, the HTTP status code is 400 (Bad Request).
-    :vartype auto_scale_evaluation_interval: ~datetime.timedelta
-    :ivar enable_inter_node_communication: Enabling inter-node communication limits the maximum
-     size of the Pool due to deployment restrictions on the Compute Nodes of the Pool. This may
-     result in the Pool not reaching its desired size. The default value is false.
-    :vartype enable_inter_node_communication: bool
-    :ivar network_configuration: The network configuration for a Pool.
-    :vartype network_configuration: ~azure-batch.models.NetworkConfiguration
-    :ivar start_task: The Task runs when the Compute Node is added to the Pool or when the Compute
-     Node is restarted.
-    :vartype start_task: ~azure-batch.models.StartTask
-    :ivar certificate_references: For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment variable
-     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
-     with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
-     (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-    :vartype certificate_references: list[~azure-batch.models.CertificateReference]
-    :ivar application_package_references: Changes to Package references affect all new Nodes
-     joining the Pool, but do not affect Compute Nodes that are already in the Pool until they are
-     rebooted or reimaged. There is a maximum of 10 Package references on any given Pool.
-    :vartype application_package_references: list[~azure-batch.models.ApplicationPackageReference]
-    :ivar application_licenses: The list of application licenses must be a subset of available
-     Batch service application licenses. If a license is requested which is not supported, Pool
-     creation will fail.
-    :vartype application_licenses: list[str]
-    :ivar task_slots_per_node: The default value is 1. The maximum value is the smaller of 4 times
-     the number of cores of the vmSize of the pool or 256.
-    :vartype task_slots_per_node: int
-    :ivar task_scheduling_policy: If not specified, the default is spread.
-    :vartype task_scheduling_policy: ~azure-batch.models.TaskSchedulingPolicy
-    :ivar user_accounts: The list of user Accounts to be created on each Compute Node in the Pool.
-    :vartype user_accounts: list[~azure-batch.models.UserAccount]
-    :ivar metadata: The Batch service does not assign any meaning to metadata; it is solely for the
-     use of user code.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    :ivar mount_configuration: Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse based
-     file system.
-    :vartype mount_configuration: list[~azure-batch.models.MountConfiguration]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'vm_size': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'cloud_service_configuration': {'key': 'cloudServiceConfiguration', 'type': 'CloudServiceConfiguration'},
-        'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
-        'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
-        'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
-        'target_low_priority_nodes': {'key': 'targetLowPriorityNodes', 'type': 'int'},
-        'enable_auto_scale': {'key': 'enableAutoScale', 'type': 'bool'},
-        'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
-        'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
-        'enable_inter_node_communication': {'key': 'enableInterNodeCommunication', 'type': 'bool'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
-        'start_task': {'key': 'startTask', 'type': 'StartTask'},
-        'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
-        'task_slots_per_node': {'key': 'taskSlotsPerNode', 'type': 'int'},
-        'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
-        'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-        'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        vm_size: str,
-        display_name: Optional[str] = None,
-        cloud_service_configuration: Optional["_models.CloudServiceConfiguration"] = None,
-        virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
-        resize_timeout: Optional[datetime.timedelta] = None,
-        target_dedicated_nodes: Optional[int] = None,
-        target_low_priority_nodes: Optional[int] = None,
-        enable_auto_scale: Optional[bool] = None,
-        auto_scale_formula: Optional[str] = None,
-        auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
-        enable_inter_node_communication: Optional[bool] = None,
-        network_configuration: Optional["_models.NetworkConfiguration"] = None,
-        start_task: Optional["_models.StartTask"] = None,
-        certificate_references: Optional[List["_models.CertificateReference"]] = None,
-        application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
-        application_licenses: Optional[List[str]] = None,
-        task_slots_per_node: Optional[int] = None,
-        task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = None,
-        user_accounts: Optional[List["_models.UserAccount"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Required. The ID can contain any combination of alphanumeric characters including
-         hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-         and case-insensitive (that is, you may not have two Pool IDs within an Account that differ only
-         by case).
-        :paramtype id: str
-        :keyword display_name: The display name need not be unique and can contain any Unicode
-         characters up to a maximum length of 1024.
-        :paramtype display_name: str
-        :keyword vm_size: Required. For information about available sizes of virtual machines for Cloud
-         Services Pools (pools created with cloudServiceConfiguration), see Sizes for Cloud Services
-         (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/). Batch
-         supports all Cloud Services VM sizes except ExtraSmall, A1V2 and A2V2. For information about
-         available VM sizes for Pools using Images from the Virtual Machines Marketplace (pools created
-         with virtualMachineConfiguration) see Sizes for Virtual Machines (Linux)
-         (https://azure.microsoft.com/documentation/articles/virtual-machines-linux-sizes/) or Sizes for
-         Virtual Machines (Windows)
-         (https://azure.microsoft.com/documentation/articles/virtual-machines-windows-sizes/). Batch
-         supports all Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS,
-         STANDARD_DS, and STANDARD_DSV2 series).
-        :paramtype vm_size: str
-        :keyword cloud_service_configuration: This property and virtualMachineConfiguration are
-         mutually exclusive and one of the properties must be specified. This property cannot be
-         specified if the Batch Account was created with its poolAllocationMode property set to
-         'UserSubscription'.
-        :paramtype cloud_service_configuration: ~azure-batch.models.CloudServiceConfiguration
-        :keyword virtual_machine_configuration: This property and cloudServiceConfiguration are
-         mutually exclusive and one of the properties must be specified.
-        :paramtype virtual_machine_configuration: ~azure-batch.models.VirtualMachineConfiguration
-        :keyword resize_timeout: This timeout applies only to manual scaling; it has no effect when
-         enableAutoScale is set to true. The default value is 15 minutes. The minimum value is 5
-         minutes. If you specify a value less than 5 minutes, the Batch service returns an error; if you
-         are calling the REST API directly, the HTTP status code is 400 (Bad Request).
-        :paramtype resize_timeout: ~datetime.timedelta
-        :keyword target_dedicated_nodes: This property must not be specified if enableAutoScale is set
-         to true. If enableAutoScale is set to false, then you must set either targetDedicatedNodes,
-         targetLowPriorityNodes, or both.
-        :paramtype target_dedicated_nodes: int
-        :keyword target_low_priority_nodes: This property must not be specified if enableAutoScale is
-         set to true. If enableAutoScale is set to false, then you must set either targetDedicatedNodes,
-         targetLowPriorityNodes, or both.
-        :paramtype target_low_priority_nodes: int
-        :keyword enable_auto_scale: If false, at least one of targetDedicatedNodes and
-         targetLowPriorityNodes must be specified. If true, the autoScaleFormula property is required
-         and the Pool automatically resizes according to the formula. The default value is false.
-        :paramtype enable_auto_scale: bool
-        :keyword auto_scale_formula: This property must not be specified if enableAutoScale is set to
-         false. It is required if enableAutoScale is set to true. The formula is checked for validity
-         before the Pool is created. If the formula is not valid, the Batch service rejects the request
-         with detailed error information. For more information about specifying this formula, see
-         'Automatically scale Compute Nodes in an Azure Batch Pool'
-         (https://azure.microsoft.com/documentation/articles/batch-automatic-scaling/).
-        :paramtype auto_scale_formula: str
-        :keyword auto_scale_evaluation_interval: The default value is 15 minutes. The minimum and
-         maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
-         minutes or greater than 168 hours, the Batch service returns an error; if you are calling the
-         REST API directly, the HTTP status code is 400 (Bad Request).
-        :paramtype auto_scale_evaluation_interval: ~datetime.timedelta
-        :keyword enable_inter_node_communication: Enabling inter-node communication limits the maximum
-         size of the Pool due to deployment restrictions on the Compute Nodes of the Pool. This may
-         result in the Pool not reaching its desired size. The default value is false.
-        :paramtype enable_inter_node_communication: bool
-        :keyword network_configuration: The network configuration for a Pool.
-        :paramtype network_configuration: ~azure-batch.models.NetworkConfiguration
-        :keyword start_task: The Task runs when the Compute Node is added to the Pool or when the
-         Compute Node is restarted.
-        :paramtype start_task: ~azure-batch.models.StartTask
-        :keyword certificate_references: For Windows Nodes, the Batch service installs the Certificates
-         to the specified Certificate store and location. For Linux Compute Nodes, the Certificates are
-         stored in a directory inside the Task working directory and an environment variable
-         AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
-         with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
-         (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-        :paramtype certificate_references: list[~azure-batch.models.CertificateReference]
-        :keyword application_package_references: Changes to Package references affect all new Nodes
-         joining the Pool, but do not affect Compute Nodes that are already in the Pool until they are
-         rebooted or reimaged. There is a maximum of 10 Package references on any given Pool.
-        :paramtype application_package_references:
-         list[~azure-batch.models.ApplicationPackageReference]
-        :keyword application_licenses: The list of application licenses must be a subset of available
-         Batch service application licenses. If a license is requested which is not supported, Pool
-         creation will fail.
-        :paramtype application_licenses: list[str]
-        :keyword task_slots_per_node: The default value is 1. The maximum value is the smaller of 4
-         times the number of cores of the vmSize of the pool or 256.
-        :paramtype task_slots_per_node: int
-        :keyword task_scheduling_policy: If not specified, the default is spread.
-        :paramtype task_scheduling_policy: ~azure-batch.models.TaskSchedulingPolicy
-        :keyword user_accounts: The list of user Accounts to be created on each Compute Node in the
-         Pool.
-        :paramtype user_accounts: list[~azure-batch.models.UserAccount]
-        :keyword metadata: The Batch service does not assign any meaning to metadata; it is solely for
-         the use of user code.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        :keyword mount_configuration: Mount the storage using Azure fileshare, NFS, CIFS or Blobfuse
-         based file system.
-        :paramtype mount_configuration: list[~azure-batch.models.MountConfiguration]
-        """
-        super(PoolAddParameter, self).__init__(**kwargs)
-        self.id = id
-        self.display_name = display_name
-        self.vm_size = vm_size
-        self.cloud_service_configuration = cloud_service_configuration
-        self.virtual_machine_configuration = virtual_machine_configuration
-        self.resize_timeout = resize_timeout
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
-        self.enable_auto_scale = enable_auto_scale
-        self.auto_scale_formula = auto_scale_formula
-        self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
-        self.enable_inter_node_communication = enable_inter_node_communication
-        self.network_configuration = network_configuration
-        self.start_task = start_task
-        self.certificate_references = certificate_references
-        self.application_package_references = application_package_references
-        self.application_licenses = application_licenses
-        self.task_slots_per_node = task_slots_per_node
-        self.task_scheduling_policy = task_scheduling_policy
-        self.user_accounts = user_accounts
-        self.metadata = metadata
-        self.mount_configuration = mount_configuration
-
-
-class PoolDeleteOptions(msrest.serialization.Model):
+class PoolDeleteOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -11904,22 +11105,22 @@ class PoolDeleteOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -11957,7 +11158,7 @@ class PoolDeleteOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolDeleteOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -11968,7 +11169,7 @@ class PoolDeleteOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolDisableAutoScaleOptions(msrest.serialization.Model):
+class PoolDisableAutoScaleOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -11986,18 +11187,18 @@ class PoolDisableAutoScaleOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -12015,14 +11216,14 @@ class PoolDisableAutoScaleOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(PoolDisableAutoScaleOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class PoolEnableAutoScaleOptions(msrest.serialization.Model):
+class PoolEnableAutoScaleOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -12056,22 +11257,22 @@ class PoolEnableAutoScaleOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -12109,7 +11310,7 @@ class PoolEnableAutoScaleOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolEnableAutoScaleOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -12120,94 +11321,37 @@ class PoolEnableAutoScaleOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolEnableAutoScaleParameter(msrest.serialization.Model):
-    """Options for enabling automatic scaling on a Pool.
-
-    :ivar auto_scale_formula: The formula is checked for validity before it is applied to the Pool.
-     If the formula is not valid, the Batch service rejects the request with detailed error
-     information. For more information about specifying this formula, see Automatically scale
-     Compute Nodes in an Azure Batch Pool
-     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
-    :vartype auto_scale_formula: str
-    :ivar auto_scale_evaluation_interval: The default value is 15 minutes. The minimum and maximum
-     value are 5 minutes and 168 hours respectively. If you specify a value less than 5 minutes or
-     greater than 168 hours, the Batch service rejects the request with an invalid property value
-     error; if you are calling the REST API directly, the HTTP status code is 400 (Bad Request). If
-     you specify a new interval, then the existing autoscale evaluation schedule will be stopped and
-     a new autoscale evaluation schedule will be started, with its starting time being the time when
-     this request was issued.
-    :vartype auto_scale_evaluation_interval: ~datetime.timedelta
-    """
-
-    _attribute_map = {
-        'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
-        'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
-    }
-
-    def __init__(
-        self,
-        *,
-        auto_scale_formula: Optional[str] = None,
-        auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
-        """
-        :keyword auto_scale_formula: The formula is checked for validity before it is applied to the
-         Pool. If the formula is not valid, the Batch service rejects the request with detailed error
-         information. For more information about specifying this formula, see Automatically scale
-         Compute Nodes in an Azure Batch Pool
-         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
-        :paramtype auto_scale_formula: str
-        :keyword auto_scale_evaluation_interval: The default value is 15 minutes. The minimum and
-         maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
-         minutes or greater than 168 hours, the Batch service rejects the request with an invalid
-         property value error; if you are calling the REST API directly, the HTTP status code is 400
-         (Bad Request). If you specify a new interval, then the existing autoscale evaluation schedule
-         will be stopped and a new autoscale evaluation schedule will be started, with its starting time
-         being the time when this request was issued.
-        :paramtype auto_scale_evaluation_interval: ~datetime.timedelta
-        """
-        super(PoolEnableAutoScaleParameter, self).__init__(**kwargs)
-        self.auto_scale_formula = auto_scale_formula
-        self.auto_scale_evaluation_interval = auto_scale_evaluation_interval
-
-
-class PoolEndpointConfiguration(msrest.serialization.Model):
+class PoolEndpointConfiguration(_serialization.Model):
     """The endpoint configuration for a Pool.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar inbound_nat_pools: Required. The maximum number of inbound NAT Pools per Batch Pool is 5.
-     If the maximum number of inbound NAT Pools is exceeded the request fails with HTTP status code
-     400. This cannot be specified if the IPAddressProvisioningType is NoPublicIPAddresses.
+    :ivar inbound_nat_pools: The maximum number of inbound NAT Pools per Batch Pool is 5. If the
+     maximum number of inbound NAT Pools is exceeded the request fails with HTTP status code 400.
+     This cannot be specified if the IPAddressProvisioningType is NoPublicIPAddresses. Required.
     :vartype inbound_nat_pools: list[~azure-batch.models.InboundNATPool]
     """
 
     _validation = {
-        'inbound_nat_pools': {'required': True},
+        "inbound_nat_pools": {"required": True},
     }
 
     _attribute_map = {
-        'inbound_nat_pools': {'key': 'inboundNATPools', 'type': '[InboundNATPool]'},
+        "inbound_nat_pools": {"key": "inboundNATPools", "type": "[InboundNATPool]"},
     }
 
-    def __init__(
-        self,
-        *,
-        inbound_nat_pools: List["_models.InboundNATPool"],
-        **kwargs
-    ):
+    def __init__(self, *, inbound_nat_pools: List["_models.InboundNATPool"], **kwargs):
         """
-        :keyword inbound_nat_pools: Required. The maximum number of inbound NAT Pools per Batch Pool is
-         5. If the maximum number of inbound NAT Pools is exceeded the request fails with HTTP status
-         code 400. This cannot be specified if the IPAddressProvisioningType is NoPublicIPAddresses.
+        :keyword inbound_nat_pools: The maximum number of inbound NAT Pools per Batch Pool is 5. If the
+         maximum number of inbound NAT Pools is exceeded the request fails with HTTP status code 400.
+         This cannot be specified if the IPAddressProvisioningType is NoPublicIPAddresses. Required.
         :paramtype inbound_nat_pools: list[~azure-batch.models.InboundNATPool]
         """
-        super(PoolEndpointConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.inbound_nat_pools = inbound_nat_pools
 
 
-class PoolEvaluateAutoScaleOptions(msrest.serialization.Model):
+class PoolEvaluateAutoScaleOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -12225,18 +11369,18 @@ class PoolEvaluateAutoScaleOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -12254,53 +11398,14 @@ class PoolEvaluateAutoScaleOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(PoolEvaluateAutoScaleOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class PoolEvaluateAutoScaleParameter(msrest.serialization.Model):
-    """Options for evaluating an automatic scaling formula on a Pool.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar auto_scale_formula: Required. The formula is validated and its results calculated, but it
-     is not applied to the Pool. To apply the formula to the Pool, 'Enable automatic scaling on a
-     Pool'. For more information about specifying this formula, see Automatically scale Compute
-     Nodes in an Azure Batch Pool
-     (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
-    :vartype auto_scale_formula: str
-    """
-
-    _validation = {
-        'auto_scale_formula': {'required': True},
-    }
-
-    _attribute_map = {
-        'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        auto_scale_formula: str,
-        **kwargs
-    ):
-        """
-        :keyword auto_scale_formula: Required. The formula is validated and its results calculated, but
-         it is not applied to the Pool. To apply the formula to the Pool, 'Enable automatic scaling on a
-         Pool'. For more information about specifying this formula, see Automatically scale Compute
-         Nodes in an Azure Batch Pool
-         (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
-        :paramtype auto_scale_formula: str
-        """
-        super(PoolEvaluateAutoScaleParameter, self).__init__(**kwargs)
-        self.auto_scale_formula = auto_scale_formula
-
-
-class PoolExistsOptions(msrest.serialization.Model):
+class PoolExistsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -12334,22 +11439,22 @@ class PoolExistsOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -12387,7 +11492,7 @@ class PoolExistsOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolExistsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -12398,7 +11503,7 @@ class PoolExistsOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolGetAllLifetimeStatisticsOptions(msrest.serialization.Model):
+class PoolGetAllLifetimeStatisticsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -12416,18 +11521,18 @@ class PoolGetAllLifetimeStatisticsOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -12445,14 +11550,14 @@ class PoolGetAllLifetimeStatisticsOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(PoolGetAllLifetimeStatisticsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class PoolGetOptions(msrest.serialization.Model):
+class PoolGetOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -12490,16 +11595,16 @@ class PoolGetOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
@@ -12507,9 +11612,9 @@ class PoolGetOptions(msrest.serialization.Model):
         *,
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -12551,7 +11656,7 @@ class PoolGetOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolGetOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.expand = expand
         self.timeout = timeout
@@ -12564,7 +11669,7 @@ class PoolGetOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolInformation(msrest.serialization.Model):
+class PoolInformation(_serialization.Model):
     """Specifies how a Job should be assigned to a Pool.
 
     :ivar pool_id: You must ensure that the Pool referenced by this property exists. If the Pool
@@ -12583,8 +11688,8 @@ class PoolInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'pool_id': {'key': 'poolId', 'type': 'str'},
-        'auto_pool_specification': {'key': 'autoPoolSpecification', 'type': 'AutoPoolSpecification'},
+        "pool_id": {"key": "poolId", "type": "str"},
+        "auto_pool_specification": {"key": "autoPoolSpecification", "type": "AutoPoolSpecification"},
     }
 
     def __init__(
@@ -12609,12 +11714,12 @@ class PoolInformation(msrest.serialization.Model):
          Pool ID or the auto Pool specification, but not both.
         :paramtype auto_pool_specification: ~azure-batch.models.AutoPoolSpecification
         """
-        super(PoolInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pool_id = pool_id
         self.auto_pool_specification = auto_pool_specification
 
 
-class PoolListOptions(msrest.serialization.Model):
+class PoolListOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -12642,30 +11747,30 @@ class PoolListOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -12693,7 +11798,7 @@ class PoolListOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(PoolListOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.select = select
         self.expand = expand
@@ -12704,7 +11809,7 @@ class PoolListOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class PoolListUsageMetricsOptions(msrest.serialization.Model):
+class PoolListUsageMetricsOptions(_serialization.Model):
     """Parameter group.
 
     :ivar start_time: The earliest time from which to include metrics. This must be at least two
@@ -12736,18 +11841,18 @@ class PoolListUsageMetricsOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'filter': {'key': '$filter', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "filter": {"key": "$filter", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
@@ -12755,11 +11860,11 @@ class PoolListUsageMetricsOptions(msrest.serialization.Model):
         *,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        filter: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -12791,7 +11896,7 @@ class PoolListUsageMetricsOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(PoolListUsageMetricsOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.filter = filter
@@ -12802,7 +11907,7 @@ class PoolListUsageMetricsOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class PoolListUsageMetricsResult(msrest.serialization.Model):
+class PoolListUsageMetricsResult(_serialization.Model):
     """The result of a listing the usage metrics for an Account.
 
     :ivar value: The Pool usage metrics data.
@@ -12812,8 +11917,8 @@ class PoolListUsageMetricsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PoolUsageMetrics]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PoolUsageMetrics]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -12829,17 +11934,17 @@ class PoolListUsageMetricsResult(msrest.serialization.Model):
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(PoolListUsageMetricsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class PoolNodeCounts(msrest.serialization.Model):
+class PoolNodeCounts(_serialization.Model):
     """The number of Compute Nodes in each state for a Pool.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar pool_id: Required. The ID of the Pool.
+    :ivar pool_id: The ID of the Pool. Required.
     :vartype pool_id: str
     :ivar dedicated: The number of Compute Nodes in each Compute Node state.
     :vartype dedicated: ~azure-batch.models.NodeCounts
@@ -12848,13 +11953,13 @@ class PoolNodeCounts(msrest.serialization.Model):
     """
 
     _validation = {
-        'pool_id': {'required': True},
+        "pool_id": {"required": True},
     }
 
     _attribute_map = {
-        'pool_id': {'key': 'poolId', 'type': 'str'},
-        'dedicated': {'key': 'dedicated', 'type': 'NodeCounts'},
-        'low_priority': {'key': 'lowPriority', 'type': 'NodeCounts'},
+        "pool_id": {"key": "poolId", "type": "str"},
+        "dedicated": {"key": "dedicated", "type": "NodeCounts"},
+        "low_priority": {"key": "lowPriority", "type": "NodeCounts"},
     }
 
     def __init__(
@@ -12866,20 +11971,20 @@ class PoolNodeCounts(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword pool_id: Required. The ID of the Pool.
+        :keyword pool_id: The ID of the Pool. Required.
         :paramtype pool_id: str
         :keyword dedicated: The number of Compute Nodes in each Compute Node state.
         :paramtype dedicated: ~azure-batch.models.NodeCounts
         :keyword low_priority: The number of Compute Nodes in each Compute Node state.
         :paramtype low_priority: ~azure-batch.models.NodeCounts
         """
-        super(PoolNodeCounts, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pool_id = pool_id
         self.dedicated = dedicated
         self.low_priority = low_priority
 
 
-class PoolNodeCountsListResult(msrest.serialization.Model):
+class PoolNodeCountsListResult(_serialization.Model):
     """The result of listing the Compute Node counts in the Account.
 
     :ivar value: A list of Compute Node counts by Pool.
@@ -12889,16 +11994,12 @@ class PoolNodeCountsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PoolNodeCounts]'},
-        'odata_next_link': {'key': 'odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PoolNodeCounts]"},
+        "odata_next_link": {"key": "odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PoolNodeCounts"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.PoolNodeCounts"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A list of Compute Node counts by Pool.
@@ -12906,12 +12007,12 @@ class PoolNodeCountsListResult(msrest.serialization.Model):
         :keyword odata_next_link: The URL to get the next set of results.
         :paramtype odata_next_link: str
         """
-        super(PoolNodeCountsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class PoolPatchOptions(msrest.serialization.Model):
+class PoolPatchOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -12945,22 +12046,22 @@ class PoolPatchOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -12998,7 +12099,7 @@ class PoolPatchOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolPatchOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -13009,82 +12110,7 @@ class PoolPatchOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolPatchParameter(msrest.serialization.Model):
-    """The set of changes to be made to a Pool.
-
-    :ivar start_task: If this element is present, it overwrites any existing StartTask. If omitted,
-     any existing StartTask is left unchanged.
-    :vartype start_task: ~azure-batch.models.StartTask
-    :ivar certificate_references: If this element is present, it replaces any existing Certificate
-     references configured on the Pool. If omitted, any existing Certificate references are left
-     unchanged. For Windows Nodes, the Batch service installs the Certificates to the specified
-     Certificate store and location. For Linux Compute Nodes, the Certificates are stored in a
-     directory inside the Task working directory and an environment variable
-     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
-     with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
-     (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-    :vartype certificate_references: list[~azure-batch.models.CertificateReference]
-    :ivar application_package_references: Changes to Package references affect all new Nodes
-     joining the Pool, but do not affect Compute Nodes that are already in the Pool until they are
-     rebooted or reimaged. If this element is present, it replaces any existing Package references.
-     If you specify an empty collection, then all Package references are removed from the Pool. If
-     omitted, any existing Package references are left unchanged.
-    :vartype application_package_references: list[~azure-batch.models.ApplicationPackageReference]
-    :ivar metadata: If this element is present, it replaces any existing metadata configured on the
-     Pool. If you specify an empty collection, any metadata is removed from the Pool. If omitted,
-     any existing metadata is left unchanged.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    """
-
-    _attribute_map = {
-        'start_task': {'key': 'startTask', 'type': 'StartTask'},
-        'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_task: Optional["_models.StartTask"] = None,
-        certificate_references: Optional[List["_models.CertificateReference"]] = None,
-        application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword start_task: If this element is present, it overwrites any existing StartTask. If
-         omitted, any existing StartTask is left unchanged.
-        :paramtype start_task: ~azure-batch.models.StartTask
-        :keyword certificate_references: If this element is present, it replaces any existing
-         Certificate references configured on the Pool. If omitted, any existing Certificate references
-         are left unchanged. For Windows Nodes, the Batch service installs the Certificates to the
-         specified Certificate store and location. For Linux Compute Nodes, the Certificates are stored
-         in a directory inside the Task working directory and an environment variable
-         AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
-         with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
-         (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-        :paramtype certificate_references: list[~azure-batch.models.CertificateReference]
-        :keyword application_package_references: Changes to Package references affect all new Nodes
-         joining the Pool, but do not affect Compute Nodes that are already in the Pool until they are
-         rebooted or reimaged. If this element is present, it replaces any existing Package references.
-         If you specify an empty collection, then all Package references are removed from the Pool. If
-         omitted, any existing Package references are left unchanged.
-        :paramtype application_package_references:
-         list[~azure-batch.models.ApplicationPackageReference]
-        :keyword metadata: If this element is present, it replaces any existing metadata configured on
-         the Pool. If you specify an empty collection, any metadata is removed from the Pool. If
-         omitted, any existing metadata is left unchanged.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        """
-        super(PoolPatchParameter, self).__init__(**kwargs)
-        self.start_task = start_task
-        self.certificate_references = certificate_references
-        self.application_package_references = application_package_references
-        self.metadata = metadata
-
-
-class PoolRemoveNodesOptions(msrest.serialization.Model):
+class PoolRemoveNodesOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -13118,22 +12144,22 @@ class PoolRemoveNodesOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -13171,7 +12197,7 @@ class PoolRemoveNodesOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolRemoveNodesOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -13182,7 +12208,7 @@ class PoolRemoveNodesOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolResizeOptions(msrest.serialization.Model):
+class PoolResizeOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -13216,22 +12242,22 @@ class PoolResizeOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -13269,7 +12295,7 @@ class PoolResizeOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolResizeOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -13280,61 +12306,7 @@ class PoolResizeOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolResizeParameter(msrest.serialization.Model):
-    """Options for changing the size of a Pool.
-
-    :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
-    :vartype target_dedicated_nodes: int
-    :ivar target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in the
-     Pool.
-    :vartype target_low_priority_nodes: int
-    :ivar resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If you
-     specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
-     REST API directly, the HTTP status code is 400 (Bad Request).
-    :vartype resize_timeout: ~datetime.timedelta
-    :ivar node_deallocation_option: The default value is requeue. Known values are: "requeue",
-     "terminate", "taskcompletion", "retaineddata".
-    :vartype node_deallocation_option: str or ~azure-batch.models.ComputeNodeDeallocationOption
-    """
-
-    _attribute_map = {
-        'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
-        'target_low_priority_nodes': {'key': 'targetLowPriorityNodes', 'type': 'int'},
-        'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
-        'node_deallocation_option': {'key': 'nodeDeallocationOption', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_dedicated_nodes: Optional[int] = None,
-        target_low_priority_nodes: Optional[int] = None,
-        resize_timeout: Optional[datetime.timedelta] = None,
-        node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
-        :paramtype target_dedicated_nodes: int
-        :keyword target_low_priority_nodes: The desired number of Spot/Low-priority Compute Nodes in
-         the Pool.
-        :paramtype target_low_priority_nodes: int
-        :keyword resize_timeout: The default value is 15 minutes. The minimum value is 5 minutes. If
-         you specify a value less than 5 minutes, the Batch service returns an error; if you are calling
-         the REST API directly, the HTTP status code is 400 (Bad Request).
-        :paramtype resize_timeout: ~datetime.timedelta
-        :keyword node_deallocation_option: The default value is requeue. Known values are: "requeue",
-         "terminate", "taskcompletion", "retaineddata".
-        :paramtype node_deallocation_option: str or ~azure-batch.models.ComputeNodeDeallocationOption
-        """
-        super(PoolResizeParameter, self).__init__(**kwargs)
-        self.target_dedicated_nodes = target_dedicated_nodes
-        self.target_low_priority_nodes = target_low_priority_nodes
-        self.resize_timeout = resize_timeout
-        self.node_deallocation_option = node_deallocation_option
-
-
-class PoolSpecification(msrest.serialization.Model):
+class PoolSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Specification for creating a new Pool.
 
     All required parameters must be populated in order to send to Azure.
@@ -13342,9 +12314,9 @@ class PoolSpecification(msrest.serialization.Model):
     :ivar display_name: The display name need not be unique and can contain any Unicode characters
      up to a maximum length of 1024.
     :vartype display_name: str
-    :ivar vm_size: Required. For information about available sizes of virtual machines in Pools,
-     see Choose a VM size for Compute Nodes in an Azure Batch Pool
-     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
+    :ivar vm_size: For information about available sizes of virtual machines in Pools, see Choose a
+     VM size for Compute Nodes in an Azure Batch Pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes). Required.
     :vartype vm_size: str
     :ivar cloud_service_configuration: This property must be specified if the Pool needs to be
      created with Azure PaaS VMs. This property and virtualMachineConfiguration are mutually
@@ -13435,31 +12407,34 @@ class PoolSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'vm_size': {'required': True},
+        "vm_size": {"required": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'cloud_service_configuration': {'key': 'cloudServiceConfiguration', 'type': 'CloudServiceConfiguration'},
-        'virtual_machine_configuration': {'key': 'virtualMachineConfiguration', 'type': 'VirtualMachineConfiguration'},
-        'task_slots_per_node': {'key': 'taskSlotsPerNode', 'type': 'int'},
-        'task_scheduling_policy': {'key': 'taskSchedulingPolicy', 'type': 'TaskSchedulingPolicy'},
-        'resize_timeout': {'key': 'resizeTimeout', 'type': 'duration'},
-        'target_dedicated_nodes': {'key': 'targetDedicatedNodes', 'type': 'int'},
-        'target_low_priority_nodes': {'key': 'targetLowPriorityNodes', 'type': 'int'},
-        'enable_auto_scale': {'key': 'enableAutoScale', 'type': 'bool'},
-        'auto_scale_formula': {'key': 'autoScaleFormula', 'type': 'str'},
-        'auto_scale_evaluation_interval': {'key': 'autoScaleEvaluationInterval', 'type': 'duration'},
-        'enable_inter_node_communication': {'key': 'enableInterNodeCommunication', 'type': 'bool'},
-        'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
-        'start_task': {'key': 'startTask', 'type': 'StartTask'},
-        'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'application_licenses': {'key': 'applicationLicenses', 'type': '[str]'},
-        'user_accounts': {'key': 'userAccounts', 'type': '[UserAccount]'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-        'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "cloud_service_configuration": {"key": "cloudServiceConfiguration", "type": "CloudServiceConfiguration"},
+        "virtual_machine_configuration": {"key": "virtualMachineConfiguration", "type": "VirtualMachineConfiguration"},
+        "task_slots_per_node": {"key": "taskSlotsPerNode", "type": "int"},
+        "task_scheduling_policy": {"key": "taskSchedulingPolicy", "type": "TaskSchedulingPolicy"},
+        "resize_timeout": {"key": "resizeTimeout", "type": "duration"},
+        "target_dedicated_nodes": {"key": "targetDedicatedNodes", "type": "int"},
+        "target_low_priority_nodes": {"key": "targetLowPriorityNodes", "type": "int"},
+        "enable_auto_scale": {"key": "enableAutoScale", "type": "bool"},
+        "auto_scale_formula": {"key": "autoScaleFormula", "type": "str"},
+        "auto_scale_evaluation_interval": {"key": "autoScaleEvaluationInterval", "type": "duration"},
+        "enable_inter_node_communication": {"key": "enableInterNodeCommunication", "type": "bool"},
+        "network_configuration": {"key": "networkConfiguration", "type": "NetworkConfiguration"},
+        "start_task": {"key": "startTask", "type": "StartTask"},
+        "certificate_references": {"key": "certificateReferences", "type": "[CertificateReference]"},
+        "application_package_references": {
+            "key": "applicationPackageReferences",
+            "type": "[ApplicationPackageReference]",
+        },
+        "application_licenses": {"key": "applicationLicenses", "type": "[str]"},
+        "user_accounts": {"key": "userAccounts", "type": "[UserAccount]"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
+        "mount_configuration": {"key": "mountConfiguration", "type": "[MountConfiguration]"},
     }
 
     def __init__(
@@ -13492,9 +12467,9 @@ class PoolSpecification(msrest.serialization.Model):
         :keyword display_name: The display name need not be unique and can contain any Unicode
          characters up to a maximum length of 1024.
         :paramtype display_name: str
-        :keyword vm_size: Required. For information about available sizes of virtual machines in Pools,
-         see Choose a VM size for Compute Nodes in an Azure Batch Pool
-         (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
+        :keyword vm_size: For information about available sizes of virtual machines in Pools, see
+         Choose a VM size for Compute Nodes in an Azure Batch Pool
+         (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes). Required.
         :paramtype vm_size: str
         :keyword cloud_service_configuration: This property must be specified if the Pool needs to be
          created with Azure PaaS VMs. This property and virtualMachineConfiguration are mutually
@@ -13586,7 +12561,7 @@ class PoolSpecification(msrest.serialization.Model):
         :keyword mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
         :paramtype mount_configuration: list[~azure-batch.models.MountConfiguration]
         """
-        super(PoolSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.vm_size = vm_size
         self.cloud_service_configuration = cloud_service_configuration
@@ -13610,17 +12585,17 @@ class PoolSpecification(msrest.serialization.Model):
         self.mount_configuration = mount_configuration
 
 
-class PoolStatistics(msrest.serialization.Model):
+class PoolStatistics(_serialization.Model):
     """Contains utilization and resource usage statistics for the lifetime of a Pool.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar url: Required. The URL for the statistics.
+    :ivar url: The URL for the statistics. Required.
     :vartype url: str
-    :ivar start_time: Required. The start time of the time range covered by the statistics.
+    :ivar start_time: The start time of the time range covered by the statistics. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar last_update_time: Required. The time at which the statistics were last updated. All
-     statistics are limited to the range between startTime and lastUpdateTime.
+    :ivar last_update_time: The time at which the statistics were last updated. All statistics are
+     limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
     :ivar usage_stats: Statistics related to Pool usage information.
     :vartype usage_stats: ~azure-batch.models.UsageStatistics
@@ -13629,17 +12604,17 @@ class PoolStatistics(msrest.serialization.Model):
     """
 
     _validation = {
-        'url': {'required': True},
-        'start_time': {'required': True},
-        'last_update_time': {'required': True},
+        "url": {"required": True},
+        "start_time": {"required": True},
+        "last_update_time": {"required": True},
     }
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'usage_stats': {'key': 'usageStats', 'type': 'UsageStatistics'},
-        'resource_stats': {'key': 'resourceStats', 'type': 'ResourceStatistics'},
+        "url": {"key": "url", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
+        "usage_stats": {"key": "usageStats", "type": "UsageStatistics"},
+        "resource_stats": {"key": "resourceStats", "type": "ResourceStatistics"},
     }
 
     def __init__(
@@ -13653,19 +12628,19 @@ class PoolStatistics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword url: Required. The URL for the statistics.
+        :keyword url: The URL for the statistics. Required.
         :paramtype url: str
-        :keyword start_time: Required. The start time of the time range covered by the statistics.
+        :keyword start_time: The start time of the time range covered by the statistics. Required.
         :paramtype start_time: ~datetime.datetime
-        :keyword last_update_time: Required. The time at which the statistics were last updated. All
-         statistics are limited to the range between startTime and lastUpdateTime.
+        :keyword last_update_time: The time at which the statistics were last updated. All statistics
+         are limited to the range between startTime and lastUpdateTime. Required.
         :paramtype last_update_time: ~datetime.datetime
         :keyword usage_stats: Statistics related to Pool usage information.
         :paramtype usage_stats: ~azure-batch.models.UsageStatistics
         :keyword resource_stats: Statistics related to resource consumption by Compute Nodes in a Pool.
         :paramtype resource_stats: ~azure-batch.models.ResourceStatistics
         """
-        super(PoolStatistics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time
@@ -13673,7 +12648,7 @@ class PoolStatistics(msrest.serialization.Model):
         self.resource_stats = resource_stats
 
 
-class PoolStopResizeOptions(msrest.serialization.Model):
+class PoolStopResizeOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -13707,22 +12682,22 @@ class PoolStopResizeOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -13760,7 +12735,7 @@ class PoolStopResizeOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(PoolStopResizeOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -13771,7 +12746,7 @@ class PoolStopResizeOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class PoolUpdatePropertiesOptions(msrest.serialization.Model):
+class PoolUpdatePropertiesOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -13789,18 +12764,18 @@ class PoolUpdatePropertiesOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -13818,133 +12793,47 @@ class PoolUpdatePropertiesOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(PoolUpdatePropertiesOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class PoolUpdatePropertiesParameter(msrest.serialization.Model):
-    """The set of changes to be made to a Pool.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_task: If this element is present, it overwrites any existing StartTask. If omitted,
-     any existing StartTask is removed from the Pool.
-    :vartype start_task: ~azure-batch.models.StartTask
-    :ivar certificate_references: Required. This list replaces any existing Certificate references
-     configured on the Pool. If you specify an empty collection, any existing Certificate references
-     are removed from the Pool. For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location. For Linux Compute Nodes, the Certificates are
-     stored in a directory inside the Task working directory and an environment variable
-     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For Certificates
-     with visibility of 'remoteUser', a 'certs' directory is created in the user's home directory
-     (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-    :vartype certificate_references: list[~azure-batch.models.CertificateReference]
-    :ivar application_package_references: Required. The list replaces any existing Application
-     Package references on the Pool. Changes to Application Package references affect all new
-     Compute Nodes joining the Pool, but do not affect Compute Nodes that are already in the Pool
-     until they are rebooted or reimaged. There is a maximum of 10 Application Package references on
-     any given Pool. If omitted, or if you specify an empty collection, any existing Application
-     Packages references are removed from the Pool. A maximum of 10 references may be specified on a
-     given Pool.
-    :vartype application_package_references: list[~azure-batch.models.ApplicationPackageReference]
-    :ivar metadata: Required. This list replaces any existing metadata configured on the Pool. If
-     omitted, or if you specify an empty collection, any existing metadata is removed from the Pool.
-    :vartype metadata: list[~azure-batch.models.MetadataItem]
-    """
-
-    _validation = {
-        'certificate_references': {'required': True},
-        'application_package_references': {'required': True},
-        'metadata': {'required': True},
-    }
-
-    _attribute_map = {
-        'start_task': {'key': 'startTask', 'type': 'StartTask'},
-        'certificate_references': {'key': 'certificateReferences', 'type': '[CertificateReference]'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        certificate_references: List["_models.CertificateReference"],
-        application_package_references: List["_models.ApplicationPackageReference"],
-        metadata: List["_models.MetadataItem"],
-        start_task: Optional["_models.StartTask"] = None,
-        **kwargs
-    ):
-        """
-        :keyword start_task: If this element is present, it overwrites any existing StartTask. If
-         omitted, any existing StartTask is removed from the Pool.
-        :paramtype start_task: ~azure-batch.models.StartTask
-        :keyword certificate_references: Required. This list replaces any existing Certificate
-         references configured on the Pool. If you specify an empty collection, any existing Certificate
-         references are removed from the Pool. For Windows Nodes, the Batch service installs the
-         Certificates to the specified Certificate store and location. For Linux Compute Nodes, the
-         Certificates are stored in a directory inside the Task working directory and an environment
-         variable AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this location. For
-         Certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
-         directory (e.g., /home/{user-name}/certs) and Certificates are placed in that directory.
-        :paramtype certificate_references: list[~azure-batch.models.CertificateReference]
-        :keyword application_package_references: Required. The list replaces any existing Application
-         Package references on the Pool. Changes to Application Package references affect all new
-         Compute Nodes joining the Pool, but do not affect Compute Nodes that are already in the Pool
-         until they are rebooted or reimaged. There is a maximum of 10 Application Package references on
-         any given Pool. If omitted, or if you specify an empty collection, any existing Application
-         Packages references are removed from the Pool. A maximum of 10 references may be specified on a
-         given Pool.
-        :paramtype application_package_references:
-         list[~azure-batch.models.ApplicationPackageReference]
-        :keyword metadata: Required. This list replaces any existing metadata configured on the Pool.
-         If omitted, or if you specify an empty collection, any existing metadata is removed from the
-         Pool.
-        :paramtype metadata: list[~azure-batch.models.MetadataItem]
-        """
-        super(PoolUpdatePropertiesParameter, self).__init__(**kwargs)
-        self.start_task = start_task
-        self.certificate_references = certificate_references
-        self.application_package_references = application_package_references
-        self.metadata = metadata
-
-
-class PoolUsageMetrics(msrest.serialization.Model):
+class PoolUsageMetrics(_serialization.Model):
     """Usage metrics for a Pool across an aggregation interval.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar pool_id: Required. The ID of the Pool whose metrics are aggregated in this entry.
+    :ivar pool_id: The ID of the Pool whose metrics are aggregated in this entry. Required.
     :vartype pool_id: str
-    :ivar start_time: Required. The start time of the aggregation interval covered by this entry.
+    :ivar start_time: The start time of the aggregation interval covered by this entry. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. The end time of the aggregation interval covered by this entry.
+    :ivar end_time: The end time of the aggregation interval covered by this entry. Required.
     :vartype end_time: ~datetime.datetime
-    :ivar vm_size: Required. For information about available sizes of virtual machines in Pools,
-     see Choose a VM size for Compute Nodes in an Azure Batch Pool
-     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
+    :ivar vm_size: For information about available sizes of virtual machines in Pools, see Choose a
+     VM size for Compute Nodes in an Azure Batch Pool
+     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes). Required.
     :vartype vm_size: str
-    :ivar total_core_hours: Required. The total core hours used in the Pool during this aggregation
-     interval.
+    :ivar total_core_hours: The total core hours used in the Pool during this aggregation interval.
+     Required.
     :vartype total_core_hours: float
     """
 
     _validation = {
-        'pool_id': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'vm_size': {'required': True},
-        'total_core_hours': {'required': True},
+        "pool_id": {"required": True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "vm_size": {"required": True},
+        "total_core_hours": {"required": True},
     }
 
     _attribute_map = {
-        'pool_id': {'key': 'poolId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'total_core_hours': {'key': 'totalCoreHours', 'type': 'float'},
+        "pool_id": {"key": "poolId", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "total_core_hours": {"key": "totalCoreHours", "type": "float"},
     }
 
     def __init__(
@@ -13958,22 +12847,22 @@ class PoolUsageMetrics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword pool_id: Required. The ID of the Pool whose metrics are aggregated in this entry.
+        :keyword pool_id: The ID of the Pool whose metrics are aggregated in this entry. Required.
         :paramtype pool_id: str
-        :keyword start_time: Required. The start time of the aggregation interval covered by this
-         entry.
+        :keyword start_time: The start time of the aggregation interval covered by this entry.
+         Required.
         :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. The end time of the aggregation interval covered by this entry.
+        :keyword end_time: The end time of the aggregation interval covered by this entry. Required.
         :paramtype end_time: ~datetime.datetime
-        :keyword vm_size: Required. For information about available sizes of virtual machines in Pools,
-         see Choose a VM size for Compute Nodes in an Azure Batch Pool
-         (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
+        :keyword vm_size: For information about available sizes of virtual machines in Pools, see
+         Choose a VM size for Compute Nodes in an Azure Batch Pool
+         (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes). Required.
         :paramtype vm_size: str
-        :keyword total_core_hours: Required. The total core hours used in the Pool during this
-         aggregation interval.
+        :keyword total_core_hours: The total core hours used in the Pool during this aggregation
+         interval. Required.
         :paramtype total_core_hours: float
         """
-        super(PoolUsageMetrics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pool_id = pool_id
         self.start_time = start_time
         self.end_time = end_time
@@ -13981,11 +12870,11 @@ class PoolUsageMetrics(msrest.serialization.Model):
         self.total_core_hours = total_core_hours
 
 
-class PublicIPAddressConfiguration(msrest.serialization.Model):
+class PublicIPAddressConfiguration(_serialization.Model):
     """The public IP Address configuration of the networking configuration of a Pool.
 
     :ivar provision: The default value is BatchManaged. Known values are: "batchmanaged",
-     "usermanaged", "nopublicipaddresses".
+     "usermanaged", and "nopublicipaddresses".
     :vartype provision: str or ~azure-batch.models.IPAddressProvisioningType
     :ivar ip_address_ids: The number of IPs specified here limits the maximum size of the Pool -
      100 dedicated nodes or 100 Spot/Low-priority nodes can be allocated for each public IP. For
@@ -13996,8 +12885,8 @@ class PublicIPAddressConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provision': {'key': 'provision', 'type': 'str'},
-        'ip_address_ids': {'key': 'ipAddressIds', 'type': '[str]'},
+        "provision": {"key": "provision", "type": "str"},
+        "ip_address_ids": {"key": "ipAddressIds", "type": "[str]"},
     }
 
     def __init__(
@@ -14009,7 +12898,7 @@ class PublicIPAddressConfiguration(msrest.serialization.Model):
     ):
         """
         :keyword provision: The default value is BatchManaged. Known values are: "batchmanaged",
-         "usermanaged", "nopublicipaddresses".
+         "usermanaged", and "nopublicipaddresses".
         :paramtype provision: str or ~azure-batch.models.IPAddressProvisioningType
         :keyword ip_address_ids: The number of IPs specified here limits the maximum size of the Pool -
          100 dedicated nodes or 100 Spot/Low-priority nodes can be allocated for each public IP. For
@@ -14018,12 +12907,12 @@ class PublicIPAddressConfiguration(msrest.serialization.Model):
          /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
         :paramtype ip_address_ids: list[str]
         """
-        super(PublicIPAddressConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provision = provision
         self.ip_address_ids = ip_address_ids
 
 
-class RecentJob(msrest.serialization.Model):
+class RecentJob(_serialization.Model):
     """Information about the most recent Job to run under the Job Schedule.
 
     :ivar id: The ID of the Job.
@@ -14033,16 +12922,12 @@ class RecentJob(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "url": {"key": "url", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        url: Optional[str] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, url: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
         """
         :keyword id: The ID of the Job.
@@ -14050,12 +12935,12 @@ class RecentJob(msrest.serialization.Model):
         :keyword url: The URL of the Job.
         :paramtype url: str
         """
-        super(RecentJob, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.url = url
 
 
-class ResizeError(msrest.serialization.Model):
+class ResizeError(_serialization.Model):
     """An error that occurred when resizing a Pool.
 
     :ivar code: An identifier for the Pool resize error. Codes are invariant and are intended to be
@@ -14069,9 +12954,9 @@ class ResizeError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[NameValuePair]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "values": {"key": "values", "type": "[NameValuePair]"},
     }
 
     def __init__(
@@ -14092,13 +12977,13 @@ class ResizeError(msrest.serialization.Model):
         :keyword values: A list of additional error details related to the Pool resize error.
         :paramtype values: list[~azure-batch.models.NameValuePair]
         """
-        super(ResizeError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.values = values
 
 
-class ResourceFile(msrest.serialization.Model):
+class ResourceFile(_serialization.Model):
     """A single file or multiple files to be downloaded to a Compute Node.
 
     :ivar auto_storage_container_name: The autoStorageContainerName, storageContainerUrl and
@@ -14141,13 +13026,13 @@ class ResourceFile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'auto_storage_container_name': {'key': 'autoStorageContainerName', 'type': 'str'},
-        'storage_container_url': {'key': 'storageContainerUrl', 'type': 'str'},
-        'http_url': {'key': 'httpUrl', 'type': 'str'},
-        'blob_prefix': {'key': 'blobPrefix', 'type': 'str'},
-        'file_path': {'key': 'filePath', 'type': 'str'},
-        'file_mode': {'key': 'fileMode', 'type': 'str'},
-        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
+        "auto_storage_container_name": {"key": "autoStorageContainerName", "type": "str"},
+        "storage_container_url": {"key": "storageContainerUrl", "type": "str"},
+        "http_url": {"key": "httpUrl", "type": "str"},
+        "blob_prefix": {"key": "blobPrefix", "type": "str"},
+        "file_path": {"key": "filePath", "type": "str"},
+        "file_mode": {"key": "fileMode", "type": "str"},
+        "identity_reference": {"key": "identityReference", "type": "ComputeNodeIdentityReference"},
     }
 
     def __init__(
@@ -14201,7 +13086,7 @@ class ResourceFile(msrest.serialization.Model):
          Batch pool which a compute node will use.
         :paramtype identity_reference: ~azure-batch.models.ComputeNodeIdentityReference
         """
-        super(ResourceFile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.auto_storage_container_name = auto_storage_container_name
         self.storage_container_url = storage_container_url
         self.http_url = http_url
@@ -14211,81 +13096,81 @@ class ResourceFile(msrest.serialization.Model):
         self.identity_reference = identity_reference
 
 
-class ResourceStatistics(msrest.serialization.Model):
+class ResourceStatistics(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Statistics related to resource consumption by Compute Nodes in a Pool.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start_time: Required. The start time of the time range covered by the statistics.
+    :ivar start_time: The start time of the time range covered by the statistics. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar last_update_time: Required. The time at which the statistics were last updated. All
-     statistics are limited to the range between startTime and lastUpdateTime.
+    :ivar last_update_time: The time at which the statistics were last updated. All statistics are
+     limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
-    :ivar avg_cpu_percentage: Required. The average CPU usage across all Compute Nodes in the Pool
-     (percentage per node).
+    :ivar avg_cpu_percentage: The average CPU usage across all Compute Nodes in the Pool
+     (percentage per node). Required.
     :vartype avg_cpu_percentage: float
-    :ivar avg_memory_gi_b: Required. The average memory usage in GiB across all Compute Nodes in
-     the Pool.
+    :ivar avg_memory_gi_b: The average memory usage in GiB across all Compute Nodes in the Pool.
+     Required.
     :vartype avg_memory_gi_b: float
-    :ivar peak_memory_gi_b: Required. The peak memory usage in GiB across all Compute Nodes in the
-     Pool.
+    :ivar peak_memory_gi_b: The peak memory usage in GiB across all Compute Nodes in the Pool.
+     Required.
     :vartype peak_memory_gi_b: float
-    :ivar avg_disk_gi_b: Required. The average used disk space in GiB across all Compute Nodes in
-     the Pool.
+    :ivar avg_disk_gi_b: The average used disk space in GiB across all Compute Nodes in the Pool.
+     Required.
     :vartype avg_disk_gi_b: float
-    :ivar peak_disk_gi_b: Required. The peak used disk space in GiB across all Compute Nodes in the
-     Pool.
+    :ivar peak_disk_gi_b: The peak used disk space in GiB across all Compute Nodes in the Pool.
+     Required.
     :vartype peak_disk_gi_b: float
-    :ivar disk_read_i_ops: Required. The total number of disk read operations across all Compute
-     Nodes in the Pool.
-    :vartype disk_read_i_ops: long
-    :ivar disk_write_i_ops: Required. The total number of disk write operations across all Compute
-     Nodes in the Pool.
-    :vartype disk_write_i_ops: long
-    :ivar disk_read_gi_b: Required. The total amount of data in GiB of disk reads across all
-     Compute Nodes in the Pool.
+    :ivar disk_read_i_ops: The total number of disk read operations across all Compute Nodes in the
+     Pool. Required.
+    :vartype disk_read_i_ops: int
+    :ivar disk_write_i_ops: The total number of disk write operations across all Compute Nodes in
+     the Pool. Required.
+    :vartype disk_write_i_ops: int
+    :ivar disk_read_gi_b: The total amount of data in GiB of disk reads across all Compute Nodes in
+     the Pool. Required.
     :vartype disk_read_gi_b: float
-    :ivar disk_write_gi_b: Required. The total amount of data in GiB of disk writes across all
-     Compute Nodes in the Pool.
+    :ivar disk_write_gi_b: The total amount of data in GiB of disk writes across all Compute Nodes
+     in the Pool. Required.
     :vartype disk_write_gi_b: float
-    :ivar network_read_gi_b: Required. The total amount of data in GiB of network reads across all
-     Compute Nodes in the Pool.
+    :ivar network_read_gi_b: The total amount of data in GiB of network reads across all Compute
+     Nodes in the Pool. Required.
     :vartype network_read_gi_b: float
-    :ivar network_write_gi_b: Required. The total amount of data in GiB of network writes across
-     all Compute Nodes in the Pool.
+    :ivar network_write_gi_b: The total amount of data in GiB of network writes across all Compute
+     Nodes in the Pool. Required.
     :vartype network_write_gi_b: float
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'last_update_time': {'required': True},
-        'avg_cpu_percentage': {'required': True},
-        'avg_memory_gi_b': {'required': True},
-        'peak_memory_gi_b': {'required': True},
-        'avg_disk_gi_b': {'required': True},
-        'peak_disk_gi_b': {'required': True},
-        'disk_read_i_ops': {'required': True},
-        'disk_write_i_ops': {'required': True},
-        'disk_read_gi_b': {'required': True},
-        'disk_write_gi_b': {'required': True},
-        'network_read_gi_b': {'required': True},
-        'network_write_gi_b': {'required': True},
+        "start_time": {"required": True},
+        "last_update_time": {"required": True},
+        "avg_cpu_percentage": {"required": True},
+        "avg_memory_gi_b": {"required": True},
+        "peak_memory_gi_b": {"required": True},
+        "avg_disk_gi_b": {"required": True},
+        "peak_disk_gi_b": {"required": True},
+        "disk_read_i_ops": {"required": True},
+        "disk_write_i_ops": {"required": True},
+        "disk_read_gi_b": {"required": True},
+        "disk_write_gi_b": {"required": True},
+        "network_read_gi_b": {"required": True},
+        "network_write_gi_b": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'avg_cpu_percentage': {'key': 'avgCPUPercentage', 'type': 'float'},
-        'avg_memory_gi_b': {'key': 'avgMemoryGiB', 'type': 'float'},
-        'peak_memory_gi_b': {'key': 'peakMemoryGiB', 'type': 'float'},
-        'avg_disk_gi_b': {'key': 'avgDiskGiB', 'type': 'float'},
-        'peak_disk_gi_b': {'key': 'peakDiskGiB', 'type': 'float'},
-        'disk_read_i_ops': {'key': 'diskReadIOps', 'type': 'long'},
-        'disk_write_i_ops': {'key': 'diskWriteIOps', 'type': 'long'},
-        'disk_read_gi_b': {'key': 'diskReadGiB', 'type': 'float'},
-        'disk_write_gi_b': {'key': 'diskWriteGiB', 'type': 'float'},
-        'network_read_gi_b': {'key': 'networkReadGiB', 'type': 'float'},
-        'network_write_gi_b': {'key': 'networkWriteGiB', 'type': 'float'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
+        "avg_cpu_percentage": {"key": "avgCPUPercentage", "type": "float"},
+        "avg_memory_gi_b": {"key": "avgMemoryGiB", "type": "float"},
+        "peak_memory_gi_b": {"key": "peakMemoryGiB", "type": "float"},
+        "avg_disk_gi_b": {"key": "avgDiskGiB", "type": "float"},
+        "peak_disk_gi_b": {"key": "peakDiskGiB", "type": "float"},
+        "disk_read_i_ops": {"key": "diskReadIOps", "type": "int"},
+        "disk_write_i_ops": {"key": "diskWriteIOps", "type": "int"},
+        "disk_read_gi_b": {"key": "diskReadGiB", "type": "float"},
+        "disk_write_gi_b": {"key": "diskWriteGiB", "type": "float"},
+        "network_read_gi_b": {"key": "networkReadGiB", "type": "float"},
+        "network_write_gi_b": {"key": "networkWriteGiB", "type": "float"},
     }
 
     def __init__(
@@ -14307,46 +13192,46 @@ class ResourceStatistics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword start_time: Required. The start time of the time range covered by the statistics.
+        :keyword start_time: The start time of the time range covered by the statistics. Required.
         :paramtype start_time: ~datetime.datetime
-        :keyword last_update_time: Required. The time at which the statistics were last updated. All
-         statistics are limited to the range between startTime and lastUpdateTime.
+        :keyword last_update_time: The time at which the statistics were last updated. All statistics
+         are limited to the range between startTime and lastUpdateTime. Required.
         :paramtype last_update_time: ~datetime.datetime
-        :keyword avg_cpu_percentage: Required. The average CPU usage across all Compute Nodes in the
-         Pool (percentage per node).
+        :keyword avg_cpu_percentage: The average CPU usage across all Compute Nodes in the Pool
+         (percentage per node). Required.
         :paramtype avg_cpu_percentage: float
-        :keyword avg_memory_gi_b: Required. The average memory usage in GiB across all Compute Nodes in
-         the Pool.
+        :keyword avg_memory_gi_b: The average memory usage in GiB across all Compute Nodes in the Pool.
+         Required.
         :paramtype avg_memory_gi_b: float
-        :keyword peak_memory_gi_b: Required. The peak memory usage in GiB across all Compute Nodes in
-         the Pool.
+        :keyword peak_memory_gi_b: The peak memory usage in GiB across all Compute Nodes in the Pool.
+         Required.
         :paramtype peak_memory_gi_b: float
-        :keyword avg_disk_gi_b: Required. The average used disk space in GiB across all Compute Nodes
-         in the Pool.
+        :keyword avg_disk_gi_b: The average used disk space in GiB across all Compute Nodes in the
+         Pool. Required.
         :paramtype avg_disk_gi_b: float
-        :keyword peak_disk_gi_b: Required. The peak used disk space in GiB across all Compute Nodes in
-         the Pool.
+        :keyword peak_disk_gi_b: The peak used disk space in GiB across all Compute Nodes in the Pool.
+         Required.
         :paramtype peak_disk_gi_b: float
-        :keyword disk_read_i_ops: Required. The total number of disk read operations across all Compute
-         Nodes in the Pool.
-        :paramtype disk_read_i_ops: long
-        :keyword disk_write_i_ops: Required. The total number of disk write operations across all
-         Compute Nodes in the Pool.
-        :paramtype disk_write_i_ops: long
-        :keyword disk_read_gi_b: Required. The total amount of data in GiB of disk reads across all
-         Compute Nodes in the Pool.
+        :keyword disk_read_i_ops: The total number of disk read operations across all Compute Nodes in
+         the Pool. Required.
+        :paramtype disk_read_i_ops: int
+        :keyword disk_write_i_ops: The total number of disk write operations across all Compute Nodes
+         in the Pool. Required.
+        :paramtype disk_write_i_ops: int
+        :keyword disk_read_gi_b: The total amount of data in GiB of disk reads across all Compute Nodes
+         in the Pool. Required.
         :paramtype disk_read_gi_b: float
-        :keyword disk_write_gi_b: Required. The total amount of data in GiB of disk writes across all
-         Compute Nodes in the Pool.
+        :keyword disk_write_gi_b: The total amount of data in GiB of disk writes across all Compute
+         Nodes in the Pool. Required.
         :paramtype disk_write_gi_b: float
-        :keyword network_read_gi_b: Required. The total amount of data in GiB of network reads across
-         all Compute Nodes in the Pool.
+        :keyword network_read_gi_b: The total amount of data in GiB of network reads across all Compute
+         Nodes in the Pool. Required.
         :paramtype network_read_gi_b: float
-        :keyword network_write_gi_b: Required. The total amount of data in GiB of network writes across
-         all Compute Nodes in the Pool.
+        :keyword network_write_gi_b: The total amount of data in GiB of network writes across all
+         Compute Nodes in the Pool. Required.
         :paramtype network_write_gi_b: float
         """
-        super(ResourceStatistics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.last_update_time = last_update_time
         self.avg_cpu_percentage = avg_cpu_percentage
@@ -14362,7 +13247,7 @@ class ResourceStatistics(msrest.serialization.Model):
         self.network_write_gi_b = network_write_gi_b
 
 
-class Schedule(msrest.serialization.Model):
+class Schedule(_serialization.Model):
     """The schedule according to which Jobs will be created. All times are fixed respective to UTC and are not impacted by daylight saving time.
 
     :ivar do_not_run_until: If you do not specify a doNotRunUntil time, the schedule becomes ready
@@ -14395,10 +13280,10 @@ class Schedule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'do_not_run_until': {'key': 'doNotRunUntil', 'type': 'iso-8601'},
-        'do_not_run_after': {'key': 'doNotRunAfter', 'type': 'iso-8601'},
-        'start_window': {'key': 'startWindow', 'type': 'duration'},
-        'recurrence_interval': {'key': 'recurrenceInterval', 'type': 'duration'},
+        "do_not_run_until": {"key": "doNotRunUntil", "type": "iso-8601"},
+        "do_not_run_after": {"key": "doNotRunAfter", "type": "iso-8601"},
+        "start_window": {"key": "startWindow", "type": "duration"},
+        "recurrence_interval": {"key": "recurrenceInterval", "type": "duration"},
     }
 
     def __init__(
@@ -14439,25 +13324,26 @@ class Schedule(msrest.serialization.Model):
          calling the REST API directly, the HTTP status code is 400 (Bad Request).
         :paramtype recurrence_interval: ~datetime.timedelta
         """
-        super(Schedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.do_not_run_until = do_not_run_until
         self.do_not_run_after = do_not_run_after
         self.start_window = start_window
         self.recurrence_interval = recurrence_interval
 
 
-class StartTask(msrest.serialization.Model):
+class StartTask(_serialization.Model):
     """Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute Node disappeared due to host failure. Retries due to recovery operations are independent of and are not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to a recovery operation may occur. Because of this, all Tasks should be idempotent. This means Tasks need to tolerate being interrupted and restarted without causing any corruption or duplicate data. The best practice for long running Tasks is to use some form of checkpointing. In some cases the StartTask may be re-run even though the Compute Node was not rebooted. Special care should be taken to avoid StartTasks which create breakaway process or install/launch services from the StartTask working directory, as this will block Batch from being able to re-run the StartTask.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar command_line: Required. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion. If you want to take
+    :ivar command_line: The command line does not run under a shell, and therefore cannot take
+     advantage of shell features such as environment variable expansion. If you want to take
      advantage of such features, you should invoke the shell in the command line, for example using
      "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
      file paths, it should use a relative path (relative to the Task working directory), or use the
      Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+     Required.
     :vartype command_line: str
     :ivar container_settings: When this is specified, all directories recursively below the
      AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
@@ -14493,17 +13379,17 @@ class StartTask(msrest.serialization.Model):
     """
 
     _validation = {
-        'command_line': {'required': True},
+        "command_line": {"required": True},
     }
 
     _attribute_map = {
-        'command_line': {'key': 'commandLine', 'type': 'str'},
-        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
-        'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
-        'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
-        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
-        'max_task_retry_count': {'key': 'maxTaskRetryCount', 'type': 'int'},
-        'wait_for_success': {'key': 'waitForSuccess', 'type': 'bool'},
+        "command_line": {"key": "commandLine", "type": "str"},
+        "container_settings": {"key": "containerSettings", "type": "TaskContainerSettings"},
+        "resource_files": {"key": "resourceFiles", "type": "[ResourceFile]"},
+        "environment_settings": {"key": "environmentSettings", "type": "[EnvironmentSetting]"},
+        "user_identity": {"key": "userIdentity", "type": "UserIdentity"},
+        "max_task_retry_count": {"key": "maxTaskRetryCount", "type": "int"},
+        "wait_for_success": {"key": "waitForSuccess", "type": "bool"},
     }
 
     def __init__(
@@ -14519,13 +13405,14 @@ class StartTask(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword command_line: Required. The command line does not run under a shell, and therefore
-         cannot take advantage of shell features such as environment variable expansion. If you want to
-         take advantage of such features, you should invoke the shell in the command line, for example
-         using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line
-         refers to file paths, it should use a relative path (relative to the Task working directory),
-         or use the Batch provided environment variable
+        :keyword command_line: The command line does not run under a shell, and therefore cannot take
+         advantage of shell features such as environment variable expansion. If you want to take
+         advantage of such features, you should invoke the shell in the command line, for example using
+         "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to
+         file paths, it should use a relative path (relative to the Task working directory), or use the
+         Batch provided environment variable
          (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
+         Required.
         :paramtype command_line: str
         :keyword container_settings: When this is specified, all directories recursively below the
          AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node) are mapped into the
@@ -14560,7 +13447,7 @@ class StartTask(msrest.serialization.Model):
          Compute Node. The default is true.
         :paramtype wait_for_success: bool
         """
-        super(StartTask, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.command_line = command_line
         self.container_settings = container_settings
         self.resource_files = resource_files
@@ -14570,16 +13457,16 @@ class StartTask(msrest.serialization.Model):
         self.wait_for_success = wait_for_success
 
 
-class StartTaskInformation(msrest.serialization.Model):
+class StartTaskInformation(_serialization.Model):
     """Information about a StartTask running on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar state: Required. The state of the StartTask on the Compute Node. Known values are:
-     "running", "completed".
+    :ivar state: The state of the StartTask on the Compute Node. Required. Known values are:
+     "running" and "completed".
     :vartype state: str or ~azure-batch.models.StartTaskState
-    :ivar start_time: Required. This value is reset every time the Task is restarted or retried
-     (that is, this is the most recent time at which the StartTask started running).
+    :ivar start_time: This value is reset every time the Task is restarted or retried (that is,
+     this is the most recent time at which the StartTask started running). Required.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: This is the end time of the most recent run of the StartTask, if that run has
      completed (even if that run failed and a retry is pending). This element is not present if the
@@ -14597,9 +13484,9 @@ class StartTaskInformation(msrest.serialization.Model):
     :ivar failure_info: This property is set only if the Task is in the completed state and
      encountered a failure.
     :vartype failure_info: ~azure-batch.models.TaskFailureInformation
-    :ivar retry_count: Required. Task application failures (non-zero exit code) are retried,
-     pre-processing errors (the Task could not be run) and file upload errors are not retried. The
-     Batch service will retry the Task up to the limit specified by the constraints.
+    :ivar retry_count: Task application failures (non-zero exit code) are retried, pre-processing
+     errors (the Task could not be run) and file upload errors are not retried. The Batch service
+     will retry the Task up to the limit specified by the constraints. Required.
     :vartype retry_count: int
     :ivar last_retry_time: This element is present only if the Task was retried (i.e. retryCount is
      nonzero). If present, this is typically the same as startTime, but may be different if the Task
@@ -14607,26 +13494,26 @@ class StartTaskInformation(msrest.serialization.Model):
      during a retry, then the startTime is updated but the lastRetryTime is not.
     :vartype last_retry_time: ~datetime.datetime
     :ivar result: If the value is 'failed', then the details of the failure can be found in the
-     failureInfo property. Known values are: "success", "failure".
+     failureInfo property. Known values are: "success" and "failure".
     :vartype result: str or ~azure-batch.models.TaskExecutionResult
     """
 
     _validation = {
-        'state': {'required': True},
-        'start_time': {'required': True},
-        'retry_count': {'required': True},
+        "state": {"required": True},
+        "start_time": {"required": True},
+        "retry_count": {"required": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'container_info': {'key': 'containerInfo', 'type': 'TaskContainerExecutionInformation'},
-        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
-        'retry_count': {'key': 'retryCount', 'type': 'int'},
-        'last_retry_time': {'key': 'lastRetryTime', 'type': 'iso-8601'},
-        'result': {'key': 'result', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "container_info": {"key": "containerInfo", "type": "TaskContainerExecutionInformation"},
+        "failure_info": {"key": "failureInfo", "type": "TaskFailureInformation"},
+        "retry_count": {"key": "retryCount", "type": "int"},
+        "last_retry_time": {"key": "lastRetryTime", "type": "iso-8601"},
+        "result": {"key": "result", "type": "str"},
     }
 
     def __init__(
@@ -14644,11 +13531,11 @@ class StartTaskInformation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword state: Required. The state of the StartTask on the Compute Node. Known values are:
-         "running", "completed".
+        :keyword state: The state of the StartTask on the Compute Node. Required. Known values are:
+         "running" and "completed".
         :paramtype state: str or ~azure-batch.models.StartTaskState
-        :keyword start_time: Required. This value is reset every time the Task is restarted or retried
-         (that is, this is the most recent time at which the StartTask started running).
+        :keyword start_time: This value is reset every time the Task is restarted or retried (that is,
+         this is the most recent time at which the StartTask started running). Required.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: This is the end time of the most recent run of the StartTask, if that run
          has completed (even if that run failed and a retry is pending). This element is not present if
@@ -14666,9 +13553,9 @@ class StartTaskInformation(msrest.serialization.Model):
         :keyword failure_info: This property is set only if the Task is in the completed state and
          encountered a failure.
         :paramtype failure_info: ~azure-batch.models.TaskFailureInformation
-        :keyword retry_count: Required. Task application failures (non-zero exit code) are retried,
+        :keyword retry_count: Task application failures (non-zero exit code) are retried,
          pre-processing errors (the Task could not be run) and file upload errors are not retried. The
-         Batch service will retry the Task up to the limit specified by the constraints.
+         Batch service will retry the Task up to the limit specified by the constraints. Required.
         :paramtype retry_count: int
         :keyword last_retry_time: This element is present only if the Task was retried (i.e. retryCount
          is nonzero). If present, this is typically the same as startTime, but may be different if the
@@ -14676,10 +13563,10 @@ class StartTaskInformation(msrest.serialization.Model):
          rebooted during a retry, then the startTime is updated but the lastRetryTime is not.
         :paramtype last_retry_time: ~datetime.datetime
         :keyword result: If the value is 'failed', then the details of the failure can be found in the
-         failureInfo property. Known values are: "success", "failure".
+         failureInfo property. Known values are: "success" and "failure".
         :paramtype result: str or ~azure-batch.models.TaskExecutionResult
         """
-        super(StartTaskInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.state = state
         self.start_time = start_time
         self.end_time = end_time
@@ -14691,7 +13578,7 @@ class StartTaskInformation(msrest.serialization.Model):
         self.result = result
 
 
-class SubtaskInformation(msrest.serialization.Model):
+class SubtaskInformation(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Information about an Azure Batch subtask.
 
     :ivar id: The ID of the subtask.
@@ -14715,40 +13602,41 @@ class SubtaskInformation(msrest.serialization.Model):
     :ivar failure_info: This property is set only if the Task is in the completed state and
      encountered a failure.
     :vartype failure_info: ~azure-batch.models.TaskFailureInformation
-    :ivar state: The state of the subtask. Known values are: "preparing", "running", "completed".
+    :ivar state: The state of the subtask. Known values are: "preparing", "running", and
+     "completed".
     :vartype state: str or ~azure-batch.models.SubtaskState
     :ivar state_transition_time: The time at which the subtask entered its current state.
     :vartype state_transition_time: ~datetime.datetime
     :ivar previous_state: This property is not set if the subtask is in its initial running state.
-     Known values are: "preparing", "running", "completed".
+     Known values are: "preparing", "running", and "completed".
     :vartype previous_state: str or ~azure-batch.models.SubtaskState
     :ivar previous_state_transition_time: This property is not set if the subtask is in its initial
      running state.
     :vartype previous_state_transition_time: ~datetime.datetime
     :ivar result: If the value is 'failed', then the details of the failure can be found in the
-     failureInfo property. Known values are: "success", "failure".
+     failureInfo property. Known values are: "success" and "failure".
     :vartype result: str or ~azure-batch.models.TaskExecutionResult
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'int'},
-        'node_info': {'key': 'nodeInfo', 'type': 'ComputeNodeInformation'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'container_info': {'key': 'containerInfo', 'type': 'TaskContainerExecutionInformation'},
-        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
-        'state': {'key': 'state', 'type': 'str'},
-        'state_transition_time': {'key': 'stateTransitionTime', 'type': 'iso-8601'},
-        'previous_state': {'key': 'previousState', 'type': 'str'},
-        'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
-        'result': {'key': 'result', 'type': 'str'},
+        "id": {"key": "id", "type": "int"},
+        "node_info": {"key": "nodeInfo", "type": "ComputeNodeInformation"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "container_info": {"key": "containerInfo", "type": "TaskContainerExecutionInformation"},
+        "failure_info": {"key": "failureInfo", "type": "TaskFailureInformation"},
+        "state": {"key": "state", "type": "str"},
+        "state_transition_time": {"key": "stateTransitionTime", "type": "iso-8601"},
+        "previous_state": {"key": "previousState", "type": "str"},
+        "previous_state_transition_time": {"key": "previousStateTransitionTime", "type": "iso-8601"},
+        "result": {"key": "result", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[int] = None,
+        id: Optional[int] = None,  # pylint: disable=redefined-builtin
         node_info: Optional["_models.ComputeNodeInformation"] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
@@ -14784,22 +13672,22 @@ class SubtaskInformation(msrest.serialization.Model):
         :keyword failure_info: This property is set only if the Task is in the completed state and
          encountered a failure.
         :paramtype failure_info: ~azure-batch.models.TaskFailureInformation
-        :keyword state: The state of the subtask. Known values are: "preparing", "running",
+        :keyword state: The state of the subtask. Known values are: "preparing", "running", and
          "completed".
         :paramtype state: str or ~azure-batch.models.SubtaskState
         :keyword state_transition_time: The time at which the subtask entered its current state.
         :paramtype state_transition_time: ~datetime.datetime
         :keyword previous_state: This property is not set if the subtask is in its initial running
-         state. Known values are: "preparing", "running", "completed".
+         state. Known values are: "preparing", "running", and "completed".
         :paramtype previous_state: str or ~azure-batch.models.SubtaskState
         :keyword previous_state_transition_time: This property is not set if the subtask is in its
          initial running state.
         :paramtype previous_state_transition_time: ~datetime.datetime
         :keyword result: If the value is 'failed', then the details of the failure can be found in the
-         failureInfo property. Known values are: "success", "failure".
+         failureInfo property. Known values are: "success" and "failure".
         :paramtype result: str or ~azure-batch.models.TaskExecutionResult
         """
-        super(SubtaskInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.node_info = node_info
         self.start_time = start_time
@@ -14814,7 +13702,7 @@ class SubtaskInformation(msrest.serialization.Model):
         self.result = result
 
 
-class TaskAddCollectionOptions(msrest.serialization.Model):
+class TaskAddCollectionOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -14832,18 +13720,18 @@ class TaskAddCollectionOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -14861,51 +13749,14 @@ class TaskAddCollectionOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(TaskAddCollectionOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class TaskAddCollectionParameter(msrest.serialization.Model):
-    """A collection of Azure Batch Tasks to add.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: Required. The total serialized size of this collection must be less than 1MB. If
-     it is greater than 1MB (for example if each Task has 100's of resource files or environment
-     variables), the request will fail with code 'RequestBodyTooLarge' and should be retried again
-     with fewer Tasks.
-    :vartype value: list[~azure-batch.models.TaskAddParameter]
-    """
-
-    _validation = {
-        'value': {'required': True, 'max_items': 100, 'min_items': 0},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[TaskAddParameter]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: List["_models.TaskAddParameter"],
-        **kwargs
-    ):
-        """
-        :keyword value: Required. The total serialized size of this collection must be less than 1MB.
-         If it is greater than 1MB (for example if each Task has 100's of resource files or environment
-         variables), the request will fail with code 'RequestBodyTooLarge' and should be retried again
-         with fewer Tasks.
-        :paramtype value: list[~azure-batch.models.TaskAddParameter]
-        """
-        super(TaskAddCollectionParameter, self).__init__(**kwargs)
-        self.value = value
-
-
-class TaskAddCollectionResult(msrest.serialization.Model):
+class TaskAddCollectionResult(_serialization.Model):
     """The result of adding a collection of Tasks to a Job.
 
     :ivar value: The results of the add Task collection operation.
@@ -14913,24 +13764,19 @@ class TaskAddCollectionResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TaskAddResult]'},
+        "value": {"key": "value", "type": "[TaskAddResult]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.TaskAddResult"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.TaskAddResult"]] = None, **kwargs):
         """
         :keyword value: The results of the add Task collection operation.
         :paramtype value: list[~azure-batch.models.TaskAddResult]
         """
-        super(TaskAddCollectionResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class TaskAddOptions(msrest.serialization.Model):
+class TaskAddOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -14948,18 +13794,18 @@ class TaskAddOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -14977,251 +13823,22 @@ class TaskAddOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(TaskAddOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
         self.ocp_date = ocp_date
 
 
-class TaskAddParameter(msrest.serialization.Model):
-    """Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute Node disappeared due to host failure. Retries due to recovery operations are independent of and are not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to a recovery operation may occur. Because of this, all Tasks should be idempotent. This means Tasks need to tolerate being interrupted and restarted without causing any corruption or duplicate data. The best practice for long running Tasks is to use some form of checkpointing.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Required. The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-     and case-insensitive (that is, you may not have two IDs within a Job that differ only by case).
-    :vartype id: str
-    :ivar display_name: The display name need not be unique and can contain any Unicode characters
-     up to a maximum length of 1024.
-    :vartype display_name: str
-    :ivar command_line: Required. For multi-instance Tasks, the command line is executed as the
-     primary Task, after the primary Task and all subtasks have finished executing the coordination
-     command line. The command line does not run under a shell, and therefore cannot take advantage
-     of shell features such as environment variable expansion. If you want to take advantage of such
-     features, you should invoke the shell in the command line, for example using "cmd /c MyCommand"
-     in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it
-     should use a relative path (relative to the Task working directory), or use the Batch provided
-     environment variable
-     (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-    :vartype command_line: str
-    :ivar container_settings: If the Pool that will run this Task has containerConfiguration set,
-     this must be set as well. If the Pool that will run this Task doesn't have
-     containerConfiguration set, this must not be set. When this is specified, all directories
-     recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node)
-     are mapped into the container, all Task environment variables are mapped into the container,
-     and the Task command line is executed in the container. Files produced in the container outside
-     of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning that Batch file APIs
-     will not be able to access those files.
-    :vartype container_settings: ~azure-batch.models.TaskContainerSettings
-    :ivar exit_conditions: How the Batch service should respond when the Task completes.
-    :vartype exit_conditions: ~azure-batch.models.ExitConditions
-    :ivar resource_files: For multi-instance Tasks, the resource files will only be downloaded to
-     the Compute Node on which the primary Task is executed. There is a maximum size for the list of
-     resource files.  When the max size is exceeded, the request will fail and the response error
-     code will be RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be
-     reduced in size. This can be achieved using .zip files, Application Packages, or Docker
-     Containers.
-    :vartype resource_files: list[~azure-batch.models.ResourceFile]
-    :ivar output_files: For multi-instance Tasks, the files will only be uploaded from the Compute
-     Node on which the primary Task is executed.
-    :vartype output_files: list[~azure-batch.models.OutputFile]
-    :ivar environment_settings: A list of environment variable settings for the Task.
-    :vartype environment_settings: list[~azure-batch.models.EnvironmentSetting]
-    :ivar affinity_info: A locality hint that can be used by the Batch service to select a Compute
-     Node on which to start a Task.
-    :vartype affinity_info: ~azure-batch.models.AffinityInformation
-    :ivar constraints: If you do not specify constraints, the maxTaskRetryCount is the
-     maxTaskRetryCount specified for the Job, the maxWallClockTime is infinite, and the
-     retentionTime is 7 days.
-    :vartype constraints: ~azure-batch.models.TaskConstraints
-    :ivar required_slots: The default is 1. A Task can only be scheduled to run on a compute node
-     if the node has enough free scheduling slots available. For multi-instance Tasks, this must be
-     1.
-    :vartype required_slots: int
-    :ivar user_identity: If omitted, the Task runs as a non-administrative user unique to the Task.
-    :vartype user_identity: ~azure-batch.models.UserIdentity
-    :ivar multi_instance_settings: Multi-instance Tasks are commonly used to support MPI Tasks. In
-     the MPI case, if any of the subtasks fail (for example due to exiting with a non-zero exit
-     code) the entire multi-instance Task fails. The multi-instance Task is then terminated and
-     retried, up to its retry limit.
-    :vartype multi_instance_settings: ~azure-batch.models.MultiInstanceSettings
-    :ivar depends_on: This Task will not be scheduled until all Tasks that it depends on have
-     completed successfully. If any of those Tasks fail and exhaust their retry counts, this Task
-     will never be scheduled. If the Job does not have usesTaskDependencies set to true, and this
-     element is present, the request fails with error code TaskDependenciesNotSpecifiedOnJob.
-    :vartype depends_on: ~azure-batch.models.TaskDependencies
-    :ivar application_package_references: Application packages are downloaded and deployed to a
-     shared directory, not the Task working directory. Therefore, if a referenced package is already
-     on the Node, and is up to date, then it is not re-downloaded; the existing copy on the Compute
-     Node is used. If a referenced Package cannot be installed, for example because the package has
-     been deleted or because download failed, the Task fails.
-    :vartype application_package_references: list[~azure-batch.models.ApplicationPackageReference]
-    :ivar authentication_token_settings: If this property is set, the Batch service provides the
-     Task with an authentication token which can be used to authenticate Batch service operations
-     without requiring an Account access key. The token is provided via the
-     AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
-     using the token depend on the settings. For example, a Task can request Job permissions in
-     order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
-     Job.
-    :vartype authentication_token_settings: ~azure-batch.models.AuthenticationTokenSettings
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'command_line': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'command_line': {'key': 'commandLine', 'type': 'str'},
-        'container_settings': {'key': 'containerSettings', 'type': 'TaskContainerSettings'},
-        'exit_conditions': {'key': 'exitConditions', 'type': 'ExitConditions'},
-        'resource_files': {'key': 'resourceFiles', 'type': '[ResourceFile]'},
-        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
-        'environment_settings': {'key': 'environmentSettings', 'type': '[EnvironmentSetting]'},
-        'affinity_info': {'key': 'affinityInfo', 'type': 'AffinityInformation'},
-        'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
-        'required_slots': {'key': 'requiredSlots', 'type': 'int'},
-        'user_identity': {'key': 'userIdentity', 'type': 'UserIdentity'},
-        'multi_instance_settings': {'key': 'multiInstanceSettings', 'type': 'MultiInstanceSettings'},
-        'depends_on': {'key': 'dependsOn', 'type': 'TaskDependencies'},
-        'application_package_references': {'key': 'applicationPackageReferences', 'type': '[ApplicationPackageReference]'},
-        'authentication_token_settings': {'key': 'authenticationTokenSettings', 'type': 'AuthenticationTokenSettings'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,
-        command_line: str,
-        display_name: Optional[str] = None,
-        container_settings: Optional["_models.TaskContainerSettings"] = None,
-        exit_conditions: Optional["_models.ExitConditions"] = None,
-        resource_files: Optional[List["_models.ResourceFile"]] = None,
-        output_files: Optional[List["_models.OutputFile"]] = None,
-        environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
-        affinity_info: Optional["_models.AffinityInformation"] = None,
-        constraints: Optional["_models.TaskConstraints"] = None,
-        required_slots: Optional[int] = None,
-        user_identity: Optional["_models.UserIdentity"] = None,
-        multi_instance_settings: Optional["_models.MultiInstanceSettings"] = None,
-        depends_on: Optional["_models.TaskDependencies"] = None,
-        application_package_references: Optional[List["_models.ApplicationPackageReference"]] = None,
-        authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Required. The ID can contain any combination of alphanumeric characters including
-         hyphens and underscores, and cannot contain more than 64 characters. The ID is case-preserving
-         and case-insensitive (that is, you may not have two IDs within a Job that differ only by case).
-        :paramtype id: str
-        :keyword display_name: The display name need not be unique and can contain any Unicode
-         characters up to a maximum length of 1024.
-        :paramtype display_name: str
-        :keyword command_line: Required. For multi-instance Tasks, the command line is executed as the
-         primary Task, after the primary Task and all subtasks have finished executing the coordination
-         command line. The command line does not run under a shell, and therefore cannot take advantage
-         of shell features such as environment variable expansion. If you want to take advantage of such
-         features, you should invoke the shell in the command line, for example using "cmd /c MyCommand"
-         in Windows or "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths, it
-         should use a relative path (relative to the Task working directory), or use the Batch provided
-         environment variable
-         (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
-        :paramtype command_line: str
-        :keyword container_settings: If the Pool that will run this Task has containerConfiguration
-         set, this must be set as well. If the Pool that will run this Task doesn't have
-         containerConfiguration set, this must not be set. When this is specified, all directories
-         recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories on the node)
-         are mapped into the container, all Task environment variables are mapped into the container,
-         and the Task command line is executed in the container. Files produced in the container outside
-         of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning that Batch file APIs
-         will not be able to access those files.
-        :paramtype container_settings: ~azure-batch.models.TaskContainerSettings
-        :keyword exit_conditions: How the Batch service should respond when the Task completes.
-        :paramtype exit_conditions: ~azure-batch.models.ExitConditions
-        :keyword resource_files: For multi-instance Tasks, the resource files will only be downloaded
-         to the Compute Node on which the primary Task is executed. There is a maximum size for the list
-         of resource files.  When the max size is exceeded, the request will fail and the response error
-         code will be RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be
-         reduced in size. This can be achieved using .zip files, Application Packages, or Docker
-         Containers.
-        :paramtype resource_files: list[~azure-batch.models.ResourceFile]
-        :keyword output_files: For multi-instance Tasks, the files will only be uploaded from the
-         Compute Node on which the primary Task is executed.
-        :paramtype output_files: list[~azure-batch.models.OutputFile]
-        :keyword environment_settings: A list of environment variable settings for the Task.
-        :paramtype environment_settings: list[~azure-batch.models.EnvironmentSetting]
-        :keyword affinity_info: A locality hint that can be used by the Batch service to select a
-         Compute Node on which to start a Task.
-        :paramtype affinity_info: ~azure-batch.models.AffinityInformation
-        :keyword constraints: If you do not specify constraints, the maxTaskRetryCount is the
-         maxTaskRetryCount specified for the Job, the maxWallClockTime is infinite, and the
-         retentionTime is 7 days.
-        :paramtype constraints: ~azure-batch.models.TaskConstraints
-        :keyword required_slots: The default is 1. A Task can only be scheduled to run on a compute
-         node if the node has enough free scheduling slots available. For multi-instance Tasks, this
-         must be 1.
-        :paramtype required_slots: int
-        :keyword user_identity: If omitted, the Task runs as a non-administrative user unique to the
-         Task.
-        :paramtype user_identity: ~azure-batch.models.UserIdentity
-        :keyword multi_instance_settings: Multi-instance Tasks are commonly used to support MPI Tasks.
-         In the MPI case, if any of the subtasks fail (for example due to exiting with a non-zero exit
-         code) the entire multi-instance Task fails. The multi-instance Task is then terminated and
-         retried, up to its retry limit.
-        :paramtype multi_instance_settings: ~azure-batch.models.MultiInstanceSettings
-        :keyword depends_on: This Task will not be scheduled until all Tasks that it depends on have
-         completed successfully. If any of those Tasks fail and exhaust their retry counts, this Task
-         will never be scheduled. If the Job does not have usesTaskDependencies set to true, and this
-         element is present, the request fails with error code TaskDependenciesNotSpecifiedOnJob.
-        :paramtype depends_on: ~azure-batch.models.TaskDependencies
-        :keyword application_package_references: Application packages are downloaded and deployed to a
-         shared directory, not the Task working directory. Therefore, if a referenced package is already
-         on the Node, and is up to date, then it is not re-downloaded; the existing copy on the Compute
-         Node is used. If a referenced Package cannot be installed, for example because the package has
-         been deleted or because download failed, the Task fails.
-        :paramtype application_package_references:
-         list[~azure-batch.models.ApplicationPackageReference]
-        :keyword authentication_token_settings: If this property is set, the Batch service provides the
-         Task with an authentication token which can be used to authenticate Batch service operations
-         without requiring an Account access key. The token is provided via the
-         AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
-         using the token depend on the settings. For example, a Task can request Job permissions in
-         order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
-         Job.
-        :paramtype authentication_token_settings: ~azure-batch.models.AuthenticationTokenSettings
-        """
-        super(TaskAddParameter, self).__init__(**kwargs)
-        self.id = id
-        self.display_name = display_name
-        self.command_line = command_line
-        self.container_settings = container_settings
-        self.exit_conditions = exit_conditions
-        self.resource_files = resource_files
-        self.output_files = output_files
-        self.environment_settings = environment_settings
-        self.affinity_info = affinity_info
-        self.constraints = constraints
-        self.required_slots = required_slots
-        self.user_identity = user_identity
-        self.multi_instance_settings = multi_instance_settings
-        self.depends_on = depends_on
-        self.application_package_references = application_package_references
-        self.authentication_token_settings = authentication_token_settings
-
-
-class TaskAddResult(msrest.serialization.Model):
+class TaskAddResult(_serialization.Model):
     """Result for a single Task added as part of an add Task collection operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. The status of the add Task request. Known values are: "success",
-     "clienterror", "servererror".
+    :ivar status: The status of the add Task request. Required. Known values are: "success",
+     "clienterror", and "servererror".
     :vartype status: str or ~azure-batch.models.TaskAddStatus
-    :ivar task_id: Required. The ID of the Task for which this is the result.
+    :ivar task_id: The ID of the Task for which this is the result. Required.
     :vartype task_id: str
     :ivar e_tag: You can use this to detect whether the Task has changed between requests. In
      particular, you can be pass the ETag with an Update Task request to specify that your changes
@@ -15236,17 +13853,17 @@ class TaskAddResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'task_id': {'required': True},
+        "status": {"required": True},
+        "task_id": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'location': {'key': 'location', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'BatchError'},
+        "status": {"key": "status", "type": "str"},
+        "task_id": {"key": "taskId", "type": "str"},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "location": {"key": "location", "type": "str"},
+        "error": {"key": "error", "type": "BatchError"},
     }
 
     def __init__(
@@ -15261,10 +13878,10 @@ class TaskAddResult(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword status: Required. The status of the add Task request. Known values are: "success",
-         "clienterror", "servererror".
+        :keyword status: The status of the add Task request. Required. Known values are: "success",
+         "clienterror", and "servererror".
         :paramtype status: str or ~azure-batch.models.TaskAddStatus
-        :keyword task_id: Required. The ID of the Task for which this is the result.
+        :keyword task_id: The ID of the Task for which this is the result. Required.
         :paramtype task_id: str
         :keyword e_tag: You can use this to detect whether the Task has changed between requests. In
          particular, you can be pass the ETag with an Update Task request to specify that your changes
@@ -15277,7 +13894,7 @@ class TaskAddResult(msrest.serialization.Model):
         :keyword error: An error response received from the Azure Batch service.
         :paramtype error: ~azure-batch.models.BatchError
         """
-        super(TaskAddResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.task_id = task_id
         self.e_tag = e_tag
@@ -15286,7 +13903,7 @@ class TaskAddResult(msrest.serialization.Model):
         self.error = error
 
 
-class TaskConstraints(msrest.serialization.Model):
+class TaskConstraints(_serialization.Model):
     """Execution constraints to apply to a Task.
 
     :ivar max_wall_clock_time: If this is not specified, there is no time limit on how long the
@@ -15306,9 +13923,9 @@ class TaskConstraints(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_wall_clock_time': {'key': 'maxWallClockTime', 'type': 'duration'},
-        'retention_time': {'key': 'retentionTime', 'type': 'duration'},
-        'max_task_retry_count': {'key': 'maxTaskRetryCount', 'type': 'int'},
+        "max_wall_clock_time": {"key": "maxWallClockTime", "type": "duration"},
+        "retention_time": {"key": "retentionTime", "type": "duration"},
+        "max_task_retry_count": {"key": "maxTaskRetryCount", "type": "int"},
     }
 
     def __init__(
@@ -15335,13 +13952,13 @@ class TaskConstraints(msrest.serialization.Model):
          start task or any task. The default value is 0 (no retries).
         :paramtype max_task_retry_count: int
         """
-        super(TaskConstraints, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_wall_clock_time = max_wall_clock_time
         self.retention_time = retention_time
         self.max_task_retry_count = max_task_retry_count
 
 
-class TaskContainerExecutionInformation(msrest.serialization.Model):
+class TaskContainerExecutionInformation(_serialization.Model):
     """Contains information about the container which a Task is executing.
 
     :ivar container_id: The ID of the container.
@@ -15355,18 +13972,13 @@ class TaskContainerExecutionInformation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'container_id': {'key': 'containerId', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'str'},
+        "container_id": {"key": "containerId", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "error": {"key": "error", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        container_id: Optional[str] = None,
-        state: Optional[str] = None,
-        error: Optional[str] = None,
-        **kwargs
+        self, *, container_id: Optional[str] = None, state: Optional[str] = None, error: Optional[str] = None, **kwargs
     ):
         """
         :keyword container_id: The ID of the container.
@@ -15378,13 +13990,13 @@ class TaskContainerExecutionInformation(msrest.serialization.Model):
          equivalent to the error field returned by "docker inspect".
         :paramtype error: str
         """
-        super(TaskContainerExecutionInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.container_id = container_id
         self.state = state
         self.error = error
 
 
-class TaskContainerSettings(msrest.serialization.Model):
+class TaskContainerSettings(_serialization.Model):
     """The container settings for a Task.
 
     All required parameters must be populated in order to send to Azure.
@@ -15392,25 +14004,25 @@ class TaskContainerSettings(msrest.serialization.Model):
     :ivar container_run_options: These additional options are supplied as arguments to the "docker
      create" command, in addition to those controlled by the Batch Service.
     :vartype container_run_options: str
-    :ivar image_name: Required. This is the full Image reference, as would be specified to "docker
-     pull". If no tag is provided as part of the Image name, the tag ":latest" is used as a default.
+    :ivar image_name: This is the full Image reference, as would be specified to "docker pull". If
+     no tag is provided as part of the Image name, the tag ":latest" is used as a default. Required.
     :vartype image_name: str
     :ivar registry: This setting can be omitted if was already provided at Pool creation.
     :vartype registry: ~azure-batch.models.ContainerRegistry
     :ivar working_directory: The default is 'taskWorkingDirectory'. Known values are:
-     "taskWorkingDirectory", "containerImageDefault".
+     "taskWorkingDirectory" and "containerImageDefault".
     :vartype working_directory: str or ~azure-batch.models.ContainerWorkingDirectory
     """
 
     _validation = {
-        'image_name': {'required': True},
+        "image_name": {"required": True},
     }
 
     _attribute_map = {
-        'container_run_options': {'key': 'containerRunOptions', 'type': 'str'},
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'registry': {'key': 'registry', 'type': 'ContainerRegistry'},
-        'working_directory': {'key': 'workingDirectory', 'type': 'str'},
+        "container_run_options": {"key": "containerRunOptions", "type": "str"},
+        "image_name": {"key": "imageName", "type": "str"},
+        "registry": {"key": "registry", "type": "ContainerRegistry"},
+        "working_directory": {"key": "workingDirectory", "type": "str"},
     }
 
     def __init__(
@@ -15426,83 +14038,74 @@ class TaskContainerSettings(msrest.serialization.Model):
         :keyword container_run_options: These additional options are supplied as arguments to the
          "docker create" command, in addition to those controlled by the Batch Service.
         :paramtype container_run_options: str
-        :keyword image_name: Required. This is the full Image reference, as would be specified to
-         "docker pull". If no tag is provided as part of the Image name, the tag ":latest" is used as a
-         default.
+        :keyword image_name: This is the full Image reference, as would be specified to "docker pull".
+         If no tag is provided as part of the Image name, the tag ":latest" is used as a default.
+         Required.
         :paramtype image_name: str
         :keyword registry: This setting can be omitted if was already provided at Pool creation.
         :paramtype registry: ~azure-batch.models.ContainerRegistry
         :keyword working_directory: The default is 'taskWorkingDirectory'. Known values are:
-         "taskWorkingDirectory", "containerImageDefault".
+         "taskWorkingDirectory" and "containerImageDefault".
         :paramtype working_directory: str or ~azure-batch.models.ContainerWorkingDirectory
         """
-        super(TaskContainerSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.container_run_options = container_run_options
         self.image_name = image_name
         self.registry = registry
         self.working_directory = working_directory
 
 
-class TaskCounts(msrest.serialization.Model):
+class TaskCounts(_serialization.Model):
     """The Task counts for a Job.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar active: Required. The number of Tasks in the active state.
+    :ivar active: The number of Tasks in the active state. Required.
     :vartype active: int
-    :ivar running: Required. The number of Tasks in the running or preparing state.
+    :ivar running: The number of Tasks in the running or preparing state. Required.
     :vartype running: int
-    :ivar completed: Required. The number of Tasks in the completed state.
+    :ivar completed: The number of Tasks in the completed state. Required.
     :vartype completed: int
-    :ivar succeeded: Required. The number of Tasks which succeeded. A Task succeeds if its result
-     (found in the executionInfo property) is 'success'.
+    :ivar succeeded: The number of Tasks which succeeded. A Task succeeds if its result (found in
+     the executionInfo property) is 'success'. Required.
     :vartype succeeded: int
-    :ivar failed: Required. The number of Tasks which failed. A Task fails if its result (found in
-     the executionInfo property) is 'failure'.
+    :ivar failed: The number of Tasks which failed. A Task fails if its result (found in the
+     executionInfo property) is 'failure'. Required.
     :vartype failed: int
     """
 
     _validation = {
-        'active': {'required': True},
-        'running': {'required': True},
-        'completed': {'required': True},
-        'succeeded': {'required': True},
-        'failed': {'required': True},
+        "active": {"required": True},
+        "running": {"required": True},
+        "completed": {"required": True},
+        "succeeded": {"required": True},
+        "failed": {"required": True},
     }
 
     _attribute_map = {
-        'active': {'key': 'active', 'type': 'int'},
-        'running': {'key': 'running', 'type': 'int'},
-        'completed': {'key': 'completed', 'type': 'int'},
-        'succeeded': {'key': 'succeeded', 'type': 'int'},
-        'failed': {'key': 'failed', 'type': 'int'},
+        "active": {"key": "active", "type": "int"},
+        "running": {"key": "running", "type": "int"},
+        "completed": {"key": "completed", "type": "int"},
+        "succeeded": {"key": "succeeded", "type": "int"},
+        "failed": {"key": "failed", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        active: int,
-        running: int,
-        completed: int,
-        succeeded: int,
-        failed: int,
-        **kwargs
-    ):
+    def __init__(self, *, active: int, running: int, completed: int, succeeded: int, failed: int, **kwargs):
         """
-        :keyword active: Required. The number of Tasks in the active state.
+        :keyword active: The number of Tasks in the active state. Required.
         :paramtype active: int
-        :keyword running: Required. The number of Tasks in the running or preparing state.
+        :keyword running: The number of Tasks in the running or preparing state. Required.
         :paramtype running: int
-        :keyword completed: Required. The number of Tasks in the completed state.
+        :keyword completed: The number of Tasks in the completed state. Required.
         :paramtype completed: int
-        :keyword succeeded: Required. The number of Tasks which succeeded. A Task succeeds if its
-         result (found in the executionInfo property) is 'success'.
+        :keyword succeeded: The number of Tasks which succeeded. A Task succeeds if its result (found
+         in the executionInfo property) is 'success'. Required.
         :paramtype succeeded: int
-        :keyword failed: Required. The number of Tasks which failed. A Task fails if its result (found
-         in the executionInfo property) is 'failure'.
+        :keyword failed: The number of Tasks which failed. A Task fails if its result (found in the
+         executionInfo property) is 'failure'. Required.
         :paramtype failed: int
         """
-        super(TaskCounts, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.active = active
         self.running = running
         self.completed = completed
@@ -15510,46 +14113,40 @@ class TaskCounts(msrest.serialization.Model):
         self.failed = failed
 
 
-class TaskCountsResult(msrest.serialization.Model):
+class TaskCountsResult(_serialization.Model):
     """The Task and TaskSlot counts for a Job.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_counts: Required. The Task counts for a Job.
+    :ivar task_counts: The Task counts for a Job. Required.
     :vartype task_counts: ~azure-batch.models.TaskCounts
-    :ivar task_slot_counts: Required. The TaskSlot counts for a Job.
+    :ivar task_slot_counts: The TaskSlot counts for a Job. Required.
     :vartype task_slot_counts: ~azure-batch.models.TaskSlotCounts
     """
 
     _validation = {
-        'task_counts': {'required': True},
-        'task_slot_counts': {'required': True},
+        "task_counts": {"required": True},
+        "task_slot_counts": {"required": True},
     }
 
     _attribute_map = {
-        'task_counts': {'key': 'taskCounts', 'type': 'TaskCounts'},
-        'task_slot_counts': {'key': 'taskSlotCounts', 'type': 'TaskSlotCounts'},
+        "task_counts": {"key": "taskCounts", "type": "TaskCounts"},
+        "task_slot_counts": {"key": "taskSlotCounts", "type": "TaskSlotCounts"},
     }
 
-    def __init__(
-        self,
-        *,
-        task_counts: "_models.TaskCounts",
-        task_slot_counts: "_models.TaskSlotCounts",
-        **kwargs
-    ):
+    def __init__(self, *, task_counts: "_models.TaskCounts", task_slot_counts: "_models.TaskSlotCounts", **kwargs):
         """
-        :keyword task_counts: Required. The Task counts for a Job.
+        :keyword task_counts: The Task counts for a Job. Required.
         :paramtype task_counts: ~azure-batch.models.TaskCounts
-        :keyword task_slot_counts: Required. The TaskSlot counts for a Job.
+        :keyword task_slot_counts: The TaskSlot counts for a Job. Required.
         :paramtype task_slot_counts: ~azure-batch.models.TaskSlotCounts
         """
-        super(TaskCountsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_counts = task_counts
         self.task_slot_counts = task_slot_counts
 
 
-class TaskDeleteOptions(msrest.serialization.Model):
+class TaskDeleteOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -15583,22 +14180,22 @@ class TaskDeleteOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -15636,7 +14233,7 @@ class TaskDeleteOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(TaskDeleteOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -15647,7 +14244,7 @@ class TaskDeleteOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class TaskDependencies(msrest.serialization.Model):
+class TaskDependencies(_serialization.Model):
     """Specifies any dependencies of a Task. Any Task that is explicitly specified or within a dependency range must complete before the dependant Task will be scheduled.
 
     :ivar task_ids: The taskIds collection is limited to 64000 characters total (i.e. the combined
@@ -15661,8 +14258,8 @@ class TaskDependencies(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'task_ids': {'key': 'taskIds', 'type': '[str]'},
-        'task_id_ranges': {'key': 'taskIdRanges', 'type': '[TaskIdRange]'},
+        "task_ids": {"key": "taskIds", "type": "[str]"},
+        "task_id_ranges": {"key": "taskIdRanges", "type": "[TaskIdRange]"},
     }
 
     def __init__(
@@ -15682,12 +14279,12 @@ class TaskDependencies(msrest.serialization.Model):
          ranges must complete successfully before the dependent Task can be scheduled.
         :paramtype task_id_ranges: list[~azure-batch.models.TaskIdRange]
         """
-        super(TaskDependencies, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_ids = task_ids
         self.task_id_ranges = task_id_ranges
 
 
-class TaskExecutionInformation(msrest.serialization.Model):
+class TaskExecutionInformation(_serialization.Model):
     """Information about the execution of a Task.
 
     All required parameters must be populated in order to send to Azure.
@@ -15712,43 +14309,43 @@ class TaskExecutionInformation(msrest.serialization.Model):
     :ivar failure_info: This property is set only if the Task is in the completed state and
      encountered a failure.
     :vartype failure_info: ~azure-batch.models.TaskFailureInformation
-    :ivar retry_count: Required. Task application failures (non-zero exit code) are retried,
-     pre-processing errors (the Task could not be run) and file upload errors are not retried. The
-     Batch service will retry the Task up to the limit specified by the constraints.
+    :ivar retry_count: Task application failures (non-zero exit code) are retried, pre-processing
+     errors (the Task could not be run) and file upload errors are not retried. The Batch service
+     will retry the Task up to the limit specified by the constraints. Required.
     :vartype retry_count: int
     :ivar last_retry_time: This element is present only if the Task was retried (i.e. retryCount is
      nonzero). If present, this is typically the same as startTime, but may be different if the Task
      has been restarted for reasons other than retry; for example, if the Compute Node was rebooted
      during a retry, then the startTime is updated but the lastRetryTime is not.
     :vartype last_retry_time: ~datetime.datetime
-    :ivar requeue_count: Required. When the user removes Compute Nodes from a Pool (by
-     resizing/shrinking the pool) or when the Job is being disabled, the user can specify that
-     running Tasks on the Compute Nodes be requeued for execution. This count tracks how many times
-     the Task has been requeued for these reasons.
+    :ivar requeue_count: When the user removes Compute Nodes from a Pool (by resizing/shrinking the
+     pool) or when the Job is being disabled, the user can specify that running Tasks on the Compute
+     Nodes be requeued for execution. This count tracks how many times the Task has been requeued
+     for these reasons. Required.
     :vartype requeue_count: int
     :ivar last_requeue_time: This property is set only if the requeueCount is nonzero.
     :vartype last_requeue_time: ~datetime.datetime
     :ivar result: If the value is 'failed', then the details of the failure can be found in the
-     failureInfo property. Known values are: "success", "failure".
+     failureInfo property. Known values are: "success" and "failure".
     :vartype result: str or ~azure-batch.models.TaskExecutionResult
     """
 
     _validation = {
-        'retry_count': {'required': True},
-        'requeue_count': {'required': True},
+        "retry_count": {"required": True},
+        "requeue_count": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'container_info': {'key': 'containerInfo', 'type': 'TaskContainerExecutionInformation'},
-        'failure_info': {'key': 'failureInfo', 'type': 'TaskFailureInformation'},
-        'retry_count': {'key': 'retryCount', 'type': 'int'},
-        'last_retry_time': {'key': 'lastRetryTime', 'type': 'iso-8601'},
-        'requeue_count': {'key': 'requeueCount', 'type': 'int'},
-        'last_requeue_time': {'key': 'lastRequeueTime', 'type': 'iso-8601'},
-        'result': {'key': 'result', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "container_info": {"key": "containerInfo", "type": "TaskContainerExecutionInformation"},
+        "failure_info": {"key": "failureInfo", "type": "TaskFailureInformation"},
+        "retry_count": {"key": "retryCount", "type": "int"},
+        "last_retry_time": {"key": "lastRetryTime", "type": "iso-8601"},
+        "requeue_count": {"key": "requeueCount", "type": "int"},
+        "last_requeue_time": {"key": "lastRequeueTime", "type": "iso-8601"},
+        "result": {"key": "result", "type": "str"},
     }
 
     def __init__(
@@ -15787,27 +14384,27 @@ class TaskExecutionInformation(msrest.serialization.Model):
         :keyword failure_info: This property is set only if the Task is in the completed state and
          encountered a failure.
         :paramtype failure_info: ~azure-batch.models.TaskFailureInformation
-        :keyword retry_count: Required. Task application failures (non-zero exit code) are retried,
+        :keyword retry_count: Task application failures (non-zero exit code) are retried,
          pre-processing errors (the Task could not be run) and file upload errors are not retried. The
-         Batch service will retry the Task up to the limit specified by the constraints.
+         Batch service will retry the Task up to the limit specified by the constraints. Required.
         :paramtype retry_count: int
         :keyword last_retry_time: This element is present only if the Task was retried (i.e. retryCount
          is nonzero). If present, this is typically the same as startTime, but may be different if the
          Task has been restarted for reasons other than retry; for example, if the Compute Node was
          rebooted during a retry, then the startTime is updated but the lastRetryTime is not.
         :paramtype last_retry_time: ~datetime.datetime
-        :keyword requeue_count: Required. When the user removes Compute Nodes from a Pool (by
-         resizing/shrinking the pool) or when the Job is being disabled, the user can specify that
-         running Tasks on the Compute Nodes be requeued for execution. This count tracks how many times
-         the Task has been requeued for these reasons.
+        :keyword requeue_count: When the user removes Compute Nodes from a Pool (by resizing/shrinking
+         the pool) or when the Job is being disabled, the user can specify that running Tasks on the
+         Compute Nodes be requeued for execution. This count tracks how many times the Task has been
+         requeued for these reasons. Required.
         :paramtype requeue_count: int
         :keyword last_requeue_time: This property is set only if the requeueCount is nonzero.
         :paramtype last_requeue_time: ~datetime.datetime
         :keyword result: If the value is 'failed', then the details of the failure can be found in the
-         failureInfo property. Known values are: "success", "failure".
+         failureInfo property. Known values are: "success" and "failure".
         :paramtype result: str or ~azure-batch.models.TaskExecutionResult
         """
-        super(TaskExecutionInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.exit_code = exit_code
@@ -15820,12 +14417,12 @@ class TaskExecutionInformation(msrest.serialization.Model):
         self.result = result
 
 
-class TaskFailureInformation(msrest.serialization.Model):
+class TaskFailureInformation(_serialization.Model):
     """Information about a Task failure.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar category: Required. The category of the error. Known values are: "usererror",
+    :ivar category: The category of the error. Required. Known values are: "usererror" and
      "servererror".
     :vartype category: str or ~azure-batch.models.ErrorCategory
     :ivar code: An identifier for the Task error. Codes are invariant and are intended to be
@@ -15839,14 +14436,14 @@ class TaskFailureInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'category': {'required': True},
+        "category": {"required": True},
     }
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[NameValuePair]'},
+        "category": {"key": "category", "type": "str"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[NameValuePair]"},
     }
 
     def __init__(
@@ -15859,7 +14456,7 @@ class TaskFailureInformation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword category: Required. The category of the error. Known values are: "usererror",
+        :keyword category: The category of the error. Required. Known values are: "usererror" and
          "servererror".
         :paramtype category: str or ~azure-batch.models.ErrorCategory
         :keyword code: An identifier for the Task error. Codes are invariant and are intended to be
@@ -15871,14 +14468,14 @@ class TaskFailureInformation(msrest.serialization.Model):
         :keyword details: A list of additional details related to the error.
         :paramtype details: list[~azure-batch.models.NameValuePair]
         """
-        super(TaskFailureInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.category = category
         self.code = code
         self.message = message
         self.details = details
 
 
-class TaskGetOptions(msrest.serialization.Model):
+class TaskGetOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -15916,16 +14513,16 @@ class TaskGetOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
@@ -15933,9 +14530,9 @@ class TaskGetOptions(msrest.serialization.Model):
         *,
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -15977,7 +14574,7 @@ class TaskGetOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(TaskGetOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.expand = expand
         self.timeout = timeout
@@ -15990,46 +14587,40 @@ class TaskGetOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class TaskIdRange(msrest.serialization.Model):
+class TaskIdRange(_serialization.Model):
     """The start and end of the range are inclusive. For example, if a range has start 9 and end 12, then it represents Tasks '9', '10', '11' and '12'.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start: Required. The first Task ID in the range.
+    :ivar start: The first Task ID in the range. Required.
     :vartype start: int
-    :ivar end: Required. The last Task ID in the range.
+    :ivar end: The last Task ID in the range. Required.
     :vartype end: int
     """
 
     _validation = {
-        'start': {'required': True},
-        'end': {'required': True},
+        "start": {"required": True},
+        "end": {"required": True},
     }
 
     _attribute_map = {
-        'start': {'key': 'start', 'type': 'int'},
-        'end': {'key': 'end', 'type': 'int'},
+        "start": {"key": "start", "type": "int"},
+        "end": {"key": "end", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        start: int,
-        end: int,
-        **kwargs
-    ):
+    def __init__(self, *, start: int, end: int, **kwargs):
         """
-        :keyword start: Required. The first Task ID in the range.
+        :keyword start: The first Task ID in the range. Required.
         :paramtype start: int
-        :keyword end: Required. The last Task ID in the range.
+        :keyword end: The last Task ID in the range. Required.
         :paramtype end: int
         """
-        super(TaskIdRange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start = start
         self.end = end
 
 
-class TaskInformation(msrest.serialization.Model):
+class TaskInformation(_serialization.Model):
     """Information about a Task running on a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
@@ -16042,24 +14633,24 @@ class TaskInformation(msrest.serialization.Model):
     :vartype task_id: str
     :ivar subtask_id: The ID of the subtask if the Task is a multi-instance Task.
     :vartype subtask_id: int
-    :ivar task_state: Required. The state of the Task. Known values are: "active", "preparing",
-     "running", "completed".
+    :ivar task_state: The state of the Task. Required. Known values are: "active", "preparing",
+     "running", and "completed".
     :vartype task_state: str or ~azure-batch.models.TaskState
     :ivar execution_info: Information about the execution of a Task.
     :vartype execution_info: ~azure-batch.models.TaskExecutionInformation
     """
 
     _validation = {
-        'task_state': {'required': True},
+        "task_state": {"required": True},
     }
 
     _attribute_map = {
-        'task_url': {'key': 'taskUrl', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
-        'subtask_id': {'key': 'subtaskId', 'type': 'int'},
-        'task_state': {'key': 'taskState', 'type': 'str'},
-        'execution_info': {'key': 'executionInfo', 'type': 'TaskExecutionInformation'},
+        "task_url": {"key": "taskUrl", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
+        "task_id": {"key": "taskId", "type": "str"},
+        "subtask_id": {"key": "subtaskId", "type": "int"},
+        "task_state": {"key": "taskState", "type": "str"},
+        "execution_info": {"key": "executionInfo", "type": "TaskExecutionInformation"},
     }
 
     def __init__(
@@ -16082,13 +14673,13 @@ class TaskInformation(msrest.serialization.Model):
         :paramtype task_id: str
         :keyword subtask_id: The ID of the subtask if the Task is a multi-instance Task.
         :paramtype subtask_id: int
-        :keyword task_state: Required. The state of the Task. Known values are: "active", "preparing",
-         "running", "completed".
+        :keyword task_state: The state of the Task. Required. Known values are: "active", "preparing",
+         "running", and "completed".
         :paramtype task_state: str or ~azure-batch.models.TaskState
         :keyword execution_info: Information about the execution of a Task.
         :paramtype execution_info: ~azure-batch.models.TaskExecutionInformation
         """
-        super(TaskInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.task_url = task_url
         self.job_id = job_id
         self.task_id = task_id
@@ -16097,7 +14688,7 @@ class TaskInformation(msrest.serialization.Model):
         self.execution_info = execution_info
 
 
-class TaskListOptions(msrest.serialization.Model):
+class TaskListOptions(_serialization.Model):
     """Parameter group.
 
     :ivar filter: An OData $filter clause. For more information on constructing this filter, see
@@ -16125,30 +14716,30 @@ class TaskListOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_results': {'maximum': 1000, 'minimum': 1},
+        "max_results": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'filter': {'key': '$filter', 'type': 'str'},
-        'select': {'key': '$select', 'type': 'str'},
-        'expand': {'key': '$expand', 'type': 'str'},
-        'max_results': {'key': 'maxResults', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "filter": {"key": "$filter", "type": "str"},
+        "select": {"key": "$select", "type": "str"},
+        "expand": {"key": "$expand", "type": "str"},
+        "max_results": {"key": "maxResults", "type": "int"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         select: Optional[str] = None,
         expand: Optional[str] = None,
-        max_results: Optional[int] = 1000,
-        timeout: Optional[int] = 30,
+        max_results: int = 1000,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -16176,7 +14767,7 @@ class TaskListOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(TaskListOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.select = select
         self.expand = expand
@@ -16187,7 +14778,7 @@ class TaskListOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class TaskListSubtasksOptions(msrest.serialization.Model):
+class TaskListSubtasksOptions(_serialization.Model):
     """Parameter group.
 
     :ivar select: An OData $select clause.
@@ -16207,20 +14798,20 @@ class TaskListSubtasksOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'select': {'key': '$select', 'type': 'str'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
+        "select": {"key": "$select", "type": "str"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
         select: Optional[str] = None,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
@@ -16240,7 +14831,7 @@ class TaskListSubtasksOptions(msrest.serialization.Model):
          current system clock time; set it explicitly if you are calling the REST API directly.
         :paramtype ocp_date: ~datetime.datetime
         """
-        super(TaskListSubtasksOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.select = select
         self.timeout = timeout
         self.client_request_id = client_request_id
@@ -16248,7 +14839,7 @@ class TaskListSubtasksOptions(msrest.serialization.Model):
         self.ocp_date = ocp_date
 
 
-class TaskReactivateOptions(msrest.serialization.Model):
+class TaskReactivateOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -16282,22 +14873,22 @@ class TaskReactivateOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -16335,7 +14926,7 @@ class TaskReactivateOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(TaskReactivateOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -16346,95 +14937,81 @@ class TaskReactivateOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class TaskSchedulingPolicy(msrest.serialization.Model):
+class TaskSchedulingPolicy(_serialization.Model):
     """Specifies how Tasks should be distributed across Compute Nodes.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar node_fill_type: Required. If not specified, the default is spread. Known values are:
-     "spread", "pack".
+    :ivar node_fill_type: If not specified, the default is spread. Required. Known values are:
+     "spread" and "pack".
     :vartype node_fill_type: str or ~azure-batch.models.ComputeNodeFillType
     """
 
     _validation = {
-        'node_fill_type': {'required': True},
+        "node_fill_type": {"required": True},
     }
 
     _attribute_map = {
-        'node_fill_type': {'key': 'nodeFillType', 'type': 'str'},
+        "node_fill_type": {"key": "nodeFillType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        node_fill_type: Union[str, "_models.ComputeNodeFillType"],
-        **kwargs
-    ):
+    def __init__(self, *, node_fill_type: Union[str, "_models.ComputeNodeFillType"], **kwargs):
         """
-        :keyword node_fill_type: Required. If not specified, the default is spread. Known values are:
-         "spread", "pack".
+        :keyword node_fill_type: If not specified, the default is spread. Required. Known values are:
+         "spread" and "pack".
         :paramtype node_fill_type: str or ~azure-batch.models.ComputeNodeFillType
         """
-        super(TaskSchedulingPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_fill_type = node_fill_type
 
 
-class TaskSlotCounts(msrest.serialization.Model):
+class TaskSlotCounts(_serialization.Model):
     """The TaskSlot counts for a Job.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar active: Required. The number of TaskSlots for active Tasks.
+    :ivar active: The number of TaskSlots for active Tasks. Required.
     :vartype active: int
-    :ivar running: Required. The number of TaskSlots for running Tasks.
+    :ivar running: The number of TaskSlots for running Tasks. Required.
     :vartype running: int
-    :ivar completed: Required. The number of TaskSlots for completed Tasks.
+    :ivar completed: The number of TaskSlots for completed Tasks. Required.
     :vartype completed: int
-    :ivar succeeded: Required. The number of TaskSlots for succeeded Tasks.
+    :ivar succeeded: The number of TaskSlots for succeeded Tasks. Required.
     :vartype succeeded: int
-    :ivar failed: Required. The number of TaskSlots for failed Tasks.
+    :ivar failed: The number of TaskSlots for failed Tasks. Required.
     :vartype failed: int
     """
 
     _validation = {
-        'active': {'required': True},
-        'running': {'required': True},
-        'completed': {'required': True},
-        'succeeded': {'required': True},
-        'failed': {'required': True},
+        "active": {"required": True},
+        "running": {"required": True},
+        "completed": {"required": True},
+        "succeeded": {"required": True},
+        "failed": {"required": True},
     }
 
     _attribute_map = {
-        'active': {'key': 'active', 'type': 'int'},
-        'running': {'key': 'running', 'type': 'int'},
-        'completed': {'key': 'completed', 'type': 'int'},
-        'succeeded': {'key': 'succeeded', 'type': 'int'},
-        'failed': {'key': 'failed', 'type': 'int'},
+        "active": {"key": "active", "type": "int"},
+        "running": {"key": "running", "type": "int"},
+        "completed": {"key": "completed", "type": "int"},
+        "succeeded": {"key": "succeeded", "type": "int"},
+        "failed": {"key": "failed", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        active: int,
-        running: int,
-        completed: int,
-        succeeded: int,
-        failed: int,
-        **kwargs
-    ):
+    def __init__(self, *, active: int, running: int, completed: int, succeeded: int, failed: int, **kwargs):
         """
-        :keyword active: Required. The number of TaskSlots for active Tasks.
+        :keyword active: The number of TaskSlots for active Tasks. Required.
         :paramtype active: int
-        :keyword running: Required. The number of TaskSlots for running Tasks.
+        :keyword running: The number of TaskSlots for running Tasks. Required.
         :paramtype running: int
-        :keyword completed: Required. The number of TaskSlots for completed Tasks.
+        :keyword completed: The number of TaskSlots for completed Tasks. Required.
         :paramtype completed: int
-        :keyword succeeded: Required. The number of TaskSlots for succeeded Tasks.
+        :keyword succeeded: The number of TaskSlots for succeeded Tasks. Required.
         :paramtype succeeded: int
-        :keyword failed: Required. The number of TaskSlots for failed Tasks.
+        :keyword failed: The number of TaskSlots for failed Tasks. Required.
         :paramtype failed: int
         """
-        super(TaskSlotCounts, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.active = active
         self.running = running
         self.completed = completed
@@ -16442,69 +15019,70 @@ class TaskSlotCounts(msrest.serialization.Model):
         self.failed = failed
 
 
-class TaskStatistics(msrest.serialization.Model):
+class TaskStatistics(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Resource usage statistics for a Task.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar url: Required. The URL of the statistics.
+    :ivar url: The URL of the statistics. Required.
     :vartype url: str
-    :ivar start_time: Required. The start time of the time range covered by the statistics.
+    :ivar start_time: The start time of the time range covered by the statistics. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar last_update_time: Required. The time at which the statistics were last updated. All
-     statistics are limited to the range between startTime and lastUpdateTime.
+    :ivar last_update_time: The time at which the statistics were last updated. All statistics are
+     limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
-    :ivar user_cpu_time: Required. The total user mode CPU time (summed across all cores and all
-     Compute Nodes) consumed by the Task.
+    :ivar user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
+     Nodes) consumed by the Task. Required.
     :vartype user_cpu_time: ~datetime.timedelta
-    :ivar kernel_cpu_time: Required. The total kernel mode CPU time (summed across all cores and
-     all Compute Nodes) consumed by the Task.
+    :ivar kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all Compute
+     Nodes) consumed by the Task. Required.
     :vartype kernel_cpu_time: ~datetime.timedelta
-    :ivar wall_clock_time: Required. The wall clock time is the elapsed time from when the Task
-     started running on a Compute Node to when it finished (or to the last time the statistics were
-     updated, if the Task had not finished by then). If the Task was retried, this includes the wall
-     clock time of all the Task retries.
+    :ivar wall_clock_time: The wall clock time is the elapsed time from when the Task started
+     running on a Compute Node to when it finished (or to the last time the statistics were updated,
+     if the Task had not finished by then). If the Task was retried, this includes the wall clock
+     time of all the Task retries. Required.
     :vartype wall_clock_time: ~datetime.timedelta
-    :ivar read_i_ops: Required. The total number of disk read operations made by the Task.
-    :vartype read_i_ops: long
-    :ivar write_i_ops: Required. The total number of disk write operations made by the Task.
-    :vartype write_i_ops: long
-    :ivar read_io_gi_b: Required. The total gibibytes read from disk by the Task.
+    :ivar read_i_ops: The total number of disk read operations made by the Task. Required.
+    :vartype read_i_ops: int
+    :ivar write_i_ops: The total number of disk write operations made by the Task. Required.
+    :vartype write_i_ops: int
+    :ivar read_io_gi_b: The total gibibytes read from disk by the Task. Required.
     :vartype read_io_gi_b: float
-    :ivar write_io_gi_b: Required. The total gibibytes written to disk by the Task.
+    :ivar write_io_gi_b: The total gibibytes written to disk by the Task. Required.
     :vartype write_io_gi_b: float
-    :ivar wait_time: Required. The total wait time of the Task. The wait time for a Task is defined
-     as the elapsed time between the creation of the Task and the start of Task execution. (If the
-     Task is retried due to failures, the wait time is the time to the most recent Task execution.).
+    :ivar wait_time: The total wait time of the Task. The wait time for a Task is defined as the
+     elapsed time between the creation of the Task and the start of Task execution. (If the Task is
+     retried due to failures, the wait time is the time to the most recent Task execution.).
+     Required.
     :vartype wait_time: ~datetime.timedelta
     """
 
     _validation = {
-        'url': {'required': True},
-        'start_time': {'required': True},
-        'last_update_time': {'required': True},
-        'user_cpu_time': {'required': True},
-        'kernel_cpu_time': {'required': True},
-        'wall_clock_time': {'required': True},
-        'read_i_ops': {'required': True},
-        'write_i_ops': {'required': True},
-        'read_io_gi_b': {'required': True},
-        'write_io_gi_b': {'required': True},
-        'wait_time': {'required': True},
+        "url": {"required": True},
+        "start_time": {"required": True},
+        "last_update_time": {"required": True},
+        "user_cpu_time": {"required": True},
+        "kernel_cpu_time": {"required": True},
+        "wall_clock_time": {"required": True},
+        "read_i_ops": {"required": True},
+        "write_i_ops": {"required": True},
+        "read_io_gi_b": {"required": True},
+        "write_io_gi_b": {"required": True},
+        "wait_time": {"required": True},
     }
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'user_cpu_time': {'key': 'userCPUTime', 'type': 'duration'},
-        'kernel_cpu_time': {'key': 'kernelCPUTime', 'type': 'duration'},
-        'wall_clock_time': {'key': 'wallClockTime', 'type': 'duration'},
-        'read_i_ops': {'key': 'readIOps', 'type': 'long'},
-        'write_i_ops': {'key': 'writeIOps', 'type': 'long'},
-        'read_io_gi_b': {'key': 'readIOGiB', 'type': 'float'},
-        'write_io_gi_b': {'key': 'writeIOGiB', 'type': 'float'},
-        'wait_time': {'key': 'waitTime', 'type': 'duration'},
+        "url": {"key": "url", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
+        "user_cpu_time": {"key": "userCPUTime", "type": "duration"},
+        "kernel_cpu_time": {"key": "kernelCPUTime", "type": "duration"},
+        "wall_clock_time": {"key": "wallClockTime", "type": "duration"},
+        "read_i_ops": {"key": "readIOps", "type": "int"},
+        "write_i_ops": {"key": "writeIOps", "type": "int"},
+        "read_io_gi_b": {"key": "readIOGiB", "type": "float"},
+        "write_io_gi_b": {"key": "writeIOGiB", "type": "float"},
+        "wait_time": {"key": "waitTime", "type": "duration"},
     }
 
     def __init__(
@@ -16524,39 +15102,39 @@ class TaskStatistics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword url: Required. The URL of the statistics.
+        :keyword url: The URL of the statistics. Required.
         :paramtype url: str
-        :keyword start_time: Required. The start time of the time range covered by the statistics.
+        :keyword start_time: The start time of the time range covered by the statistics. Required.
         :paramtype start_time: ~datetime.datetime
-        :keyword last_update_time: Required. The time at which the statistics were last updated. All
-         statistics are limited to the range between startTime and lastUpdateTime.
+        :keyword last_update_time: The time at which the statistics were last updated. All statistics
+         are limited to the range between startTime and lastUpdateTime. Required.
         :paramtype last_update_time: ~datetime.datetime
-        :keyword user_cpu_time: Required. The total user mode CPU time (summed across all cores and all
-         Compute Nodes) consumed by the Task.
+        :keyword user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
+         Nodes) consumed by the Task. Required.
         :paramtype user_cpu_time: ~datetime.timedelta
-        :keyword kernel_cpu_time: Required. The total kernel mode CPU time (summed across all cores and
-         all Compute Nodes) consumed by the Task.
+        :keyword kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all
+         Compute Nodes) consumed by the Task. Required.
         :paramtype kernel_cpu_time: ~datetime.timedelta
-        :keyword wall_clock_time: Required. The wall clock time is the elapsed time from when the Task
-         started running on a Compute Node to when it finished (or to the last time the statistics were
-         updated, if the Task had not finished by then). If the Task was retried, this includes the wall
-         clock time of all the Task retries.
+        :keyword wall_clock_time: The wall clock time is the elapsed time from when the Task started
+         running on a Compute Node to when it finished (or to the last time the statistics were updated,
+         if the Task had not finished by then). If the Task was retried, this includes the wall clock
+         time of all the Task retries. Required.
         :paramtype wall_clock_time: ~datetime.timedelta
-        :keyword read_i_ops: Required. The total number of disk read operations made by the Task.
-        :paramtype read_i_ops: long
-        :keyword write_i_ops: Required. The total number of disk write operations made by the Task.
-        :paramtype write_i_ops: long
-        :keyword read_io_gi_b: Required. The total gibibytes read from disk by the Task.
+        :keyword read_i_ops: The total number of disk read operations made by the Task. Required.
+        :paramtype read_i_ops: int
+        :keyword write_i_ops: The total number of disk write operations made by the Task. Required.
+        :paramtype write_i_ops: int
+        :keyword read_io_gi_b: The total gibibytes read from disk by the Task. Required.
         :paramtype read_io_gi_b: float
-        :keyword write_io_gi_b: Required. The total gibibytes written to disk by the Task.
+        :keyword write_io_gi_b: The total gibibytes written to disk by the Task. Required.
         :paramtype write_io_gi_b: float
-        :keyword wait_time: Required. The total wait time of the Task. The wait time for a Task is
-         defined as the elapsed time between the creation of the Task and the start of Task execution.
-         (If the Task is retried due to failures, the wait time is the time to the most recent Task
-         execution.).
+        :keyword wait_time: The total wait time of the Task. The wait time for a Task is defined as the
+         elapsed time between the creation of the Task and the start of Task execution. (If the Task is
+         retried due to failures, the wait time is the time to the most recent Task execution.).
+         Required.
         :paramtype wait_time: ~datetime.timedelta
         """
-        super(TaskStatistics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.start_time = start_time
         self.last_update_time = last_update_time
@@ -16570,7 +15148,7 @@ class TaskStatistics(msrest.serialization.Model):
         self.wait_time = wait_time
 
 
-class TaskTerminateOptions(msrest.serialization.Model):
+class TaskTerminateOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -16604,22 +15182,22 @@ class TaskTerminateOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -16657,7 +15235,7 @@ class TaskTerminateOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(TaskTerminateOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -16668,7 +15246,7 @@ class TaskTerminateOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class TaskUpdateOptions(msrest.serialization.Model):
+class TaskUpdateOptions(_serialization.Model):
     """Parameter group.
 
     :ivar timeout: The maximum time that the server can spend processing the request, in seconds.
@@ -16702,22 +15280,22 @@ class TaskUpdateOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'client_request_id': {'key': 'client-request-id', 'type': 'str'},
-        'return_client_request_id': {'key': 'return-client-request-id', 'type': 'bool'},
-        'ocp_date': {'key': 'ocp-date', 'type': 'rfc-1123'},
-        'if_match': {'key': 'If-Match', 'type': 'str'},
-        'if_none_match': {'key': 'If-None-Match', 'type': 'str'},
-        'if_modified_since': {'key': 'If-Modified-Since', 'type': 'rfc-1123'},
-        'if_unmodified_since': {'key': 'If-Unmodified-Since', 'type': 'rfc-1123'},
+        "timeout": {"key": "timeout", "type": "int"},
+        "client_request_id": {"key": "client-request-id", "type": "str"},
+        "return_client_request_id": {"key": "return-client-request-id", "type": "bool"},
+        "ocp_date": {"key": "ocp-date", "type": "rfc-1123"},
+        "if_match": {"key": "If-Match", "type": "str"},
+        "if_none_match": {"key": "If-None-Match", "type": "str"},
+        "if_modified_since": {"key": "If-Modified-Since", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "If-Unmodified-Since", "type": "rfc-1123"},
     }
 
     def __init__(
         self,
         *,
-        timeout: Optional[int] = 30,
+        timeout: int = 30,
         client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = False,
+        return_client_request_id: bool = False,
         ocp_date: Optional[datetime.datetime] = None,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
@@ -16755,7 +15333,7 @@ class TaskUpdateOptions(msrest.serialization.Model):
          not been modified since the specified time.
         :paramtype if_unmodified_since: ~datetime.datetime
         """
-        super(TaskUpdateOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timeout = timeout
         self.client_request_id = client_request_id
         self.return_client_request_id = return_client_request_id
@@ -16766,47 +15344,20 @@ class TaskUpdateOptions(msrest.serialization.Model):
         self.if_unmodified_since = if_unmodified_since
 
 
-class TaskUpdateParameter(msrest.serialization.Model):
-    """The set of changes to be made to a Task.
-
-    :ivar constraints: If omitted, the Task is given the default constraints. For multi-instance
-     Tasks, updating the retention time applies only to the primary Task and not subtasks.
-    :vartype constraints: ~azure-batch.models.TaskConstraints
-    """
-
-    _attribute_map = {
-        'constraints': {'key': 'constraints', 'type': 'TaskConstraints'},
-    }
-
-    def __init__(
-        self,
-        *,
-        constraints: Optional["_models.TaskConstraints"] = None,
-        **kwargs
-    ):
-        """
-        :keyword constraints: If omitted, the Task is given the default constraints. For multi-instance
-         Tasks, updating the retention time applies only to the primary Task and not subtasks.
-        :paramtype constraints: ~azure-batch.models.TaskConstraints
-        """
-        super(TaskUpdateParameter, self).__init__(**kwargs)
-        self.constraints = constraints
-
-
-class UploadBatchServiceLogsConfiguration(msrest.serialization.Model):
+class UploadBatchServiceLogsConfiguration(_serialization.Model):
     """The Azure Batch service log files upload configuration for a Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar container_url: Required. If a user assigned managed identity is not being used, the URL
-     must include a Shared Access Signature (SAS) granting write permissions to the container. The
-     SAS duration must allow enough time for the upload to finish. The start time for SAS is
-     optional and recommended to not be specified.
+    :ivar container_url: If a user assigned managed identity is not being used, the URL must
+     include a Shared Access Signature (SAS) granting write permissions to the container. The SAS
+     duration must allow enough time for the upload to finish. The start time for SAS is optional
+     and recommended to not be specified. Required.
     :vartype container_url: str
-    :ivar start_time: Required. Any log file containing a log message in the time range will be
-     uploaded. This means that the operation might retrieve more logs than have been requested since
-     the entire log file is always uploaded, but the operation should not retrieve fewer logs than
-     have been requested.
+    :ivar start_time: Any log file containing a log message in the time range will be uploaded.
+     This means that the operation might retrieve more logs than have been requested since the
+     entire log file is always uploaded, but the operation should not retrieve fewer logs than have
+     been requested. Required.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: Any log file containing a log message in the time range will be uploaded. This
      means that the operation might retrieve more logs than have been requested since the entire log
@@ -16819,15 +15370,15 @@ class UploadBatchServiceLogsConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'container_url': {'required': True},
-        'start_time': {'required': True},
+        "container_url": {"required": True},
+        "start_time": {"required": True},
     }
 
     _attribute_map = {
-        'container_url': {'key': 'containerUrl', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
+        "container_url": {"key": "containerUrl", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "identity_reference": {"key": "identityReference", "type": "ComputeNodeIdentityReference"},
     }
 
     def __init__(
@@ -16840,15 +15391,15 @@ class UploadBatchServiceLogsConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword container_url: Required. If a user assigned managed identity is not being used, the
-         URL must include a Shared Access Signature (SAS) granting write permissions to the container.
-         The SAS duration must allow enough time for the upload to finish. The start time for SAS is
-         optional and recommended to not be specified.
+        :keyword container_url: If a user assigned managed identity is not being used, the URL must
+         include a Shared Access Signature (SAS) granting write permissions to the container. The SAS
+         duration must allow enough time for the upload to finish. The start time for SAS is optional
+         and recommended to not be specified. Required.
         :paramtype container_url: str
-        :keyword start_time: Required. Any log file containing a log message in the time range will be
-         uploaded. This means that the operation might retrieve more logs than have been requested since
-         the entire log file is always uploaded, but the operation should not retrieve fewer logs than
-         have been requested.
+        :keyword start_time: Any log file containing a log message in the time range will be uploaded.
+         This means that the operation might retrieve more logs than have been requested since the
+         entire log file is always uploaded, but the operation should not retrieve fewer logs than have
+         been requested. Required.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Any log file containing a log message in the time range will be uploaded.
          This means that the operation might retrieve more logs than have been requested since the
@@ -16859,79 +15410,73 @@ class UploadBatchServiceLogsConfiguration(msrest.serialization.Model):
          container.
         :paramtype identity_reference: ~azure-batch.models.ComputeNodeIdentityReference
         """
-        super(UploadBatchServiceLogsConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.container_url = container_url
         self.start_time = start_time
         self.end_time = end_time
         self.identity_reference = identity_reference
 
 
-class UploadBatchServiceLogsResult(msrest.serialization.Model):
+class UploadBatchServiceLogsResult(_serialization.Model):
     """The result of uploading Batch service log files from a specific Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar virtual_directory_name: Required. The virtual directory name is part of the blob name for
-     each log file uploaded, and it is built based poolId, nodeId and a unique identifier.
+    :ivar virtual_directory_name: The virtual directory name is part of the blob name for each log
+     file uploaded, and it is built based poolId, nodeId and a unique identifier. Required.
     :vartype virtual_directory_name: str
-    :ivar number_of_files_uploaded: Required. The number of log files which will be uploaded.
+    :ivar number_of_files_uploaded: The number of log files which will be uploaded. Required.
     :vartype number_of_files_uploaded: int
     """
 
     _validation = {
-        'virtual_directory_name': {'required': True},
-        'number_of_files_uploaded': {'required': True},
+        "virtual_directory_name": {"required": True},
+        "number_of_files_uploaded": {"required": True},
     }
 
     _attribute_map = {
-        'virtual_directory_name': {'key': 'virtualDirectoryName', 'type': 'str'},
-        'number_of_files_uploaded': {'key': 'numberOfFilesUploaded', 'type': 'int'},
+        "virtual_directory_name": {"key": "virtualDirectoryName", "type": "str"},
+        "number_of_files_uploaded": {"key": "numberOfFilesUploaded", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        virtual_directory_name: str,
-        number_of_files_uploaded: int,
-        **kwargs
-    ):
+    def __init__(self, *, virtual_directory_name: str, number_of_files_uploaded: int, **kwargs):
         """
-        :keyword virtual_directory_name: Required. The virtual directory name is part of the blob name
-         for each log file uploaded, and it is built based poolId, nodeId and a unique identifier.
+        :keyword virtual_directory_name: The virtual directory name is part of the blob name for each
+         log file uploaded, and it is built based poolId, nodeId and a unique identifier. Required.
         :paramtype virtual_directory_name: str
-        :keyword number_of_files_uploaded: Required. The number of log files which will be uploaded.
+        :keyword number_of_files_uploaded: The number of log files which will be uploaded. Required.
         :paramtype number_of_files_uploaded: int
         """
-        super(UploadBatchServiceLogsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.virtual_directory_name = virtual_directory_name
         self.number_of_files_uploaded = number_of_files_uploaded
 
 
-class UsageStatistics(msrest.serialization.Model):
+class UsageStatistics(_serialization.Model):
     """Statistics related to Pool usage information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar start_time: Required. The start time of the time range covered by the statistics.
+    :ivar start_time: The start time of the time range covered by the statistics. Required.
     :vartype start_time: ~datetime.datetime
-    :ivar last_update_time: Required. The time at which the statistics were last updated. All
-     statistics are limited to the range between startTime and lastUpdateTime.
+    :ivar last_update_time: The time at which the statistics were last updated. All statistics are
+     limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
-    :ivar dedicated_core_time: Required. The aggregated wall-clock time of the dedicated Compute
-     Node cores being part of the Pool.
+    :ivar dedicated_core_time: The aggregated wall-clock time of the dedicated Compute Node cores
+     being part of the Pool. Required.
     :vartype dedicated_core_time: ~datetime.timedelta
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'last_update_time': {'required': True},
-        'dedicated_core_time': {'required': True},
+        "start_time": {"required": True},
+        "last_update_time": {"required": True},
+        "dedicated_core_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_update_time': {'key': 'lastUpdateTime', 'type': 'iso-8601'},
-        'dedicated_core_time': {'key': 'dedicatedCoreTime', 'type': 'duration'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
+        "dedicated_core_time": {"key": "dedicatedCoreTime", "type": "duration"},
     }
 
     def __init__(
@@ -16943,31 +15488,31 @@ class UsageStatistics(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword start_time: Required. The start time of the time range covered by the statistics.
+        :keyword start_time: The start time of the time range covered by the statistics. Required.
         :paramtype start_time: ~datetime.datetime
-        :keyword last_update_time: Required. The time at which the statistics were last updated. All
-         statistics are limited to the range between startTime and lastUpdateTime.
+        :keyword last_update_time: The time at which the statistics were last updated. All statistics
+         are limited to the range between startTime and lastUpdateTime. Required.
         :paramtype last_update_time: ~datetime.datetime
-        :keyword dedicated_core_time: Required. The aggregated wall-clock time of the dedicated Compute
-         Node cores being part of the Pool.
+        :keyword dedicated_core_time: The aggregated wall-clock time of the dedicated Compute Node
+         cores being part of the Pool. Required.
         :paramtype dedicated_core_time: ~datetime.timedelta
         """
-        super(UsageStatistics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.last_update_time = last_update_time
         self.dedicated_core_time = dedicated_core_time
 
 
-class UserAccount(msrest.serialization.Model):
+class UserAccount(_serialization.Model):
     """Properties used to create a user used to execute Tasks on an Azure Batch Compute Node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the user Account.
+    :ivar name: The name of the user Account. Required.
     :vartype name: str
-    :ivar password: Required. The password for the user Account.
+    :ivar password: The password for the user Account. Required.
     :vartype password: str
-    :ivar elevation_level: The default value is nonAdmin. Known values are: "nonadmin", "admin".
+    :ivar elevation_level: The default value is nonAdmin. Known values are: "nonadmin" and "admin".
     :vartype elevation_level: str or ~azure-batch.models.ElevationLevel
     :ivar linux_user_configuration: This property is ignored if specified on a Windows Pool. If not
      specified, the user is created with the default options.
@@ -16979,16 +15524,16 @@ class UserAccount(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'password': {'required': True},
+        "name": {"required": True},
+        "password": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'elevation_level': {'key': 'elevationLevel', 'type': 'str'},
-        'linux_user_configuration': {'key': 'linuxUserConfiguration', 'type': 'LinuxUserConfiguration'},
-        'windows_user_configuration': {'key': 'windowsUserConfiguration', 'type': 'WindowsUserConfiguration'},
+        "name": {"key": "name", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "elevation_level": {"key": "elevationLevel", "type": "str"},
+        "linux_user_configuration": {"key": "linuxUserConfiguration", "type": "LinuxUserConfiguration"},
+        "windows_user_configuration": {"key": "windowsUserConfiguration", "type": "WindowsUserConfiguration"},
     }
 
     def __init__(
@@ -17002,11 +15547,12 @@ class UserAccount(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the user Account.
+        :keyword name: The name of the user Account. Required.
         :paramtype name: str
-        :keyword password: Required. The password for the user Account.
+        :keyword password: The password for the user Account. Required.
         :paramtype password: str
-        :keyword elevation_level: The default value is nonAdmin. Known values are: "nonadmin", "admin".
+        :keyword elevation_level: The default value is nonAdmin. Known values are: "nonadmin" and
+         "admin".
         :paramtype elevation_level: str or ~azure-batch.models.ElevationLevel
         :keyword linux_user_configuration: This property is ignored if specified on a Windows Pool. If
          not specified, the user is created with the default options.
@@ -17016,7 +15562,7 @@ class UserAccount(msrest.serialization.Model):
          options.
         :paramtype windows_user_configuration: ~azure-batch.models.WindowsUserConfiguration
         """
-        super(UserAccount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.password = password
         self.elevation_level = elevation_level
@@ -17024,14 +15570,14 @@ class UserAccount(msrest.serialization.Model):
         self.windows_user_configuration = windows_user_configuration
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """The user assigned Identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar resource_id: Required. The ARM resource id of the user assigned identity.
+    :ivar resource_id: The ARM resource id of the user assigned identity. Required.
     :vartype resource_id: str
     :ivar client_id: The client id of the user assigned identity.
     :vartype client_id: str
@@ -17040,34 +15586,29 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_id': {'required': True},
-        'client_id': {'readonly': True},
-        'principal_id': {'readonly': True},
+        "resource_id": {"required": True},
+        "client_id": {"readonly": True},
+        "principal_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: str, **kwargs):
         """
-        :keyword resource_id: Required. The ARM resource id of the user assigned identity.
+        :keyword resource_id: The ARM resource id of the user assigned identity. Required.
         :paramtype resource_id: str
         """
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.client_id = None
         self.principal_id = None
 
 
-class UserIdentity(msrest.serialization.Model):
+class UserIdentity(_serialization.Model):
     """Specify either the userName or autoUser property, but not both.
 
     :ivar user_name: The userName and autoUser properties are mutually exclusive; you must specify
@@ -17079,16 +15620,12 @@ class UserIdentity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_name': {'key': 'username', 'type': 'str'},
-        'auto_user': {'key': 'autoUser', 'type': 'AutoUserSpecification'},
+        "user_name": {"key": "username", "type": "str"},
+        "auto_user": {"key": "autoUser", "type": "AutoUserSpecification"},
     }
 
     def __init__(
-        self,
-        *,
-        user_name: Optional[str] = None,
-        auto_user: Optional["_models.AutoUserSpecification"] = None,
-        **kwargs
+        self, *, user_name: Optional[str] = None, auto_user: Optional["_models.AutoUserSpecification"] = None, **kwargs
     ):
         """
         :keyword user_name: The userName and autoUser properties are mutually exclusive; you must
@@ -17098,27 +15635,27 @@ class UserIdentity(msrest.serialization.Model):
          specify one but not both.
         :paramtype auto_user: ~azure-batch.models.AutoUserSpecification
         """
-        super(UserIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_name = user_name
         self.auto_user = auto_user
 
 
-class VirtualMachineConfiguration(msrest.serialization.Model):
+class VirtualMachineConfiguration(_serialization.Model):
     """The configuration for Compute Nodes in a Pool based on the Azure Virtual Machines infrastructure.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar image_reference: Required. A reference to an Azure Virtual Machines Marketplace Image or
-     a Shared Image Gallery Image. To get the list of all Azure Marketplace Image references
-     verified by Azure Batch, see the 'List Supported Images' operation.
+    :ivar image_reference: A reference to an Azure Virtual Machines Marketplace Image or a Shared
+     Image Gallery Image. To get the list of all Azure Marketplace Image references verified by
+     Azure Batch, see the 'List Supported Images' operation. Required.
     :vartype image_reference: ~azure-batch.models.ImageReference
-    :ivar node_agent_sku_id: Required. The Batch Compute Node agent is a program that runs on each
-     Compute Node in the Pool, and provides the command-and-control interface between the Compute
-     Node and the Batch service. There are different implementations of the Compute Node agent,
-     known as SKUs, for different operating systems. You must specify a Compute Node agent SKU which
-     matches the selected Image reference. To get the list of supported Compute Node agent SKUs
-     along with their list of verified Image references, see the 'List supported Compute Node agent
-     SKUs' operation.
+    :ivar node_agent_sku_id: The Batch Compute Node agent is a program that runs on each Compute
+     Node in the Pool, and provides the command-and-control interface between the Compute Node and
+     the Batch service. There are different implementations of the Compute Node agent, known as
+     SKUs, for different operating systems. You must specify a Compute Node agent SKU which matches
+     the selected Image reference. To get the list of supported Compute Node agent SKUs along with
+     their list of verified Image references, see the 'List supported Compute Node agent SKUs'
+     operation. Required.
     :vartype node_agent_sku_id: str
     :ivar windows_configuration: This property must not be specified if the imageReference property
      specifies a Linux OS Image.
@@ -17136,7 +15673,7 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute Nodes which will
      be deployed. If omitted, no on-premises licensing discount is applied. Values are:
-    
+
       Windows_Server - The on-premises license is for Windows Server.
       Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
@@ -17158,21 +15695,21 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'image_reference': {'required': True},
-        'node_agent_sku_id': {'required': True},
+        "image_reference": {"required": True},
+        "node_agent_sku_id": {"required": True},
     }
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
-        'node_agent_sku_id': {'key': 'nodeAgentSKUId', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
-        'data_disks': {'key': 'dataDisks', 'type': '[DataDisk]'},
-        'license_type': {'key': 'licenseType', 'type': 'str'},
-        'container_configuration': {'key': 'containerConfiguration', 'type': 'ContainerConfiguration'},
-        'disk_encryption_configuration': {'key': 'diskEncryptionConfiguration', 'type': 'DiskEncryptionConfiguration'},
-        'node_placement_configuration': {'key': 'nodePlacementConfiguration', 'type': 'NodePlacementConfiguration'},
-        'extensions': {'key': 'extensions', 'type': '[VMExtension]'},
-        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
+        "node_agent_sku_id": {"key": "nodeAgentSKUId", "type": "str"},
+        "windows_configuration": {"key": "windowsConfiguration", "type": "WindowsConfiguration"},
+        "data_disks": {"key": "dataDisks", "type": "[DataDisk]"},
+        "license_type": {"key": "licenseType", "type": "str"},
+        "container_configuration": {"key": "containerConfiguration", "type": "ContainerConfiguration"},
+        "disk_encryption_configuration": {"key": "diskEncryptionConfiguration", "type": "DiskEncryptionConfiguration"},
+        "node_placement_configuration": {"key": "nodePlacementConfiguration", "type": "NodePlacementConfiguration"},
+        "extensions": {"key": "extensions", "type": "[VMExtension]"},
+        "os_disk": {"key": "osDisk", "type": "OSDisk"},
     }
 
     def __init__(
@@ -17191,17 +15728,17 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword image_reference: Required. A reference to an Azure Virtual Machines Marketplace Image
-         or a Shared Image Gallery Image. To get the list of all Azure Marketplace Image references
-         verified by Azure Batch, see the 'List Supported Images' operation.
+        :keyword image_reference: A reference to an Azure Virtual Machines Marketplace Image or a
+         Shared Image Gallery Image. To get the list of all Azure Marketplace Image references verified
+         by Azure Batch, see the 'List Supported Images' operation. Required.
         :paramtype image_reference: ~azure-batch.models.ImageReference
-        :keyword node_agent_sku_id: Required. The Batch Compute Node agent is a program that runs on
-         each Compute Node in the Pool, and provides the command-and-control interface between the
-         Compute Node and the Batch service. There are different implementations of the Compute Node
-         agent, known as SKUs, for different operating systems. You must specify a Compute Node agent
-         SKU which matches the selected Image reference. To get the list of supported Compute Node agent
-         SKUs along with their list of verified Image references, see the 'List supported Compute Node
-         agent SKUs' operation.
+        :keyword node_agent_sku_id: The Batch Compute Node agent is a program that runs on each Compute
+         Node in the Pool, and provides the command-and-control interface between the Compute Node and
+         the Batch service. There are different implementations of the Compute Node agent, known as
+         SKUs, for different operating systems. You must specify a Compute Node agent SKU which matches
+         the selected Image reference. To get the list of supported Compute Node agent SKUs along with
+         their list of verified Image references, see the 'List supported Compute Node agent SKUs'
+         operation. Required.
         :paramtype node_agent_sku_id: str
         :keyword windows_configuration: This property must not be specified if the imageReference
          property specifies a Linux OS Image.
@@ -17219,7 +15756,7 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         :keyword license_type: This only applies to Images that contain the Windows operating system,
          and should only be used when you hold valid on-premises licenses for the Compute Nodes which
          will be deployed. If omitted, no on-premises licensing discount is applied. Values are:
-        
+
           Windows_Server - The on-premises license is for Windows Server.
           Windows_Client - The on-premises license is for Windows Client.
         :paramtype license_type: str
@@ -17239,7 +15776,7 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         :keyword os_disk: Settings for the operating system disk of the compute node (VM).
         :paramtype os_disk: ~azure-batch.models.OSDisk
         """
-        super(VirtualMachineConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.image_reference = image_reference
         self.node_agent_sku_id = node_agent_sku_id
         self.windows_configuration = windows_configuration
@@ -17252,7 +15789,7 @@ class VirtualMachineConfiguration(msrest.serialization.Model):
         self.os_disk = os_disk
 
 
-class VirtualMachineInfo(msrest.serialization.Model):
+class VirtualMachineInfo(_serialization.Model):
     """Info about the current state of the virtual machine.
 
     :ivar image_reference: A reference to an Azure Virtual Machines Marketplace Image or a Shared
@@ -17262,35 +15799,30 @@ class VirtualMachineInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
+        "image_reference": {"key": "imageReference", "type": "ImageReference"},
     }
 
-    def __init__(
-        self,
-        *,
-        image_reference: Optional["_models.ImageReference"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, image_reference: Optional["_models.ImageReference"] = None, **kwargs):
         """
         :keyword image_reference: A reference to an Azure Virtual Machines Marketplace Image or a
          Shared Image Gallery Image. To get the list of all Azure Marketplace Image references verified
          by Azure Batch, see the 'List Supported Images' operation.
         :paramtype image_reference: ~azure-batch.models.ImageReference
         """
-        super(VirtualMachineInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.image_reference = image_reference
 
 
-class VMExtension(msrest.serialization.Model):
+class VMExtension(_serialization.Model):
     """The configuration for virtual machine extensions.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the virtual machine extension.
+    :ivar name: The name of the virtual machine extension. Required.
     :vartype name: str
-    :ivar publisher: Required. The name of the extension handler publisher.
+    :ivar publisher: The name of the extension handler publisher. Required.
     :vartype publisher: str
-    :ivar type: Required. The type of the extension.
+    :ivar type: The type of the extension. Required.
     :vartype type: str
     :ivar type_handler_version: The version of script handler.
     :vartype type_handler_version: str
@@ -17298,31 +15830,31 @@ class VMExtension(msrest.serialization.Model):
      version if one is available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true.
     :vartype auto_upgrade_minor_version: bool
-    :ivar settings: Any object.
-    :vartype settings: any
+    :ivar settings: JSON formatted public settings for the extension.
+    :vartype settings: JSON
     :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: any
+    :vartype protected_settings: JSON
     :ivar provision_after_extensions: Collection of extension names after which this extension
      needs to be provisioned.
     :vartype provision_after_extensions: list[str]
     """
 
     _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "publisher": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'settings', 'type': 'object'},
-        'protected_settings': {'key': 'protectedSettings', 'type': 'object'},
-        'provision_after_extensions': {'key': 'provisionAfterExtensions', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "settings", "type": "object"},
+        "protected_settings": {"key": "protectedSettings", "type": "object"},
+        "provision_after_extensions": {"key": "provisionAfterExtensions", "type": "[str]"},
     }
 
     def __init__(
@@ -17333,17 +15865,17 @@ class VMExtension(msrest.serialization.Model):
         type: str,
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        protected_settings: Optional[Any] = None,
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
         provision_after_extensions: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the virtual machine extension.
+        :keyword name: The name of the virtual machine extension. Required.
         :paramtype name: str
-        :keyword publisher: Required. The name of the extension handler publisher.
+        :keyword publisher: The name of the extension handler publisher. Required.
         :paramtype publisher: str
-        :keyword type: Required. The type of the extension.
+        :keyword type: The type of the extension. Required.
         :paramtype type: str
         :keyword type_handler_version: The version of script handler.
         :paramtype type_handler_version: str
@@ -17351,16 +15883,16 @@ class VMExtension(msrest.serialization.Model):
          version if one is available at deployment time. Once deployed, however, the extension will not
          upgrade minor versions unless redeployed, even with this property set to true.
         :paramtype auto_upgrade_minor_version: bool
-        :keyword settings: Any object.
-        :paramtype settings: any
+        :keyword settings: JSON formatted public settings for the extension.
+        :paramtype settings: JSON
         :keyword protected_settings: The extension can contain either protectedSettings or
          protectedSettingsFromKeyVault or no protected settings at all.
-        :paramtype protected_settings: any
+        :paramtype protected_settings: JSON
         :keyword provision_after_extensions: Collection of extension names after which this extension
          needs to be provisioned.
         :paramtype provision_after_extensions: list[str]
         """
-        super(VMExtension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.type = type
@@ -17371,7 +15903,7 @@ class VMExtension(msrest.serialization.Model):
         self.provision_after_extensions = provision_after_extensions
 
 
-class VMExtensionInstanceView(msrest.serialization.Model):
+class VMExtensionInstanceView(_serialization.Model):
     """The vm extension instance view.
 
     :ivar name: The name of the vm extension instance view.
@@ -17383,9 +15915,9 @@ class VMExtensionInstanceView(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
-        'sub_statuses': {'key': 'subStatuses', 'type': '[InstanceViewStatus]'},
+        "name": {"key": "name", "type": "str"},
+        "statuses": {"key": "statuses", "type": "[InstanceViewStatus]"},
+        "sub_statuses": {"key": "subStatuses", "type": "[InstanceViewStatus]"},
     }
 
     def __init__(
@@ -17404,13 +15936,13 @@ class VMExtensionInstanceView(msrest.serialization.Model):
         :keyword sub_statuses: The resource status information.
         :paramtype sub_statuses: list[~azure-batch.models.InstanceViewStatus]
         """
-        super(VMExtensionInstanceView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.statuses = statuses
         self.sub_statuses = sub_statuses
 
 
-class WindowsConfiguration(msrest.serialization.Model):
+class WindowsConfiguration(_serialization.Model):
     """Windows operating system settings to apply to the virtual machine.
 
     :ivar enable_automatic_updates: If omitted, the default value is true.
@@ -17418,45 +15950,35 @@ class WindowsConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enable_automatic_updates': {'key': 'enableAutomaticUpdates', 'type': 'bool'},
+        "enable_automatic_updates": {"key": "enableAutomaticUpdates", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enable_automatic_updates: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enable_automatic_updates: Optional[bool] = None, **kwargs):
         """
         :keyword enable_automatic_updates: If omitted, the default value is true.
         :paramtype enable_automatic_updates: bool
         """
-        super(WindowsConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enable_automatic_updates = enable_automatic_updates
 
 
-class WindowsUserConfiguration(msrest.serialization.Model):
+class WindowsUserConfiguration(_serialization.Model):
     """Properties used to create a user Account on a Windows Compute Node.
 
     :ivar login_mode: The default value for VirtualMachineConfiguration Pools is 'batch' and for
-     CloudServiceConfiguration Pools is 'interactive'. Known values are: "batch", "interactive".
+     CloudServiceConfiguration Pools is 'interactive'. Known values are: "batch" and "interactive".
     :vartype login_mode: str or ~azure-batch.models.LoginMode
     """
 
     _attribute_map = {
-        'login_mode': {'key': 'loginMode', 'type': 'str'},
+        "login_mode": {"key": "loginMode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        login_mode: Optional[Union[str, "_models.LoginMode"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, login_mode: Optional[Union[str, "_models.LoginMode"]] = None, **kwargs):
         """
         :keyword login_mode: The default value for VirtualMachineConfiguration Pools is 'batch' and for
-         CloudServiceConfiguration Pools is 'interactive'. Known values are: "batch", "interactive".
+         CloudServiceConfiguration Pools is 'interactive'. Known values are: "batch" and "interactive".
         :paramtype login_mode: str or ~azure-batch.models.LoginMode
         """
-        super(WindowsUserConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.login_mode = login_mode

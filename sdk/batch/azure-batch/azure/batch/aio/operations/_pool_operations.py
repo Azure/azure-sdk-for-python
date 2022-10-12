@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,9 +27,27 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._pool_operations import build_add_request, build_delete_request, build_disable_auto_scale_request, build_enable_auto_scale_request, build_evaluate_auto_scale_request, build_exists_request, build_get_all_lifetime_statistics_request, build_get_request, build_list_request, build_list_usage_metrics_request, build_patch_request, build_remove_nodes_request, build_resize_request, build_stop_resize_request, build_update_properties_request
-T = TypeVar('T')
+from ...operations._pool_operations import (
+    build_add_request,
+    build_delete_request,
+    build_disable_auto_scale_request,
+    build_enable_auto_scale_request,
+    build_evaluate_auto_scale_request,
+    build_exists_request,
+    build_get_all_lifetime_statistics_request,
+    build_get_request,
+    build_list_request,
+    build_list_usage_metrics_request,
+    build_patch_request,
+    build_remove_nodes_request,
+    build_resize_request,
+    build_stop_resize_request,
+    build_update_properties_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class PoolOperations:
     """
@@ -42,13 +68,10 @@ class PoolOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list_usage_metrics(
-        self,
-        pool_list_usage_metrics_options: Optional[_models.PoolListUsageMetricsOptions] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.PoolListUsageMetricsResult]:
+        self, pool_list_usage_metrics_options: Optional[_models.PoolListUsageMetricsOptions] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.PoolUsageMetrics"]:
         """Lists the usage metrics, aggregated by Pool across individual time intervals, for the specified
         Account.
 
@@ -61,21 +84,24 @@ class PoolOperations:
         :param pool_list_usage_metrics_options: Parameter group. Default value is None.
         :type pool_list_usage_metrics_options: ~azure-batch.models.PoolListUsageMetricsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PoolListUsageMetricsResult or the result of
-         cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.PoolListUsageMetricsResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either PoolUsageMetrics or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.PoolUsageMetrics]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PoolListUsageMetricsResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PoolListUsageMetricsResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _start_time = None
@@ -87,17 +113,16 @@ class PoolOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if pool_list_usage_metrics_options is not None:
-                    _start_time = pool_list_usage_metrics_options.start_time
+                    _client_request_id = pool_list_usage_metrics_options.client_request_id
                     _end_time = pool_list_usage_metrics_options.end_time
                     _filter = pool_list_usage_metrics_options.filter
                     _max_results = pool_list_usage_metrics_options.max_results
-                    _timeout = pool_list_usage_metrics_options.timeout
-                    _client_request_id = pool_list_usage_metrics_options.client_request_id
-                    _return_client_request_id = pool_list_usage_metrics_options.return_client_request_id
                     _ocp_date = pool_list_usage_metrics_options.ocp_date
-                
+                    _return_client_request_id = pool_list_usage_metrics_options.return_client_request_id
+                    _start_time = pool_list_usage_metrics_options.start_time
+                    _timeout = pool_list_usage_metrics_options.timeout
+
                 request = build_list_usage_metrics_request(
-                    api_version=api_version,
                     start_time=_start_time,
                     end_time=_end_time,
                     filter=_filter,
@@ -106,58 +131,32 @@ class PoolOperations:
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list_usage_metrics.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list_usage_metrics.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _start_time = None
-                _end_time = None
-                _filter = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if pool_list_usage_metrics_options is not None:
-                    _start_time = pool_list_usage_metrics_options.start_time
-                    _end_time = pool_list_usage_metrics_options.end_time
-                    _filter = pool_list_usage_metrics_options.filter
-                    _max_results = pool_list_usage_metrics_options.max_results
-                    _timeout = pool_list_usage_metrics_options.timeout
-                    _client_request_id = pool_list_usage_metrics_options.client_request_id
-                    _return_client_request_id = pool_list_usage_metrics_options.return_client_request_id
-                    _ocp_date = pool_list_usage_metrics_options.ocp_date
-                
-                request = build_list_usage_metrics_request(
-                    api_version=api_version,
-                    start_time=_start_time,
-                    end_time=_end_time,
-                    filter=_filter,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
@@ -171,10 +170,8 @@ class PoolOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -185,11 +182,9 @@ class PoolOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_usage_metrics.metadata = {'url': "/poolusagemetrics"}  # type: ignore
+    list_usage_metrics.metadata = {"url": "/poolusagemetrics"}  # type: ignore
 
     @distributed_trace_async
     async def get_all_lifetime_statistics(
@@ -208,52 +203,54 @@ class PoolOperations:
         :type pool_get_all_lifetime_statistics_options:
          ~azure-batch.models.PoolGetAllLifetimeStatisticsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PoolStatistics, or the result of cls(response)
+        :return: PoolStatistics or the result of cls(response)
         :rtype: ~azure-batch.models.PoolStatistics
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PoolStatistics]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PoolStatistics]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if pool_get_all_lifetime_statistics_options is not None:
-            _timeout = pool_get_all_lifetime_statistics_options.timeout
             _client_request_id = pool_get_all_lifetime_statistics_options.client_request_id
-            _return_client_request_id = pool_get_all_lifetime_statistics_options.return_client_request_id
             _ocp_date = pool_get_all_lifetime_statistics_options.ocp_date
+            _return_client_request_id = pool_get_all_lifetime_statistics_options.return_client_request_id
+            _timeout = pool_get_all_lifetime_statistics_options.timeout
 
         request = build_get_all_lifetime_statistics_request(
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.get_all_lifetime_statistics.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_all_lifetime_statistics.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -262,88 +259,88 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = self._deserialize('PoolStatistics', pipeline_response)
+        deserialized = self._deserialize("PoolStatistics", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get_all_lifetime_statistics.metadata = {'url': "/lifetimepoolstats"}  # type: ignore
-
+    get_all_lifetime_statistics.metadata = {"url": "/lifetimepoolstats"}  # type: ignore
 
     @distributed_trace_async
     async def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool: _models.PoolAddParameter,
-        pool_add_options: Optional[_models.PoolAddOptions] = None,
-        **kwargs: Any
+        self, pool: _models.BatchPool, pool_add_options: Optional[_models.PoolAddOptions] = None, **kwargs: Any
     ) -> None:
         """Adds a Pool to the specified Account.
 
         When naming Pools, avoid including sensitive information such as user names or secret project
         names. This information may appear in telemetry logs accessible to Microsoft Support engineers.
 
-        :param pool: The Pool to be added.
-        :type pool: ~azure-batch.models.PoolAddParameter
+        :param pool: The Pool to be added. Required.
+        :type pool: ~azure-batch.models.BatchPool
         :param pool_add_options: Parameter group. Default value is None.
         :type pool_add_options: ~azure-batch.models.PoolAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if pool_add_options is not None:
-            _timeout = pool_add_options.timeout
             _client_request_id = pool_add_options.client_request_id
-            _return_client_request_id = pool_add_options.return_client_request_id
             _ocp_date = pool_add_options.ocp_date
-        _content = self._serialize.body(pool, 'PoolAddParameter')
+            _return_client_request_id = pool_add_options.return_client_request_id
+            _timeout = pool_add_options.timeout
+        _json = self._serialize.body(pool, "BatchPool")
 
         request = build_add_request(
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.add.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.add.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -352,25 +349,21 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    add.metadata = {'url': "/pools"}  # type: ignore
-
+    add.metadata = {"url": "/pools"}  # type: ignore
 
     @distributed_trace
     def list(
-        self,
-        pool_list_options: Optional[_models.PoolListOptions] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.CloudPoolListResult]:
+        self, pool_list_options: Optional[_models.PoolListOptions] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.BatchPool"]:
         """Lists all of the Pools in the specified Account.
 
         Lists all of the Pools in the specified Account.
@@ -378,20 +371,24 @@ class PoolOperations:
         :param pool_list_options: Parameter group. Default value is None.
         :type pool_list_options: ~azure-batch.models.PoolListOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CloudPoolListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.CloudPoolListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either BatchPool or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.BatchPool]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudPoolListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchPoolListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _filter = None
@@ -403,17 +400,16 @@ class PoolOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if pool_list_options is not None:
-                    _filter = pool_list_options.filter
-                    _select = pool_list_options.select
-                    _expand = pool_list_options.expand
-                    _max_results = pool_list_options.max_results
-                    _timeout = pool_list_options.timeout
                     _client_request_id = pool_list_options.client_request_id
-                    _return_client_request_id = pool_list_options.return_client_request_id
+                    _expand = pool_list_options.expand
+                    _filter = pool_list_options.filter
+                    _max_results = pool_list_options.max_results
                     _ocp_date = pool_list_options.ocp_date
-                
+                    _return_client_request_id = pool_list_options.return_client_request_id
+                    _select = pool_list_options.select
+                    _timeout = pool_list_options.timeout
+
                 request = build_list_request(
-                    api_version=api_version,
                     filter=_filter,
                     select=_select,
                     expand=_expand,
@@ -422,63 +418,37 @@ class PoolOperations:
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _filter = None
-                _select = None
-                _expand = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if pool_list_options is not None:
-                    _filter = pool_list_options.filter
-                    _select = pool_list_options.select
-                    _expand = pool_list_options.expand
-                    _max_results = pool_list_options.max_results
-                    _timeout = pool_list_options.timeout
-                    _client_request_id = pool_list_options.client_request_id
-                    _return_client_request_id = pool_list_options.return_client_request_id
-                    _ocp_date = pool_list_options.ocp_date
-                
-                request = build_list_request(
-                    api_version=api_version,
-                    filter=_filter,
-                    select=_select,
-                    expand=_expand,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("CloudPoolListResult", pipeline_response)
+            deserialized = self._deserialize("BatchPoolListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -487,10 +457,8 @@ class PoolOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -501,18 +469,13 @@ class PoolOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/pools"}  # type: ignore
+    list.metadata = {"url": "/pools"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_delete_options: Optional[_models.PoolDeleteOptions] = None,
-        **kwargs: Any
+        self, pool_id: str, pool_delete_options: Optional[_models.PoolDeleteOptions] = None, **kwargs: Any
     ) -> None:
         """Deletes a Pool from the specified Account.
 
@@ -527,25 +490,28 @@ class PoolOperations:
         you call an Update, Patch or Delete API on a Pool in the deleting state, it will fail with HTTP
         status code 409 with error code PoolBeingDeleted.
 
-        :param pool_id: The ID of the Pool to delete.
+        :param pool_id: The ID of the Pool to delete. Required.
         :type pool_id: str
         :param pool_delete_options: Parameter group. Default value is None.
         :type pool_delete_options: ~azure-batch.models.PoolDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -556,18 +522,17 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_delete_options is not None:
-            _timeout = pool_delete_options.timeout
             _client_request_id = pool_delete_options.client_request_id
-            _return_client_request_id = pool_delete_options.return_client_request_id
-            _ocp_date = pool_delete_options.ocp_date
             _if_match = pool_delete_options.if_match
-            _if_none_match = pool_delete_options.if_none_match
             _if_modified_since = pool_delete_options.if_modified_since
+            _if_none_match = pool_delete_options.if_none_match
             _if_unmodified_since = pool_delete_options.if_unmodified_since
+            _ocp_date = pool_delete_options.ocp_date
+            _return_client_request_id = pool_delete_options.return_client_request_id
+            _timeout = pool_delete_options.timeout
 
         request = build_delete_request(
             pool_id=pool_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -576,21 +541,21 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.delete.metadata['url'],
+            api_version=api_version,
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -599,44 +564,42 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': "/pools/{poolId}"}  # type: ignore
-
+    delete.metadata = {"url": "/pools/{poolId}"}  # type: ignore
 
     @distributed_trace_async
     async def exists(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_exists_options: Optional[_models.PoolExistsOptions] = None,
-        **kwargs: Any
+        self, pool_id: str, pool_exists_options: Optional[_models.PoolExistsOptions] = None, **kwargs: Any
     ) -> None:
         """Gets basic properties of a Pool.
 
-        :param pool_id: The ID of the Pool to get.
+        :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
         :param pool_exists_options: Parameter group. Default value is None.
         :type pool_exists_options: ~azure-batch.models.PoolExistsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -647,18 +610,17 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_exists_options is not None:
-            _timeout = pool_exists_options.timeout
             _client_request_id = pool_exists_options.client_request_id
-            _return_client_request_id = pool_exists_options.return_client_request_id
-            _ocp_date = pool_exists_options.ocp_date
             _if_match = pool_exists_options.if_match
-            _if_none_match = pool_exists_options.if_none_match
             _if_modified_since = pool_exists_options.if_modified_since
+            _if_none_match = pool_exists_options.if_none_match
             _if_unmodified_since = pool_exists_options.if_unmodified_since
+            _ocp_date = pool_exists_options.ocp_date
+            _return_client_request_id = pool_exists_options.return_client_request_id
+            _timeout = pool_exists_options.timeout
 
         request = build_exists_request(
             pool_id=pool_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -667,21 +629,21 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.exists.metadata['url'],
+            api_version=api_version,
+            template_url=self.exists.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -691,46 +653,44 @@ class PoolOperations:
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-            response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-            response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-            response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            
+            response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+            response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    exists.metadata = {'url': "/pools/{poolId}"}  # type: ignore
-
+    exists.metadata = {"url": "/pools/{poolId}"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self,
-        pool_id: str,
-        pool_get_options: Optional[_models.PoolGetOptions] = None,
-        **kwargs: Any
-    ) -> _models.CloudPool:
+        self, pool_id: str, pool_get_options: Optional[_models.PoolGetOptions] = None, **kwargs: Any
+    ) -> _models.BatchPool:
         """Gets information about the specified Pool.
 
-        :param pool_id: The ID of the Pool to get.
+        :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
         :param pool_get_options: Parameter group. Default value is None.
         :type pool_get_options: ~azure-batch.models.PoolGetOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CloudPool, or the result of cls(response)
-        :rtype: ~azure-batch.models.CloudPool
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: BatchPool or the result of cls(response)
+        :rtype: ~azure-batch.models.BatchPool
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.CloudPool]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BatchPool]
 
         _select = None
         _expand = None
@@ -743,20 +703,19 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_get_options is not None:
-            _select = pool_get_options.select
-            _expand = pool_get_options.expand
-            _timeout = pool_get_options.timeout
             _client_request_id = pool_get_options.client_request_id
-            _return_client_request_id = pool_get_options.return_client_request_id
-            _ocp_date = pool_get_options.ocp_date
+            _expand = pool_get_options.expand
             _if_match = pool_get_options.if_match
-            _if_none_match = pool_get_options.if_none_match
             _if_modified_since = pool_get_options.if_modified_since
+            _if_none_match = pool_get_options.if_none_match
             _if_unmodified_since = pool_get_options.if_unmodified_since
+            _ocp_date = pool_get_options.ocp_date
+            _return_client_request_id = pool_get_options.return_client_request_id
+            _select = pool_get_options.select
+            _timeout = pool_get_options.timeout
 
         request = build_get_request(
             pool_id=pool_id,
-            api_version=api_version,
             select=_select,
             expand=_expand,
             timeout=_timeout,
@@ -767,21 +726,21 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -790,26 +749,25 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = self._deserialize('CloudPool', pipeline_response)
+        deserialized = self._deserialize("BatchPool", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get.metadata = {'url': "/pools/{poolId}"}  # type: ignore
-
+    get.metadata = {"url": "/pools/{poolId}"}  # type: ignore
 
     @distributed_trace_async
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_patch_parameter: _models.PoolPatchParameter,
+        pool_update: _models.BatchPoolUpdate,
         pool_patch_options: Optional[_models.PoolPatchOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -819,28 +777,33 @@ class PoolOperations:
         StartTask associated with it, and a request does not specify a StartTask element, then the Pool
         keeps the existing StartTask.
 
-        :param pool_id: The ID of the Pool to update.
+        :param pool_id: The ID of the Pool to update. Required.
         :type pool_id: str
-        :param pool_patch_parameter: The parameters for the request.
-        :type pool_patch_parameter: ~azure-batch.models.PoolPatchParameter
+        :param pool_update: The parameters for the request. Required.
+        :type pool_update: ~azure-batch.models.BatchPoolUpdate
         :param pool_patch_options: Parameter group. Default value is None.
         :type pool_patch_options: ~azure-batch.models.PoolPatchOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -851,21 +814,18 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_patch_options is not None:
-            _timeout = pool_patch_options.timeout
             _client_request_id = pool_patch_options.client_request_id
-            _return_client_request_id = pool_patch_options.return_client_request_id
-            _ocp_date = pool_patch_options.ocp_date
             _if_match = pool_patch_options.if_match
-            _if_none_match = pool_patch_options.if_none_match
             _if_modified_since = pool_patch_options.if_modified_since
+            _if_none_match = pool_patch_options.if_none_match
             _if_unmodified_since = pool_patch_options.if_unmodified_since
-        _content = self._serialize.body(pool_patch_parameter, 'PoolPatchParameter')
+            _ocp_date = pool_patch_options.ocp_date
+            _return_client_request_id = pool_patch_options.return_client_request_id
+            _timeout = pool_patch_options.timeout
+        _json = self._serialize.body(pool_update, "BatchPoolUpdate")
 
         request = build_patch_request(
             pool_id=pool_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -874,21 +834,23 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.patch.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.patch.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -897,18 +859,16 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    patch.metadata = {'url': "/pools/{poolId}"}  # type: ignore
-
+    patch.metadata = {"url": "/pools/{poolId}"}  # type: ignore
 
     @distributed_trace_async
     async def disable_auto_scale(  # pylint: disable=inconsistent-return-statements
@@ -921,58 +881,60 @@ class PoolOperations:
 
         Disables automatic scaling for a Pool.
 
-        :param pool_id: The ID of the Pool on which to disable automatic scaling.
+        :param pool_id: The ID of the Pool on which to disable automatic scaling. Required.
         :type pool_id: str
         :param pool_disable_auto_scale_options: Parameter group. Default value is None.
         :type pool_disable_auto_scale_options: ~azure-batch.models.PoolDisableAutoScaleOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if pool_disable_auto_scale_options is not None:
-            _timeout = pool_disable_auto_scale_options.timeout
             _client_request_id = pool_disable_auto_scale_options.client_request_id
-            _return_client_request_id = pool_disable_auto_scale_options.return_client_request_id
             _ocp_date = pool_disable_auto_scale_options.ocp_date
+            _return_client_request_id = pool_disable_auto_scale_options.return_client_request_id
+            _timeout = pool_disable_auto_scale_options.timeout
 
         request = build_disable_auto_scale_request(
             pool_id=pool_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.disable_auto_scale.metadata['url'],
+            api_version=api_version,
+            template_url=self.disable_auto_scale.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -981,24 +943,22 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    disable_auto_scale.metadata = {'url': "/pools/{poolId}/disableautoscale"}  # type: ignore
-
+    disable_auto_scale.metadata = {"url": "/pools/{poolId}/disableautoscale"}  # type: ignore
 
     @distributed_trace_async
     async def enable_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_enable_auto_scale_parameter: _models.PoolEnableAutoScaleParameter,
+        parameters: _models.BatchPoolEnableAutoScaleParameters,
         pool_enable_auto_scale_options: Optional[_models.PoolEnableAutoScaleOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -1010,28 +970,33 @@ class PoolOperations:
         specify a new autoscale formula and/or a new evaluation interval. You cannot call this API for
         the same Pool more than once every 30 seconds.
 
-        :param pool_id: The ID of the Pool on which to enable automatic scaling.
+        :param pool_id: The ID of the Pool on which to enable automatic scaling. Required.
         :type pool_id: str
-        :param pool_enable_auto_scale_parameter: The parameters for the request.
-        :type pool_enable_auto_scale_parameter: ~azure-batch.models.PoolEnableAutoScaleParameter
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure-batch.models.BatchPoolEnableAutoScaleParameters
         :param pool_enable_auto_scale_options: Parameter group. Default value is None.
         :type pool_enable_auto_scale_options: ~azure-batch.models.PoolEnableAutoScaleOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1042,21 +1007,18 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_enable_auto_scale_options is not None:
-            _timeout = pool_enable_auto_scale_options.timeout
             _client_request_id = pool_enable_auto_scale_options.client_request_id
-            _return_client_request_id = pool_enable_auto_scale_options.return_client_request_id
-            _ocp_date = pool_enable_auto_scale_options.ocp_date
             _if_match = pool_enable_auto_scale_options.if_match
-            _if_none_match = pool_enable_auto_scale_options.if_none_match
             _if_modified_since = pool_enable_auto_scale_options.if_modified_since
+            _if_none_match = pool_enable_auto_scale_options.if_none_match
             _if_unmodified_since = pool_enable_auto_scale_options.if_unmodified_since
-        _content = self._serialize.body(pool_enable_auto_scale_parameter, 'PoolEnableAutoScaleParameter')
+            _ocp_date = pool_enable_auto_scale_options.ocp_date
+            _return_client_request_id = pool_enable_auto_scale_options.return_client_request_id
+            _timeout = pool_enable_auto_scale_options.timeout
+        _json = self._serialize.body(parameters, "BatchPoolEnableAutoScaleParameters")
 
         request = build_enable_auto_scale_request(
             pool_id=pool_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1065,21 +1027,23 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.enable_auto_scale.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.enable_auto_scale.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1088,24 +1052,22 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    enable_auto_scale.metadata = {'url': "/pools/{poolId}/enableautoscale"}  # type: ignore
-
+    enable_auto_scale.metadata = {"url": "/pools/{poolId}/enableautoscale"}  # type: ignore
 
     @distributed_trace_async
     async def evaluate_auto_scale(
         self,
         pool_id: str,
-        pool_evaluate_auto_scale_parameter: _models.PoolEvaluateAutoScaleParameter,
+        parameters: _models.BatchPoolEvaluateAutoScaleParameters,
         pool_evaluate_auto_scale_options: Optional[_models.PoolEvaluateAutoScaleOptions] = None,
         **kwargs: Any
     ) -> _models.AutoScaleRun:
@@ -1116,63 +1078,68 @@ class PoolOperations:
         evaluate a formula.
 
         :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
+         Required.
         :type pool_id: str
-        :param pool_evaluate_auto_scale_parameter: The parameters for the request.
-        :type pool_evaluate_auto_scale_parameter: ~azure-batch.models.PoolEvaluateAutoScaleParameter
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure-batch.models.BatchPoolEvaluateAutoScaleParameters
         :param pool_evaluate_auto_scale_options: Parameter group. Default value is None.
         :type pool_evaluate_auto_scale_options: ~azure-batch.models.PoolEvaluateAutoScaleOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AutoScaleRun, or the result of cls(response)
+        :return: AutoScaleRun or the result of cls(response)
         :rtype: ~azure-batch.models.AutoScaleRun
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AutoScaleRun]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AutoScaleRun]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if pool_evaluate_auto_scale_options is not None:
-            _timeout = pool_evaluate_auto_scale_options.timeout
             _client_request_id = pool_evaluate_auto_scale_options.client_request_id
-            _return_client_request_id = pool_evaluate_auto_scale_options.return_client_request_id
             _ocp_date = pool_evaluate_auto_scale_options.ocp_date
-        _content = self._serialize.body(pool_evaluate_auto_scale_parameter, 'PoolEvaluateAutoScaleParameter')
+            _return_client_request_id = pool_evaluate_auto_scale_options.return_client_request_id
+            _timeout = pool_evaluate_auto_scale_options.timeout
+        _json = self._serialize.body(parameters, "BatchPoolEvaluateAutoScaleParameters")
 
         request = build_evaluate_auto_scale_request(
             pool_id=pool_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.evaluate_auto_scale.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.evaluate_auto_scale.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1181,27 +1148,26 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
-        deserialized = self._deserialize('AutoScaleRun', pipeline_response)
+        deserialized = self._deserialize("AutoScaleRun", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    evaluate_auto_scale.metadata = {'url': "/pools/{poolId}/evaluateautoscale"}  # type: ignore
-
+    evaluate_auto_scale.metadata = {"url": "/pools/{poolId}/evaluateautoscale"}  # type: ignore
 
     @distributed_trace_async
     async def resize(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_resize_parameter: _models.PoolResizeParameter,
+        parameters: _models.BatchPoolResizeParameters,
         pool_resize_options: Optional[_models.PoolResizeOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -1214,28 +1180,33 @@ class PoolOperations:
         a Pool downwards, the Batch service chooses which Compute Nodes to remove. To remove specific
         Compute Nodes, use the Pool remove Compute Nodes API instead.
 
-        :param pool_id: The ID of the Pool to resize.
+        :param pool_id: The ID of the Pool to resize. Required.
         :type pool_id: str
-        :param pool_resize_parameter: The parameters for the request.
-        :type pool_resize_parameter: ~azure-batch.models.PoolResizeParameter
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure-batch.models.BatchPoolResizeParameters
         :param pool_resize_options: Parameter group. Default value is None.
         :type pool_resize_options: ~azure-batch.models.PoolResizeOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1246,21 +1217,18 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_resize_options is not None:
-            _timeout = pool_resize_options.timeout
             _client_request_id = pool_resize_options.client_request_id
-            _return_client_request_id = pool_resize_options.return_client_request_id
-            _ocp_date = pool_resize_options.ocp_date
             _if_match = pool_resize_options.if_match
-            _if_none_match = pool_resize_options.if_none_match
             _if_modified_since = pool_resize_options.if_modified_since
+            _if_none_match = pool_resize_options.if_none_match
             _if_unmodified_since = pool_resize_options.if_unmodified_since
-        _content = self._serialize.body(pool_resize_parameter, 'PoolResizeParameter')
+            _ocp_date = pool_resize_options.ocp_date
+            _return_client_request_id = pool_resize_options.return_client_request_id
+            _timeout = pool_resize_options.timeout
+        _json = self._serialize.body(parameters, "BatchPoolResizeParameters")
 
         request = build_resize_request(
             pool_id=pool_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1269,21 +1237,23 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.resize.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.resize.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1292,25 +1262,20 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': "/pools/{poolId}/resize"}  # type: ignore
-
+    resize.metadata = {"url": "/pools/{poolId}/resize"}  # type: ignore
 
     @distributed_trace_async
     async def stop_resize(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_stop_resize_options: Optional[_models.PoolStopResizeOptions] = None,
-        **kwargs: Any
+        self, pool_id: str, pool_stop_resize_options: Optional[_models.PoolStopResizeOptions] = None, **kwargs: Any
     ) -> None:
         """Stops an ongoing resize operation on the Pool.
 
@@ -1321,25 +1286,28 @@ class PoolOperations:
         steady. A resize operation need not be an explicit resize Pool request; this API can also be
         used to halt the initial sizing of the Pool when it is created.
 
-        :param pool_id: The ID of the Pool whose resizing you want to stop.
+        :param pool_id: The ID of the Pool whose resizing you want to stop. Required.
         :type pool_id: str
         :param pool_stop_resize_options: Parameter group. Default value is None.
         :type pool_stop_resize_options: ~azure-batch.models.PoolStopResizeOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1350,18 +1318,17 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_stop_resize_options is not None:
-            _timeout = pool_stop_resize_options.timeout
             _client_request_id = pool_stop_resize_options.client_request_id
-            _return_client_request_id = pool_stop_resize_options.return_client_request_id
-            _ocp_date = pool_stop_resize_options.ocp_date
             _if_match = pool_stop_resize_options.if_match
-            _if_none_match = pool_stop_resize_options.if_none_match
             _if_modified_since = pool_stop_resize_options.if_modified_since
+            _if_none_match = pool_stop_resize_options.if_none_match
             _if_unmodified_since = pool_stop_resize_options.if_unmodified_since
+            _ocp_date = pool_stop_resize_options.ocp_date
+            _return_client_request_id = pool_stop_resize_options.return_client_request_id
+            _timeout = pool_stop_resize_options.timeout
 
         request = build_stop_resize_request(
             pool_id=pool_id,
-            api_version=api_version,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1370,21 +1337,21 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.stop_resize.metadata['url'],
+            api_version=api_version,
+            template_url=self.stop_resize.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1393,24 +1360,22 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stop_resize.metadata = {'url': "/pools/{poolId}/stopresize"}  # type: ignore
-
+    stop_resize.metadata = {"url": "/pools/{poolId}/stopresize"}  # type: ignore
 
     @distributed_trace_async
     async def update_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        pool_update_properties_parameter: _models.PoolUpdatePropertiesParameter,
+        pool_update_properties_parameter: _models.BatchPool,
         pool_update_properties_options: Optional[_models.PoolUpdatePropertiesOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -1420,64 +1385,68 @@ class PoolOperations:
         StartTask associated with it and if StartTask is not specified with this request, then the
         Batch service will remove the existing StartTask.
 
-        :param pool_id: The ID of the Pool to update.
+        :param pool_id: The ID of the Pool to update. Required.
         :type pool_id: str
-        :param pool_update_properties_parameter: The parameters for the request.
-        :type pool_update_properties_parameter: ~azure-batch.models.PoolUpdatePropertiesParameter
+        :param pool_update_properties_parameter: The parameters for the request. Required.
+        :type pool_update_properties_parameter: ~azure-batch.models.BatchPool
         :param pool_update_properties_options: Parameter group. Default value is None.
         :type pool_update_properties_options: ~azure-batch.models.PoolUpdatePropertiesOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
         _return_client_request_id = None
         _ocp_date = None
         if pool_update_properties_options is not None:
-            _timeout = pool_update_properties_options.timeout
             _client_request_id = pool_update_properties_options.client_request_id
-            _return_client_request_id = pool_update_properties_options.return_client_request_id
             _ocp_date = pool_update_properties_options.ocp_date
-        _content = self._serialize.body(pool_update_properties_parameter, 'PoolUpdatePropertiesParameter')
+            _return_client_request_id = pool_update_properties_options.return_client_request_id
+            _timeout = pool_update_properties_options.timeout
+        _json = self._serialize.body(pool_update_properties_parameter, "BatchPool")
 
         request = build_update_properties_request(
             pool_id=pool_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.update_properties.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.update_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1486,24 +1455,22 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_properties.metadata = {'url': "/pools/{poolId}/updateproperties"}  # type: ignore
-
+    update_properties.metadata = {"url": "/pools/{poolId}/updateproperties"}  # type: ignore
 
     @distributed_trace_async
     async def remove_nodes(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        node_remove_parameter: _models.NodeRemoveParameter,
+        parameters: _models.NodeRemoveParameters,
         pool_remove_nodes_options: Optional[_models.PoolRemoveNodesOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -1513,28 +1480,33 @@ class PoolOperations:
         operation runs, the allocation state changes from steady to resizing. Each request may remove
         up to 100 nodes.
 
-        :param pool_id: The ID of the Pool from which you want to remove Compute Nodes.
+        :param pool_id: The ID of the Pool from which you want to remove Compute Nodes. Required.
         :type pool_id: str
-        :param node_remove_parameter: The parameters for the request.
-        :type node_remove_parameter: ~azure-batch.models.NodeRemoveParameter
+        :param parameters: The parameters for the request. Required.
+        :type parameters: ~azure-batch.models.NodeRemoveParameters
         :param pool_remove_nodes_options: Parameter group. Default value is None.
         :type pool_remove_nodes_options: ~azure-batch.models.PoolRemoveNodesOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json; odata=minimalmetadata"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/json; odata=minimalmetadata")
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _timeout = None
         _client_request_id = None
@@ -1545,21 +1517,18 @@ class PoolOperations:
         _if_modified_since = None
         _if_unmodified_since = None
         if pool_remove_nodes_options is not None:
-            _timeout = pool_remove_nodes_options.timeout
             _client_request_id = pool_remove_nodes_options.client_request_id
-            _return_client_request_id = pool_remove_nodes_options.return_client_request_id
-            _ocp_date = pool_remove_nodes_options.ocp_date
             _if_match = pool_remove_nodes_options.if_match
-            _if_none_match = pool_remove_nodes_options.if_none_match
             _if_modified_since = pool_remove_nodes_options.if_modified_since
+            _if_none_match = pool_remove_nodes_options.if_none_match
             _if_unmodified_since = pool_remove_nodes_options.if_unmodified_since
-        _content = self._serialize.body(node_remove_parameter, 'NodeRemoveParameter')
+            _ocp_date = pool_remove_nodes_options.ocp_date
+            _return_client_request_id = pool_remove_nodes_options.return_client_request_id
+            _timeout = pool_remove_nodes_options.timeout
+        _json = self._serialize.body(parameters, "NodeRemoveParameters")
 
         request = build_remove_nodes_request(
             pool_id=pool_id,
-            api_version=api_version,
-            content_type=content_type,
-            content=_content,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
@@ -1568,21 +1537,23 @@ class PoolOperations:
             if_none_match=_if_none_match,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
-            template_url=self.remove_nodes.metadata['url'],
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.remove_nodes.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1591,15 +1562,13 @@ class PoolOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
-
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    remove_nodes.metadata = {'url': "/pools/{poolId}/removenodes"}  # type: ignore
-
+    remove_nodes.metadata = {"url": "/pools/{poolId}/removenodes"}  # type: ignore

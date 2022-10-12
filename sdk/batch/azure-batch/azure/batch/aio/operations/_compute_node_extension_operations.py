@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +28,10 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._compute_node_extension_operations import build_get_request, build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ComputeNodeExtensionOperations:
     """
@@ -42,7 +52,6 @@ class ComputeNodeExtensionOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def get(
         self,
@@ -56,30 +65,33 @@ class ComputeNodeExtensionOperations:
 
         Gets information about the specified Compute Node Extension.
 
-        :param pool_id: The ID of the Pool that contains the Compute Node.
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that contains the extensions.
+        :param node_id: The ID of the Compute Node that contains the extensions. Required.
         :type node_id: str
         :param extension_name: The name of the of the Compute Node Extension that you want to get
-         information about.
+         information about. Required.
         :type extension_name: str
         :param compute_node_extension_get_options: Parameter group. Default value is None.
         :type compute_node_extension_get_options: ~azure-batch.models.ComputeNodeExtensionGetOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NodeVMExtension, or the result of cls(response)
+        :return: NodeVMExtension or the result of cls(response)
         :rtype: ~azure-batch.models.NodeVMExtension
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.NodeVMExtension]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NodeVMExtension]
 
         _select = None
         _timeout = None
@@ -87,37 +99,36 @@ class ComputeNodeExtensionOperations:
         _return_client_request_id = None
         _ocp_date = None
         if compute_node_extension_get_options is not None:
+            _client_request_id = compute_node_extension_get_options.client_request_id
+            _ocp_date = compute_node_extension_get_options.ocp_date
+            _return_client_request_id = compute_node_extension_get_options.return_client_request_id
             _select = compute_node_extension_get_options.select
             _timeout = compute_node_extension_get_options.timeout
-            _client_request_id = compute_node_extension_get_options.client_request_id
-            _return_client_request_id = compute_node_extension_get_options.return_client_request_id
-            _ocp_date = compute_node_extension_get_options.ocp_date
 
         request = build_get_request(
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
-            api_version=api_version,
             select=_select,
             timeout=_timeout,
             client_request_id=_client_request_id,
             return_client_request_id=_return_client_request_id,
             ocp_date=_ocp_date,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+            "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -126,20 +137,19 @@ class ComputeNodeExtensionOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
-        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
-        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
-        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
+        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
-        deserialized = self._deserialize('NodeVMExtension', pipeline_response)
+        deserialized = self._deserialize("NodeVMExtension", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    get.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/extensions/{extensionName}"}  # type: ignore
-
+    get.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/extensions/{extensionName}"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -148,32 +158,36 @@ class ComputeNodeExtensionOperations:
         node_id: str,
         compute_node_extension_list_options: Optional[_models.ComputeNodeExtensionListOptions] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.NodeVMExtensionList]:
+    ) -> AsyncIterable["_models.NodeVMExtension"]:
         """Lists the Compute Nodes Extensions in the specified Pool.
 
         Lists the Compute Nodes Extensions in the specified Pool.
 
-        :param pool_id: The ID of the Pool that contains Compute Node.
+        :param pool_id: The ID of the Pool that contains Compute Node. Required.
         :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to list extensions.
+        :param node_id: The ID of the Compute Node that you want to list extensions. Required.
         :type node_id: str
         :param compute_node_extension_list_options: Parameter group. Default value is None.
         :type compute_node_extension_list_options: ~azure-batch.models.ComputeNodeExtensionListOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either NodeVMExtensionList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.NodeVMExtensionList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either NodeVMExtension or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure-batch.models.NodeVMExtension]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-01-01.15.0"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.NodeVMExtensionList]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NodeVMExtensionList]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
                 _select = None
@@ -183,71 +197,48 @@ class ComputeNodeExtensionOperations:
                 _return_client_request_id = None
                 _ocp_date = None
                 if compute_node_extension_list_options is not None:
-                    _select = compute_node_extension_list_options.select
-                    _max_results = compute_node_extension_list_options.max_results
-                    _timeout = compute_node_extension_list_options.timeout
                     _client_request_id = compute_node_extension_list_options.client_request_id
-                    _return_client_request_id = compute_node_extension_list_options.return_client_request_id
+                    _max_results = compute_node_extension_list_options.max_results
                     _ocp_date = compute_node_extension_list_options.ocp_date
-                
+                    _return_client_request_id = compute_node_extension_list_options.return_client_request_id
+                    _select = compute_node_extension_list_options.select
+                    _timeout = compute_node_extension_list_options.timeout
+
                 request = build_list_request(
                     pool_id=pool_id,
                     node_id=node_id,
-                    api_version=api_version,
                     select=_select,
                     max_results=_max_results,
                     timeout=_timeout,
                     client_request_id=_client_request_id,
                     return_client_request_id=_return_client_request_id,
                     ocp_date=_ocp_date,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                _select = None
-                _max_results = None
-                _timeout = None
-                _client_request_id = None
-                _return_client_request_id = None
-                _ocp_date = None
-                if compute_node_extension_list_options is not None:
-                    _select = compute_node_extension_list_options.select
-                    _max_results = compute_node_extension_list_options.max_results
-                    _timeout = compute_node_extension_list_options.timeout
-                    _client_request_id = compute_node_extension_list_options.client_request_id
-                    _return_client_request_id = compute_node_extension_list_options.return_client_request_id
-                    _ocp_date = compute_node_extension_list_options.ocp_date
-                
-                request = build_list_request(
-                    pool_id=pool_id,
-                    node_id=node_id,
-                    api_version=api_version,
-                    select=_select,
-                    max_results=_max_results,
-                    timeout=_timeout,
-                    client_request_id=_client_request_id,
-                    return_client_request_id=_return_client_request_id,
-                    ocp_date=_ocp_date,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
+                    "batchUrl": self._serialize.url(
+                        "self._config.batch_url", self._config.batch_url, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "batchUrl": self._serialize.url("self._config.batch_url", self._config.batch_url, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
@@ -261,10 +252,8 @@ class ComputeNodeExtensionOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -275,8 +264,6 @@ class ComputeNodeExtensionOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/pools/{poolId}/nodes/{nodeId}/extensions"}  # type: ignore
+    list.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/extensions"}  # type: ignore
