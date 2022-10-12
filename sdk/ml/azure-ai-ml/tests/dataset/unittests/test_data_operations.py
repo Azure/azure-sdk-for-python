@@ -12,8 +12,13 @@ from azure.ai.ml._restclient.v2021_10_01.models._models_py3 import (
     DatasetVersionData,
     DatasetVersionDetails,
 )
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.constants._common import (
+    REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
+    AssetTypes,
+    YAMLRefDocLinks,
+    YAMLRefDocSchemaNames,
+)
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget
@@ -23,10 +28,11 @@ from azure.core.paging import ItemPaged
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         serviceclient_2022_05_01=mock_aml_services_2022_05_01,
     )
 
@@ -34,12 +40,14 @@ def mock_datastore_operation(
 @pytest.fixture
 def mock_data_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operation: Mock,
     mock_machinelearning_client: Mock,
 ) -> DataOperations:
     yield DataOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
@@ -118,6 +126,7 @@ class TestDataOperations:
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
+                show_progress=True,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -156,6 +165,7 @@ class TestDataOperations:
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
+                show_progress=True,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -165,12 +175,16 @@ class TestDataOperations:
         Expect to raise ValidationException for missing path
         """
         name = "random_name"
-        data = Data(name=name, version="1", description="this is an mltable dataset", type=AssetTypes.MLTABLE)
+        data1 = Data(name=name, version="1", description="this is an mltable dataset", type=AssetTypes.MLTABLE)
 
         with pytest.raises(Exception) as ex:
-            mock_data_operations.create_or_update(data)
+            mock_data_operations.create_or_update(data1)
         assert "At least one required parameter is missing" in str(ex.value)
         mock_data_operations._operation.create_or_update.assert_not_called()
+
+        with pytest.raises(Exception) as ex:
+            load_data("tests/test_configs/dataset/data_missing_path_test.yml")
+        assert REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA) in str(ex.value)
 
     @patch("azure.ai.ml.operations._data_operations.read_local_mltable_metadata_contents")
     @patch("azure.ai.ml.operations._data_operations.read_remote_mltable_metadata_contents")
@@ -444,7 +458,7 @@ class TestDataOperations:
             "azure.ai.ml.operations._data_operations.Data._from_rest_object",
             return_value=None,
         ):
-            data = load_data(path=data_path)
+            data = load_data(data_path)
             path = Path(data._base_path, data.path).resolve()
             mock_data_operations.create_or_update(data)
             mock_thing.assert_called_once_with(
@@ -457,4 +471,5 @@ class TestDataOperations:
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
+                show_progress=True,
             )

@@ -4,21 +4,14 @@
 
 # pylint: disable=protected-access
 
-from time import time
-from typing import Dict, Iterable, Tuple, Union
+import time
+from typing import Dict, Iterable, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    DiagnoseRequestProperties,
-    DiagnoseWorkspaceParameters,
-    ListWorkspaceKeysResult,
-    WorkspaceUpdateParameters,
-)
+from azure.ai.ml._restclient.v2022_05_01.models import WorkspaceUpdateParameters
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling, polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
     delete_resource_by_arm_id,
@@ -27,16 +20,27 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
+from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
+from azure.ai.ml.entities import (
+    DiagnoseRequestProperties,
+    DiagnoseResponseResult,
+    DiagnoseResponseResultValue,
+    DiagnoseWorkspaceParameters,
+    Workspace,
+    WorkspaceKeys,
+)
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.entities import ManagedServiceIdentity, Workspace
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller
+from azure.core.polling import LROPoller, PollingMethod
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceOperations:
@@ -55,7 +59,7 @@ class WorkspaceOperations:
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
@@ -65,7 +69,7 @@ class WorkspaceOperations:
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
-    @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = "resource_group") -> Iterable[Workspace]:
         """List all workspaces that the user has access to in the current
         resource group or subscription.
@@ -85,7 +89,8 @@ class WorkspaceOperations:
             cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
         )
 
-    @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
+    @distributed_trace
     def get(self, name: str = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
 
@@ -100,20 +105,23 @@ class WorkspaceOperations:
         obj = self._operation.get(resource_group, workspace_name)
         return Workspace._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.List_Keys", ActivityType.PUBLICAPI)
-    def list_keys(self, name: str = None) -> ListWorkspaceKeysResult:
-        """List keys for the workspace.
+    # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
+    @distributed_trace
+    def get_keys(self, name: str = None) -> WorkspaceKeys:
+        """Get keys for the workspace.
 
         :param name: Name of the workspace.
         :type name: str
-        :return: A list of keys.
-        :rtype: ListWorkspaceKeysResult
+        :return: Keys of workspace dependent resources.
+        :rtype: WorkspaceKeys
         """
         workspace_name = self._check_workspace_name(name)
-        return self._operation.list_keys(self._resource_group_name, workspace_name)
+        obj = self._operation.list_keys(self._resource_group_name, workspace_name)
+        return WorkspaceKeys._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
-    def begin_sync_keys(self, name: str = None, **kwargs: Dict) -> LROPoller:
+    # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
+    @distributed_trace
+    def begin_sync_keys(self, name: str = None) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
         any resource in the workspace are changed, it can take around an hour
         for them to automatically be updated. This function enables keys to be
@@ -122,24 +130,20 @@ class WorkspaceOperations:
 
         :param name: Name of the workspace.
         :type name: str
+        :return: An instance of LROPoller that returns either None or the sync keys result.
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
-
-        no_wait = kwargs.get("no_wait", False)
-
         workspace_name = self._check_workspace_name(name)
-        poller = self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
+        return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
 
-        if no_wait:
-            return poller
-        polling_wait(poller, message="Waiting for the workspace keys sync.")
-
-    @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
+    @distributed_trace
     def begin_create(
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller:
+    ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
 
         Returns the workspace if already exists.
@@ -147,8 +151,8 @@ class WorkspaceOperations:
         :param workspace: Workspace definition.
         :type workspace: Workspace
         :type update_dependent_resources: boolean
-        :return: A poller to track the operation status.
-        :rtype: LROPoller
+        :return: An instance of LROPoller that returns a Workspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
@@ -190,25 +194,33 @@ class WorkspaceOperations:
             deployment_name=get_deployment_name(workspace.name),
         )
 
-        no_wait = kwargs.get("no_wait", False)
         # deploy_resource() blocks for the poller to succeed if wait is True
         poller = arm_submit.deploy_resource(
             template=template,
             resources_being_deployed=resources_being_deployed,
             parameters=param,
-            wait=not no_wait,
+            wait=False,
         )
 
-        return poller if no_wait else self.get(workspace.name, resource_group=resource_group)
+        def callback():
+            return self.get(workspace.name, resource_group=resource_group)
 
-    @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
+        return LROPoller(
+            self._operation._client,
+            None,
+            lambda *x, **y: None,
+            CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, callback),
+        )
+
+    # @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
+    @distributed_trace
     def begin_update(
         self,
         workspace: Workspace,
         *,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> Union[LROPoller, Workspace]:
+    ) -> LROPoller[Workspace]:
         """Update friendly name, description, managed identities or tags of a workspace.
 
         :param workspace: Workspace resource.
@@ -222,12 +234,12 @@ class WorkspaceOperations:
         :param application_insights: Application insights resource for workspace.
         :param container_registry: Container registry resource for workspace.
         :type workspace: Workspace
-        :return: A poller to track the operation status.
-        :rtype: LROPoller
+        :return: An instance of LROPoller that returns a Workspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         identity = kwargs.get("identity", workspace.identity)
         if identity:
-            identity = identity._to_rest_object()
+            identity = identity._to_workspace_rest_object()
         update_param = WorkspaceUpdateParameters(
             tags=workspace.tags,
             description=kwargs.get("description", workspace.description),
@@ -280,20 +292,18 @@ class WorkspaceOperations:
             )
         update_param.container_registry = container_registry
         update_param.application_insights = application_insights
-        no_wait = kwargs.get("no_wait", False)
 
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
-        poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=not no_wait)
 
-        if not no_wait:
-            return Workspace._from_rest_object(poller.result())
-        module_logger.info(
-            "Workspace update request initiated. Status can be checked using `az ml workspace show -n %s`\n",
-            workspace.name,
-        )
+        # pylint: disable=unused-argument
+        def callback(_, deserialized, args):
+            return Workspace._from_rest_object(deserialized)
+
+        poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=True, cls=callback)
         return poller
 
-    @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
+    @distributed_trace
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
         """Delete a workspace.
 
@@ -304,69 +314,46 @@ class WorkspaceOperations:
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
         :return: A poller to track the operation status.
-        :rtype: LROPoller
+        :rtype: ~azure.core.polling.LROPoller[None]
         """
-        try:
-            workspace = self.get(name, **kwargs)
-            resource_group = kwargs.get("resource_group") or self._resource_group_name
-            if delete_dependent_resources:
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    workspace.application_insights,
-                    ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
-                )
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    workspace.storage_account,
-                    ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
-                )
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    workspace.key_vault,
-                    ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
-                )
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    workspace.container_registry,
-                    ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
-                )
-
-            start_time = time()
-            path_format_arguments = {
-                "endpointName": name,
-                "resourceGroupName": resource_group,
-                "workspaceName": name,
-            }
-            no_wait = kwargs.get("no_wait", False)
-
-            delete_poller = self._operation.begin_delete(
-                resource_group_name=resource_group,
-                workspace_name=name,
-                polling=AzureMLPolling(
-                    LROConfigurations.POLL_INTERVAL,
-                    path_format_arguments=path_format_arguments,
-                    **self._init_kwargs,
-                )
-                if not no_wait
-                else False,
-                polling_interval=LROConfigurations.POLL_INTERVAL,
-                **self._init_kwargs,
+        workspace = self.get(name, **kwargs)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        if delete_dependent_resources:
+            delete_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
             )
+            delete_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.storage_account,
+                ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
+            )
+            delete_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.key_vault,
+                ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
+            )
+            delete_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.container_registry,
+                ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
+            )
+        poller = self._operation.begin_delete(
+            resource_group_name=resource_group,
+            workspace_name=name,
+            **self._init_kwargs,
+        )
+        module_logger.info("Delete request initiated for workspace: %s\n", name)
+        return poller
 
-            if no_wait:
-                module_logger.info("Delete request initiated for workspace: %s`\n", name)
-                return delete_poller
-            message = f"Deleting workspace {name} "
-            polling_wait(poller=delete_poller, start_time=start_time, message=message)
-        except Exception as response_exception:
-            raise response_exception
-
-    @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
-    def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller:
+    @distributed_trace
+    # @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
+    def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller[DiagnoseResponseResultValue]:
         """Diagnose workspace setup problems.
 
         If your workspace is not working as expected, you can run this diagnosis to
@@ -377,18 +364,24 @@ class WorkspaceOperations:
         :param name: Name of the workspace
         :type name: str
         :return: A poller to track the operation status.
-        :rtype: LROPoller
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.DiagnoseResponseResultValue]
         """
-        no_wait = kwargs.get("no_wait", False)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())
-        poller = self._operation.begin_diagnose(resource_group, name, parameters, polling=not no_wait)
-        if not no_wait:
-            return poller.result().value.as_dict()
-        module_logger.info("Diagnose request initiated for workspace:%s`\n", name)
+        parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())._to_rest_object()
+
+        # pylint: disable=unused-argument
+        def callback(_, deserialized, args):
+            diagnose_response_result = DiagnoseResponseResult._from_rest_object(deserialized)
+            res = None
+            if diagnose_response_result:
+                res = diagnose_response_result.value
+            return res
+
+        poller = self._operation.begin_diagnose(resource_group, name, parameters, polling=True, cls=callback)
+        module_logger.info("Diagnose request initiated for workspace: %s\n", name)
         return poller
 
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements,too-many-branches
     def _populate_arm_paramaters(self, workspace: Workspace) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
@@ -495,9 +488,11 @@ class WorkspaceOperations:
 
         identity = None
         if workspace.identity:
-            identity = workspace.identity._to_rest_object()
+            identity = workspace.identity._to_workspace_rest_object()
         else:
-            identity = ManagedServiceIdentity(type=ManagedServiceIdentityType.SYSTEM_ASSIGNED)._to_rest_object()
+            # pylint: disable=protected-access
+            identity = IdentityConfiguration(
+                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:
@@ -547,3 +542,52 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
         None,
     )
     return app_insights
+
+
+class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
+    def __init__(self, poller, arm_submit, func) -> None:
+        self.poller = poller
+        self.arm_submit = arm_submit
+        self.func = func
+        super().__init__()
+
+    def resource(self):
+        error = None
+        try:
+            while not self.poller.done():
+                try:
+                    time.sleep(LROConfigurations.SLEEP_TIME)
+                    self.arm_submit._check_deployment_status()
+                except KeyboardInterrupt as e:
+                    self.arm_submit._client.close()
+                    error = e
+                    raise
+
+            if self.poller._exception is not None:
+                error = self.poller._exception
+        except Exception as e:  # pylint: disable=broad-except
+            error = e
+        finally:
+            # one last check to make sure all print statements make it
+            if not isinstance(error, KeyboardInterrupt):
+                self.arm_submit._check_deployment_status()
+                total_duration = self.poller.result().properties.duration
+
+        if error is not None:
+            error_msg = f"Unable to create resource. \n {error}\n"
+            module_logger.error(error_msg)
+            raise error
+        module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
+        return self.func()
+
+    def initialize(self, *args, **kwargs):
+        pass
+
+    def finished(self):
+        pass
+
+    def run(self):
+        pass
+
+    def status(self):
+        pass

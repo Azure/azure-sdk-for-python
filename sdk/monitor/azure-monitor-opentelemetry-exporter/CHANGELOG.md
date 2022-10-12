@@ -1,6 +1,25 @@
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.0b9 (Unreleased)
+
+### Features Added
+
+- Add validation logic to ApplicationInsightsSampler
+    ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed sampleRate field in ApplicationInsightsSampler, changed attribute to `_MS.sampleRate`
+    ([#26771](https://github.com/Azure/azure-sdk-for-python/pull/26771))
+
+### Other Changes
+
+- Update `README.md`
+    ([#26520](https://github.com/Azure/azure-sdk-for-python/pull/26520))
+
+## 1.0.0b8 (2022-09-26)
 
 ### Features Added
 
@@ -20,12 +39,8 @@
     ([#26224](https://github.com/Azure/azure-sdk-for-python/pull/26224))
 - Implement truncation logic for telemetry payload
     ([#26257](https://github.com/Azure/azure-sdk-for-python/pull/26257))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Populate metric namespace with meter instrumentation scope name
+    ([#26257](https://github.com/Azure/azure-sdk-for-python/pull/26257))
 
 ## 1.0.0b7 (2022-08-12)
 

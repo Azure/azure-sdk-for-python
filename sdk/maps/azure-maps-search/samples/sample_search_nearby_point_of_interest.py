@@ -22,7 +22,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def search_nearby_point_of_interest():
-    # [START search_nearby_point_of_interest]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -32,7 +31,6 @@ def search_nearby_point_of_interest():
 
     print("Get Search Nearby point of interest:")
     print(result)
-    # [END search_nearby_point_of_interest]
 
 if __name__ == '__main__':
     search_nearby_point_of_interest()

@@ -6,25 +6,24 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutputType as JobOutputType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import LiteralJobInput as LiteralJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput as RestMLTableJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobInput as RestUriFileJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -106,7 +105,7 @@ def build_input_output(
     item: Union[InputOutputEntry, Input, Output, str, bool, int, float],
     inputs: bool = True,
 ) -> Union[InputOutputEntry, Input, Output, str, bool, int, float]:
-    if isinstance(item, InputOutputEntry) or isinstance(item, Input) or isinstance(item, Output):
+    if isinstance(item, (Input, InputOutputEntry, Output)):
         # return objects constructed at yaml load or specified in sdk
         return item
     # parse dictionary into supported class
@@ -191,7 +190,8 @@ def to_rest_dataset_literal_inputs(
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
             validate_pipeline_input_key_contains_allowed_characters(input_name)
-        else:
+        elif job_type:
+            # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
             if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):

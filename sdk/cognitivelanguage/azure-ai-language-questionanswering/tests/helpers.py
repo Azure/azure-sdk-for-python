@@ -57,7 +57,7 @@ class QnaAuthoringHelper:
         # export project
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json",
+            file_format="json",
             **kwargs
         )
         result = export_poller.result()
@@ -69,7 +69,6 @@ class QnaAuthoringHelper:
                 **kwargs
             )
             delete_poller.result()
-
         return result["resultUrl"]
 
 
@@ -125,7 +124,7 @@ class QnaAuthoringAsyncHelper:
         # export project
         export_poller = await client.begin_export(
             project_name=project_name,
-            format="json",
+            file_format="json",
             **kwargs
         )
         result = await export_poller.result()
@@ -137,5 +136,4 @@ class QnaAuthoringAsyncHelper:
                 **kwargs
             )
             await delete_poller.result()
-
         return result["resultUrl"]

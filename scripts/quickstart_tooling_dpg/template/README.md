@@ -1,7 +1,10 @@
 ### Settings
 
 ```yaml
-input-file: {{ input_file }}
+input-file:
+{%- for file in input_file %}
+ - {{ file }}
+{%- endfor %}
 output-folder: ../
 namespace: {{ namespace }}
 package-name: {{ package_name }}

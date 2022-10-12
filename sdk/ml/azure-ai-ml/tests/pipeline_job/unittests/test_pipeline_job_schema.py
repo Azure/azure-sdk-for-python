@@ -1,7 +1,9 @@
 import json
 import re
+from copy import deepcopy
 from io import StringIO
-from typing import Any, Dict
+from pathlib import Path
+from typing import Any, Dict, Optional
 
 import pydash
 import pytest
@@ -10,11 +12,16 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService, MLTableJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobInput
-from azure.ai.ml._utils.utils import is_data_binding_expression, load_yaml
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
+    LearningRateScheduler,
+    StochasticOptimizer,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -26,11 +33,12 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_contains_allowed_characters,
 )
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
@@ -1373,24 +1381,23 @@ class TestPipelineJobSchema:
                 "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_ner.yml",
                 "automl_text_ner",
             ),
-            # AutoML Vision component - for vision, parameterization fails
-            # (
-            #     "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml",
-            #     "hello_automl_image_multiclass_classification",
-            # ),
-            # parameterization fails
-            # (
-            #     "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml",
-            #     "hello_automl_image_multilabel_classification",
-            # ),
-            # (
-            #     "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml",
-            #     "hello_automl_image_object_detection",
-            # ),
-            # (
-            #     "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml",
-            #     "hello_automl_image_instance_segmentation",
-            # ),
+            # AutoML Vision component
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml",
+                "hello_automl_image_multiclass_classification",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml",
+                "hello_automl_image_multilabel_classification",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml",
+                "hello_automl_image_object_detection",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml",
+                "hello_automl_image_instance_segmentation",
+            ),
         ],
     )
     def test_automl_node_in_pipeline_load_dump(
@@ -1407,8 +1414,9 @@ class TestPipelineJobSchema:
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(pipeline)
 
-        pipeline_dict = pipeline._to_dict()
-        pipeline_job_dict = json.loads(json.dumps(pipeline_dict["jobs"][job_key]))
+        automl_job = pipeline.jobs[job_key]
+        automl_job_dict = automl_job._to_dict(inside_pipeline=True)
+        pipeline_job_dict = json.loads(json.dumps(automl_job_dict))
         original_job_dict = json.loads(json.dumps(original_dict["jobs"][job_key]))
         omit_fields = ["display_name", "experiment_name", "log_verbosity", "name", "outputs", "properties", "tags"]
         pipeline_job_dict = pydash.omit(pipeline_job_dict, omit_fields)
@@ -1420,7 +1428,203 @@ class TestPipelineJobSchema:
             # sweep comparison won't match as pipeline dict will contain default values
             pipeline_job_dict = pydash.omit(pipeline_job_dict, ["sweep"])
             original_job_dict = pydash.omit(original_job_dict, ["sweep"])
+
+            for i, search_space_item in enumerate(original_job_dict.get("search_space", [])):
+                original_job_dict["search_space"][i] = _convert_sweep_dist_dict_to_str_dict(search_space_item)
         assert pipeline_job_dict == original_job_dict
+
+    def _raise_error_on_wrong_schema(self, test_path, original_dict, job_key, mock_machinelearning_client, mocker):
+        dump_yaml_to_file(test_path, original_dict)
+        with pytest.raises(ValidationError):
+            self.test_automl_node_in_pipeline_load_dump(test_path, job_key, mock_machinelearning_client, mocker)
+
+    @pytest.mark.parametrize(
+        "test_path, job_key",
+        [
+            # AutoML Vision component
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml",
+                "hello_automl_image_multiclass_classification",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml",
+                "hello_automl_image_multilabel_classification",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml",
+                "hello_automl_image_object_detection",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml",
+                "hello_automl_image_instance_segmentation",
+            ),
+        ],
+    )
+    def test_automl_image_node_in_pipeline_load_dump(
+        self, test_path, job_key, mock_machinelearning_client: MLClient, mocker: MockFixture, tmp_path: Path
+    ):
+        with open(test_path) as f:
+            original_dict = yaml.safe_load(f)
+
+        test_yaml_path = tmp_path / f"{job_key}_job.yml"
+        # Test Invalid number_of_epochs
+        original_dict_copy = deepcopy(original_dict)
+        original_dict_copy["jobs"][job_key]["search_space"][0]["number_of_epochs"] = {
+            "type": "choice",
+            "values": [1.5, 2.5],
+        }
+
+        self._raise_error_on_wrong_schema(
+            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+        )
+
+        # # Test AMS Gradient
+        original_dict_copy = deepcopy(original_dict)
+        original_dict_copy["jobs"][job_key]["search_space"][0]["ams_gradient"] = {
+            "type": "choice",
+            "values": [1.2, 2.5],
+        }
+        self._raise_error_on_wrong_schema(
+            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+        )
+
+        original_dict_copy["jobs"][job_key]["search_space"][0]["ams_gradient"] = True
+        dump_yaml_to_file(test_yaml_path, original_dict_copy)
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+        # test LRSChedular Enum
+        original_dict_copy = deepcopy(original_dict)
+        original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = {
+            "type": "choice",
+            "values": ["random_lr_scheduler1", "random_lr_scheduler2"],
+        }
+        self._raise_error_on_wrong_schema(
+            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+        )
+
+        original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = camel_to_snake(
+            LearningRateScheduler.WARMUP_COSINE
+        )
+        dump_yaml_to_file(test_yaml_path, original_dict_copy)
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+        original_dict_copy["jobs"][job_key]["search_space"][0]["learning_rate_scheduler"] = {
+            "type": "choice",
+            "values": [camel_to_snake(LearningRateScheduler.WARMUP_COSINE), camel_to_snake(LearningRateScheduler.STEP)],
+        }
+        dump_yaml_to_file(test_yaml_path, original_dict_copy)
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+        # test Optimizer
+        original_dict_copy = deepcopy(original_dict)
+        original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = {
+            "type": "choice",
+            "values": ["random1", "random2"],
+        }
+        self._raise_error_on_wrong_schema(
+            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+        )
+
+        original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = camel_to_snake(StochasticOptimizer.ADAM)
+        dump_yaml_to_file(test_yaml_path, original_dict_copy)
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+        original_dict_copy["jobs"][job_key]["search_space"][0]["optimizer"] = {
+            "type": "choice",
+            "values": [camel_to_snake(StochasticOptimizer.SGD), camel_to_snake(StochasticOptimizer.ADAM)],
+        }
+        dump_yaml_to_file(test_yaml_path, original_dict_copy)
+        self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+        # Test Model Name
+        original_dict_copy = deepcopy(original_dict)
+        original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = 1
+        self._raise_error_on_wrong_schema(
+            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+        )
+
+        original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = 100.5
+        self._raise_error_on_wrong_schema(
+            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+        )
+
+        original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = True
+        self._raise_error_on_wrong_schema(
+            test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+        )
+
+        if "image_" in job_key and "classification" in job_key:
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
+                "type": "choice",
+                "values": ["yolov5"],
+            }
+            self._raise_error_on_wrong_schema(
+                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            )
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
+                "type": "choice",
+                "values": ["vitb16r224"],
+            }
+            dump_yaml_to_file(test_yaml_path, original_dict_copy)
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "vitb16r224"
+            dump_yaml_to_file(test_yaml_path, original_dict_copy)
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+        elif "object_detection" in job_key:
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
+                "type": "choice",
+                "values": ["vitb16r224"],
+            }
+            self._raise_error_on_wrong_schema(
+                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            )
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
+                "type": "choice",
+                "values": ["yolov5", "fasterrcnn_resnet50_fpn"],
+            }
+            dump_yaml_to_file(test_yaml_path, original_dict_copy)
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "fasterrcnn_resnet50_fpn"
+            dump_yaml_to_file(test_yaml_path, original_dict_copy)
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+        elif "instance_segmentation" in job_key:
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
+                "type": "choice",
+                "values": ["vitb16r224"],
+            }
+            self._raise_error_on_wrong_schema(
+                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            )
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
+                "type": "choice",
+                "values": ["fasterrcnn_resnet50_fpn"],
+            }
+            self._raise_error_on_wrong_schema(
+                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            )
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "yolov5"
+            self._raise_error_on_wrong_schema(
+                test_yaml_path, original_dict_copy, job_key, mock_machinelearning_client, mocker
+            )
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = {
+                "type": "choice",
+                "values": ["maskrcnn_resnet152_fpn", "maskrcnn_resnet18_fpn"],
+            }
+            dump_yaml_to_file(test_yaml_path, original_dict_copy)
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
+
+            original_dict_copy["jobs"][job_key]["search_space"][0]["model_name"] = "maskrcnn_resnet18_fpn"
+            dump_yaml_to_file(test_yaml_path, original_dict_copy)
+            self.test_automl_node_in_pipeline_load_dump(test_yaml_path, job_key, mock_machinelearning_client, mocker)
 
     @pytest.mark.parametrize(
         "params_override, error_field, expecting_field",
@@ -1479,15 +1683,19 @@ class TestPipelineJobSchema:
             assert isinstance(service, JobService)
 
         job_rest_obj = job._to_rest_object()
-        assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
-            "my_jupyter": {"job_service_type": "Jupyter"},
+        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
+        # rest object of node in pipeline should be pure dict
+        assert rest_services == {
+            "my_jupyter": {
+                "job_service_type": "Jupyter",
+            },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
-                "properties": {
-                    "logDir": "~/tblog",
-                },
+                "properties": {"logDir": "~/tblog"},
             },
-            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+            "my_jupyterlab": {
+                "job_service_type": "JupyterLab",
+            },
         }
 
     def test_command_job_node_services_in_pipeline_with_no_component(self):
@@ -1499,15 +1707,19 @@ class TestPipelineJobSchema:
             assert isinstance(service, JobService)
 
         job_rest_obj = job._to_rest_object()
+
+        # rest object of node in pipeline should be pure dict
         assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
-            "my_jupyter": {"job_service_type": "Jupyter"},
+            "my_jupyter": {
+                "job_service_type": "Jupyter",
+            },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
-                "properties": {
-                    "logDir": "~/tblog",
-                },
+                "properties": {"logDir": "~/tblog"},
             },
-            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+            "my_jupyterlab": {
+                "job_service_type": "JupyterLab",
+            },
         }
 
     def test_dump_pipeline_inputs(self):
@@ -1582,3 +1794,13 @@ class TestPipelineJobSchema:
         with pytest.raises(Exception) as e:
             load_job(source=test_path)
         assert "'jobs' and 'component' are mutually exclusive fields in pipeline job" in str(e.value)
+
+    @pytest.mark.parametrize(
+        "pipeline_job_path, expected_error",
+        DATABINDING_EXPRESSION_TEST_CASES,
+    )
+    def test_pipeline_job_with_data_binding_expression(
+        self, client: MLClient, pipeline_job_path: str, expected_error: Optional[Exception]
+    ):
+        pipeline: PipelineJob = load_job(source=pipeline_job_path)
+        pipeline._to_rest_object()

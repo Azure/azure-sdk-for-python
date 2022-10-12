@@ -18,6 +18,7 @@ from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.polling import LROPoller
 
 
 from devtools_testutils import AzureRecordedTestCase
@@ -43,7 +44,7 @@ class TestImportJob(AzureRecordedTestCase):
     def test_import_job_submit_cancel(self, client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
 
-        job = load_job(path="./tests/test_configs/import_job/import_job_test.yml")
+        job = load_job("./tests/test_configs/import_job/import_job_test.yml")
         self.validate_import_job_submit_cancel(job, client)
 
     @pytest.mark.e2etest
@@ -84,14 +85,19 @@ class TestImportJob(AzureRecordedTestCase):
 
         # Test cancel with submit to save test resource.
         # The job not supposed to succeed and usually failed quickly so status can be 'failed' as well
-        client.jobs.cancel(import_job.name)
+        cancel_poller = client.jobs.begin_cancel(import_job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
         import_job_3 = client.jobs.get(import_job.name)
         assert import_job_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED, JobStatus.FAILED)
 
     @pytest.mark.e2etest
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
 
-        pipeline: PipelineJob = load_job(path="./tests/test_configs/import_job/import_pipeline_test.yml")
+        pipeline: PipelineJob = load_job("./tests/test_configs/import_job/import_pipeline_test.yml")
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
 
     @pytest.mark.e2etest
@@ -179,7 +185,9 @@ class TestImportJob(AzureRecordedTestCase):
                 == import_pipeline.jobs[import_step].outputs["output"]._data.path
             )
 
-        client.jobs.cancel(import_pipeline.name)
+        cancel_poller = client.jobs.begin_cancel(import_pipeline.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
         import_pipeline_3 = client.jobs.get(import_pipeline.name)
         assert import_pipeline_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
@@ -194,7 +202,7 @@ class TestImportJob(AzureRecordedTestCase):
 
         job = client.jobs.create_or_update(
             load_job(
-                path="./tests/test_configs/import_job/import_job_test.yml",
+                "./tests/test_configs/import_job/import_job_test.yml",
                 params_override=[{"name": randstr("name")}],
             )
         )

@@ -33,6 +33,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import ConversationAnalysisClient as GeneratedConversationAnalysisClient
+from .._patch import POLLING_INTERVAL_DEFAULT
 
 
 def _authentication_policy(credential):
@@ -51,7 +52,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint: disable=client-accepts-api-version-keyword
+class ConversationAnalysisClient(GeneratedConversationAnalysisClient):
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). The synchronous API
     in this suite accepts a request and mediates among multiple language projects, such as LUIS
@@ -88,6 +89,7 @@ class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint:
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 

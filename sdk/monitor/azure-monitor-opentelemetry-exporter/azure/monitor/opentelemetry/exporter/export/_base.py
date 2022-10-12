@@ -58,6 +58,9 @@ class BaseExporter:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :keyword str api_version: The service API version used. Defaults to latest.
+        :keyword str connection_string: The connection string used for your Application Insights resource.
+        :keyword bool enable_local_storage: Determines whether to store failed telemetry records for retry. Defaults to `True`.
+        :keyword str storage_path: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
@@ -74,7 +77,7 @@ class BaseExporter:
         default_storage_path = os.path.join(
             tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
         )
-        self._storage_path = kwargs.get('storage_path', default_storage_path)  # Maintenance interval in seconds.
+        self._storage_path = kwargs.get('storage_path', default_storage_path)  # Storage path in which to store retry files.
         self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 

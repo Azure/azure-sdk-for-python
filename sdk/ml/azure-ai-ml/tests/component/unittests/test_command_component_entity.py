@@ -9,9 +9,8 @@ from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, 
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command, Sweep
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.sweep import Choice
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -190,6 +189,7 @@ class TestCommandComponentEntity:
             "distribution": None,
             "environment_variables": {},
             "inputs": {},
+            "properties": {},
             "limits": None,
             "name": None,
             "outputs": {},
@@ -236,6 +236,7 @@ class TestCommandComponentEntity:
             "outputs": {},
             "resources": None,
             "tags": {},
+            "properties": {},
             "type": "command",
             "_source": "YAML.COMPONENT",
         }
@@ -351,24 +352,24 @@ class TestCommandComponentEntity:
 
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
-        # directly load illegal YAML component will get validation exception to prevent user init entity
+        component = load_component(yaml_path)
         with pytest.raises(ValidationException) as e:
-            load_component(path=yaml_path)
+            component._validate(raise_error=True)
         assert "Invalid component input names 'COMPONENT_IN_NUMBER' and 'component_in_number'" in str(e.value)
         component = load_component(
-            path=yaml_path,
+            yaml_path,
             params_override=[
                 {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
             ],
         )
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert validation_result.passed
 
         # user can still overwrite input name to illegal
         component.inputs["COMPONENT_IN_NUMBER"] = Input(description="1", type="number")
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert not validation_result.passed
-        assert validation_result.invalid_fields[0] == "inputs.COMPONENT_IN_NUMBER"
+        assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
     def test_primitive_output(self):
         expected_rest_component = {
@@ -393,7 +394,7 @@ class TestCommandComponentEntity:
 
         # from YAML
         yaml_path = "./tests/test_configs/components/helloworld_component_primitive_outputs.yml"
-        component1 = load_component(path=yaml_path)
+        component1 = load_component(yaml_path)
         actual_component_dict1 = pydash.omit(
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )

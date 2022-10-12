@@ -8,7 +8,7 @@ from pytest_mock import MockFixture
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_online_deployment
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._deployment.online_deployment import (
     KubernetesOnlineDeployment,
@@ -119,6 +119,7 @@ def mock_local_deployment_helper() -> Mock:
 @pytest.fixture
 def mock_online_deployment_operations(
     mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
     mock_aml_services_2021_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> OnlineDeploymentOperations:
@@ -126,6 +127,7 @@ def mock_online_deployment_operations(
 
     yield OnlineDeploymentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client_02_2022_preview=mock_aml_services_2021_10_01,
         all_operations=mock_machinelearning_client._operation_container,
         local_deployment_helper=mock_local_deployment_helper,
@@ -171,5 +173,5 @@ class TestOnlineDeploymentOperations:
     ) -> None:
         random_name = "random_string"
         mock_aml_services_2021_10_01.online_deployments.begin_delete.return_value = mock_delete_poller
-        mock_online_deployment_operations.delete(endpoint_name="k8sendpoint", name=random_name)
+        mock_online_deployment_operations.begin_delete(endpoint_name="k8sendpoint", name=random_name)
         mock_online_deployment_operations._online_deployment.begin_delete.assert_called_once()

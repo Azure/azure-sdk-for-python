@@ -41,7 +41,7 @@ setup(
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
@@ -81,13 +81,10 @@ setup(
         "azure-storage-file-share<13.0.0",
         "azure-storage-file-datalake<13.0.0",
         "pydash<6.0.0",
-        "pathspec==0.9.*",
         "isodate",
-        # Used for local endpoint story.
-        "docker",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
-        "applicationinsights<=0.11.10",
+        # "applicationinsights<=0.11.10", # To be replaced by azure-monitor-query
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package

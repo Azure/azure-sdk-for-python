@@ -9,7 +9,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentVersionData,
     ComponentVersionDetails,
 )
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.operations import ComponentOperations
 
@@ -18,10 +18,14 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 
 @pytest.fixture
 def mock_component_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock, mock_machinelearning_client: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_05_01: Mock,
+    mock_machinelearning_client: Mock
 ) -> ComponentOperations:
     yield ComponentOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
     )

@@ -13,7 +13,7 @@ from enum import Enum
 from math import isnan
 from uuid import UUID
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables import (
     TableServiceClient,
