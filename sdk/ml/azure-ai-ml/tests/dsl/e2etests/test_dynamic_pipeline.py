@@ -105,5 +105,20 @@ class TestDynamicPipeline(AzureRecordedTestCase):
             },
         }
 
-    def test_dsl_condition_pipeline_with_expression(self):
-        pass
+    @pytest.mark.skip(reason="TODO(2027778): Verify after primitive condition is supported.")
+    def test_dsl_condition_pipeline_with_primitive_input(self, client: MLClient):
+        hello_world_component_no_paths = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
+
+        @pipeline(
+            name="test_mldesigner_component_with_conditional_output",
+            compute="cpu-cluster",
+        )
+        def condition_pipeline():
+            node1 = hello_world_component_no_paths(component_in_number=1)
+            node2 = hello_world_component_no_paths(component_in_number=2)
+            condition(condition=True, false_block=node1, true_block=node2)
+
+        pipeline_job = condition_pipeline()
+        client.jobs.create_or_update(pipeline_job)
