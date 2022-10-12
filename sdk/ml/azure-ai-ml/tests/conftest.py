@@ -13,9 +13,7 @@ import pytest
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -524,8 +522,7 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 
 @pytest.fixture()
 def enable_pipeline_private_preview_features(mocker: MockFixture):
-    mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
-    mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()

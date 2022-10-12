@@ -28,7 +28,8 @@ from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml.entities._builders.control_flow_node import LoopNode
+from azure.ai.ml.entities._builders.condition_node import ConditionNode
+from azure.ai.ml.entities._builders.control_flow_node import LoopNode, ControlFlowNode
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline
@@ -266,11 +267,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
     def _validate_input(self):
         validation_result = self._create_empty_validation_result()
+        # TODO(1979547): refine this logic: not all nodes have `_get_input_binding_dict` method
         used_pipeline_inputs = set(
             itertools.chain(
                 *[
                     self.component._get_input_binding_dict(node if not isinstance(node, LoopNode) else node.body)[0]
-                    for node in self.jobs.values()
+                    for node in self.jobs.values() if not isinstance(node, ConditionNode)
+                    # condition node has no inputs
                 ]
             )
         )

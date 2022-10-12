@@ -98,6 +98,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
+from ..entities._builders.condition_node import ConditionNode
 from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
@@ -419,7 +420,7 @@ class JobOperations(_ScopeDependentOperations):
 
             for node_name, node in job.jobs.items():
                 try:
-                    if not isinstance(node, DoWhile):
+                    if not isinstance(node, (DoWhile, ConditionNode)):
                         node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))

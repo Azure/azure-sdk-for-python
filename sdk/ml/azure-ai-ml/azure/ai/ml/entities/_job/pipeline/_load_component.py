@@ -17,6 +17,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
 from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
+from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
@@ -79,6 +80,12 @@ class _PipelineNodeFactory:
             _type=ControlFlowType.DO_WHILE,
             create_instance_func=None,
             load_from_rest_object_func=DoWhile._from_rest_object,
+            nested_schema=None,
+        )
+        self.register_type(
+            _type=ControlFlowType.IF_ELSE,
+            create_instance_func=None,
+            load_from_rest_object_func=ConditionNode._from_rest_object,
             nested_schema=None,
         )
 

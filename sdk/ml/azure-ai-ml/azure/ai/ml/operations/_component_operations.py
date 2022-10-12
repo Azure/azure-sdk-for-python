@@ -37,6 +37,7 @@ from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarge
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
+from ..entities._builders.condition_node import ConditionNode
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
@@ -531,6 +532,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):
                 resolve_base_node(key, job_instance)
+            elif isinstance(job_instance, ConditionNode):
+                pass
             else:
                 msg = f"Non supported job type in Pipeline: {type(job_instance)}"
                 raise ComponentException(
