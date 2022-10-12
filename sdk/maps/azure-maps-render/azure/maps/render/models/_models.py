@@ -6,6 +6,7 @@
 # pylint: disable=unused-import,ungrouped-imports,super-init-not-called, C0302, C0203
 from typing import NamedTuple, Any
 from .._generated.models import (
+    MapAttribution,
     Copyright as GenCopyright,
     RegionCopyrights as GenRegionCopyrights,
     RegionCopyrightsCountry as GenRegionCopyrightsCountry,
@@ -41,6 +42,22 @@ class BoundingBox(NamedTuple):
     east: float = 0.0
     north: float = 0.0
 
+class RegionalCopyrightsCountry(GenRegionCopyrightsCountry):
+    """Country property.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :keyword iso3_code: ISO3 property.
+    :paramtype iso3_code: str
+    :keyword label: Label property.
+    :paramtype label: str
+    """
+    def __init__(
+        self,
+        **kwargs: Any
+    ):
+        self.iso3_code = kwargs.get("iso3_code", None)
+        self.label = kwargs.get("label", None)
 
 class RegionalCopyrights(GenRegionCopyrights):
     """RegionCopyrights.
@@ -50,7 +67,7 @@ class RegionalCopyrights(GenRegionCopyrights):
     :keyword copyrights: Copyrights array.
     :paramtype copyrights: list[str]
     :keyword country: Country property.
-    :paramtype country: ~azure.maps.render.models.RegionCopyrightsCountry
+    :paramtype country: RegionalCopyrightsCountry
     """
     def __init__(
         self,
@@ -77,24 +94,6 @@ class Copyright(GenCopyright):
         self.general_copyrights = kwargs.get("general_copyrights", None)
         self.regional_copyrights = kwargs.get("regional_copyrights", None)
 
-class RegionCopyrightsCountry(GenRegionCopyrightsCountry):
-    """Country property.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :keyword iso3_code: ISO3 property.
-    :paramtype iso3_code: str
-    :keyword label: Label property.
-    :paramtype label: str
-    """
-    def __init__(
-        self,
-        **kwargs: Any
-    ):
-        self.iso3_code = kwargs.get("iso3_code", None)
-        self.label = kwargs.get("label", None)
-
-
 class MapTileset(GenMapTileset):  # pylint: disable=too-many-instance-attributes
     """Metadata for a tileset in the TileJSON format.
 
@@ -113,7 +112,7 @@ class MapTileset(GenMapTileset):  # pylint: disable=too-many-instance-attributes
     :keyword map_attribution: Copyright attribution to be displayed on the map. Implementations MAY decide
      to treat this as HTML or literal text. For security reasons, make absolutely sure that this
      field can't be abused as a vector for XSS or beacon tracking.
-    :paramtype map_attribution: str
+    :paramtype map_attribution: ~azure.maps.render.models.MapAttribution
     :keyword template: A mustache template to be used to format data from grids for interaction.
     :paramtype template: str
     :keyword legend: A legend to be displayed with the map. Implementations MAY decide to treat this
