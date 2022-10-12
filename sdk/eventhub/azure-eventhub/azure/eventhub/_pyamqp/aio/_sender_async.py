@@ -101,10 +101,10 @@ class SenderLink(Link):
             "payload": output,
         }
         if self.network_trace:
-            _LOGGER.info(
+            _LOGGER.debug(
                 "-> %r", TransferFrame(delivery_id="<pending>", **delivery.frame), extra=self.network_trace_params
             )
-            _LOGGER.info("   %r", delivery.message, extra=self.network_trace_params)
+            _LOGGER.debug("   %r", delivery.message, extra=self.network_trace_params)
         await self._session._outgoing_transfer(delivery)  # pylint:disable=protected-access
         sent_and_settled = False
         if delivery.transfer_state == SessionTransferState.OKAY:
