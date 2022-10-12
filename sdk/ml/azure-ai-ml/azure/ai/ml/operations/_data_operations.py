@@ -152,9 +152,8 @@ class DataOperations(_ScopeDependentOperations):
                 **self._init_kwargs,
             )
             return Data._from_rest_object(data_version_resource)
-        except Exception as ex:
-            if isinstance(ex, (ValidationException, SchemaValidationError)):
-                log_and_raise_error(ex)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:

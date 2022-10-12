@@ -111,9 +111,8 @@ class DatastoreOperations(_ScopeDependentOperations):
             if include_secrets:
                 self._fetch_and_populate_secret(datastore_resource)
             return Datastore._from_rest_object(datastore_resource)
-        except Exception as ex:
-            if isinstance(ex, (ValidationException, SchemaValidationError)):
-                log_and_raise_error(ex)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     def _fetch_and_populate_secret(self, datastore_resource: DatastoreData) -> None:
         if datastore_resource.name and not isinstance(
