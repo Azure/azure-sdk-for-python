@@ -10,6 +10,7 @@
 
 ### Other Changes
 - Added `typing-extensions>=4.0.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-file-datalake[aio]` to install.
 
 ## 12.9.0 (2022-10-11)
 
