@@ -4,10 +4,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List
+from typing import Dict
 import re
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -22,7 +21,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment
+from azure.ai.ml.entities import BatchDeployment, BatchJob
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -88,6 +87,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         if (
             not skip_script_validation
+            and deployment
+            and deployment.code_configuration
             and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
             and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
         ):
@@ -201,7 +202,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str, *, name: str = None) -> List[BatchJobResource]:
+    def list_jobs(self, endpoint_name: str, *, name: str = None) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
@@ -211,7 +212,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
-        :rtype: List[BatchJobResource]
+        :rtype: ItemPaged[BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

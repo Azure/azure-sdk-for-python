@@ -12,8 +12,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import LiteralJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType, LiteralJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput as RestMLTableJobInput
@@ -191,7 +190,8 @@ def to_rest_dataset_literal_inputs(
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
             validate_pipeline_input_key_contains_allowed_characters(input_name)
-        else:
+        elif job_type:
+            # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
             if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):

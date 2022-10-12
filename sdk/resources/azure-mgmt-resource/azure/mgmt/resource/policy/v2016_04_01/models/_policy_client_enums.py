@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class PolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom.
-    """
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of policy definition. Possible values are NotSpecified, BuiltIn, and Custom."""
 
     NOT_SPECIFIED = "NotSpecified"
     BUILT_IN = "BuiltIn"

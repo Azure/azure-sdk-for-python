@@ -31,9 +31,8 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import Component
+from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._validation import ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
@@ -43,6 +42,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ..entities._job.pipeline._attr_dict import has_attr_safe
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -489,14 +489,14 @@ class ComponentOperations(_ScopeDependentOperations):
         def preprocess_job(node):
             """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
             # compute binding to pipeline input is supported on node.
-            supported_fields = ["compute"]
+            supported_fields = ["compute", "compute_name"]
             for field_name in supported_fields:
                 val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
                 if isinstance(val, PipelineInput):
                     # Put binding string to field
                     setattr(node, field_name, val._data_binding())
 
-        def resolve_base_node(name, node):
+        def resolve_base_node(name, node: BaseNode):
             """Resolve node name, compute and component for base node."""
             # Set display name as node name
             if (
@@ -514,6 +514,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 if not is_data_binding_expression(node.compute):
                     # Get compute for each job
                     node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
+                if has_attr_safe(node, "compute_name") and not is_data_binding_expression(node.compute_name):
+                    node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
             # Get the component id for each job's component
             # Note: do not use node.component as Sweep don't have that
             node._component = resolver(

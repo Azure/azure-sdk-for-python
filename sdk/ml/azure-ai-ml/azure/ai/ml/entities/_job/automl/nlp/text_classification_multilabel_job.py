@@ -19,7 +19,9 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.nlp.automl_nlp_job import AutoMLNLPJob
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
+from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
+from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -76,6 +78,13 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             training_data=self.training_data,
             validation_data=self.validation_data,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
+            sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
+            fixed_parameters=self._training_parameters._to_rest_object() if self._training_parameters else None,
+            search_space=(
+                [entry._to_rest_object() for entry in self._search_space if entry is not None]
+                if self._search_space is not None
+                else None
+            ),
             featurization_settings=self._featurization._to_rest_object() if self._featurization else None,
             primary_metric=self.primary_metric,
             log_verbosity=self.log_verbosity,
@@ -116,6 +125,16 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             if task_details.featurization_settings
             else None
         )
+        sweep = (
+            NlpSweepSettings._from_rest_object(task_details.sweep_settings)
+            if task_details.sweep_settings
+            else None
+        )
+        training_parameters = (
+            NlpFixedParameters._from_rest_object(task_details.fixed_parameters)
+            if task_details.fixed_parameters
+            else None
+        )
 
         text_classification_multilabel_job = cls(
             # ----- job specific params
@@ -139,6 +158,9 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             training_data=task_details.training_data,
             validation_data=task_details.validation_data,
             limits=limits,
+            sweep=sweep,
+            training_parameters=training_parameters,
+            search_space=cls._get_search_space_from_str(task_details.search_space),
             featurization=featurization,
             identity=_BaseJobIdentityConfiguration._from_rest_object(
                 properties.identity) if properties.identity else None,
