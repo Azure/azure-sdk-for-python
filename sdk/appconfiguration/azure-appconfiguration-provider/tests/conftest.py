@@ -1,9 +1,8 @@
 import os
 from devtools_testutils import (
-    test_proxy,
     add_general_regex_sanitizer,
-    add_body_string_sanitizer,
-    add_oauth_response_sanitizer
+    add_general_string_sanitizer,
+    add_oauth_response_sanitizer,
 )
 import pytest
 
@@ -22,6 +21,5 @@ def add_sanitizers(test_proxy):
         value="fake-client-secret", regex=os.environ.get('APPCONFIGURATION_CLIENT_SECRET', "fake-client-secret"))
     add_general_regex_sanitizer(
         value="fake-tenant-id", regex=os.environ.get('APPCONFIGURATION_TENANT_ID', "fake-tenant-id"))
-    add_general_regex_sanitizer(
-        value="https://fake-key-vault.vault.azure.net/", regex="/*" + os.environ.get('APPCONFIGURATION_KEY_VAULT_REFERENCE', "fake-key-vault.vault") + "/*")
+    add_general_string_sanitizer(value="https://fake-key-vault.vault.azure.net/", target=os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://fake-key-vault.vault.azure.net/"))
     add_oauth_response_sanitizer()
