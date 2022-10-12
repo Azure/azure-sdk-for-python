@@ -694,6 +694,33 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
+    def test_delete_entity_with_keys_in_uuid(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            entity = {
+                u"PartitionKey": str(TEST_GUID),
+                u"RowKey": str(TEST_GUID),
+            }
+            self.table.upsert_entity(entity)
+            
+            result = self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+            assert result is not None
+
+            entity = {
+                u"PartitionKey": TEST_GUID,
+                u"RowKey": TEST_GUID,
+            }
+            # Act
+            self.table.delete_entity(entity=entity)
+
+            with pytest.raises(ResourceNotFoundError):
+                result = self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
     def test_get_entity_full_metadata(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
