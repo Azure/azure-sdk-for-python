@@ -15,6 +15,8 @@ from typing import Any, Callable, Dict, TypeVar
 from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _GroupAttrDict
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.exceptions import (
     MissingPositionalArgsError,
     MultipleValueError,
@@ -23,8 +25,6 @@ from azure.ai.ml.exceptions import (
     UnsupportedParameterKindError,
     UserErrorException,
 )
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
 from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 from ._settings import _dsl_settings_stack
@@ -42,6 +42,8 @@ SUPPORTED_INPUT_TYPES = (
     bool,
     int,
     float,
+    PipelineExpression,
+    _GroupAttrDict,
 )
 module_logger = logging.getLogger(__name__)
 
@@ -242,7 +244,7 @@ def _validate_args(func, args, kwargs):
 
     def _is_supported_data_type(_data):
         return (
-            isinstance(_data, SUPPORTED_INPUT_TYPES + (PipelineExpression,))
+            isinstance(_data, SUPPORTED_INPUT_TYPES)
             or is_parameter_group(_data)
         )
 

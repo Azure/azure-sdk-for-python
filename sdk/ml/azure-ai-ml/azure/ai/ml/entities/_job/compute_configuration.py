@@ -17,6 +17,7 @@ module_logger = logging.getLogger(__name__)
 class ComputeConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
+        *,
         target: str = None,
         instance_count: int = None,
         is_local: bool = None,

@@ -87,7 +87,10 @@ class TestComponent(AzureRecordedTestCase):
         component_resource = create_component(client, component_name, path=yaml_path)
         loaded_dict = load_registered_component(client, component_name, component_resource.version, omit_fields)
 
-        json_path = yaml_path.rsplit(".", 1)[0] + ".loaded_from_rest.json"
+        base_dir = "./tests/test_configs/internal"
+        json_path = (yaml_path.rsplit(".", 1)[0] + ".json")
+        json_path = os.path.join(base_dir, "loaded_from_rest", os.path.relpath(json_path, base_dir))
+        os.makedirs(os.path.dirname(json_path), exist_ok=True)
         if not os.path.isfile(json_path):
             with open(json_path, "w") as f:
                 json.dump(loaded_dict, f, indent=2)

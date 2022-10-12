@@ -6,47 +6,38 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import ErrorDefinitionProperties
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import RoleAssignmentApproval
-    from ._models_py3 import RoleAssignmentApprovalListResult
-    from ._models_py3 import RoleAssignmentApprovalStep
-    from ._models_py3 import RoleAssignmentApprovalStepListResult
-    from ._models_py3 import RoleAssignmentApprovalStepProperties
-except (SyntaxError, ImportError):
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import ErrorDefinitionProperties  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import RoleAssignmentApproval  # type: ignore
-    from ._models import RoleAssignmentApprovalListResult  # type: ignore
-    from ._models import RoleAssignmentApprovalStep  # type: ignore
-    from ._models import RoleAssignmentApprovalStepListResult  # type: ignore
-    from ._models import RoleAssignmentApprovalStepProperties  # type: ignore
+from ._models_py3 import ErrorDefinition
+from ._models_py3 import ErrorDefinitionProperties
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import RoleAssignmentApproval
+from ._models_py3 import RoleAssignmentApprovalListResult
+from ._models_py3 import RoleAssignmentApprovalStep
+from ._models_py3 import RoleAssignmentApprovalStepListResult
+from ._models_py3 import RoleAssignmentApprovalStepProperties
 
-from ._authorization_management_client_enums import (
-    RoleAssignmentApprovalActorIdentityType,
-    RoleAssignmentApprovalStepReviewResult,
-    RoleAssignmentApprovalStepStatus,
-)
+from ._authorization_management_client_enums import RoleAssignmentApprovalActorIdentityType
+from ._authorization_management_client_enums import RoleAssignmentApprovalStepReviewResult
+from ._authorization_management_client_enums import RoleAssignmentApprovalStepStatus
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ErrorDefinition',
-    'ErrorDefinitionProperties',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'RoleAssignmentApproval',
-    'RoleAssignmentApprovalListResult',
-    'RoleAssignmentApprovalStep',
-    'RoleAssignmentApprovalStepListResult',
-    'RoleAssignmentApprovalStepProperties',
-    'RoleAssignmentApprovalActorIdentityType',
-    'RoleAssignmentApprovalStepReviewResult',
-    'RoleAssignmentApprovalStepStatus',
+    "ErrorDefinition",
+    "ErrorDefinitionProperties",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "RoleAssignmentApproval",
+    "RoleAssignmentApprovalListResult",
+    "RoleAssignmentApprovalStep",
+    "RoleAssignmentApprovalStepListResult",
+    "RoleAssignmentApprovalStepProperties",
+    "RoleAssignmentApprovalActorIdentityType",
+    "RoleAssignmentApprovalStepReviewResult",
+    "RoleAssignmentApprovalStepStatus",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

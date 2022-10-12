@@ -8,10 +8,10 @@ from marshmallow import ValidationError
 from ..exceptions import ValidationException
 from . import Component, Job
 from ._load_functions import _load_common_raising_marshmallow_error, _try_load_yaml_dict
-from ._validation import SchemaValidatableMixin, _ValidationResultBuilder
+from ._validation import SchemaValidatableMixin, _ValidationResultBuilder, ValidationResult
 
 
-def validate_common(cls, path, validate_func, params_override=None):
+def validate_common(cls, path, validate_func, params_override=None) -> ValidationResult:
     params_override = params_override or []
     yaml_dict = _try_load_yaml_dict(path)
 
@@ -30,10 +30,10 @@ def validate_common(cls, path, validate_func, params_override=None):
     except ValidationException as err:
         return _ValidationResultBuilder.from_single_message(err.message)
     except ValidationError as err:
-        return _ValidationResultBuilder.from_validation_error(err, path)
+        return _ValidationResultBuilder.from_validation_error(err, source_path=path)
 
 
-def validate_component(path, ml_client=None, params_override=None):
+def validate_component(path, ml_client=None, params_override=None) -> ValidationResult:
     """Validate a component defined in a local file.
 
     :param path: The path to the component definition file.
@@ -44,7 +44,7 @@ def validate_component(path, ml_client=None, params_override=None):
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :return: The validation result.
-    :rtype: azure.ai.ml.core.ValidationResult
+    :rtype: ValidationResult
     """
     return validate_common(
         cls=Component,
@@ -54,7 +54,7 @@ def validate_component(path, ml_client=None, params_override=None):
     )
 
 
-def validate_job(path, ml_client=None, params_override=None):
+def validate_job(path, ml_client=None, params_override=None) -> ValidationResult:
     """Validate a job defined in a local file.
 
     :param path: The path to the job definition file.
@@ -65,7 +65,7 @@ def validate_job(path, ml_client=None, params_override=None):
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :return: The validation result.
-    :rtype: azure.ai.ml.core.ValidationResult
+    :rtype: ValidationResult
     """
     return validate_common(
         cls=Job,

@@ -9,8 +9,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentJobConstants, IOConstants
@@ -155,6 +155,8 @@ class InputOutputBase(ABC):
 
     @path.setter
     def path(self, path):
+        # For un-configured input/output, we build a default data entry for them.
+        self._build_default_data()
         if hasattr(self._data, "path"):
             self._data.path = path
         else:
@@ -170,6 +172,9 @@ class InputOutputBase(ABC):
         """Return data binding string representation for this input/output."""
         raise NotImplementedError()
 
+    # Why did we have this function? It prevents the DictMixin from being applied.
+    # Unclear if we explicitly do NOT want the mapping protocol to be applied to this, or it this was just
+    # confirmation that it didn't at the time.
     def keys(self):
         # This property is introduced to raise catchable Exception in marshmallow mapping validation trial.
         raise TypeError(f"'{type(self).__name__}' object is not a mapping")
@@ -361,7 +366,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     def _build_default_data(self):
         """Build default data when output not configured."""
         if self._data is None:
-            self._data = Output()
+            # _meta will be None when node._component is not a Component object
+            # so we just leave the type inference work to backend
+            self._data = Output(type=None)
 
     def _build_data(self, data, key=None):
         """Build output data according to assigned input, eg: node.outputs.key = data"""
@@ -438,7 +445,6 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         """
         super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
         self._group_names = group_names if group_names else []
-        self._full_name = "%s.%s" % (".".join(self._group_names), self._name) if self._group_names else self._name
 
     def __str__(self) -> str:
         return self._data_binding()
@@ -451,7 +457,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
             msg = "Can not bind input to another component's input."
             raise ValidationException(message=msg, no_personal_data_message=msg, target=ErrorTarget.PIPELINE)
         if isinstance(data, (PipelineInput, NodeOutput)):
-            # If value is input or output, it's a data binding, we require it have a owner so we can convert it to
+            # If value is input or output, it's a data binding, owner is required to convert it to
             # a data binding, eg: ${{parent.inputs.xxx}}
             if isinstance(data, NodeOutput) and data._owner is None:
                 msg = "Setting input binding {} to output without owner is not allowed."
@@ -468,7 +474,8 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         return data
 
     def _data_binding(self):
-        return f"${{{{parent.inputs.{self._full_name}}}}}"
+        full_name = "%s.%s" % (".".join(self._group_names), self._name) if self._group_names else self._name
+        return f"${{{{parent.inputs.{full_name}}}}}"
 
     def _to_input(self) -> Input:
         """Convert pipeline input to component input for pipeline component."""
@@ -593,15 +600,13 @@ class _GroupAttrDict(InputsAttrDict):
 
     def __getattr__(self, name: K) -> V:
         if name not in self:
-            # pylint: disable=unnecessary-comprehension
-            raise UnexpectedAttributeError(keyword=name, keywords=[key for key in self])
+            raise UnexpectedAttributeError(keyword=name, keywords=list(self))
         return super().__getitem__(name)
 
     def __getitem__(self, item: K) -> V:
         # We raise this exception instead of KeyError
         if item not in self:
-            # pylint: disable=unnecessary-comprehension
-            raise UnexpectedKeywordError(func_name="ParameterGroup", keyword=item, keywords=[key for key in self])
+            raise UnexpectedKeywordError(func_name="ParameterGroup", keyword=item, keywords=list(self))
         return super().__getitem__(item)
 
     # For Jupyter Notebook auto-completion
@@ -628,6 +633,15 @@ class _GroupAttrDict(InputsAttrDict):
                 )
         return flattened_parameters
 
+    def insert_group_name_for_items(self, group_name):
+        # Insert one group name for all items.
+        for v in self.values():
+            if isinstance(v, _GroupAttrDict):
+                v.insert_group_name_for_items(group_name)
+            elif isinstance(v, PipelineInput):
+                # Insert group names for pipeline input
+                v._group_names = [group_name] + v._group_names
+
 
 class OutputsAttrDict(dict):
     def __init__(self, outputs: dict, **kwargs):
@@ -644,6 +658,13 @@ class OutputsAttrDict(dict):
 
     def __getattr__(self, item) -> NodeOutput:
         return self.__getitem__(item)
+
+    def __getitem__(self, item) -> NodeOutput:
+        if item not in self:
+            # We raise this exception instead of KeyError as OutputsAttrDict doesn't support add new item after
+            # __init__.
+            raise UnexpectedAttributeError(keyword=item, keywords=list(self))
+        return super().__getitem__(item)
 
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):

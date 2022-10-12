@@ -10,7 +10,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData as FebRestJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
@@ -362,7 +362,7 @@ class TestPipelineJobEntity:
 
         assert actual_dict == {
             "featurization": {"dataset_language": "eng"},
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -397,7 +397,7 @@ class TestPipelineJobEntity:
         )
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -426,7 +426,7 @@ class TestPipelineJobEntity:
         actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["automl_text_ner"], omit_fields)
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -1454,3 +1454,17 @@ class TestPipelineJobEntity:
         rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
         assert pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
         assert rest_pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
+
+    def test_pipeline_node_default_output(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+
+        # pipeline level output
+        pipeline_output = pipeline.outputs["job_out_path_2"]
+        assert pipeline_output.mode == "upload"
+
+        # other node level output tests can be found in
+        # dsl/unittests/test_component_func.py::TestComponentFunc::test_component_outputs
+        # data-binding-expression
+        with pytest.raises(ValidationException, match="<class '.*'> does not support setting path."):
+            pipeline.jobs["merge_component_outputs"].outputs["component_out_path_1"].path = "xxx"

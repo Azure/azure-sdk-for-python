@@ -5,18 +5,18 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import datetime
+from datetime import timedelta
 from azure.core.credentials import AccessToken
 from azure.communication.identity.aio import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
 from azure.communication.identity._shared.utils import parse_connection_str
-from azure_devtools.scenario_tests import RecordingProcessor
-from devtools_testutils import ResourceGroupPreparer
 from _shared.helper import URIIdentityReplacer, URIMsalUsernameReplacer
 from asynctestcase  import AsyncCommunicationIdentityTestCase
+from devtools_testutils import is_live
 from _shared.testcase import BodyReplacerProcessor
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
+from utils import is_token_expiration_within_allowed_deviation
 from azure.identity.aio import DefaultAzureCredential
 
 class FakeTokenCredential(object):
@@ -36,7 +36,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
     @CommunicationPreparer()
     async def test_create_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
         endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
-        from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
         else:
@@ -75,9 +74,76 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
+    async def test_create_user_and_token_with_custom_minimum_validity(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        
+        token_expires_in = timedelta(minutes=60)
+        
+        async with identity_client:
+            user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+
+        assert user.properties.get('id') is not None
+        assert token_response.token is not None
+        
+        if is_live():
+            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
+        
+    @CommunicationPreparer()
+    async def test_create_user_and_token_with_custom_maximum_validity(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        
+        token_expires_in = timedelta(minutes=1440)
+        
+        async with identity_client:
+            user, token_response = await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+
+        assert user.properties.get('id') is not None
+        assert token_response.token is not None
+        
+        if is_live():
+            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
+        
+    @CommunicationPreparer()
+    async def test_create_user_and_token_with_custom_validity_under_minimum_allowed(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        
+        token_expires_in = timedelta(minutes=59)
+        
+        async with identity_client:
+            with pytest.raises(Exception) as ex:
+                await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+            
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+        
+    @CommunicationPreparer()
+    async def test_create_user_and_token_with_custom_validity_over_maximum_allowed(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        
+        token_expires_in = timedelta(minutes=1441)
+        
+        async with identity_client:
+            with pytest.raises(Exception) as ex:
+                await identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+            
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+
+    @CommunicationPreparer()
     async def test_get_token_from_managed_identity(self, communication_livetest_dynamic_connection_string):
         endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
-        from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
         else:
@@ -106,11 +172,82 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
 
         assert user.properties.get('id') is not None
         assert token_response.token is not None
+        
+    @CommunicationPreparer()
+    async def test_get_token_with_custom_minimum_validity(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        
+        token_expires_in = timedelta(minutes=60)
+        
+        async with identity_client:
+            user = await identity_client.create_user()
+            token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+
+        assert user.properties.get('id') is not None
+        assert token_response.token is not None
+        
+        if is_live():
+            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
+        
+    @CommunicationPreparer()
+    async def test_get_token_with_custom_maximum_validity(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        
+        token_expires_in = timedelta(minutes=1440)
+        
+        async with identity_client:
+            user = await identity_client.create_user()
+            token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+
+        assert user.properties.get('id') is not None
+        assert token_response.token is not None
+        
+        if is_live():
+            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
+        
+    @CommunicationPreparer()
+    async def test_get_token_with_custom_validity_under_minimum_allowed(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+        
+        token_expires_in = timedelta(minutes=59)
+        
+        async with identity_client:
+                with pytest.raises(Exception) as ex:
+                    user = await identity_client.create_user()
+                    await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
+        
+    @CommunicationPreparer()
+    async def test_get_token_with_custom_validity_over_maximum_allowed(self, communication_livetest_dynamic_connection_string):
+        identity_client = CommunicationIdentityClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        token_expires_in = timedelta(minutes=1441)
+        
+        async with identity_client:
+            with pytest.raises(Exception) as ex:
+                user = await identity_client.create_user()
+                await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+
+        assert str(ex.value.status_code) == "400"
+        assert ex.value.message is not None
 
     @CommunicationPreparer()
     async def test_revoke_tokens_from_managed_identity(self, communication_livetest_dynamic_connection_string):
         endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
-        from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
         else:
@@ -145,7 +282,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
     @CommunicationPreparer()
     async def test_delete_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
         endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
-        from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
         else:
@@ -234,7 +370,6 @@ class CommunicationIdentityClientTestAsync(AsyncCommunicationIdentityTestCase):
         if(self.skip_get_token_for_teams_user_test()):
             return
         endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
-        from devtools_testutils import is_live
         if not is_live():
             credential = FakeTokenCredential()
         else:

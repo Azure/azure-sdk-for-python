@@ -977,6 +977,34 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertFalse(envelope.data.base_data.success)
 
+    def test_span_to_envelope_sample_rate(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "test": "asd",
+                "http.method": "GET",
+                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
+                "http.status_code": 200,
+                "_MS.sampleRate": 50,
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.sample_rate, 50)
+        self.assertIsNone(envelope.data.base_data.properties.get("_MS.sampleRate"))
+
     def test_span_to_envelope_properties(self):
         exporter = self._exporter
         start_time = 1575494316027613500

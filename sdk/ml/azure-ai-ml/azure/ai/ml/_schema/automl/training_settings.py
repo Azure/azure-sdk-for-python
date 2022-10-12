@@ -6,11 +6,10 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ClassificationModels,
     ForecastingModels,
     RegressionModels,
-    StackEnsembleSettings,
     StackMetaLearnerType,
 )
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
@@ -37,6 +36,7 @@ class StackEnsembleSettingsSchema(metaclass=PatchedSchemaMeta):
         # Converting it here, as there is no corresponding entity class
         stack_meta_learner_type = data.pop("stack_meta_learner_type")
         stack_meta_learner_type = StackMetaLearnerType[stack_meta_learner_type.upper()]
+        from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
         return StackEnsembleSettings(stack_meta_learner_type=stack_meta_learner_type, **data)
 
 

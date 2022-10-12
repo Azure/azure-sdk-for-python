@@ -125,3 +125,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry.instrumentation.urllib3",
     "opentelemetry.instrumentation.wsgi",
 )
+
+# sampleRate
+
+_SAMPLE_RATE_KEY = "_MS.sampleRate"

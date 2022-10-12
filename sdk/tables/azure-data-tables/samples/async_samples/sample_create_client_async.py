@@ -56,7 +56,7 @@ class CreateClients(object):
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-        with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
+        async with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
             properties = await table_service.get_service_properties()
             print("Properties: {}".format(properties))
         # [END create_table_service_client]
@@ -69,5 +69,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
