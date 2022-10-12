@@ -11,6 +11,7 @@ from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.trace import SpanKind
 
+from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
@@ -46,7 +47,7 @@ _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
 ]
 
 _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
-    "sampleRate",
+    _SAMPLE_RATE_KEY,
 ]
 
 
@@ -425,8 +426,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             data.target = str(target)[:1024]
 
     # sampleRate
-    if "sampleRate" in span.attributes:
-        envelope.sample_rate = span.attributes["sampleRate"]
+    if _SAMPLE_RATE_KEY in span.attributes:
+        envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
 
     data.properties = _utils._filter_custom_properties(
         span.attributes,

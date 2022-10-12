@@ -11,7 +11,7 @@
 
 ### Bugs Fixed
 
-- Fixed sampleRate field in ApplicationInsightsSampler
+- Fixed sampleRate field in ApplicationInsightsSampler, changed attribute to `_MS.sampleRate`
     ([#26771](https://github.com/Azure/azure-sdk-for-python/pull/26771))
 
 ### Other Changes
