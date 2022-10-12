@@ -10,6 +10,7 @@ from datetime import datetime
 from math import isnan
 from enum import Enum
 import sys
+from uuid import UUID
 
 import six
 from azure.core import MatchConditions
@@ -34,6 +35,8 @@ def _get_match_headers(etag, match_condition):
 
 def _prepare_key(keyvalue):
     """Duplicate the single quote char to escape."""
+    if isinstance(keyvalue, UUID):
+        keyvalue = str(keyvalue)
     try:
         return keyvalue.replace("'", "''")
     except AttributeError:

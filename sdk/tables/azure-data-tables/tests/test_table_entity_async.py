@@ -959,23 +959,24 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_entity_non_string_partition_and_row_key(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_delete_entity_with_keys_in_uuid(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {
-                "PartitionKey": TEST_GUID,
-                "RowKey": TEST_GUID,
+                u"PartitionKey": TEST_GUID,
+                u"RowKey": TEST_GUID,
             }
-            await self.table.create_entity(entity)
+            await self.table.upsert_entity(entity)
+            
+            result = await self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+            assert result is not None
 
             # Act
             await self.table.delete_entity(entity=entity)
 
-            count = 0
-            async for entity in self.table.list_entities():
-                count += 1
-            assert count == 0
+            with pytest.raises(ResourceNotFoundError):
+                result = await self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
         finally:
             await self._tear_down()
 

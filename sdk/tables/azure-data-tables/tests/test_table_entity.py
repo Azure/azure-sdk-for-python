@@ -1223,23 +1223,24 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_delete_entity_non_string_partition_and_row_key(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_delete_entity_with_keys_in_uuid(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
             entity = {
-                "PartitionKey": TEST_GUID,
-                "RowKey": TEST_GUID,
+                u"PartitionKey": TEST_GUID,
+                u"RowKey": TEST_GUID,
             }
-            self.table.create_entity(entity)
+            self.table.upsert_entity(entity)
+            
+            result = self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+            assert result is not None
 
             # Act
             self.table.delete_entity(entity=entity)
 
-            count = 0
-            for entity in self.table.list_entities():
-                count += 1
-            assert count == 0
+            with pytest.raises(ResourceNotFoundError):
+                result = self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
         finally:
             self._tear_down()
 
