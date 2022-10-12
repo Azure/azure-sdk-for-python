@@ -585,14 +585,18 @@ For more information on Integrated Cache, see [Azure Cosmos DB integrated cache 
 
  CosmosDB SDK under the hood is using `requests` library as a network transport. In case you would like to change it's settings you may pass it into `CosmosClient` constructor or `from_connection_string` class method.
 
- For example if you would like to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`.
+ In the case of the synchronous client to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`. The asynchronous client takes instance of `AioHttpTransport` with `aiohttp.ClientSession` instead. Please be aware that by doing this one is forfeiting any default configuration of the Session that the SDK might be doing (for example, the current Core implementation will disable the requests retry policy in favour of the Azure SDK retry policy, otherwise both retry policies will come into play and may change the error behaviour). Another thing to consider is the ownership of the session, SDK will be handling the session. When one needs to be able to control the Session there is a flag `session_owner` that can be set `RequestsTransport(session=session, session_owner=False)`
 
  ```Python
  from azure.cosmos import CosmosClient
+ from azure.core.pipeline.transport import RequestsTransport
  import requests
+
  session = requests.Session()
  adapter = requests.adapters.HTTPAdapter(pool_connections=42, pool_maxsize=42)
  session.mount('https://', adapter)
+
+ COSMOS_CONNECTION_STRING = os.environ['COSMOS_CONNECTION_STRING']
  cosmos_client = CosmosClient.from_connection_string(
      COSMOS_CONNECTION_STRING,
      transport=RequestsTransport(session=session)
