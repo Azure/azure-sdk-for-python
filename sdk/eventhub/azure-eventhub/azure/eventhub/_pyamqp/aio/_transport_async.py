@@ -424,7 +424,7 @@ class AsyncTransport(
             )
 
 
-class WebSocketTransportAsync(AsyncTransportMixin):
+class WebSocketTransportAsync(AsyncTransportMixin): # pylint: disable=too-many-instance-attributes
     def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self._read_buffer = BytesIO()
         self.loop = asyncio.get_running_loop()
@@ -461,7 +461,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
-    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-arguments
+    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
         from websocket import WebSocketTimeoutException
 
