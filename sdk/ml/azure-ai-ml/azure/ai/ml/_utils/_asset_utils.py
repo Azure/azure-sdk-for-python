@@ -104,6 +104,7 @@ class IgnoreFile(object):
             self._path_spec = self._create_pathspec()
         file_path = Path(file_path)
         if file_path.is_absolute():
+            file_path = file_path.resolve()
             ignore_dirname = self._path.parent
             if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
                 return True
