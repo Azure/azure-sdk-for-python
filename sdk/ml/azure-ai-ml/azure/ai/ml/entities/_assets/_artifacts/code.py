@@ -110,7 +110,11 @@ class Code(Artifact):
         if hasattr(self, "_hash_sha256"):
             properties["hash_sha256"] = self._hash_sha256
             properties["hash_version"] = get_content_hash_version()
-        code_version = CodeVersionDetails(code_uri=self.path, is_anonymous=self._is_anonymous, properties=properties, is_ip_protected= self.is_ip_protected)
+        code_version = CodeVersionDetails(code_uri=self.path, 
+                                          is_anonymous=self._is_anonymous, 
+                                          properties=properties, 
+                                          is_ip_protected= self.is_ip_protected
+                                          )
         code_version_resource = CodeVersionData(properties=code_version)
 
         return code_version_resource
