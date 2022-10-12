@@ -149,6 +149,36 @@ class AsyncTransportMixin:
         await self.write(data)
         # _LOGGER.info("OCH%d -> %r", channel, frame)
 
+class AsyncTransport(
+    AsyncTransportMixin
+):  # pylint: disable=too-many-instance-attributes
+    """Common superclass for TCP and SSL transports."""
+
+    def __init__(
+        self,
+        host,
+        *,
+        port=AMQP_PORT,
+        connect_timeout=None,
+        ssl_opts=False,
+        socket_settings=None,
+        raise_on_initial_eintr=True,
+        **kwargs,  # pylint: disable=unused-argument
+    ):
+        self.connected = False
+        self.sock = None
+        self.reader = None
+        self.writer = None
+        self.raise_on_initial_eintr = raise_on_initial_eintr
+        self._read_buffer = BytesIO()
+        self.host, self.port = to_host_port(host, port)
+
+        self.connect_timeout = connect_timeout
+        self.socket_settings = socket_settings
+        self.loop = asyncio.get_running_loop()
+        self.socket_lock = asyncio.Lock()
+        self.sslopts = self._build_ssl_opts(ssl_opts)
+
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
             return sslopts
@@ -190,37 +220,6 @@ class AsyncTransportMixin:
         ctx.load_verify_locations(cafile=certifi.where())
         ctx.check_hostname = check_hostname
         return ctx
-
-
-class AsyncTransport(
-    AsyncTransportMixin
-):  # pylint: disable=too-many-instance-attributes
-    """Common superclass for TCP and SSL transports."""
-
-    def __init__(
-        self,
-        host,
-        *,
-        port=AMQP_PORT,
-        connect_timeout=None,
-        ssl_opts=False,
-        socket_settings=None,
-        raise_on_initial_eintr=True,
-        **kwargs,  # pylint: disable=unused-argument
-    ):
-        self.connected = False
-        self.sock = None
-        self.reader = None
-        self.writer = None
-        self.raise_on_initial_eintr = raise_on_initial_eintr
-        self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host, port)
-
-        self.connect_timeout = connect_timeout
-        self.socket_settings = socket_settings
-        self.loop = asyncio.get_running_loop()
-        self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl_opts)
 
     async def connect(self):
         try:
@@ -425,87 +424,56 @@ class AsyncTransport(
             )
 
 
-class WebSocketTransportAsync(
-    AsyncTransportMixin
-): # pylint: disable=too-many-instance-attributes
-    def __init__(
-        self,
-        host,
-        *,
-        port=WEBSOCKET_PORT,
-        connect_timeout=None,
-        ssl_opts=None,
-        **kwargs
-    ):
+class WebSocketTransportAsync(AsyncTransportMixin):
+    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
         self._read_buffer = BytesIO()
+        self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
+        self.sslopts = ssl if isinstance(ssl, dict) else {}
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
-        self.host, self.port = to_host_port(host, port)
+        self.host = host
         self.ws = None
-        self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
-        self.connected = False
 
     async def connect(self):
-        username, password = None, None
-        http_proxy_host, http_proxy_port = None, None
-        http_proxy_auth = None
-
+        http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
         if self._http_proxy:
             http_proxy_host = self._http_proxy["proxy_hostname"]
             http_proxy_port = self._http_proxy["proxy_port"]
-            if http_proxy_host and http_proxy_port:
-                http_proxy_host = f"{http_proxy_host}:{http_proxy_port}"
             username = self._http_proxy.get("username", None)
             password = self._http_proxy.get("password", None)
-
-        try:
-            from aiohttp import ClientSession
-            from urllib.parse import urlsplit
-
             if username or password:
-                from aiohttp import BasicAuth
+                http_proxy_auth = (username, password)
+        try:
+            from websocket import create_connection
 
-                http_proxy_auth = BasicAuth(login=username, password=password)
-
-            self.session = ClientSession()
-            if self._custom_endpoint:
-                url = f"wss://{self._custom_endpoint}"
-            else:
-                url = f"wss://{self.host}"
-                parsed_url = urlsplit(url)
-                url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
-
-            self.ws = await self.session.ws_connect(
-                url=url,
+            self.ws = create_connection(
+                url="wss://{}".format(self._custom_endpoint or self.host),
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
-                protocols=[AMQP_WS_SUBPROTOCOL],
-                autoclose=False,
-                proxy=http_proxy_host,
-                proxy_auth=http_proxy_auth,
-                ssl=self.sslopts,
+                skip_utf8_validation=True,
+                sslopt=self.sslopts,
+                http_proxy_host=http_proxy_host,
+                http_proxy_port=http_proxy_port,
+                http_proxy_auth=http_proxy_auth,
             )
-            self.connected = True
-
         except ImportError:
-            raise ValueError(
-                "Please install aiohttp library to use websocket transport."
-            )
+            raise ValueError("Please install websocket-client library to use websocket transport.")
 
-    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
+    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-arguments
         """Read exactly n bytes from the peer."""
+        from websocket import WebSocketTimeoutException
 
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
         n -= nbytes
-
         try:
             while n:
-                data = await self.ws.receive_bytes()
+                data = await self.loop.run_in_executor(None, self.ws.recv)
+
                 if len(data) <= n:
                     view[length : length + len(data)] = data
                     n -= len(data)
@@ -513,20 +481,20 @@ class WebSocketTransportAsync(
                     view[length : length + n] = data[0:n]
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
+
             return view
-        except asyncio.TimeoutError:
+        except WebSocketTimeoutException:
             raise TimeoutError()
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        await self.ws.close()
-        await self.session.close()
+        await self.loop.run_in_executor(None, self.ws.close)
         self.connected = False
 
     async def write(self, s):
-        """Completely write a string (byte array) to the peer.
+        """Completely write a string to the peer.
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        await self.loop.run_in_executor(None, self.ws.send_binary, s)
