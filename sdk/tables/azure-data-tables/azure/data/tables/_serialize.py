@@ -10,7 +10,6 @@ from datetime import datetime
 from math import isnan
 from enum import Enum
 import sys
-from uuid import UUID
 
 import six
 from azure.core import MatchConditions
