@@ -522,7 +522,9 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 
 @pytest.fixture()
 def enable_pipeline_private_preview_features(mocker: MockFixture):
-    mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()

@@ -1,5 +1,4 @@
 import contextlib
-
 import pytest
 
 from azure.ai.ml._schema.pipeline import PipelineJobSchema
