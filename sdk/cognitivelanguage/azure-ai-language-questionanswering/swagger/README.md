@@ -69,7 +69,7 @@ These settings apply only when `--tag=release_authoring_1_1` is specified on the
 ```yaml $(tag) == 'release_authoring_1_1'
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/59ad2b7dd63e952822aa51e11a26a0af5724f996/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
 output-folder: ../azure/ai/language/questionanswering/authoring
-title: QuestionAnsweringAuthoringClient
+title: AuthoringClient
 ```
 
 
@@ -91,15 +91,8 @@ directive:
 
 ```yaml
 # Define HTTP 200 responses for LROs to document result model.
+# Note there is no transform for DeleteProject. This should return None.
 directive:
-- where-operation: QuestionAnsweringProjects_DeleteProject
-  transform: |
-    $.responses["200"] = {
-      description: "Project delete job status.",
-      schema: {
-        "$ref": "#/definitions/JobState"
-      }
-    };
 - where-operation: QuestionAnsweringProjects_DeployProject
   transform: |
     $.responses["200"] = {

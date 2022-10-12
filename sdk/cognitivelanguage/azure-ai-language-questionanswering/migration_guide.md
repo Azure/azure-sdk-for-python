@@ -174,13 +174,13 @@ client = QnAMakerClient(
 )
 ```
 
-Now in `azure-ai-language-questionanswering` you can create a `QuestionAnsweringAuthoringClient` using an [AzureKeyCredential][azure_key_credential] or a token credential from the [azure-identity](https://pypi.org/project/azure-identity/) library:
+Now in `azure-ai-language-questionanswering` you can create a `AuthoringClient` using an [AzureKeyCredential][azure_key_credential] or a token credential from the [azure-identity](https://pypi.org/project/azure-identity/) library:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
-client = QuestionAnsweringAuthoringClient(
+client = AuthoringClient(
     endpoint="https://<my-cognitiveservices-account>.cognitiveservices.azure.com",
     credential=AzureKeyCredential("API key")
 )
@@ -188,9 +188,9 @@ client = QuestionAnsweringAuthoringClient(
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
-client = QuestionAnsweringAuthoringClient(
+client = AuthoringClient(
     endpoint="https://<my-cognitiveservices-account>.cognitiveservices.azure.com",
     credential=DefaultAzureCredential()
 )
@@ -243,9 +243,9 @@ Now in `azure-ai-language-questionanswering`, you can create a new Question Answ
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
-client = QuestionAnsweringAuthoringClient(
+client = AuthoringClient(
     endpoint="https://<my-cognitiveservices-account>.cognitiveservices.azure.com",
     credential=AzureKeyCredential("API key")
 )
@@ -314,9 +314,9 @@ Now in `azure-ai-language-questionanswering`, you can update your knowledge sour
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
-client = QuestionAnsweringAuthoringClient(
+client = AuthoringClient(
     endpoint="https://<my-cognitiveservices-account>.cognitiveservices.azure.com",
     credential=AzureKeyCredential("API key")
 )
@@ -348,9 +348,9 @@ You can also update a project's questions and answers directly as follows:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
-client = QuestionAnsweringAuthoringClient(
+client = AuthoringClient(
     endpoint="https://<my-cognitiveservices-account>.cognitiveservices.azure.com",
     credential=AzureKeyCredential("API key")
 )
@@ -403,9 +403,9 @@ Now you can export your Question Answering project:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
-client = QuestionAnsweringAuthoringClient(
+client = AuthoringClient(
     endpoint="https://<my-cognitiveservices-account>.cognitiveservices.azure.com",
     credential=AzureKeyCredential("API key")
 )
@@ -440,9 +440,9 @@ Now in `azure-ai-language-questionanswering`, you can delete a project using the
 
 ```python
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import AuthoringClient
 
-client = QuestionAnsweringAuthoringClient(
+client = AuthoringClient(
     endpoint="https://<my-cognitiveservices-account>.cognitiveservices.azure.com",
     credential=AzureKeyCredential("API key")
 )
