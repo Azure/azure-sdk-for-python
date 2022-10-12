@@ -45,6 +45,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             preferred_aggregation=kwargs.get("preferred_aggregation"),
         )
 
+    # pylint: disable=R1702
     def export(
         self,
         metrics_data: OTMetricsData,
@@ -185,7 +186,11 @@ def _convert_point_to_envelope(
 
 
 # pylint: disable=protected-access
-def _handle_std_metric_envelope(envelope: TelemetryItem, name: str, attributes: Mapping[str, AttributeValue]) -> Optional[TelemetryItem]:
+def _handle_std_metric_envelope(
+    envelope: TelemetryItem,
+    name: str,
+    attributes:Mapping[str, AttributeValue]
+) -> Optional[TelemetryItem]:
     properties = {}
     tags = envelope.tags
     # TODO: switch to semconv constants
@@ -247,4 +252,3 @@ def _get_metric_export_result(result: ExportResult) -> MetricExportResult:
     ):
         return MetricExportResult.FAILURE
     return None
-
