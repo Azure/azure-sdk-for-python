@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,14 +7,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._avs_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27,22 +36,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -59,72 +66,112 @@ class Addon(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: The properties of an addon resource.
-    :type properties: ~azure.mgmt.avs.models.AddonProperties
+    :ivar properties: The properties of an addon resource.
+    :vartype properties: ~azure.mgmt.avs.models.AddonProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AddonProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "AddonProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["AddonProperties"] = None,
-        **kwargs
-    ):
-        super(Addon, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.AddonProperties"] = None, **kwargs):
+        """
+        :keyword properties: The properties of an addon resource.
+        :paramtype properties: ~azure.mgmt.avs.models.AddonProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class AddonProperties(msrest.serialization.Model):
+class AddonProperties(_serialization.Model):
     """The properties of an addon.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AddonHcxProperties, AddonSrmProperties, AddonVrProperties.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AddonArcProperties, AddonHcxProperties, AddonSrmProperties, AddonVrProperties
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param addon_type: Required. The type of private cloud addon.Constant filled by server.
-     Possible values include: "SRM", "VR", "HCX".
-    :type addon_type: str or ~azure.mgmt.avs.models.AddonType
-    :ivar provisioning_state: The state of the addon provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Building", "Deleting", "Updating".
+    :ivar addon_type: The type of private cloud addon. Required. Known values are: "SRM", "VR",
+     "HCX", and "Arc".
+    :vartype addon_type: str or ~azure.mgmt.avs.models.AddonType
+    :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
     """
 
     _validation = {
-        'addon_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "addon_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'addon_type': {'key': 'addonType', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "addon_type": {"key": "addonType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     _subtype_map = {
-        'addon_type': {'HCX': 'AddonHcxProperties', 'SRM': 'AddonSrmProperties', 'VR': 'AddonVrProperties'}
+        "addon_type": {
+            "Arc": "AddonArcProperties",
+            "HCX": "AddonHcxProperties",
+            "SRM": "AddonSrmProperties",
+            "VR": "AddonVrProperties",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AddonProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.addon_type = None  # type: Optional[str]
         self.provisioning_state = None
+
+
+class AddonArcProperties(AddonProperties):
+    """The properties of an Arc addon.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar addon_type: The type of private cloud addon. Required. Known values are: "SRM", "VR",
+     "HCX", and "Arc".
+    :vartype addon_type: str or ~azure.mgmt.avs.models.AddonType
+    :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Building", "Deleting", "Updating", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
+    :ivar v_center: The VMware vCenter resource ID.
+    :vartype v_center: str
+    """
+
+    _validation = {
+        "addon_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "addon_type": {"key": "addonType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "v_center": {"key": "vCenter", "type": "str"},
+    }
+
+    def __init__(self, *, v_center: Optional[str] = None, **kwargs):
+        """
+        :keyword v_center: The VMware vCenter resource ID.
+        :paramtype v_center: str
+        """
+        super().__init__(**kwargs)
+        self.addon_type = "Arc"  # type: str
+        self.v_center = v_center
 
 
 class AddonHcxProperties(AddonProperties):
@@ -134,40 +181,39 @@ class AddonHcxProperties(AddonProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param addon_type: Required. The type of private cloud addon.Constant filled by server.
-     Possible values include: "SRM", "VR", "HCX".
-    :type addon_type: str or ~azure.mgmt.avs.models.AddonType
-    :ivar provisioning_state: The state of the addon provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Building", "Deleting", "Updating".
+    :ivar addon_type: The type of private cloud addon. Required. Known values are: "SRM", "VR",
+     "HCX", and "Arc".
+    :vartype addon_type: str or ~azure.mgmt.avs.models.AddonType
+    :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
-    :param offer: Required. The HCX offer, example VMware MaaS Cloud Provider (Enterprise).
-    :type offer: str
+    :ivar offer: The HCX offer, example VMware MaaS Cloud Provider (Enterprise). Required.
+    :vartype offer: str
     """
 
     _validation = {
-        'addon_type': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'offer': {'required': True},
+        "addon_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "offer": {"required": True},
     }
 
     _attribute_map = {
-        'addon_type': {'key': 'addonType', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
+        "addon_type": {"key": "addonType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        offer: str,
-        **kwargs
-    ):
-        super(AddonHcxProperties, self).__init__(**kwargs)
-        self.addon_type = 'HCX'  # type: str
+    def __init__(self, *, offer: str, **kwargs):
+        """
+        :keyword offer: The HCX offer, example VMware MaaS Cloud Provider (Enterprise). Required.
+        :paramtype offer: str
+        """
+        super().__init__(**kwargs)
+        self.addon_type = "HCX"  # type: str
         self.offer = offer
 
 
-class AddonList(msrest.serialization.Model):
+class AddonList(_serialization.Model):
     """A paged list of addons.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -179,20 +225,18 @@ class AddonList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Addon]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Addon]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AddonList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -204,35 +248,34 @@ class AddonSrmProperties(AddonProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param addon_type: Required. The type of private cloud addon.Constant filled by server.
-     Possible values include: "SRM", "VR", "HCX".
-    :type addon_type: str or ~azure.mgmt.avs.models.AddonType
-    :ivar provisioning_state: The state of the addon provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Building", "Deleting", "Updating".
+    :ivar addon_type: The type of private cloud addon. Required. Known values are: "SRM", "VR",
+     "HCX", and "Arc".
+    :vartype addon_type: str or ~azure.mgmt.avs.models.AddonType
+    :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
-    :param license_key: The Site Recovery Manager (SRM) license.
-    :type license_key: str
+    :ivar license_key: The Site Recovery Manager (SRM) license.
+    :vartype license_key: str
     """
 
     _validation = {
-        'addon_type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "addon_type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'addon_type': {'key': 'addonType', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'license_key': {'key': 'licenseKey', 'type': 'str'},
+        "addon_type": {"key": "addonType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "license_key": {"key": "licenseKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        license_key: Optional[str] = None,
-        **kwargs
-    ):
-        super(AddonSrmProperties, self).__init__(**kwargs)
-        self.addon_type = 'SRM'  # type: str
+    def __init__(self, *, license_key: Optional[str] = None, **kwargs):
+        """
+        :keyword license_key: The Site Recovery Manager (SRM) license.
+        :paramtype license_key: str
+        """
+        super().__init__(**kwargs)
+        self.addon_type = "SRM"  # type: str
         self.license_key = license_key
 
 
@@ -243,40 +286,39 @@ class AddonVrProperties(AddonProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param addon_type: Required. The type of private cloud addon.Constant filled by server.
-     Possible values include: "SRM", "VR", "HCX".
-    :type addon_type: str or ~azure.mgmt.avs.models.AddonType
-    :ivar provisioning_state: The state of the addon provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Building", "Deleting", "Updating".
+    :ivar addon_type: The type of private cloud addon. Required. Known values are: "SRM", "VR",
+     "HCX", and "Arc".
+    :vartype addon_type: str or ~azure.mgmt.avs.models.AddonType
+    :ivar provisioning_state: The state of the addon provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.AddonProvisioningState
-    :param vrs_count: Required. The vSphere Replication Server (VRS) count.
-    :type vrs_count: int
+    :ivar vrs_count: The vSphere Replication Server (VRS) count. Required.
+    :vartype vrs_count: int
     """
 
     _validation = {
-        'addon_type': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'vrs_count': {'required': True},
+        "addon_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "vrs_count": {"required": True},
     }
 
     _attribute_map = {
-        'addon_type': {'key': 'addonType', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'vrs_count': {'key': 'vrsCount', 'type': 'int'},
+        "addon_type": {"key": "addonType", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "vrs_count": {"key": "vrsCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        vrs_count: int,
-        **kwargs
-    ):
-        super(AddonVrProperties, self).__init__(**kwargs)
-        self.addon_type = 'VR'  # type: str
+    def __init__(self, *, vrs_count: int, **kwargs):
+        """
+        :keyword vrs_count: The vSphere Replication Server (VRS) count. Required.
+        :paramtype vrs_count: int
+        """
+        super().__init__(**kwargs)
+        self.addon_type = "VR"  # type: str
         self.vrs_count = vrs_count
 
 
-class AdminCredentials(msrest.serialization.Model):
+class AdminCredentials(_serialization.Model):
     """Administrative credentials for accessing vCenter and NSX-T.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -292,63 +334,70 @@ class AdminCredentials(msrest.serialization.Model):
     """
 
     _validation = {
-        'nsxt_username': {'readonly': True},
-        'nsxt_password': {'readonly': True},
-        'vcenter_username': {'readonly': True},
-        'vcenter_password': {'readonly': True},
+        "nsxt_username": {"readonly": True},
+        "nsxt_password": {"readonly": True},
+        "vcenter_username": {"readonly": True},
+        "vcenter_password": {"readonly": True},
     }
 
     _attribute_map = {
-        'nsxt_username': {'key': 'nsxtUsername', 'type': 'str'},
-        'nsxt_password': {'key': 'nsxtPassword', 'type': 'str'},
-        'vcenter_username': {'key': 'vcenterUsername', 'type': 'str'},
-        'vcenter_password': {'key': 'vcenterPassword', 'type': 'str'},
+        "nsxt_username": {"key": "nsxtUsername", "type": "str"},
+        "nsxt_password": {"key": "nsxtPassword", "type": "str"},
+        "vcenter_username": {"key": "vcenterUsername", "type": "str"},
+        "vcenter_password": {"key": "vcenterPassword", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AdminCredentials, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.nsxt_username = None
         self.nsxt_password = None
         self.vcenter_username = None
         self.vcenter_password = None
 
 
-class AvailabilityProperties(msrest.serialization.Model):
+class AvailabilityProperties(_serialization.Model):
     """The properties describing private cloud availability zone distribution.
 
-    :param strategy: The availability strategy for the private cloud. Possible values include:
-     "SingleZone", "DualZone".
-    :type strategy: str or ~azure.mgmt.avs.models.AvailabilityStrategy
-    :param zone: The primary availability zone for the private cloud.
-    :type zone: int
-    :param secondary_zone: The secondary availability zone for the private cloud.
-    :type secondary_zone: int
+    :ivar strategy: The availability strategy for the private cloud. Known values are: "SingleZone"
+     and "DualZone".
+    :vartype strategy: str or ~azure.mgmt.avs.models.AvailabilityStrategy
+    :ivar zone: The primary availability zone for the private cloud.
+    :vartype zone: int
+    :ivar secondary_zone: The secondary availability zone for the private cloud.
+    :vartype secondary_zone: int
     """
 
     _attribute_map = {
-        'strategy': {'key': 'strategy', 'type': 'str'},
-        'zone': {'key': 'zone', 'type': 'int'},
-        'secondary_zone': {'key': 'secondaryZone', 'type': 'int'},
+        "strategy": {"key": "strategy", "type": "str"},
+        "zone": {"key": "zone", "type": "int"},
+        "secondary_zone": {"key": "secondaryZone", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        strategy: Optional[Union[str, "AvailabilityStrategy"]] = None,
+        strategy: Optional[Union[str, "_models.AvailabilityStrategy"]] = None,
         zone: Optional[int] = None,
         secondary_zone: Optional[int] = None,
         **kwargs
     ):
-        super(AvailabilityProperties, self).__init__(**kwargs)
+        """
+        :keyword strategy: The availability strategy for the private cloud. Known values are:
+         "SingleZone" and "DualZone".
+        :paramtype strategy: str or ~azure.mgmt.avs.models.AvailabilityStrategy
+        :keyword zone: The primary availability zone for the private cloud.
+        :paramtype zone: int
+        :keyword secondary_zone: The secondary availability zone for the private cloud.
+        :paramtype secondary_zone: int
+        """
+        super().__init__(**kwargs)
         self.strategy = strategy
         self.zone = zone
         self.secondary_zone = secondary_zone
 
 
-class Circuit(msrest.serialization.Model):
+class Circuit(_serialization.Model):
     """An ExpressRoute Circuit.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -364,24 +413,22 @@ class Circuit(msrest.serialization.Model):
     """
 
     _validation = {
-        'primary_subnet': {'readonly': True},
-        'secondary_subnet': {'readonly': True},
-        'express_route_id': {'readonly': True},
-        'express_route_private_peering_id': {'readonly': True},
+        "primary_subnet": {"readonly": True},
+        "secondary_subnet": {"readonly": True},
+        "express_route_id": {"readonly": True},
+        "express_route_private_peering_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'primary_subnet': {'key': 'primarySubnet', 'type': 'str'},
-        'secondary_subnet': {'key': 'secondarySubnet', 'type': 'str'},
-        'express_route_id': {'key': 'expressRouteID', 'type': 'str'},
-        'express_route_private_peering_id': {'key': 'expressRoutePrivatePeeringID', 'type': 'str'},
+        "primary_subnet": {"key": "primarySubnet", "type": "str"},
+        "secondary_subnet": {"key": "secondarySubnet", "type": "str"},
+        "express_route_id": {"key": "expressRouteID", "type": "str"},
+        "express_route_private_peering_id": {"key": "expressRoutePrivatePeeringID", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Circuit, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.primary_subnet = None
         self.secondary_subnet = None
         self.express_route_id = None
@@ -399,40 +446,39 @@ class CloudLink(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar status: The state of the cloud link. Possible values include: "Active", "Building",
-     "Deleting", "Failed", "Disconnected".
+    :ivar status: The state of the cloud link. Known values are: "Active", "Building", "Deleting",
+     "Failed", and "Disconnected".
     :vartype status: str or ~azure.mgmt.avs.models.CloudLinkStatus
-    :param linked_cloud: Identifier of the other private cloud participating in the link.
-    :type linked_cloud: str
+    :ivar linked_cloud: Identifier of the other private cloud participating in the link.
+    :vartype linked_cloud: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'linked_cloud': {'key': 'properties.linkedCloud', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "linked_cloud": {"key": "properties.linkedCloud", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        linked_cloud: Optional[str] = None,
-        **kwargs
-    ):
-        super(CloudLink, self).__init__(**kwargs)
+    def __init__(self, *, linked_cloud: Optional[str] = None, **kwargs):
+        """
+        :keyword linked_cloud: Identifier of the other private cloud participating in the link.
+        :paramtype linked_cloud: str
+        """
+        super().__init__(**kwargs)
         self.status = None
         self.linked_cloud = linked_cloud
 
 
-class CloudLinkList(msrest.serialization.Model):
+class CloudLinkList(_serialization.Model):
     """A paged list of cloud links.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -444,20 +490,18 @@ class CloudLinkList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CloudLink]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CloudLink]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CloudLinkList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -475,48 +519,51 @@ class Cluster(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param sku: Required. The cluster SKU.
-    :type sku: ~azure.mgmt.avs.models.Sku
-    :param cluster_size: The cluster size.
-    :type cluster_size: int
-    :ivar provisioning_state: The state of the cluster provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Deleting", "Updating".
+    :ivar sku: The cluster SKU. Required.
+    :vartype sku: ~azure.mgmt.avs.models.Sku
+    :ivar cluster_size: The cluster size.
+    :vartype cluster_size: int
+    :ivar provisioning_state: The state of the cluster provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :param hosts: The hosts.
-    :type hosts: list[str]
+    :ivar hosts: The hosts.
+    :vartype hosts: list[str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'sku': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'cluster_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "sku": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "cluster_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'cluster_id': {'key': 'properties.clusterId', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "cluster_size": {"key": "properties.clusterSize", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "cluster_id": {"key": "properties.clusterId", "type": "int"},
+        "hosts": {"key": "properties.hosts", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        sku: "Sku",
-        cluster_size: Optional[int] = None,
-        hosts: Optional[List[str]] = None,
-        **kwargs
+        self, *, sku: "_models.Sku", cluster_size: Optional[int] = None, hosts: Optional[List[str]] = None, **kwargs
     ):
-        super(Cluster, self).__init__(**kwargs)
+        """
+        :keyword sku: The cluster SKU. Required.
+        :paramtype sku: ~azure.mgmt.avs.models.Sku
+        :keyword cluster_size: The cluster size.
+        :paramtype cluster_size: int
+        :keyword hosts: The hosts.
+        :paramtype hosts: list[str]
+        """
+        super().__init__(**kwargs)
         self.sku = sku
         self.cluster_size = cluster_size
         self.provisioning_state = None
@@ -524,7 +571,7 @@ class Cluster(Resource):
         self.hosts = hosts
 
 
-class ClusterList(msrest.serialization.Model):
+class ClusterList(_serialization.Model):
     """A paged list of clusters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -536,60 +583,58 @@ class ClusterList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Cluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Cluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ClusterList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class CommonClusterProperties(msrest.serialization.Model):
+class CommonClusterProperties(_serialization.Model):
     """The common properties of a cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param cluster_size: The cluster size.
-    :type cluster_size: int
-    :ivar provisioning_state: The state of the cluster provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Deleting", "Updating".
+    :ivar cluster_size: The cluster size.
+    :vartype cluster_size: int
+    :ivar provisioning_state: The state of the cluster provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :param hosts: The hosts.
-    :type hosts: list[str]
+    :ivar hosts: The hosts.
+    :vartype hosts: list[str]
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'cluster_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "cluster_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'cluster_id': {'key': 'clusterId', 'type': 'int'},
-        'hosts': {'key': 'hosts', 'type': '[str]'},
+        "cluster_size": {"key": "clusterSize", "type": "int"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "cluster_id": {"key": "clusterId", "type": "int"},
+        "hosts": {"key": "hosts", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        cluster_size: Optional[int] = None,
-        hosts: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(CommonClusterProperties, self).__init__(**kwargs)
+    def __init__(self, *, cluster_size: Optional[int] = None, hosts: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword cluster_size: The cluster size.
+        :paramtype cluster_size: int
+        :keyword hosts: The hosts.
+        :paramtype hosts: list[str]
+        """
+        super().__init__(**kwargs)
         self.cluster_size = cluster_size
         self.provisioning_state = None
         self.cluster_id = None
@@ -601,63 +646,111 @@ class ClusterProperties(CommonClusterProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param cluster_size: The cluster size.
-    :type cluster_size: int
-    :ivar provisioning_state: The state of the cluster provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Deleting", "Updating".
+    :ivar cluster_size: The cluster size.
+    :vartype cluster_size: int
+    :ivar provisioning_state: The state of the cluster provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :param hosts: The hosts.
-    :type hosts: list[str]
+    :ivar hosts: The hosts.
+    :vartype hosts: list[str]
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'cluster_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "cluster_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'cluster_id': {'key': 'clusterId', 'type': 'int'},
-        'hosts': {'key': 'hosts', 'type': '[str]'},
+        "cluster_size": {"key": "clusterSize", "type": "int"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "cluster_id": {"key": "clusterId", "type": "int"},
+        "hosts": {"key": "hosts", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        cluster_size: Optional[int] = None,
-        hosts: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(ClusterProperties, self).__init__(cluster_size=cluster_size, hosts=hosts, **kwargs)
+    def __init__(self, *, cluster_size: Optional[int] = None, hosts: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword cluster_size: The cluster size.
+        :paramtype cluster_size: int
+        :keyword hosts: The hosts.
+        :paramtype hosts: list[str]
+        """
+        super().__init__(cluster_size=cluster_size, hosts=hosts, **kwargs)
 
 
-class ClusterUpdate(msrest.serialization.Model):
+class ClusterUpdate(_serialization.Model):
     """An update of a cluster resource.
 
-    :param cluster_size: The cluster size.
-    :type cluster_size: int
-    :param hosts: The hosts.
-    :type hosts: list[str]
+    :ivar cluster_size: The cluster size.
+    :vartype cluster_size: int
+    :ivar hosts: The hosts.
+    :vartype hosts: list[str]
     """
 
     _attribute_map = {
-        'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[str]'},
+        "cluster_size": {"key": "properties.clusterSize", "type": "int"},
+        "hosts": {"key": "properties.hosts", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        cluster_size: Optional[int] = None,
-        hosts: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(ClusterUpdate, self).__init__(**kwargs)
+    def __init__(self, *, cluster_size: Optional[int] = None, hosts: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword cluster_size: The cluster size.
+        :paramtype cluster_size: int
+        :keyword hosts: The hosts.
+        :paramtype hosts: list[str]
+        """
+        super().__init__(**kwargs)
         self.cluster_size = cluster_size
         self.hosts = hosts
+
+
+class ClusterZone(_serialization.Model):
+    """Zone and associated hosts info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar hosts: List of hosts belonging to the availability zone in a cluster.
+    :vartype hosts: list[str]
+    :ivar zone: Availability zone identifier.
+    :vartype zone: str
+    """
+
+    _validation = {
+        "hosts": {"readonly": True},
+        "zone": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "hosts": {"key": "hosts", "type": "[str]"},
+        "zone": {"key": "zone", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.hosts = None
+        self.zone = None
+
+
+class ClusterZoneList(_serialization.Model):
+    """List of all zones and associated hosts for a cluster.
+
+    :ivar zones: Zone and associated hosts info.
+    :vartype zones: list[~azure.mgmt.avs.models.ClusterZone]
+    """
+
+    _attribute_map = {
+        "zones": {"key": "zones", "type": "[ClusterZone]"},
+    }
+
+    def __init__(self, *, zones: Optional[List["_models.ClusterZone"]] = None, **kwargs):
+        """
+        :keyword zones: Zone and associated hosts info.
+        :paramtype zones: list[~azure.mgmt.avs.models.ClusterZone]
+        """
+        super().__init__(**kwargs)
+        self.zones = zones
 
 
 class Datastore(Resource):
@@ -671,51 +764,58 @@ class Datastore(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar provisioning_state: The state of the datastore provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Pending", "Creating", "Updating", "Deleting".
+    :ivar provisioning_state: The state of the datastore provisioning. Known values are:
+     "Succeeded", "Failed", "Cancelled", "Pending", "Creating", "Updating", "Deleting", and
+     "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.DatastoreProvisioningState
-    :param net_app_volume: An Azure NetApp Files volume.
-    :type net_app_volume: ~azure.mgmt.avs.models.NetAppVolume
-    :param disk_pool_volume: An iSCSI volume.
-    :type disk_pool_volume: ~azure.mgmt.avs.models.DiskPoolVolume
-    :ivar status: The operational status of the datastore. Possible values include: "Unknown",
-     "Accessible", "Inaccessible", "Attached", "Detached", "LostCommunication", "DeadOrError".
+    :ivar net_app_volume: An Azure NetApp Files volume.
+    :vartype net_app_volume: ~azure.mgmt.avs.models.NetAppVolume
+    :ivar disk_pool_volume: An iSCSI volume.
+    :vartype disk_pool_volume: ~azure.mgmt.avs.models.DiskPoolVolume
+    :ivar status: The operational status of the datastore. Known values are: "Unknown",
+     "Accessible", "Inaccessible", "Attached", "Detached", "LostCommunication", and "DeadOrError".
     :vartype status: str or ~azure.mgmt.avs.models.DatastoreStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'net_app_volume': {'key': 'properties.netAppVolume', 'type': 'NetAppVolume'},
-        'disk_pool_volume': {'key': 'properties.diskPoolVolume', 'type': 'DiskPoolVolume'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "net_app_volume": {"key": "properties.netAppVolume", "type": "NetAppVolume"},
+        "disk_pool_volume": {"key": "properties.diskPoolVolume", "type": "DiskPoolVolume"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        net_app_volume: Optional["NetAppVolume"] = None,
-        disk_pool_volume: Optional["DiskPoolVolume"] = None,
+        net_app_volume: Optional["_models.NetAppVolume"] = None,
+        disk_pool_volume: Optional["_models.DiskPoolVolume"] = None,
         **kwargs
     ):
-        super(Datastore, self).__init__(**kwargs)
+        """
+        :keyword net_app_volume: An Azure NetApp Files volume.
+        :paramtype net_app_volume: ~azure.mgmt.avs.models.NetAppVolume
+        :keyword disk_pool_volume: An iSCSI volume.
+        :paramtype disk_pool_volume: ~azure.mgmt.avs.models.DiskPoolVolume
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.net_app_volume = net_app_volume
         self.disk_pool_volume = disk_pool_volume
         self.status = None
 
 
-class DatastoreList(msrest.serialization.Model):
+class DatastoreList(_serialization.Model):
     """A paged list of datastores.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -727,127 +827,140 @@ class DatastoreList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Datastore]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Datastore]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DatastoreList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class DiskPoolVolume(msrest.serialization.Model):
+class DiskPoolVolume(_serialization.Model):
     """An iSCSI volume from Microsoft.StoragePool provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_id: Required. Azure resource ID of the iSCSI target.
-    :type target_id: str
-    :param lun_name: Required. Name of the LUN to be used for datastore.
-    :type lun_name: str
-    :param mount_option: Mode that describes whether the LUN has to be mounted as a datastore or
-     attached as a LUN. Possible values include: "MOUNT", "ATTACH". Default value: "MOUNT".
-    :type mount_option: str or ~azure.mgmt.avs.models.MountOptionEnum
+    :ivar target_id: Azure resource ID of the iSCSI target. Required.
+    :vartype target_id: str
+    :ivar lun_name: Name of the LUN to be used for datastore. Required.
+    :vartype lun_name: str
+    :ivar mount_option: Mode that describes whether the LUN has to be mounted as a datastore or
+     attached as a LUN. Known values are: "MOUNT" and "ATTACH".
+    :vartype mount_option: str or ~azure.mgmt.avs.models.MountOptionEnum
     :ivar path: Device path.
     :vartype path: str
     """
 
     _validation = {
-        'target_id': {'required': True},
-        'lun_name': {'required': True},
-        'path': {'readonly': True},
+        "target_id": {"required": True},
+        "lun_name": {"required": True},
+        "path": {"readonly": True},
     }
 
     _attribute_map = {
-        'target_id': {'key': 'targetId', 'type': 'str'},
-        'lun_name': {'key': 'lunName', 'type': 'str'},
-        'mount_option': {'key': 'mountOption', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "target_id": {"key": "targetId", "type": "str"},
+        "lun_name": {"key": "lunName", "type": "str"},
+        "mount_option": {"key": "mountOption", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        target_id: str,
-        lun_name: str,
-        mount_option: Optional[Union[str, "MountOptionEnum"]] = "MOUNT",
-        **kwargs
+        self, *, target_id: str, lun_name: str, mount_option: Union[str, "_models.MountOptionEnum"] = "MOUNT", **kwargs
     ):
-        super(DiskPoolVolume, self).__init__(**kwargs)
+        """
+        :keyword target_id: Azure resource ID of the iSCSI target. Required.
+        :paramtype target_id: str
+        :keyword lun_name: Name of the LUN to be used for datastore. Required.
+        :paramtype lun_name: str
+        :keyword mount_option: Mode that describes whether the LUN has to be mounted as a datastore or
+         attached as a LUN. Known values are: "MOUNT" and "ATTACH".
+        :paramtype mount_option: str or ~azure.mgmt.avs.models.MountOptionEnum
+        """
+        super().__init__(**kwargs)
         self.target_id = target_id
         self.lun_name = lun_name
         self.mount_option = mount_option
         self.path = None
 
 
-class Encryption(msrest.serialization.Model):
+class Encryption(_serialization.Model):
     """The properties of customer managed encryption key.
 
-    :param status: Status of customer managed encryption key. Possible values include: "Enabled",
+    :ivar status: Status of customer managed encryption key. Known values are: "Enabled" and
      "Disabled".
-    :type status: str or ~azure.mgmt.avs.models.EncryptionState
-    :param key_vault_properties: The key vault where the encryption key is stored.
-    :type key_vault_properties: ~azure.mgmt.avs.models.EncryptionKeyVaultProperties
+    :vartype status: str or ~azure.mgmt.avs.models.EncryptionState
+    :ivar key_vault_properties: The key vault where the encryption key is stored.
+    :vartype key_vault_properties: ~azure.mgmt.avs.models.EncryptionKeyVaultProperties
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'EncryptionKeyVaultProperties'},
+        "status": {"key": "status", "type": "str"},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "EncryptionKeyVaultProperties"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "EncryptionState"]] = None,
-        key_vault_properties: Optional["EncryptionKeyVaultProperties"] = None,
+        status: Optional[Union[str, "_models.EncryptionState"]] = None,
+        key_vault_properties: Optional["_models.EncryptionKeyVaultProperties"] = None,
         **kwargs
     ):
-        super(Encryption, self).__init__(**kwargs)
+        """
+        :keyword status: Status of customer managed encryption key. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype status: str or ~azure.mgmt.avs.models.EncryptionState
+        :keyword key_vault_properties: The key vault where the encryption key is stored.
+        :paramtype key_vault_properties: ~azure.mgmt.avs.models.EncryptionKeyVaultProperties
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.key_vault_properties = key_vault_properties
 
 
-class EncryptionKeyVaultProperties(msrest.serialization.Model):
+class EncryptionKeyVaultProperties(_serialization.Model):
     """An Encryption Key.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param key_name: The name of the key.
-    :type key_name: str
-    :param key_version: The version of the key.
-    :type key_version: str
-    :param key_vault_url: The URL of the vault.
-    :type key_vault_url: str
-    :ivar key_state: The state of key provided. Possible values include: "Connected",
-     "AccessDenied".
+    :ivar key_name: The name of the key.
+    :vartype key_name: str
+    :ivar key_version: The version of the key.
+    :vartype key_version: str
+    :ivar auto_detected_key_version: The auto-detected version of the key if versionType is
+     auto-detected.
+    :vartype auto_detected_key_version: str
+    :ivar key_vault_url: The URL of the vault.
+    :vartype key_vault_url: str
+    :ivar key_state: The state of key provided. Known values are: "Connected" and "AccessDenied".
     :vartype key_state: str or ~azure.mgmt.avs.models.EncryptionKeyStatus
-    :ivar version_type: Property of the key if user provided or auto detected. Possible values
-     include: "Fixed", "AutoDetected".
+    :ivar version_type: Property of the key if user provided or auto detected. Known values are:
+     "Fixed" and "AutoDetected".
     :vartype version_type: str or ~azure.mgmt.avs.models.EncryptionVersionType
     """
 
     _validation = {
-        'key_state': {'readonly': True},
-        'version_type': {'readonly': True},
+        "auto_detected_key_version": {"readonly": True},
+        "key_state": {"readonly": True},
+        "version_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'key_version': {'key': 'keyVersion', 'type': 'str'},
-        'key_vault_url': {'key': 'keyVaultUrl', 'type': 'str'},
-        'key_state': {'key': 'keyState', 'type': 'str'},
-        'version_type': {'key': 'versionType', 'type': 'str'},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
+        "auto_detected_key_version": {"key": "autoDetectedKeyVersion", "type": "str"},
+        "key_vault_url": {"key": "keyVaultUrl", "type": "str"},
+        "key_state": {"key": "keyState", "type": "str"},
+        "version_type": {"key": "versionType", "type": "str"},
     }
 
     def __init__(
@@ -858,15 +971,24 @@ class EncryptionKeyVaultProperties(msrest.serialization.Model):
         key_vault_url: Optional[str] = None,
         **kwargs
     ):
-        super(EncryptionKeyVaultProperties, self).__init__(**kwargs)
+        """
+        :keyword key_name: The name of the key.
+        :paramtype key_name: str
+        :keyword key_version: The version of the key.
+        :paramtype key_version: str
+        :keyword key_vault_url: The URL of the vault.
+        :paramtype key_vault_url: str
+        """
+        super().__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
+        self.auto_detected_key_version = None
         self.key_vault_url = key_vault_url
         self.key_state = None
         self.version_type = None
 
 
-class Endpoints(msrest.serialization.Model):
+class Endpoints(_serialization.Model):
     """Endpoint addresses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -880,28 +1002,26 @@ class Endpoints(msrest.serialization.Model):
     """
 
     _validation = {
-        'nsxt_manager': {'readonly': True},
-        'vcsa': {'readonly': True},
-        'hcx_cloud_manager': {'readonly': True},
+        "nsxt_manager": {"readonly": True},
+        "vcsa": {"readonly": True},
+        "hcx_cloud_manager": {"readonly": True},
     }
 
     _attribute_map = {
-        'nsxt_manager': {'key': 'nsxtManager', 'type': 'str'},
-        'vcsa': {'key': 'vcsa', 'type': 'str'},
-        'hcx_cloud_manager': {'key': 'hcxCloudManager', 'type': 'str'},
+        "nsxt_manager": {"key": "nsxtManager", "type": "str"},
+        "vcsa": {"key": "vcsa", "type": "str"},
+        "hcx_cloud_manager": {"key": "hcxCloudManager", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Endpoints, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.nsxt_manager = None
         self.vcsa = None
         self.hcx_cloud_manager = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -909,29 +1029,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -949,26 +1067,24 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -988,50 +1104,49 @@ class ExpressRouteAuthorization(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: The state of the  ExpressRoute Circuit Authorization provisioning.
-     Possible values include: "Succeeded", "Failed", "Updating".
+     Known values are: "Succeeded", "Failed", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.ExpressRouteAuthorizationProvisioningState
     :ivar express_route_authorization_id: The ID of the ExpressRoute Circuit Authorization.
     :vartype express_route_authorization_id: str
     :ivar express_route_authorization_key: The key of the ExpressRoute Circuit Authorization.
     :vartype express_route_authorization_key: str
-    :param express_route_id: The ID of the ExpressRoute Circuit.
-    :type express_route_id: str
+    :ivar express_route_id: The ID of the ExpressRoute Circuit.
+    :vartype express_route_id: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'express_route_authorization_id': {'readonly': True},
-        'express_route_authorization_key': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "express_route_authorization_id": {"readonly": True},
+        "express_route_authorization_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'express_route_authorization_id': {'key': 'properties.expressRouteAuthorizationId', 'type': 'str'},
-        'express_route_authorization_key': {'key': 'properties.expressRouteAuthorizationKey', 'type': 'str'},
-        'express_route_id': {'key': 'properties.expressRouteId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "express_route_authorization_id": {"key": "properties.expressRouteAuthorizationId", "type": "str"},
+        "express_route_authorization_key": {"key": "properties.expressRouteAuthorizationKey", "type": "str"},
+        "express_route_id": {"key": "properties.expressRouteId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        express_route_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ExpressRouteAuthorization, self).__init__(**kwargs)
+    def __init__(self, *, express_route_id: Optional[str] = None, **kwargs):
+        """
+        :keyword express_route_id: The ID of the ExpressRoute Circuit.
+        :paramtype express_route_id: str
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.express_route_authorization_id = None
         self.express_route_authorization_key = None
         self.express_route_id = express_route_id
 
 
-class ExpressRouteAuthorizationList(msrest.serialization.Model):
+class ExpressRouteAuthorizationList(_serialization.Model):
     """A paged list of ExpressRoute Circuit Authorizations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1043,20 +1158,18 @@ class ExpressRouteAuthorizationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExpressRouteAuthorization]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExpressRouteAuthorization]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ExpressRouteAuthorizationList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1073,45 +1186,45 @@ class GlobalReachConnection(Resource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: The state of the  ExpressRoute Circuit Authorization provisioning.
-     Possible values include: "Succeeded", "Failed", "Updating".
+     Known values are: "Succeeded", "Failed", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.GlobalReachConnectionProvisioningState
     :ivar address_prefix: The network used for global reach carved out from the original network
      block provided for the private cloud.
     :vartype address_prefix: str
-    :param authorization_key: Authorization key from the peer express route used for the global
+    :ivar authorization_key: Authorization key from the peer express route used for the global
      reach connection.
-    :type authorization_key: str
-    :ivar circuit_connection_status: The connection status of the global reach connection. Possible
-     values include: "Connected", "Connecting", "Disconnected".
+    :vartype authorization_key: str
+    :ivar circuit_connection_status: The connection status of the global reach connection. Known
+     values are: "Connected", "Connecting", and "Disconnected".
     :vartype circuit_connection_status: str or ~azure.mgmt.avs.models.GlobalReachConnectionStatus
-    :param peer_express_route_circuit: Identifier of the ExpressRoute Circuit to peer with in the
+    :ivar peer_express_route_circuit: Identifier of the ExpressRoute Circuit to peer with in the
      global reach connection.
-    :type peer_express_route_circuit: str
-    :param express_route_id: The ID of the Private Cloud's ExpressRoute Circuit that is
+    :vartype peer_express_route_circuit: str
+    :ivar express_route_id: The ID of the Private Cloud's ExpressRoute Circuit that is
      participating in the global reach connection.
-    :type express_route_id: str
+    :vartype express_route_id: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'address_prefix': {'readonly': True},
-        'circuit_connection_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "address_prefix": {"readonly": True},
+        "circuit_connection_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'address_prefix': {'key': 'properties.addressPrefix', 'type': 'str'},
-        'authorization_key': {'key': 'properties.authorizationKey', 'type': 'str'},
-        'circuit_connection_status': {'key': 'properties.circuitConnectionStatus', 'type': 'str'},
-        'peer_express_route_circuit': {'key': 'properties.peerExpressRouteCircuit', 'type': 'str'},
-        'express_route_id': {'key': 'properties.expressRouteId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "address_prefix": {"key": "properties.addressPrefix", "type": "str"},
+        "authorization_key": {"key": "properties.authorizationKey", "type": "str"},
+        "circuit_connection_status": {"key": "properties.circuitConnectionStatus", "type": "str"},
+        "peer_express_route_circuit": {"key": "properties.peerExpressRouteCircuit", "type": "str"},
+        "express_route_id": {"key": "properties.expressRouteId", "type": "str"},
     }
 
     def __init__(
@@ -1122,7 +1235,18 @@ class GlobalReachConnection(Resource):
         express_route_id: Optional[str] = None,
         **kwargs
     ):
-        super(GlobalReachConnection, self).__init__(**kwargs)
+        """
+        :keyword authorization_key: Authorization key from the peer express route used for the global
+         reach connection.
+        :paramtype authorization_key: str
+        :keyword peer_express_route_circuit: Identifier of the ExpressRoute Circuit to peer with in the
+         global reach connection.
+        :paramtype peer_express_route_circuit: str
+        :keyword express_route_id: The ID of the Private Cloud's ExpressRoute Circuit that is
+         participating in the global reach connection.
+        :paramtype express_route_id: str
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.address_prefix = None
         self.authorization_key = authorization_key
@@ -1131,7 +1255,7 @@ class GlobalReachConnection(Resource):
         self.express_route_id = express_route_id
 
 
-class GlobalReachConnectionList(msrest.serialization.Model):
+class GlobalReachConnectionList(_serialization.Model):
     """A paged list of global reach connections.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1143,20 +1267,18 @@ class GlobalReachConnectionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GlobalReachConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GlobalReachConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GlobalReachConnectionList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1174,37 +1296,35 @@ class HcxEnterpriseSite(Resource):
     :vartype type: str
     :ivar activation_key: The activation key.
     :vartype activation_key: str
-    :ivar status: The status of the HCX Enterprise Site. Possible values include: "Available",
-     "Consumed", "Deactivated", "Deleted".
+    :ivar status: The status of the HCX Enterprise Site. Known values are: "Available", "Consumed",
+     "Deactivated", and "Deleted".
     :vartype status: str or ~azure.mgmt.avs.models.HcxEnterpriseSiteStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'activation_key': {'readonly': True},
-        'status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "activation_key": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'activation_key': {'key': 'properties.activationKey', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "activation_key": {"key": "properties.activationKey", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HcxEnterpriseSite, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.activation_key = None
         self.status = None
 
 
-class HcxEnterpriseSiteList(msrest.serialization.Model):
+class HcxEnterpriseSiteList(_serialization.Model):
     """A paged list of HCX Enterprise Sites.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1216,63 +1336,61 @@ class HcxEnterpriseSiteList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HcxEnterpriseSite]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HcxEnterpriseSite]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HcxEnterpriseSiteList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class IdentitySource(msrest.serialization.Model):
+class IdentitySource(_serialization.Model):
     """vCenter Single Sign On Identity Source.
 
-    :param name: The name of the identity source.
-    :type name: str
-    :param alias: The domain's NetBIOS name.
-    :type alias: str
-    :param domain: The domain's dns name.
-    :type domain: str
-    :param base_user_dn: The base distinguished name for users.
-    :type base_user_dn: str
-    :param base_group_dn: The base distinguished name for groups.
-    :type base_group_dn: str
-    :param primary_server: Primary server URL.
-    :type primary_server: str
-    :param secondary_server: Secondary server URL.
-    :type secondary_server: str
-    :param ssl: Protect LDAP communication using SSL certificate (LDAPS). Possible values include:
-     "Enabled", "Disabled".
-    :type ssl: str or ~azure.mgmt.avs.models.SslEnum
-    :param username: The ID of an Active Directory user with a minimum of read-only access to Base
+    :ivar name: The name of the identity source.
+    :vartype name: str
+    :ivar alias: The domain's NetBIOS name.
+    :vartype alias: str
+    :ivar domain: The domain's dns name.
+    :vartype domain: str
+    :ivar base_user_dn: The base distinguished name for users.
+    :vartype base_user_dn: str
+    :ivar base_group_dn: The base distinguished name for groups.
+    :vartype base_group_dn: str
+    :ivar primary_server: Primary server URL.
+    :vartype primary_server: str
+    :ivar secondary_server: Secondary server URL.
+    :vartype secondary_server: str
+    :ivar ssl: Protect LDAP communication using SSL certificate (LDAPS). Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl: str or ~azure.mgmt.avs.models.SslEnum
+    :ivar username: The ID of an Active Directory user with a minimum of read-only access to Base
      DN for users and group.
-    :type username: str
-    :param password: The password of the Active Directory user with a minimum of read-only access
-     to Base DN for users and groups.
-    :type password: str
+    :vartype username: str
+    :ivar password: The password of the Active Directory user with a minimum of read-only access to
+     Base DN for users and groups.
+    :vartype password: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'alias': {'key': 'alias', 'type': 'str'},
-        'domain': {'key': 'domain', 'type': 'str'},
-        'base_user_dn': {'key': 'baseUserDN', 'type': 'str'},
-        'base_group_dn': {'key': 'baseGroupDN', 'type': 'str'},
-        'primary_server': {'key': 'primaryServer', 'type': 'str'},
-        'secondary_server': {'key': 'secondaryServer', 'type': 'str'},
-        'ssl': {'key': 'ssl', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "alias": {"key": "alias", "type": "str"},
+        "domain": {"key": "domain", "type": "str"},
+        "base_user_dn": {"key": "baseUserDN", "type": "str"},
+        "base_group_dn": {"key": "baseGroupDN", "type": "str"},
+        "primary_server": {"key": "primaryServer", "type": "str"},
+        "secondary_server": {"key": "secondaryServer", "type": "str"},
+        "ssl": {"key": "ssl", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
     def __init__(
@@ -1285,12 +1403,37 @@ class IdentitySource(msrest.serialization.Model):
         base_group_dn: Optional[str] = None,
         primary_server: Optional[str] = None,
         secondary_server: Optional[str] = None,
-        ssl: Optional[Union[str, "SslEnum"]] = None,
+        ssl: Optional[Union[str, "_models.SslEnum"]] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
         **kwargs
     ):
-        super(IdentitySource, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the identity source.
+        :paramtype name: str
+        :keyword alias: The domain's NetBIOS name.
+        :paramtype alias: str
+        :keyword domain: The domain's dns name.
+        :paramtype domain: str
+        :keyword base_user_dn: The base distinguished name for users.
+        :paramtype base_user_dn: str
+        :keyword base_group_dn: The base distinguished name for groups.
+        :paramtype base_group_dn: str
+        :keyword primary_server: Primary server URL.
+        :paramtype primary_server: str
+        :keyword secondary_server: Secondary server URL.
+        :paramtype secondary_server: str
+        :keyword ssl: Protect LDAP communication using SSL certificate (LDAPS). Known values are:
+         "Enabled" and "Disabled".
+        :paramtype ssl: str or ~azure.mgmt.avs.models.SslEnum
+        :keyword username: The ID of an Active Directory user with a minimum of read-only access to
+         Base DN for users and group.
+        :paramtype username: str
+        :keyword password: The password of the Active Directory user with a minimum of read-only access
+         to Base DN for users and groups.
+        :paramtype password: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.alias = alias
         self.domain = domain
@@ -1303,21 +1446,21 @@ class IdentitySource(msrest.serialization.Model):
         self.password = password
 
 
-class LogSpecification(msrest.serialization.Model):
+class LogSpecification(_serialization.Model):
     """Specifications of the Log for Azure Monitoring.
 
-    :param name: Name of the log.
-    :type name: str
-    :param display_name: Localized friendly display name of the log.
-    :type display_name: str
-    :param blob_duration: Blob duration of the log.
-    :type blob_duration: str
+    :ivar name: Name of the log.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the log.
+    :vartype display_name: str
+    :ivar blob_duration: Blob duration of the log.
+    :vartype blob_duration: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
     def __init__(
@@ -1328,7 +1471,15 @@ class LogSpecification(msrest.serialization.Model):
         blob_duration: Optional[str] = None,
         **kwargs
     ):
-        super(LogSpecification, self).__init__(**kwargs)
+        """
+        :keyword name: Name of the log.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the log.
+        :paramtype display_name: str
+        :keyword blob_duration: Blob duration of the log.
+        :paramtype blob_duration: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.blob_duration = blob_duration
@@ -1339,58 +1490,58 @@ class ManagementCluster(CommonClusterProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param cluster_size: The cluster size.
-    :type cluster_size: int
-    :ivar provisioning_state: The state of the cluster provisioning. Possible values include:
-     "Succeeded", "Failed", "Cancelled", "Deleting", "Updating".
+    :ivar cluster_size: The cluster size.
+    :vartype cluster_size: int
+    :ivar provisioning_state: The state of the cluster provisioning. Known values are: "Succeeded",
+     "Failed", "Cancelled", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ClusterProvisioningState
     :ivar cluster_id: The identity.
     :vartype cluster_id: int
-    :param hosts: The hosts.
-    :type hosts: list[str]
+    :ivar hosts: The hosts.
+    :vartype hosts: list[str]
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'cluster_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "cluster_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'cluster_id': {'key': 'clusterId', 'type': 'int'},
-        'hosts': {'key': 'hosts', 'type': '[str]'},
+        "cluster_size": {"key": "clusterSize", "type": "int"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "cluster_id": {"key": "clusterId", "type": "int"},
+        "hosts": {"key": "hosts", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        cluster_size: Optional[int] = None,
-        hosts: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(ManagementCluster, self).__init__(cluster_size=cluster_size, hosts=hosts, **kwargs)
+    def __init__(self, *, cluster_size: Optional[int] = None, hosts: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword cluster_size: The cluster size.
+        :paramtype cluster_size: int
+        :keyword hosts: The hosts.
+        :paramtype hosts: list[str]
+        """
+        super().__init__(cluster_size=cluster_size, hosts=hosts, **kwargs)
 
 
-class MetricDimension(msrest.serialization.Model):
+class MetricDimension(_serialization.Model):
     """Specifications of the Dimension of metrics.
 
-    :param name: Name of the dimension.
-    :type name: str
-    :param display_name: Localized friendly display name of the dimension.
-    :type display_name: str
-    :param internal_name: Name of the dimension as it appears in MDM.
-    :type internal_name: str
-    :param to_be_exported_for_shoebox: A boolean flag indicating whether this dimension should be
+    :ivar name: Name of the dimension.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the dimension.
+    :vartype display_name: str
+    :ivar internal_name: Name of the dimension as it appears in MDM.
+    :vartype internal_name: str
+    :ivar to_be_exported_for_shoebox: A boolean flag indicating whether this dimension should be
      included for the shoebox export scenario.
-    :type to_be_exported_for_shoebox: bool
+    :vartype to_be_exported_for_shoebox: bool
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
     def __init__(
@@ -1402,61 +1553,72 @@ class MetricDimension(msrest.serialization.Model):
         to_be_exported_for_shoebox: Optional[bool] = None,
         **kwargs
     ):
-        super(MetricDimension, self).__init__(**kwargs)
+        """
+        :keyword name: Name of the dimension.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the dimension.
+        :paramtype display_name: str
+        :keyword internal_name: Name of the dimension as it appears in MDM.
+        :paramtype internal_name: str
+        :keyword to_be_exported_for_shoebox: A boolean flag indicating whether this dimension should be
+         included for the shoebox export scenario.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Specifications of the Metrics for Azure Monitoring.
 
-    :param name: Name of the metric.
-    :type name: str
-    :param display_name: Localized friendly display name of the metric.
-    :type display_name: str
-    :param display_description: Localized friendly description of the metric.
-    :type display_description: str
-    :param unit: Unit that makes sense for the metric.
-    :type unit: str
-    :param category: Name of the metric category that the metric belongs to. A metric can only
+    :ivar name: Name of the metric.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: Localized friendly description of the metric.
+    :vartype display_description: str
+    :ivar unit: Unit that makes sense for the metric.
+    :vartype unit: str
+    :ivar category: Name of the metric category that the metric belongs to. A metric can only
      belong to a single category.
-    :type category: str
-    :param aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
+    :vartype category: str
+    :ivar aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
      Maximum, Total, Count.
-    :type aggregation_type: str
-    :param supported_aggregation_types: Supported aggregation types.
-    :type supported_aggregation_types: list[str]
-    :param supported_time_grain_types: Supported time grain types.
-    :type supported_time_grain_types: list[str]
-    :param fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+    :vartype aggregation_type: str
+    :ivar supported_aggregation_types: Supported aggregation types.
+    :vartype supported_aggregation_types: list[str]
+    :ivar supported_time_grain_types: Supported time grain types.
+    :vartype supported_time_grain_types: list[str]
+    :ivar fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
      duration where no metric is emitted/published.
-    :type fill_gap_with_zero: bool
-    :param dimensions: Dimensions of the metric.
-    :type dimensions: list[~azure.mgmt.avs.models.MetricDimension]
-    :param enable_regional_mdm_account: Whether or not the service is using regional MDM accounts.
-    :type enable_regional_mdm_account: str
-    :param source_mdm_account: The name of the MDM account.
-    :type source_mdm_account: str
-    :param source_mdm_namespace: The name of the MDM namespace.
-    :type source_mdm_namespace: str
+    :vartype fill_gap_with_zero: bool
+    :ivar dimensions: Dimensions of the metric.
+    :vartype dimensions: list[~azure.mgmt.avs.models.MetricDimension]
+    :ivar enable_regional_mdm_account: Whether or not the service is using regional MDM accounts.
+    :vartype enable_regional_mdm_account: str
+    :ivar source_mdm_account: The name of the MDM account.
+    :vartype source_mdm_account: str
+    :ivar source_mdm_namespace: The name of the MDM namespace.
+    :vartype source_mdm_namespace: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'str'},
-        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "dimensions": {"key": "dimensions", "type": "[MetricDimension]"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "str"},
+        "source_mdm_account": {"key": "sourceMdmAccount", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
     }
 
     def __init__(
@@ -1471,13 +1633,45 @@ class MetricSpecification(msrest.serialization.Model):
         supported_aggregation_types: Optional[List[str]] = None,
         supported_time_grain_types: Optional[List[str]] = None,
         fill_gap_with_zero: Optional[bool] = None,
-        dimensions: Optional[List["MetricDimension"]] = None,
+        dimensions: Optional[List["_models.MetricDimension"]] = None,
         enable_regional_mdm_account: Optional[str] = None,
         source_mdm_account: Optional[str] = None,
         source_mdm_namespace: Optional[str] = None,
         **kwargs
     ):
-        super(MetricSpecification, self).__init__(**kwargs)
+        """
+        :keyword name: Name of the metric.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the metric.
+        :paramtype display_name: str
+        :keyword display_description: Localized friendly description of the metric.
+        :paramtype display_description: str
+        :keyword unit: Unit that makes sense for the metric.
+        :paramtype unit: str
+        :keyword category: Name of the metric category that the metric belongs to. A metric can only
+         belong to a single category.
+        :paramtype category: str
+        :keyword aggregation_type: Only provide one value for this field. Valid values: Average,
+         Minimum, Maximum, Total, Count.
+        :paramtype aggregation_type: str
+        :keyword supported_aggregation_types: Supported aggregation types.
+        :paramtype supported_aggregation_types: list[str]
+        :keyword supported_time_grain_types: Supported time grain types.
+        :paramtype supported_time_grain_types: list[str]
+        :keyword fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+         duration where no metric is emitted/published.
+        :paramtype fill_gap_with_zero: bool
+        :keyword dimensions: Dimensions of the metric.
+        :paramtype dimensions: list[~azure.mgmt.avs.models.MetricDimension]
+        :keyword enable_regional_mdm_account: Whether or not the service is using regional MDM
+         accounts.
+        :paramtype enable_regional_mdm_account: str
+        :keyword source_mdm_account: The name of the MDM account.
+        :paramtype source_mdm_account: str
+        :keyword source_mdm_namespace: The name of the MDM namespace.
+        :paramtype source_mdm_namespace: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -1493,34 +1687,33 @@ class MetricSpecification(msrest.serialization.Model):
         self.source_mdm_namespace = source_mdm_namespace
 
 
-class NetAppVolume(msrest.serialization.Model):
+class NetAppVolume(_serialization.Model):
     """An Azure NetApp Files volume from Microsoft.NetApp provider.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Azure resource ID of the NetApp volume.
-    :type id: str
+    :ivar id: Azure resource ID of the NetApp volume. Required.
+    :vartype id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
-        super(NetAppVolume, self).__init__(**kwargs)
+    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Azure resource ID of the NetApp volume. Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """A REST API operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1529,26 +1722,26 @@ class Operation(msrest.serialization.Model):
     :vartype name: str
     :ivar display: Contains the localized display information for this operation.
     :vartype display: ~azure.mgmt.avs.models.OperationDisplay
-    :param is_data_action: Gets or sets a value indicating whether the operation is a data action
-     or not.
-    :type is_data_action: bool
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Properties of the operation.
-    :type properties: ~azure.mgmt.avs.models.OperationProperties
+    :ivar is_data_action: Gets or sets a value indicating whether the operation is a data action or
+     not.
+    :vartype is_data_action: bool
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: ~azure.mgmt.avs.models.OperationProperties
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
+        "name": {"readonly": True},
+        "display": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OperationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "OperationProperties"},
     }
 
     def __init__(
@@ -1556,10 +1749,19 @@ class Operation(msrest.serialization.Model):
         *,
         is_data_action: Optional[bool] = None,
         origin: Optional[str] = None,
-        properties: Optional["OperationProperties"] = None,
+        properties: Optional["_models.OperationProperties"] = None,
         **kwargs
     ):
-        super(Operation, self).__init__(**kwargs)
+        """
+        :keyword is_data_action: Gets or sets a value indicating whether the operation is a data action
+         or not.
+        :paramtype is_data_action: bool
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword properties: Properties of the operation.
+        :paramtype properties: ~azure.mgmt.avs.models.OperationProperties
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.display = None
         self.is_data_action = is_data_action
@@ -1567,7 +1769,7 @@ class Operation(msrest.serialization.Model):
         self.properties = properties
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Contains the localized display information for this operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1583,31 +1785,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """Pageable list of operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1619,46 +1819,43 @@ class OperationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OperationProperties(msrest.serialization.Model):
+class OperationProperties(_serialization.Model):
     """Extra Operation properties.
 
-    :param service_specification: Service specifications of the operation.
-    :type service_specification: ~azure.mgmt.avs.models.ServiceSpecification
+    :ivar service_specification: Service specifications of the operation.
+    :vartype service_specification: ~azure.mgmt.avs.models.ServiceSpecification
     """
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
-    def __init__(
-        self,
-        *,
-        service_specification: Optional["ServiceSpecification"] = None,
-        **kwargs
-    ):
-        super(OperationProperties, self).__init__(**kwargs)
+    def __init__(self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs):
+        """
+        :keyword service_specification: Service specifications of the operation.
+        :paramtype service_specification: ~azure.mgmt.avs.models.ServiceSpecification
+        """
+        super().__init__(**kwargs)
         self.service_specification = service_specification
 
 
-class PlacementPoliciesList(msrest.serialization.Model):
+class PlacementPoliciesList(_serialization.Model):
     """Represents list of placement policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1670,20 +1867,18 @@ class PlacementPoliciesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PlacementPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PlacementPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PlacementPoliciesList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -1699,116 +1894,146 @@ class PlacementPolicy(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: placement policy properties.
-    :type properties: ~azure.mgmt.avs.models.PlacementPolicyProperties
+    :ivar properties: placement policy properties.
+    :vartype properties: ~azure.mgmt.avs.models.PlacementPolicyProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PlacementPolicyProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "PlacementPolicyProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["PlacementPolicyProperties"] = None,
-        **kwargs
-    ):
-        super(PlacementPolicy, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.PlacementPolicyProperties"] = None, **kwargs):
+        """
+        :keyword properties: placement policy properties.
+        :paramtype properties: ~azure.mgmt.avs.models.PlacementPolicyProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class PlacementPolicyProperties(msrest.serialization.Model):
+class PlacementPolicyProperties(_serialization.Model):
     """Abstract placement policy properties.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: VmHostPlacementPolicyProperties, VmPlacementPolicyProperties.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VmHostPlacementPolicyProperties, VmPlacementPolicyProperties
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. placement policy type.Constant filled by server.  Possible values
-     include: "VmVm", "VmHost".
-    :type type: str or ~azure.mgmt.avs.models.PlacementPolicyType
-    :param state: Whether the placement policy is enabled or disabled. Possible values include:
-     "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
-    :param display_name: Display name of the placement policy.
-    :type display_name: str
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar type: placement policy type. Required. Known values are: "VmVm" and "VmHost".
+    :vartype type: str or ~azure.mgmt.avs.models.PlacementPolicyType
+    :ivar state: Whether the placement policy is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :ivar display_name: Display name of the placement policy.
+    :vartype display_name: str
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.PlacementPolicyProvisioningState
     """
 
     _validation = {
-        'type': {'required': True},
-        'provisioning_state': {'readonly': True},
+        "type": {"required": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'VmHost': 'VmHostPlacementPolicyProperties', 'VmVm': 'VmPlacementPolicyProperties'}
-    }
+    _subtype_map = {"type": {"VmHost": "VmHostPlacementPolicyProperties", "VmVm": "VmPlacementPolicyProperties"}}
 
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "PlacementPolicyState"]] = None,
+        state: Optional[Union[str, "_models.PlacementPolicyState"]] = None,
         display_name: Optional[str] = None,
         **kwargs
     ):
-        super(PlacementPolicyProperties, self).__init__(**kwargs)
+        """
+        :keyword state: Whether the placement policy is enabled or disabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+        :keyword display_name: Display name of the placement policy.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.type = None  # type: Optional[str]
         self.state = state
         self.display_name = display_name
         self.provisioning_state = None
 
 
-class PlacementPolicyUpdate(msrest.serialization.Model):
+class PlacementPolicyUpdate(_serialization.Model):
     """An update of a DRS placement policy resource.
 
-    :param state: Whether the placement policy is enabled or disabled. Possible values include:
-     "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
-    :param vm_members: Virtual machine members list.
-    :type vm_members: list[str]
-    :param host_members: Host members list.
-    :type host_members: list[str]
+    :ivar state: Whether the placement policy is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :ivar vm_members: Virtual machine members list.
+    :vartype vm_members: list[str]
+    :ivar host_members: Host members list.
+    :vartype host_members: list[str]
+    :ivar affinity_strength: vm-host placement policy affinity strength (should/must). Known values
+     are: "Should" and "Must".
+    :vartype affinity_strength: str or ~azure.mgmt.avs.models.AffinityStrength
+    :ivar azure_hybrid_benefit_type: placement policy azure hybrid benefit opt-in type. Known
+     values are: "SqlHost" and "None".
+    :vartype azure_hybrid_benefit_type: str or ~azure.mgmt.avs.models.AzureHybridBenefitType
     """
 
     _attribute_map = {
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'vm_members': {'key': 'properties.vmMembers', 'type': '[str]'},
-        'host_members': {'key': 'properties.hostMembers', 'type': '[str]'},
+        "state": {"key": "properties.state", "type": "str"},
+        "vm_members": {"key": "properties.vmMembers", "type": "[str]"},
+        "host_members": {"key": "properties.hostMembers", "type": "[str]"},
+        "affinity_strength": {"key": "properties.affinityStrength", "type": "str"},
+        "azure_hybrid_benefit_type": {"key": "properties.azureHybridBenefitType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "PlacementPolicyState"]] = None,
+        state: Optional[Union[str, "_models.PlacementPolicyState"]] = None,
         vm_members: Optional[List[str]] = None,
         host_members: Optional[List[str]] = None,
+        affinity_strength: Optional[Union[str, "_models.AffinityStrength"]] = None,
+        azure_hybrid_benefit_type: Optional[Union[str, "_models.AzureHybridBenefitType"]] = None,
         **kwargs
     ):
-        super(PlacementPolicyUpdate, self).__init__(**kwargs)
+        """
+        :keyword state: Whether the placement policy is enabled or disabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+        :keyword vm_members: Virtual machine members list.
+        :paramtype vm_members: list[str]
+        :keyword host_members: Host members list.
+        :paramtype host_members: list[str]
+        :keyword affinity_strength: vm-host placement policy affinity strength (should/must). Known
+         values are: "Should" and "Must".
+        :paramtype affinity_strength: str or ~azure.mgmt.avs.models.AffinityStrength
+        :keyword azure_hybrid_benefit_type: placement policy azure hybrid benefit opt-in type. Known
+         values are: "SqlHost" and "None".
+        :paramtype azure_hybrid_benefit_type: str or ~azure.mgmt.avs.models.AzureHybridBenefitType
+        """
+        super().__init__(**kwargs)
         self.state = state
         self.vm_members = vm_members
         self.host_members = host_members
+        self.affinity_strength = affinity_strength
+        self.azure_hybrid_benefit_type = azure_hybrid_benefit_type
 
 
 class TrackedResource(Resource):
@@ -1822,39 +2047,39 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
 
 
-class PrivateCloud(TrackedResource):
+class PrivateCloud(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A private cloud resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1867,37 +2092,37 @@ class PrivateCloud(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param sku: Required. The private cloud SKU.
-    :type sku: ~azure.mgmt.avs.models.Sku
-    :param identity: The identity of the private cloud, if configured.
-    :type identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
-    :param management_cluster: The default cluster used for management.
-    :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
-    :param internet: Connectivity to internet is enabled or disabled. Possible values include:
-     "Enabled", "Disabled". Default value: "Disabled".
-    :type internet: str or ~azure.mgmt.avs.models.InternetEnum
-    :param identity_sources: vCenter Single Sign On Identity Sources.
-    :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
-    :param availability: Properties describing how the cloud is distributed across availability
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The private cloud SKU. Required.
+    :vartype sku: ~azure.mgmt.avs.models.Sku
+    :ivar identity: The identity of the private cloud, if configured.
+    :vartype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
+    :ivar management_cluster: The default cluster used for management.
+    :vartype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+    :ivar internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype internet: str or ~azure.mgmt.avs.models.InternetEnum
+    :ivar identity_sources: vCenter Single Sign On Identity Sources.
+    :vartype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :ivar availability: Properties describing how the cloud is distributed across availability
      zones.
-    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
-    :param encryption: Customer managed key encryption, can be enabled or disabled.
-    :type encryption: ~azure.mgmt.avs.models.Encryption
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Cancelled", "Pending", "Building", "Deleting", "Updating".
+    :vartype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :ivar encryption: Customer managed key encryption, can be enabled or disabled.
+    :vartype encryption: ~azure.mgmt.avs.models.Encryption
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Cancelled", "Pending", "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.PrivateCloudProvisioningState
-    :param circuit: An ExpressRoute Circuit.
-    :type circuit: ~azure.mgmt.avs.models.Circuit
+    :ivar circuit: An ExpressRoute Circuit.
+    :vartype circuit: ~azure.mgmt.avs.models.Circuit
     :ivar endpoints: The endpoints.
     :vartype endpoints: ~azure.mgmt.avs.models.Endpoints
-    :param network_block: The block of addresses should be unique across VNet in your subscription
+    :ivar network_block: The block of addresses should be unique across VNet in your subscription
      as well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where A,B,C,D are
      between 0 and 255, and X is between 0 and 22.
-    :type network_block: str
+    :vartype network_block: str
     :ivar management_network: Network used to access vCenter Server and NSX-T Manager.
     :vartype management_network: str
     :ivar provisioning_network: Used for virtual machine cold migration, cloning, and snapshot
@@ -1905,86 +2130,129 @@ class PrivateCloud(TrackedResource):
     :vartype provisioning_network: str
     :ivar vmotion_network: Used for live migration of virtual machines.
     :vartype vmotion_network: str
-    :param vcenter_password: Optionally, set the vCenter admin password when the private cloud is
+    :ivar vcenter_password: Optionally, set the vCenter admin password when the private cloud is
      created.
-    :type vcenter_password: str
-    :param nsxt_password: Optionally, set the NSX-T Manager password when the private cloud is
+    :vartype vcenter_password: str
+    :ivar nsxt_password: Optionally, set the NSX-T Manager password when the private cloud is
      created.
-    :type nsxt_password: str
+    :vartype nsxt_password: str
     :ivar vcenter_certificate_thumbprint: Thumbprint of the vCenter Server SSL certificate.
     :vartype vcenter_certificate_thumbprint: str
     :ivar nsxt_certificate_thumbprint: Thumbprint of the NSX-T Manager SSL certificate.
     :vartype nsxt_certificate_thumbprint: str
     :ivar external_cloud_links: Array of cloud link IDs from other clouds that connect to this one.
     :vartype external_cloud_links: list[str]
-    :param secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present in
-     a stretched private cloud.
-    :type secondary_circuit: ~azure.mgmt.avs.models.Circuit
+    :ivar secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present in a
+     stretched private cloud.
+    :vartype secondary_circuit: ~azure.mgmt.avs.models.Circuit
+    :ivar nsx_public_ip_quota_raised: Flag to indicate whether the private cloud has the quota for
+     provisioned NSX Public IP count raised from 64 to 1024. Known values are: "Enabled" and
+     "Disabled".
+    :vartype nsx_public_ip_quota_raised: str or ~azure.mgmt.avs.models.NsxPublicIpQuotaRaisedEnum
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'sku': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'endpoints': {'readonly': True},
-        'management_network': {'readonly': True},
-        'provisioning_network': {'readonly': True},
-        'vmotion_network': {'readonly': True},
-        'vcenter_certificate_thumbprint': {'readonly': True},
-        'nsxt_certificate_thumbprint': {'readonly': True},
-        'external_cloud_links': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "sku": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "endpoints": {"readonly": True},
+        "management_network": {"readonly": True},
+        "provisioning_network": {"readonly": True},
+        "vmotion_network": {"readonly": True},
+        "vcenter_certificate_thumbprint": {"readonly": True},
+        "nsxt_certificate_thumbprint": {"readonly": True},
+        "external_cloud_links": {"readonly": True},
+        "nsx_public_ip_quota_raised": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'identity': {'key': 'identity', 'type': 'PrivateCloudIdentity'},
-        'management_cluster': {'key': 'properties.managementCluster', 'type': 'ManagementCluster'},
-        'internet': {'key': 'properties.internet', 'type': 'str'},
-        'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
-        'availability': {'key': 'properties.availability', 'type': 'AvailabilityProperties'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'circuit': {'key': 'properties.circuit', 'type': 'Circuit'},
-        'endpoints': {'key': 'properties.endpoints', 'type': 'Endpoints'},
-        'network_block': {'key': 'properties.networkBlock', 'type': 'str'},
-        'management_network': {'key': 'properties.managementNetwork', 'type': 'str'},
-        'provisioning_network': {'key': 'properties.provisioningNetwork', 'type': 'str'},
-        'vmotion_network': {'key': 'properties.vmotionNetwork', 'type': 'str'},
-        'vcenter_password': {'key': 'properties.vcenterPassword', 'type': 'str'},
-        'nsxt_password': {'key': 'properties.nsxtPassword', 'type': 'str'},
-        'vcenter_certificate_thumbprint': {'key': 'properties.vcenterCertificateThumbprint', 'type': 'str'},
-        'nsxt_certificate_thumbprint': {'key': 'properties.nsxtCertificateThumbprint', 'type': 'str'},
-        'external_cloud_links': {'key': 'properties.externalCloudLinks', 'type': '[str]'},
-        'secondary_circuit': {'key': 'properties.secondaryCircuit', 'type': 'Circuit'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "PrivateCloudIdentity"},
+        "management_cluster": {"key": "properties.managementCluster", "type": "ManagementCluster"},
+        "internet": {"key": "properties.internet", "type": "str"},
+        "identity_sources": {"key": "properties.identitySources", "type": "[IdentitySource]"},
+        "availability": {"key": "properties.availability", "type": "AvailabilityProperties"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "circuit": {"key": "properties.circuit", "type": "Circuit"},
+        "endpoints": {"key": "properties.endpoints", "type": "Endpoints"},
+        "network_block": {"key": "properties.networkBlock", "type": "str"},
+        "management_network": {"key": "properties.managementNetwork", "type": "str"},
+        "provisioning_network": {"key": "properties.provisioningNetwork", "type": "str"},
+        "vmotion_network": {"key": "properties.vmotionNetwork", "type": "str"},
+        "vcenter_password": {"key": "properties.vcenterPassword", "type": "str"},
+        "nsxt_password": {"key": "properties.nsxtPassword", "type": "str"},
+        "vcenter_certificate_thumbprint": {"key": "properties.vcenterCertificateThumbprint", "type": "str"},
+        "nsxt_certificate_thumbprint": {"key": "properties.nsxtCertificateThumbprint", "type": "str"},
+        "external_cloud_links": {"key": "properties.externalCloudLinks", "type": "[str]"},
+        "secondary_circuit": {"key": "properties.secondaryCircuit", "type": "Circuit"},
+        "nsx_public_ip_quota_raised": {"key": "properties.nsxPublicIpQuotaRaised", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        sku: "Sku",
+        sku: "_models.Sku",
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["PrivateCloudIdentity"] = None,
-        management_cluster: Optional["ManagementCluster"] = None,
-        internet: Optional[Union[str, "InternetEnum"]] = "Disabled",
-        identity_sources: Optional[List["IdentitySource"]] = None,
-        availability: Optional["AvailabilityProperties"] = None,
-        encryption: Optional["Encryption"] = None,
-        circuit: Optional["Circuit"] = None,
+        identity: Optional["_models.PrivateCloudIdentity"] = None,
+        management_cluster: Optional["_models.ManagementCluster"] = None,
+        internet: Union[str, "_models.InternetEnum"] = "Disabled",
+        identity_sources: Optional[List["_models.IdentitySource"]] = None,
+        availability: Optional["_models.AvailabilityProperties"] = None,
+        encryption: Optional["_models.Encryption"] = None,
+        circuit: Optional["_models.Circuit"] = None,
         network_block: Optional[str] = None,
         vcenter_password: Optional[str] = None,
         nsxt_password: Optional[str] = None,
-        secondary_circuit: Optional["Circuit"] = None,
+        secondary_circuit: Optional["_models.Circuit"] = None,
         **kwargs
     ):
-        super(PrivateCloud, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The private cloud SKU. Required.
+        :paramtype sku: ~azure.mgmt.avs.models.Sku
+        :keyword identity: The identity of the private cloud, if configured.
+        :paramtype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
+        :keyword management_cluster: The default cluster used for management.
+        :paramtype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+        :keyword internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+         and "Disabled".
+        :paramtype internet: str or ~azure.mgmt.avs.models.InternetEnum
+        :keyword identity_sources: vCenter Single Sign On Identity Sources.
+        :paramtype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+        :keyword availability: Properties describing how the cloud is distributed across availability
+         zones.
+        :paramtype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+        :keyword encryption: Customer managed key encryption, can be enabled or disabled.
+        :paramtype encryption: ~azure.mgmt.avs.models.Encryption
+        :keyword circuit: An ExpressRoute Circuit.
+        :paramtype circuit: ~azure.mgmt.avs.models.Circuit
+        :keyword network_block: The block of addresses should be unique across VNet in your
+         subscription as well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where
+         A,B,C,D are between 0 and 255, and X is between 0 and 22.
+        :paramtype network_block: str
+        :keyword vcenter_password: Optionally, set the vCenter admin password when the private cloud is
+         created.
+        :paramtype vcenter_password: str
+        :keyword nsxt_password: Optionally, set the NSX-T Manager password when the private cloud is
+         created.
+        :paramtype nsxt_password: str
+        :keyword secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present
+         in a stretched private cloud.
+        :paramtype secondary_circuit: ~azure.mgmt.avs.models.Circuit
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
         self.management_cluster = management_cluster
@@ -2005,9 +2273,10 @@ class PrivateCloud(TrackedResource):
         self.nsxt_certificate_thumbprint = None
         self.external_cloud_links = None
         self.secondary_circuit = secondary_circuit
+        self.nsx_public_ip_quota_raised = None
 
 
-class PrivateCloudIdentity(msrest.serialization.Model):
+class PrivateCloudIdentity(_serialization.Model):
     """Identity for the virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2018,36 +2287,37 @@ class PrivateCloudIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID associated with the private cloud. This property will only be
      provided for a system assigned identity.
     :vartype tenant_id: str
-    :param type: The type of identity used for the private cloud. The type 'SystemAssigned' refers
+    :ivar type: The type of identity used for the private cloud. The type 'SystemAssigned' refers
      to an implicitly created identity. The type 'None' will remove any identities from the Private
-     Cloud. Possible values include: "SystemAssigned", "None".
-    :type type: str or ~azure.mgmt.avs.models.ResourceIdentityType
+     Cloud. Known values are: "SystemAssigned" and "None".
+    :vartype type: str or ~azure.mgmt.avs.models.ResourceIdentityType
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        **kwargs
-    ):
-        super(PrivateCloudIdentity, self).__init__(**kwargs)
+    def __init__(self, *, type: Optional[Union[str, "_models.ResourceIdentityType"]] = None, **kwargs):
+        """
+        :keyword type: The type of identity used for the private cloud. The type 'SystemAssigned'
+         refers to an implicitly created identity. The type 'None' will remove any identities from the
+         Private Cloud. Known values are: "SystemAssigned" and "None".
+        :paramtype type: str or ~azure.mgmt.avs.models.ResourceIdentityType
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class PrivateCloudList(msrest.serialization.Model):
+class PrivateCloudList(_serialization.Model):
     """A paged list of private clouds.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2059,60 +2329,72 @@ class PrivateCloudList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateCloud]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateCloud]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateCloudList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PrivateCloudUpdateProperties(msrest.serialization.Model):
+class PrivateCloudUpdateProperties(_serialization.Model):
     """The properties of a private cloud resource that may be updated.
 
-    :param management_cluster: The default cluster used for management.
-    :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
-    :param internet: Connectivity to internet is enabled or disabled. Possible values include:
-     "Enabled", "Disabled". Default value: "Disabled".
-    :type internet: str or ~azure.mgmt.avs.models.InternetEnum
-    :param identity_sources: vCenter Single Sign On Identity Sources.
-    :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
-    :param availability: Properties describing how the cloud is distributed across availability
+    :ivar management_cluster: The default cluster used for management.
+    :vartype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+    :ivar internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype internet: str or ~azure.mgmt.avs.models.InternetEnum
+    :ivar identity_sources: vCenter Single Sign On Identity Sources.
+    :vartype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :ivar availability: Properties describing how the cloud is distributed across availability
      zones.
-    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
-    :param encryption: Customer managed key encryption, can be enabled or disabled.
-    :type encryption: ~azure.mgmt.avs.models.Encryption
+    :vartype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :ivar encryption: Customer managed key encryption, can be enabled or disabled.
+    :vartype encryption: ~azure.mgmt.avs.models.Encryption
     """
 
     _attribute_map = {
-        'management_cluster': {'key': 'managementCluster', 'type': 'ManagementCluster'},
-        'internet': {'key': 'internet', 'type': 'str'},
-        'identity_sources': {'key': 'identitySources', 'type': '[IdentitySource]'},
-        'availability': {'key': 'availability', 'type': 'AvailabilityProperties'},
-        'encryption': {'key': 'encryption', 'type': 'Encryption'},
+        "management_cluster": {"key": "managementCluster", "type": "ManagementCluster"},
+        "internet": {"key": "internet", "type": "str"},
+        "identity_sources": {"key": "identitySources", "type": "[IdentitySource]"},
+        "availability": {"key": "availability", "type": "AvailabilityProperties"},
+        "encryption": {"key": "encryption", "type": "Encryption"},
     }
 
     def __init__(
         self,
         *,
-        management_cluster: Optional["ManagementCluster"] = None,
-        internet: Optional[Union[str, "InternetEnum"]] = "Disabled",
-        identity_sources: Optional[List["IdentitySource"]] = None,
-        availability: Optional["AvailabilityProperties"] = None,
-        encryption: Optional["Encryption"] = None,
+        management_cluster: Optional["_models.ManagementCluster"] = None,
+        internet: Union[str, "_models.InternetEnum"] = "Disabled",
+        identity_sources: Optional[List["_models.IdentitySource"]] = None,
+        availability: Optional["_models.AvailabilityProperties"] = None,
+        encryption: Optional["_models.Encryption"] = None,
         **kwargs
     ):
-        super(PrivateCloudUpdateProperties, self).__init__(**kwargs)
+        """
+        :keyword management_cluster: The default cluster used for management.
+        :paramtype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+        :keyword internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+         and "Disabled".
+        :paramtype internet: str or ~azure.mgmt.avs.models.InternetEnum
+        :keyword identity_sources: vCenter Single Sign On Identity Sources.
+        :paramtype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+        :keyword availability: Properties describing how the cloud is distributed across availability
+         zones.
+        :paramtype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+        :keyword encryption: Customer managed key encryption, can be enabled or disabled.
+        :paramtype encryption: ~azure.mgmt.avs.models.Encryption
+        """
+        super().__init__(**kwargs)
         self.management_cluster = management_cluster
         self.internet = internet
         self.identity_sources = identity_sources
@@ -2120,36 +2402,36 @@ class PrivateCloudUpdateProperties(msrest.serialization.Model):
         self.encryption = encryption
 
 
-class PrivateCloudProperties(PrivateCloudUpdateProperties):
+class PrivateCloudProperties(PrivateCloudUpdateProperties):  # pylint: disable=too-many-instance-attributes
     """The properties of a private cloud resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param management_cluster: The default cluster used for management.
-    :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
-    :param internet: Connectivity to internet is enabled or disabled. Possible values include:
-     "Enabled", "Disabled". Default value: "Disabled".
-    :type internet: str or ~azure.mgmt.avs.models.InternetEnum
-    :param identity_sources: vCenter Single Sign On Identity Sources.
-    :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
-    :param availability: Properties describing how the cloud is distributed across availability
+    :ivar management_cluster: The default cluster used for management.
+    :vartype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+    :ivar internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype internet: str or ~azure.mgmt.avs.models.InternetEnum
+    :ivar identity_sources: vCenter Single Sign On Identity Sources.
+    :vartype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :ivar availability: Properties describing how the cloud is distributed across availability
      zones.
-    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
-    :param encryption: Customer managed key encryption, can be enabled or disabled.
-    :type encryption: ~azure.mgmt.avs.models.Encryption
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Cancelled", "Pending", "Building", "Deleting", "Updating".
+    :vartype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :ivar encryption: Customer managed key encryption, can be enabled or disabled.
+    :vartype encryption: ~azure.mgmt.avs.models.Encryption
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Cancelled", "Pending", "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.PrivateCloudProvisioningState
-    :param circuit: An ExpressRoute Circuit.
-    :type circuit: ~azure.mgmt.avs.models.Circuit
+    :ivar circuit: An ExpressRoute Circuit.
+    :vartype circuit: ~azure.mgmt.avs.models.Circuit
     :ivar endpoints: The endpoints.
     :vartype endpoints: ~azure.mgmt.avs.models.Endpoints
-    :param network_block: Required. The block of addresses should be unique across VNet in your
-     subscription as well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where
-     A,B,C,D are between 0 and 255, and X is between 0 and 22.
-    :type network_block: str
+    :ivar network_block: The block of addresses should be unique across VNet in your subscription
+     as well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where A,B,C,D are
+     between 0 and 255, and X is between 0 and 22. Required.
+    :vartype network_block: str
     :ivar management_network: Network used to access vCenter Server and NSX-T Manager.
     :vartype management_network: str
     :ivar provisioning_network: Used for virtual machine cold migration, cloning, and snapshot
@@ -2157,72 +2439,114 @@ class PrivateCloudProperties(PrivateCloudUpdateProperties):
     :vartype provisioning_network: str
     :ivar vmotion_network: Used for live migration of virtual machines.
     :vartype vmotion_network: str
-    :param vcenter_password: Optionally, set the vCenter admin password when the private cloud is
+    :ivar vcenter_password: Optionally, set the vCenter admin password when the private cloud is
      created.
-    :type vcenter_password: str
-    :param nsxt_password: Optionally, set the NSX-T Manager password when the private cloud is
+    :vartype vcenter_password: str
+    :ivar nsxt_password: Optionally, set the NSX-T Manager password when the private cloud is
      created.
-    :type nsxt_password: str
+    :vartype nsxt_password: str
     :ivar vcenter_certificate_thumbprint: Thumbprint of the vCenter Server SSL certificate.
     :vartype vcenter_certificate_thumbprint: str
     :ivar nsxt_certificate_thumbprint: Thumbprint of the NSX-T Manager SSL certificate.
     :vartype nsxt_certificate_thumbprint: str
     :ivar external_cloud_links: Array of cloud link IDs from other clouds that connect to this one.
     :vartype external_cloud_links: list[str]
-    :param secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present in
-     a stretched private cloud.
-    :type secondary_circuit: ~azure.mgmt.avs.models.Circuit
+    :ivar secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present in a
+     stretched private cloud.
+    :vartype secondary_circuit: ~azure.mgmt.avs.models.Circuit
+    :ivar nsx_public_ip_quota_raised: Flag to indicate whether the private cloud has the quota for
+     provisioned NSX Public IP count raised from 64 to 1024. Known values are: "Enabled" and
+     "Disabled".
+    :vartype nsx_public_ip_quota_raised: str or ~azure.mgmt.avs.models.NsxPublicIpQuotaRaisedEnum
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'endpoints': {'readonly': True},
-        'network_block': {'required': True},
-        'management_network': {'readonly': True},
-        'provisioning_network': {'readonly': True},
-        'vmotion_network': {'readonly': True},
-        'vcenter_certificate_thumbprint': {'readonly': True},
-        'nsxt_certificate_thumbprint': {'readonly': True},
-        'external_cloud_links': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "endpoints": {"readonly": True},
+        "network_block": {"required": True},
+        "management_network": {"readonly": True},
+        "provisioning_network": {"readonly": True},
+        "vmotion_network": {"readonly": True},
+        "vcenter_certificate_thumbprint": {"readonly": True},
+        "nsxt_certificate_thumbprint": {"readonly": True},
+        "external_cloud_links": {"readonly": True},
+        "nsx_public_ip_quota_raised": {"readonly": True},
     }
 
     _attribute_map = {
-        'management_cluster': {'key': 'managementCluster', 'type': 'ManagementCluster'},
-        'internet': {'key': 'internet', 'type': 'str'},
-        'identity_sources': {'key': 'identitySources', 'type': '[IdentitySource]'},
-        'availability': {'key': 'availability', 'type': 'AvailabilityProperties'},
-        'encryption': {'key': 'encryption', 'type': 'Encryption'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'circuit': {'key': 'circuit', 'type': 'Circuit'},
-        'endpoints': {'key': 'endpoints', 'type': 'Endpoints'},
-        'network_block': {'key': 'networkBlock', 'type': 'str'},
-        'management_network': {'key': 'managementNetwork', 'type': 'str'},
-        'provisioning_network': {'key': 'provisioningNetwork', 'type': 'str'},
-        'vmotion_network': {'key': 'vmotionNetwork', 'type': 'str'},
-        'vcenter_password': {'key': 'vcenterPassword', 'type': 'str'},
-        'nsxt_password': {'key': 'nsxtPassword', 'type': 'str'},
-        'vcenter_certificate_thumbprint': {'key': 'vcenterCertificateThumbprint', 'type': 'str'},
-        'nsxt_certificate_thumbprint': {'key': 'nsxtCertificateThumbprint', 'type': 'str'},
-        'external_cloud_links': {'key': 'externalCloudLinks', 'type': '[str]'},
-        'secondary_circuit': {'key': 'secondaryCircuit', 'type': 'Circuit'},
+        "management_cluster": {"key": "managementCluster", "type": "ManagementCluster"},
+        "internet": {"key": "internet", "type": "str"},
+        "identity_sources": {"key": "identitySources", "type": "[IdentitySource]"},
+        "availability": {"key": "availability", "type": "AvailabilityProperties"},
+        "encryption": {"key": "encryption", "type": "Encryption"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "circuit": {"key": "circuit", "type": "Circuit"},
+        "endpoints": {"key": "endpoints", "type": "Endpoints"},
+        "network_block": {"key": "networkBlock", "type": "str"},
+        "management_network": {"key": "managementNetwork", "type": "str"},
+        "provisioning_network": {"key": "provisioningNetwork", "type": "str"},
+        "vmotion_network": {"key": "vmotionNetwork", "type": "str"},
+        "vcenter_password": {"key": "vcenterPassword", "type": "str"},
+        "nsxt_password": {"key": "nsxtPassword", "type": "str"},
+        "vcenter_certificate_thumbprint": {"key": "vcenterCertificateThumbprint", "type": "str"},
+        "nsxt_certificate_thumbprint": {"key": "nsxtCertificateThumbprint", "type": "str"},
+        "external_cloud_links": {"key": "externalCloudLinks", "type": "[str]"},
+        "secondary_circuit": {"key": "secondaryCircuit", "type": "Circuit"},
+        "nsx_public_ip_quota_raised": {"key": "nsxPublicIpQuotaRaised", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         network_block: str,
-        management_cluster: Optional["ManagementCluster"] = None,
-        internet: Optional[Union[str, "InternetEnum"]] = "Disabled",
-        identity_sources: Optional[List["IdentitySource"]] = None,
-        availability: Optional["AvailabilityProperties"] = None,
-        encryption: Optional["Encryption"] = None,
-        circuit: Optional["Circuit"] = None,
+        management_cluster: Optional["_models.ManagementCluster"] = None,
+        internet: Union[str, "_models.InternetEnum"] = "Disabled",
+        identity_sources: Optional[List["_models.IdentitySource"]] = None,
+        availability: Optional["_models.AvailabilityProperties"] = None,
+        encryption: Optional["_models.Encryption"] = None,
+        circuit: Optional["_models.Circuit"] = None,
         vcenter_password: Optional[str] = None,
         nsxt_password: Optional[str] = None,
-        secondary_circuit: Optional["Circuit"] = None,
+        secondary_circuit: Optional["_models.Circuit"] = None,
         **kwargs
     ):
-        super(PrivateCloudProperties, self).__init__(management_cluster=management_cluster, internet=internet, identity_sources=identity_sources, availability=availability, encryption=encryption, **kwargs)
+        """
+        :keyword management_cluster: The default cluster used for management.
+        :paramtype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+        :keyword internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+         and "Disabled".
+        :paramtype internet: str or ~azure.mgmt.avs.models.InternetEnum
+        :keyword identity_sources: vCenter Single Sign On Identity Sources.
+        :paramtype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+        :keyword availability: Properties describing how the cloud is distributed across availability
+         zones.
+        :paramtype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+        :keyword encryption: Customer managed key encryption, can be enabled or disabled.
+        :paramtype encryption: ~azure.mgmt.avs.models.Encryption
+        :keyword circuit: An ExpressRoute Circuit.
+        :paramtype circuit: ~azure.mgmt.avs.models.Circuit
+        :keyword network_block: The block of addresses should be unique across VNet in your
+         subscription as well as on-premise. Make sure the CIDR format is conformed to (A.B.C.D/X) where
+         A,B,C,D are between 0 and 255, and X is between 0 and 22. Required.
+        :paramtype network_block: str
+        :keyword vcenter_password: Optionally, set the vCenter admin password when the private cloud is
+         created.
+        :paramtype vcenter_password: str
+        :keyword nsxt_password: Optionally, set the NSX-T Manager password when the private cloud is
+         created.
+        :paramtype nsxt_password: str
+        :keyword secondary_circuit: A secondary expressRoute circuit from a separate AZ. Only present
+         in a stretched private cloud.
+        :paramtype secondary_circuit: ~azure.mgmt.avs.models.Circuit
+        """
+        super().__init__(
+            management_cluster=management_cluster,
+            internet=internet,
+            identity_sources=identity_sources,
+            availability=availability,
+            encryption=encryption,
+            **kwargs
+        )
         self.provisioning_state = None
         self.circuit = circuit
         self.endpoints = None
@@ -2236,52 +2560,71 @@ class PrivateCloudProperties(PrivateCloudUpdateProperties):
         self.nsxt_certificate_thumbprint = None
         self.external_cloud_links = None
         self.secondary_circuit = secondary_circuit
+        self.nsx_public_ip_quota_raised = None
 
 
-class PrivateCloudUpdate(msrest.serialization.Model):
+class PrivateCloudUpdate(_serialization.Model):
     """An update to a private cloud resource.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: The identity of the private cloud, if configured.
-    :type identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
-    :param management_cluster: The default cluster used for management.
-    :type management_cluster: ~azure.mgmt.avs.models.ManagementCluster
-    :param internet: Connectivity to internet is enabled or disabled. Possible values include:
-     "Enabled", "Disabled". Default value: "Disabled".
-    :type internet: str or ~azure.mgmt.avs.models.InternetEnum
-    :param identity_sources: vCenter Single Sign On Identity Sources.
-    :type identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
-    :param availability: Properties describing how the cloud is distributed across availability
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the private cloud, if configured.
+    :vartype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
+    :ivar management_cluster: The default cluster used for management.
+    :vartype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+    :ivar internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype internet: str or ~azure.mgmt.avs.models.InternetEnum
+    :ivar identity_sources: vCenter Single Sign On Identity Sources.
+    :vartype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+    :ivar availability: Properties describing how the cloud is distributed across availability
      zones.
-    :type availability: ~azure.mgmt.avs.models.AvailabilityProperties
-    :param encryption: Customer managed key encryption, can be enabled or disabled.
-    :type encryption: ~azure.mgmt.avs.models.Encryption
+    :vartype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+    :ivar encryption: Customer managed key encryption, can be enabled or disabled.
+    :vartype encryption: ~azure.mgmt.avs.models.Encryption
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'PrivateCloudIdentity'},
-        'management_cluster': {'key': 'properties.managementCluster', 'type': 'ManagementCluster'},
-        'internet': {'key': 'properties.internet', 'type': 'str'},
-        'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
-        'availability': {'key': 'properties.availability', 'type': 'AvailabilityProperties'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "PrivateCloudIdentity"},
+        "management_cluster": {"key": "properties.managementCluster", "type": "ManagementCluster"},
+        "internet": {"key": "properties.internet", "type": "str"},
+        "identity_sources": {"key": "properties.identitySources", "type": "[IdentitySource]"},
+        "availability": {"key": "properties.availability", "type": "AvailabilityProperties"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["PrivateCloudIdentity"] = None,
-        management_cluster: Optional["ManagementCluster"] = None,
-        internet: Optional[Union[str, "InternetEnum"]] = "Disabled",
-        identity_sources: Optional[List["IdentitySource"]] = None,
-        availability: Optional["AvailabilityProperties"] = None,
-        encryption: Optional["Encryption"] = None,
+        identity: Optional["_models.PrivateCloudIdentity"] = None,
+        management_cluster: Optional["_models.ManagementCluster"] = None,
+        internet: Union[str, "_models.InternetEnum"] = "Disabled",
+        identity_sources: Optional[List["_models.IdentitySource"]] = None,
+        availability: Optional["_models.AvailabilityProperties"] = None,
+        encryption: Optional["_models.Encryption"] = None,
         **kwargs
     ):
-        super(PrivateCloudUpdate, self).__init__(**kwargs)
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the private cloud, if configured.
+        :paramtype identity: ~azure.mgmt.avs.models.PrivateCloudIdentity
+        :keyword management_cluster: The default cluster used for management.
+        :paramtype management_cluster: ~azure.mgmt.avs.models.ManagementCluster
+        :keyword internet: Connectivity to internet is enabled or disabled. Known values are: "Enabled"
+         and "Disabled".
+        :paramtype internet: str or ~azure.mgmt.avs.models.InternetEnum
+        :keyword identity_sources: vCenter Single Sign On Identity Sources.
+        :paramtype identity_sources: list[~azure.mgmt.avs.models.IdentitySource]
+        :keyword availability: Properties describing how the cloud is distributed across availability
+         zones.
+        :paramtype availability: ~azure.mgmt.avs.models.AvailabilityProperties
+        :keyword encryption: Customer managed key encryption, can be enabled or disabled.
+        :paramtype encryption: ~azure.mgmt.avs.models.Encryption
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
         self.management_cluster = management_cluster
@@ -2305,60 +2648,62 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class ScriptExecutionParameter(msrest.serialization.Model):
+class ScriptExecutionParameter(_serialization.Model):
     """The arguments passed in to the execution.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: PSCredentialExecutionParameter, ScriptSecureStringExecutionParameter, ScriptStringExecutionParameter.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    PSCredentialExecutionParameter, ScriptSecureStringExecutionParameter,
+    ScriptStringExecutionParameter
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The parameter name.
-    :type name: str
-    :param type: Required. The type of execution parameter.Constant filled by server.  Possible
-     values include: "Value", "SecureValue", "Credential".
-    :type type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
+    :ivar name: The parameter name. Required.
+    :vartype name: str
+    :ivar type: The type of execution parameter. Required. Known values are: "Value",
+     "SecureValue", and "Credential".
+    :vartype type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'Credential': 'PSCredentialExecutionParameter', 'SecureValue': 'ScriptSecureStringExecutionParameter', 'Value': 'ScriptStringExecutionParameter'}
+        "type": {
+            "Credential": "PSCredentialExecutionParameter",
+            "SecureValue": "ScriptSecureStringExecutionParameter",
+            "Value": "ScriptStringExecutionParameter",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(ScriptExecutionParameter, self).__init__(**kwargs)
+    def __init__(self, *, name: str, **kwargs):
+        """
+        :keyword name: The parameter name. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = None  # type: Optional[str]
 
@@ -2368,70 +2713,69 @@ class PSCredentialExecutionParameter(ScriptExecutionParameter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The parameter name.
-    :type name: str
-    :param type: Required. The type of execution parameter.Constant filled by server.  Possible
-     values include: "Value", "SecureValue", "Credential".
-    :type type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
-    :param username: username for login.
-    :type username: str
-    :param password: password for login.
-    :type password: str
+    :ivar name: The parameter name. Required.
+    :vartype name: str
+    :ivar type: The type of execution parameter. Required. Known values are: "Value",
+     "SecureValue", and "Credential".
+    :vartype type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
+    :ivar username: username for login.
+    :vartype username: str
+    :ivar password: password for login.
+    :vartype password: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        **kwargs
-    ):
-        super(PSCredentialExecutionParameter, self).__init__(name=name, **kwargs)
-        self.type = 'Credential'  # type: str
+    def __init__(self, *, name: str, username: Optional[str] = None, password: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The parameter name. Required.
+        :paramtype name: str
+        :keyword username: username for login.
+        :paramtype username: str
+        :keyword password: password for login.
+        :paramtype password: str
+        """
+        super().__init__(name=name, **kwargs)
+        self.type = "Credential"  # type: str
         self.username = username
         self.password = password
 
 
-class Quota(msrest.serialization.Model):
+class Quota(_serialization.Model):
     """Subscription quotas.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar hosts_remaining: Remaining hosts quota by sku type.
     :vartype hosts_remaining: dict[str, int]
-    :ivar quota_enabled: Host quota is active for current subscription. Possible values include:
-     "Enabled", "Disabled".
+    :ivar quota_enabled: Host quota is active for current subscription. Known values are: "Enabled"
+     and "Disabled".
     :vartype quota_enabled: str or ~azure.mgmt.avs.models.QuotaEnabled
     """
 
     _validation = {
-        'hosts_remaining': {'readonly': True},
-        'quota_enabled': {'readonly': True},
+        "hosts_remaining": {"readonly": True},
+        "quota_enabled": {"readonly": True},
     }
 
     _attribute_map = {
-        'hosts_remaining': {'key': 'hostsRemaining', 'type': '{int}'},
-        'quota_enabled': {'key': 'quotaEnabled', 'type': 'str'},
+        "hosts_remaining": {"key": "hostsRemaining", "type": "{int}"},
+        "quota_enabled": {"key": "quotaEnabled", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Quota, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.hosts_remaining = None
         self.quota_enabled = None
 
@@ -2456,34 +2800,32 @@ class ScriptCmdlet(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'description': {'readonly': True},
-        'timeout': {'readonly': True},
-        'parameters': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "description": {"readonly": True},
+        "timeout": {"readonly": True},
+        "parameters": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'timeout': {'key': 'properties.timeout', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ScriptParameter]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "timeout": {"key": "properties.timeout", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ScriptParameter]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScriptCmdlet, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.description = None
         self.timeout = None
         self.parameters = None
 
 
-class ScriptCmdletsList(msrest.serialization.Model):
+class ScriptCmdletsList(_serialization.Model):
     """Pageable list of scripts/cmdlets.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2495,25 +2837,23 @@ class ScriptCmdletsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ScriptCmdlet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ScriptCmdlet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScriptCmdletsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ScriptExecution(ProxyResource):
+class ScriptExecution(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """An instance of a script executed by a user - custom or AVS.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2524,35 +2864,35 @@ class ScriptExecution(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param script_cmdlet_id: A reference to the script cmdlet resource if user is running a AVS
+    :ivar script_cmdlet_id: A reference to the script cmdlet resource if user is running a AVS
      script.
-    :type script_cmdlet_id: str
-    :param parameters: Parameters the script will accept.
-    :type parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
-    :param hidden_parameters: Parameters that will be hidden/not visible to ARM, such as passwords
+    :vartype script_cmdlet_id: str
+    :ivar parameters: Parameters the script will accept.
+    :vartype parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
+    :ivar hidden_parameters: Parameters that will be hidden/not visible to ARM, such as passwords
      and credentials.
-    :type hidden_parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
-    :param failure_reason: Error message if the script was able to run, but if the script itself
-     had errors or powershell threw an exception.
-    :type failure_reason: str
-    :param timeout: Time limit for execution.
-    :type timeout: str
-    :param retention: Time to live for the resource. If not provided, will be available for 60
-     days.
-    :type retention: str
+    :vartype hidden_parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
+    :ivar failure_reason: Error message if the script was able to run, but if the script itself had
+     errors or powershell threw an exception.
+    :vartype failure_reason: str
+    :ivar timeout: Time limit for execution.
+    :vartype timeout: str
+    :ivar retention: Time to live for the resource. If not provided, will be available for 60 days.
+    :vartype retention: str
     :ivar submitted_at: Time the script execution was submitted.
     :vartype submitted_at: ~datetime.datetime
     :ivar started_at: Time the script execution was started.
     :vartype started_at: ~datetime.datetime
     :ivar finished_at: Time the script execution was finished.
     :vartype finished_at: ~datetime.datetime
-    :ivar provisioning_state: The state of the script execution resource. Possible values include:
-     "Pending", "Running", "Succeeded", "Failed", "Cancelling", "Cancelled", "Deleting".
+    :ivar provisioning_state: The state of the script execution resource. Known values are:
+     "Pending", "Running", "Succeeded", "Failed", "Cancelling", "Cancelled", "Deleting", and
+     "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.ScriptExecutionProvisioningState
-    :param output: Standard output stream from the powershell execution.
-    :type output: list[str]
-    :param named_outputs: User-defined dictionary.
-    :type named_outputs: dict[str, any]
+    :ivar output: Standard output stream from the powershell execution.
+    :vartype output: list[str]
+    :ivar named_outputs: User-defined dictionary.
+    :vartype named_outputs: dict[str, JSON]
     :ivar information: Standard information out stream from the powershell execution.
     :vartype information: list[str]
     :ivar warnings: Standard warning out stream from the powershell execution.
@@ -2562,53 +2902,75 @@ class ScriptExecution(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'submitted_at': {'readonly': True},
-        'started_at': {'readonly': True},
-        'finished_at': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'information': {'readonly': True},
-        'warnings': {'readonly': True},
-        'errors': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "submitted_at": {"readonly": True},
+        "started_at": {"readonly": True},
+        "finished_at": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "information": {"readonly": True},
+        "warnings": {"readonly": True},
+        "errors": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'script_cmdlet_id': {'key': 'properties.scriptCmdletId', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ScriptExecutionParameter]'},
-        'hidden_parameters': {'key': 'properties.hiddenParameters', 'type': '[ScriptExecutionParameter]'},
-        'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
-        'timeout': {'key': 'properties.timeout', 'type': 'str'},
-        'retention': {'key': 'properties.retention', 'type': 'str'},
-        'submitted_at': {'key': 'properties.submittedAt', 'type': 'iso-8601'},
-        'started_at': {'key': 'properties.startedAt', 'type': 'iso-8601'},
-        'finished_at': {'key': 'properties.finishedAt', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'output': {'key': 'properties.output', 'type': '[str]'},
-        'named_outputs': {'key': 'properties.namedOutputs', 'type': '{object}'},
-        'information': {'key': 'properties.information', 'type': '[str]'},
-        'warnings': {'key': 'properties.warnings', 'type': '[str]'},
-        'errors': {'key': 'properties.errors', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "script_cmdlet_id": {"key": "properties.scriptCmdletId", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ScriptExecutionParameter]"},
+        "hidden_parameters": {"key": "properties.hiddenParameters", "type": "[ScriptExecutionParameter]"},
+        "failure_reason": {"key": "properties.failureReason", "type": "str"},
+        "timeout": {"key": "properties.timeout", "type": "str"},
+        "retention": {"key": "properties.retention", "type": "str"},
+        "submitted_at": {"key": "properties.submittedAt", "type": "iso-8601"},
+        "started_at": {"key": "properties.startedAt", "type": "iso-8601"},
+        "finished_at": {"key": "properties.finishedAt", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "output": {"key": "properties.output", "type": "[str]"},
+        "named_outputs": {"key": "properties.namedOutputs", "type": "{object}"},
+        "information": {"key": "properties.information", "type": "[str]"},
+        "warnings": {"key": "properties.warnings", "type": "[str]"},
+        "errors": {"key": "properties.errors", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
         script_cmdlet_id: Optional[str] = None,
-        parameters: Optional[List["ScriptExecutionParameter"]] = None,
-        hidden_parameters: Optional[List["ScriptExecutionParameter"]] = None,
+        parameters: Optional[List["_models.ScriptExecutionParameter"]] = None,
+        hidden_parameters: Optional[List["_models.ScriptExecutionParameter"]] = None,
         failure_reason: Optional[str] = None,
         timeout: Optional[str] = None,
         retention: Optional[str] = None,
         output: Optional[List[str]] = None,
-        named_outputs: Optional[Dict[str, Any]] = None,
+        named_outputs: Optional[Dict[str, JSON]] = None,
         **kwargs
     ):
-        super(ScriptExecution, self).__init__(**kwargs)
+        """
+        :keyword script_cmdlet_id: A reference to the script cmdlet resource if user is running a AVS
+         script.
+        :paramtype script_cmdlet_id: str
+        :keyword parameters: Parameters the script will accept.
+        :paramtype parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
+        :keyword hidden_parameters: Parameters that will be hidden/not visible to ARM, such as
+         passwords and credentials.
+        :paramtype hidden_parameters: list[~azure.mgmt.avs.models.ScriptExecutionParameter]
+        :keyword failure_reason: Error message if the script was able to run, but if the script itself
+         had errors or powershell threw an exception.
+        :paramtype failure_reason: str
+        :keyword timeout: Time limit for execution.
+        :paramtype timeout: str
+        :keyword retention: Time to live for the resource. If not provided, will be available for 60
+         days.
+        :paramtype retention: str
+        :keyword output: Standard output stream from the powershell execution.
+        :paramtype output: list[str]
+        :keyword named_outputs: User-defined dictionary.
+        :paramtype named_outputs: dict[str, JSON]
+        """
+        super().__init__(**kwargs)
         self.script_cmdlet_id = script_cmdlet_id
         self.parameters = parameters
         self.hidden_parameters = hidden_parameters
@@ -2626,7 +2988,7 @@ class ScriptExecution(ProxyResource):
         self.errors = None
 
 
-class ScriptExecutionsList(msrest.serialization.Model):
+class ScriptExecutionsList(_serialization.Model):
     """Pageable list of script executions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2638,20 +3000,18 @@ class ScriptExecutionsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ScriptExecution]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ScriptExecution]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScriptExecutionsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -2671,34 +3031,42 @@ class ScriptPackage(ProxyResource):
     :vartype description: str
     :ivar version: Module version.
     :vartype version: str
+    :ivar company: Company that created and supports the package.
+    :vartype company: str
+    :ivar uri: Link to support by the package vendor.
+    :vartype uri: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'description': {'readonly': True},
-        'version': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "description": {"readonly": True},
+        "version": {"readonly": True},
+        "company": {"readonly": True},
+        "uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "company": {"key": "properties.company", "type": "str"},
+        "uri": {"key": "properties.uri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScriptPackage, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.description = None
         self.version = None
+        self.company = None
+        self.uri = None
 
 
-class ScriptPackagesList(msrest.serialization.Model):
+class ScriptPackagesList(_serialization.Model):
     """A list of the available script packages.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2710,67 +3078,64 @@ class ScriptPackagesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ScriptPackage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ScriptPackage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ScriptPackagesList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ScriptParameter(msrest.serialization.Model):
+class ScriptParameter(_serialization.Model):
     """An parameter that the script will accept.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The type of parameter the script is expecting. psCredential is a
-     PSCredentialObject. Possible values include: "String", "SecureString", "Credential", "Int",
-     "Bool", "Float".
+     PSCredentialObject. Known values are: "String", "SecureString", "Credential", "Int", "Bool",
+     and "Float".
     :vartype type: str or ~azure.mgmt.avs.models.ScriptParameterTypes
-    :param name: The parameter name that the script will expect a parameter value for.
-    :type name: str
+    :ivar name: The parameter name that the script will expect a parameter value for.
+    :vartype name: str
     :ivar description: User friendly description of the parameter.
     :vartype description: str
     :ivar visibility: Should this parameter be visible to arm and passed in the parameters argument
-     when executing. Possible values include: "Visible", "Hidden".
+     when executing. Known values are: "Visible" and "Hidden".
     :vartype visibility: str or ~azure.mgmt.avs.models.VisibilityParameterEnum
-    :ivar optional: Is this parameter required or optional. Possible values include: "Optional",
+    :ivar optional: Is this parameter required or optional. Known values are: "Optional" and
      "Required".
     :vartype optional: str or ~azure.mgmt.avs.models.OptionalParamEnum
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'description': {'readonly': True},
-        'visibility': {'readonly': True},
-        'optional': {'readonly': True},
+        "type": {"readonly": True},
+        "description": {"readonly": True},
+        "visibility": {"readonly": True},
+        "optional": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'visibility': {'key': 'visibility', 'type': 'str'},
-        'optional': {'key': 'optional', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "visibility": {"key": "visibility", "type": "str"},
+        "optional": {"key": "optional", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
-        super(ScriptParameter, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The parameter name that the script will expect a parameter value for.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.type = None
         self.name = name
         self.description = None
@@ -2783,35 +3148,35 @@ class ScriptSecureStringExecutionParameter(ScriptExecutionParameter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The parameter name.
-    :type name: str
-    :param type: Required. The type of execution parameter.Constant filled by server.  Possible
-     values include: "Value", "SecureValue", "Credential".
-    :type type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
-    :param secure_value: A secure value for the passed parameter, not to be stored in logs.
-    :type secure_value: str
+    :ivar name: The parameter name. Required.
+    :vartype name: str
+    :ivar type: The type of execution parameter. Required. Known values are: "Value",
+     "SecureValue", and "Credential".
+    :vartype type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
+    :ivar secure_value: A secure value for the passed parameter, not to be stored in logs.
+    :vartype secure_value: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'secure_value': {'key': 'secureValue', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "secure_value": {"key": "secureValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        secure_value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ScriptSecureStringExecutionParameter, self).__init__(name=name, **kwargs)
-        self.type = 'SecureValue'  # type: str
+    def __init__(self, *, name: str, secure_value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The parameter name. Required.
+        :paramtype name: str
+        :keyword secure_value: A secure value for the passed parameter, not to be stored in logs.
+        :paramtype secure_value: str
+        """
+        super().__init__(name=name, **kwargs)
+        self.type = "SecureValue"  # type: str
         self.secure_value = secure_value
 
 
@@ -2820,97 +3185,102 @@ class ScriptStringExecutionParameter(ScriptExecutionParameter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The parameter name.
-    :type name: str
-    :param type: Required. The type of execution parameter.Constant filled by server.  Possible
-     values include: "Value", "SecureValue", "Credential".
-    :type type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
-    :param value: The value for the passed parameter.
-    :type value: str
+    :ivar name: The parameter name. Required.
+    :vartype name: str
+    :ivar type: The type of execution parameter. Required. Known values are: "Value",
+     "SecureValue", and "Credential".
+    :vartype type: str or ~azure.mgmt.avs.models.ScriptExecutionParameterType
+    :ivar value: The value for the passed parameter.
+    :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ScriptStringExecutionParameter, self).__init__(name=name, **kwargs)
-        self.type = 'Value'  # type: str
+    def __init__(self, *, name: str, value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The parameter name. Required.
+        :paramtype name: str
+        :keyword value: The value for the passed parameter.
+        :paramtype value: str
+        """
+        super().__init__(name=name, **kwargs)
+        self.type = "Value"  # type: str
         self.value = value
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """Service specification payload.
 
-    :param log_specifications: Specifications of the Log for Azure Monitoring.
-    :type log_specifications: list[~azure.mgmt.avs.models.LogSpecification]
-    :param metric_specifications: Specifications of the Metrics for Azure Monitoring.
-    :type metric_specifications: list[~azure.mgmt.avs.models.MetricSpecification]
+    :ivar log_specifications: Specifications of the Log for Azure Monitoring.
+    :vartype log_specifications: list[~azure.mgmt.avs.models.LogSpecification]
+    :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
+    :vartype metric_specifications: list[~azure.mgmt.avs.models.MetricSpecification]
     """
 
     _attribute_map = {
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["LogSpecification"]] = None,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         **kwargs
     ):
-        super(ServiceSpecification, self).__init__(**kwargs)
+        """
+        :keyword log_specifications: Specifications of the Log for Azure Monitoring.
+        :paramtype log_specifications: list[~azure.mgmt.avs.models.LogSpecification]
+        :keyword metric_specifications: Specifications of the Metrics for Azure Monitoring.
+        :paramtype metric_specifications: list[~azure.mgmt.avs.models.MetricSpecification]
+        """
+        super().__init__(**kwargs)
         self.log_specifications = log_specifications
         self.metric_specifications = metric_specifications
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The resource model definition representing SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU.
-    :type name: str
+    :ivar name: The name of the SKU. Required.
+    :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(Sku, self).__init__(**kwargs)
+    def __init__(self, *, name: str, **kwargs):
+        """
+        :keyword name: The name of the SKU. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
 
 
-class Trial(msrest.serialization.Model):
+class Trial(_serialization.Model):
     """Subscription trial availability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar status: Trial status. Possible values include: "TrialAvailable", "TrialUsed",
+    :ivar status: Trial status. Known values are: "TrialAvailable", "TrialUsed", and
      "TrialDisabled".
     :vartype status: str or ~azure.mgmt.avs.models.TrialStatus
     :ivar available_hosts: Number of trial hosts available.
@@ -2918,20 +3288,18 @@ class Trial(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'available_hosts': {'readonly': True},
+        "status": {"readonly": True},
+        "available_hosts": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'available_hosts': {'key': 'availableHosts', 'type': 'int'},
+        "status": {"key": "status", "type": "str"},
+        "available_hosts": {"key": "availableHosts", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Trial, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.available_hosts = None
 
@@ -2955,64 +3323,64 @@ class VirtualMachine(ProxyResource):
      folder.
     :vartype folder_path: str
     :ivar restrict_movement: Whether VM DRS-driven movement is restricted (enabled) or not
-     (disabled). Possible values include: "Enabled", "Disabled".
+     (disabled). Known values are: "Enabled" and "Disabled".
     :vartype restrict_movement: str or ~azure.mgmt.avs.models.VirtualMachineRestrictMovementState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'mo_ref_id': {'readonly': True},
-        'folder_path': {'readonly': True},
-        'restrict_movement': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "mo_ref_id": {"readonly": True},
+        "folder_path": {"readonly": True},
+        "restrict_movement": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'mo_ref_id': {'key': 'properties.moRefId', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'restrict_movement': {'key': 'properties.restrictMovement', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "mo_ref_id": {"key": "properties.moRefId", "type": "str"},
+        "folder_path": {"key": "properties.folderPath", "type": "str"},
+        "restrict_movement": {"key": "properties.restrictMovement", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualMachine, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.display_name = None
         self.mo_ref_id = None
         self.folder_path = None
         self.restrict_movement = None
 
 
-class VirtualMachineRestrictMovement(msrest.serialization.Model):
+class VirtualMachineRestrictMovement(_serialization.Model):
     """Set VM DRS-driven movement to restricted (enabled) or not (disabled).
 
-    :param restrict_movement: Whether VM DRS-driven movement is restricted (enabled) or not
-     (disabled). Possible values include: "Enabled", "Disabled".
-    :type restrict_movement: str or ~azure.mgmt.avs.models.VirtualMachineRestrictMovementState
+    :ivar restrict_movement: Whether VM DRS-driven movement is restricted (enabled) or not
+     (disabled). Known values are: "Enabled" and "Disabled".
+    :vartype restrict_movement: str or ~azure.mgmt.avs.models.VirtualMachineRestrictMovementState
     """
 
     _attribute_map = {
-        'restrict_movement': {'key': 'restrictMovement', 'type': 'str'},
+        "restrict_movement": {"key": "restrictMovement", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        restrict_movement: Optional[Union[str, "VirtualMachineRestrictMovementState"]] = None,
-        **kwargs
+        self, *, restrict_movement: Optional[Union[str, "_models.VirtualMachineRestrictMovementState"]] = None, **kwargs
     ):
-        super(VirtualMachineRestrictMovement, self).__init__(**kwargs)
+        """
+        :keyword restrict_movement: Whether VM DRS-driven movement is restricted (enabled) or not
+         (disabled). Known values are: "Enabled" and "Disabled".
+        :paramtype restrict_movement: str or ~azure.mgmt.avs.models.VirtualMachineRestrictMovementState
+        """
+        super().__init__(**kwargs)
         self.restrict_movement = restrict_movement
 
 
-class VirtualMachinesList(msrest.serialization.Model):
+class VirtualMachinesList(_serialization.Model):
     """A list of Virtual Machines.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3024,20 +3392,18 @@ class VirtualMachinesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualMachine]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualMachine]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualMachinesList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3049,42 +3415,49 @@ class VmHostPlacementPolicyProperties(PlacementPolicyProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. placement policy type.Constant filled by server.  Possible values
-     include: "VmVm", "VmHost".
-    :type type: str or ~azure.mgmt.avs.models.PlacementPolicyType
-    :param state: Whether the placement policy is enabled or disabled. Possible values include:
-     "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
-    :param display_name: Display name of the placement policy.
-    :type display_name: str
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar type: placement policy type. Required. Known values are: "VmVm" and "VmHost".
+    :vartype type: str or ~azure.mgmt.avs.models.PlacementPolicyType
+    :ivar state: Whether the placement policy is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :ivar display_name: Display name of the placement policy.
+    :vartype display_name: str
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.PlacementPolicyProvisioningState
-    :param vm_members: Required. Virtual machine members list.
-    :type vm_members: list[str]
-    :param host_members: Required. Host members list.
-    :type host_members: list[str]
-    :param affinity_type: Required. placement policy affinity type. Possible values include:
-     "Affinity", "AntiAffinity".
-    :type affinity_type: str or ~azure.mgmt.avs.models.AffinityType
+    :ivar vm_members: Virtual machine members list. Required.
+    :vartype vm_members: list[str]
+    :ivar host_members: Host members list. Required.
+    :vartype host_members: list[str]
+    :ivar affinity_type: placement policy affinity type. Required. Known values are: "Affinity" and
+     "AntiAffinity".
+    :vartype affinity_type: str or ~azure.mgmt.avs.models.AffinityType
+    :ivar affinity_strength: vm-host placement policy affinity strength (should/must). Known values
+     are: "Should" and "Must".
+    :vartype affinity_strength: str or ~azure.mgmt.avs.models.AffinityStrength
+    :ivar azure_hybrid_benefit_type: placement policy azure hybrid benefit opt-in type. Known
+     values are: "SqlHost" and "None".
+    :vartype azure_hybrid_benefit_type: str or ~azure.mgmt.avs.models.AzureHybridBenefitType
     """
 
     _validation = {
-        'type': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'vm_members': {'required': True},
-        'host_members': {'required': True},
-        'affinity_type': {'required': True},
+        "type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "vm_members": {"required": True},
+        "host_members": {"required": True},
+        "affinity_type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'vm_members': {'key': 'vmMembers', 'type': '[str]'},
-        'host_members': {'key': 'hostMembers', 'type': '[str]'},
-        'affinity_type': {'key': 'affinityType', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "vm_members": {"key": "vmMembers", "type": "[str]"},
+        "host_members": {"key": "hostMembers", "type": "[str]"},
+        "affinity_type": {"key": "affinityType", "type": "str"},
+        "affinity_strength": {"key": "affinityStrength", "type": "str"},
+        "azure_hybrid_benefit_type": {"key": "azureHybridBenefitType", "type": "str"},
     }
 
     def __init__(
@@ -3092,16 +3465,40 @@ class VmHostPlacementPolicyProperties(PlacementPolicyProperties):
         *,
         vm_members: List[str],
         host_members: List[str],
-        affinity_type: Union[str, "AffinityType"],
-        state: Optional[Union[str, "PlacementPolicyState"]] = None,
+        affinity_type: Union[str, "_models.AffinityType"],
+        state: Optional[Union[str, "_models.PlacementPolicyState"]] = None,
         display_name: Optional[str] = None,
+        affinity_strength: Optional[Union[str, "_models.AffinityStrength"]] = None,
+        azure_hybrid_benefit_type: Optional[Union[str, "_models.AzureHybridBenefitType"]] = None,
         **kwargs
     ):
-        super(VmHostPlacementPolicyProperties, self).__init__(state=state, display_name=display_name, **kwargs)
-        self.type = 'VmHost'  # type: str
+        """
+        :keyword state: Whether the placement policy is enabled or disabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+        :keyword display_name: Display name of the placement policy.
+        :paramtype display_name: str
+        :keyword vm_members: Virtual machine members list. Required.
+        :paramtype vm_members: list[str]
+        :keyword host_members: Host members list. Required.
+        :paramtype host_members: list[str]
+        :keyword affinity_type: placement policy affinity type. Required. Known values are: "Affinity"
+         and "AntiAffinity".
+        :paramtype affinity_type: str or ~azure.mgmt.avs.models.AffinityType
+        :keyword affinity_strength: vm-host placement policy affinity strength (should/must). Known
+         values are: "Should" and "Must".
+        :paramtype affinity_strength: str or ~azure.mgmt.avs.models.AffinityStrength
+        :keyword azure_hybrid_benefit_type: placement policy azure hybrid benefit opt-in type. Known
+         values are: "SqlHost" and "None".
+        :paramtype azure_hybrid_benefit_type: str or ~azure.mgmt.avs.models.AzureHybridBenefitType
+        """
+        super().__init__(state=state, display_name=display_name, **kwargs)
+        self.type = "VmHost"  # type: str
         self.vm_members = vm_members
         self.host_members = host_members
         self.affinity_type = affinity_type
+        self.affinity_strength = affinity_strength
+        self.azure_hybrid_benefit_type = azure_hybrid_benefit_type
 
 
 class VmPlacementPolicyProperties(PlacementPolicyProperties):
@@ -3111,53 +3508,94 @@ class VmPlacementPolicyProperties(PlacementPolicyProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. placement policy type.Constant filled by server.  Possible values
-     include: "VmVm", "VmHost".
-    :type type: str or ~azure.mgmt.avs.models.PlacementPolicyType
-    :param state: Whether the placement policy is enabled or disabled. Possible values include:
-     "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.avs.models.PlacementPolicyState
-    :param display_name: Display name of the placement policy.
-    :type display_name: str
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar type: placement policy type. Required. Known values are: "VmVm" and "VmHost".
+    :vartype type: str or ~azure.mgmt.avs.models.PlacementPolicyType
+    :ivar state: Whether the placement policy is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+    :ivar display_name: Display name of the placement policy.
+    :vartype display_name: str
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.PlacementPolicyProvisioningState
-    :param vm_members: Required. Virtual machine members list.
-    :type vm_members: list[str]
-    :param affinity_type: Required. placement policy affinity type. Possible values include:
-     "Affinity", "AntiAffinity".
-    :type affinity_type: str or ~azure.mgmt.avs.models.AffinityType
+    :ivar vm_members: Virtual machine members list. Required.
+    :vartype vm_members: list[str]
+    :ivar affinity_type: placement policy affinity type. Required. Known values are: "Affinity" and
+     "AntiAffinity".
+    :vartype affinity_type: str or ~azure.mgmt.avs.models.AffinityType
     """
 
     _validation = {
-        'type': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'vm_members': {'required': True},
-        'affinity_type': {'required': True},
+        "type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "vm_members": {"required": True},
+        "affinity_type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'vm_members': {'key': 'vmMembers', 'type': '[str]'},
-        'affinity_type': {'key': 'affinityType', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "vm_members": {"key": "vmMembers", "type": "[str]"},
+        "affinity_type": {"key": "affinityType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         vm_members: List[str],
-        affinity_type: Union[str, "AffinityType"],
-        state: Optional[Union[str, "PlacementPolicyState"]] = None,
+        affinity_type: Union[str, "_models.AffinityType"],
+        state: Optional[Union[str, "_models.PlacementPolicyState"]] = None,
         display_name: Optional[str] = None,
         **kwargs
     ):
-        super(VmPlacementPolicyProperties, self).__init__(state=state, display_name=display_name, **kwargs)
-        self.type = 'VmVm'  # type: str
+        """
+        :keyword state: Whether the placement policy is enabled or disabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.avs.models.PlacementPolicyState
+        :keyword display_name: Display name of the placement policy.
+        :paramtype display_name: str
+        :keyword vm_members: Virtual machine members list. Required.
+        :paramtype vm_members: list[str]
+        :keyword affinity_type: placement policy affinity type. Required. Known values are: "Affinity"
+         and "AntiAffinity".
+        :paramtype affinity_type: str or ~azure.mgmt.avs.models.AffinityType
+        """
+        super().__init__(state=state, display_name=display_name, **kwargs)
+        self.type = "VmVm"  # type: str
         self.vm_members = vm_members
         self.affinity_type = affinity_type
+
+
+class WorkloadNetwork(ProxyResource):
+    """Workload Network.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class WorkloadNetworkDhcp(ProxyResource):
@@ -3171,83 +3609,80 @@ class WorkloadNetworkDhcp(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param properties: DHCP properties.
-    :type properties: ~azure.mgmt.avs.models.WorkloadNetworkDhcpEntity
+    :ivar properties: DHCP properties.
+    :vartype properties: ~azure.mgmt.avs.models.WorkloadNetworkDhcpEntity
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'WorkloadNetworkDhcpEntity'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "WorkloadNetworkDhcpEntity"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["WorkloadNetworkDhcpEntity"] = None,
-        **kwargs
-    ):
-        super(WorkloadNetworkDhcp, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.WorkloadNetworkDhcpEntity"] = None, **kwargs):
+        """
+        :keyword properties: DHCP properties.
+        :paramtype properties: ~azure.mgmt.avs.models.WorkloadNetworkDhcpEntity
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class WorkloadNetworkDhcpEntity(msrest.serialization.Model):
+class WorkloadNetworkDhcpEntity(_serialization.Model):
     """Base class for WorkloadNetworkDhcpServer and WorkloadNetworkDhcpRelay to inherit from.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WorkloadNetworkDhcpRelay, WorkloadNetworkDhcpServer.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    WorkloadNetworkDhcpRelay, WorkloadNetworkDhcpServer
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param dhcp_type: Required. Type of DHCP: SERVER or RELAY.Constant filled by server.  Possible
-     values include: "SERVER", "RELAY".
-    :type dhcp_type: str or ~azure.mgmt.avs.models.DhcpTypeEnum
-    :param display_name: Display name of the DHCP entity.
-    :type display_name: str
+    :ivar dhcp_type: Type of DHCP: SERVER or RELAY. Required. Known values are: "SERVER" and
+     "RELAY".
+    :vartype dhcp_type: str or ~azure.mgmt.avs.models.DhcpTypeEnum
+    :ivar display_name: Display name of the DHCP entity.
+    :vartype display_name: str
     :ivar segments: NSX Segments consuming DHCP.
     :vartype segments: list[str]
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.WorkloadNetworkDhcpProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
+    :ivar revision: NSX revision number.
+    :vartype revision: int
     """
 
     _validation = {
-        'dhcp_type': {'required': True},
-        'segments': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "dhcp_type": {"required": True},
+        "segments": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'dhcp_type': {'key': 'dhcpType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'segments': {'key': 'segments', 'type': '[str]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'revision': {'key': 'revision', 'type': 'long'},
+        "dhcp_type": {"key": "dhcpType", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "segments": {"key": "segments", "type": "[str]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "revision": {"key": "revision", "type": "int"},
     }
 
-    _subtype_map = {
-        'dhcp_type': {'RELAY': 'WorkloadNetworkDhcpRelay', 'SERVER': 'WorkloadNetworkDhcpServer'}
-    }
+    _subtype_map = {"dhcp_type": {"RELAY": "WorkloadNetworkDhcpRelay", "SERVER": "WorkloadNetworkDhcpServer"}}
 
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        revision: Optional[int] = None,
-        **kwargs
-    ):
-        super(WorkloadNetworkDhcpEntity, self).__init__(**kwargs)
+    def __init__(self, *, display_name: Optional[str] = None, revision: Optional[int] = None, **kwargs):
+        """
+        :keyword display_name: Display name of the DHCP entity.
+        :paramtype display_name: str
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        """
+        super().__init__(**kwargs)
         self.dhcp_type = None  # type: Optional[str]
         self.display_name = display_name
         self.segments = None
@@ -3255,7 +3690,7 @@ class WorkloadNetworkDhcpEntity(msrest.serialization.Model):
         self.revision = revision
 
 
-class WorkloadNetworkDhcpList(msrest.serialization.Model):
+class WorkloadNetworkDhcpList(_serialization.Model):
     """A list of NSX dhcp entities.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3267,20 +3702,18 @@ class WorkloadNetworkDhcpList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkDhcp]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkDhcp]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkDhcpList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3292,36 +3725,36 @@ class WorkloadNetworkDhcpRelay(WorkloadNetworkDhcpEntity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param dhcp_type: Required. Type of DHCP: SERVER or RELAY.Constant filled by server.  Possible
-     values include: "SERVER", "RELAY".
-    :type dhcp_type: str or ~azure.mgmt.avs.models.DhcpTypeEnum
-    :param display_name: Display name of the DHCP entity.
-    :type display_name: str
+    :ivar dhcp_type: Type of DHCP: SERVER or RELAY. Required. Known values are: "SERVER" and
+     "RELAY".
+    :vartype dhcp_type: str or ~azure.mgmt.avs.models.DhcpTypeEnum
+    :ivar display_name: Display name of the DHCP entity.
+    :vartype display_name: str
     :ivar segments: NSX Segments consuming DHCP.
     :vartype segments: list[str]
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.WorkloadNetworkDhcpProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
-    :param server_addresses: DHCP Relay Addresses. Max 3.
-    :type server_addresses: list[str]
+    :ivar revision: NSX revision number.
+    :vartype revision: int
+    :ivar server_addresses: DHCP Relay Addresses. Max 3.
+    :vartype server_addresses: list[str]
     """
 
     _validation = {
-        'dhcp_type': {'required': True},
-        'segments': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'server_addresses': {'max_items': 3, 'min_items': 1},
+        "dhcp_type": {"required": True},
+        "segments": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "server_addresses": {"max_items": 3, "min_items": 1},
     }
 
     _attribute_map = {
-        'dhcp_type': {'key': 'dhcpType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'segments': {'key': 'segments', 'type': '[str]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'revision': {'key': 'revision', 'type': 'long'},
-        'server_addresses': {'key': 'serverAddresses', 'type': '[str]'},
+        "dhcp_type": {"key": "dhcpType", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "segments": {"key": "segments", "type": "[str]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "revision": {"key": "revision", "type": "int"},
+        "server_addresses": {"key": "serverAddresses", "type": "[str]"},
     }
 
     def __init__(
@@ -3332,8 +3765,16 @@ class WorkloadNetworkDhcpRelay(WorkloadNetworkDhcpEntity):
         server_addresses: Optional[List[str]] = None,
         **kwargs
     ):
-        super(WorkloadNetworkDhcpRelay, self).__init__(display_name=display_name, revision=revision, **kwargs)
-        self.dhcp_type = 'RELAY'  # type: str
+        """
+        :keyword display_name: Display name of the DHCP entity.
+        :paramtype display_name: str
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        :keyword server_addresses: DHCP Relay Addresses. Max 3.
+        :paramtype server_addresses: list[str]
+        """
+        super().__init__(display_name=display_name, revision=revision, **kwargs)
+        self.dhcp_type = "RELAY"  # type: str
         self.server_addresses = server_addresses
 
 
@@ -3344,38 +3785,38 @@ class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param dhcp_type: Required. Type of DHCP: SERVER or RELAY.Constant filled by server.  Possible
-     values include: "SERVER", "RELAY".
-    :type dhcp_type: str or ~azure.mgmt.avs.models.DhcpTypeEnum
-    :param display_name: Display name of the DHCP entity.
-    :type display_name: str
+    :ivar dhcp_type: Type of DHCP: SERVER or RELAY. Required. Known values are: "SERVER" and
+     "RELAY".
+    :vartype dhcp_type: str or ~azure.mgmt.avs.models.DhcpTypeEnum
+    :ivar display_name: Display name of the DHCP entity.
+    :vartype display_name: str
     :ivar segments: NSX Segments consuming DHCP.
     :vartype segments: list[str]
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.avs.models.WorkloadNetworkDhcpProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
-    :param server_address: DHCP Server Address.
-    :type server_address: str
-    :param lease_time: DHCP Server Lease Time.
-    :type lease_time: long
+    :ivar revision: NSX revision number.
+    :vartype revision: int
+    :ivar server_address: DHCP Server Address.
+    :vartype server_address: str
+    :ivar lease_time: DHCP Server Lease Time.
+    :vartype lease_time: int
     """
 
     _validation = {
-        'dhcp_type': {'required': True},
-        'segments': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "dhcp_type": {"required": True},
+        "segments": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'dhcp_type': {'key': 'dhcpType', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'segments': {'key': 'segments', 'type': '[str]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'revision': {'key': 'revision', 'type': 'long'},
-        'server_address': {'key': 'serverAddress', 'type': 'str'},
-        'lease_time': {'key': 'leaseTime', 'type': 'long'},
+        "dhcp_type": {"key": "dhcpType", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "segments": {"key": "segments", "type": "[str]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "revision": {"key": "revision", "type": "int"},
+        "server_address": {"key": "serverAddress", "type": "str"},
+        "lease_time": {"key": "leaseTime", "type": "int"},
     }
 
     def __init__(
@@ -3387,13 +3828,23 @@ class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity):
         lease_time: Optional[int] = None,
         **kwargs
     ):
-        super(WorkloadNetworkDhcpServer, self).__init__(display_name=display_name, revision=revision, **kwargs)
-        self.dhcp_type = 'SERVER'  # type: str
+        """
+        :keyword display_name: Display name of the DHCP entity.
+        :paramtype display_name: str
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        :keyword server_address: DHCP Server Address.
+        :paramtype server_address: str
+        :keyword lease_time: DHCP Server Lease Time.
+        :paramtype lease_time: int
+        """
+        super().__init__(display_name=display_name, revision=revision, **kwargs)
+        self.dhcp_type = "SERVER"  # type: str
         self.server_address = server_address
         self.lease_time = lease_time
 
 
-class WorkloadNetworkDnsService(ProxyResource):
+class WorkloadNetworkDnsService(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """NSX DNS Service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3404,47 +3855,47 @@ class WorkloadNetworkDnsService(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the DNS Service.
-    :type display_name: str
-    :param dns_service_ip: DNS service IP of the DNS Service.
-    :type dns_service_ip: str
-    :param default_dns_zone: Default DNS zone of the DNS Service.
-    :type default_dns_zone: str
-    :param fqdn_zones: FQDN zones of the DNS Service.
-    :type fqdn_zones: list[str]
-    :param log_level: DNS Service log level. Possible values include: "DEBUG", "INFO", "WARNING",
-     "ERROR", "FATAL".
-    :type log_level: str or ~azure.mgmt.avs.models.DnsServiceLogLevelEnum
-    :ivar status: DNS Service status. Possible values include: "SUCCESS", "FAILURE".
+    :ivar display_name: Display name of the DNS Service.
+    :vartype display_name: str
+    :ivar dns_service_ip: DNS service IP of the DNS Service.
+    :vartype dns_service_ip: str
+    :ivar default_dns_zone: Default DNS zone of the DNS Service.
+    :vartype default_dns_zone: str
+    :ivar fqdn_zones: FQDN zones of the DNS Service.
+    :vartype fqdn_zones: list[str]
+    :ivar log_level: DNS Service log level. Known values are: "DEBUG", "INFO", "WARNING", "ERROR",
+     and "FATAL".
+    :vartype log_level: str or ~azure.mgmt.avs.models.DnsServiceLogLevelEnum
+    :ivar status: DNS Service status. Known values are: "SUCCESS" and "FAILURE".
     :vartype status: str or ~azure.mgmt.avs.models.DnsServiceStatusEnum
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.WorkloadNetworkDnsServiceProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
+    :ivar revision: NSX revision number.
+    :vartype revision: int
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'dns_service_ip': {'key': 'properties.dnsServiceIp', 'type': 'str'},
-        'default_dns_zone': {'key': 'properties.defaultDnsZone', 'type': 'str'},
-        'fqdn_zones': {'key': 'properties.fqdnZones', 'type': '[str]'},
-        'log_level': {'key': 'properties.logLevel', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'long'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "dns_service_ip": {"key": "properties.dnsServiceIp", "type": "str"},
+        "default_dns_zone": {"key": "properties.defaultDnsZone", "type": "str"},
+        "fqdn_zones": {"key": "properties.fqdnZones", "type": "[str]"},
+        "log_level": {"key": "properties.logLevel", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "int"},
     }
 
     def __init__(
@@ -3454,11 +3905,26 @@ class WorkloadNetworkDnsService(ProxyResource):
         dns_service_ip: Optional[str] = None,
         default_dns_zone: Optional[str] = None,
         fqdn_zones: Optional[List[str]] = None,
-        log_level: Optional[Union[str, "DnsServiceLogLevelEnum"]] = None,
+        log_level: Optional[Union[str, "_models.DnsServiceLogLevelEnum"]] = None,
         revision: Optional[int] = None,
         **kwargs
     ):
-        super(WorkloadNetworkDnsService, self).__init__(**kwargs)
+        """
+        :keyword display_name: Display name of the DNS Service.
+        :paramtype display_name: str
+        :keyword dns_service_ip: DNS service IP of the DNS Service.
+        :paramtype dns_service_ip: str
+        :keyword default_dns_zone: Default DNS zone of the DNS Service.
+        :paramtype default_dns_zone: str
+        :keyword fqdn_zones: FQDN zones of the DNS Service.
+        :paramtype fqdn_zones: list[str]
+        :keyword log_level: DNS Service log level. Known values are: "DEBUG", "INFO", "WARNING",
+         "ERROR", and "FATAL".
+        :paramtype log_level: str or ~azure.mgmt.avs.models.DnsServiceLogLevelEnum
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.dns_service_ip = dns_service_ip
         self.default_dns_zone = default_dns_zone
@@ -3469,7 +3935,7 @@ class WorkloadNetworkDnsService(ProxyResource):
         self.revision = revision
 
 
-class WorkloadNetworkDnsServicesList(msrest.serialization.Model):
+class WorkloadNetworkDnsServicesList(_serialization.Model):
     """A list of NSX DNS Services.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3481,20 +3947,18 @@ class WorkloadNetworkDnsServicesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkDnsService]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkDnsService]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkDnsServicesList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3510,42 +3974,42 @@ class WorkloadNetworkDnsZone(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the DNS Zone.
-    :type display_name: str
-    :param domain: Domain names of the DNS Zone.
-    :type domain: list[str]
-    :param dns_server_ips: DNS Server IP array of the DNS Zone.
-    :type dns_server_ips: list[str]
-    :param source_ip: Source IP of the DNS Zone.
-    :type source_ip: str
-    :param dns_services: Number of DNS Services using the DNS zone.
-    :type dns_services: long
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar display_name: Display name of the DNS Zone.
+    :vartype display_name: str
+    :ivar domain: Domain names of the DNS Zone.
+    :vartype domain: list[str]
+    :ivar dns_server_ips: DNS Server IP array of the DNS Zone.
+    :vartype dns_server_ips: list[str]
+    :ivar source_ip: Source IP of the DNS Zone.
+    :vartype source_ip: str
+    :ivar dns_services: Number of DNS Services using the DNS zone.
+    :vartype dns_services: int
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.WorkloadNetworkDnsZoneProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
+    :ivar revision: NSX revision number.
+    :vartype revision: int
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'domain': {'key': 'properties.domain', 'type': '[str]'},
-        'dns_server_ips': {'key': 'properties.dnsServerIps', 'type': '[str]'},
-        'source_ip': {'key': 'properties.sourceIp', 'type': 'str'},
-        'dns_services': {'key': 'properties.dnsServices', 'type': 'long'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'long'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "domain": {"key": "properties.domain", "type": "[str]"},
+        "dns_server_ips": {"key": "properties.dnsServerIps", "type": "[str]"},
+        "source_ip": {"key": "properties.sourceIp", "type": "str"},
+        "dns_services": {"key": "properties.dnsServices", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "int"},
     }
 
     def __init__(
@@ -3559,7 +4023,21 @@ class WorkloadNetworkDnsZone(ProxyResource):
         revision: Optional[int] = None,
         **kwargs
     ):
-        super(WorkloadNetworkDnsZone, self).__init__(**kwargs)
+        """
+        :keyword display_name: Display name of the DNS Zone.
+        :paramtype display_name: str
+        :keyword domain: Domain names of the DNS Zone.
+        :paramtype domain: list[str]
+        :keyword dns_server_ips: DNS Server IP array of the DNS Zone.
+        :paramtype dns_server_ips: list[str]
+        :keyword source_ip: Source IP of the DNS Zone.
+        :paramtype source_ip: str
+        :keyword dns_services: Number of DNS Services using the DNS zone.
+        :paramtype dns_services: int
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.domain = domain
         self.dns_server_ips = dns_server_ips
@@ -3569,7 +4047,7 @@ class WorkloadNetworkDnsZone(ProxyResource):
         self.revision = revision
 
 
-class WorkloadNetworkDnsZonesList(msrest.serialization.Model):
+class WorkloadNetworkDnsZonesList(_serialization.Model):
     """A list of NSX DNS Zones.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3581,20 +4059,18 @@ class WorkloadNetworkDnsZonesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkDnsZone]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkDnsZone]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkDnsZonesList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3610,39 +4086,38 @@ class WorkloadNetworkGateway(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the DHCP entity.
-    :type display_name: str
+    :ivar display_name: Display name of the DHCP entity.
+    :vartype display_name: str
     :ivar path: NSX Gateway Path.
     :vartype path: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'path': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "path": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'path': {'key': 'properties.path', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "path": {"key": "properties.path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(WorkloadNetworkGateway, self).__init__(**kwargs)
+    def __init__(self, *, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword display_name: Display name of the DHCP entity.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.path = None
 
 
-class WorkloadNetworkGatewayList(msrest.serialization.Model):
+class WorkloadNetworkGatewayList(_serialization.Model):
     """A list of NSX Gateways.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3654,20 +4129,46 @@ class WorkloadNetworkGatewayList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkGateway]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkGatewayList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class WorkloadNetworkList(_serialization.Model):
+    """A list of workload networks.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The items on the page.
+    :vartype value: list[~azure.mgmt.avs.models.WorkloadNetwork]
+    :ivar next_link: URL to get the next page if any.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[WorkloadNetwork]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3683,57 +4184,70 @@ class WorkloadNetworkPortMirroring(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the port mirroring profile.
-    :type display_name: str
-    :param direction: Direction of port mirroring profile. Possible values include: "INGRESS",
-     "EGRESS", "BIDIRECTIONAL".
-    :type direction: str or ~azure.mgmt.avs.models.PortMirroringDirectionEnum
-    :param source: Source VM Group.
-    :type source: str
-    :param destination: Destination VM Group.
-    :type destination: str
-    :ivar status: Port Mirroring Status. Possible values include: "SUCCESS", "FAILURE".
+    :ivar display_name: Display name of the port mirroring profile.
+    :vartype display_name: str
+    :ivar direction: Direction of port mirroring profile. Known values are: "INGRESS", "EGRESS",
+     and "BIDIRECTIONAL".
+    :vartype direction: str or ~azure.mgmt.avs.models.PortMirroringDirectionEnum
+    :ivar source: Source VM Group.
+    :vartype source: str
+    :ivar destination: Destination VM Group.
+    :vartype destination: str
+    :ivar status: Port Mirroring Status. Known values are: "SUCCESS" and "FAILURE".
     :vartype status: str or ~azure.mgmt.avs.models.PortMirroringStatusEnum
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.WorkloadNetworkPortMirroringProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
+    :ivar revision: NSX revision number.
+    :vartype revision: int
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'direction': {'key': 'properties.direction', 'type': 'str'},
-        'source': {'key': 'properties.source', 'type': 'str'},
-        'destination': {'key': 'properties.destination', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'long'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "direction": {"key": "properties.direction", "type": "str"},
+        "source": {"key": "properties.source", "type": "str"},
+        "destination": {"key": "properties.destination", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         display_name: Optional[str] = None,
-        direction: Optional[Union[str, "PortMirroringDirectionEnum"]] = None,
+        direction: Optional[Union[str, "_models.PortMirroringDirectionEnum"]] = None,
         source: Optional[str] = None,
         destination: Optional[str] = None,
         revision: Optional[int] = None,
         **kwargs
     ):
-        super(WorkloadNetworkPortMirroring, self).__init__(**kwargs)
+        """
+        :keyword display_name: Display name of the port mirroring profile.
+        :paramtype display_name: str
+        :keyword direction: Direction of port mirroring profile. Known values are: "INGRESS", "EGRESS",
+         and "BIDIRECTIONAL".
+        :paramtype direction: str or ~azure.mgmt.avs.models.PortMirroringDirectionEnum
+        :keyword source: Source VM Group.
+        :paramtype source: str
+        :keyword destination: Destination VM Group.
+        :paramtype destination: str
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.direction = direction
         self.source = source
@@ -3743,7 +4257,7 @@ class WorkloadNetworkPortMirroring(ProxyResource):
         self.revision = revision
 
 
-class WorkloadNetworkPortMirroringList(msrest.serialization.Model):
+class WorkloadNetworkPortMirroringList(_serialization.Model):
     """A list of NSX Port Mirroring.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3755,20 +4269,18 @@ class WorkloadNetworkPortMirroringList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkPortMirroring]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkPortMirroring]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkPortMirroringList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3784,51 +4296,51 @@ class WorkloadNetworkPublicIP(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the Public IP Block.
-    :type display_name: str
-    :param number_of_public_i_ps: Number of Public IPs requested.
-    :type number_of_public_i_ps: long
+    :ivar display_name: Display name of the Public IP Block.
+    :vartype display_name: str
+    :ivar number_of_public_i_ps: Number of Public IPs requested.
+    :vartype number_of_public_i_ps: int
     :ivar public_ip_block: CIDR Block of the Public IP Block.
     :vartype public_ip_block: str
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.WorkloadNetworkPublicIPProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'public_ip_block': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "public_ip_block": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'number_of_public_i_ps': {'key': 'properties.numberOfPublicIPs', 'type': 'long'},
-        'public_ip_block': {'key': 'properties.publicIPBlock', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "number_of_public_i_ps": {"key": "properties.numberOfPublicIPs", "type": "int"},
+        "public_ip_block": {"key": "properties.publicIPBlock", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        number_of_public_i_ps: Optional[int] = None,
-        **kwargs
-    ):
-        super(WorkloadNetworkPublicIP, self).__init__(**kwargs)
+    def __init__(self, *, display_name: Optional[str] = None, number_of_public_i_ps: Optional[int] = None, **kwargs):
+        """
+        :keyword display_name: Display name of the Public IP Block.
+        :paramtype display_name: str
+        :keyword number_of_public_i_ps: Number of Public IPs requested.
+        :paramtype number_of_public_i_ps: int
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.number_of_public_i_ps = number_of_public_i_ps
         self.public_ip_block = None
         self.provisioning_state = None
 
 
-class WorkloadNetworkPublicIPsList(msrest.serialization.Model):
+class WorkloadNetworkPublicIPsList(_serialization.Model):
     """A list of NSX Public IP Blocks.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3840,20 +4352,18 @@ class WorkloadNetworkPublicIPsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkPublicIP]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkPublicIP]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkPublicIPsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -3869,44 +4379,44 @@ class WorkloadNetworkSegment(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the segment.
-    :type display_name: str
-    :param connected_gateway: Gateway which to connect segment to.
-    :type connected_gateway: str
-    :param subnet: Subnet which to connect segment to.
-    :type subnet: ~azure.mgmt.avs.models.WorkloadNetworkSegmentSubnet
+    :ivar display_name: Display name of the segment.
+    :vartype display_name: str
+    :ivar connected_gateway: Gateway which to connect segment to.
+    :vartype connected_gateway: str
+    :ivar subnet: Subnet which to connect segment to.
+    :vartype subnet: ~azure.mgmt.avs.models.WorkloadNetworkSegmentSubnet
     :ivar port_vif: Port Vif which segment is associated with.
     :vartype port_vif: list[~azure.mgmt.avs.models.WorkloadNetworkSegmentPortVif]
-    :ivar status: Segment status. Possible values include: "SUCCESS", "FAILURE".
+    :ivar status: Segment status. Known values are: "SUCCESS" and "FAILURE".
     :vartype status: str or ~azure.mgmt.avs.models.SegmentStatusEnum
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.WorkloadNetworkSegmentProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
+    :ivar revision: NSX revision number.
+    :vartype revision: int
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'port_vif': {'readonly': True},
-        'status': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "port_vif": {"readonly": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'connected_gateway': {'key': 'properties.connectedGateway', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'WorkloadNetworkSegmentSubnet'},
-        'port_vif': {'key': 'properties.portVif', 'type': '[WorkloadNetworkSegmentPortVif]'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'long'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "connected_gateway": {"key": "properties.connectedGateway", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "WorkloadNetworkSegmentSubnet"},
+        "port_vif": {"key": "properties.portVif", "type": "[WorkloadNetworkSegmentPortVif]"},
+        "status": {"key": "properties.status", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "int"},
     }
 
     def __init__(
@@ -3914,11 +4424,21 @@ class WorkloadNetworkSegment(ProxyResource):
         *,
         display_name: Optional[str] = None,
         connected_gateway: Optional[str] = None,
-        subnet: Optional["WorkloadNetworkSegmentSubnet"] = None,
+        subnet: Optional["_models.WorkloadNetworkSegmentSubnet"] = None,
         revision: Optional[int] = None,
         **kwargs
     ):
-        super(WorkloadNetworkSegment, self).__init__(**kwargs)
+        """
+        :keyword display_name: Display name of the segment.
+        :paramtype display_name: str
+        :keyword connected_gateway: Gateway which to connect segment to.
+        :paramtype connected_gateway: str
+        :keyword subnet: Subnet which to connect segment to.
+        :paramtype subnet: ~azure.mgmt.avs.models.WorkloadNetworkSegmentSubnet
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.connected_gateway = connected_gateway
         self.subnet = subnet
@@ -3928,28 +4448,27 @@ class WorkloadNetworkSegment(ProxyResource):
         self.revision = revision
 
 
-class WorkloadNetworkSegmentPortVif(msrest.serialization.Model):
+class WorkloadNetworkSegmentPortVif(_serialization.Model):
     """Ports and any VIF attached to segment.
 
-    :param port_name: Name of port or VIF attached to segment.
-    :type port_name: str
+    :ivar port_name: Name of port or VIF attached to segment.
+    :vartype port_name: str
     """
 
     _attribute_map = {
-        'port_name': {'key': 'portName', 'type': 'str'},
+        "port_name": {"key": "portName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        port_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(WorkloadNetworkSegmentPortVif, self).__init__(**kwargs)
+    def __init__(self, *, port_name: Optional[str] = None, **kwargs):
+        """
+        :keyword port_name: Name of port or VIF attached to segment.
+        :paramtype port_name: str
+        """
+        super().__init__(**kwargs)
         self.port_name = port_name
 
 
-class WorkloadNetworkSegmentsList(msrest.serialization.Model):
+class WorkloadNetworkSegmentsList(_serialization.Model):
     """A list of NSX Segments.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3961,46 +4480,44 @@ class WorkloadNetworkSegmentsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkSegment]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkSegment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkSegmentsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class WorkloadNetworkSegmentSubnet(msrest.serialization.Model):
+class WorkloadNetworkSegmentSubnet(_serialization.Model):
     """Subnet configuration for segment.
 
-    :param dhcp_ranges: DHCP Range assigned for subnet.
-    :type dhcp_ranges: list[str]
-    :param gateway_address: Gateway address.
-    :type gateway_address: str
+    :ivar dhcp_ranges: DHCP Range assigned for subnet.
+    :vartype dhcp_ranges: list[str]
+    :ivar gateway_address: Gateway address.
+    :vartype gateway_address: str
     """
 
     _attribute_map = {
-        'dhcp_ranges': {'key': 'dhcpRanges', 'type': '[str]'},
-        'gateway_address': {'key': 'gatewayAddress', 'type': 'str'},
+        "dhcp_ranges": {"key": "dhcpRanges", "type": "[str]"},
+        "gateway_address": {"key": "gatewayAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dhcp_ranges: Optional[List[str]] = None,
-        gateway_address: Optional[str] = None,
-        **kwargs
-    ):
-        super(WorkloadNetworkSegmentSubnet, self).__init__(**kwargs)
+    def __init__(self, *, dhcp_ranges: Optional[List[str]] = None, gateway_address: Optional[str] = None, **kwargs):
+        """
+        :keyword dhcp_ranges: DHCP Range assigned for subnet.
+        :paramtype dhcp_ranges: list[str]
+        :keyword gateway_address: Gateway address.
+        :paramtype gateway_address: str
+        """
+        super().__init__(**kwargs)
         self.dhcp_ranges = dhcp_ranges
         self.gateway_address = gateway_address
 
@@ -4016,39 +4533,38 @@ class WorkloadNetworkVirtualMachine(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the VM.
-    :type display_name: str
-    :ivar vm_type: Virtual machine type. Possible values include: "REGULAR", "EDGE", "SERVICE".
+    :ivar display_name: Display name of the VM.
+    :vartype display_name: str
+    :ivar vm_type: Virtual machine type. Known values are: "REGULAR", "EDGE", and "SERVICE".
     :vartype vm_type: str or ~azure.mgmt.avs.models.VMTypeEnum
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'vm_type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "vm_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'vm_type': {'key': 'properties.vmType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "vm_type": {"key": "properties.vmType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(WorkloadNetworkVirtualMachine, self).__init__(**kwargs)
+    def __init__(self, *, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword display_name: Display name of the VM.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.vm_type = None
 
 
-class WorkloadNetworkVirtualMachinesList(msrest.serialization.Model):
+class WorkloadNetworkVirtualMachinesList(_serialization.Model):
     """A list of NSX Virtual Machines.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4060,20 +4576,18 @@ class WorkloadNetworkVirtualMachinesList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkVirtualMachine]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkVirtualMachine]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkVirtualMachinesList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -4089,37 +4603,37 @@ class WorkloadNetworkVMGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param display_name: Display name of the VM group.
-    :type display_name: str
-    :param members: Virtual machine members of this group.
-    :type members: list[str]
-    :ivar status: VM Group status. Possible values include: "SUCCESS", "FAILURE".
+    :ivar display_name: Display name of the VM group.
+    :vartype display_name: str
+    :ivar members: Virtual machine members of this group.
+    :vartype members: list[str]
+    :ivar status: VM Group status. Known values are: "SUCCESS" and "FAILURE".
     :vartype status: str or ~azure.mgmt.avs.models.VMGroupStatusEnum
-    :ivar provisioning_state: The provisioning state. Possible values include: "Succeeded",
-     "Failed", "Building", "Deleting", "Updating".
+    :ivar provisioning_state: The provisioning state. Known values are: "Succeeded", "Failed",
+     "Building", "Deleting", "Updating", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.avs.models.WorkloadNetworkVMGroupProvisioningState
-    :param revision: NSX revision number.
-    :type revision: long
+    :ivar revision: NSX revision number.
+    :vartype revision: int
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'members': {'key': 'properties.members', 'type': '[str]'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'long'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "members": {"key": "properties.members", "type": "[str]"},
+        "status": {"key": "properties.status", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "int"},
     }
 
     def __init__(
@@ -4130,7 +4644,15 @@ class WorkloadNetworkVMGroup(ProxyResource):
         revision: Optional[int] = None,
         **kwargs
     ):
-        super(WorkloadNetworkVMGroup, self).__init__(**kwargs)
+        """
+        :keyword display_name: Display name of the VM group.
+        :paramtype display_name: str
+        :keyword members: Virtual machine members of this group.
+        :paramtype members: list[str]
+        :keyword revision: NSX revision number.
+        :paramtype revision: int
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.members = members
         self.status = None
@@ -4138,7 +4660,7 @@ class WorkloadNetworkVMGroup(ProxyResource):
         self.revision = revision
 
 
-class WorkloadNetworkVMGroupsList(msrest.serialization.Model):
+class WorkloadNetworkVMGroupsList(_serialization.Model):
     """A list of NSX VM Groups.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4150,19 +4672,17 @@ class WorkloadNetworkVMGroupsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkloadNetworkVMGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WorkloadNetworkVMGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WorkloadNetworkVMGroupsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
