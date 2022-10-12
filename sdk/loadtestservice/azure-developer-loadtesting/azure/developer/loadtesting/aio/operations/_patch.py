@@ -94,12 +94,12 @@ class AppComponentOperations:
         self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
 
     async def get_app_components(
-            self,
-            *,
-            test_run_id: Optional[str] = None,
-            test_id: Optional[str] = None,
-            name: Optional[str] = None,
-            **kwargs: Any,
+        self,
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any,
     ) -> MutableMapping[str, Any]:
         """Get App Components for a test or a test run by its name.
 
@@ -156,7 +156,7 @@ class AppComponentOperations:
 
     @overload
     async def create_or_update_app_components(
-            self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -232,7 +232,7 @@ class AppComponentOperations:
 
     @overload
     async def create_or_update_app_components(
-            self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self, name: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an App Component (Azure resource) to a test or test run.
 
@@ -281,8 +281,9 @@ class AppComponentOperations:
         """
 
     @distributed_trace
-    async def create_or_update_app_components(self, name: str, body: Union[JSON, IO], **kwargs: Any) -> MutableMapping[
-        str, Any]:
+    async def create_or_update_app_components(
+        self, name: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Associate an App Component (Azure resource) to a test or test run.
 
         Associate an App Component (Azure resource) to a test or test run.
@@ -332,7 +333,7 @@ class AppComponentOperations:
 
     @distributed_trace
     async def delete_app_components(  # pylint: disable=inconsistent-return-statements
-            self, name: str, **kwargs: Any
+        self, name: str, **kwargs: Any
     ) -> None:
         """Delete an App Component.
 

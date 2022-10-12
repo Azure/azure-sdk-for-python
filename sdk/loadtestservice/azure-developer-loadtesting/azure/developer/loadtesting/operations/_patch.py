@@ -33,10 +33,10 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_upload_test_file_request(
-        test_id: str,
-        file_id: str,
-        file: BinaryIO,
-        **kwargs,
+    test_id: str,
+    file_id: str,
+    file: BinaryIO,
+    **kwargs,
 ) -> HttpRequest:
     """
     Core logic for uploading a file
@@ -140,8 +140,12 @@ class AppComponentOperations:
         self.__app_component_operations_generated = AppComponentOperationsGenerated(*args, **kwargs)
 
     def get_app_components(
-        self, *, test_run_id: Optional[str] = None, test_id: Optional[str] = None,
-        name: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        test_run_id: Optional[str] = None,
+        test_id: Optional[str] = None,
+        name: Optional[str] = None,
+        **kwargs: Any,
     ) -> JSON:
         """Get App Components for a test or a test run by its name.
 
@@ -372,9 +376,7 @@ class AppComponentOperations:
         return self.__app_component_operations_generated.create_or_update_app_components(name, body, **kwargs)
 
     @distributed_trace
-    def delete_app_components(  # pylint: disable=inconsistent-return-statements
-            self, name: str, **kwargs: Any
-    ) -> None:
+    def delete_app_components(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete an App Component.
 
         Delete an App Component.
