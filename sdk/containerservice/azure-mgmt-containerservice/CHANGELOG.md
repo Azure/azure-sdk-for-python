@@ -1,5 +1,13 @@
 # Release History
 
+## 20.5.0 (2022-10-12)
+
+### Features Added
+
+  - Model AgentPool has a new parameter network_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter network_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter network_profile
+
 ## 20.4.0 (2022-09-20)
 
 ### Features Added
