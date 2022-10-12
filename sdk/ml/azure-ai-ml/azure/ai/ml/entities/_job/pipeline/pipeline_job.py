@@ -29,7 +29,7 @@ from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
-from azure.ai.ml.entities._builders.control_flow_node import LoopNode, ControlFlowNode
+from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.pipeline import Pipeline

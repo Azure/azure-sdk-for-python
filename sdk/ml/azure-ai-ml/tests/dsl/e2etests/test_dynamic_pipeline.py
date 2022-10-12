@@ -1,12 +1,29 @@
+import contextlib
+
 import pytest
 
+from azure.ai.ml._schema.pipeline import PipelineJobSchema
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.dsl._utils import environment_variable_overwrite
 from .._util import _DSL_TIMEOUT_SECOND
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
+from azure.ai.ml._schema.pipeline.pipeline_component import PipelineJobsField
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
+
+
+@contextlib.contextmanager
+def include_private_preview_nodes_in_pipeline():
+    with environment_variable_overwrite(AZUREML_PRIVATE_FEATURES_ENV_VAR, "True"):
+        PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
 
 
 @pytest.mark.usefixtures(
@@ -20,6 +37,8 @@ from azure.ai.ml.dsl._condition import condition
 @pytest.mark.e2etest
 class TestDynamicPipeline(AzureRecordedTestCase):
     def test_dsl_condition_pipeline(self, client: MLClient):
+        # update jobs field to include private preview nodes
+
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
         )
@@ -39,7 +58,10 @@ class TestDynamicPipeline(AzureRecordedTestCase):
             condition(condition=result.outputs.output, false_block=node1, true_block=node2)
 
         pipeline_job = condition_pipeline()
-        pipeline_job = client.jobs.create_or_update(pipeline_job)
+
+        # include private preview nodes
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = client.jobs.create_or_update(pipeline_job)
 
         omit_fields = [
             "name",
