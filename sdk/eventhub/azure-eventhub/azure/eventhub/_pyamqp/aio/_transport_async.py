@@ -425,16 +425,25 @@ class AsyncTransport(
 
 
 class WebSocketTransportAsync(AsyncTransportMixin): # pylint: disable=too-many-instance-attributes
-    def __init__(self, host, port=WEBSOCKET_PORT, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(
+        self,
+        host,
+        *,
+        port=WEBSOCKET_PORT,
+        connect_timeout=None,
+        ssl_opts=None,
+        **kwargs
+    ): # pylint: disable=unused-argument
         self._read_buffer = BytesIO()
         self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = ssl if isinstance(ssl, dict) else {}
+        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host = host
         self.ws = None
         self._http_proxy = kwargs.get("http_proxy", None)
+        self.connected = False
 
     async def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
@@ -458,6 +467,7 @@ class WebSocketTransportAsync(AsyncTransportMixin): # pylint: disable=too-many-i
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth,
             )
+            self.connected = True
         except ImportError:
             raise ValueError("Please install websocket-client library to use websocket transport.")
 
