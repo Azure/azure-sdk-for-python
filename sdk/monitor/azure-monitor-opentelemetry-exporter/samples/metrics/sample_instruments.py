@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
 """
 An example to show an application using all instruments in the OpenTelemetry SDK. Metrics created
 and recorded using the sdk are tracked and telemetry is exported to application insights with the
@@ -64,3 +65,5 @@ histogram.record(99.9)
 
 # Async Gauge
 gauge = meter.create_observable_gauge("gauge", [observable_gauge_func])
+
+# cSpell:disable

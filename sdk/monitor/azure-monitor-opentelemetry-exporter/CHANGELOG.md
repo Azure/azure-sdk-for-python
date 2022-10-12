@@ -12,7 +12,7 @@
 ### Bugs Fixed
 
 - Fixed sampleRate field in ApplicationInsightsSampler
-    ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
+    ([#26771](https://github.com/Azure/azure-sdk-for-python/pull/26771))
 
 ### Other Changes
 
