@@ -45,7 +45,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             self.phone_number = get_test_phone_number()
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
-            self.static_connection_str, 
+            self.connection_str, 
             http_logging_policy=get_http_logging_policy(),
             headers_policy=get_header_policy(),
             api_version=API_VERSION
@@ -58,7 +58,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             PhoneNumberResponseReplacerProcessor()])
 
     def _get_managed_identity_phone_number_client(self):
-        endpoint, access_key = parse_connection_str(self.static_connection_str)
+        endpoint, access_key = parse_connection_str(self.connection_str)
         credential = create_token_credential()
         return PhoneNumbersClient(
             endpoint, 
