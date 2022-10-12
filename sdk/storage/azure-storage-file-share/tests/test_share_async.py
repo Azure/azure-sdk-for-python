@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-import requests
 import time
 from datetime import datetime, timedelta
 
 import pytest
+import requests
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.fileshare import (
