@@ -598,7 +598,9 @@ For more information on Integrated Cache, see [Azure Cosmos DB integrated cache 
      transport=RequestsTransport(session=session)
  )
  # or 
- cosmos_client = CosmosClient(uri, key, transport=RequestsTransport(session=session))
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+cosmos_client = CosmosClient(URL, KEY, transport=RequestsTransport(session=session))
  ```
 
 ## Troubleshooting
