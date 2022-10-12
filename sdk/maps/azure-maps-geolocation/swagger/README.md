@@ -22,8 +22,8 @@ autorest --v3 --python
 ```yaml
 tag: 1.0-preview
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/maps/data-plane/Geolocation/readme.md
-output-folder: ../azure/maps/route/_generated
-namespace: azure.maps.route
+output-folder: ../azure/maps/geolocation/_generated
+namespace: azure.maps.geolocation
 no-namespace-folders: true
 use-extension:
   "@autorest/modelerfour": "4.22.3"

@@ -232,7 +232,13 @@ class PipelineComponent(Component):
         not set. Raise error if pipeline input is optional but link to
         required inputs.
         """
-        component_definition_inputs = node.component.inputs
+        component_definition_inputs = {}
+        # Add flattened group input into definition inputs.
+        # e.g. Add {'group_name.item': PipelineInput} for {'group_name': GroupInput}
+        for name, val in node.component.inputs.items():
+            if isinstance(val, GroupInput):
+                component_definition_inputs.update(val.flatten(group_parameter_name=name))
+            component_definition_inputs[name] = val
         # Collect binding relation dict {'pipeline_input': ['node_input']}
         validation_result = self._create_empty_validation_result()
         binding_dict, optional_binding_in_expression_dict = self._get_input_binding_dict(node)

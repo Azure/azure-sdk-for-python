@@ -8,7 +8,7 @@ import functools
 import sys
 import time
 import warnings
-from typing import ( # pylint: disable=unused-import
+from typing import (
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
 
@@ -19,7 +19,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._parser import _get_file_permission, _datetime_to_str
 from .._shared.parser import _str
-
 from .._generated.aio import AzureFileStorage
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -32,8 +31,9 @@ from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from .._models import ShareProperties, DirectoryProperties, ContentSettings, NTFSAttributes
+    from .._models import DirectoryProperties, NTFSAttributes
     from .._generated.models import HandleItem
 
 
@@ -74,15 +74,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
-    def __init__( # type: ignore
-            self, account_url,  # type: str
-            share_name, # type: str
-            directory_path, # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> None
+    def __init__(
+            self, account_url: str,
+            share_name: str,
+            directory_path: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):

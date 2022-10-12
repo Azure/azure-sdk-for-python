@@ -6,23 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ClassicAdministrator
-    from ._models_py3 import ClassicAdministratorListResult
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-except (SyntaxError, ImportError):
-    from ._models import ClassicAdministrator  # type: ignore
-    from ._models import ClassicAdministratorListResult  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
+from ._models_py3 import ClassicAdministrator
+from ._models_py3 import ClassicAdministratorListResult
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ClassicAdministrator',
-    'ClassicAdministratorListResult',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
+    "ClassicAdministrator",
+    "ClassicAdministratorListResult",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
