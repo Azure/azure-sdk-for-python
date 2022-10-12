@@ -11,6 +11,7 @@
 #   authorization_operations: 1/1
 
 import unittest
+import pytest
 
 import azure.mgmt.resource
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
@@ -26,6 +27,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
             azure.mgmt.resource.ResourceManagementClient
         )
 
+    @pytest.mark.skip(reason="authorization failed, need to add white_list")
     @recorded_by_proxy
     def test_locks_at_subscription_level(self):
         lock_name = 'pylockrg'
@@ -48,6 +50,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
             lock_name
         )
 
+    @pytest.mark.skip(reason="authorization failed, need to add white_list")
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
     def test_locks_by_scope(self, resource_group, location):
@@ -97,6 +100,8 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
         )
         result = result.result()
 
+
+    @pytest.mark.skip(reason="authorization failed, need to add white_list")
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
     def test_locks_at_resource_level(self, resource_group, location):
@@ -165,6 +170,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
         )
         delete_result.wait()
 
+    @pytest.mark.skip(reason="authorization failed, need to add white_list")
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy
     def test_locks_at_resource_group_level(self, resource_group, location):

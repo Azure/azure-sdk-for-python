@@ -38,7 +38,7 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
         ],
         metadata={"description": "Provides the configuration for a distributed run."},
     )
-    # primitive output is only supported for command component
+    # primitive output is only supported for command component & pipeline component
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField(

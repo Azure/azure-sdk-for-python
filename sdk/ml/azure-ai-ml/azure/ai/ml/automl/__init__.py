@@ -7,6 +7,8 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationMultilabelJob,
     ImageClassificationSearchSpace,
     ImageLimitSettings,
+    ImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection,
     ImageObjectDetectionJob,
     ImageObjectDetectionSearchSpace,
     ImageInstanceSegmentationJob,
@@ -14,6 +16,7 @@ from azure.ai.ml.entities._job.automl.image import (
 )
 from azure.ai.ml.entities._job.automl.nlp import (
     NlpFeaturizationSettings,
+    NlpFixedParameters,
     NlpLimitSettings,
     NlpSearchSpace,
     NlpSweepSettings,
@@ -31,6 +34,7 @@ from azure.ai.ml.entities._job.automl.tabular import (
     TabularLimitSettings
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from .._restclient.v2022_10_01_preview.models import (
     BlockedTransformers,
     ClassificationModels,
@@ -87,10 +91,13 @@ __all__ = [
     "ForecastingSettings",
     "TabularLimitSettings",
     "NlpFeaturizationSettings",
+    "NlpFixedParameters",
     "NlpLimitSettings",
     "NlpSweepSettings",
     "NlpSearchSpace",
     "ImageLimitSettings",
+    "ImageModelSettingsClassification",
+    "ImageModelSettingsObjectDetection",
     "ImageSweepSettings",
     "ImageObjectDetectionSearchSpace",
     "ImageClassificationSearchSpace",
@@ -105,6 +112,7 @@ __all__ = [
     "regression",
     "forecasting",
     "SearchSpace",
+    "StackEnsembleSettings",
     "BlockedTransformers",
     "ClassificationJob",
     "ForecastingJob",

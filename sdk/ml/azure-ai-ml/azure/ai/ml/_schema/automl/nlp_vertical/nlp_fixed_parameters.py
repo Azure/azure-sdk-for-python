@@ -6,11 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    NlpFixedParameters,
-    NlpLearningRateScheduler
-)
-
+from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_kebab
@@ -35,5 +31,7 @@ class NlpFixedParametersSchema(metaclass=PatchedSchemaMeta):
     weight_decay = fields.Float()
 
     @post_load
-    def make(self, data, **kwargs) -> NlpFixedParameters:
+    def make(self, data, **kwargs):
+        from azure.ai.ml.automl import NlpFixedParameters
+
         return NlpFixedParameters(**data)
