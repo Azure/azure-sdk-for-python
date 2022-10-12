@@ -28,14 +28,14 @@ def get_route_directions_batch_sync():
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_route_client.get_route_directions_batch_sync(
-        route_directions_batch_queries=[
+        queries=[
             "47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
         ]
     )
 
     print("Get route directions batch sync")
-    print(result.batch_summary.total_requests)
-    print(result.batch_items[0].response.routes[0].sections[0])
+    print(result.summary.total_requests)
+    print(result.items[0].response.routes[0].sections[0])
     # [END get_route_directions_batch_sync]
 
 if __name__ == '__main__':

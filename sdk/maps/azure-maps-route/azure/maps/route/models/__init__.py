@@ -19,7 +19,6 @@ from .._generated.models import (
     RouteMatrixSummary,
     RouteDirectionsBatchItem,
     RouteOptimizedWaypoint,
-    RouteLeg,
     RouteSummary,
     RouteSection,
     RouteGuidance,
@@ -42,7 +41,8 @@ from ._models import (
     GeoJsonObjectType,
     GeoJsonGeometryCollection,
     RouteDirectionsBatchResult,
-    RouteDirectionsBatchItem
+    RouteDirectionsBatchItem,
+    RouteLeg
 )
 
 

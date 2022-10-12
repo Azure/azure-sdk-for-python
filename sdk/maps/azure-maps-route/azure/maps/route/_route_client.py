@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import Union, Any, List
+from typing import Union, Any, List, Tuple
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.polling import LROPoller
@@ -27,15 +27,19 @@ from ._generated.models import (
 class MapsRouteClient(MapsRouteClientBase):
     """Azure Maps Route REST APIs.
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
-    :keyword str base_url: Supported Maps Services or Language resource base_url
-     (protocol and hostname, for example: 'https://<resource-name>.mapsservices.azure.com').
-    :keyword str client_id: Specifies which account is intended for usage with the Azure AD security model.
-     It represents a unique ID for the Azure Maps account.
+    :param credential:
+        Credential needed for the client to connect to Azure.
+    :type credential:
+        ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
+    :keyword str base_url:
+        Supported Maps Services or Language resource base_url
+        (protocol and hostname, for example: 'https://us.atlas.microsoft.com').
+    :keyword str client_id:
+        Specifies which account is intended for usage with the Azure AD security model.
+        It represents a unique ID for the Azure Maps account.
     :keyword api_version:
-            The API version of the service to use for requests. It defaults to the latest service version.
-            Setting to an older version may result in reduced feature compatibility.
+        The API version of the service to use for requests. It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
     :paramtype api_version: str
     """
 
@@ -53,7 +57,7 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def get_route_directions(
         self,
-        route_points: List[LatLon],
+        route_points: Union[List[LatLon], List[Tuple]],
         **kwargs: Any
     ) -> RouteDirections:
         """
@@ -66,7 +70,7 @@ class MapsRouteClient(MapsRouteClientBase):
         instructions is also available, depending on the options selected.
 
         :param route_points: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
-        :type route_points: List[LatLon]
+        :type route_points: List[LatLon] or List[Tuple]
         :keyword supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
          used as input for route reconstruction and for calculating zero or more alternative routes to
          this reference route.
@@ -302,7 +306,7 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def get_route_range(
         self,
-        coordinates: LatLon,
+        coordinates: Union[LatLon, Tuple],
         **kwargs: Any
     ) -> RouteRangeResult:
 
@@ -472,44 +476,44 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def get_route_directions_batch_sync(
         self,
-        route_directions_batch_queries: List[str],
+        queries: List[str],
         **kwargs: Any
     ) -> RouteDirectionsBatchResult:
 
         """Sends batches of route directions requests.
         The method return the result directly.
 
-        :param route_directions_batch_queries: The list of route directions queries/requests to
+        :param queries: The list of route directions queries/requests to
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version
          and must contain at least 1 query. Required.
-        :type route_directions_batch_queries: List[str]
+        :type queries: List[str]
         :return: RouteDirectionsBatchResult
-        :rtype: ~azure.maps.route.models.RouteDirectionsBatchResult
+        :rtype: RouteDirectionsBatchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         batch_items = [{"query": f"?query={query}"} for query
-                       in route_directions_batch_queries] if route_directions_batch_queries else []
-        return self._route_client.request_route_directions_batch_sync(
+                       in queries] if queries else []
+        result = self._route_client.request_route_directions_batch_sync(
             format=ResponseFormat.JSON,
             route_directions_batch_queries={"batch_items": batch_items},
             **kwargs
         )
-
+        return RouteDirectionsBatchResult(summary=result.batch_summary, items=result.batch_items)
 
     @distributed_trace
     def begin_route_directions_batch(
         self,
-        route_directions_batch_queries: List[str],
+        queries: List[str],
         **kwargs: Any
     ) -> LROPoller[RouteDirectionsBatchResult]:
 
         """Sends batches of route direction queries.
         The method returns a poller for retrieving the result later.
 
-        :param route_directions_batch_queries: The list of route directions queries/requests to
+        :param queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
          and must contain at least 1 query. Required.
-        :type route_directions_batch_queries: List[str]
+        :type queries: List[str]
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -518,11 +522,11 @@ class MapsRouteClient(MapsRouteClientBase):
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
+        :rtype: ~azure.core.polling.LROPoller[RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         batch_items = [{"query": f"?query={query}"} for query
-                       in route_directions_batch_queries] if route_directions_batch_queries else []
+                       in queries] if queries else []
 
         poller = self._route_client.begin_request_route_directions_batch(
             format=ResponseFormat.JSON,
@@ -552,7 +556,7 @@ class MapsRouteClient(MapsRouteClientBase):
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
+        :rtype: ~azure.core.polling.LROPoller[RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -567,7 +571,7 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def get_route_matrix(
         self,
-        route_matrix_query: RouteMatrixQuery,
+        query: RouteMatrixQuery,
         **kwargs: Any
     ) -> RouteMatrixResult:
 
@@ -578,12 +582,12 @@ class MapsRouteClient(MapsRouteClientBase):
         The maximum size of a matrix for this method is 100
          (the number of origins multiplied by the number of destinations)
 
-        :param route_matrix_query: The matrix of origin and destination coordinates to compute the
+        :param query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
          parameters. The minimum and the maximum cell count supported are 1 and **700** for async and
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
          origins and 25 destinations for async API. Is either a model type or a IO type. Required.
-        :type route_matrix_query: ~azure.maps.route.models.RouteMatrixQuery or IO
+        :type query: ~azure.maps.route.models.RouteMatrixQuery or IO
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
@@ -678,7 +682,7 @@ class MapsRouteClient(MapsRouteClientBase):
         """
         return self._route_client.request_route_matrix_sync(
             format=ResponseFormat.JSON,
-            route_matrix_query=route_matrix_query,
+            route_matrix_query=query,
             **kwargs
         )
 
@@ -686,7 +690,7 @@ class MapsRouteClient(MapsRouteClientBase):
     @distributed_trace
     def begin_route_matrix_batch(
         self,
-        route_matrix_query: RouteMatrixQuery,
+        query: RouteMatrixQuery,
         **kwargs: Any
     ) -> LROPoller[RouteMatrixResult]:
 
@@ -697,12 +701,12 @@ class MapsRouteClient(MapsRouteClientBase):
         The maximum size of a matrix for this method is 700
          (the number of origins multiplied by the number of destinations)
 
-        :param route_matrix_query: The matrix of origin and destination coordinates to compute the
+        :param query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
          parameters. The minimum and the maximum cell count supported are 1 and **700** for async and
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
          origins and 25 destinations for async API. Required.
-        :type route_matrix_query: ~azure.maps.route.models.RouteMatrixQuery
+        :type query: ~azure.maps.route.models.RouteMatrixQuery
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
@@ -805,7 +809,7 @@ class MapsRouteClient(MapsRouteClientBase):
 
         poller = self._route_client.begin_request_route_matrix(
             format=ResponseFormat.JSON,
-            route_matrix_query=route_matrix_query,
+            route_matrix_query=query,
             **kwargs
         )
         return poller

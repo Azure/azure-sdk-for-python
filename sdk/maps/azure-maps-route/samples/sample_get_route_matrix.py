@@ -57,7 +57,7 @@ def get_route_matrix():
         }
     }
 
-    result = maps_route_client.get_route_matrix(route_matrix_query=request_obj)
+    result = maps_route_client.get_route_matrix(query=request_obj)
 
     print("Get Route Matrix with given request object:")
     print(result.summary)

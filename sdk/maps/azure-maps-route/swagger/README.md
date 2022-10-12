@@ -22,9 +22,6 @@ output-folder: ../azure/maps/route/_generated
 namespace: azure.maps.route
 package-name: azure-maps-route
 no-namespace-folders: true
-use-extension:
-  "@autorest/modelerfour": "4.22.3"
-
 license-header: MICROSOFT_MIT_NO_VERSION
 credential-scopes: https://atlas.microsoft.com/.default
 clear-output-folder: true
@@ -39,4 +36,12 @@ version-tolerant: true
 models-mode: msrest
 show-operations: true
 only-path-and-body-parameters-positional: true
+```
+
+```yaml
+directive:
+- from: swagger-document
+  where: $.securityDefinitions
+  transform: |
+    $["SharedKey"]["in"] = "header";
 ```

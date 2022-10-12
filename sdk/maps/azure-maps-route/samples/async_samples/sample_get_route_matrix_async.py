@@ -59,7 +59,7 @@ async def get_route_matrix_async():
     }
 
     async with maps_route_client:
-        result = await maps_route_client.get_route_matrix(route_matrix_query=request_obj)
+        result = await maps_route_client.get_route_matrix(query=request_obj)
 
     print("Get Route Matrix with given request object:")
     print(result.matrix[0][0].response.summary.length_in_meters)

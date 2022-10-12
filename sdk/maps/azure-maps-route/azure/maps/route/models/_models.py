@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports
+# pylint: disable=unused-import,ungrouped-imports, super-init-not-called
 from typing import List, Optional, Union, NamedTuple
 from enum import Enum, EnumMeta
 from six import with_metaclass
@@ -11,7 +11,9 @@ import msrest.serialization
 
 from azure.core import CaseInsensitiveEnumMeta
 from .._generated.models import (
-    BatchResult as GenBatchResult
+    BatchResult as GenBatchResult,
+    RouteLeg as GenRouteLeg,
+    BatchResultSummary
 )
 
 class LatLon(NamedTuple):
@@ -41,6 +43,66 @@ class BoundingBox(NamedTuple):
     south: float = 0.0
     east: float = 0.0
     north: float = 0.0
+
+class RouteDirectionsBatchItem(object):
+    """An item returned from Route Directions Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar response: The result of the query. RouteDirections if the query completed successfully,
+     ErrorResponse otherwise.
+    :vartype response: ~azure.maps.route.models.RouteDirectionsBatchItemResponse
+    """
+
+    _validation = {
+        "response": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "response": {"key": "response", "type": "RouteDirectionsBatchItemResponse"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.response = None
+
+class RouteDirectionsBatchResult(GenBatchResult):
+    """This object is returned from a successful Route Directions Batch service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :keyword summary: Summary of the results for the batch request.
+    :paramtype summary: ~azure.maps.route.models.BatchResultSummary
+    :keyword items: Array containing the batch results.
+    :paramtype items: list[RouteDirectionsBatchItem]
+    """
+    def __init__(
+        self,
+        summary: BatchResultSummary = None,
+        items: List[RouteDirectionsBatchItem] = None
+    ):
+        self.summary = summary
+        self.items = items
+
+class RouteLeg(GenRouteLeg):
+    """A description of a part of a route, comprised of a list of points.
+    Each additional waypoint provided in the request will result in an additional
+    leg in the returned route.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar summary: Summary object for route section.
+    :vartype summary: ~azure.maps.route.models.RouteLegSummary
+    :ivar points: Points array.
+    :vartype points: list[LatLon]
+    """
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.summary = None
+        self.points = None
 
 class GeoJsonObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types - Point,
@@ -746,52 +808,3 @@ class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
         super(GeoJsonPolygon, self).__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
         self.type = 'Polygon'  # type: str
-
-class RouteDirectionsBatchResult(GenBatchResult):
-    """This object is returned from a successful Route Directions Batch service call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar batch_summary: Summary of the results for the batch request.
-    :vartype batch_summary: ~azure.maps.route.models.BatchResultSummary
-    :ivar batch_items: Array containing the batch results.
-    :vartype batch_items: list[RouteDirectionsBatchItem]
-    """
-
-    _validation = {
-        "batch_summary": {"readonly": True},
-        "batch_items": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "batch_summary": {"key": "summary", "type": "BatchResultSummary"},
-        "batch_items": {"key": "batchItems", "type": "[RouteDirectionsBatchItem]"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.batch_items = None
-
-class RouteDirectionsBatchItem(object):
-    """An item returned from Route Directions Batch service call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar response: The result of the query. RouteDirections if the query completed successfully,
-     ErrorResponse otherwise.
-    :vartype response: ~azure.maps.route.models.RouteDirectionsBatchItemResponse
-    """
-
-    _validation = {
-        "response": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "response": {"key": "response", "type": "RouteDirectionsBatchItemResponse"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.response = None
