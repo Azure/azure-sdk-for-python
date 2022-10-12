@@ -121,37 +121,40 @@ class DataOperations(_ScopeDependentOperations):
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
-        if version and label:
-            msg = "Cannot specify both version and label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.DATA,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
+        try:
+            if version and label:
+                msg = "Cannot specify both version and label."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.DATA,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
+
+            if label:
+                return _resolve_label_to_asset(self, name, label)
+
+            if not version:
+                msg = "Must provide either version or label."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.DATA,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
+                )
+            data_version_resource = self._operation.get(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                name=name,
+                version=version,
+                **self._init_kwargs,
             )
-
-        if label:
-            return _resolve_label_to_asset(self, name, label)
-
-        if not version:
-            msg = "Must provide either version or label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.DATA,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
-        data_version_resource = self._operation.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            name=name,
-            version=version,
-            **self._init_kwargs,
-        )
-
-        return Data._from_rest_object(data_version_resource)
+            return Data._from_rest_object(data_version_resource)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:

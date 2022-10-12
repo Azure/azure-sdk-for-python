@@ -101,16 +101,19 @@ class DatastoreOperations(_ScopeDependentOperations):
         :return: Datastore with the specified name.
         :rtype: Datastore
         """
-
-        datastore_resource = self._operation.get(
-            name=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            **self._init_kwargs
-        )
-        if include_secrets:
-            self._fetch_and_populate_secret(datastore_resource)
-        return Datastore._from_rest_object(datastore_resource)
+        try:
+            datastore_resource = self._operation.get(
+                name=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._init_kwargs
+            )
+            if include_secrets:
+                self._fetch_and_populate_secret(datastore_resource)
+            return Datastore._from_rest_object(datastore_resource)
+        except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
 
     def _fetch_and_populate_secret(self, datastore_resource: DatastoreData) -> None:
         if datastore_resource.name and not isinstance(
