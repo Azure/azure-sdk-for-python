@@ -19,7 +19,10 @@ class TestRegistry(AzureRecordedTestCase):
         crud_registry_client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
-        reg_name = f"e2etest{randstr('reg_name')}"
+        # Registries cannot currently handle names with underscores,
+        # so remove it from the randomly generated registry name
+        # to avoid problems.
+        reg_name = "".join(f"{randstr('reg_name')}".split("_"))
         params_override = [
             {
                 "name": reg_name,
@@ -39,3 +42,7 @@ class TestRegistry(AzureRecordedTestCase):
 
         registry = crud_registry_client.registries.get(name=reg_name)
         assert registry.name == reg_name
+
+        registry = crud_registry_client.registries.delete(name=reg_name)
+        
+        registry = crud_registry_client.registries.get(name=reg_name)

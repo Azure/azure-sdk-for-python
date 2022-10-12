@@ -57,5 +57,5 @@ class TestRegistryOperations:
 
     def test_delete(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
 
-        mock_registry_operation.delete(registry_name="some registry")
+        mock_registry_operation.delete(name="some registry")
         mock_registry_operation._operation.delete.assert_called_once()
