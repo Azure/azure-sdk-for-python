@@ -34,13 +34,8 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_replica_request(
-    resource_group_name: str,
-    container_app_name: str,
-    revision_name: str,
-    replica_name: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_list_detectors_request(
+    resource_group_name: str, environment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -51,16 +46,14 @@ def build_get_replica_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{replicaName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
-        "revisionName": _SERIALIZER.url("revision_name", revision_name, "str"),
-        "replicaName": _SERIALIZER.url("replica_name", replica_name, "str"),
+        "environmentName": _SERIALIZER.url("environment_name", environment_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -74,8 +67,8 @@ def build_get_replica_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_replicas_request(
-    resource_group_name: str, container_app_name: str, revision_name: str, subscription_id: str, **kwargs: Any
+def build_get_detector_request(
+    resource_group_name: str, environment_name: str, detector_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -86,15 +79,15 @@ def build_list_replicas_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors/{detectorName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "containerAppName": _SERIALIZER.url("container_app_name", container_app_name, "str"),
-        "revisionName": _SERIALIZER.url("revision_name", revision_name, "str"),
+        "environmentName": _SERIALIZER.url("environment_name", environment_name, "str"),
+        "detectorName": _SERIALIZER.url("detector_name", detector_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -108,14 +101,14 @@ def build_list_replicas_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ContainerAppsRevisionReplicasOperations:
+class ManagedEnvironmentDiagnosticsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.appcontainers.ContainerAppsAPIClient`'s
-        :attr:`container_apps_revision_replicas` attribute.
+        :attr:`managed_environment_diagnostics` attribute.
     """
 
     models = _models
@@ -128,25 +121,21 @@ class ContainerAppsRevisionReplicasOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_replica(
-        self, resource_group_name: str, container_app_name: str, revision_name: str, replica_name: str, **kwargs: Any
-    ) -> _models.Replica:
-        """Get a replica for a Container App Revision.
+    def list_detectors(
+        self, resource_group_name: str, environment_name: str, **kwargs: Any
+    ) -> _models.DiagnosticsCollection:
+        """Get the list of diagnostics for a given Managed Environment.
 
-        Get a replica for a Container App Revision.
+        Get the list of diagnostics for a Managed Environment used to host container apps.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param container_app_name: Name of the Container App. Required.
-        :type container_app_name: str
-        :param revision_name: Name of the Container App Revision. Required.
-        :type revision_name: str
-        :param replica_name: Name of the Container App Revision Replica. Required.
-        :type replica_name: str
+        :param environment_name: Name of the Environment. Required.
+        :type environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Replica or the result of cls(response)
-        :rtype: ~azure.mgmt.appcontainers.models.Replica
+        :return: DiagnosticsCollection or the result of cls(response)
+        :rtype: ~azure.mgmt.appcontainers.models.DiagnosticsCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -161,16 +150,14 @@ class ContainerAppsRevisionReplicasOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Replica]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DiagnosticsCollection]
 
-        request = build_get_replica_request(
+        request = build_list_detectors_request(
             resource_group_name=resource_group_name,
-            container_app_name=container_app_name,
-            revision_name=revision_name,
-            replica_name=replica_name,
+            environment_name=environment_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_replica.metadata["url"],
+            template_url=self.list_detectors.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -188,33 +175,33 @@ class ContainerAppsRevisionReplicasOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Replica", pipeline_response)
+        deserialized = self._deserialize("DiagnosticsCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_replica.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{replicaName}"}  # type: ignore
+    list_detectors.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors"}  # type: ignore
 
     @distributed_trace
-    def list_replicas(
-        self, resource_group_name: str, container_app_name: str, revision_name: str, **kwargs: Any
-    ) -> _models.ReplicaCollection:
-        """List replicas for a Container App Revision.
+    def get_detector(
+        self, resource_group_name: str, environment_name: str, detector_name: str, **kwargs: Any
+    ) -> _models.Diagnostics:
+        """Get the diagnostics data for a given Managed Environment.
 
-        List replicas for a Container App Revision.
+        Get the diagnostics data for a Managed Environment used to host container apps.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param container_app_name: Name of the Container App. Required.
-        :type container_app_name: str
-        :param revision_name: Name of the Container App Revision. Required.
-        :type revision_name: str
+        :param environment_name: Name of the Environment. Required.
+        :type environment_name: str
+        :param detector_name: Name of the Managed Environment detector. Required.
+        :type detector_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ReplicaCollection or the result of cls(response)
-        :rtype: ~azure.mgmt.appcontainers.models.ReplicaCollection
+        :return: Diagnostics or the result of cls(response)
+        :rtype: ~azure.mgmt.appcontainers.models.Diagnostics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -229,15 +216,15 @@ class ContainerAppsRevisionReplicasOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ReplicaCollection]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Diagnostics]
 
-        request = build_list_replicas_request(
+        request = build_get_detector_request(
             resource_group_name=resource_group_name,
-            container_app_name=container_app_name,
-            revision_name=revision_name,
+            environment_name=environment_name,
+            detector_name=detector_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_replicas.metadata["url"],
+            template_url=self.get_detector.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -255,11 +242,11 @@ class ContainerAppsRevisionReplicasOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ReplicaCollection", pipeline_response)
+        deserialized = self._deserialize("Diagnostics", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_replicas.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas"}  # type: ignore
+    get_detector.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/detectors/{detectorName}"}  # type: ignore

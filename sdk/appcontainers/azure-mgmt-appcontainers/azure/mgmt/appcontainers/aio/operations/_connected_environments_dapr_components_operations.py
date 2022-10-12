@@ -28,7 +28,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._dapr_components_operations import (
+from ...operations._connected_environments_dapr_components_operations import (
     build_create_or_update_request,
     build_delete_request,
     build_get_request,
@@ -40,14 +40,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class DaprComponentsOperations:
+class ConnectedEnvironmentsDaprComponentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
-        :attr:`dapr_components` attribute.
+        :attr:`connected_environments_dapr_components` attribute.
     """
 
     models = _models
@@ -61,17 +61,17 @@ class DaprComponentsOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, environment_name: str, **kwargs: Any
+        self, resource_group_name: str, connected_environment_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.DaprComponent"]:
-        """Get the Dapr Components for a managed environment.
+        """Get the Dapr Components for a connected environment.
 
-        Get the Dapr Components for a managed environment.
+        Get the Dapr Components for a connected environment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
+        :param connected_environment_name: Name of the connected environment. Required.
+        :type connected_environment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DaprComponent or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appcontainers.models.DaprComponent]
@@ -96,7 +96,7 @@ class DaprComponentsOperations:
 
                 request = build_list_request(
                     resource_group_name=resource_group_name,
-                    environment_name=environment_name,
+                    connected_environment_name=connected_environment_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
@@ -141,11 +141,11 @@ class DaprComponentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/connectedEnvironments/{connectedEnvironmentName}/daprComponents"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, environment_name: str, component_name: str, **kwargs: Any
+        self, resource_group_name: str, connected_environment_name: str, component_name: str, **kwargs: Any
     ) -> _models.DaprComponent:
         """Get a dapr component.
 
@@ -154,8 +154,8 @@ class DaprComponentsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
+        :param connected_environment_name: Name of the connected environment. Required.
+        :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -179,7 +179,7 @@ class DaprComponentsOperations:
 
         request = build_get_request(
             resource_group_name=resource_group_name,
-            environment_name=environment_name,
+            connected_environment_name=connected_environment_name,
             component_name=component_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -208,13 +208,13 @@ class DaprComponentsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/connectedEnvironments/{connectedEnvironmentName}/daprComponents/{componentName}"}  # type: ignore
 
     @overload
     async def create_or_update(
         self,
         resource_group_name: str,
-        environment_name: str,
+        connected_environment_name: str,
         component_name: str,
         dapr_component_envelope: _models.DaprComponent,
         *,
@@ -223,13 +223,13 @@ class DaprComponentsOperations:
     ) -> _models.DaprComponent:
         """Creates or updates a Dapr Component.
 
-        Creates or updates a Dapr Component in a Managed Environment.
+        Creates or updates a Dapr Component in a connected environment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
+        :param connected_environment_name: Name of the connected environment. Required.
+        :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component. Required.
@@ -247,7 +247,7 @@ class DaprComponentsOperations:
     async def create_or_update(
         self,
         resource_group_name: str,
-        environment_name: str,
+        connected_environment_name: str,
         component_name: str,
         dapr_component_envelope: IO,
         *,
@@ -256,13 +256,13 @@ class DaprComponentsOperations:
     ) -> _models.DaprComponent:
         """Creates or updates a Dapr Component.
 
-        Creates or updates a Dapr Component in a Managed Environment.
+        Creates or updates a Dapr Component in a connected environment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
+        :param connected_environment_name: Name of the connected environment. Required.
+        :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component. Required.
@@ -280,20 +280,20 @@ class DaprComponentsOperations:
     async def create_or_update(
         self,
         resource_group_name: str,
-        environment_name: str,
+        connected_environment_name: str,
         component_name: str,
         dapr_component_envelope: Union[_models.DaprComponent, IO],
         **kwargs: Any
     ) -> _models.DaprComponent:
         """Creates or updates a Dapr Component.
 
-        Creates or updates a Dapr Component in a Managed Environment.
+        Creates or updates a Dapr Component in a connected environment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
+        :param connected_environment_name: Name of the connected environment. Required.
+        :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :param dapr_component_envelope: Configuration details of the Dapr Component. Is either a model
@@ -332,7 +332,7 @@ class DaprComponentsOperations:
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
-            environment_name=environment_name,
+            connected_environment_name=connected_environment_name,
             component_name=component_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -364,21 +364,21 @@ class DaprComponentsOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/connectedEnvironments/{connectedEnvironmentName}/daprComponents/{componentName}"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, environment_name: str, component_name: str, **kwargs: Any
+        self, resource_group_name: str, connected_environment_name: str, component_name: str, **kwargs: Any
     ) -> None:
         """Delete a Dapr Component.
 
-        Delete a Dapr Component from a Managed Environment.
+        Delete a Dapr Component from a connected environment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
+        :param connected_environment_name: Name of the connected environment. Required.
+        :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -402,7 +402,7 @@ class DaprComponentsOperations:
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
-            environment_name=environment_name,
+            connected_environment_name=connected_environment_name,
             component_name=component_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -427,11 +427,11 @@ class DaprComponentsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}"}  # type: ignore
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/connectedEnvironments/{connectedEnvironmentName}/daprComponents/{componentName}"}  # type: ignore
 
     @distributed_trace_async
     async def list_secrets(
-        self, resource_group_name: str, environment_name: str, component_name: str, **kwargs: Any
+        self, resource_group_name: str, connected_environment_name: str, component_name: str, **kwargs: Any
     ) -> _models.DaprSecretsCollection:
         """List secrets for a dapr component.
 
@@ -440,8 +440,8 @@ class DaprComponentsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param environment_name: Name of the Managed Environment. Required.
-        :type environment_name: str
+        :param connected_environment_name: Name of the connected environment. Required.
+        :type connected_environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -465,7 +465,7 @@ class DaprComponentsOperations:
 
         request = build_list_secrets_request(
             resource_group_name=resource_group_name,
-            environment_name=environment_name,
+            connected_environment_name=connected_environment_name,
             component_name=component_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -494,4 +494,4 @@ class DaprComponentsOperations:
 
         return deserialized
 
-    list_secrets.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{componentName}/listSecrets"}  # type: ignore
+    list_secrets.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/connectedEnvironments/{connectedEnvironmentName}/daprComponents/{componentName}/listSecrets"}  # type: ignore
