@@ -5,14 +5,11 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
 import functools
-from typing import Any, Dict, Optional, Type, TypeVar, Union, TYPE_CHECKING
+from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from urllib.parse import urlparse, quote, unquote
 
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
 import six
+from typing_extensions import Self
 
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
@@ -31,10 +28,8 @@ from ._generated.models import ListBlobsIncludeItem
 from ._deserialize import process_storage_error, is_file_path
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-
-
-ClassType = TypeVar("ClassType")
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -78,12 +73,11 @@ class FileSystemClient(StorageAccountHostsMixin):
             :caption: Get a FileSystemClient from an existing DataLakeServiceClient.
     """
     def __init__(
-        self, account_url,  # type: str
-        file_system_name,  # type: str
-        credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self, account_url: str,
+        file_system_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -149,12 +143,11 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            file_system_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            file_system_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """
         Create FileSystemClient from a Connection String.
 

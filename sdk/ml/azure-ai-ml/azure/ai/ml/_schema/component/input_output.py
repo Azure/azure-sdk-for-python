@@ -51,16 +51,12 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
     )
 
 
-class PrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
+class PrimitiveOutputSchema(OutputPortSchema):
     type = DumpableEnumField(
         allowed_values=SUPPORTED_PARAM_TYPES,
         required=True,
     )
-    description = fields.Str()
     is_control = fields.Bool()
-    mode = DumpableEnumField(
-        allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
-    )
 
 
 class ParameterSchema(metaclass=PatchedSchemaMeta):
