@@ -7,45 +7,39 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models
 from ._configuration import PhoneNumbersClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import PhoneNumbersOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
-    from azure.core.rest import HttpRequest, HttpResponse
-
-class PhoneNumbersClient(object):
-    """The phone numbers client uses Azure Communication Services to purchase and manage phone numbers.
+class PhoneNumbersClient:  # pylint: disable=client-accepts-api-version-keyword
+    """The phone numbers client uses Azure Communication Services to purchase and manage phone
+    numbers.
 
     :ivar phone_numbers: PhoneNumbersOperations operations
     :vartype phone_numbers: azure.communication.phonenumbers.operations.PhoneNumbersOperations
     :param endpoint: The communication resource, for example
-     https://resourcename.communication.azure.com.
+     https://resourcename.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2022-01-11-preview2". Note that
-     overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-01-11-preview2". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        _base_url = '{endpoint}'
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs: Any
+    ) -> None:
+        _endpoint = "{endpoint}"
         self._config = PhoneNumbersClientConfiguration(endpoint=endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -53,13 +47,7 @@ class PhoneNumbersClient(object):
         self._serialize.client_side_validation = False
         self.phone_numbers = PhoneNumbersOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -68,7 +56,7 @@ class PhoneNumbersClient(object):
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -79,7 +67,7 @@ class PhoneNumbersClient(object):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
