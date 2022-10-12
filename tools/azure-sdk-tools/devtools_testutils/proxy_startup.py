@@ -146,7 +146,7 @@ def start_test_proxy(request) -> None:
 
                 os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", envname)
                 if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
-                    os.mkdir(os.environ["PROXY_ASSETS_FOLDER"])
+                    os.mkdirs(os.environ["PROXY_ASSETS_FOLDER"])
 
                 proc = subprocess.Popen(
                     shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
