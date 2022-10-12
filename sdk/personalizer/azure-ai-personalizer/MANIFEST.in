@@ -1,0 +1,8 @@
+recursive-include tests *.py
+include *.md
+include LICENSE
+include azure/__init__.py
+include azure/ai/__init__.py
+recursive-include samples *.py *.md
+recursive-include doc *.rst
+include azure/ai/personalizer/py.typed

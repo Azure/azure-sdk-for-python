@@ -1,0 +1,55 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/logs?api-version=2022-09-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "477ac346-4977-4bda-a5a7-e4b4101a4218",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "0",
+        "Date": "Tue, 11 Oct 2022 20:26:20 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/logs/properties?api-version=2022-09-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "af3bea5f-5ef7-4f58-a3ba-426648eab82c",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "2",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 11 Oct 2022 20:26:20 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "15"
+      },
+      "ResponseBody": {}
+    }
+  ],
+  "Variables": {}
+}
