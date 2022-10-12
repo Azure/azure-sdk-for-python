@@ -45,6 +45,10 @@ _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
     "code.",
 ]
 
+_STANDARD_AZURE_MONITOR_ATTRIBUTES = [
+    "sampleRate",
+]
+
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
@@ -420,9 +424,13 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         if target:
             data.target = str(target)[:1024]
 
+    # sampleRate
+    if "sampleRate" in span.attributes:
+        envelope.sample_rate = span.attributes["sampleRate"]
+
     data.properties = _utils._filter_custom_properties(
         span.attributes,
-        lambda key, val: not _is_opentelemetry_standard_attribute(key)
+        lambda key, val: not _is_standard_attribute(key)
     )
     if span.links:
         # Max length for value is 8192
@@ -450,7 +458,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             )
         properties = _utils._filter_custom_properties(
             event.attributes,
-            lambda key, val: not _is_opentelemetry_standard_attribute(key)
+            lambda key, val: not _is_standard_attribute(key)
         )
         if event.name == "exception":
             envelope.name = 'Microsoft.ApplicationInsights.Exception'
@@ -545,11 +553,12 @@ def _check_instrumentation_span(span: ReadableSpan) -> None:
         _utils.add_instrumentation(name)
 
 
-def _is_opentelemetry_standard_attribute(key: str) -> bool:
+def _is_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
-    return False
+    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES
+
 
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub

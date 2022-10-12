@@ -3,7 +3,7 @@
 """
 An example to show an application using all instruments in the OpenTelemetry SDK. Metrics created
 and recorded using the sdk are tracked and telemetry is exported to application insights with the
-AzureMonitorMetricsExporter.
+AzureMonitorMetricExporter.
 """
 import os
 from typing import Iterable
@@ -18,7 +18,8 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 exporter = AzureMonitorMetricExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
-reader = PeriodicExportingMetricReader(exporter, export_interval_millis=5000)
+# Metrics are reported every 1 minute
+reader = PeriodicExportingMetricReader(exporter)
 metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
 
 # Create a namespaced meter
