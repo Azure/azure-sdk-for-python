@@ -30,7 +30,7 @@ extends:
     Variables:
     - template: /eng/pipelines/templates/variables/globals.yml
     - name: PythonVersion
-      value: '3.7'
+      value: '3.10'
     Language: Python
     InstallLanguageSteps:
     - task: UsePythonVersion@0
