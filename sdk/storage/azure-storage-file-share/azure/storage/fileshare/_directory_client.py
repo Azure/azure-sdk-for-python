@@ -6,23 +6,18 @@
 
 import functools
 import time
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
-
-
-try:
-    from urllib.parse import urlparse, quote, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import quote, unquote # type: ignore
+from urllib.parse import urlparse, quote, unquote
 
 import six
+from typing_extensions import Self
+
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-
 from ._generated import AzureFileStorage
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
@@ -35,8 +30,9 @@ from ._file_client import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from ._models import ShareProperties, DirectoryProperties, ContentSettings
+    from ._models import DirectoryProperties
     from ._generated.models import HandleItem
 
 
@@ -81,15 +77,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
-    def __init__( # type: ignore
-            self, account_url,  # type: str
-            share_name, # type: str
-            directory_path, # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> None
+    def __init__(
+            self, account_url: str,
+            share_name: str,
+            directory_path: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -125,12 +120,12 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @classmethod
-    def from_directory_url(cls, directory_url,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> ShareDirectoryClient
+    def from_directory_url(
+            cls, directory_url: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create a ShareDirectoryClient from a directory url.
 
         :param str directory_url:
@@ -190,13 +185,12 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            share_name,  # type: str
-            directory_path,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> ShareDirectoryClient
+            cls, conn_str: str,
+            share_name: str,
+            directory_path: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create ShareDirectoryClient from a Connection String.
 
         :param str conn_str:
