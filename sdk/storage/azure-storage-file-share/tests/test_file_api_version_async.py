@@ -55,8 +55,8 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
         service_client = ShareServiceClient(
             "https://foo.file.core.windows.net/account",
             credential="fake_key")
-        self.assertEqual(service_client.api_version, self.api_version_2)
-        self.assertEqual(service_client._client._config.version, self.api_version_2)
+        assert service_client.api_version == self.api_version_2
+        assert service_client._client._config.version == self.api_version_2
 
         with pytest.raises(AttributeError):
             service_client.api_version = self.api_version_1
@@ -65,36 +65,36 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
             "https://foo.file.core.windows.net/account",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(service_client.api_version, self.api_version_1)
-        self.assertEqual(service_client._client._config.version, self.api_version_1)
+        assert service_client.api_version == self.api_version_1
+        assert service_client._client._config.version == self.api_version_1
 
         share_client = service_client.get_share_client("foo")
-        self.assertEqual(share_client.api_version, self.api_version_1)
-        self.assertEqual(share_client._client._config.version, self.api_version_1)
+        assert share_client.api_version == self.api_version_1
+        assert share_client._client._config.version == self.api_version_1
 
     def test_share_client_api_version_property(self):
         share_client = ShareClient(
             "https://foo.file.core.windows.net/account",
             "share_name",
             credential="fake_key")
-        self.assertEqual(share_client.api_version, self.api_version_2)
-        self.assertEqual(share_client._client._config.version, self.api_version_2)
+        assert share_client.api_version == self.api_version_2
+        assert share_client._client._config.version == self.api_version_2
 
         share_client = ShareClient(
             "https://foo.file.core.windows.net/account",
             "share_name",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(share_client.api_version, self.api_version_1)
-        self.assertEqual(share_client._client._config.version, self.api_version_1)
+        assert share_client.api_version == self.api_version_1
+        assert share_client._client._config.version == self.api_version_1
 
         dir_client = share_client.get_directory_client("foo")
-        self.assertEqual(dir_client.api_version, self.api_version_1)
-        self.assertEqual(dir_client._client._config.version, self.api_version_1)
+        assert dir_client.api_version == self.api_version_1
+        assert dir_client._client._config.version == self.api_version_1
 
         file_client = share_client.get_file_client("foo")
-        self.assertEqual(file_client.api_version, self.api_version_1)
-        self.assertEqual(file_client._client._config.version, self.api_version_1)
+        assert file_client.api_version == self.api_version_1
+        assert file_client._client._config.version == self.api_version_1
 
     def test_directory_client_api_version_property(self):
         dir_client = ShareDirectoryClient(
@@ -102,8 +102,8 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
             "share_name",
             "dir_path",
             credential="fake_key")
-        self.assertEqual(dir_client.api_version, self.api_version_2)
-        self.assertEqual(dir_client._client._config.version, self.api_version_2)
+        assert dir_client.api_version == self.api_version_2
+        assert dir_client._client._config.version == self.api_version_2
 
         dir_client = ShareDirectoryClient(
             "https://foo.file.core.windows.net/account",
@@ -111,16 +111,16 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
             "dir_path",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(dir_client.api_version, self.api_version_1)
-        self.assertEqual(dir_client._client._config.version, self.api_version_1)
+        assert dir_client.api_version == self.api_version_1
+        assert dir_client._client._config.version == self.api_version_1
 
         subdir_client = dir_client.get_subdirectory_client("foo")
-        self.assertEqual(subdir_client.api_version, self.api_version_1)
-        self.assertEqual(subdir_client._client._config.version, self.api_version_1)
+        assert subdir_client.api_version == self.api_version_1
+        assert subdir_client._client._config.version == self.api_version_1
 
         file_client = dir_client.get_file_client("foo")
-        self.assertEqual(file_client.api_version, self.api_version_1)
-        self.assertEqual(file_client._client._config.version, self.api_version_1)
+        assert file_client.api_version == self.api_version_1
+        assert file_client._client._config.version == self.api_version_1
 
     def test_file_client_api_version_property(self):
         file_client = ShareFileClient(
@@ -128,8 +128,8 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
             "share",
             self._get_file_reference(),
             credential="fake_key")
-        self.assertEqual(file_client.api_version, self.api_version_2)
-        self.assertEqual(file_client._client._config.version, self.api_version_2)
+        assert file_client.api_version == self.api_version_2
+        assert file_client._client._config.version == self.api_version_2
 
         file_client = ShareFileClient(
             "https://foo.file.core.windows.net/account",
@@ -137,8 +137,8 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
             self._get_file_reference(),
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(file_client.api_version, self.api_version_1)
-        self.assertEqual(file_client._client._config.version, self.api_version_1)
+        assert file_client.api_version == self.api_version_1
+        assert file_client._client._config.version == self.api_version_1
 
     def test_invalid_api_version(self):
         with pytest.raises(ValueError) as error:
@@ -146,7 +146,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
                 "https://foo.file.core.windows.net/account",
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
             ShareClient(
@@ -154,7 +154,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
                 "share_name",
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
             ShareDirectoryClient(
@@ -163,7 +163,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
                 "dir_path",
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
             ShareFileClient(
@@ -172,11 +172,13 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
                 self._get_file_reference(),
                 credential="fake_key",
                 api_version="foo")
-        self.assertTrue(str(error.value).startswith("Unsupported API version 'foo'."))
+        assert str(error.value).startswith("Unsupported API version 'foo'.")
 
     @FileSharePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_old_api_copy_file_succeeds_async(self, storage_account_name, storage_account_key):
+    async def test_old_api_copy_file_succeeds(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         fsc = ShareServiceClient(
             self.account_url(storage_account_name, "file"),
             credential=storage_account_key,
@@ -203,13 +205,13 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
         # Assert
         dest_prop = await file_client.get_file_properties()
         # to make sure the acl is copied from source
-        self.assertEqual(source_prop['permission_key'], dest_prop['permission_key'])
+        assert source_prop['permission_key'] == dest_prop['permission_key']
 
-        self.assertIsNotNone(copy)
-        self.assertEqual(copy['copy_status'], 'success')
-        self.assertIsNotNone(copy['copy_id'])
+        assert copy is not None
+        assert copy['copy_status'] == 'success'
+        assert copy['copy_id'] is not None
 
         copy_file = await (await file_client.download_file()).readall()
-        self.assertEqual(copy_file, self.short_byte_data)
+        assert copy_file == self.short_byte_data
 
 # ------------------------------------------------------------------------------
