@@ -13,16 +13,16 @@ from azure.storage.fileshare.aio import (
     ShareDirectoryClient,
     ShareFileClient
 )
+from devtools_testutils.aio import recorded_by_proxy_async
 from settings.testcase import FileSharePreparer
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+from devtools_testutils.storage.aio import AsyncStorageTestCase, AsyncStorageRecordedTestCase
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
 
 
-class AsyncStorageClientTest(AsyncStorageTestCase):
+class TestAsyncStorageClient(AsyncStorageRecordedTestCase):
     def setUp(self):
-        super(AsyncStorageTestCase, self).setUp()
         self.api_version_1 = "2019-02-02"
         self.api_version_2 = X_MS_VERSION
         self.short_byte_data = self.get_random_bytes(1024)
@@ -52,6 +52,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
     # --Test Cases--------------------------------------------------------------
 
     def test_service_client_api_version_property(self):
+        self.setUp()
         service_client = ShareServiceClient(
             "https://foo.file.core.windows.net/account",
             credential="fake_key")
@@ -73,6 +74,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
         assert share_client._client._config.version == self.api_version_1
 
     def test_share_client_api_version_property(self):
+        self.setUp()
         share_client = ShareClient(
             "https://foo.file.core.windows.net/account",
             "share_name",
@@ -97,6 +99,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
         assert file_client._client._config.version == self.api_version_1
 
     def test_directory_client_api_version_property(self):
+        self.setUp()
         dir_client = ShareDirectoryClient(
             "https://foo.file.core.windows.net/account",
             "share_name",
@@ -123,6 +126,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
         assert file_client._client._config.version == self.api_version_1
 
     def test_file_client_api_version_property(self):
+        self.setUp()
         file_client = ShareFileClient(
             "https://foo.file.core.windows.net/account",
             "share",
@@ -141,6 +145,7 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
         assert file_client._client._config.version == self.api_version_1
 
     def test_invalid_api_version(self):
+        self.setUp()
         with pytest.raises(ValueError) as error:
             ShareServiceClient(
                 "https://foo.file.core.windows.net/account",
@@ -175,9 +180,12 @@ class AsyncStorageClientTest(AsyncStorageTestCase):
         assert str(error.value).startswith("Unsupported API version 'foo'.")
 
     @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_old_api_copy_file_succeeds(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+
+        self.setUp()
 
         fsc = ShareServiceClient(
             self.account_url(storage_account_name, "file"),
