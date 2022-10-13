@@ -17,10 +17,10 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Oct 2022 23:19:30 GMT",
+        "Date": "Thu, 13 Oct 2022 23:19:22 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BAAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6AgAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:23 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
@@ -104,7 +104,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BAAAAPOT2toOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6AgAAAPOT2toOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -115,16 +115,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Oct 2022 23:19:30 GMT",
+        "Date": "Thu, 13 Oct 2022 23:19:22 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BAAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6AgAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:23 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13845.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13845.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -175,56 +175,108 @@
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2021-10",
-      "RequestMethod": "GET",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-twice76053178?api-version=2021-10",
+      "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/json; serialization=Avro",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+        "Content-Length": "179",
+        "Content-Type": "application/json; serialization=Avro",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": null,
-      "StatusCode": 400,
-      "ResponseHeaders": {
-        "Content-Type": "application/json",
-        "Date": "Thu, 13 Oct 2022 23:19:31 GMT",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked",
-        "x-ms-error-code": "InvalidRequest"
+      "RequestBody": {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "age",
+            "type": [
+              "int",
+              "null"
+            ]
+          },
+          {
+            "name": "city",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ]
       },
-      "ResponseBody": {
-        "error": {
-          "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:17228168-7159-4c96-9733-4936312e5908_G7, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/a, Timestamp:2022-10-13T23:19:31"
-        }
-      }
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 13 Oct 2022 23:19:23 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-twice76053178/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupavro",
+        "Schema-Id": "064e131fb3f54384b3557caea0e650d2",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/064e131fb3f54384b3557caea0e650d2?api-version=2021-10",
+        "Schema-Name": "test-schema-twice76053178",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-twice76053178/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2021-10",
-      "RequestMethod": "GET",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-twice76053178?api-version=2021-10",
+      "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/json; serialization=Avro",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
+        "Content-Length": "179",
+        "Content-Type": "application/json; serialization=Avro",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": null,
-      "StatusCode": 404,
-      "ResponseHeaders": {
-        "Content-Type": "application/json",
-        "Date": "Thu, 13 Oct 2022 23:19:31 GMT",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked",
-        "x-ms-error-code": "ItemNotFound"
+      "RequestBody": {
+        "namespace": "example.avro",
+        "type": "record",
+        "name": "User",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "age",
+            "type": [
+              "int",
+              "null"
+            ]
+          },
+          {
+            "name": "city",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        ]
       },
-      "ResponseBody": {
-        "error": {
-          "code": "ItemNotFound",
-          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:65775811-79f9-418f-bd6c-3ea2ff3d1c35_G7, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-10-13T23:19:31"
-        }
-      }
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 13 Oct 2022 23:19:24 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-twice76053178/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupavro",
+        "Schema-Id": "064e131fb3f54384b3557caea0e650d2",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/064e131fb3f54384b3557caea0e650d2?api-version=2021-10",
+        "Schema-Name": "test-schema-twice76053178",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-twice76053178/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
     }
   ],
   "Variables": {}
