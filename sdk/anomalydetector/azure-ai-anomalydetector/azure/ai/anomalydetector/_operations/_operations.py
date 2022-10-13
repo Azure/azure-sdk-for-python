@@ -46,7 +46,7 @@ def build_detect_entire_series_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/timeseries/entire/detect"
+    _url = "/anomalydetector/v1.1-preview/timeseries/entire/detect"
 
     # Construct headers
     if content_type is not None:
@@ -63,7 +63,7 @@ def build_detect_last_point_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/timeseries/last/detect"
+    _url = "/anomalydetector/v1.1-preview/timeseries/last/detect"
 
     # Construct headers
     if content_type is not None:
@@ -80,7 +80,7 @@ def build_detect_change_point_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/timeseries/changepoint/detect"
+    _url = "/anomalydetector/v1.1-preview/timeseries/changepoint/detect"
 
     # Construct headers
     if content_type is not None:

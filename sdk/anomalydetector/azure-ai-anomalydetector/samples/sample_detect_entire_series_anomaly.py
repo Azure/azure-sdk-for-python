@@ -23,8 +23,6 @@ USAGE:
 
 import os
 from azure.ai.anomalydetector import AnomalyDetectorClient
-from azure.ai.anomalydetector.models import DetectRequest, TimeSeriesPoint, TimeGranularity, \
-    AnomalyDetectorError
 from azure.core.credentials import AzureKeyCredential
 import pandas as pd
 
@@ -34,12 +32,12 @@ class DetectEntireAnomalySample(object):
     def detect_entire_series(self):
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
-        TIME_SERIES_DATA_PATH = os.path.join("./sample_data", "request-data.csv")
+        TIME_SERIES_DATA_PATH = os.path.join("./samples", "sample_data", "request-data.csv")
 
         # Create an Anomaly Detector client
 
         # <client>
-        client = AnomalyDetectorClient(AzureKeyCredential(SUBSCRIPTION_KEY), ANOMALY_DETECTOR_ENDPOINT)
+        client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
         # </client>
 
         # Load in the time series data file
@@ -48,13 +46,16 @@ class DetectEntireAnomalySample(object):
         series = []
         data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding='utf-8', parse_dates=[0])
         for index, row in data_file.iterrows():
-            series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
+            series.append({"timestamp": row[0], "value": row[1]})
         # </loadDataFile>
 
         # Create a request from the data file
 
         # <request>
-        request = DetectRequest(series=series, granularity=TimeGranularity.daily)
+        request = {
+            "series": series,
+            "granularity": "daily"
+        }
         # </request>
 
         # detect anomalies throughout the entire time series, as a batch
@@ -67,9 +68,9 @@ class DetectEntireAnomalySample(object):
         except Exception as e:
             print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
 
-        if any(response.is_anomaly):
+        if any(response['isAnomaly']):
             print('An anomaly was detected at index:')
-            for i, value in enumerate(response.is_anomaly):
+            for i, value in enumerate(response['isAnomaly']):
                 if value:
                     print(i)
         else:
