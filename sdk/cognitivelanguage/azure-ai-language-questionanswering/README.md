@@ -1,4 +1,4 @@
-# Azure Cognitive Language Services Question Answering client library for Python
+# Azure Cognitive Language Service Question Answering client library for Python
 
 Question Answering is a cloud-based API service that lets you create a conversational question-and-answer layer over your existing data. Use it to build a knowledge base by extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Answer users’ questions with the best answers from the QnAs in your knowledge base—automatically. Your knowledge base gets smarter, too, as it continually learns from users' behavior.
 
@@ -18,7 +18,7 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 
 ### Install the package
 
-Install the Azure QuestionAnswering client library for Python with [pip][pip_link]:
+Install the Azure Question Answering client library for Python with [pip][pip_link]:
 
 ```bash
 pip install azure-ai-language-questionanswering
@@ -32,9 +32,9 @@ In order to interact with the Question Answering service, you'll need to create 
 
 #### Get an API key
 
-You can get the **endpoint** and an **API key** from the Cognitive Services resource or Question Answering resource in the [Azure Portal][azure_portal].
+You can get the **endpoint** and an **API key** from the Language resource in the [Azure Portal][azure_portal].
 
-Alternatively, use the [Azure CLI][azure_cli] command shown below to get the API key from the Question Answering resource.
+Alternatively, use the [Azure CLI][azure_cli] command shown below to get the API key from the Language resource.
 
 ```powershell
 az cognitiveservices account keys list --resource-group <resource-group-name> --name <resource-name>
@@ -91,7 +91,7 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.ai.textanalytics import QuestionAnsweringClient
+from azure.ai.language.questionanswering import QuestionAnsweringClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
@@ -287,7 +287,7 @@ for d in deployments:
 
 #### Asynchronous operations
 
-The above examples can also be run asynchronously using the client in the `aio` namespace:
+The above examples can also be run asynchronously using the clients in the `aio` namespace:
 
 ```python
 import os
@@ -314,8 +314,8 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 
 ### General
 
-Azure QuestionAnswering clients raise exceptions defined in [Azure Core][azure_core_readme].
-When you interact with the Cognitive Language Services Question Answering client library using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][questionanswering_rest_docs] requests.
+Azure Question Answering clients raise exceptions defined in [Azure Core][azure_core_readme].
+When you interact with the Cognitive Language Service Question Answering client library using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][questionanswering_rest_docs] requests.
 
 For example, if you submit a question to a non-existent knowledge base, a `400` error is returned indicating "Bad Request".
 
