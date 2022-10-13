@@ -14,7 +14,7 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 
 - Python 3.7 or later is required to use this package.
 - An [Azure subscription][azure_subscription]
-- A Language Service resource
+- A [Language Service][language_service] resource
 
 ### Install the package
 
@@ -28,7 +28,7 @@ pip install azure-ai-language-questionanswering
 
 ### Authenticate the client
 
-In order to interact with the Question Answering service, you'll need to create an instance of the [QuestionAnsweringClient][questionanswering_client_class] class or an instance of the [AuthoringClient][questionansweringauthoring_client_class] for managing projects within your resource. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+In order to interact with the Question Answering service, you'll need to create an instance of the [QuestionAnsweringClient][questionanswering_client_class] class or an instance of the [AuthoringClient][authoring_client_class] for managing projects within your resource. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
 
 #### Get an API key
 
@@ -42,7 +42,7 @@ az cognitiveservices account keys list --resource-group <resource-group-name> --
 
 #### Create QuestionAnsweringClient
 
-Once you've determined your **endpoint** and **API key** you can instantiate a `QuestionAnsweringClient`:
+Once you've determined your **endpoint** and **API key** you can instantiate a [QuestionAnsweringClient][questionanswering_client_class]:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -55,7 +55,7 @@ client = QuestionAnsweringClient(endpoint, credential)
 ```
 
 #### Create AuthoringClient
-With your endpoint and API key, you can instantiate a [AuthoringClient][questionansweringauthoring_client_class]:
+With your endpoint and API key, you can instantiate a [AuthoringClient][authoring_client_class]:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -106,24 +106,34 @@ The [QuestionAnsweringClient][questionanswering_client_class] is the primary int
 For asynchronous operations, an async `QuestionAnsweringClient` is in the `azure.ai.language.questionanswering.aio` namespace.
 
 ### AuthoringClient
-The [AuthoringClient][questionansweringauthoring_client_class] provides an interface for managing Question Answering projects. Examples of the available operations include creating and deploying projects, updating your knowledge sources, and updating question and answer pairs. It provides both synchronous and asynchronous APIs.
+The [AuthoringClient][authoring_client_class] provides an interface for managing Question Answering projects. Examples of the available operations include creating and deploying projects, updating your knowledge sources, and updating question and answer pairs. It provides both synchronous and asynchronous APIs.
 
 ## Examples
 
 ### QuestionAnsweringClient
 The `azure-ai-language-questionanswering` client library provides both synchronous and asynchronous APIs.
 
-The following examples show common scenarios using the `client` [created above](#create-questionansweringclient).
-
-- [Ask a question](#ask-a-question)
-- [Ask a follow-up question](#ask-a-follow-up-question)
-- [Asynchronous operations](#asynchronous-operations)
+- [Ask a question](#ask-a-question "Ask a question")
+- [Ask a follow-up question](#ask-a-follow-up-question "Ask a follow-up question")
+- [Create a new project](#create-a-new-project "Create a new project")
+- [Add a knowledge source](#add-a-knowledge-source "Add a knowledge source")
+- [Deploy your project](#deploy-your-project "Deploy your project")
+- [Asynchronous operations](#asynchronous-operations "Asynchronous operations")
 
 #### Ask a question
 
 The only input required to ask a question using a knowledge base is just the question itself:
 
 ```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering import QuestionAnsweringClient
+
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
+
+client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
+
 output = client.get_answers(
     question="How long should my Surface battery last?",
     project_name="FAQ",
@@ -142,7 +152,15 @@ You can set additional keyword options to limit the number of answers, specify a
 If your knowledge base is configured for [chit-chat][questionanswering_docs_chat], the answers from the knowledge base may include suggested [prompts for follow-up questions][questionanswering_refdocs_prompts] to initiate a conversation. You can ask a follow-up question by providing the ID of your chosen answer as the context for the continued conversation:
 
 ```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering import QuestionAnsweringClient
 from azure.ai.language.questionanswering import models
+
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
+
+client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
 
 output = client.get_answers(
     question="How long should charging take?",
@@ -155,27 +173,7 @@ output = client.get_answers(
 for candidate in output.answers:
     print("({}) {}".format(candidate.confidence, candidate.answer))
     print("Source: {}".format(candidate.source))
-
 ```
-
-#### Asynchronous operations
-
-The above examples can also be run asynchronously using the client in the `aio` namespace:
-
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-
-client = QuestionAnsweringClient(endpoint, credential)
-
-output = await client.get_answers(
-    question="How long should my Surface battery last?",
-    project_name="FAQ",
-    deployment_name="production"
-)
-```
-
-### AuthoringClient
 
 #### Create a new project
 
@@ -214,6 +212,18 @@ with client:
 #### Add a knowledge source
 
 ```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.authoring import AuthoringClient
+
+# get service secrets
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
+
+# create client
+client = AuthoringClient(endpoint, AzureKeyCredential(key))
+
+project_name = "IssacNewton"
 update_sources_poller = client.begin_update_sources(
     project_name=project_name,
     sources=[
@@ -245,6 +255,19 @@ for source in sources:
 
 
 ```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.authoring import AuthoringClient
+
+# get service secrets
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
+
+# create client
+client = AuthoringClient(endpoint, AzureKeyCredential(key))
+
+project_name = "IssacNewton"
+
 # deploy project
 deployment_poller = client.begin_deploy_project(
     project_name=project_name,
@@ -262,7 +285,26 @@ for d in deployments:
     print(d)
 ```
 
+#### Asynchronous operations
 
+The above examples can also be run asynchronously using the client in the `aio` namespace:
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
+
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
+
+client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
+
+output = await client.get_answers(
+    question="How long should my Surface battery last?",
+    project_name="FAQ",
+    deployment_name="production"
+)
+```
 
 ## Optional Configuration
 
@@ -275,7 +317,7 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 Azure QuestionAnswering clients raise exceptions defined in [Azure Core][azure_core_readme].
 When you interact with the Cognitive Language Services Question Answering client library using the Python SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][questionanswering_rest_docs] requests.
 
-For example, if you submit a question to a non-existant knowledge base, a `400` error is returned indicating "Bad Request".
+For example, if you submit a question to a non-existent knowledge base, a `400` error is returned indicating "Bad Request".
 
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -323,6 +365,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli]: https://docs.microsoft.com/cli/azure/
 [azure_portal]: https://portal.azure.com/
 [azure_subscription]: https://azure.microsoft.com/free/
+[language_service]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
 [cla]: https://cla.microsoft.com
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
@@ -335,7 +378,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]: https://pypi.org/project/pip/
 [questionanswering_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html#azure.ai.language.questionanswering.QuestionAnsweringClient
-[questionansweringauthoring_client_class]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/authoring/_client.py
+[authoring_client_class]: https://aka.ms/azsdk/python/questionansweringauthoringclient
 [questionanswering_refdocs_prompts]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.models.html#azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
 [questionanswering_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/
 [questionanswering_docs]: https://azure.microsoft.com/services/cognitive-services/qna-maker/
@@ -344,7 +387,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [questionanswering_docs_features]: https://azure.microsoft.com/services/cognitive-services/qna-maker/#features
 [questionanswering_pypi_package]: https://pypi.org/project/azure-ai-language-questionanswering/
 [questionanswering_refdocs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html
-[questionanswering_rest_docs]: https://docs.microsoft.com/rest/api/cognitiveservices-qnamaker/
+[questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/question-answering
 [questionanswering_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/README.md
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
