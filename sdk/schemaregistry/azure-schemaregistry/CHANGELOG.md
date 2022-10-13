@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `Json` has been added as a supported format in `SchemaFormat`.
+- `JSON` has been added as a supported format in `SchemaFormat`.
 
 ## 1.2.0 (2022-10-10)
 
