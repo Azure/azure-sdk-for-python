@@ -423,7 +423,7 @@ class CodegenTestPR:
         self.check_ci_file_proc(target_msrest)
         self.check_ci_file_proc(target_mgmt_core)
 
-    def check_dev_requirment(self):
+    def check_dev_requirement(self):
         file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
         content = [
             "-e ../../../tools/azure-sdk-tools\n",
@@ -441,7 +441,7 @@ class CodegenTestPR:
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
-        self.check_dev_requirment()
+        self.check_dev_requirement()
 
     def sdk_code_path(self) -> str:
         return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
