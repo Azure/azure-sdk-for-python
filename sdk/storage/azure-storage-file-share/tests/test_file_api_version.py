@@ -3,18 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 
+import pytest
 from azure.core.exceptions import ResourceExistsError
+from azure.storage.fileshare import ShareClient, ShareDirectoryClient, ShareFileClient, ShareServiceClient
 from azure.storage.fileshare._shared.constants import X_MS_VERSION
-from azure.storage.fileshare import (
-    ShareServiceClient,
-    ShareClient,
-    ShareDirectoryClient,
-    ShareFileClient
-)
+
 from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
