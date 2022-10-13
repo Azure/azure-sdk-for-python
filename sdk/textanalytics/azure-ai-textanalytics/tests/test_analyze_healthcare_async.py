@@ -22,7 +22,7 @@ from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsApiVersion,
     HealthcareEntityRelation,
-    DocumentType
+    HealthcareDocumentType
 )
 from azure.ai.textanalytics.aio import AsyncAnalyzeHealthcareEntitiesLROPoller
 
@@ -644,7 +644,7 @@ class TestHealth(TextAnalyticsTest):
                     "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
                 ],
                 fhir_version="4.0.1",
-                document_type=DocumentType.PROGRESS_NOTE,
+                document_type=HealthcareDocumentType.PROGRESS_NOTE,
                 polling_interval=self._interval(),
             )
 

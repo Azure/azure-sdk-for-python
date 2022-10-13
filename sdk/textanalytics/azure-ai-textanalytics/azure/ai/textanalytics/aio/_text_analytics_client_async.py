@@ -892,7 +892,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             have fhir_version provided when used. Behavior of using None enum is the same as not using the
             document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
             "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
-        :paramtype document_type: str or ~azure.ai.textanalytics.DocumentType
+        :paramtype document_type: str or ~azure.ai.textanalytics.HealthcareDocumentType
         :return: An instance of an AsyncAnalyzeHealthcareEntitiesLROPoller. Call `result()` on the poller
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and

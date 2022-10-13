@@ -2553,7 +2553,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         have fhir_version provided when used. Behavior of using None enum is the same as not using the
         document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
         "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
-    :paramtype document_type: Optional[str or ~azure.ai.textanalytics.DocumentType]
+    :paramtype document_type: Optional[str or ~azure.ai.textanalytics.HealthcareDocumentType]
     :ivar Optional[str] model_version: The model version to use for the analysis.
     :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,

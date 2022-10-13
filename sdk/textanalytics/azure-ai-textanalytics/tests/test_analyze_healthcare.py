@@ -22,7 +22,7 @@ from azure.ai.textanalytics import (
     TextAnalyticsApiVersion,
     HealthcareEntityRelation,
     AnalyzeHealthcareEntitiesLROPoller,
-    DocumentType
+    HealthcareDocumentType
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -611,7 +611,7 @@ class TestHealth(TextAnalyticsTest):
                 "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
             ],
             fhir_version="4.0.1",
-            document_type=DocumentType.PROGRESS_NOTE,
+            document_type=HealthcareDocumentType.PROGRESS_NOTE,
             polling_interval=self._interval(),
         )
 

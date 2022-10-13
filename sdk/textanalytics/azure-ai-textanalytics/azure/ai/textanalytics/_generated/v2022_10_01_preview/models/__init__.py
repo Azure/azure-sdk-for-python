@@ -175,10 +175,10 @@ from ._text_analytics_client_enums import ClassificationType
 from ._text_analytics_client_enums import Conditionality
 from ._text_analytics_client_enums import DateTimeSubKind
 from ._text_analytics_client_enums import DocumentSentimentValue
-from ._text_analytics_client_enums import DocumentType
 from ._text_analytics_client_enums import ErrorCode
 from ._text_analytics_client_enums import ExtractiveSummarizationSortingCriteria
 from ._text_analytics_client_enums import FhirVersion
+from ._text_analytics_client_enums import HealthcareDocumentType
 from ._text_analytics_client_enums import HealthcareEntityCategory
 from ._text_analytics_client_enums import InformationUnit
 from ._text_analytics_client_enums import InnerErrorCode
@@ -374,10 +374,10 @@ __all__ = [
     'Conditionality',
     'DateTimeSubKind',
     'DocumentSentimentValue',
-    'DocumentType',
     'ErrorCode',
     'ExtractiveSummarizationSortingCriteria',
     'FhirVersion',
+    'HealthcareDocumentType',
     'HealthcareEntityCategory',
     'InformationUnit',
     'InnerErrorCode',
