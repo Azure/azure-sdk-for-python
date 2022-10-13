@@ -45,8 +45,9 @@
     },
     "variables": {
       "apiVersion": "2018-01-01-preview",
-      "schemaRegistryGroup": "azsdk_net_test_group",
-      "schemaRegistryEndpoint": "[format('{0}.servicebus.windows.net', parameters('baseName'))]"
+      "schemaRegistryEndpoint": "[format('{0}.servicebus.windows.net', parameters('baseName'))]",
+      "schemaRegistryGroupJson": "azsdk_python_test_group_json",
+      "schemaRegistryGroupAvro": "azsdk_python_test_group_avro"
     },
     "resources": [
       {
@@ -69,22 +70,40 @@
       {
         "type": "Microsoft.EventHub/namespaces/schemagroups",
         "apiVersion": "[variables('apiVersion')]",
-        "name": "[format('{0}/{1}', parameters('baseName'), variables('schemaRegistryGroup'))]",
+        "name": "[format('{0}/{1}', parameters('baseName'), variables('schemaRegistryGroupAvro'))]",
         "location": "[parameters('location')]",
         "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces',parameters('baseName'))]"],
         "properties": {
           "schemaType": "avro"
         }
-      }
+      }//,
+      //{
+      //  "type": "Microsoft.EventHub/namespaces/schemagroups",
+      //  "apiVersion": "[variables('apiVersion')]",
+      //  "name": "[format('{0}/{1}', parameters('baseName'), variables('schemaRegistryGroupJson'))]",
+      //  "location": "[parameters('location')]",
+      //  "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces',parameters('baseName'))]"],
+      //  "properties": {
+      //    "schemaType": "json"
+      //  }
+      //}
     ],
     "outputs": {
       "SCHEMAREGISTRY_GROUP": {
         "type": "string",
-        "value": "[variables('schemaRegistryGroup')]"
+        "value": "[variables('schemaRegistryGroupAvro')]"
       },
       "SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE": {
         "type": "string",
         "value": "[variables('schemaRegistryEndpoint')]"
-      }
+      },
+      "SCHEMAREGISTRY_GROUP_AVRO": {
+        "type": "string",
+        "value": "[variables('schemaRegistryGroupAvro')]"
+      }//,
+      //"SCHEMAREGISTRY_GROUP_JSON": {
+      //  "type": "string",
+      //  "value": "[variables('schemaRegistryGroupJson')]"
+      //}
     }
   }

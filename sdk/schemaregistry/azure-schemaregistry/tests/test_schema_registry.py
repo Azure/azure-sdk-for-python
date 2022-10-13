@@ -27,7 +27,18 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 
-SchemaRegistryEnvironmentVariableLoader = functools.partial(EnvironmentVariableLoader, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
+SchemaRegistryEnvironmentVariableLoader = functools.partial(
+    EnvironmentVariableLoader,
+    "schemaregistry",
+    schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/",
+    schemaregistry_group="fakegroup"
+)
+AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+JSON_SCHEMA_STR = None
+
+AVRO_FORMAT = "Avro"
+JSON_FORMAT = None
+
 
 class TestSchemaRegistry(AzureRecordedTestCase):
 
@@ -37,23 +48,23 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace)
 
     @SchemaRegistryEnvironmentVariableLoader()
+    @pytest.mark.parametrize("schema_str, format", [
+        (AVRO_SCHEMA_STR, AVRO_FORMAT)])
     @recorded_by_proxy
-    def test_schema_basic(self, **kwargs):
+    def test_schema_basic(self, schema_str, format, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name('test-schema-basic')
-        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-        format = "Avro"
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert schema_properties.id is not None
-        assert schema_properties.format == "Avro"
+        assert schema_properties.format == format
 
         returned_schema = client.get_schema(schema_id=schema_properties.id, logging_enable=True)
 
         assert returned_schema.properties.id == schema_properties.id
-        assert returned_schema.properties.format == "Avro"
+        assert returned_schema.properties.format == format
         assert returned_schema.properties.group_name == schemaregistry_group
         assert returned_schema.properties.name == name
         assert returned_schema.definition == schema_str
@@ -65,7 +76,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert "Missing" in str(exc)
 
         assert returned_version_schema.properties.id == schema_properties.id
-        assert returned_version_schema.properties.format == "Avro"
+        assert returned_version_schema.properties.format == format
         assert returned_version_schema.properties.group_name == schemaregistry_group
         assert returned_version_schema.properties.name == name
         assert returned_version_schema.properties.version == schema_properties.version
@@ -74,7 +85,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert returned_schema_properties.id == schema_properties.id
-        assert returned_schema_properties.format == "Avro"
+        assert returned_schema_properties.format == format
         assert returned_schema.properties.group_name == schemaregistry_group
         assert returned_schema.properties.name == name
 
