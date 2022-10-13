@@ -5,6 +5,7 @@
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
 from typing import Dict, Union
+import os
 
 from marshmallow import INCLUDE, Schema
 
@@ -176,6 +177,21 @@ class InternalComponent(Component):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalBaseComponentSchema(context=context)
 
+    def _validate(self, raise_error=False) -> MutableValidationResult:
+        if self._additional_includes is not None and self._additional_includes._validate().passed:
+            # update source path in case dependency file is in additional_includes
+            with self._resolve_local_code() as tmp_base_path:
+                origin_base_path, origin_source_path = self._base_path, self._source_path
+
+                try:
+                    self._base_path, self._source_path = \
+                        tmp_base_path, tmp_base_path / os.path.basename(self._source_path)
+                    return super()._validate(raise_error=raise_error)
+                finally:
+                    self._base_path, self._source_path = origin_base_path, origin_source_path
+
+        return super()._validate(raise_error=raise_error)
+
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
         if isinstance(self.environment, InternalEnvironment):
@@ -228,14 +244,3 @@ class InternalComponent(Component):
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
-
-    def _schema_validate(self) -> MutableValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalComponent, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result

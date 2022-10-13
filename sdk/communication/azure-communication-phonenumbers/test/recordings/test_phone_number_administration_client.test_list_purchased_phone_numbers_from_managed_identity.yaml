@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
     method: GET
     uri: https://sanitized.communication.azure.com/phoneNumbers?skip=0&top=100&api-version=2022-01-11-preview2
   response:
@@ -195,7 +195,7 @@ interactions:
         "assignmentType": "application", "purchaseDate": "2021-06-23T23:41:22.1720088+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
         {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
-        "tollFree", "capabilities": {"calling": "inbound", "sms": "outbound"}, "assignmentType":
+        "tollFree", "capabilities": {"calling": "none", "sms": "outbound"}, "assignmentType":
         "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00", "cost":
         {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}, {"id":
         "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
@@ -417,21 +417,21 @@ interactions:
         "nextLink": "/phoneNumbers?skip=100&top=100&api-version=2022-01-11-preview2"}'
     headers:
       api-supported-versions:
-      - 2021-03-07, 2022-01-11-preview2
+      - 2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 12 Jan 2022 16:24:40 GMT
+      - Wed, 12 Oct 2022 01:01:15 GMT
       ms-cv:
-      - WlkpBqUX40yEpeTVct8OPg.0
-      request-context:
-      - appId=
+      - SXSxZMQlL0ezI0szYhCEvg.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 7286ms
+      - 5185ms
     status:
       code: 200
       message: OK

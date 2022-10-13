@@ -1,5 +1,16 @@
 # Release History
 
+## 12.10.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Added `typing-extensions>=4.0.1` as a dependency.
+
 ## 12.10.0 (2022-10-11)
 
 ### Features Added
