@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "761",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -53,41 +53,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "12c97a00-1418-4c23-aece-e55b5992ec7f",
+        "apim-request-id": "f9417a3c-cc77-4b9d-9039-e722d5640e08",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:29:36 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a38b58fe-8024-4e2d-ab92-b2c9638bccf1?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 19:57:54 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/75b190ec-06b6-4226-9f8d-343955e7f30c?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "325"
+        "x-envoy-upstream-service-time": "212"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a38b58fe-8024-4e2d-ab92-b2c9638bccf1?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/75b190ec-06b6-4226-9f8d-343955e7f30c?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "36cae872-0537-4627-833d-0e991f2c5d62",
+        "apim-request-id": "76985106-7c60-4837-b953-a7782f983f43",
         "Content-Length": "4117",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:29:42 GMT",
+        "Date": "Mon, 10 Oct 2022 19:57:59 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "138"
+        "x-envoy-upstream-service-time": "101"
       },
       "ResponseBody": {
-        "jobId": "a38b58fe-8024-4e2d-ab92-b2c9638bccf1",
-        "lastUpdatedDateTime": "2022-06-09T17:29:41Z",
-        "createdDateTime": "2022-06-09T17:29:37Z",
-        "expirationDateTime": "2022-06-10T17:29:37Z",
+        "jobId": "75b190ec-06b6-4226-9f8d-343955e7f30c",
+        "lastUpdateDateTime": "2022-10-10T19:57:56Z",
+        "createdDateTime": "2022-10-10T19:57:54Z",
+        "expirationDateTime": "2022-10-11T19:57:54Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -99,7 +99,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:29:41.2348593Z",
+              "lastUpdateDateTime": "2022-10-10T19:57:56.2278392Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -201,7 +201,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:29:39.477272Z",
+              "lastUpdateDateTime": "2022-10-10T19:57:56.6796342Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -261,7 +261,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:29:39.8686681Z",
+              "lastUpdateDateTime": "2022-10-10T19:57:56.4573207Z",
               "status": "succeeded",
               "results": {
                 "documents": [

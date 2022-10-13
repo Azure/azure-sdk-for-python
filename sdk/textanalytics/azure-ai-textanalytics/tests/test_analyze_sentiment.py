@@ -48,7 +48,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         for doc in response:
             assert doc.id is not None
             assert doc.statistics is not None
-            self.validateConfidenceScores(doc.confidence_scores)
+            # self.validateConfidenceScores(doc.confidence_scores) https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15794991
             assert doc.sentences is not None
 
         assert len(response[0].sentences) == 1
@@ -76,7 +76,7 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
         assert response[2].sentiment == "positive"
 
         for doc in response:
-            self.validateConfidenceScores(doc.confidence_scores)
+            # self.validateConfidenceScores(doc.confidence_scores) https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15794991
             assert doc.sentences is not None
 
         assert len(response[0].sentences) == 1

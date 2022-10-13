@@ -10,7 +10,6 @@ from typing import Dict, Union
 from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
 from azure.ai.ml.entities._assets import Environment
 
 from ..._schema import NestedField, UnionField
@@ -25,7 +24,7 @@ INPUT_BINDING_PREFIX = "AZURE_ML_INPUT_"
 OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
-class ParameterizedCommand(LoadableMixin):
+class ParameterizedCommand:
     """Command component that contains the training command and supporting
     parameters for the command.
 
@@ -50,7 +49,7 @@ class ParameterizedCommand(LoadableMixin):
         code: str = None,
         environment_variables: Dict = None,
         distribution: Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
-        environment: Union["Environment", str] = None,
+        environment: Union[Environment, str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)

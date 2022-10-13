@@ -29,6 +29,7 @@ extends:
   parameters:
     ServiceDirectory: ml
     ValidateFormatting: true
+    TestProxy: true
     Artifacts:
     - name: azure-ai-ml
       safeName: azureaiml

@@ -70,4 +70,9 @@ setup(
         'six>=1.11.0',
         "typing-extensions>=4.0.1",
     ],
+    extras_require={
+        "aio": [
+            "aiohttp>=3.0",
+        ],
+    },
 )
