@@ -117,6 +117,17 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
+## Key Concepts
+Dev Boxes refer to managed developer machines running in Azure. Dev Boxes are provisioned in Pools, which define the network and image used for a Dev Box.
+
+Environments refer to templated developer environments, which combine a template (Catalog Item) and parameters.
+
+## Troubleshooting
+Errors can occur during inital requests and long-running operations, and will provide information about how to resolve the error. 
+Be sure to confirm that dependent resources, such as pools and catalogs, are set up properly and are in a healthy state. You will not be able to create resources with the package when your dependent resources are in a failed state.
+
+## Next Steps
+Get started by exploring our samples and starting to use the package!
 
 ## Contributing
 
