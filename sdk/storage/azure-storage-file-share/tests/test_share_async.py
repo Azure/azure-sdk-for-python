@@ -792,6 +792,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         await lease.release()
         await self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_list_shares_with_snapshot(self, **kwargs):
@@ -818,6 +819,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         self.assertNamedItemInContainer(all_shares, snapshot2['snapshot'])
         await self._delete_shares(share.share_name)
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_list_shares_with_prefix(self, **kwargs):
@@ -1071,6 +1073,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         assert share2_root_squash == ShareRootSquash.root_squash
         await self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_list_shares_with_root_squash_and_protocols(self, **kwargs):

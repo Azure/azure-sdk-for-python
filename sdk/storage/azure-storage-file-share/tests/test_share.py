@@ -791,6 +791,7 @@ class TestStorageShare(StorageRecordedTestCase):
         lease.release()
         self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_list_shares_with_snapshot(self, **kwargs):
@@ -814,6 +815,7 @@ class TestStorageShare(StorageRecordedTestCase):
         share.delete_share(delete_snapshots=True)
         self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_list_shares_with_prefix(self, **kwargs):
@@ -1052,6 +1054,7 @@ class TestStorageShare(StorageRecordedTestCase):
         assert share2_props.root_squash == ShareRootSquash.root_squash
         assert share2_props.protocols == ['NFS']
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_list_shares_with_root_squash_and_protocols(self, **kwargs):
