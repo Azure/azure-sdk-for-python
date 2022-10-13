@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Removed `msrest` dependency.
 - Added `typing-extensions>=4.0.1` as a dependency.
 
 ## 12.14.0 (2022-10-11)
