@@ -35,6 +35,8 @@ def generate_path_property(azureml_type):
     return UnionField(
         [
             ArmVersionedStr(azureml_type=azureml_type),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.DATASTORE),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.JOB),
             ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
             fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
             fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
