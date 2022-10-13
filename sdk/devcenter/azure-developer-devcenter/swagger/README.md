@@ -2,10 +2,10 @@
 
 ```yaml
 input-file:
-  - C:\Users\chrismiller\source\repos\azure-devtest-center\src\sdk\specification\devcenter\data-plane\Microsoft.DevCenter\preview\2022-03-01-preview\devcenter.json
-  - C:\Users\chrismiller\source\repos\azure-devtest-center\src\sdk\specification\devcenter\data-plane\Microsoft.DevCenter\preview\2022-03-01-preview\devbox.json
-  - C:\Users\chrismiller\source\repos\azure-devtest-center\src\sdk\specification\devcenter\data-plane\Microsoft.DevCenter\preview\2022-03-01-preview\environments.json
-output-folder: ../
+  - https://github.com/Azure/azure-rest-api-specs/blob/5a024c0e76424caaca36166ba41cee6f3f1f8add/specification/devcenter/data-plane/Microsoft.DevCenter/preview/2022-03-01-preview/devcenter.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/5a024c0e76424caaca36166ba41cee6f3f1f8add/specification/devcenter/data-plane/Microsoft.DevCenter/preview/2022-03-01-preview/devbox.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/5a024c0e76424caaca36166ba41cee6f3f1f8add/specification/devcenter/data-plane/Microsoft.DevCenter/preview/2022-03-01-preview/environments.json
+output-folder: ../azure/developer/devcenter
 namespace: azure.developer.devcenter
 package-name: azure-developer-devcenter
 license-header: MICROSOFT_MIT_NO_VERSION
