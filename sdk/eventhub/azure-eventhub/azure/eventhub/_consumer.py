@@ -219,7 +219,18 @@ class EventHubConsumer(
             while retried_times <= max_retries:
                 try:
                     if self._open():
-                        self._handler.do_work(batch=self._prefetch)  # type: ignore
+                        running = self._handler.do_work(batch=self._prefetch)  # type: ignore
+                        if not running:
+                            last_exception = self._handle_exception(exception)
+                            retried_times += 1
+                            if retried_times > max_retries:
+                                _LOGGER.info(
+                                    "%r operation has exhausted retry. Last exception: %r.",
+                                    self._name,
+                                    last_exception,
+                                )
+                                raise last_exception
+                        # If self._shutdown is false because of a ValueError would this get propogated through
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     self._amqp_transport.check_link_stolen(self, exception)
