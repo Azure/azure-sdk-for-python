@@ -33,7 +33,7 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     "schemaregistry",
     schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/",
     schemaregistry_group_avro="fakegroupavro",
-# TODO: uncomment    schemaregistry_group_json="fakegroupjson",
+    schemaregistry_group_json="fakegroupjson",
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 JSON_SCHEMA = {
@@ -79,7 +79,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace, is_async=True)
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_schema_basic_async(self, format, schema_str, **kwargs):
@@ -123,7 +123,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_schema_update_async(self, format, schema_str, **kwargs):
@@ -167,7 +167,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_schema_same_twice_async(self, format, schema_str, **kwargs):
@@ -182,7 +182,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_schema_negative_wrong_credential_async(self, format, schema_str, **kwargs):
@@ -197,7 +197,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_schema_negative_wrong_endpoint_async(self, format, schema_str, **kwargs):
@@ -228,7 +228,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_schema_negative_no_schema_version_async(self, format, schema_str, **kwargs):
@@ -244,7 +244,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         await client._generated_client._config.credential.close()
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_register_schema_errors(self, format, schema_str, **kwargs):
@@ -276,7 +276,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert e.value.reason == 'Unsupported Media Type'
     
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy_async
     async def test_get_schema_properties_errors(self, format, schema_str, **kwargs):

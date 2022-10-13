@@ -32,7 +32,7 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     "schemaregistry",
     schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/",
     schemaregistry_group_avro="fakegroupavro",
-# TODO: uncomment    schemaregistry_group_json="fakegroupjson",
+    schemaregistry_group_json="fakegroupjson",
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 JSON_SCHEMA = {
@@ -78,7 +78,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace)
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_basic(self, format, schema_str, **kwargs):
@@ -120,7 +120,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert returned_schema.properties.name == name
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_update(self, format, schema_str, **kwargs):
@@ -161,7 +161,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert old_schema.properties.version == schema_properties.version
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_same_twice(self, format, schema_str, **kwargs):
@@ -175,7 +175,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert schema_properties.id == schema_properties_second.id
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_wrong_credential(self, format, schema_str, **kwargs):
@@ -189,7 +189,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_wrong_endpoint(self, format, schema_str, **kwargs):
@@ -215,7 +215,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
             client.get_schema('a' * 32)
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_no_schema_version(self, format, schema_str, **kwargs):
@@ -230,7 +230,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_register_schema_errors(self, format, schema_str, **kwargs):
@@ -262,7 +262,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
     
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args], ids=[AVRO_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
     @ArgPasser()
     @recorded_by_proxy
     def test_get_schema_properties_errors(self, format, schema_str, **kwargs):
