@@ -49,10 +49,10 @@ class MultivariateSample:
         model_list = []
 
         while next_link != '':
-            r = self.ad_client.list_multivariate_model(skip=skip, top=10000)
+            r = self.ad_client.list_multivariate_model(skip=skip, top=10)
             next_link = r['nextLink'] 
             model_list.extend(r['models'])
-            skip = skip + 10
+            skip = skip + len(r['models'])
         return model_list
 
     def train(self, body):
@@ -66,7 +66,7 @@ class MultivariateSample:
             print("Training new model...(it may take a few minutes)")
             response = self.ad_client.create_multivariate_model(body)
             trained_model_id = response['modelId']
-            print("Training model id is ", trained_model_id)
+            print("Training model id is {}".format(trained_model_id))
 
             ## Wait until the model is ready. It usually takes several minutes
             model_status = None
@@ -75,7 +75,7 @@ class MultivariateSample:
             while model_status != 'READY' and model_status != 'FAILED':
                 model_info = self.ad_client.get_multivariate_model(trained_model_id)
                 model_status = model_info['modelInfo']['status']
-                print("Model is", model_status)
+                print("Model is {}".format(model_status))
                 time.sleep(1)
 
             print(model_info)
@@ -118,7 +118,7 @@ class MultivariateSample:
 
             while r['summary']['status'] != 'READY' and r['summary']['status'] != 'FAILED':
                 r = self.ad_client.get_batch_detection_result(result_id)
-                print("Detection is", r['summary']['status'])
+                print("Detection is {}".format(r['summary']['status']))
                 time.sleep(1)
 
             if r['summary']['status'] == 'FAILED':
