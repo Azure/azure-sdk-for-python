@@ -13,7 +13,10 @@ from azure.core import CaseInsensitiveEnumMeta
 from .._generated.models import (
     BatchResult as GenBatchResult,
     RouteLeg as GenRouteLeg,
-    BatchResultSummary
+    BatchResultSummary,
+    ErrorDetail,
+    RouteReport,
+    RouteSectionTec
 )
 
 class LatLon(NamedTuple):
@@ -44,30 +47,170 @@ class BoundingBox(NamedTuple):
     east: float = 0.0
     north: float = 0.0
 
+# cSpell:disable
+class RouteSection(object):
+    """Route sections contain additional information about parts of a route. Each section contains at least the elements ``startPointIndex``\ , ``endPointIndex``\ , and ``sectionType``.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar start_point_index: Index of the first point (offset 0) in the route this section applies
+     to.
+    :vartype start_point_index: int
+    :ivar end_point_index: Index of the last point (offset 0) in the route this section applies to.
+    :vartype end_point_index: int
+    :ivar section_type: Section types of the reported route response. Known values are:
+     "CAR_TRAIN", "COUNTRY", "FERRY", "MOTORWAY", "PEDESTRIAN", "TOLL_ROAD", "TOLL_VIGNETTE",
+     "TRAFFIC", "TRAVEL_MODE", "TUNNEL", "CARPOOL", and "URBAN".
+    :vartype section_type: str or ~azure.maps.route.models.SectionType
+    :ivar travel_mode: Travel mode for the calculated route. The value will be set to ``other`` if
+     the requested mode of transport is not possible in this section. Known values are: "car",
+     "truck", "taxi", "bus", "van", "motorcycle", "bicycle", "pedestrian", and "other".
+    :vartype travel_mode: str or ~azure.maps.route.models.TravelMode
+    :ivar simple_category: Type of the incident. Can currently be JAM, ROAD_WORK, ROAD_CLOSURE, or
+     OTHER. See "tec" for detailed information. Known values are: "JAM", "ROAD_WORK",
+     "ROAD_CLOSURE", and "OTHER".
+    :vartype simple_category: str or ~azure.maps.route.models.SimpleCategory
+    :ivar effective_speed_in_kmh: Effective speed of the incident in km/h, averaged over its entire
+     length.
+    :vartype effective_speed_in_kmh: int
+    :ivar delay_in_seconds: Delay in seconds caused by the incident.
+    :vartype delay_in_seconds: int
+    :ivar delay_magnitude: The magnitude of delay caused by the incident. These values correspond
+     to the values of the response field ty of the `Get Traffic Incident Detail API
+     <https://docs.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_. Known values
+     are: "0", "1", "2", "3", and "4".
+    :vartype delay_magnitude: str or ~azure.maps.route.models.DelayMagnitude
+    :ivar tec: Details of the traffic event, using definitions in the `TPEG2-TEC
+     <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes
+     elements.
+    :vartype tec: ~azure.maps.route.models.RouteSectionTec
+    """
+
+    _validation = {
+        "start_point_index": {"readonly": True},
+        "end_point_index": {"readonly": True},
+        "section_type": {"readonly": True},
+        "travel_mode": {"readonly": True},
+        "simple_category": {"readonly": True},
+        "effective_speed_in_kmh": {"readonly": True},
+        "delay_in_seconds": {"readonly": True},
+        "delay_magnitude": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "start_point_index": {"key": "startPointIndex", "type": "int"},
+        "end_point_index": {"key": "endPointIndex", "type": "int"},
+        "section_type": {"key": "sectionType", "type": "str"},
+        "travel_mode": {"key": "travelMode", "type": "str"},
+        "simple_category": {"key": "simpleCategory", "type": "str"},
+        "effective_speed_in_kmh": {"key": "effectiveSpeedInKmh", "type": "int"},
+        "delay_in_seconds": {"key": "delayInSeconds", "type": "int"},
+        "delay_magnitude": {"key": "magnitudeOfDelay", "type": "str"},
+        "tec": {"key": "tec", "type": "RouteSectionTec"},
+    }
+
+    def __init__(self, *, tec: Optional["RouteSectionTec"] = None, **kwargs):
+        """
+        :keyword tec: Details of the traffic event, using definitions in the `TPEG2-TEC
+         <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes
+         elements.
+        :paramtype tec: ~azure.maps.route.models.RouteSectionTec
+        """
+        super().__init__(**kwargs)
+        self.start_point_index = None
+        self.end_point_index = None
+        self.section_type = None
+        self.travel_mode = None
+        self.simple_category = None
+        self.effective_speed_in_kmh = None
+        self.delay_in_seconds = None
+        self.delay_magnitude = None
+        self.tec = tec
+
+class RouteDirectionsBatchItemResult(object):
+    """The result of the query. RouteDirections if the query completed successfully, ErrorResponse otherwise.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar error: The error object.
+    :vartype error: ~azure.maps.route.models.ErrorDetail
+    :ivar format_version: Format Version property.
+    :vartype format_version: str
+    :ivar routes: Routes array.
+    :vartype routes: list[~azure.maps.route.models.Route]
+    :ivar optimized_waypoints: Optimized sequence of waypoints. It shows the index from the user
+     provided waypoint sequence for the original and optimized list. For instance, a response:
+
+     .. code-block::
+
+        <optimizedWaypoints>
+        <waypoint providedIndex="0" optimizedIndex="1"/>
+        <waypoint providedIndex="1" optimizedIndex="2"/>
+        <waypoint providedIndex="2" optimizedIndex="0"/>
+        </optimizedWaypoints>
+
+     means that the original sequence is [0, 1, 2] and optimized sequence is [1, 2, 0]. Since the
+     index starts by 0 the original is "first, second, third" while the optimized is "second, third,
+     first".
+    :vartype optimized_waypoints: list[~azure.maps.route.models.RouteOptimizedWaypoint]
+    :ivar report: Reports the effective settings used in the current call.
+    :vartype report: RouteReport
+    """
+
+    _validation = {
+        "format_version": {"readonly": True},
+        "routes": {"readonly": True},
+        "optimized_waypoints": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "format_version": {"key": "formatVersion", "type": "str"},
+        "routes": {"key": "routes", "type": "[Route]"},
+        "optimized_waypoints": {"key": "optimizedWaypoints", "type": "[RouteOptimizedWaypoint]"},
+        "report": {"key": "report", "type": "RouteReport"},
+    }
+
+    def __init__(
+        self, *, error: Optional["ErrorDetail"] = None, report: Optional["RouteReport"] = None, **kwargs
+    ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.maps.route.models.ErrorDetail
+        :keyword report: Reports the effective settings used in the current call.
+        :paramtype report: ~azure.maps.route.models.RouteReport
+        """
+        super().__init__(report=report, error=error, **kwargs)
+        self.error = error
+        self.format_version = None
+        self.routes = None
+        self.optimized_waypoints = None
+        self.report = report
+
 class RouteDirectionsBatchItem(object):
     """An item returned from Route Directions Batch service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar response: The result of the query. RouteDirections if the query completed successfully,
+    :ivar result: The result of the query. RouteDirections if the query completed successfully,
      ErrorResponse otherwise.
-    :vartype response: ~azure.maps.route.models.RouteDirectionsBatchItemResponse
+    :vartype result: RouteDirectionsBatchItemResult
     """
 
     _validation = {
-        "response": {"readonly": True},
+        "result": {"readonly": True},
     }
 
     _attribute_map = {
-        "response": {"key": "response", "type": "RouteDirectionsBatchItemResponse"},
+        "result": {"key": "result", "type": "RouteDirectionsBatchItemResult"},
     }
 
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.response = None
+        self.result = None
 
-class RouteDirectionsBatchResult(GenBatchResult):
+class RouteDirectionsBatchResult(object):
     """This object is returned from a successful Route Directions Batch service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -808,3 +951,28 @@ class GeoJsonPolygon(GeoJsonObject, GeoJsonPolygonData):
         super(GeoJsonPolygon, self).__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
         self.type = 'Polygon'  # type: str
+
+class TravelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Travel mode for the calculated route. The value will be set to ``other`` if the requested mode
+    of transport is not possible in this section.
+    """
+
+    #: The returned routes are optimized for cars.
+    CAR = "car"
+    #: The returned routes are optimized for commercial vehicles, like for trucks.
+    TRUCK = "truck"
+    #: The returned routes are optimized for taxis. BETA functionality.
+    TAXI = "taxi"
+    #: The returned routes are optimized for buses, including the use of bus only lanes. BETA
+    #: functionality.
+    BUS = "bus"
+    #: The returned routes are optimized for vans. BETA functionality.
+    VAN = "van"
+    #: The returned routes are optimized for motorcycles. BETA functionality.
+    MOTORCYCLE = "motorcycle"
+    #: The returned routes are optimized for bicycles, including use of bicycle lanes.
+    BICYCLE = "bicycle"
+    #: The returned routes are optimized for pedestrians, including the use of sidewalks.
+    PEDESTRIAN = "pedestrian"
+    #: The given mode of transport is not possible in this section
+    OTHER = "other"

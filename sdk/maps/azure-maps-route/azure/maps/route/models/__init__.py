@@ -17,12 +17,11 @@ from .._generated.models import (
     RouteMatrixQuery,
     RouteMatrixResult,
     RouteMatrixSummary,
-    RouteDirectionsBatchItem,
     RouteOptimizedWaypoint,
     RouteSummary,
-    RouteSection,
     RouteGuidance,
-    Route
+    Route,
+    RouteSectionTec
 )
 
 from ._models import (
@@ -42,7 +41,9 @@ from ._models import (
     GeoJsonGeometryCollection,
     RouteDirectionsBatchResult,
     RouteDirectionsBatchItem,
-    RouteLeg
+    RouteLeg,
+    TravelMode,
+    RouteDirectionsBatchItemResult
 )
 
 
@@ -62,7 +63,6 @@ __all__ = [
     'VehicleLoadType',
     'VehicleEngineType',
     'RouteDirectionsBatchResult',
-    'RouteDirectionsBatchItem',
     'RouteRepresentationForBestOrder',
     'AlternativeRouteType',
     'RouteMatrixQuery',
@@ -70,7 +70,6 @@ __all__ = [
     'Route',
     'RouteLeg',
     'RouteSummary',
-    'RouteSection',
     'RouteGuidance',
     'RouteMatrixSummary',
     'RouteDirectionsBatchItem',
@@ -86,5 +85,8 @@ __all__ = [
     'GeoJsonMultiPolygon',
     'GeoJsonPoint',
     'GeoJsonPolygon',
-    'GeoJsonGeometryCollection'
+    'GeoJsonGeometryCollection',
+    'TravelMode',
+    'RouteDirectionsBatchItemResult',
+    'RouteSectionTec'
 ]

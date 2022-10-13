@@ -16,7 +16,8 @@ from .models import (
     RouteRangeResult,
     RouteMatrixResult,
     RouteMatrixQuery,
-    LatLon
+    LatLon,
+    TravelMode
 )
 
 from ._generated.models import (
