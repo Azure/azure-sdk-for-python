@@ -379,7 +379,14 @@ def execute_tox_serial(tox_command_tuples):
             shutil.rmtree(tox_dir)
 
             if os.path.exists(clone_dir):
-                shutil.rmtree(clone_dir)
+                try:
+                    shutil.rmtree(clone_dir)
+                except Exception as e:
+                    # git has a permissions problem. one of the files it drops
+                    # cannot be removed as no one has the permission to do so.
+                    # lets log just in case, but this should really only affect windows machines.
+                    logging.info(e)
+                    pass
 
     return return_code
 
