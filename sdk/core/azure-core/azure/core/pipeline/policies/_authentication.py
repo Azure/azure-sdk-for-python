@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+from urllib.parse import urlparse
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -35,7 +36,7 @@ class _BearerTokenCredentialPolicyBase(object):
         self._scopes = scopes
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
-        self._original_url = None
+        self._original_domain = None
         self._always_adding_header = kwargs.pop('always_adding_header', False)
 
     @staticmethod
@@ -75,10 +76,11 @@ class _BearerTokenCredentialPolicyBase(object):
     def _need_adding_header(self, url):
         if self._always_adding_header:
             return True
-        if not self._original_url:
-            self._original_url = url
+        domain = urlparse(url).netloc
+        if not self._original_domain:
+            self._original_domain = domain
             return True
-        if self._original_url == url:
+        if self._original_domain == domain:
             return True
         return False
 
