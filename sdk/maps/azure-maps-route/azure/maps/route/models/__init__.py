@@ -21,7 +21,13 @@ from .._generated.models import (
     RouteSummary,
     RouteGuidance,
     Route,
-    RouteSectionTec
+    RouteSectionTec,
+    BatchResultSummary,
+    GuidanceInstructionType,
+    JunctionType,
+    RouteLegSummary,
+    GeoJsonFeatureCollectionData,
+    GeoJsonGeometryCollectionData,
 )
 
 from ._models import (
@@ -43,7 +49,10 @@ from ._models import (
     RouteDirectionsBatchItem,
     RouteLeg,
     TravelMode,
-    RouteDirectionsBatchItemResult
+    RouteDirectionsBatchItemResult,
+    GeoJsonMultiLineStringData,
+    GeoJsonMultiPolygonData,
+    GeoJsonMultiPointData
 )
 
 
@@ -51,6 +60,10 @@ __all__ = [
     'RouteRangeResult',
     'LatLon',
     'BoundingBox',
+    'BatchResultSummary',
+    'JunctionType',
+    'GuidanceInstructionType',
+    'RouteLegSummary',
     'RouteDirections',
     'RouteInstructionsType',
     'ComputeTravelTime',
@@ -88,5 +101,10 @@ __all__ = [
     'GeoJsonGeometryCollection',
     'TravelMode',
     'RouteDirectionsBatchItemResult',
-    'RouteSectionTec'
+    'RouteSectionTec',
+    'GeoJsonFeatureCollectionData',
+    'GeoJsonGeometryCollectionData',
+    'GeoJsonMultiLineStringData',
+    'GeoJsonMultiPolygonData',
+    'GeoJsonMultiPointData'
 ]

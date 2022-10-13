@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports, R0904, C0302
-from typing import Union, Any, List, Tuple
+# pylint: disable=unused-import,ungrouped-imports, R0904, C0302, W0212
+from typing import Union, Any, List, Tuple, overload
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.polling import LROPoller
@@ -23,6 +23,12 @@ from .models import (
 from ._generated.models import (
     ResponseFormat
 )
+
+def get_batch_id_from_poller(polling_method):
+    if hasattr(polling_method, "_operation"):
+        operation=polling_method._operation
+        return operation._location_url.split('/')[-1].split('?')[0]
+    return None
 
 # By default, use the latest supported API version
 class MapsRouteClient(MapsRouteClientBase):
@@ -501,73 +507,68 @@ class MapsRouteClient(MapsRouteClientBase):
         )
         return RouteDirectionsBatchResult(summary=result.batch_summary, items=result.batch_items)
 
-    @distributed_trace
-    def begin_route_directions_batch(
+    @overload
+    def begin_get_route_directions_batch(
+        self,
+        batch_id: str,
+        **kwargs: Any
+    ) -> LROPoller[RouteDirectionsBatchResult]:
+        pass
+
+    @overload
+    def begin_get_route_directions_batch(
         self,
         queries: List[str],
+        **kwargs: Any
+    ) -> LROPoller[RouteDirectionsBatchResult]:
+        pass
+
+    @distributed_trace
+    def begin_get_route_directions_batch(
+        self,
         **kwargs: Any
     ) -> LROPoller[RouteDirectionsBatchResult]:
 
         """Sends batches of route direction queries.
         The method returns a poller for retrieving the result later.
 
-        :param queries: The list of route directions queries/requests to
+        :keyword queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
          and must contain at least 1 query. Required.
-        :type queries: List[str]
+        :paramtype queries: List[str]
+        :keyword batch_id: Batch id for querying the operation. Required.
+        :paramtype batch_id: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns RouteDirectionsBatchResult
         :rtype: ~azure.core.polling.LROPoller[RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        queries=kwargs.pop('queries', None)
+        batch_id=kwargs.pop('batch_id', None)
+
+        if batch_id:
+            poller = self._route_client.begin_get_route_directions_batch(
+                format=ResponseFormat.JSON,
+                batch_id=batch_id,
+                **kwargs
+            )
+            return poller
+
         batch_items = [{"query": f"?query={query}"} for query
                        in queries] if queries else []
-
-        poller = self._route_client.begin_request_route_directions_batch(
+        batch_poller = self._route_client.begin_request_route_directions_batch(
             format=ResponseFormat.JSON,
             route_directions_batch_queries={"batch_items": batch_items},
             **kwargs
         )
-        return poller
-
-
-    @distributed_trace
-    def get_route_directions_batch(
-        self,
-        batch_id: str,
-        **kwargs: Any
-    )-> LROPoller[RouteDirectionsBatchResult]:
-
-        """Retrieves the result of a previous route direction batch request.
-        The method returns a poller for retrieving the result.
-
-        :param batch_id: Batch id for querying the operation. Required.
-        :type batch_id: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[RouteDirectionsBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-        poller = self._route_client.begin_get_route_directions_batch(
-            format=ResponseFormat.JSON,
-            batch_id=batch_id,
-            **kwargs
-        )
-        return poller
-
+        batch_poller.batch_id = get_batch_id_from_poller(batch_poller.polling_method())
+        return batch_poller
 
     @distributed_trace
     def get_route_matrix(
@@ -589,9 +590,6 @@ class MapsRouteClient(MapsRouteClientBase):
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
          origins and 25 destinations for async API. Is either a model type or a IO type. Required.
         :type query: ~azure.maps.route.models.RouteMatrixQuery or IO
-        :param format: Desired format of the response. Only ``json`` format is supported. "json"
-         Default value is "json".
-        :type format: str or ~azure.maps.route.models.JsonFormat
         :keyword wait_for_results: Boolean to indicate whether to execute the request synchronously. If
          set to true, user will get a 200 response if the request is finished under 120 seconds.
          Otherwise, user will get a 202 response right away. Please refer to the API description for
@@ -687,11 +685,25 @@ class MapsRouteClient(MapsRouteClientBase):
             **kwargs
         )
 
-
-    @distributed_trace
-    def begin_route_matrix_batch(
+    @overload
+    def begin_get_route_matrix_batch(
         self,
         query: RouteMatrixQuery,
+        **kwargs: Any
+    ) -> LROPoller[RouteMatrixResult]:
+        pass
+
+    @overload
+    def begin_get_route_matrix_batch(
+        self,
+        matrix_id: str,
+        **kwargs: Any
+    ) -> LROPoller[RouteMatrixResult]:
+        pass
+
+    @distributed_trace
+    def begin_get_route_matrix_batch(
+        self,
         **kwargs: Any
     ) -> LROPoller[RouteMatrixResult]:
 
@@ -702,15 +714,15 @@ class MapsRouteClient(MapsRouteClientBase):
         The maximum size of a matrix for this method is 700
          (the number of origins multiplied by the number of destinations)
 
-        :param query: The matrix of origin and destination coordinates to compute the
+        :keyword query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
          parameters. The minimum and the maximum cell count supported are 1 and **700** for async and
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
          origins and 25 destinations for async API. Required.
-        :type query: ~azure.maps.route.models.RouteMatrixQuery
-        :param format: Desired format of the response. Only ``json`` format is supported. "json"
-         Default value is "json".
-        :type format: str or ~azure.maps.route.models.JsonFormat
+        :paramtype query: ~azure.maps.route.models.RouteMatrixQuery
+        :keyword matrix_id: Matrix id received after the Matrix Route request was accepted successfully.
+         Required.
+        :paramtype matrix_id: str
         :keyword wait_for_results: Boolean to indicate whether to execute the request synchronously. If
          set to true, user will get a 200 response if the request is finished under 120 seconds.
          Otherwise, user will get a 202 response right away. Please refer to the API description for
@@ -800,52 +812,25 @@ class MapsRouteClient(MapsRouteClientBase):
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
          polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :paramtype polling: bool
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of LROPoller that returns RouteMatrixResult
         :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        query=kwargs.pop('query', None)
+        matrix_id = kwargs.pop('matrix_id', None)
+
+        if matrix_id:
+            return self._route_client.begin_get_route_matrix(
+                matrix_id=matrix_id,
+                **kwargs
+            )
 
         poller = self._route_client.begin_request_route_matrix(
             format=ResponseFormat.JSON,
             route_matrix_query=query,
             **kwargs
         )
-        return poller
-
-
-    @distributed_trace
-    def get_route_matrix_batch(
-        self,
-        matrix_id: str,
-        **kwargs: Any
-    ) -> LROPoller[RouteMatrixResult]:
-
-        """If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request.
-
-        Retrieves the result of a previous route matrix request.
-        The method returns a poller for retrieving the result.
-
-        :param matrix_id: Matrix id received after the Matrix Route request was accepted successfully.
-         Required.
-        :type matrix_id: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteMatrixResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        poller = self._route_client.begin_get_route_matrix(
-            matrix_id=matrix_id,
-            **kwargs
-        )
-
         return poller

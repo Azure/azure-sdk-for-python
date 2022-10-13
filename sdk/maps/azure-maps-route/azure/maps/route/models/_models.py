@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports, super-init-not-called
+# pylint: disable=unused-import,ungrouped-imports, super-init-not-called, W0212, C0302
 from typing import List, Optional, Union, NamedTuple
 from enum import Enum, EnumMeta
 from six import with_metaclass
@@ -16,7 +16,8 @@ from .._generated.models import (
     BatchResultSummary,
     ErrorDetail,
     RouteReport,
-    RouteSectionTec
+    RouteSectionTec,
+    GuidanceInstructionType
 )
 
 class LatLon(NamedTuple):
@@ -49,7 +50,8 @@ class BoundingBox(NamedTuple):
 
 # cSpell:disable
 class RouteSection(object):
-    """Route sections contain additional information about parts of a route. Each section contains at least the elements ``startPointIndex``\ , ``endPointIndex``\ , and ``sectionType``.
+    """Route sections contain additional information about parts of a route.
+    Each section contains at least the elements ``startPointIndex``, ``endPointIndex``, and ``sectionType``.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -222,11 +224,10 @@ class RouteDirectionsBatchResult(object):
     """
     def __init__(
         self,
-        summary: BatchResultSummary = None,
-        items: List[RouteDirectionsBatchItem] = None
+        **kwargs
     ):
-        self.summary = summary
-        self.items = items
+        self.summary = kwargs.get('summary', None)
+        self.items = kwargs.get('items', None)
 
 class RouteLeg(GenRouteLeg):
     """A description of a part of a route, comprised of a list of points.
@@ -976,3 +977,254 @@ class TravelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PEDESTRIAN = "pedestrian"
     #: The given mode of transport is not possible in this section
     OTHER = "other"
+
+class RouteInstruction(object):  # pylint: disable=too-many-instance-attributes
+    """A set of attributes describing a maneuver, e.g. 'Turn right', 'Keep left',
+    'Take the ferry', 'Take the motorway', 'Arrive'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar route_offset_in_meters: Distance from the start of the route to the point of the
+     instruction.
+    :vartype route_offset_in_meters: int
+    :ivar travel_time_in_seconds: Estimated travel time up to the point corresponding to
+     routeOffsetInMeters.
+    :vartype travel_time_in_seconds: int
+    :ivar point: A location represented as a latitude and longitude.
+    :vartype point: LatLon
+    :ivar point_index: The index of the point in the list of polyline "points" corresponding to the
+     point of the instruction.
+    :vartype point_index: int
+    :ivar instruction_type: Type of the instruction, e.g., turn or change of road form. Known
+     values are: "TURN", "ROAD_CHANGE", "LOCATION_DEPARTURE", "LOCATION_ARRIVAL", "DIRECTION_INFO",
+     and "LOCATION_WAYPOINT".
+    :vartype instruction_type: str or ~azure.maps.route.models.GuidanceInstructionType
+    :ivar road_numbers: The road number(s) of the next significant road segment(s) after the
+     maneuver, or of the road(s) to be followed. Example: ["E34", "N205"].
+    :vartype road_numbers: list[str]
+    :ivar exit_number: The number(s) of a highway exit taken by the current maneuver. If an exit
+     has multiple exit numbers, they will be separated by "," and possibly aggregated by "-", e.g.,
+     "10, 13-15".
+    :vartype exit_number: str
+    :ivar street: Street name of the next significant road segment after the maneuver, or of the
+     street that should be followed.
+    :vartype street: str
+    :ivar signpost_text: The text on a signpost which is most relevant to the maneuver, or to the
+     direction that should be followed.
+    :vartype signpost_text: str
+    :ivar country_code: 3-character `ISO 3166-1 <https://www.iso.org/iso-3166-country-codes.html>`_
+     alpha-3 country code. E.g. USA.
+    :vartype country_code: str
+    :ivar state_code: A subdivision (e.g., state) of the country, represented by the second part of
+     an `ISO 3166-2 <https://www.iso.org/standard/63546.html>`_ code. This is only available for
+     some countries like the US, Canada, and Mexico.
+    :vartype state_code: str
+    :ivar junction_type: The type of the junction where the maneuver takes place. For larger
+     roundabouts, two separate instructions are generated for entering and leaving the roundabout.
+     Known values are: "REGULAR", "ROUNDABOUT", and "BIFURCATION".
+    :vartype junction_type: str or ~azure.maps.route.models.JunctionType
+    :ivar turn_angle_in_degrees: Indicates the direction of an instruction. If junctionType
+     indicates a turn instruction:
+
+
+     * 180 = U-turn
+     * [-179, -1] = Left turn
+     * 0 = Straight on (a '0 degree' turn)
+     * [1, 179] = Right turn
+
+     If junctionType indicates a bifurcation instruction:
+
+
+     * <0 - keep left
+     * &gt;0 - keep right.
+    :vartype turn_angle_in_degrees: int
+    :ivar roundabout_exit_number: This indicates which exit to take at a roundabout.
+    :vartype roundabout_exit_number: str
+    :ivar possible_combine_with_next: It is possible to optionally combine the instruction with the
+     next one. This can be used to build messages like "Turn left and then turn right".
+    :vartype possible_combine_with_next: bool
+    :ivar driving_side: Indicates left-hand vs. right-hand side driving at the point of the
+     maneuver. Known values are: "LEFT" and "RIGHT".
+    :vartype driving_side: str or ~azure.maps.route.models.DrivingSide
+    :ivar maneuver: A code identifying the maneuver. Known values are: "ARRIVE", "ARRIVE_LEFT",
+     "ARRIVE_RIGHT", "DEPART", "STRAIGHT", "KEEP_RIGHT", "BEAR_RIGHT", "TURN_RIGHT", "SHARP_RIGHT",
+     "KEEP_LEFT", "BEAR_LEFT", "TURN_LEFT", "SHARP_LEFT", "MAKE_UTURN", "ENTER_MOTORWAY",
+     "ENTER_FREEWAY", "ENTER_HIGHWAY", "TAKE_EXIT", "MOTORWAY_EXIT_LEFT", "MOTORWAY_EXIT_RIGHT",
+     "TAKE_FERRY", "ROUNDABOUT_CROSS", "ROUNDABOUT_RIGHT", "ROUNDABOUT_LEFT", "ROUNDABOUT_BACK",
+     "TRY_MAKE_UTURN", "FOLLOW", "SWITCH_PARALLEL_ROAD", "SWITCH_MAIN_ROAD", "ENTRANCE_RAMP",
+     "WAYPOINT_LEFT", "WAYPOINT_RIGHT", and "WAYPOINT_REACHED".
+    :vartype maneuver: str or ~azure.maps.route.models.GuidanceManeuver
+    :ivar message: A human-readable message for the maneuver.
+    :vartype message: str
+    :ivar combined_message: A human-readable message for the maneuver combined with the message
+     from the next instruction. Sometimes it is possible to combine two successive instructions into
+     a single instruction making it easier to follow. When this is the case the
+     possibleCombineWithNext flag will be true. For example:
+
+     .. code-block::
+
+        10. Turn left onto Einsteinweg/A10/E22 towards Ring Amsterdam
+        11. Follow Einsteinweg/A10/E22 towards Ring Amsterdam
+
+     The possibleCombineWithNext flag on instruction 10 is true. This indicates to the clients of
+     coded guidance that it can be combined with instruction 11. The instructions will be combined
+     automatically for clients requesting human-readable guidance. The combinedMessage field
+     contains the combined message:
+
+     .. code-block::
+
+        Turn left onto Einsteinweg/A10/E22 towards Ring Amsterdam
+        then follow Einsteinweg/A10/E22 towards Ring Amsterdam.
+    :vartype combined_message: str
+    """
+
+    _validation = {
+        "route_offset_in_meters": {"readonly": True},
+        "travel_time_in_seconds": {"readonly": True},
+        "point_index": {"readonly": True},
+        "road_numbers": {"readonly": True},
+        "exit_number": {"readonly": True},
+        "street": {"readonly": True},
+        "signpost_text": {"readonly": True},
+        "country_code": {"readonly": True},
+        "state_code": {"readonly": True},
+        "junction_type": {"readonly": True},
+        "turn_angle_in_degrees": {"readonly": True},
+        "roundabout_exit_number": {"readonly": True},
+        "possible_combine_with_next": {"readonly": True},
+        "driving_side": {"readonly": True},
+        "maneuver": {"readonly": True},
+        "message": {"readonly": True},
+        "combined_message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "route_offset_in_meters": {"key": "routeOffsetInMeters", "type": "int"},
+        "travel_time_in_seconds": {"key": "travelTimeInSeconds", "type": "int"},
+        "point": {"key": "point", "type": "LatLongPair"},
+        "point_index": {"key": "pointIndex", "type": "int"},
+        "instruction_type": {"key": "instructionType", "type": "str"},
+        "road_numbers": {"key": "roadNumbers", "type": "[str]"},
+        "exit_number": {"key": "exitNumber", "type": "str"},
+        "street": {"key": "street", "type": "str"},
+        "signpost_text": {"key": "signpostText", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "state_code": {"key": "stateCode", "type": "str"},
+        "junction_type": {"key": "junctionType", "type": "str"},
+        "turn_angle_in_degrees": {"key": "turnAngleInDecimalDegrees", "type": "int"},
+        "roundabout_exit_number": {"key": "roundaboutExitNumber", "type": "str"},
+        "possible_combine_with_next": {"key": "possibleCombineWithNext", "type": "bool"},
+        "driving_side": {"key": "drivingSide", "type": "str"},
+        "maneuver": {"key": "maneuver", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "combined_message": {"key": "combinedMessage", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        point: Optional["LatLon"] = None,
+        instruction_type: Optional[Union[str, "GuidanceInstructionType"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword point: A location represented as a latitude and longitude.
+        :paramtype point: ~azure.maps.route.models.LatLongPair
+        :keyword instruction_type: Type of the instruction, e.g., turn or change of road form. Known
+         values are: "TURN", "ROAD_CHANGE", "LOCATION_DEPARTURE", "LOCATION_ARRIVAL", "DIRECTION_INFO",
+         and "LOCATION_WAYPOINT".
+        :paramtype instruction_type: str or ~azure.maps.route.models.GuidanceInstructionType
+        """
+        super().__init__(**kwargs)
+        self.route_offset_in_meters = None
+        self.travel_time_in_seconds = None
+        self.point = point
+        self.point_index = None
+        self.instruction_type = instruction_type
+        self.road_numbers = None
+        self.exit_number = None
+        self.street = None
+        self.signpost_text = None
+        self.country_code = None
+        self.state_code = None
+        self.junction_type = None
+        self.turn_angle_in_degrees = None
+        self.roundabout_exit_number = None
+        self.possible_combine_with_next = None
+        self.driving_side = None
+        self.maneuver = None
+        self.message = None
+        self.combined_message = None
+
+class GeoJsonMultiLineStringData(object):
+    """GeoJsonMultiLineStringData.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param coordinates: Required. Coordinates for the ``GeoJson MultiLineString`` geometry.
+    :type coordinates: list[list[list[LatLon]]]
+    """
+
+    _validation = {
+        'coordinates': {'required': True},
+    }
+
+    _attribute_map = {
+        'coordinates': {'key': 'coordinates', 'type': '[[[LatLon]]]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonMultiLineStringData, self).__init__(**kwargs)
+        self.coordinates = kwargs['coordinates']
+
+class GeoJsonMultiPointData(object):
+    """Data contained by a ``GeoJson MultiPoint``.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
+    :type coordinates: list[list[LatLon]]
+    """
+
+    _validation = {
+        'coordinates': {'required': True},
+    }
+
+    _attribute_map = {
+        'coordinates': {'key': 'coordinates', 'type': '[[LatLon]]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonMultiPointData, self).__init__(**kwargs)
+        self.coordinates = kwargs['coordinates']
+
+class GeoJsonMultiPolygonData(object):
+    """GeoJsonMultiPolygonData.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
+     that coordinates in GeoJSON are in x, y order (longitude, latitude).
+    :type coordinates: list[list[list[list[LatLon]]]]
+    """
+
+    _validation = {
+        'coordinates': {'required': True},
+    }
+
+    _attribute_map = {
+        'coordinates': {'key': 'coordinates', 'type': '[[[[LatLon]]]]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonMultiPolygonData, self).__init__(**kwargs)
+        self.coordinates = kwargs['coordinates']

@@ -23,6 +23,11 @@ Then for common Azure Maps Route operations:
 
 * Request Route Matrix: [sample_request_route_matrix.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_matrix.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/async_samples/sample_get_route_matrix_async.py))
 
+* Request Begin Get Route Directions batch [sample_begin_get_route_directions_batch(
+.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_begin_get_route_directions_batch.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/async_samples/sample_begin_get_route_directions_batch_async.py))
+
+* Request Get Route Directions Batch Sync [sample_get_route_directions_batch_sync.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_get_route_directions_batch_sync.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/async_samples/sample_get_route_directions_batch_sync_async.py))
+
 ## Prerequisites
 
 * Python 3.6 or later is required to use this package
