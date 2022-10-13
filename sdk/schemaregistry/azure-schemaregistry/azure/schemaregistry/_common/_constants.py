@@ -34,6 +34,8 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVRO = "Avro"
     """Represents the Apache Avro schema format."""
 
+    JSON = "JSON"
+    """Represents the JSON schema format."""
 
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
