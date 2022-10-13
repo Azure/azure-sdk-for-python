@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
     DataVersion,
     UriFileJobInput,
     UriFolderJobInput,
+    UriFileJobOutput,
 )
 from azure.ai.ml._schema.core.fields import ArmStr, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -22,7 +23,7 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities import ComputeConfiguration
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 from .compute_binding import ComputeBindingSchema
@@ -66,4 +67,9 @@ class BatchJobSchema(PathAwareSchema):
         if data.get(EndpointYamlFields.RETRY_SETTINGS, None):
             data[EndpointYamlFields.RETRY_SETTINGS] = data[EndpointYamlFields.RETRY_SETTINGS]._to_rest_object()
 
+        if data.get(EndpointYamlFields.BATCH_JOB_OUTPUT_DATA, None):
+            for key, output_data in data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA].items():
+                if isinstance(output_data, Output):
+                    if output_data.type == AssetTypes.URI_FILE:
+                        data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA][key] = UriFileJobOutput(uri=output_data.path)
         return BatchJob(**data)

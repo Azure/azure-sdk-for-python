@@ -41,7 +41,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities import BatchEndpoint, BatchJob
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -195,6 +195,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         *,
         deployment_name: str = None,
         inputs: Dict[str, Input] = None,
+        outputs: Dict[str, Output] = None,
         **kwargs,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
@@ -249,6 +250,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
+
+        if outputs:
+            params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
 
         # Batch job doesn't have a python class, loading a rest object using params override
         context = {
