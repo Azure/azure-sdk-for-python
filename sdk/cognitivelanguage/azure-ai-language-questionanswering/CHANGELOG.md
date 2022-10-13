@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.1.0 (2022-10-13)
 
 ### Breaking Changes
 * `QuestionAnsweringProjectsClient` was renamed to `AuthoringClient`.
