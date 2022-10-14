@@ -28,7 +28,6 @@ extends:
   parameters:
     ServiceDirectory: maps
     TestProxy: true
-    TestTimeoutInMinutes: 120
     Artifacts:
     - name: azure-mgmt-maps
       safeName: azuremgmtmaps
@@ -38,4 +37,5 @@ extends:
       safeName: azuremapsgeolocation
     - name: azure-maps-render
       safeName: azuremapsrender
-
+    - name: azure-maps-route
+      safeName: azuremapsroute
