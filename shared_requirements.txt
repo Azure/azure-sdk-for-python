@@ -3,6 +3,7 @@ azure-ai-translation-nspkg
 azure-ai-language-nspkg
 azure-iot-nspkg
 azure-monitor-nspkg
+azure-appconfiguration<2.0.0,>=1.2.0
 azure-applicationinsights~=0.1.0
 azure-batch~=4.1
 azure-cognitiveservices-nspkg
@@ -89,7 +90,6 @@ azure-mgmt-subscription~=0.2.0
 azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-messaging-nspkg
-azure-mixedreality-nspkg
 azure-mixedreality-authentication
 azure-nspkg
 azure-keyvault-nspkg
@@ -108,6 +108,7 @@ azure-storage-blob~=1.3
 azure-storage-file~=1.3
 azure-storage-queue~=1.3
 cryptography>=2.1.4
+fixedint==0.1.6
 futures
 mock
 typing
@@ -126,9 +127,10 @@ aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.11.0
 isodate>=0.6.0
-avro>=1.11.1
+avro>=1.11.0
 pyjwt>=1.7.1
 chardet<5,>=3.0.2
+yarl<2.0,>=1.0
 #override azure-core typing-extensions>=4.0.1
 #override azure-search-documents typing-extensions>=3.7.4.3
 #override azure azure-keyvault~=1.0
@@ -158,18 +160,21 @@ chardet<5,>=3.0.2
 #override azure-search-documents azure-core<2.0.0,>=1.19.0
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.23.0
 #override azure-ai-formrecognizer typing-extensions>=4.0.1
-#override azure-storage-blob azure-core<2.0.0,>=1.24.2
-#override azure-storage-blob msrest>=0.7.1
+#override azure-storage-blob azure-core<2.0.0,>=1.26.0
+#override azure-storage-blob azure-core[aio]<2.0.0,>=1.26.0
+#override azure-storage-blob typing-extensions>=4.0.1
 #override azure-storage-blob-changefeed azure-storage-blob>=12.5.0,<13.0.0
-#override azure-storage-queue azure-core<2.0.0,>=1.24.2
-#override azure-storage-queue msrest>=0.7.1
-#override azure-storage-file-share azure-core<2.0.0,>=1.24.2
-#override azure-storage-file-share msrest>=0.7.1
-#override azure-storage-file-datalake azure-core<2.0.0,>=1.24.2
-#override azure-storage-file-datalake msrest>=0.7.1
-#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.14.0b1
+#override azure-storage-queue azure-core<2.0.0,>=1.26.0
+#override azure-storage-queue azure-core[aio]<2.0.0,>=1.26.0
+#override azure-storage-queue typing-extensions>=4.0.1
+#override azure-storage-file-share azure-core<2.0.0,>=1.26.0
+#override azure-storage-file-share azure-core[aio]<2.0.0,>=1.26.0
+#override azure-storage-file-share typing-extensions>=4.0.1
+#override azure-storage-file-datalake azure-storage-blob<13.0.0,>=12.14.0
+#override azure-storage-file-datalake azure-core<2.0.0,>=1.26.0
+#override azure-storage-file-datalake azure-core[aio]<2.0.0,>=1.26.0
+#override azure-storage-file-datalake typing-extensions>=4.0.1
 #override azure-security-attestation azure-core<2.0.0,>=1.8.2
-#override azure-data-tables msrest>=0.6.19
 #override azure-schemaregistry azure-core<2.0.0,>=1.24.0
 #override azure-schemaregistry-avroencoder typing-extensions>=4.0.1
 opencensus>=0.6.0
@@ -184,18 +189,22 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
 #override azure-eventhub-checkpointstoretable azure-core<2.0.0,>=1.14.0
 #override azure-eventhub uamqp>=1.6.0,<2.0.0
-#override azure-appconfiguration msrest>=0.6.10
+#override azure-appconfiguration azure-core<2.0.0,>=1.24.0
+#override azure-appconfiguration-provider azure-appconfiguration<2.0.0,>=1.3.0
+#override azure-appconfiguration-provider azure-keyvault-secrets<5.0.0,>=4.3.0
 #override azure-servicebus uamqp>=1.5.1,<2.0.0
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.14.0
 #override azure-servicebus typing-extensions>=3.7.4.3
 #override azure-synapse-accesscontrol azure-core>=1.20.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.20.0,<2.0.0
-#override azure-synapse-artifacts azure-core>=1.23.0,<2.0.0
+#override azure-synapse-artifacts azure-mgmt-core<2.0.0,>=1.3.2
+#override azure-synapse-artifacts msrest>=0.7.1
 #override azure-synapse-monitoring azure-core>=1.20.0,<2.0.0
 #override azure-synapse-managedprivateendpoints azure-core>=1.20.0,<2.0.0
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
-#override azure-eventgrid azure-core<2.0.0,>=1.18.0
+#override azure-eventgrid azure-core<2.0.0,>=1.24.0
+#override azure-eventgrid msrest>=0.7.1
 #override azure-monitor-query msrest>=0.6.19
 #override azure-monitor-query azure-core<2.0.0,>=1.12.0
 #override azure-monitor-ingestion msrest>=0.6.19
@@ -216,11 +225,13 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-communication-email azure-mgmt-core<2.0.0,>=1.3.2
 #override azure-communication-rooms azure-core<2.0.0,>=1.24.0
 #override azure-communication-rooms msrest>=0.7.1
+#override azure-communication-jobrouter azure-core<2.0.0,>=1.25.0
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0
 #override azure-mgmt-communication azure-mgmt-core<2.0.0,>=1.3.2
 #override azure-ai-metricsadvisor azure-core<2.0.0,>=1.23.0
 #override azure-ai-translation-document azure-core<2.0.0,>=1.14.0
 #override azure-monitor-opentelemetry-exporter azure-core<2.0.0,>=1.23.0
+#override azure-monitor-opentelemetry-exporter fixedint==0.1.6
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
 #override azure-monitor-opentelemetry-exporter opentelemetry-api<2.0.0,>=1.12.0
 #override azure-monitor-opentelemetry-exporter opentelemetry-sdk<2.0.0,>=1.12.0
@@ -231,6 +242,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-messaging-webpubsubservice pyjwt>=1.7.1
 #override azure-messaging-webpubsubservice six>=1.12.0
 #override azure-messaging-webpubsubservice cryptography>=2.8.0
+#override azure-mgmt-security azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mixedreality-authentication azure-core<2.0.0,>=1.4.0
 #override azure-iot-deviceupdate azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-alertsmanagement msrest>=0.7.1
@@ -244,16 +256,18 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mixedreality-remoterendering azure-core<2.0.0,>=1.6.0
 #override azure-mixedreality-remoterendering azure-mixedreality-authentication>=1.0.0b1
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.24.0
+#override azure-mgmt-elasticsan msrest>=0.7.1
 #override azure-mgmt-eventgrid msrest>=0.7.1
 #override azure-ai-language-conversations isodate<1.0.0,>=0.6.1
-#override azure-mgmt-loadtestservice azure-mgmt-core>=1.3.1,<2.0.0
-#override azure-mgmt-loadtestservice msrest>=0.6.21
+#override azure-ai-language-questionanswering isodate<1.0.0,>=0.6.1
+#override azure-mgmt-loadtestservice azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-loadtestservice msrest>=0.7.1
 #override azure-mgmt-deviceupdate msrest>=0.7.1
-#override azure-mgmt-dataprotection msrest>=0.6.21
+#override azure-mgmt-dataprotection msrest>=0.7.1
 #override azure-mgmt-chaos msrest>=0.6.21
 #override azure-mgmt-resourceconnector msrest>=0.6.21
 #override azure-mgmt-desktopvirtualization msrest>=0.6.21
-#override azure-mgmt-netapp msrest>=0.6.21
+#override azure-mgmt-netapp msrest>=0.7.1
 #override azure-mgmt-monitor msrest>=0.7.1
 #override azure-mgmt-applicationinsights msrest>=0.6.21
 #override azure-mgmt-notificationhubs msrest>=0.7.1
@@ -283,6 +297,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-synapse msrest>=0.6.21
 #override azure-mgmt-botservice msrest>=0.6.21
 #override azure-mgmt-web msrest>=0.7.1
+#override azure-mgmt-elasticsan azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-subscription msrest>=0.7.1
 #override azure-mgmt-trafficmanager msrest>=0.6.21
 #override azure-mgmt-subscription azure-mgmt-core>=1.3.2,<2.0.0
@@ -296,16 +311,16 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storage msrest>=0.7.1
 #override azure-mgmt-batch msrest>=0.7.1
 #override azure-mgmt-appconfiguration msrest>=0.7.1
-#override azure-mgmt-dnsresolver msrest>=0.6.21
+#override azure-mgmt-dnsresolver msrest>=0.7.1
 #override azure-mgmt-appplatform msrest>=0.6.21
 #override azure-mgmt-cosmosdb msrest>=0.7.1
 #override azure-mgmt-mobilenetwork msrest>=0.6.21
-#override azure-mgmt-kusto msrest>=0.6.21
+#override azure-mgmt-kusto msrest>=0.7.1
 #override azure-mgmt-servicelinker msrest>=0.7.1
 #override azure-mgmt-servicelinker azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-azurestackhci msrest>=0.6.21
 #override azure-mgmt-azurestackhci azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-sqlvirtualmachine msrest>=0.6.21
+#override azure-mgmt-sqlvirtualmachine msrest>=0.7.1
 #override azure-mgmt-rdbms msrest>=0.6.21
 #override azure-cognitiveservices-anomalydetector azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-formrecognizer azure-mgmt-core>=1.2.0,<2.0.0
@@ -334,8 +349,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storagecache azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-monitor azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-labservices azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-mgmt-securityinsight msrest>=0.6.21
-#override azure-mgmt-securityinsight azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-securityinsight msrest>=0.7.1
+#override azure-mgmt-securityinsight azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-msi msrest>=0.6.21
 #override azure-mgmt-msi azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-applicationinsights azure-mgmt-core>=1.3.0,<2.0.0
@@ -378,19 +393,21 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-cosmosdb azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datafactory azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-scvmm msrest>=0.6.21
+#override azure-mgmt-security msrest>=0.7.1
 #override azure-mgmt-scvmm azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-reservations msrest>=0.6.21
-#override azure-mgmt-reservations azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-reservations msrest>=0.7.1
+#override azure-mgmt-reservations azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-chaos azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-network msrest>=0.7.1
 #override azure-mgmt-network azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-redhatopenshift msrest>=0.6.21
 #override azure-mgmt-redhatopenshift azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-appcontainers msrest>=0.6.21
-#override azure-mgmt-appcontainers azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-appcontainers msrest>=0.7.1
+#override azure-mgmt-appcontainers azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-recoveryservicesbackup azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-mgmt-dynatrace msrest>=0.6.21
-#override azure-mgmt-dynatrace azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-dynatrace msrest>=0.7.1
+#override azure-mgmt-dynatrace azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-securitydevops msrest>=0.7.1
 #override azure-mgmt-appplatform azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-compute azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-servicefabricmanagedclusters msrest>=0.7.1
@@ -405,7 +422,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-appconfiguration azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-imagebuilder msrest>=0.6.21
 #override azure-mgmt-imagebuilder azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-sqlvirtualmachine azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-sqlvirtualmachine azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-batch azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-workloads msrest>=0.6.21
 #override azure-mgmt-workloads azure-mgmt-core>=1.3.0,<2.0.0
@@ -414,14 +431,16 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-logic msrest>=0.6.21
 #override azure-mgmt-logic azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-communication msrest>=0.6.21
+#override azure-mgmt-securitydevops azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-communication azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-marketplaceordering msrest>=0.6.21
 #override azure-mgmt-marketplaceordering azure-mgmt-core>=1.3.1,<2.0.0
-#override azure-mgmt-authorization msrest>=0.6.21
-#override azure-mgmt-authorization azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-authorization msrest>=0.7.1
+#override azure-mgmt-authorization azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-iothub azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-devtestlabs msrest>=0.6.21
 #override azure-mgmt-devtestlabs azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-dataprotection azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-search msrest>=0.6.21
 #override azure-mgmt-search azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-notificationhubs azure-mgmt-core>=1.3.1,<2.0.0
@@ -451,7 +470,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-iothub azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-devtestlabs msrest>=0.7.1
 #override azure-mgmt-devtestlabs azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-kusto azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-search msrest>=0.7.1
+#override azure-mgmt-dnsresolver azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-search azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-notificationhubs azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-commerce msrest>=0.7.1
@@ -466,7 +487,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-relay azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-nginx msrest>=0.6.21
 #override azure-mgmt-nginx azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-netapp azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-netapp azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-consumption azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-confidentialledger azure-core<2.0.0,>=1.24.0
 #override azure-confidentialledger isodate<1.0.0,>=0.6.1
@@ -503,3 +524,4 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-redis azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph msrest>=0.7.1
+#override azure-core-experimental azure-core<2.0.0,>=1.25.0

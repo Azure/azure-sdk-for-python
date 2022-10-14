@@ -10,15 +10,12 @@ import os
 from enum import Enum
 from os import PathLike
 from typing import Dict, List, Optional, Union
-
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -38,17 +35,40 @@ from azure.ai.ml.entities._job.distribution import (
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
-from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._job.sweep.search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    SweepDistribution,
+    Uniform,
+)
 from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._credentials import (
+    ManagedIdentityConfiguration,
+    AmlTokenConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
-from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
-from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    from_rest_dict_to_dummy_rest_object,
+    get_rest_dict_for_node_attrs,
+    load_from_dict,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 from .sweep import Sweep
 
@@ -98,7 +118,9 @@ class Command(BaseNode):
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     :param services: Interactive services for the node.
-    :type services: dict
+    :type services: Dict[str, JobService]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -120,19 +142,22 @@ class Command(BaseNode):
         ] = None,
         outputs: Dict[str, Union[str, Output]] = None,
         limits: CommandJobLimits = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
         distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
         environment: Union[Environment, str] = None,
         environment_variables: Dict = None,
         resources: JobResourceConfiguration = None,
-        services: dict = None,
+        services: Dict[str, JobService] = None,
         **kwargs,
     ):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         # resolve normal dict to dict[str, JobService]
-        services = self._resolve_job_services(services)
+        services = _resolve_job_services(services)
         kwargs.pop("type", None)
         self._parameters = kwargs.pop("parameters", {})
         BaseNode.__init__(
@@ -166,18 +191,10 @@ class Command(BaseNode):
 
     @classmethod
     def _get_supported_inputs_types(cls):
-        # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
+        supported_types = super()._get_supported_inputs_types() or ()
         return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
             SweepDistribution,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
+            *supported_types,
         )
 
     @classmethod
@@ -231,7 +248,7 @@ class Command(BaseNode):
 
     @services.setter
     def services(self, value: Dict):
-        self._services = self._resolve_job_services(value)
+        self._services = _resolve_job_services(value)
 
     @property
     def component(self) -> Union[str, CommandComponent]:
@@ -250,7 +267,7 @@ class Command(BaseNode):
             msg = "Can't set command property for a registered component {}"
             raise ValidationException(
                 message=msg.format(self.component),
-                no_personal_data_message=msg.format(self.component),
+                no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -275,7 +292,7 @@ class Command(BaseNode):
             msg = "Can't set code property for a registered component {}"
             raise ValidationException(
                 message=msg.format(self.component),
-                no_personal_data_message=msg.format(self.component),
+                no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -329,8 +346,14 @@ class Command(BaseNode):
         timeout: int = None,
         trial_timeout: int = None,
         early_termination_policy: Union[EarlyTerminationPolicy, str] = None,
-        search_space: Dict[str, SweepDistribution] = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        search_space: Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The
         command component in current Command node will be used as its trial
@@ -360,7 +383,10 @@ class Command(BaseNode):
         :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping
             or truncation_selection.
         :param identity: Identity that training job will use while running on compute.
-        :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
+        :type identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration]
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
         """
@@ -442,24 +468,16 @@ class Command(BaseNode):
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
-        distribution = self.distribution._to_rest_object() if self.distribution else None
-        limits = self.limits._to_rest_object() if self.limits else None
-        services = {k: v.as_dict() for k, v in self.services.items()} if isinstance(self.services, dict) else None
-        rest_obj.update(
-            convert_ordered_dict_to_dict(
-                dict(
-                    componentId=self._get_component_id(),
-                    distribution=get_rest_dict(distribution),
-                    limits=get_rest_dict(limits),
-                    resources=get_rest_dict(self.resources, clear_empty_value=True),
-                    services=services,
-                )
-            )
-        )
-        # TODO 1951540: Refactor: avoid send None field to server, for other fields like limits, resources etc.
-        if rest_obj["services"] is None:
-            del rest_obj["services"]
-        return rest_obj
+        for key, value in {
+            "componentId": self._get_component_id(),
+            "distribution": get_rest_dict_for_node_attrs(self.distribution, clear_empty_value=True),
+            "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+            "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
+            "services": get_rest_dict_for_node_attrs(self.services),
+        }.items():
+            if value is not None:
+                rest_obj[key] = value
+        return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Command":
@@ -494,6 +512,18 @@ class Command(BaseNode):
         if "distribution" in obj and obj["distribution"]:
             obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
+        # services, sweep won't have services
+        if "services" in obj and obj["services"]:
+            # pipeline node rest object are dicts while _from_rest_job_services expect RestJobService
+            services = {}
+            for service_name, service in obj["services"].items():
+                # in rest object of a pipeline job, service will be transferred to a dict as
+                # it's attributes of a node, but JobService._from_rest_object expect a
+                # RestJobService, so we need to convert it back. Here we convert the dict to a
+                # dummy rest object which may work as a RestJobService instead.
+                services[service_name] = from_rest_dict_to_dummy_rest_object(service)
+            obj["services"] = JobService._from_rest_job_services(services)
+
         # handle limits
         if "limits" in obj and obj["limits"]:
             rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
@@ -515,7 +545,7 @@ class Command(BaseNode):
             properties=rest_command_job.properties,
             command=rest_command_job.command,
             experiment_name=rest_command_job.experiment_name,
-            services=rest_command_job.services,
+            services=JobService._from_rest_job_services(rest_command_job.services),
             status=rest_command_job.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
@@ -523,7 +553,8 @@ class Command(BaseNode):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=Identity._from_rest_object(rest_command_job.identity) if rest_command_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_command_job.identity) if rest_command_job.identity else None,
             environment_variables=rest_command_job.environment_variables,
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
@@ -552,6 +583,7 @@ class Command(BaseNode):
         for key, value in inputs.items():
             if value is not None:
                 built_inputs[key] = value
+
         return built_inputs
 
     @classmethod
@@ -559,36 +591,6 @@ class Command(BaseNode):
         from azure.ai.ml._schema.pipeline import CommandSchema
 
         return CommandSchema(context=context)
-
-    def _resolve_job_services(self, services: dict) -> dict:
-        """Resolve normal dict to dict[str, JobService]"""
-        if services is None:
-            return None
-        elif not isinstance(services, dict):
-            msg = f"Services must be a dict, got {type(services)} instead."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.COMMAND_JOB,
-                error_category=ErrorCategory.USER_ERROR,
-            )
-
-        result = {}
-        for name, service in services.items():
-            if isinstance(service, dict):
-                service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
-            elif not isinstance(service, JobService):
-                msg = (
-                    f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
-                )
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.COMMAND_JOB,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            result[name] = service
-        return result
 
     def __call__(self, *args, **kwargs) -> "Command":
         """Call Command as a function will return a new instance each time."""
@@ -623,7 +625,37 @@ class Command(BaseNode):
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )
+
+
+def _resolve_job_services(services: dict) -> Dict[str, JobService]:
+    """Resolve normal dict to dict[str, JobService]"""
+    if services is None:
+        return None
+
+    if not isinstance(services, dict):
+        msg = f"Services must be a dict, got {type(services)} instead."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMMAND_JOB,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+    result = {}
+    for name, service in services.items():
+        if isinstance(service, dict):
+            service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
+        elif not isinstance(service, JobService):
+            msg = f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.COMMAND_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        result[name] = service
+    return result

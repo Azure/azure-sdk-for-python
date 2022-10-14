@@ -14,9 +14,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
       x-ms-date:
-      - Wed, 12 Jan 2022 16:26:05 GMT
+      - Wed, 12 Oct 2022 01:02:44 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -27,21 +27,21 @@ interactions:
         code.", "target": "countrycode"}}'
     headers:
       api-supported-versions:
-      - 2021-03-07, 2022-01-11-preview2
+      - 2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01
       content-type:
       - application/json
       date:
-      - Wed, 12 Jan 2022 16:26:01 GMT
+      - Wed, 12 Oct 2022 01:02:45 GMT
       ms-cv:
-      - 6wQ+SNvlcU6YgG6cPUm/EA.0
-      request-context:
-      - appId=
+      - umlRgrxq6Ue7ekMyMYyehQ.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 60ms
+      - 65ms
     status:
       code: 400
       message: Bad Request

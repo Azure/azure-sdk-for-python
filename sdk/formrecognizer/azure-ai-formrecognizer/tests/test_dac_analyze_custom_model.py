@@ -13,6 +13,7 @@ from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultO
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
@@ -34,6 +35,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         with pytest.raises(ValueError):
             client.begin_analyze_document(model_id="", document=b"xx")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -79,6 +81,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -124,6 +127,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -169,6 +173,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -187,6 +192,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         result = poller.result()
         assert result
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -211,6 +217,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy

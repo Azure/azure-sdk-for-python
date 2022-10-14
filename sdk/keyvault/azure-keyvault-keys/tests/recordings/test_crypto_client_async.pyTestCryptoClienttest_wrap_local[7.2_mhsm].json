@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -26,7 +26,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -71,14 +71,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
           "kty": "RSA-HSM",
           "n": "mvK_LUsTEul5G-i_r4_R2qLGuGBJycA1fgOzLg5bht6u0_f6Vr2sStpyimiFGI4-A-3QrXk7NsCE83QEdSfbsbe9xc62I7HoY6_C9I82j5DcIaE1Xw4dY92HhXszfm_X1qwLpXznuxc5CE_3eX4FYHx1NsoM_zTRDzFY_AP1te0Y-16wFxklVoJ7zgk6DNRf_MZEBhGGw9IUC2qV7OSbTUdkNQmEqjcmPQ72kYngxqs2GJjJLXDLTPolvv9gSDjq6JDBu1ZjO9keRVPE7KdP8ZdJMUpHIGGQ2F4Aaa4WbjrrA3NB8zIeqHZRbFeCA7liM8CCAkMSQqaj0DAWDjC8-F8NVzV36M1EoY4RFflaK-qi1MG_7ADxy60WZYyWj26tszyatg4TwisSFyqX_v0TT-kwRkWDOk-k9f1ixdBUv1hFl3Ho7IXu2AnXJ7Xvt7GJUjXwD5fmuCIanYAAwOCvypWhlJKEqiXfCE8KluNxbLBVH4zgAwTR0xpgBYJxEgloH0zMtk00_Q1pxVGDhs2kzslD1ItAEXvzmFT8t39kNGJ7Nl5h-hJaFjJFtH-n3YhkoyGNToUUmW6g6HQyz0cZSv9GE64DMfhn6qyQoJ_1xJ39trdQeEb8qocXwd1fMc0F1H8PSa1aiRbcF8lA2owbfOTvDAQWULXzuZpz7Ufvd-c"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b/unwrapkey?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b/unwrapkey?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -106,12 +106,12 @@
       },
       "ResponseBody": {
         "alg": "RSA-OAEP",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
         "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b/unwrapkey?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b/unwrapkey?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -139,12 +139,12 @@
       },
       "ResponseBody": {
         "alg": "RSA-OAEP-256",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
         "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b/unwrapkey?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b/unwrapkey?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -172,7 +172,7 @@
       },
       "ResponseBody": {
         "alg": "RSA1_5",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestwrap-localdf182da6/da7804b5139f0a3687e30fafd08ada5b",
         "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"
       }
     }

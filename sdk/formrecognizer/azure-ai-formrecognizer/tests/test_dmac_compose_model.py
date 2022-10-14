@@ -13,12 +13,14 @@ from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelC
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 class TestTraining(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -50,6 +52,7 @@ class TestTraining(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -82,6 +85,7 @@ class TestTraining(FormRecognizerTest):
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_compose_continuation_token(self, **kwargs):
@@ -102,6 +106,7 @@ class TestTraining(FormRecognizerTest):
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy

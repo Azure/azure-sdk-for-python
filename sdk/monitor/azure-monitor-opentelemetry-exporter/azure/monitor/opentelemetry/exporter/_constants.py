@@ -98,3 +98,7 @@ _INSTRUMENTATIONS_LIST = [
 ]
 # cSpell:enable
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
+
+# sampleRate
+
+_SAMPLE_RATE_KEY = "_MS.sampleRate"

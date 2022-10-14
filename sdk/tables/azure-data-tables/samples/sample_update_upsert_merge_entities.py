@@ -37,13 +37,13 @@ class TableEntitySamples(object):
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
-        self.table_name = "SampleUpdateUpsertMerge"
+        self.table_base = "SampleUpdateUpsertMerge"
 
     def create_and_get_entities(self):
         # Instantiate a table client
         from azure.data.tables import TableClient
 
-        with TableClient.from_connection_string(self.connection_string, table_name="mytable3") as table:
+        with TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "create") as table:
 
             # Create the Table
             table.create_table()
@@ -79,7 +79,7 @@ class TableEntitySamples(object):
         # Instantiate a table client
         from azure.data.tables import TableClient
 
-        with TableClient.from_connection_string(self.connection_string, table_name="mytable4") as table:
+        with TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "list") as table:
 
             # Create the table
             table.create_table()
@@ -123,7 +123,7 @@ class TableEntitySamples(object):
         from azure.data.tables import TableClient
         from azure.data.tables import UpdateMode
 
-        with TableClient.from_connection_string(self.connection_string, table_name="mytable6") as table:
+        with TableClient.from_connection_string(self.connection_string, table_name=self.table_base + "update") as table:
 
             # Create the table and Table Client
             table.create_table()

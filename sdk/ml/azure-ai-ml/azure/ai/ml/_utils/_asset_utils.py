@@ -16,7 +16,6 @@ from pathlib import Path
 from platform import system
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
 
-import pathspec
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
 
@@ -33,7 +32,6 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import (
     DatasetVersionData,
     ModelVersionData,
@@ -49,16 +47,23 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelContainersOperations,
     ModelVersionsOperations,
 )
-from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
+from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.exceptions import (
+    EmptyDirectoryError,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
-hash_type = type(hashlib.md5())
+hash_type = type(hashlib.md5()) # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -77,12 +82,12 @@ class IgnoreFile(object):
         self._path = path
         self._path_spec = None
 
-    def _create_pathspec(self) -> Optional[pathspec.PathSpec]:
+    def _create_pathspec(self) -> Optional[List[GitWildMatchPattern]]:
         """Creates path specification based on ignore file contents."""
         if not self.exists():
             return None
         with open(self._path, "r") as fh:
-            return pathspec.PathSpec.from_lines("gitwildmatch", fh)
+            return [GitWildMatchPattern(line) for line in fh if line]
 
     def exists(self) -> bool:
         """Checks if ignore file exists."""
@@ -104,7 +109,13 @@ class IgnoreFile(object):
                 return True
             file_path = os.path.relpath(file_path, ignore_dirname)
 
-        return self._path_spec.match_file(str(file_path))
+        file_path = str(file_path)
+        norm_file = normalize_file(file_path)
+        for pattern in self._path_spec:
+            if pattern.include is not None:
+                if norm_file in pattern.match((norm_file,)):
+                    return bool(pattern.include)
+        return False
 
     @property
     def path(self) -> Union[Path, str]:
@@ -218,7 +229,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 
 def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")
+    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version") # nosec
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
@@ -253,24 +264,28 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
     4. Hash the content and convert to hex digest string.
     """
     # DO NOT change this function unless you change the verification logic together
-    _hash = hashlib.sha256()
     actual_path = path
     if os.path.islink(path):
         link_path = os.readlink(path)
         actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
     if os.path.isdir(actual_path):
-        _hash = _get_folder_content_hash(actual_path, _hash, ignore_file=ignore_file)
-    elif os.path.isfile(actual_path):
-        _hash = _get_file_hash(actual_path, _hash)
-    return str(_hash.hexdigest())
+        return _get_file_list_content_hash(_get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
+    if os.path.isfile(actual_path):
+        return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
+    return None
 
 
-def _get_folder_content_hash(
-    path: Union[str, Path], _hash: hash_type, ignore_file: IgnoreFile = IgnoreFile()
-) -> hash_type:
+def _get_upload_files_from_folder(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> List[str]:
     upload_paths = []
     for root, _, files in os.walk(path, followlinks=True):
         upload_paths += list(traverse_directory(root, files, Path(path).resolve(), "", ignore_file=ignore_file))
+    return upload_paths
+
+
+def _get_file_list_content_hash(file_list) -> str:
+    # file_list is a list of tuples, (absolute_path, relative_path)
+
+    _hash = hashlib.sha256()
     # Add file count to the hash and add '#' around file name then add each file's size to avoid collision like:
     # Case 1:
     # 'a.txt' with contents 'a'
@@ -279,14 +294,14 @@ def _get_folder_content_hash(
     # Case 2:
     # cspell:disable-next-line
     # 'a.txt' with contents 'ab.txtb'
-    _hash.update(str(len(upload_paths)).encode())
+    _hash.update(str(len(file_list)).encode())
     # Sort by "destination" path, since in this function destination prefix is empty and keep the link name in path.
-    for file_path, file_name in sorted(upload_paths, key=lambda x: str(x[1]).lower()):
+    for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
         _hash.update(("#" + file_name + "#").encode())
         _hash.update(str(os.path.getsize(file_path)).encode())
-    for file_path, file_name in sorted(upload_paths, key=lambda x: str(x[1]).lower()):
+    for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
         _hash = _get_file_hash(file_path, _hash)
-    return _hash
+    return str(_hash.hexdigest())
 
 
 def traverse_directory(

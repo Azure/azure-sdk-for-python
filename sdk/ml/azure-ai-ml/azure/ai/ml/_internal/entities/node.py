@@ -13,11 +13,11 @@ from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities import Component, Job
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineInputBase, PipelineOutputBase
+from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, PipelineInput
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
-from ...entities._validation import ValidationResult
 from .._schema.component import NodeType
+from ._input_outputs import InternalInput
 
 
 class InternalBaseNode(BaseNode):
@@ -47,7 +47,7 @@ class InternalBaseNode(BaseNode):
             str,
             Union[
                 PipelineInput,
-                PipelineOutputBase,
+                NodeOutput,
                 Input,
                 str,
                 bool,
@@ -74,6 +74,9 @@ class InternalBaseNode(BaseNode):
             **kwargs,
         )
 
+    def _build_input(self, name, meta: Input, data) -> NodeInput:
+        return super(InternalBaseNode, self)._build_input(name, InternalInput._cast_from_input_or_dict(meta), data)
+
     @property
     def _skip_required_compute_missing_validation(self) -> bool:
         return True
@@ -91,17 +94,6 @@ class InternalBaseNode(BaseNode):
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Job":
         raise RuntimeError("Internal components doesn't support load from dict")
 
-    def _schema_validate(self) -> ValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalBaseNode, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class?
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result
-
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from .._schema.node import InternalBaseNodeSchema
@@ -118,7 +110,7 @@ class InternalBaseNode(BaseNode):
             # hack: remove unfilled input from rest object instead a default input of {"job_input_type": "literal"}
             # note that this hack is not always effective as _data will be set to Input() when visiting input_value.type
             if (
-                isinstance(input_value, PipelineInputBase)
+                isinstance(input_value, NodeInput)
                 and input_value._data is None
                 and input_name in rest_dataset_literal_inputs
             ):
@@ -172,6 +164,7 @@ class HDInsight(InternalBaseNode):
         kwargs.pop("type", None)
         super(HDInsight, self).__init__(type=NodeType.HDI, **kwargs)
         self._init = True
+        self._compute_name: str = kwargs.pop("compute_name", None)
         self._queue: str = kwargs.pop("queue", None)
         self._driver_memory: str = kwargs.pop("driver_memory", None)
         self._driver_cores: int = kwargs.pop("driver_cores", None)
@@ -181,6 +174,15 @@ class HDInsight(InternalBaseNode):
         self._conf: Union[dict, str] = kwargs.pop("conf", None)
         self._hdinsight_spark_job_name: str = kwargs.pop("hdinsight_spark_job_name", None)
         self._init = False
+
+    @property
+    def compute_name(self) -> str:
+        """Name of the compute to be used."""
+        return self._compute_name
+
+    @compute_name.setter
+    def compute_name(self, value: str):
+        self._compute_name = value
 
     @property
     def queue(self) -> str:
@@ -263,6 +265,7 @@ class HDInsight(InternalBaseNode):
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return [
+            "compute_name",
             "queue",
             "driver_cores",
             "executor_memory",

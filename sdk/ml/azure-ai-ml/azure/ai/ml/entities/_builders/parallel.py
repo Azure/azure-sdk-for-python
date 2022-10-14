@@ -12,7 +12,7 @@ from typing import Dict, List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
@@ -25,9 +25,8 @@ from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
 from ..._schema import PathAwareSchema
 from .._job.distribution import DistributionConfiguration
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
-from .._util import convert_ordered_dict_to_dict, get_rest_dict, validate_attribute_type
+from .._job.pipeline._io import NodeOutput
+from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -87,8 +86,7 @@ class Parallel(BaseNode):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
-                PipelineOutputBase,
+                NodeOutput,
                 Input,
                 str,
                 bool,
@@ -174,21 +172,6 @@ class Parallel(BaseNode):
                 self._base_path = self.component.base_path
 
         self._init = False
-
-    @classmethod
-    def _get_supported_inputs_types(cls):
-        # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
-        return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
-        )
 
     @classmethod
     def _get_supported_outputs_types(cls):
@@ -332,10 +315,10 @@ class Parallel(BaseNode):
             convert_ordered_dict_to_dict(
                 dict(
                     componentId=self._get_component_id(),
-                    retry_settings=get_rest_dict(self.retry_settings),
+                    retry_settings=get_rest_dict_for_node_attrs(self.retry_settings),
                     logging_level=self.logging_level,
                     mini_batch_size=self.mini_batch_size,
-                    resources=self.resources._to_rest_object().as_dict() if self.resources else None,
+                    resources=get_rest_dict_for_node_attrs(self.resources),
                 )
             )
         )

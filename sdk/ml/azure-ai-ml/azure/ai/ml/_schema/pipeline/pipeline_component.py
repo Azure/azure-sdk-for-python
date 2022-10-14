@@ -11,6 +11,7 @@ from marshmallow import INCLUDE, fields, post_load, pre_dump
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
+from azure.ai.ml._schema.component.input_output import OutputPortSchema, PrimitiveOutputSchema
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     FileRefField,
@@ -31,12 +32,15 @@ from azure.ai.ml._schema.pipeline.component_job import (
     SweepSchema,
     _resolve_inputs_outputs,
 )
+from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
+from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType
 
 
 class NodeNameStr(PipelineNodeNameStr):
@@ -45,38 +49,44 @@ class NodeNameStr(PipelineNodeNameStr):
 
 
 def PipelineJobsField():
-    return fields.Dict(
+    pipeline_enable_job_type = {
+        NodeType.COMMAND: [
+            NestedField(CommandSchema, unknown=INCLUDE),
+            NestedField(PipelineCommandJobSchema),
+        ],
+        NodeType.IMPORT: [
+            NestedField(ImportSchema, unknown=INCLUDE),
+            NestedField(PipelineImportJobSchema),
+        ],
+        NodeType.SWEEP: [NestedField(SweepSchema, unknown=INCLUDE)],
+        NodeType.PARALLEL: [
+            # ParallelSchema support parallel pipeline yml with "component"
+            NestedField(ParallelSchema, unknown=INCLUDE),
+            NestedField(PipelineParallelJobSchema, unknown=INCLUDE),
+        ],
+        NodeType.PIPELINE: [NestedField("PipelineSchema", unknown=INCLUDE)],
+        NodeType.AUTOML: AutoMLNodeSchema(unknown=INCLUDE),
+        NodeType.SPARK: [
+            NestedField(SparkSchema, unknown=INCLUDE),
+            NestedField(PipelineSparkJobSchema),
+        ],
+    }
+
+    if is_private_preview_enabled():
+        pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
+        pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
+
+    pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),
-        values=TypeSensitiveUnionField(
-            {
-                NodeType.COMMAND: [
-                    NestedField(CommandSchema, unknown=INCLUDE),
-                    NestedField(PipelineCommandJobSchema),
-                ],
-                NodeType.IMPORT: [
-                    NestedField(ImportSchema, unknown=INCLUDE),
-                    NestedField(PipelineImportJobSchema),
-                ],
-                NodeType.SWEEP: [NestedField(SweepSchema, unknown=INCLUDE)],
-                NodeType.PARALLEL: [
-                    # ParallelSchema support parallel pipeline yml with "component"
-                    NestedField(ParallelSchema, unknown=INCLUDE),
-                    NestedField(PipelineParallelJobSchema, unknown=INCLUDE),
-                ],
-                NodeType.PIPELINE: [NestedField("PipelineSchema", unknown=INCLUDE)],
-                NodeType.AUTOML: AutoMLNodeSchema(unknown=INCLUDE),
-                NodeType.SPARK: [
-                    NestedField(SparkSchema, unknown=INCLUDE),
-                    NestedField(PipelineSparkJobSchema),
-                ],
-            }
-        ),
+        values=TypeSensitiveUnionField(pipeline_enable_job_type),
     )
+    return pipeline_job_field
 
 
 def _post_load_pipeline_jobs(context, data: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
+    from azure.ai.ml.entities._builders.do_while import DoWhile
     from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 
@@ -85,13 +95,18 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     # convert JobNode to Component here
     jobs = data.get("jobs", {})
 
-    # convert AutoML job dict to instance
     for key, job_instance in jobs.items():
-        if isinstance(job_instance, dict) and job_instance.get("type") == NodeType.AUTOML:
-            job_instance = AutoMLJob._create_instance_from_schema_dict(
-                loaded_data=job_instance,
-            )
-            jobs[key] = job_instance
+        if isinstance(job_instance, dict):
+            # convert AutoML job dict to instance
+            if job_instance.get("type") == NodeType.AUTOML:
+                job_instance = AutoMLJob._create_instance_from_schema_dict(
+                    loaded_data=job_instance,
+                )
+                jobs[key] = job_instance
+            elif job_instance.get("type") == ControlFlowType.DO_WHILE:
+                # Convert to do-while node.
+                job_instance = DoWhile._create_instance_from_schema_dict(pipeline_jobs=jobs, loaded_data=job_instance)
+                jobs[key] = job_instance
 
     for key, job_instance in jobs.items():
         # Translate job to node if translatable and overrides to_node.
@@ -109,7 +124,7 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     return data
 
 
-def _resolve_pipeline_component_inputs(component, **kwargs):
+def _resolve_pipeline_component_inputs(component, **kwargs):  # pylint: disable=unused-argument
     # Try resolve object's inputs & outputs and return a resolved new object
     result = copy.copy(component)
     # Flatten group inputs
@@ -120,6 +135,17 @@ def _resolve_pipeline_component_inputs(component, **kwargs):
 class PipelineComponentSchema(ComponentSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.PIPELINE])
     jobs = PipelineJobsField()
+
+    # primitive output is only supported for command component & pipeline component
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(PrimitiveOutputSchema),
+                NestedField(OutputPortSchema),
+            ]
+        ),
+    )
 
     @pre_dump
     def resolve_pipeline_component_inputs(self, component, **kwargs):  # pylint: disable=unused-argument, no-self-use

@@ -5,6 +5,7 @@
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
 from typing import Dict, Union
+import os
 
 from marshmallow import INCLUDE, Schema
 
@@ -15,11 +16,12 @@ from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
+from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
 
@@ -115,7 +117,8 @@ class InternalComponent(Component):
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
-        # TODO: remove this to keep it a general component class
+        self.__additional_includes = None
+        # TODO: remove these to keep it a general component class
         self.command = command
         self.scope = scope
         self.hemera = hemera
@@ -124,12 +127,21 @@ class InternalComponent(Component):
         self.starlite = starlite
         self.ae365exepool = ae365exepool
         self.launcher = launcher
-        self.__additional_includes = None
 
         # add some internal specific attributes to inputs/outputs after super().__init__()
-        self._build_internal_inputs_outputs(inputs, outputs)
+        self._post_process_internal_inputs_outputs(inputs, outputs)
 
-    def _build_internal_inputs_outputs(
+    @classmethod
+    def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
+        component_io = {}
+        for name, port in io_dict.items():
+            if is_input:
+                component_io[name] = InternalInput._cast_from_input_or_dict(port)
+            else:
+                component_io[name] = InternalOutput._cast_from_output_or_dict(port)
+        return component_io
+
+    def _post_process_internal_inputs_outputs(
         self,
         inputs_dict: Union[Dict, Input, Output],
         outputs_dict: Union[Dict, Input, Output],
@@ -138,7 +150,7 @@ class InternalComponent(Component):
             original = inputs_dict[io_name]
             # force append attribute for internal inputs
             if isinstance(original, dict):
-                for attr_name in ["is_resource", "default", "optional"]:
+                for attr_name in ["is_resource"]:
                     if attr_name in original:
                         io_object.__setattr__(attr_name, original[attr_name])
 
@@ -165,12 +177,30 @@ class InternalComponent(Component):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalBaseComponentSchema(context=context)
 
-    def _customized_validate(self) -> ValidationResult:
+    def _validate(self, raise_error=False) -> MutableValidationResult:
+        if self._additional_includes is not None and self._additional_includes._validate().passed:
+            # update source path in case dependency file is in additional_includes
+            with self._resolve_local_code() as tmp_base_path:
+                origin_base_path, origin_source_path = self._base_path, self._source_path
+
+                try:
+                    self._base_path, self._source_path = \
+                        tmp_base_path, tmp_base_path / os.path.basename(self._source_path)
+                    return super()._validate(raise_error=raise_error)
+                finally:
+                    self._base_path, self._source_path = origin_base_path, origin_source_path
+
+        return super()._validate(raise_error=raise_error)
+
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
         if isinstance(self.environment, InternalEnvironment):
-            validation_result.merge_with(self.environment.validate(self._source_path))
+            validation_result.merge_with(
+                self.environment._validate(self._source_path),
+                field_name="environment",
+            )
         if self._additional_includes is not None:
-            validation_result.merge_with(self._additional_includes.validate())
+            validation_result.merge_with(self._additional_includes._validate())
         return validation_result
 
     @classmethod
@@ -214,14 +244,3 @@ class InternalComponent(Component):
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
-
-    def _schema_validate(self) -> ValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalComponent, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result

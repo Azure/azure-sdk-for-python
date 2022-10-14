@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 
 import copy
+import platform
 from typing import Tuple
 
 import pytest
-from automl_job.jsonl_converter import convert_mask_in_VOC_to_jsonl
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
 from azure.ai.ml import MLClient, automl
@@ -18,9 +18,16 @@ from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob,
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
+from devtools_testutils import AzureRecordedTestCase, is_live
+
 
 @pytest.mark.automle2etest
-class TestAutoMLImageSegmentation:
+@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.skipif(
+    condition=not is_live() or platform.python_implementation() == "PyPy",
+    reason="Datasets downloaded by test are too large to record reliably"
+)
+class TestAutoMLImageSegmentation(AzureRecordedTestCase):
     def _create_jsonl_segmentation(self, client, train_path, val_path):
 
         fridge_data = Data(
@@ -30,6 +37,9 @@ class TestAutoMLImageSegmentation:
         data_path_uri = client.data.create_or_update(fridge_data)
 
         data_path = "./odFridgeObjectsMask/"
+
+        from automl_job.jsonl_converter import convert_mask_in_VOC_to_jsonl
+
         convert_mask_in_VOC_to_jsonl(data_path, data_path_uri.path, train_path, val_path)
 
     def test_image_segmentation_run(self, image_segmentation_dataset: Tuple[Input, Input], client: MLClient) -> None:
@@ -70,9 +80,8 @@ class TestAutoMLImageSegmentation:
                 ),
             ]
         )
+        image_instance_segmentation_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
         image_instance_segmentation_job_sweep.set_sweep(
-            max_trials=1,
-            max_concurrent_trials=1,
             sampling_algorithm="Random",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )

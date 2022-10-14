@@ -11,7 +11,6 @@ from azure.ai.ml.entities._component.component import Component, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ..._schema import PathAwareSchema
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .base_node import BaseNode
@@ -71,7 +70,8 @@ class Pipeline(BaseNode):
             outputs=outputs,
             **kwargs,
         )
-        self._settings = settings if settings else PipelineJobSettings()
+        self._settings = None
+        self.settings = settings
 
     @property
     def component(self) -> Union[str, Component]:
@@ -87,11 +87,21 @@ class Pipeline(BaseNode):
         :return: Settings of the pipeline.
         :rtype: ~azure.ai.ml.entities.PipelineJobSettings
         """
+        if self._settings is None:
+            self._settings = PipelineJobSettings()
         return self._settings
 
     @settings.setter
     def settings(self, value):
+        if value is not None and not isinstance(value, PipelineJobSettings):
+            raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
+
+    @classmethod
+    def _get_supported_inputs_types(cls):
+        # Return None here to skip validation,
+        # as input could be custom class object(parameter group).
+        return None
 
     @property
     def _skip_required_compute_missing_validation(self):
@@ -117,7 +127,7 @@ class Pipeline(BaseNode):
             properties=self.properties,
             inputs=self._job_inputs,
             outputs=self._job_outputs,
-            jobs=self.component.jobs,
+            component=self.component,
             settings=self.settings,
         )
 
@@ -126,12 +136,15 @@ class Pipeline(BaseNode):
         # Note: settings is not supported on node,
         # jobs.create_or_update(node) will call node._to_job() at first,
         # thus won't reach here.
+        # pylint: disable=protected-access
         from azure.ai.ml.entities import PipelineComponent
 
         validation_result = super(Pipeline, self)._customized_validate()
         ignored_keys = PipelineComponent._check_ignored_keys(self)
         if ignored_keys:
             validation_result.append_warning(message=f"{ignored_keys} ignored on node {self.name!r}.")
+        if isinstance(self.component, PipelineComponent):
+            validation_result.merge_with(self.component._customized_validate())
         return validation_result
 
     @classmethod

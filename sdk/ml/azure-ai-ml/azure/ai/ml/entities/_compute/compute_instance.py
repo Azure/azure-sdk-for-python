@@ -6,7 +6,6 @@
 
 from typing import Dict, List, Optional
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstance as CIRest
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
@@ -21,10 +20,13 @@ from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
+from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 
-from ._identity import IdentityConfiguration
 from ._schedule import ComputeSchedules
+from ._setup_scripts import SetupScripts
 
 
 class ComputeInstanceSshSettings:
@@ -69,7 +71,7 @@ class ComputeInstanceSshSettings:
         return self._ssh_port
 
 
-class AssignedUserConfiguration:
+class AssignedUserConfiguration(DictMixin):
     """Settings to create a compute on behalf of another user."""
 
     def __init__(self, *, user_tenant_id: str, user_object_id: str):
@@ -123,6 +125,8 @@ class ComputeInstance(Compute):
     :param idle_time_before_shutdown: Stops compute instance after user defined period of
         inactivity. Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
     :type idle_time_before_shutdown: Optional[str], optional
+    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
+    :type setup_scripts: Optional[SetupScripts], optional
     """
 
     def __init__(
@@ -138,6 +142,7 @@ class ComputeInstance(Compute):
         schedules: Optional[ComputeSchedules] = None,
         identity: IdentityConfiguration = None,
         idle_time_before_shutdown: Optional[str] = None,
+        setup_scripts: Optional[SetupScripts] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -159,6 +164,7 @@ class ComputeInstance(Compute):
         self.schedules = schedules
         self.identity = identity
         self.idle_time_before_shutdown = idle_time_before_shutdown
+        self.setup_scripts = setup_scripts
         self.subnet = None
 
     @property
@@ -227,6 +233,7 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown=self.idle_time_before_shutdown,
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
+        compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
@@ -235,7 +242,7 @@ class ComputeInstance(Compute):
         return ComputeResource(
             location=self.location,
             properties=compute_instance,
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
         )
 
     def _to_dict(self) -> Dict:
@@ -317,7 +324,10 @@ class ComputeInstance(Compute):
             schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
             if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
             else None,
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
+            if prop.properties and prop.properties.setup_scripts
+            else None,
         )
         return response
 

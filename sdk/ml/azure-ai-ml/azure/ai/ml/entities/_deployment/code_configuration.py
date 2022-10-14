@@ -4,14 +4,15 @@
 
 import logging
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2021_10_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._mixins import DictMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class CodeConfiguration:
+class CodeConfiguration(DictMixin):
     """CodeConfiguration.
 
     :param code: Code entity, defaults to None
