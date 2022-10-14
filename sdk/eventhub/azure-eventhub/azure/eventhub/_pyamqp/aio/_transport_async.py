@@ -381,13 +381,12 @@ class AsyncTransport(
         self.loop.run_in_executor(None, self.writer.write,s)
         await self.writer.drain()
 
-    async def close(self):
+    def close(self):
         if self.writer is not None:
             if self.sslopts:
                 # see issue: https://github.com/encode/httpx/issues/914
                 self.writer.transport.abort()
             self.writer.close()
-            await self.writer.wait_closed()
             self.writer, self.reader = None, None
         self.sock = None
         self.connected = False
@@ -498,7 +497,7 @@ class WebSocketTransportAsync(AsyncTransportMixin): # pylint: disable=too-many-i
         except WebSocketTimeoutException:
             raise TimeoutError()
 
-    async def close(self):
+    def close(self):
         """Do any preliminary work in shutting down the connection."""
         self.ws.close()
         self.connected = False
