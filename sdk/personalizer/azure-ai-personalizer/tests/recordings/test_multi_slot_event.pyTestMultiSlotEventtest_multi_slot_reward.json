@@ -7,16 +7,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "597ce102-fa4a-4227-a409-0fe8e2843d95",
+        "apim-request-id": "3b4b60ee-5eda-4973-bdf0-66f88712b59b",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "155",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:26:22 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:44 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
@@ -38,7 +38,7 @@
         "Connection": "keep-alive",
         "Content-Length": "64",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "reward": [
@@ -50,15 +50,15 @@
       },
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "1f167e74-afd9-42a3-97f8-304146ecbdcd",
+        "apim-request-id": "6d3523cc-76ef-4f5e-b9f8-6e9186b19928",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 11 Oct 2022 20:26:23 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:44 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2"
+        "x-envoy-upstream-service-time": "4"
       },
       "ResponseBody": null
     }

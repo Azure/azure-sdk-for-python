@@ -8,15 +8,15 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "26fe0980-3132-4c58-87e0-634a20a617ea",
+        "apim-request-id": "77d4ea6d-a04e-450d-92c5-63c725f96b0b",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 11 Oct 2022 20:26:20 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:42 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
@@ -33,22 +33,22 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1251c487-6176-4c24-9458-1cecf85e9f32",
+        "apim-request-id": "c8fd5bb1-6414-4994-9986-bd123a5a95fc",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "2",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:26:20 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:42 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "26"
+        "x-envoy-upstream-service-time": "24"
       },
       "ResponseBody": {}
     }

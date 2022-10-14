@@ -26,7 +26,8 @@ class TestConfigurationAsync(AzureRecordedTestCase):
     async def test_update_configuration(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_admin_client(
+            personalizer_endpoint, personalizer_api_key)
         configuration = {
             "rewardAggregation": "average",
             "modelExportFrequency": "PT3M",
@@ -48,10 +49,13 @@ class TestConfigurationAsync(AzureRecordedTestCase):
     async def test_update_policy(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_admin_client(
+            personalizer_endpoint, personalizer_api_key)
         policy = {
             "name": "app1",
-            "arguments": "--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic ME --quadratic OT --quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips --epsilon 0.2",
+            "arguments": "--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic ME --quadratic OT "
+                         "--quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips "
+                         "--epsilon 0.2",
         }
         updated_policy = await client.policy.update(policy)
         await self.sleep(30)
@@ -68,7 +72,8 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         }
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_admin_client(
+            personalizer_endpoint, personalizer_api_key)
         new_policy = await client.policy.reset()
         await self.sleep(30)
         policy_equals(new_policy, default_policy)

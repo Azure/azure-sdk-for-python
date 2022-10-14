@@ -10,7 +10,7 @@ class TestMultiSlotRank(AzureRecordedTestCase):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
         client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
-        personalizer_helpers.enable_multi_slot(client, self.is_live)
+        personalizer_helpers.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
         request = {"actions": get_actions(), "slots": get_slots(), "eventId": event_id}
         response = client.multi_slot.rank(request)
@@ -26,7 +26,7 @@ class TestMultiSlotRank(AzureRecordedTestCase):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
         client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
-        personalizer_helpers.enable_multi_slot(client, self.is_live)
+        personalizer_helpers.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
         request = {
             "eventId": event_id,
@@ -51,10 +51,10 @@ def get_actions():
 
 def get_context_features():
     return [
-        {"User": {"ProfileType": "AnonymousUser", "LatLong": "47.6,-122.1"}},
-        {"Environment": {"DayOfMonth": "28", "MonthOfYear": "8", "Weather": "Sunny"}},
-        {"Device": {"Mobile": True, "Windows": True}},
-        {"RecentActivity": {"ItemsInCart": 3}},
+        {"user": {"profileType": "anonymousUser", "latLong": "47.6,-122.1"}},
+        {"environment": {"dayOfMonth": "28", "monthOfYear": "8", "weather": "Sunny"}},
+        {"device": {"mobile": True, "windows": True}},
+        {"recentActivity": {"itemsInCart": 3}},
     ]
 
 
@@ -62,12 +62,12 @@ def get_slots():
     return [{
         "id": "Main Article",
         "baselineAction": "NewsArticle",
-        "features": [{"Size": "Large", "Position": "Top Middle"}],
+        "positionFeatures": [{"Size": "Large", "Position": "Top Middle"}],
         "excludedActions": ["SportsArticle", "EntertainmentArticle"],
-    },
-    {
-        "id": "Side Bar",
-        "baselineAction": "SportsArticle",
-        "features": [{"Size": "Small", "Position": "Bottom Right"}],
-        "excludedActions": ["EntertainmentArticle"],
-    }]
+        },
+        {
+            "id": "Side Bar",
+            "baselineAction": "SportsArticle",
+            "positionFeatures": [{"Size": "Small", "Position": "Bottom Right"}],
+            "excludedActions": ["EntertainmentArticle"],
+        }]

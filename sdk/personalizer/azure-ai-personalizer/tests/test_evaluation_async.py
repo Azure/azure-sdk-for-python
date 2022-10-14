@@ -18,7 +18,8 @@ class TestEvaluationsAsync(AzureRecordedTestCase):
     async def test_run_evaluation(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_admin_client(
+            personalizer_endpoint, personalizer_api_key)
         evaluation_id = str(uuid.uuid4())
         evaluation_name = "python_sdk_test_evaluation"
         start_time = date.fromisoformat("2022-09-24")
@@ -45,7 +46,8 @@ class TestEvaluationsAsync(AzureRecordedTestCase):
     async def test_list_evaluations(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers_async.create_async_personalizer_admin_client(
+            personalizer_endpoint, personalizer_api_key)
         client.evaluations.list()
 
     async def is_evaluation_final(self, client, evaluation_id, iso_start_time, iso_end_time):

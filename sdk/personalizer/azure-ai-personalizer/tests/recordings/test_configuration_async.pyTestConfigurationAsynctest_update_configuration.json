@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "215",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "rewardAggregation": "average",
@@ -22,17 +22,17 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "decb4e9a-7e9d-497c-a858-b85aa2d12cdd",
+        "apim-request-id": "dc0127c3-ee1d-4dad-ab54-fd01c9a34f32",
         "Cache-Control": "no-store, must-revalidate, no-cache",
-        "Content-Length": "417",
+        "Content-Length": "462",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:24:43 GMT",
+        "Date": "Fri, 14 Oct 2022 21:41:09 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "245"
+        "x-envoy-upstream-service-time": "259"
       },
       "ResponseBody": {
         "rewardWaitTime": "PT4H",
@@ -41,12 +41,13 @@
         "explorationPercentage": 0.3,
         "modelExportFrequency": "PT3M",
         "logRetentionDays": -1,
-        "lastConfigurationEditDate": "2022-10-11T20:24:12",
+        "lastConfigurationEditDate": "2022-10-14T21:40:39",
         "learningMode": "Online",
         "isAutoOptimizationEnabled": true,
         "autoOptimizationFrequency": "P28D",
         "autoOptimizationStartDate": "2022-09-01T21:02:42",
-        "modelRetrainDays": 0
+        "modelRetrainDays": 0,
+        "isInferenceExplainabilityEnabled": false
       }
     },
     {
@@ -55,22 +56,22 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "98da5236-1eb6-4caf-9e7e-909b425c5b7c",
+        "apim-request-id": "f3db7cb6-5eaa-44fd-89a7-8d40ac566508",
         "Cache-Control": "no-store, must-revalidate, no-cache",
-        "Content-Length": "417",
+        "Content-Length": "462",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:25:14 GMT",
+        "Date": "Fri, 14 Oct 2022 21:41:39 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "47"
+        "x-envoy-upstream-service-time": "32"
       },
       "ResponseBody": {
         "rewardWaitTime": "PT4H",
@@ -79,12 +80,13 @@
         "explorationPercentage": 0.3,
         "modelExportFrequency": "PT3M",
         "logRetentionDays": -1,
-        "lastConfigurationEditDate": "2022-10-11T20:24:12",
+        "lastConfigurationEditDate": "2022-10-14T21:40:39",
         "learningMode": "Online",
         "isAutoOptimizationEnabled": true,
         "autoOptimizationFrequency": "P28D",
         "autoOptimizationStartDate": "2022-09-01T21:02:42",
-        "modelRetrainDays": 0
+        "modelRetrainDays": 0,
+        "isInferenceExplainabilityEnabled": false
       }
     }
   ],

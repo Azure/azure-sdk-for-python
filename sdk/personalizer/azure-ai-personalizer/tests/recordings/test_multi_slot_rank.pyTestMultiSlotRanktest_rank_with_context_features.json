@@ -7,22 +7,22 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9315bd14-6d68-4a1e-a1e8-48d47a81f191",
+        "apim-request-id": "480910d1-cd26-4700-893f-6fbe1eb3383b",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "155",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:26:25 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:45 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "13"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "name": "1f8622f33afb4845823480ac4aaa9a2d",
@@ -36,9 +36,9 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "831",
+        "Content-Length": "847",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "eventId": "123456789",
@@ -72,7 +72,7 @@
           {
             "id": "Main Article",
             "baselineAction": "NewsArticle",
-            "features": [
+            "positionFeatures": [
               {
                 "Size": "Large",
                 "Position": "Top Middle"
@@ -86,7 +86,7 @@
           {
             "id": "Side Bar",
             "baselineAction": "SportsArticle",
-            "features": [
+            "positionFeatures": [
               {
                 "Size": "Small",
                 "Position": "Bottom Right"
@@ -99,45 +99,45 @@
         ],
         "contextFeatures": [
           {
-            "User": {
-              "ProfileType": "AnonymousUser",
-              "LatLong": "47.6,-122.1"
+            "user": {
+              "profileType": "anonymousUser",
+              "latLong": "47.6,-122.1"
             }
           },
           {
-            "Environment": {
-              "DayOfMonth": "28",
-              "MonthOfYear": "8",
-              "Weather": "Sunny"
+            "environment": {
+              "dayOfMonth": "28",
+              "monthOfYear": "8",
+              "weather": "Sunny"
             }
           },
           {
-            "Device": {
-              "Mobile": true,
-              "Windows": true
+            "device": {
+              "mobile": true,
+              "windows": true
             }
           },
           {
-            "RecentActivity": {
-              "ItemsInCart": 3
+            "recentActivity": {
+              "itemsInCart": 3
             }
           }
         ]
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "a543d654-b2e6-40d4-a678-b3fb4e171d29",
+        "apim-request-id": "0832ba49-cc6c-4475-a006-1bb8e24496e9",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "201",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Tue, 11 Oct 2022 20:26:25 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:45 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "4"
+        "x-envoy-upstream-service-time": "3"
       },
       "ResponseBody": {
         "slots": [

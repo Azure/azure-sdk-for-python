@@ -21,19 +21,31 @@ from azure.core.credentials import AzureKeyCredential
 
 
 async def main():
-    client = get_async_personalizer_client()
+    try:
+        endpoint = os.environ['PERSONALIZER_ENDPOINT']
+    except KeyError:
+        print("PERSONALIZER_ENDPOINT must be set.")
+        sys.exit(1)
+
+    try:
+        api_key = os.environ['PERSONALIZER_API_KEY']
+    except KeyError:
+        print("PERSONALIZER_API_KEY must be set.")
+        sys.exit(1)
+
+    client = PersonalizerClient(endpoint, AzureKeyCredential(api_key))
 
     # We want to rank the actions for two slots.
     slots = [
         {
             "id": "Main Article",
             "baselineAction": "NewsArticle",
-            "features": [{"Size": "Large", "Position": "Top Middle"}],
+            "positionFeatures": [{"Size": "Large", "Position": "Top Middle"}],
         },
         {
             "id": "Side Bar",
             "baselineAction": "SportsArticle",
-            "features": [{"Size": "Small", "Position": "Bottom Right"}],
+            "positionFeatures": [{"Size": "Small", "Position": "Bottom Right"}],
         },
     ]
 
@@ -44,11 +56,12 @@ async def main():
         {"id": "EntertainmentArticle", "features": [{"type": "Entertainment"}]},
     ]
 
+    # Context of the user to which the action must be presented.
     context_features = [
-        {"User": {"ProfileType": "AnonymousUser", "LatLong": "47.6,-122.1"}},
-        {"Environment": {"DayOfMonth": "28", "MonthOfYear": "8", "Weather": "Sunny"}},
-        {"Device": {"Mobile": True, "Windows": True}},
-        {"RecentActivity": {"ItemsInCart": 3}},
+        {"user": {"profileType": "AnonymousUser", "latLong": "47.6,-122.1"}},
+        {"environment": {"dayOfMonth": "28", "monthOfYear": "8", "weather": "Sunny"}},
+        {"device": {"mobile": True, "windows": True}},
+        {"recentActivity": {"itemsInCart": 3}},
     ]
 
     request = {
@@ -72,28 +85,6 @@ async def main():
             rank_response.get("eventId"),
             {"reward": [{"slotId": "Main Article", "value": 1.0}]})
         print("Completed sending reward response")
-
-
-def get_async_personalizer_client():
-    endpoint = get_endpoint()
-    api_key = get_api_key()
-    return PersonalizerClient(endpoint, AzureKeyCredential(api_key))
-
-
-def get_endpoint():
-    try:
-        return os.environ['PERSONALIZER_ENDPOINT']
-    except KeyError:
-        print("PERSONALIZER_ENDPOINT must be set.")
-        sys.exit(1)
-
-
-def get_api_key():
-    try:
-        return os.environ['PERSONALIZER_API_KEY']
-    except KeyError:
-        print("PERSONALIZER_API_KEY must be set.")
-        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -21,8 +21,21 @@ from azure.core.credentials import AzureKeyCredential
 
 
 async def main():
-    client = get_async_personalizer_client()
+    try:
+        endpoint = os.environ['PERSONALIZER_ENDPOINT']
+    except KeyError:
+        print("PERSONALIZER_ENDPOINT must be set.")
+        sys.exit(1)
 
+    try:
+        api_key = os.environ['PERSONALIZER_API_KEY']
+    except KeyError:
+        print("PERSONALIZER_API_KEY must be set.")
+        sys.exit(1)
+
+    client = PersonalizerClient(endpoint, AzureKeyCredential(api_key))
+
+    # The list of actions to be ranked with metadata associated for each action.
     actions = [
         {
             "id": "Video1",
@@ -39,10 +52,12 @@ async def main():
             ],
         },
     ]
+
+    # Context of the user to which the action must be presented.
     context_features = [
-        {"Features": {"day": "tuesday", "time": "night", "weather": "rainy"}},
+        {"currentContext": {"day": "tuesday", "time": "night", "weather": "rainy"}},
         {
-            "Features": {
+            "userContext": {
                 "payingUser": True,
                 "favoriteGenre": "documentary",
                 "hoursOnSite": 0.12,
@@ -67,28 +82,6 @@ async def main():
         print("Sending reward event")
         await client.events.reward(rank_response.get("eventId"), {"value": 1.0})
         print("Completed sending reward response")
-
-
-def get_async_personalizer_client():
-    endpoint = get_endpoint()
-    api_key = get_api_key()
-    return PersonalizerClient(endpoint, AzureKeyCredential(api_key))
-
-
-def get_endpoint():
-    try:
-        return os.environ['PERSONALIZER_ENDPOINT']
-    except KeyError:
-        print("PERSONALIZER_ENDPOINT must be set.")
-        sys.exit(1)
-
-
-def get_api_key():
-    try:
-        return os.environ['PERSONALIZER_API_KEY']
-    except KeyError:
-        print("PERSONALIZER_API_KEY must be set.")
-        sys.exit(1)
 
 
 if __name__ == "__main__":

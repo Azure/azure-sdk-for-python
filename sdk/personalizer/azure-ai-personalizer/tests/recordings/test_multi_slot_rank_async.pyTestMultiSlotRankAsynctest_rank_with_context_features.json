@@ -6,22 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "96bc0d30-f989-45b5-8865-a15265698140",
+        "apim-request-id": "d89e889a-efe3-469d-a999-4c0c40ce2cee",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "155",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:26:27 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:46 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "11"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "name": "1f8622f33afb4845823480ac4aaa9a2d",
@@ -34,9 +34,9 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "831",
+        "Content-Length": "847",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "eventId": "123456789",
@@ -70,7 +70,7 @@
           {
             "id": "Main Article",
             "baselineAction": "NewsArticle",
-            "features": [
+            "positionFeatures": [
               {
                 "Size": "Large",
                 "Position": "Top Middle"
@@ -84,7 +84,7 @@
           {
             "id": "Side Bar",
             "baselineAction": "SportsArticle",
-            "features": [
+            "positionFeatures": [
               {
                 "Size": "Small",
                 "Position": "Bottom Right"
@@ -124,18 +124,18 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "39364b1b-42dd-49d6-817c-858e7a557583",
+        "apim-request-id": "43297afb-9933-451f-b6cc-ad8412c21607",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "201",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Tue, 11 Oct 2022 20:26:27 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:46 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "4"
+        "x-envoy-upstream-service-time": "3"
       },
       "ResponseBody": {
         "slots": [

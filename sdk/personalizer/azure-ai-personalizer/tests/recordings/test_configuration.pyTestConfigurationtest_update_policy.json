@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "223",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "name": "app1",
@@ -17,17 +17,17 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "88444063-9c84-4b8a-b6fc-0ed7e1407639",
+        "apim-request-id": "3ec767f3-991f-4f63-a5f3-d2b0d988dc76",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "257",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:23:42 GMT",
+        "Date": "Fri, 14 Oct 2022 21:40:08 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "169"
+        "x-envoy-upstream-service-time": "115"
       },
       "ResponseBody": {
         "name": "dccb7cec1bc54695b64a0ea223b02533",
@@ -41,22 +41,22 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d18bc7b8-2596-43f6-8a08-5fce3a7af7e1",
+        "apim-request-id": "79eb2e3b-fd29-4088-a8ba-7466e3db4d26",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "257",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:24:12 GMT",
+        "Date": "Fri, 14 Oct 2022 21:40:38 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "10"
+        "x-envoy-upstream-service-time": "12"
       },
       "ResponseBody": {
         "name": "dccb7cec1bc54695b64a0ea223b02533",

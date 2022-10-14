@@ -9,22 +9,22 @@
         "Connection": "keep-alive",
         "Content-Length": "14",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "value": 1.0
       },
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "645585f5-bcd9-43ca-b414-02648f790cd0",
+        "apim-request-id": "ce943b2a-6800-40ac-a7c7-e6dbd4f8de9b",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 11 Oct 2022 20:26:17 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:41 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "807"
+        "x-envoy-upstream-service-time": "31"
       },
       "ResponseBody": null
     }

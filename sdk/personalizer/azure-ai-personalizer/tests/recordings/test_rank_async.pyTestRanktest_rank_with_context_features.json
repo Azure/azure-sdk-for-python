@@ -6,15 +6,15 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "554",
+        "Content-Length": "560",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "eventId": "123456789",
         "actions": [
           {
-            "id": "Person1",
+            "id": "Video1",
             "features": [
               {
                 "videoType": "documentary",
@@ -27,7 +27,7 @@
             ]
           },
           {
-            "id": "Person2",
+            "id": "Video2",
             "features": [
               {
                 "videoType": "documentary",
@@ -42,14 +42,14 @@
         ],
         "contextFeatures": [
           {
-            "Features": {
+            "currentContext": {
               "day": "tuesday",
               "time": "night",
               "weather": "rainy"
             }
           },
           {
-            "Features": {
+            "userContext": {
               "payingUser": true,
               "favoriteGenre": "documentary",
               "hoursOnSite": 0.12,
@@ -58,37 +58,37 @@
           }
         ],
         "excludedActions": [
-          "Person1"
+          "Video1"
         ]
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "f07f3b32-f246-4923-84b9-719521bd278d",
+        "apim-request-id": "5d82a025-14c7-4a79-924f-ae1cdf9aaf3a",
         "Cache-Control": "no-store, must-revalidate, no-cache",
-        "Content-Length": "200",
+        "Content-Length": "197",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Tue, 11 Oct 2022 20:26:28 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:47 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3"
+        "x-envoy-upstream-service-time": "4"
       },
       "ResponseBody": {
         "ranking": [
           {
-            "id": "Person1",
+            "id": "Video1",
             "probability": 0.0
           },
           {
-            "id": "Person2",
+            "id": "Video2",
             "probability": 1.0
           }
         ],
         "eventId": "123456789",
-        "rewardActionId": "Person2"
+        "rewardActionId": "Video2"
       }
     }
   ],

@@ -23,7 +23,7 @@ class TestConfiguration(AzureRecordedTestCase):
     def test_update_configuration(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
         configuration = {
             "rewardAggregation": "average",
             "modelExportFrequency": "PT3M",
@@ -45,10 +45,12 @@ class TestConfiguration(AzureRecordedTestCase):
     def test_update_policy(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
         policy = {
             "name": "app1",
-            "arguments": "--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic ME --quadratic OT --quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips --epsilon 0.2",
+            "arguments": "--cb_explore_adf --quadratic GT --quadratic MR --quadratic GR --quadratic ME --quadratic OT "
+                         "--quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips "
+                         "--epsilon 0.2",
         }
         updated_policy = client.policy.update(policy)
         self.sleep(30)
@@ -65,7 +67,7 @@ class TestConfiguration(AzureRecordedTestCase):
         }
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
-        client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
+        client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
         new_policy = client.policy.reset()
         self.sleep(30)
         policy_equals(new_policy, default_policy)

@@ -1,5 +1,5 @@
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.personalizer import PersonalizerClient
+from azure.ai.personalizer import PersonalizerClient, PersonalizerAdministrationClient
 from devtools_testutils import EnvironmentVariableLoader
 import functools
 import time
@@ -20,7 +20,14 @@ def create_personalizer_client(personalizer_endpoint, personalizer_api_key):
     return client
 
 
-def enable_multi_slot(client, is_live):
+def create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key):
+    credential = AzureKeyCredential(personalizer_api_key)
+    client = PersonalizerAdministrationClient(personalizer_endpoint, credential=credential)
+    return client
+
+
+def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live):
+    client = create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
     policy = client.policy.get()
     if policy["arguments"].__contains__("--ccb_explore_adf"):
         return

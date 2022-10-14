@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "150",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "actions": [
@@ -30,18 +30,18 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "c99127a4-8616-4105-a7ac-6bacb605e491",
+        "apim-request-id": "bd8b3731-1d7c-41f5-bcdc-177b329e338a",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "166",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Tue, 11 Oct 2022 20:26:27 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:47 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "33"
+        "x-envoy-upstream-service-time": "35"
       },
       "ResponseBody": {
         "ranking": [
@@ -50,7 +50,7 @@
             "probability": 1.0
           }
         ],
-        "eventId": "e86431de53074c21affcda5674f374e8-aPliY",
+        "eventId": "4fd470fb9bd0469d8c384c1add84b226-aQrVt",
         "rewardActionId": "Person"
       }
     }

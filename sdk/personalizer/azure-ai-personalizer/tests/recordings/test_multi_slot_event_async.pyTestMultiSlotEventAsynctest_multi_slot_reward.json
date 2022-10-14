@@ -6,22 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d4c31744-ab4a-4949-ac4e-e555306fc5ae",
+        "apim-request-id": "c37e0e68-2478-474a-aeaa-0518d11651b4",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "155",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:26:24 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:44 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "12"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "name": "1f8622f33afb4845823480ac4aaa9a2d",
@@ -36,7 +36,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "64",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "reward": [
@@ -48,15 +48,15 @@
       },
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "1570aa91-0ca3-4e4c-9bd8-f9b6c1c2ccc6",
+        "apim-request-id": "70eebcb5-c077-48da-9b2f-8f68eaa05300",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 11 Oct 2022 20:26:24 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:44 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2"
+        "x-envoy-upstream-service-time": "3"
       },
       "ResponseBody": null
     }

@@ -13,8 +13,9 @@ class TestMultiSlotRankAsync(AzureRecordedTestCase):
     async def test_rank_with_no_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
-        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
-        await personalizer_helpers_async.enable_multi_slot(client, self.is_live)
+        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint,
+                                                                             personalizer_api_key)
+        await personalizer_helpers_async.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
         request = {"actions": get_actions(), "slots": get_slots(), "eventId": event_id}
         response = await client.multi_slot.rank(request)
@@ -29,8 +30,9 @@ class TestMultiSlotRankAsync(AzureRecordedTestCase):
     async def test_rank_with_context_features(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_multi_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
-        client = personalizer_helpers_async.create_async_personalizer_client(personalizer_endpoint, personalizer_api_key)
-        await personalizer_helpers_async.enable_multi_slot(client, self.is_live)
+        client = personalizer_helpers_async.create_async_personalizer_client(
+            personalizer_endpoint, personalizer_api_key)
+        await personalizer_helpers_async.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
         request = {
             "eventId": event_id,
@@ -66,12 +68,12 @@ def get_slots():
     return [{
         "id": "Main Article",
         "baselineAction": "NewsArticle",
-        "features": [{"Size": "Large", "Position": "Top Middle"}],
+        "positionFeatures": [{"Size": "Large", "Position": "Top Middle"}],
         "excludedActions": ["SportsArticle", "EntertainmentArticle"],
-    },
-    {
-        "id": "Side Bar",
-        "baselineAction": "SportsArticle",
-        "features": [{"Size": "Small", "Position": "Bottom Right"}],
-        "excludedActions": ["EntertainmentArticle"],
-    }]
+        },
+        {
+            "id": "Side Bar",
+            "baselineAction": "SportsArticle",
+            "positionFeatures": [{"Size": "Small", "Position": "Bottom Right"}],
+            "excludedActions": ["EntertainmentArticle"],
+        }]

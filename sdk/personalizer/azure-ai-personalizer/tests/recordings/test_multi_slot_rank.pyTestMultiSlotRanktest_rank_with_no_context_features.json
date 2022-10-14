@@ -7,16 +7,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "feec0279-1f9a-4a5d-b834-b77191722287",
+        "apim-request-id": "9cccc3a7-4dc1-443e-9572-3b0dd0f6254f",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "155",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 20:26:25 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:45 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
@@ -36,9 +36,9 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "574",
+        "Content-Length": "590",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "actions": [
@@ -71,7 +71,7 @@
           {
             "id": "Main Article",
             "baselineAction": "NewsArticle",
-            "features": [
+            "positionFeatures": [
               {
                 "Size": "Large",
                 "Position": "Top Middle"
@@ -85,7 +85,7 @@
           {
             "id": "Side Bar",
             "baselineAction": "SportsArticle",
-            "features": [
+            "positionFeatures": [
               {
                 "Size": "Small",
                 "Position": "Bottom Right"
@@ -100,18 +100,18 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "677716bc-f40e-4d2a-ab9c-1c161e2cefd4",
+        "apim-request-id": "10dd2bda-f340-4da0-b2e5-37496da33030",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "201",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Tue, 11 Oct 2022 20:26:25 GMT",
+        "Date": "Fri, 14 Oct 2022 21:42:45 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "slots": [
