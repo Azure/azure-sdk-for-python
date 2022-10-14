@@ -52,7 +52,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
 
     # --Direct Parameters Test Cases --------------------------------------------
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -70,7 +69,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             self.validate_standard_account_endpoints(service, url)
             assert service.scheme == 'https'
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -90,7 +88,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             assert service.account_name == self.account_name
             assert service.url.endswith(self.sas_token)
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -104,7 +101,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
                 service_type(self.account_url(storage_account_name, "file"), credential=self.token_credential,
                              share_name='foo', directory_path='bar', file_path='baz')
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_china(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -126,7 +122,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             assert service.primary_hostname == '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -143,7 +138,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             self.validate_standard_account_endpoints(service, service_type[1], protocol='http')
             assert service.scheme == 'http'
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_empty_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -159,7 +153,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
             assert str(e.value.args[0]) == 'You need to provide either an account shared key or SAS token when creating a storage service.'
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_socket_timeout(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -183,7 +176,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
     # --Connection String Test Cases --------------------------------------------
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_connection_string_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -201,7 +193,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             self.validate_standard_account_endpoints(service, service_type[1])
             assert service.scheme == 'https'
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_connection_string_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -221,7 +212,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             assert service.account_name == self.account_name
             assert service.url.endswith(self.sas_token)
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_connection_string_endpoint_protocol(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -244,7 +234,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.scheme == 'http'
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_connection_string_emulated(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -258,7 +247,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             with pytest.raises(ValueError):
                 service_type[0].from_connection_string(conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_connection_string_fails_if_secondary_without_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -276,7 +264,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
                 service_type[0].from_connection_string(
                     conn_string, share_name='foo', directory_path='bar', file_path='baz')
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -301,7 +288,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             assert service.primary_hostname == 'www.mydomain.com'
             assert service.secondary_hostname == 'www-sec.mydomain.com'
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_create_service_with_custom_account_endpoint_path(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -439,7 +425,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
 
         await service.get_service_properties(raw_response_hook=callback, user_agent='customer_user_agent')
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_closing_pipeline_client(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -457,7 +442,6 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
                 assert hasattr(service, 'close')
                 await service.close()
 
-    @pytest.mark.live_test_only
     @FileSharePreparer()
     async def test_closing_pipeline_client_simple(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
