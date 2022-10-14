@@ -378,7 +378,8 @@ class AsyncTransport(
 
     async def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        self.writer.write(s)
+        self.loop.run_in_executor(None, self.writer.write,s)
+        await self.writer.drain()
 
     async def close(self):
         if self.writer is not None:
@@ -386,6 +387,7 @@ class AsyncTransport(
                 # see issue: https://github.com/encode/httpx/issues/914
                 self.writer.transport.abort()
             self.writer.close()
+            await self.writer.wait_closed()
             self.writer, self.reader = None, None
         self.sock = None
         self.connected = False
