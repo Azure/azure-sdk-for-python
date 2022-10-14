@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2022-10-14)
+## 9.0.1 (2022-10-14)
 
+### Bugs Fixed
 
+  - Added missing parameter `api_version` for operation AccountsOperations.begin_renew_credentials
 
 ## 9.0.0 (2022-09-26)
 
