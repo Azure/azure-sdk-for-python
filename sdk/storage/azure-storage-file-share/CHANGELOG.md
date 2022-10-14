@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed an issue where keyword `name_starts_with` was not being passed to the service properly for the `list_shares` async API
 
 ### Other Changes
 - Added `typing-extensions>=4.0.1` as a dependency.

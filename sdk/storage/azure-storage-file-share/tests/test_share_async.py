@@ -824,6 +824,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
+        await self._create_share('othershare')
         share = await self._create_share('random4')
 
         # Act
