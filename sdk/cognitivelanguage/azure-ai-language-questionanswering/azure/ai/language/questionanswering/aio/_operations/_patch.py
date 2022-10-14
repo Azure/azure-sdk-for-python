@@ -86,7 +86,16 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :paramtype include_unstructured_sources: bool
         :return: AnswersResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_query_knowledgebase_async.py
+                :start-after: [START query_knowledgebase_async]
+                :end-before: [END query_knowledgebase_async]
+                :language: python
+                :dedent: 4
+                :caption: Answer the specified question using your knowledge base.
         """
         options, kwargs = _get_answers_prepare_options(*args, **kwargs)
         return await super().get_answers(options, **kwargs)  # type: ignore
@@ -123,7 +132,16 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :paramtype language: str
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_query_text_async.py
+                :start-after: [START query_text_async]
+                :end-before: [END query_text_async]
+                :language: python
+                :dedent: 4
+                :caption: Answers the specified question using the provided text.
         """
         options, kwargs = _get_answers_from_text_prepare_options(
             *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore

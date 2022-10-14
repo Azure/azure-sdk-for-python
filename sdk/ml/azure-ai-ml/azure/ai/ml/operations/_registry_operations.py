@@ -19,7 +19,7 @@ from azure.core.polling import LROPoller
 
 from azure.ai.ml._utils._experimental import experimental
 from .._utils._azureml_polling import AzureMLPolling
-from ..constants._common import LROConfigurations
+from ..constants._common import LROConfigurations, Scope
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -52,14 +52,19 @@ class RegistryOperations:
         self._init_kwargs = kwargs
 
     #@ monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
-    def list(self) -> Iterable[Registry]:
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current
-        resource group.
+        resource group or subscription.
 
+        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :type scope: str, optional
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
-
+        if scope.lower() == Scope.SUBSCRIPTION:
+            return self._operation.list_by_subscription(
+                cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs]
+            )
         return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], \
             resource_group_name=self._resource_group_name)
 

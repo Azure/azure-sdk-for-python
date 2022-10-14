@@ -1,5 +1,17 @@
 # Release History
 
+## 12.14.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+
 ## 12.14.0 (2022-10-11)
 
 ### Features Added

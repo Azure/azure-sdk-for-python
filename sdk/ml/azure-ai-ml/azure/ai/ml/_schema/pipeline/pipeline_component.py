@@ -136,7 +136,7 @@ class PipelineComponentSchema(ComponentSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.PIPELINE])
     jobs = PipelineJobsField()
 
-    # primitive output is only supported for command component
+    # primitive output is only supported for command component & pipeline component
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField(

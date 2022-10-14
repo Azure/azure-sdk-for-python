@@ -29,8 +29,17 @@ def mock_registry_operation(
 @pytest.mark.unittest
 class TestRegistryOperations:
     def test_list(self, mock_registry_operation: RegistryOperations) -> None:
+        # Test different input options for the scope value
         mock_registry_operation.list()
         mock_registry_operation._operation.list.assert_called_once()
+
+        mock_registry_operation.list(scope="invalid")
+        assert mock_registry_operation._operation.list.call_count == 2
+        mock_registry_operation._operation.list_by_subscription.assert_not_called()
+        
+        mock_registry_operation.list(scope="subscription")
+        assert mock_registry_operation._operation.list.call_count == 2
+        mock_registry_operation._operation.list_by_subscription.assert_called_once()
 
     def test_get(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
         mock_registry_operation.get(f"unittest_{randstr('reg_name')}")

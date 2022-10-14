@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
       x-ms-date:
-      - Wed, 12 Jan 2022 16:27:48 GMT
+      - Wed, 12 Oct 2022 01:04:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -416,14 +416,15 @@ interactions:
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}],
         "nextLink": "/phoneNumbers?skip=100&top=100&api-version=2022-01-11-preview2"}'
     headers:
-      api-supported-versions: 2021-03-07, 2022-01-11-preview2
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2, 2022-06-01-preview,
+        2022-12-01
       content-type: application/json; charset=utf-8
-      date: Wed, 12 Jan 2022 16:27:48 GMT
-      ms-cv: AjJ5StT5mE+KFQOh7ftn4w.0
-      request-context: appId=
+      date: Wed, 12 Oct 2022 01:04:06 GMT
+      ms-cv: CBE/GZxaJUmsFbmW3cGnMw.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 4572ms
+      x-processing-time: 2568ms
     status:
       code: 200
       message: OK
@@ -431,12 +432,10 @@ interactions:
 - request:
     body: ''
     headers:
-      Accept:
-      - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
       x-ms-date:
-      - Wed, 12 Jan 2022 16:27:53 GMT
+      - Wed, 12 Oct 2022 01:04:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -459,6 +458,10 @@ interactions:
         {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
         "assignmentType": "application", "purchaseDate": "2021-06-24T00:39:13.0650895+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "tollFree", "capabilities": {"calling": "none", "sms": "inbound+outbound"},
+        "assignmentType": "application", "purchaseDate": "2022-08-09T21:31:11.7335307+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
         {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
@@ -829,31 +832,28 @@ interactions:
         "assignmentType": "application", "purchaseDate": "2021-06-24T00:19:13.3153527+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
         {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "tollFree", "capabilities": {"calling": "none", "sms": "inbound+outbound"},
+        "assignmentType": "application", "purchaseDate": "2022-08-10T00:33:17.3724362+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
         "assignmentType": "application", "purchaseDate": "2021-06-24T00:34:45.0763318+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
         {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
         "assignmentType": "application", "purchaseDate": "2021-06-24T00:40:14.5388708+00:00",
-        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
-        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
-        "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
-        "assignmentType": "application", "purchaseDate": "2021-06-24T00:38:13.7766563+00:00",
-        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
-        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
-        "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
-        "assignmentType": "application", "purchaseDate": "2021-06-23T23:42:00.1600209+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}],
         "nextLink": "/phoneNumbers?skip=200&top=100&api-version=2022-01-11-preview2"}'
     headers:
-      api-supported-versions: 2021-03-07, 2022-01-11-preview2
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2, 2022-06-01-preview,
+        2022-12-01
       content-type: application/json; charset=utf-8
-      date: Wed, 12 Jan 2022 16:27:52 GMT
-      ms-cv: 7w6yfKaIsUaVIgnfD8ogXg.0
-      request-context: appId=
+      date: Wed, 12 Oct 2022 01:04:08 GMT
+      ms-cv: 1Q4j+GlSi0KrlmQ9Ri6+1A.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 4063ms
+      x-processing-time: 2096ms
     status:
       code: 200
       message: OK
@@ -861,12 +861,10 @@ interactions:
 - request:
     body: ''
     headers:
-      Accept:
-      - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.8.10 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29)
       x-ms-date:
-      - Wed, 12 Jan 2022 16:27:57 GMT
+      - Wed, 12 Oct 2022 01:04:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -876,13 +874,21 @@ interactions:
       string: '{"phoneNumbers": [{"id": "sanitized", "phoneNumber": "sanitized", "countryCode":
         "US", "phoneNumberType": "tollFree", "capabilities": {"calling": "inbound+outbound",
         "sms": "inbound+outbound"}, "assignmentType": "application", "purchaseDate":
-        "2021-06-23T23:42:15.9484758+00:00", "cost": {"amount": 2.0, "currencyCode":
+        "2021-06-24T00:38:13.7766563+00:00", "cost": {"amount": 2.0, "currencyCode":
         "USD", "billingFrequency": "monthly"}}, {"id": "sanitized", "phoneNumber":
         "sanitized", "countryCode": "US", "phoneNumberType": "tollFree", "capabilities":
         {"calling": "inbound+outbound", "sms": "inbound+outbound"}, "assignmentType":
-        "application", "purchaseDate": "2021-06-23T23:42:23.3515457+00:00", "cost":
+        "application", "purchaseDate": "2021-06-23T23:42:00.1600209+00:00", "cost":
         {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}, {"id":
         "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
+        "assignmentType": "application", "purchaseDate": "2021-06-23T23:42:15.9484758+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
+        "assignmentType": "application", "purchaseDate": "2021-06-23T23:42:23.3515457+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
         "assignmentType": "application", "purchaseDate": "2021-06-24T00:42:13.7459585+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
@@ -949,16 +955,21 @@ interactions:
         {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
         "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
         "assignmentType": "application", "purchaseDate": "2021-06-23T23:50:43.5645432+00:00",
+        "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
+        {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
+        "tollFree", "capabilities": {"calling": "none", "sms": "inbound+outbound"},
+        "assignmentType": "application", "purchaseDate": "2022-08-09T18:34:21.0065235+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}]}'
     headers:
-      api-supported-versions: 2021-03-07, 2022-01-11-preview2
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2, 2022-06-01-preview,
+        2022-12-01
       content-type: application/json; charset=utf-8
-      date: Wed, 12 Jan 2022 16:27:56 GMT
-      ms-cv: vtLd12KSR0KIjU4OLZaZdA.0
-      request-context: appId=
+      date: Wed, 12 Oct 2022 01:04:10 GMT
+      ms-cv: FDq4GRZuOE+xPQZ8WiCFuQ.0
+      strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 4158ms
+      x-processing-time: 1750ms
     status:
       code: 200
       message: OK
