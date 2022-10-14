@@ -585,7 +585,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             ),
             detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
                 healthcare_result.detected_language
-            ) if hasattr(healthcare_result, "detected_language") else None
+            ) if hasattr(healthcare_result, "detected_language") and healthcare_result.detected_language else None
         )
 
     def __repr__(self):
@@ -2372,7 +2372,7 @@ class RecognizeCustomEntitiesResult(DictMixin):
             ),
             detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
                 result.detected_language
-            ) if hasattr(result, "detected_language") else None
+            ) if hasattr(result, "detected_language") and result.detected_language else None
         )
 
 
@@ -2502,7 +2502,7 @@ class ClassifyDocumentResult(DictMixin):
             ),
             detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
                 result.detected_language
-            ) if hasattr(result, "detected_language") else None
+            ) if hasattr(result, "detected_language") and result.detected_language else None
         )
 
 

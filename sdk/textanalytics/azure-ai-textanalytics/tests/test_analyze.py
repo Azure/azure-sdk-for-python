@@ -1791,3 +1791,57 @@ class TestAnalyze(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             poller.cancel()
         assert"Cancellation not supported by API versions v3.0, v3.1." in str(e.value)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_autodetect_lang_document(self, client):
+        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for doc in result:
+            if doc.id == "1":
+                assert doc.detected_language.iso6391_name == "en"
+            else:
+                assert doc.detected_language.iso6391_name == "es"
+
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15816856")
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_autodetect_lang_with_default(self, client):
+        single_doc = "Tumhara naam kya hai?"
+        docs = [{"id": "1", "text": single_doc}]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            language="auto",
+            autodetect_default_language="en",
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                assert doc.detected_language.iso6391_name == "hi"
+                assert doc.detected_language.script == "Latin"
