@@ -517,6 +517,13 @@ class TestStorageClient(StorageRecordedTestCase):
         assert service.primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url == 'http://local-machine:11002/custom/account/path/foo'
 
+        service = ContainerClient.from_container_url("http://local-machine:11002/custom/account/path/foo/?query=value")
+        assert service.account_name == None
+        assert service.container_name == "foo"
+        assert service.credential == None
+        assert service.primary_hostname == 'local-machine:11002/custom/account/path'
+        assert service.url == 'http://local-machine:11002/custom/account/path/foo'
+
         service = BlobClient(account_url=custom_account_url, container_name="foo", blob_name="bar", snapshot="baz")
         assert service.account_name == None
         assert service.container_name == "foo"
