@@ -28,7 +28,7 @@ WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
 CONTAINER_STARTUP_TIMEOUT = 6000
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
-PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
+PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
 discovered_roots = []
