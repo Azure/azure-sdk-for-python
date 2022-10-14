@@ -208,11 +208,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 container_url = "https://" + container_url
         except AttributeError:
             raise ValueError("Container URL must be a string.")
-        parsed_url = urlparse(container_url.rstrip('/'))
+        parsed_url = urlparse(container_url)
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
 
-        container_path = parsed_url.path.lstrip('/').split('/')
+        container_path = parsed_url.path.strip('/').split('/')
         account_path = ""
         if len(container_path) > 1:
             account_path = "/" + "/".join(container_path[:-1])
