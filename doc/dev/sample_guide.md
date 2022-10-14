@@ -16,8 +16,10 @@ The Azure SDK repository is organized in the following folder structure, with th
       - `/tests`
 
 ##  Getting Started (a.k.a. `Hello World`) README Examples
-Each package folder contains a package-specific `README.md` file. Most of these `README` files contain `Hello World` code samples illustrating basic usage of the APIs contained in the package. For example, you can find `Hello World` samples for the `azure-storage-blob` package [here][blob_readme].
+Each package folder contains a package-specific `README.md` file. Most of these `README` files contain `Hello World` code samples illustrating basic usage of the APIs contained in the package.
 Note that the package-level README should not include samples for every API available in the client library -- it is meant to highlight the champion scenarios, or most common scenarios used by our customers.
+
+[README examples][blob_readme]
 
 ## Package Samples
 Each package folder contains a subfolder called `samples` with additional code samples which are runnable `.py` files. Please read the Python sample guidelines to understand the requirements for a sample: [Sample Guidelines][python_sample_guidelines].
@@ -26,13 +28,14 @@ Each sample scenario should include an asynchronous equivalent under a separate 
 A sample should start with a [header][sample_header] that explains what the sample will demonstrate and any set-up necessary to run it, including environment variables which must be set. 
 The code for the sample should be runnable by invoking `python sample.py` and demonstrate the intended scenario in one file which can be copy/pasted easily into an IDE.
 
-[Example sync][example_sample_sync]
-[Example async][example_sample_async]
+[Sample sync example][example_sample_sync]
+
+[Sample async example][example_sample_async]
 
 ## Package Sample README
 A samples-level README provides a high-level overview of the provided samples and how to get started with running them in a local environment. 
 
-[Example][example_samples_readme]
+[Sample README example][example_samples_readme]
 
 The Samples README also contains [metadata][metadata_example] to help publish our samples to the [Microsoft Samples browser][samples_browser].
 Note that the metadata under `products` must match an existing product slug found [here][product_slug]. See [here][request_product_slug] for requesting a new product slug.
@@ -45,7 +48,7 @@ To do this, place `# [START <keyword>]` and `# [END <keyword>]` comments which s
 
 The given `START`/`END` keywords can be used in a [sphinx literalinclude][sphinx] directive in the docstring where the code snippet should be rendered in the reference documentation.
 
-[Example][literalinclude]
+[Literalinclude example][literalinclude]
 
 The rendered code snippets are sensitive to the indentation in the sample file. Adjust the `dedent` accordingly to ensure the sample is captured accurately and not accidentally trimmed.
 You can preview how published reference documentation will look by running [tox][tox]: `tox -e sphinx -c ../../../eng/tox/tox.ini`.
@@ -68,7 +71,8 @@ For general how-to with the Python SDK, see the [Azure SDK for Python Overview][
 ## More Information
 
 [Python Guidelines][python_guidelines]
-[How to Document an SDK client library [Microsoft Internal]][document_sdk] 
+
+[How to Document an SDK client library (Microsoft Internal)][document_sdk] 
 
 <!-- LINKS -->
 
