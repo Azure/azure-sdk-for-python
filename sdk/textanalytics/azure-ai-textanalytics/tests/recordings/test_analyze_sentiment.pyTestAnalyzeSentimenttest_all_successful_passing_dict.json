@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-05-01\u0026showStats=true",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/:analyze-text?api-version=2022-10-01-preview\u0026showStats=true",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "418",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "SentimentAnalysis",
@@ -38,14 +38,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b28717bf-d894-4b55-9a71-9d6892359e88",
-        "Content-Length": "1571",
+        "apim-request-id": "b9c0cf8f-cee9-4637-b104-49485144c4ed",
+        "Content-Length": "1558",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Wed, 08 Jun 2022 01:14:41 GMT",
+        "Date": "Mon, 10 Oct 2022 21:10:58 GMT",
+        "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "18"
+        "x-envoy-upstream-service-time": "20982"
       },
       "ResponseBody": {
         "kind": "SentimentAnalysisResults",
@@ -65,17 +66,17 @@
                 "transactionsCount": 1
               },
               "confidenceScores": {
-                "positive": 0.01,
-                "neutral": 0.97,
-                "negative": 0.02
+                "positive": 0.0,
+                "neutral": 1.0,
+                "negative": 0.0
               },
               "sentences": [
                 {
                   "sentiment": "neutral",
                   "confidenceScores": {
-                    "positive": 0.01,
-                    "neutral": 0.97,
-                    "negative": 0.02
+                    "positive": 0.0,
+                    "neutral": 1.0,
+                    "negative": 0.0
                   },
                   "offset": 0,
                   "length": 51,
@@ -92,17 +93,17 @@
                 "transactionsCount": 1
               },
               "confidenceScores": {
-                "positive": 0.01,
-                "neutral": 0.01,
+                "positive": 0.0,
+                "neutral": 0.02,
                 "negative": 0.98
               },
               "sentences": [
                 {
                   "sentiment": "negative",
                   "confidenceScores": {
-                    "positive": 0.01,
-                    "neutral": 0.01,
-                    "negative": 0.98
+                    "positive": 0.0,
+                    "neutral": 0.03,
+                    "negative": 0.96
                   },
                   "offset": 0,
                   "length": 39,
@@ -112,8 +113,8 @@
                   "sentiment": "negative",
                   "confidenceScores": {
                     "positive": 0.0,
-                    "neutral": 0.01,
-                    "negative": 0.99
+                    "neutral": 0.0,
+                    "negative": 1.0
                   },
                   "offset": 39,
                   "length": 21,
@@ -130,15 +131,15 @@
                 "transactionsCount": 1
               },
               "confidenceScores": {
-                "positive": 0.98,
-                "neutral": 0.01,
-                "negative": 0.01
+                "positive": 0.8,
+                "neutral": 0.19,
+                "negative": 0.02
               },
               "sentences": [
                 {
                   "sentiment": "positive",
                   "confidenceScores": {
-                    "positive": 0.99,
+                    "positive": 1.0,
                     "neutral": 0.0,
                     "negative": 0.0
                   },
@@ -149,9 +150,9 @@
                 {
                   "sentiment": "positive",
                   "confidenceScores": {
-                    "positive": 0.96,
-                    "neutral": 0.03,
-                    "negative": 0.01
+                    "positive": 0.6,
+                    "neutral": 0.37,
+                    "negative": 0.03
                   },
                   "offset": 37,
                   "length": 23,
@@ -162,7 +163,7 @@
             }
           ],
           "errors": [],
-          "modelVersion": "2021-10-01"
+          "modelVersion": "2022-10-01"
         }
       }
     }

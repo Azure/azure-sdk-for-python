@@ -14,6 +14,7 @@ from ._images_operations import ImagesOperations
 from ._image_versions_operations import ImageVersionsOperations
 from ._catalogs_operations import CatalogsOperations
 from ._environment_types_operations import EnvironmentTypesOperations
+from ._project_allowed_environment_types_operations import ProjectAllowedEnvironmentTypesOperations
 from ._project_environment_types_operations import ProjectEnvironmentTypesOperations
 from ._dev_box_definitions_operations import DevBoxDefinitionsOperations
 from ._operations import Operations
@@ -37,6 +38,7 @@ __all__ = [
     "ImageVersionsOperations",
     "CatalogsOperations",
     "EnvironmentTypesOperations",
+    "ProjectAllowedEnvironmentTypesOperations",
     "ProjectEnvironmentTypesOperations",
     "DevBoxDefinitionsOperations",
     "Operations",

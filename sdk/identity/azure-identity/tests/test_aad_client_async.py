@@ -284,7 +284,9 @@ async def test_multitenant_cache():
     tenant_a = "tenant-a"
     tenant_b = "tenant-b"
     tenant_c = "tenant-c"
+    tenant_d = "tenant-d"
     authority = "https://localhost/" + tenant_a
+    message = "additionally_allowed_tenants"
 
     cache = TokenCache()
     cache.add(
@@ -308,7 +310,13 @@ async def test_multitenant_cache():
     assert client_b.get_cached_access_token([scope]) is None
 
     # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
-    client_c = AadClient(tenant_id=tenant_c, **common_args)
+    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=['*'], **common_args)
     assert client_c.get_cached_access_token([scope]) is None
     token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
     assert token.token == expected_token
+
+    # but d does not add target tenant into allowed list therefore fail
+    client_d = AadClient(tenant_id=tenant_d, **common_args)
+    assert client_d.get_cached_access_token([scope]) is None
+    with pytest.raises(ClientAuthenticationError, match=message):
+        client_d.get_cached_access_token([scope], tenant_id=tenant_a)

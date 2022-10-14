@@ -1,0 +1,2864 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Azure Machine Learning Model Registry Service",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets": {
+        "post": {
+          "tags": [
+            "Asset"
+          ],
+          "operationId": "Assets_Create",
+          "parameters": [
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "Asset"
+          ],
+        "operationId": "Assets_List",
+          "parameters": [
+            {
+              "name": "runId",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "projectId",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "name",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "tag",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "count",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            {
+              "name": "$skipToken",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "tags",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "properties",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "type",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "orderby",
+              "in": "query",
+              "schema": {
+                "$ref": "#/components/schemas/OrderString"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AssetPaginatedResult"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AssetPaginatedResult"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AssetPaginatedResult"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/assets/{id}": {
+        "patch": {
+          "tags": [
+            "Asset"
+          ],
+          "operationId": "Assets_Patch",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Asset"
+          ],
+          "operationId": "Assets_Delete",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "204": {
+              "description": "Success"
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "Asset"
+          ],
+          "operationId": "Assets_QueryById",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Asset"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/extensiveModels/{id}": {
+        "get": {
+          "tags": [
+            "ExtensiveModel"
+          ],
+          "operationId": "ExtensiveModel_QueryById",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ExtensiveModel"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ExtensiveModel"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ExtensiveModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/meta/migration": {
+        "post": {
+          "tags": [
+            "Migration"
+          ],
+          "operationId": "Migration_StartMigration",
+          "parameters": [
+            {
+              "name": "migration",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "timeout",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "default": "00:01:00"
+              }
+            },
+            {
+              "name": "collectionId",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceId",
+              "in": "query",
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models": {
+        "post": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_Register",
+          "parameters": [
+            {
+              "name": "autoVersion",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": true
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_List",
+          "parameters": [
+            {
+              "name": "name",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "tag",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "version",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "framework",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "description",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "count",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            {
+              "name": "offset",
+              "in": "query",
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            {
+              "name": "$skipToken",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "tags",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "properties",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "runId",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "datasetId",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "orderBy",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "latestVersionOnly",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            {
+              "name": "feed",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "listViewType",
+              "in": "query",
+              "schema": {
+                "$ref": "#/components/schemas/ListViewType"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelPagedResponse"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelPagedResponse"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelPagedResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/createUnregisteredInput": {
+        "post": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_CreateUnregisteredInputModel",
+          "parameters": [
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredInputModelDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredInputModelDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredInputModelDto"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredInputModelDto"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/createUnregisteredOutput": {
+        "post": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_CreateUnregisteredOutputModel",
+          "parameters": [
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredOutputModelDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredOutputModelDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredOutputModelDto"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUnregisteredOutputModelDto"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/batchGetResolvedUris": {
+        "post": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_BatchGetResolvedUris",
+          "parameters": [
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchGetResolvedUrisDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchGetResolvedUrisDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchGetResolvedUrisDto"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchGetResolvedUrisDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchModelPathResponseDto"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchModelPathResponseDto"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/BatchModelPathResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{id}": {
+        "get": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_QueryById",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "includeDeploymentSettings",
+              "in": "query",
+              "schema": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_Delete",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "204": {
+              "description": "Success"
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_Patch",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Operation"
+                  }
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/list": {
+        "post": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_ListQueryPost",
+          "parameters": [
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListModelsRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListModelsRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListModelsRequest"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListModelsRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelListModelsRequestPagedResponse"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelListModelsRequestPagedResponse"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelListModelsRequestPagedResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/querybatch": {
+        "post": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_BatchQuery",
+          "parameters": [
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelBatchDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelBatchDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelBatchDto"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelBatchDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "text/plain": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelBatchResponseDto"
+                  }
+                },
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelBatchResponseDto"
+                  }
+                },
+                "text/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ModelBatchResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/deploymentSettings": {
+        "post": {
+          "tags": [
+            "Model"
+          ],
+          "operationId": "Models_DeploymentSettings",
+          "parameters": [
+            {
+              "name": "subscriptionId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "resourceGroupName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "workspaceName",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json-patch+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelSettingsIdentifiers"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelSettingsIdentifiers"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelSettingsIdentifiers"
+                }
+              },
+              "application/*+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelSettingsIdentifiers"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Artifact": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "nullable": true
+            },
+            "prefix": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "Asset": {
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "nullable": true
+            },
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "artifacts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Artifact"
+              },
+              "nullable": true
+            },
+            "kvTags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "properties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "runid": {
+              "type": "string",
+              "nullable": true
+            },
+            "projectid": {
+              "type": "string",
+              "nullable": true
+            },
+            "meta": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "createdTime": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "additionalProperties": false
+        },
+        "AssetDto": {
+          "type": "object",
+          "properties": {
+            "assetId": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityId": {
+              "type": "string",
+              "nullable": true
+            },
+            "dataItems": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/DataItem"
+              },
+              "nullable": true
+            },
+            "dataReferences": {
+              "$ref": "#/components/schemas/DataReferences"
+            },
+            "shouldIndex": {
+              "type": "boolean"
+            },
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/DependentAsset"
+              },
+              "nullable": true
+            },
+            "intellectualPropertyPublisherInformation": {
+              "$ref": "#/components/schemas/IntellectualPropertyPublisherInformation"
+            }
+          },
+          "additionalProperties": false
+        },
+        "AssetPaginatedResult": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Asset"
+              },
+              "nullable": true
+            },
+            "continuationToken": {
+              "type": "string",
+              "nullable": true
+            },
+            "nextLink": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "BatchGetResolvedUrisDto": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "BatchModelPathResponseDto": {
+          "type": "object",
+          "properties": {
+            "values": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/ModelPathResponseDto"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "BlobReference": {
+          "type": "object",
+          "properties": {
+            "blobUri": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true
+            },
+            "storageAccountArmId": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "BlobReferenceForConsumptionDto": {
+          "type": "object",
+          "properties": {
+            "blobUri": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true
+            },
+            "storageAccountArmId": {
+              "type": "string",
+              "nullable": true
+            },
+            "credential": {
+              "$ref": "#/components/schemas/DataReferenceCredentialDto"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ComputeEnvironmentType": {
+          "enum": [
+            "ACS",
+            "FPGA",
+            "ACI",
+            "AKS",
+            "AMLCOMPUTE",
+            "IOT",
+            "MIR",
+            "AKSENDPOINT",
+            "MIRSINGLEMODEL",
+            "MIRAMLCOMPUTE",
+            "MIRGA",
+            "AMLARC",
+            "BATCHAMLCOMPUTE",
+            "UNKNOWN"
+          ],
+          "type": "string"
+        },
+        "ContainerResourceRequirements": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "number",
+              "format": "double",
+              "nullable": true
+            },
+            "cpuLimit": {
+              "type": "number",
+              "format": "double",
+              "nullable": true
+            },
+            "memoryInGB": {
+              "type": "number",
+              "format": "double",
+              "nullable": true
+            },
+            "memoryInGBLimit": {
+              "type": "number",
+              "format": "double",
+              "nullable": true
+            },
+            "gpuEnabled": {
+              "type": "boolean",
+              "nullable": true
+            },
+            "gpu": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "fpga": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "CreatedBy": {
+          "type": "object",
+          "properties": {
+            "userObjectId": {
+              "type": "string",
+              "nullable": true
+            },
+            "userTenantId": {
+              "type": "string",
+              "nullable": true
+            },
+            "userName": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "CreateUnregisteredInputModelDto": {
+          "type": "object",
+          "properties": {
+            "runId": {
+              "type": "string",
+              "nullable": true
+            },
+            "inputName": {
+              "type": "string",
+              "nullable": true
+            },
+            "path": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true
+            },
+            "type": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "CreateUnregisteredOutputModelDto": {
+          "type": "object",
+          "properties": {
+            "runId": {
+              "type": "string",
+              "nullable": true
+            },
+            "outputName": {
+              "type": "string",
+              "nullable": true
+            },
+            "path": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true
+            },
+            "type": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "CreationContext": {
+          "type": "object",
+          "properties": {
+            "createdTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "createdBy": {
+              "$ref": "#/components/schemas/CreatedBy"
+            },
+            "creationSource": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": { }
+        },
+        "DataItem": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DataReferenceCredentialDto": {
+          "type": "object",
+          "properties": {
+            "credentialType": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": { }
+        },
+        "DataReferences": {
+          "type": "object",
+          "properties": {
+            "blobReferences": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/BlobReference"
+              },
+              "nullable": true
+            },
+            "imageRegistryReferences": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/ImageReference"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DataReferencesForConsumptionDto": {
+          "type": "object",
+          "properties": {
+            "blobReferences": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/BlobReferenceForConsumptionDto"
+              },
+              "nullable": true
+            },
+            "imageRegistryReferences": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/ImageReferenceForConsumptionDto"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DatasetReference": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "id": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DependencyMapDto": {
+          "type": "object",
+          "properties": {
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/DependencyMapItemDto"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DependencyMapItemDto": {
+          "type": "object",
+          "properties": {
+            "sourceId": {
+              "type": "string",
+              "nullable": true
+            },
+            "destinationId": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DependentAsset": {
+          "type": "object",
+          "properties": {
+            "assetId": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DependentEntitiesDto": {
+          "type": "object",
+          "properties": {
+            "assetId": {
+              "type": "string",
+              "nullable": true
+            },
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/DependentAsset"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "DeploymentType": {
+          "enum": [
+            "GRPCRealtimeEndpoint",
+            "HttpRealtimeEndpoint",
+            "Batch"
+          ],
+          "type": "string"
+        },
+        "EntityKind": {
+          "enum": [
+            "Invalid",
+            "LineageRoot",
+            "Versioned",
+            "Unversioned"
+          ],
+          "type": "string"
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "nullable": true
+            },
+            "statusCode": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "message": {
+              "type": "string",
+              "nullable": true
+            },
+            "target": {
+              "type": "string",
+              "nullable": true
+            },
+            "details": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/InnerErrorDetails"
+              },
+              "nullable": true
+            },
+            "correlation": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ExtensibleObject": {
+          "type": "object",
+          "additionalProperties": { }
+        },
+        "ExtensiveModel": {
+          "type": "object",
+          "properties": {
+            "Model": {
+              "$ref": "#/components/schemas/Model"
+            },
+            "ServiceList": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ServiceResponseBase"
+              },
+              "nullable": true
+            },
+            "AssetList": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Asset"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "FeedIndexEntityDto": {
+          "type": "object",
+          "properties": {
+            "indexEntity": {
+              "$ref": "#/components/schemas/IndexEntity"
+            },
+            "schemaId": {
+              "type": "string",
+              "nullable": true
+            },
+            "entitySchema": {
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "FeedIndexEntityRequestDto": {
+          "type": "object",
+          "properties": {
+            "feedEntity": {
+              "$ref": "#/components/schemas/AssetDto"
+            },
+            "labelToVersionMapping": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ImageReference": {
+          "type": "object",
+          "properties": {
+            "imageRegistryReference": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ImageReferenceForConsumptionDto": {
+          "type": "object",
+          "properties": {
+            "imageRegistryReference": {
+              "type": "string",
+              "nullable": true
+            },
+            "credential": {
+              "$ref": "#/components/schemas/DataReferenceCredentialDto"
+            }
+          },
+          "additionalProperties": false
+        },
+        "IndexAnnotations": {
+          "type": "object",
+          "properties": {
+            "archived": {
+              "type": "boolean"
+            },
+            "tags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": { }
+        },
+        "IndexEntity": {
+          "type": "object",
+          "properties": {
+            "schemaId": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityId": {
+              "type": "string",
+              "nullable": true
+            },
+            "kind": {
+              "$ref": "#/components/schemas/EntityKind"
+            },
+            "annotations": {
+              "$ref": "#/components/schemas/IndexAnnotations"
+            },
+            "properties": {
+              "$ref": "#/components/schemas/IndexProperties"
+            },
+            "internal": {
+              "$ref": "#/components/schemas/ExtensibleObject"
+            },
+            "updateSequence": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "type": {
+              "type": "string",
+              "nullable": true
+            },
+            "version": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "entityContainerId": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "entityObjectId": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "resourceType": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Relationship"
+              },
+              "nullable": true
+            },
+            "assetId": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "IndexProperties": {
+          "type": "object",
+          "properties": {
+            "creationContext": {
+              "$ref": "#/components/schemas/CreationContext"
+            }
+          },
+          "additionalProperties": { }
+        },
+        "InnerErrorDetails": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "nullable": true
+            },
+            "message": {
+              "type": "string",
+              "nullable": true
+            },
+            "target": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "IntellectualPropertyPublisherInformation": {
+          "type": "object",
+          "properties": {
+            "intellectualPropertyPublisher": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ListModelsRequest": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "tag": {
+              "type": "string",
+              "nullable": true
+            },
+            "version": {
+              "type": "string",
+              "nullable": true
+            },
+            "framework": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "count": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "offset": {
+              "type": "integer",
+              "format": "int32",
+              "nullable": true
+            },
+            "skipToken": {
+              "type": "string",
+              "nullable": true
+            },
+            "tags": {
+              "type": "string",
+              "nullable": true
+            },
+            "properties": {
+              "type": "string",
+              "nullable": true
+            },
+            "runId": {
+              "type": "string",
+              "nullable": true
+            },
+            "datasetId": {
+              "type": "string",
+              "nullable": true
+            },
+            "orderBy": {
+              "$ref": "#/components/schemas/OrderString"
+            },
+            "latestVersionOnly": {
+              "type": "boolean"
+            },
+            "modifiedAfter": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "modifiedBefore": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "listViewType": {
+              "$ref": "#/components/schemas/ListViewType"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ListViewType": {
+          "enum": [
+            "ActiveOnly",
+            "ArchivedOnly",
+            "All"
+          ],
+          "type": "string"
+        },
+        "Model": {
+          "required": [
+            "mimeType",
+            "name"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "nullable": true
+            },
+            "name": {
+              "type": "string"
+            },
+            "framework": {
+              "type": "string",
+              "nullable": true
+            },
+            "frameworkVersion": {
+              "type": "string",
+              "nullable": true
+            },
+            "version": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "datasets": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/DatasetReference"
+              },
+              "nullable": true
+            },
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true
+            },
+            "mimeType": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "createdTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "modifiedTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "unpack": {
+              "type": "boolean"
+            },
+            "parentModelId": {
+              "type": "string",
+              "nullable": true
+            },
+            "runId": {
+              "type": "string",
+              "nullable": true
+            },
+            "experimentName": {
+              "type": "string",
+              "nullable": true
+            },
+            "kvTags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "properties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "derivedModelIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "inputsSchema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ModelSchema"
+              },
+              "nullable": true
+            },
+            "outputsSchema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ModelSchema"
+              },
+              "nullable": true
+            },
+            "sampleInputData": {
+              "type": "string",
+              "nullable": true
+            },
+            "sampleOutputData": {
+              "type": "string",
+              "nullable": true
+            },
+            "resourceRequirements": {
+              "$ref": "#/components/schemas/ContainerResourceRequirements"
+            },
+            "createdBy": {
+              "$ref": "#/components/schemas/User"
+            },
+            "modifiedBy": {
+              "$ref": "#/components/schemas/User"
+            },
+            "flavors": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "nullable": true
+            },
+            "modelFormat": {
+              "$ref": "#/components/schemas/ModelFormatEnum"
+            },
+            "stage": {
+              "type": "string",
+              "nullable": true
+            },
+            "modelContainerId": {
+              "type": "string",
+              "nullable": true
+            },
+            "mmsId": {
+              "type": "string",
+              "nullable": true
+            },
+            "defaultDeploymentSettings": {
+              "$ref": "#/components/schemas/ModelDeploymentSettings"
+            },
+            "isAnonymous": {
+              "type": "boolean"
+            },
+            "isArchived": {
+              "type": "boolean"
+            },
+            "isRegistered": {
+              "type": "boolean"
+            },
+            "dataPath": {
+              "type": "string",
+              "format": "uri",
+              "nullable": true
+            },
+            "modelType": {
+              "type": "string",
+              "nullable": true
+            },
+            "assetId": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelBatchDto": {
+          "type": "object",
+          "properties": {
+            "modelIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelBatchResponseDto": {
+          "type": "object",
+          "properties": {
+            "models": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/components/schemas/Model"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelContainerRequest": {
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "kvTags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "isArchived": {
+              "type": "boolean"
+            },
+            "isRegistered": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelDeploymentSettings": {
+          "required": [
+            "modelFormat"
+          ],
+          "type": "object",
+          "properties": {
+            "modelFormat": {
+              "$ref": "#/components/schemas/ModelFormatEnum"
+            },
+            "ModelName": {
+              "type": "string",
+              "nullable": true
+            },
+            "ModelVersion": {
+              "type": "string",
+              "nullable": true
+            },
+            "ModelType": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelFormatEnum": {
+          "enum": [
+            "CUSTOM",
+            "MLFLOW",
+            "TRITON",
+            "PRESETS"
+          ],
+          "type": "string"
+        },
+        "ModelListModelsRequestPagedResponse": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Model"
+              },
+              "nullable": true
+            },
+            "nextLink": {
+              "type": "string",
+              "nullable": true
+            },
+            "continuationToken": {
+              "type": "string",
+              "nullable": true
+            },
+            "nextRequest": {
+              "$ref": "#/components/schemas/ListModelsRequest"
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelPagedResponse": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Model"
+              },
+              "nullable": true
+            },
+            "continuationToken": {
+              "type": "string",
+              "nullable": true
+            },
+            "nextLink": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelPathResponseDto": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "nullable": true
+            },
+            "type": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelSchema": {
+          "required": [
+            "name"
+          ],
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "dataType": {
+              "$ref": "#/components/schemas/ModelSchemaDataType"
+            },
+            "shape": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "ModelSchemaDataType": {
+          "enum": [
+            "undefined",
+            "bool",
+            "uint8",
+            "uint16",
+            "uint32",
+            "uint64",
+            "int8",
+            "int16",
+            "int32",
+            "int64",
+            "float16",
+            "float32",
+            "float64",
+            "bfloat16",
+            "complex64",
+            "complex128",
+            "string"
+          ],
+          "type": "string"
+        },
+        "ModelSettingsIdentifiers": {
+          "type": "object",
+          "properties": {
+            "modelId": {
+              "type": "string",
+              "nullable": true
+            },
+            "engineId": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "Operation": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "nullable": true
+            },
+            "path": {
+              "type": "string",
+              "nullable": true
+            },
+            "op": {
+              "type": "string",
+              "nullable": true
+            },
+            "from": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "OrderString": {
+          "enum": [
+            "CreatedAtDesc",
+            "CreatedAtAsc",
+            "UpdatedAtDesc",
+            "UpdatedAtAsc"
+          ],
+          "type": "string"
+        },
+        "ProviderFeedEntityRequestDto": {
+          "type": "object",
+          "properties": {
+            "sourceAndTargetAssetIds": {
+              "$ref": "#/components/schemas/DependencyMapItemDto"
+            },
+            "dependencyMapDto": {
+              "$ref": "#/components/schemas/DependencyMapDto"
+            },
+            "labelToVersionMapping": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "Relationship": {
+          "type": "object",
+          "properties": {
+            "relationType": {
+              "type": "string",
+              "nullable": true
+            },
+            "targetEntityId": {
+              "type": "string",
+              "nullable": true
+            },
+            "assetId": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityType": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            },
+            "direction": {
+              "type": "string",
+              "nullable": true
+            },
+            "entityContainerId": {
+              "type": "string",
+              "nullable": true,
+              "readOnly": true
+            }
+          },
+          "additionalProperties": { }
+        },
+        "ServiceResponseBase": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "nullable": true
+            },
+            "name": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "kvTags": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "properties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "operationId": {
+              "type": "string",
+              "nullable": true
+            },
+            "state": {
+              "$ref": "#/components/schemas/WebServiceState"
+            },
+            "createdTime": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedTime": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true
+            },
+            "error": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "computeType": {
+              "$ref": "#/components/schemas/ComputeEnvironmentType"
+            },
+            "deploymentType": {
+              "$ref": "#/components/schemas/DeploymentType"
+            },
+            "createdBy": {
+              "$ref": "#/components/schemas/User"
+            },
+            "endpointName": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "User": {
+          "type": "object",
+          "properties": {
+            "userObjectId": {
+              "type": "string",
+              "nullable": true
+            },
+            "userPuId": {
+              "type": "string",
+              "nullable": true
+            },
+            "userIdp": {
+              "type": "string",
+              "nullable": true
+            },
+            "userAltSecId": {
+              "type": "string",
+              "nullable": true
+            },
+            "userIss": {
+              "type": "string",
+              "nullable": true
+            },
+            "userTenantId": {
+              "type": "string",
+              "nullable": true
+            },
+            "userName": {
+              "type": "string",
+              "nullable": true
+            },
+            "upn": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "WebServiceState": {
+          "enum": [
+            "Transitioning",
+            "Healthy",
+            "Unhealthy",
+            "Failed",
+            "Unschedulable"
+          ],
+          "type": "string"
+        }
+      }
+    }
+  }

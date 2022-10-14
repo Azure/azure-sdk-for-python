@@ -3,6 +3,9 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+# pylint: disable=unused-import
+from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
+
 
 class AutoMLConstants:
     # The following are fields found in the yaml for AutoML Job
@@ -46,3 +49,64 @@ class AutoMLTransformerParameterKeys(Enum):
     IMPUTER = "Imputer"
     TF_IDF = "TfIdf"
     HASH_ONE_HOT_ENCODER = "HashOneHotEncoder"
+
+
+class ImageClassificationModelNames(Enum):
+    '''
+    Model names that are supported for Image Classification tasks.
+    '''
+    MOBILENETV2 = "mobilenetv2"
+    RESNET18 = "resnet18"
+    RESNET34 = "resnet34"
+    RESNET50 = "resnet50"
+    RESNET101 = "resnet101"
+    RESNET152 = "resnet152"
+    RESNEST50 = "resnest50"
+    RESNEST101 = "resnest101"
+    SERESNEXT = "seresnext"
+    VITS16R224 = "vits16r224"
+    VITB16R224 = "vitb16r224"
+    VITL16R224 = "vitl16r224"
+
+
+class ImageObjectDetectionModelNames(Enum):
+    '''
+    Model names that are supported for Image Object Detection tasks.
+    '''
+    YOLOV5 = "yolov5"
+    FASTERRCNN_RESNET18_FPN = "fasterrcnn_resnet18_fpn"
+    FASTERRCNN_RESNET34_FPN = "fasterrcnn_resnet34_fpn"
+    FASTERRCNN_RESNET50_FPN = "fasterrcnn_resnet50_fpn"
+    FASTERRCNN_RESNET101_FPN = "fasterrcnn_resnet101_fpn"
+    FASTERRCNN_RESNET152_FPN = "fasterrcnn_resnet152_fpn"
+    RETINANET_RESNET50_FPN = "retinanet_resnet50_fpn"
+
+
+class ImageInstanceSegmentationModelNames(Enum):
+    '''
+    Model names that are supported for Image Instance Segmentation tasks.
+    '''
+    MASKRCNN_RESNET18_FPN = "maskrcnn_resnet18_fpn"
+    MASKRCNN_RESNET34_FPN = "maskrcnn_resnet34_fpn"
+    MASKRCNN_RESNET50_FPN = "maskrcnn_resnet50_fpn"
+    MASKRCNN_RESNET101_FPN = "maskrcnn_resnet101_fpn"
+    MASKRCNN_RESNET152_FPN = "maskrcnn_resnet152_fpn"
+
+
+class NlpModels(Enum):
+    # Model names for NLP tasks.
+    BERT_BASE_CASED = "bert-base-cased"
+    BERT_BASE_UNCASED = "bert-base-uncased"
+    BERT_BASE_MULTILINGUAL_CASED = "bert-base-multilingual-cased"
+    BERT_BASE_GERMAN_CASED = "bert-base-german-cased"
+    BERT_LARGE_CASED = "bert-large-cased"
+    BERT_LARGE_UNCASED = "bert-large-uncased"
+    DISTILBERT_BASE_CASED = "distilbert-base-cased"
+    DISTILBERT_BASE_UNCASED = "distilbert-base-uncased"
+    ROBERTA_BASE = "roberta-base"
+    ROBERTA_LARGE = "roberta-large"
+    DISTILROBERTA_BASE = "distilroberta-base"
+    XLM_ROBERTA_BASE = "xlm-roberta-base"
+    XLM_ROBERTA_LARGE = "xlm-roberta-large"
+    XLNET_BASE_CASED = "xlnet-base-cased"
+    XLNET_LARGE_CASED = "xlnet-large-cased"

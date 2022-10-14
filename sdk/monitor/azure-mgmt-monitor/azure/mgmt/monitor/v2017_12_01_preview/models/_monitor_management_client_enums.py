@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class NamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of namespace
-    """
+    """Kind of namespace."""
 
     PLATFORM = "Platform"
     CUSTOM = "Custom"

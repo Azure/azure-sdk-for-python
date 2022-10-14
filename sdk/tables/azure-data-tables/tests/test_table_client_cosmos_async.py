@@ -15,11 +15,7 @@ from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION, TableTransactionError
 
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import SLEEP_DELAY
 from async_preparers import cosmos_decorator_async
-from devtools_testutils import AzureTestCase
-
-# ------------------------------------------------------------------------------
 
 SERVICES = {
     TableServiceClient: 'cosmos',
@@ -29,6 +25,7 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
+
 
 class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 

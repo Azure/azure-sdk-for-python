@@ -18,21 +18,36 @@ from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.polling import LROPoller
+
+
+from devtools_testutils import AzureRecordedTestCase
+from pytest_mock import MockFixture
+
+
+@pytest.fixture(autouse=True)
+def import_job_enabled(mocker: MockFixture):
+    mocker.patch("azure.ai.ml.entities._job.import_job.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
 
 
 @pytest.mark.timeout(600)
-@pytest.mark.usefixtures("mock_code_hash")
-class TestImportJob:
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_asset_name",
+    "mock_code_hash",
+    "mock_component_hash",
+    "enable_environment_id_arm_expansion",
+)
+class TestImportJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
     def test_import_job_submit_cancel(self, client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
 
-        job = load_job(path="./tests/test_configs/import_job/import_job_test.yml")
+        job = load_job("./tests/test_configs/import_job/import_job_test.yml")
         self.validate_import_job_submit_cancel(job, client)
 
     @pytest.mark.e2etest
-    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
     def test_import_node_submit_cancel(self, client: MLClient) -> None:
         from azure.ai.ml.entities._builders.import_func import import_job
 
@@ -70,26 +85,22 @@ class TestImportJob:
 
         # Test cancel with submit to save test resource.
         # The job not supposed to succeed and usually failed quickly so status can be 'failed' as well
-        client.jobs.cancel(import_job.name)
+        cancel_poller = client.jobs.begin_cancel(import_job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
         import_job_3 = client.jobs.get(import_job.name)
         assert import_job_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED, JobStatus.FAILED)
 
     @pytest.mark.e2etest
-    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
+    @pytest.mark.skip(
+        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
+    )
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
 
-        pipeline: PipelineJob = load_job(path="./tests/test_configs/import_job/import_pipeline_test.yml")
+        pipeline: PipelineJob = load_job("./tests/test_configs/import_job/import_pipeline_test.yml")
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
 
     @pytest.mark.e2etest
-    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
-    def test_import_pipeline_component_submit_cancel(self, client: MLClient) -> None:
-
-        pipeline: PipelineJob = load_job(path="./tests/test_configs/import_job/import_pipeline_component_test.yml")
-        self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
-
-    @pytest.mark.e2etest
-    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
     def test_import_dsl_pipeline_submit_cancel(self, client: MLClient) -> None:
         def generate_dsl_pipeline():
             # 1. Load component funcs
@@ -174,13 +185,14 @@ class TestImportJob:
                 == import_pipeline.jobs[import_step].outputs["output"]._data.path
             )
 
-        client.jobs.cancel(import_pipeline.name)
+        cancel_poller = client.jobs.begin_cancel(import_pipeline.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
         import_pipeline_3 = client.jobs.get(import_pipeline.name)
         assert import_pipeline_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
     @pytest.mark.e2etest
-    @mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}, clear=True)
-    def test_import_job_download(self, randstr: Callable[[], str], client: MLClient) -> None:
+    def test_import_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
         def wait_until_done(job: Job) -> None:
             poll_start_time = time.time()
             while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
@@ -190,8 +202,8 @@ class TestImportJob:
 
         job = client.jobs.create_or_update(
             load_job(
-                path="./tests/test_configs/import_job/import_job_test.yml",
-                params_override=[{"name": randstr()}],
+                "./tests/test_configs/import_job/import_job_test.yml",
+                params_override=[{"name": randstr("name")}],
             )
         )
 

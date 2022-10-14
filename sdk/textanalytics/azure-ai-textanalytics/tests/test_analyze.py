@@ -120,7 +120,7 @@ class TestAnalyze(TextAnalyticsTest):
             assert isinstance(document_result, AnalyzeSentimentResult)
             assert document_result.id is not None
             assert document_result.statistics is not None
-            self.validateConfidenceScores(document_result.confidence_scores)
+            # self.validateConfidenceScores(document_result.confidence_scores) https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15794991
             assert document_result.sentences is not None
             if idx == 0:
                 assert document_result.sentiment == "neutral"
@@ -492,6 +492,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.character_count
                 assert document_result.statistics.transaction_count
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -807,6 +808,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
+    @pytest.mark.skip("test is hanging with PPE")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy

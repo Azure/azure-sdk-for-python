@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "370",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -43,41 +43,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "4ece5cd1-0b7a-4692-bf67-ab38716e5550",
+        "apim-request-id": "e1cd63b0-fa24-44fb-909a-7938a43acb94",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 23:09:21 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/11bd013c-b00c-4307-8bb2-ee332b65dfa8?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 20:50:58 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2d03bcf2-6202-4f67-aa85-3d68c6e3000f?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "240"
+        "x-envoy-upstream-service-time": "186"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/11bd013c-b00c-4307-8bb2-ee332b65dfa8?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/2d03bcf2-6202-4f67-aa85-3d68c6e3000f?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e7dfee33-e8b9-4016-9f0a-efc2dc0d5477",
-        "Content-Length": "2753",
+        "apim-request-id": "86dcbd26-5a9b-4d07-b940-2f8a17d06d64",
+        "Content-Length": "2805",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 23:09:26 GMT",
+        "Date": "Mon, 10 Oct 2022 20:51:03 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "56"
+        "x-envoy-upstream-service-time": "103"
       },
       "ResponseBody": {
-        "jobId": "11bd013c-b00c-4307-8bb2-ee332b65dfa8",
-        "lastUpdatedDateTime": "2022-06-09T23:09:22Z",
-        "createdDateTime": "2022-06-09T23:09:21Z",
-        "expirationDateTime": "2022-06-10T23:09:21Z",
+        "jobId": "2d03bcf2-6202-4f67-aa85-3d68c6e3000f",
+        "lastUpdateDateTime": "2022-10-10T20:51:00Z",
+        "createdDateTime": "2022-10-10T20:50:58Z",
+        "expirationDateTime": "2022-10-11T20:50:58Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -89,7 +89,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T23:09:22.4144245Z",
+              "lastUpdateDateTime": "2022-10-10T20:51:00.500581Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -243,6 +243,7 @@
                     ],
                     "relations": [
                       {
+                        "confidenceScore": 1.0,
                         "relationType": "DosageOfMedication",
                         "entities": [
                           {
@@ -256,6 +257,7 @@
                         ]
                       },
                       {
+                        "confidenceScore": 1.0,
                         "relationType": "FrequencyOfMedication",
                         "entities": [
                           {
@@ -291,7 +293,7 @@
                       "message": "Invalid Language Code.",
                       "innererror": {
                         "code": "UnsupportedLanguageCode",
-                        "message": "Invalid language code. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"
+                        "message": "Invalid language code \u0027english\u0027. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"
                       }
                     }
                   }

@@ -22,7 +22,7 @@ class UniformSchema(metaclass=PatchedSchemaMeta):
     def predump(self, data, **kwargs):
         from azure.ai.ml.sweep import LogUniform, Uniform
 
-        if not (isinstance(data, Uniform) or isinstance(data, LogUniform)):
+        if not isinstance(data, (Uniform, LogUniform)):
             raise ValidationError("Cannot dump non-Uniform or non-LogUniform object into UniformSchema")
         if data.type.lower() not in SearchSpace.UNIFORM_LOGUNIFORM:
             raise ValidationError(BASE_ERROR_MESSAGE + str(SearchSpace.UNIFORM_LOGUNIFORM))
@@ -51,6 +51,12 @@ class QUniformSchema(metaclass=PatchedSchemaMeta):
     def predump(self, data, **kwargs):
         from azure.ai.ml.sweep import QLogUniform, QUniform
 
-        if not (isinstance(data, QUniform) or isinstance(data, QLogUniform)):
+        if not isinstance(data, (QUniform, QLogUniform)):
             raise ValidationError("Cannot dump non-QUniform or non-QLogUniform object into UniformSchema")
         return data
+
+
+class IntegerQUniformSchema(QUniformSchema):
+    min_value = DumpableIntegerField(strict=True, required=True)
+    max_value = DumpableIntegerField(strict=True, required=True)
+    q = DumpableIntegerField(strict=True, required=True)

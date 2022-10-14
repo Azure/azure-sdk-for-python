@@ -3,10 +3,10 @@ from datetime import datetime
 import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities import CronTrigger, JobSchedule, PipelineJob, RecurrencePattern, RecurrenceTrigger
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _SCHEDULE_TIMEOUT_SECOND
 
@@ -130,7 +130,7 @@ class TestScheduleEntity:
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(
-            path="./tests/test_configs/command_job/local_job.yaml",
+            "./tests/test_configs/command_job/local_job.yaml",
         )
         trigger = RecurrenceTrigger(
             frequency="week",

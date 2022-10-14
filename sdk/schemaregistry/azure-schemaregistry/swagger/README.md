@@ -6,7 +6,7 @@
 ```ps
 cd C:\Work\SchemaRegistry\
 autorest --reset
-autorest --low-level-client --modelerfour.lenient-model-deduplication README.md
+autorest --low-level-client --modelerfour.lenient-model-deduplication --show-operations --trace=false README.md
 ```
 ### Settings
 ``` yaml
