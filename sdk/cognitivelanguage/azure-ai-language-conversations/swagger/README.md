@@ -26,7 +26,6 @@ license-header: MICROSOFT_MIT_NO_VERSION
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-tag: release_2022_05_15_preview
 openapi-type: data-plane
 version-tolerant: true
 package-version: 1.1.0b3
@@ -50,7 +49,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/374bebd0b0764ba8350cb186e010f1fee987d0b7/dev/cognitiveservices/data-plane/Language/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/40f5247a48ff1eec044c8441c422af0628a8a288/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```
@@ -60,7 +59,7 @@ title: ConversationAnalysisClient
 These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_authoring_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e7f37e4e43b1d12fd1988fda3ed39624c4b23303/specification/cognitiveservices/data-plane/Language/preview/2022-05-15-preview/analyzeconversations-authoring.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/40f5247a48ff1eec044c8441c422af0628a8a288/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations-authoring.json
 output-folder: ../azure/ai/language/conversations/authoring
 title: ConversationAuthoringClient
 ```
@@ -394,4 +393,34 @@ directive:
   - rename-operation:
       from: ConversationalAnalysisAuthoring_ListTrainingConfigVersions
       to: ListTrainingConfigVersions
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_DeleteDeploymentFromResources
+      to: DeleteDeploymentFromResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetDeploymentDeleteFromResourcesStatus
+      to: GetDeploymentDeleteFromResourcesStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_LoadSnapshot
+      to: LoadSnapshot
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetLoadSnapshotStatus
+      to: GetLoadSnapshotStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_ListDeploymentResources
+      to: ListDeploymentResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_AssignDeploymentResources
+      to: AssignDeploymentResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetAssignDeploymentResourcesStatus
+      to: GetAssignDeploymentResourcesStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_UnassignDeploymentResources
+      to: UnassignDeploymentResources
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_GetUnassignDeploymentResourcesStatus
+      to: GetUnassignDeploymentResourcesStatus
+  - rename-operation:
+      from: ConversationalAnalysisAuthoring_ListAssignedResourceDeployments
+      to: ListAssignedResourceDeployments
 ```

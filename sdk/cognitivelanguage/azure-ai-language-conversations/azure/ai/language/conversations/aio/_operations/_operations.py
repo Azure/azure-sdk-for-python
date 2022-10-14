@@ -477,8 +477,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                     "createdDateTime": "2020-02-20 00:00:00",  # Required.
                     "jobId": "str",  # Required.
                     "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Required. Known values are: "notStarted", "running",
-                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
+                    "status": "str",  # The status of the task at the mentioned last update time.
+                      Required. Known values are: "notStarted", "running", "succeeded", "failed",
+                      "cancelled", "cancelling", and "partiallyCompleted".
                     "tasks": {
                         "completed": 0,  # Count of tasks completed successfully. Required.
                         "failed": 0,  # Count of tasks that failed. Required.
@@ -589,8 +590,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                     "createdDateTime": "2020-02-20 00:00:00",  # Required.
                     "jobId": "str",  # Required.
                     "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Required. Known values are: "notStarted", "running",
-                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
+                    "status": "str",  # The status of the task at the mentioned last update time.
+                      Required. Known values are: "notStarted", "running", "succeeded", "failed",
+                      "cancelled", "cancelling", and "partiallyCompleted".
                     "tasks": {
                         "completed": 0,  # Count of tasks completed successfully. Required.
                         "failed": 0,  # Count of tasks that failed. Required.
@@ -699,8 +701,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
                     "createdDateTime": "2020-02-20 00:00:00",  # Required.
                     "jobId": "str",  # Required.
                     "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Required. Known values are: "notStarted", "running",
-                      "succeeded", "partiallyCompleted", "failed", "cancelled", and "cancelling".
+                    "status": "str",  # The status of the task at the mentioned last update time.
+                      Required. Known values are: "notStarted", "running", "succeeded", "failed",
+                      "cancelled", "cancelling", and "partiallyCompleted".
                     "tasks": {
                         "completed": 0,  # Count of tasks completed successfully. Required.
                         "failed": 0,  # Count of tasks that failed. Required.
