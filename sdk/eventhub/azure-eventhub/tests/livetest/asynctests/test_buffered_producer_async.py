@@ -491,6 +491,7 @@ async def test_long_sleep(connection_str):
     await consumer.close()
     await receive_thread
 
+@pytest.mark.skip('not testing correctly + flaky, fix during MQ')
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_long_wait_small_buffer(connection_str):

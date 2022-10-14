@@ -505,6 +505,7 @@ def test_long_sleep(connection_str, uamqp_transport):
     consumer.close()
     receive_thread.join()
 
+@pytest.mark.skip('not testing correctly + flaky, fix during MQ')
 @pytest.mark.liveTest
 def test_long_wait_small_buffer(connection_str):
     received_events = defaultdict(list)
