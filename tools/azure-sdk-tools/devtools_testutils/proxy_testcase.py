@@ -48,7 +48,8 @@ def get_recording_assets(test_id: str) -> str:
 
             # we need to check for assets.json first!
             if os.path.exists(os.path.join(root, possible_assets)):
-                return os.path.abspath(os.path.join(root, possible_assets))
+                complete_path = os.path.abspath(os.path.join(root, possible_assets))
+                return os.path.relpath(complete_path, root)
             # we need the git check to prevent ascending out of the repo
             elif os.path.exists(os.path.join(root, possible_root)):
                 return None
