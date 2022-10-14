@@ -624,32 +624,54 @@ class GeoJsonLineString(GeoJsonObject, GeoJsonLineStringData):
         self.type = 'LineString'  # type: str
 
 
-class GeoJsonMultiLineStringData(msrest.serialization.Model):
+class GeoJsonMultiLineStringData(object):
     """GeoJsonMultiLineStringData.
 
     All required parameters must be populated in order to send to Azure.
 
     :param coordinates: Required. Coordinates for the ``GeoJson MultiLineString`` geometry.
-    :type coordinates: list[list[LatLon]]
+    :type coordinates: list[list[list[LatLon]]]
     """
-
-    _validation = {
-        'coordinates': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[LatLon]]'},
-    }
 
     def __init__(
         self,
-        *,
-        coordinates: List[List[LatLon]],
         **kwargs
     ):
         super(GeoJsonMultiLineStringData, self).__init__(**kwargs)
-        self.coordinates = coordinates
+        self.coordinates = kwargs['coordinates']
 
+class GeoJsonMultiPointData(object):
+    """Data contained by a ``GeoJson MultiPoint``.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
+    :type coordinates: list[list[LatLon]]
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonMultiPointData, self).__init__(**kwargs)
+        self.coordinates = kwargs['coordinates']
+
+class GeoJsonMultiPolygonData(object):
+    """GeoJsonMultiPolygonData.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
+     that coordinates in GeoJSON are in x, y order (longitude, latitude).
+    :type coordinates: list[list[list[list[LatLon]]]]
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(GeoJsonMultiPolygonData, self).__init__(**kwargs)
+        self.coordinates = kwargs['coordinates']
 
 class GeoJsonMultiLineString(GeoJsonObject, GeoJsonMultiLineStringData):
     """A valid ``GeoJSON MultiLineString`` geometry type.
@@ -667,16 +689,6 @@ class GeoJsonMultiLineString(GeoJsonObject, GeoJsonMultiLineStringData):
     :type type: str or GeoJsonObjectType
     """
 
-    _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[LatLon]]'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
     def __init__(
         self,
         *,
@@ -686,34 +698,6 @@ class GeoJsonMultiLineString(GeoJsonObject, GeoJsonMultiLineStringData):
         super(GeoJsonMultiLineString, self).__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
         self.type = 'MultiLineString'  # type: str
-
-
-class GeoJsonMultiPointData(msrest.serialization.Model):
-    """Data contained by a ``GeoJson MultiPoint``.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
-    :type coordinates: list[LatLon]
-    """
-
-    _validation = {
-        'coordinates': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[LatLon]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        coordinates: List[LatLon],
-        **kwargs
-    ):
-        super(GeoJsonMultiPointData, self).__init__(**kwargs)
-        self.coordinates = coordinates
-
 
 class GeoJsonMultiPoint(GeoJsonObject, GeoJsonMultiPointData):
     """A valid ``GeoJSON MultiPoint`` geometry type.
@@ -731,16 +715,6 @@ class GeoJsonMultiPoint(GeoJsonObject, GeoJsonMultiPointData):
     :type type: str or GeoJsonObjectType
     """
 
-    _validation = {
-        'coordinates': {'required': True},
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[LatLon]'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
     def __init__(
         self,
         *,
@@ -750,36 +724,6 @@ class GeoJsonMultiPoint(GeoJsonObject, GeoJsonMultiPointData):
         super(GeoJsonMultiPoint, self).__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
         self.type = 'MultiPoint'  # type: str
-        self.type = 'MultiPoint'  # type: str
-
-
-class GeoJsonMultiPolygonData(msrest.serialization.Model):
-    """GeoJsonMultiPolygonData.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type coordinates: list[list[list[LatLon]]]
-    """
-
-    _validation = {
-        'coordinates': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[LatLon]]]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        coordinates: List[List[List[LatLon]]],
-        **kwargs
-    ):
-        super(GeoJsonMultiPolygonData, self).__init__(**kwargs)
-        self.coordinates = coordinates
-
 
 class GeoJsonMultiPolygon(GeoJsonObject, GeoJsonMultiPolygonData):
     """A valid ``GeoJSON MultiPolygon`` object type.
@@ -1155,76 +1099,3 @@ class RouteInstruction(object):  # pylint: disable=too-many-instance-attributes
         self.maneuver = None
         self.message = None
         self.combined_message = None
-
-class GeoJsonMultiLineStringData(object):
-    """GeoJsonMultiLineStringData.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiLineString`` geometry.
-    :type coordinates: list[list[list[LatLon]]]
-    """
-
-    _validation = {
-        'coordinates': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[LatLon]]]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiLineStringData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-
-class GeoJsonMultiPointData(object):
-    """Data contained by a ``GeoJson MultiPoint``.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param coordinates: Required. Coordinates for the ``GeoJson MultiPoint`` geometry.
-    :type coordinates: list[list[LatLon]]
-    """
-
-    _validation = {
-        'coordinates': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[LatLon]]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPointData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
-
-class GeoJsonMultiPolygonData(object):
-    """GeoJsonMultiPolygonData.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param coordinates: Required. Contains a list of valid ``GeoJSON Polygon`` objects. **Note**
-     that coordinates in GeoJSON are in x, y order (longitude, latitude).
-    :type coordinates: list[list[list[list[LatLon]]]]
-    """
-
-    _validation = {
-        'coordinates': {'required': True},
-    }
-
-    _attribute_map = {
-        'coordinates': {'key': 'coordinates', 'type': '[[[[LatLon]]]]'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(GeoJsonMultiPolygonData, self).__init__(**kwargs)
-        self.coordinates = kwargs['coordinates']
