@@ -1,5 +1,8 @@
-from azure.template import template_main
+"""
+See https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/sample_guide.md
+"""
 
+from azure.template import template_main
 
 def simple_sample():
     print("Running simple sample")
