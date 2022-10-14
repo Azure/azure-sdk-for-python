@@ -500,7 +500,7 @@ class WebSocketTransportAsync(AsyncTransportMixin): # pylint: disable=too-many-i
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        await self.loop.run_in_executor(None, self.ws.close)
+        self.ws.close()
         self.connected = False
 
     async def write(self, s):
