@@ -1687,7 +1687,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert res.error.code == "InvalidDocument"
                 else:
                     assert res.entities
-                    # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/13227791
+                    # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
