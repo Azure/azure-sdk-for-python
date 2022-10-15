@@ -8,6 +8,7 @@ from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml.constants._job.job import JobServicesPropertiesNames
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -31,6 +32,8 @@ class JobService(RestTranslatableMixin):
     :type properties: dict[str, str]
     :param status: Status of endpoint.
     :type status: str
+    :param public_keys: public key to connect to the service.
+    :type public_keys: str
     """
 
     def __init__(
@@ -40,6 +43,7 @@ class JobService(RestTranslatableMixin):
         job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard", "VSCode"]] = None,
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
+        public_keys: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
@@ -48,18 +52,24 @@ class JobService(RestTranslatableMixin):
         self.job_service_type = job_service_type
         self.nodes = nodes
         self.status = status
+        self.public_keys = public_keys
         self.port = port
         self.properties = properties
         self._validate_nodes()
 
     def _to_rest_object(self) -> RestJobService:
+        properties = self.properties
+        if self.public_keys and properties:
+            properties = {**properties, JobServicesPropertiesNames.PUBLIC_KEYS: self.public_keys}
+        if self.public_keys and not properties:
+            properties = {JobServicesPropertiesNames.PUBLIC_KEYS: self.public_keys}
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=self.job_service_type,
             nodes=AllNodes() if self.nodes else None,
             status=self.status,
             port=self.port,
-            properties=self.properties,
+            properties=properties,
         )
 
     def _validate_nodes(self):
@@ -83,14 +93,23 @@ class JobService(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JobService":
+        publicKeys = None
+        properties = None
+        if obj.properties:
+            publicKeys = obj.properties.get(JobServicesPropertiesNames.PUBLIC_KEYS)
+            properties = {**obj.properties}
+        if publicKeys:
+            properties.pop(JobServicesPropertiesNames.PUBLIC_KEYS)
+
         return cls(
             endpoint=obj.endpoint,
             job_service_type=obj.job_service_type,
             # nodes="all" if isinstance(obj.nodes, AllNodes) else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
+            publicKeys=publicKeys,
             port=obj.port,
-            properties=obj.properties,
+            properties=properties,
         )
 
     @classmethod

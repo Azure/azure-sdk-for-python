@@ -36,6 +36,8 @@ class JobLogPattern:
 class JobServices:
     STUDIO = "Studio"
 
+class JobServicesPropertiesNames:
+    PUBLIC_KEYS = "publicKeys"
 
 class ImportSourceType:
     AZURESQLDB = "azuresqldb"
