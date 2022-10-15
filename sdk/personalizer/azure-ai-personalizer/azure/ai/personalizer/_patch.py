@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Union, Any
+from typing import List, Union, Any, IO
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 
@@ -113,14 +113,14 @@ class PersonalizerClient:
         self.events = self._client.events
         self.multi_slot_events = self._client.multi_slot_events
 
-    def rank(self, request: JSON) -> JSON:
+    def rank(self, request: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Submit a Personalizer rank request. Receives a context and a list of actions.
         Returns which of the provided actions should be used by your application, in rewardActionId.
 
         :param request: Request containing context and list of actions
         :type request: JSON
         """
-        return self._client.rank(request)
+        return self._client.rank(request, **kwargs)
 
 
 def patch_sdk():

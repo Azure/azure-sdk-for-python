@@ -71,17 +71,16 @@ async def main():
         "contextFeatures": context_features,
     }
 
-    async with client:
-        print("Sending rank request")
-        rank_response = await client.rank(request)
-        print("Rank returned response with event id {} and recommended {} as the best action"
-              .format(rank_response.get("eventId"), rank_response.get("rewardActionId")))
+    print("Sending rank request")
+    rank_response = await client.rank(request)
+    print("Rank returned response with event id {} and recommended {} as the best action"
+          .format(rank_response.get("eventId"), rank_response.get("rewardActionId")))
 
-        # The event response will be determined by how the user interacted with the action that was presented to them.
-        # Let us say that they like the action. So we associate a reward of 1.
-        print("Sending reward event")
-        await client.events.reward(rank_response.get("eventId"), {"value": 1.0})
-        print("Completed sending reward response")
+    # The event response will be determined by how the user interacted with the action that was presented to them.
+    # Let us say that they like the action. So we associate a reward of 1.
+    print("Sending reward event")
+    await client.events.reward(rank_response.get("eventId"), {"value": 1.0})
+    print("Completed sending reward response")
 
 
 if __name__ == "__main__":

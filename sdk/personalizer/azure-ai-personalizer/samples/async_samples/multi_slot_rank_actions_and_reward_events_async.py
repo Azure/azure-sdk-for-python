@@ -70,21 +70,20 @@ async def main():
         "contextFeatures": context_features
     }
 
-    async with client:
-        print("Sending multi-slot rank request")
-        rank_response = await client.multi_slot.rank(request)
-        print("Rank returned response with event id {} and recommended the following:"
-              .format(rank_response.get("eventId")))
-        for slot in rank_response.get("slots"):
-            print("Action: {} for slot: {}".format(slot.get("rewardActionId"), slot.get("id")))
+    print("Sending multi-slot rank request")
+    rank_response = await client.multi_slot.rank(request)
+    print("Rank returned response with event id {} and recommended the following:"
+          .format(rank_response.get("eventId")))
+    for slot in rank_response.get("slots"):
+        print("Action: {} for slot: {}".format(slot.get("rewardActionId"), slot.get("id")))
 
-        # The event response will be determined by how the user interacted with the action that was presented to them.
-        # Let us say that they like the action presented to them for Main Article slot. So we associate a reward of 1.
-        print("Sending reward event for Main Article slot")
-        await client.multi_slot_events.reward(
-            rank_response.get("eventId"),
-            {"reward": [{"slotId": "Main Article", "value": 1.0}]})
-        print("Completed sending reward response")
+    # The event response will be determined by how the user interacted with the action that was presented to them.
+    # Let us say that they like the action presented to them for Main Article slot. So we associate a reward of 1.
+    print("Sending reward event for Main Article slot")
+    await client.multi_slot_events.reward(
+        rank_response.get("eventId"),
+        {"reward": [{"slotId": "Main Article", "value": 1.0}]})
+    print("Completed sending reward response")
 
 
 if __name__ == "__main__":
