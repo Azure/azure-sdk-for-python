@@ -93,9 +93,9 @@ def check_system_proxy_availability() -> None:
     ca_bundle = "REQUESTS_CA_BUNDLE"
 
     if not os.environ.get(ssl_cert):
-        _LOGGER.error(f"Please check '{ssl_cert}' path")
+        _LOGGER.error(f"Please ensure the '{ssl_cert}' environment variable is correctly set in your test environment")
     if not os.environ.get(ca_bundle):
-        _LOGGER.error(f"Please check '{ca_bundle}' path")
+        _LOGGER.error(f"Please ensure the '{ca_bundle}' environment variable is correctly set in your test environment")
 
 
 def check_proxy_availability() -> None:
