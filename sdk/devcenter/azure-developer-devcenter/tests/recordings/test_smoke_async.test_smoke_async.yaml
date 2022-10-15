@@ -1,0 +1,70 @@
+interactions:
+- request:
+    body: '{"x-recording-file": "sdk/devcenter/azure-developer-devcenter/tests/recordings/test_smoke_async.pyTestDevcenterSmokeAsynctest_smoke_async"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '139'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.28.1
+    method: POST
+    uri: https://localhost:5001/record/start
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Sat, 15 Oct 2022 01:00:42 GMT
+      server:
+      - Kestrel
+      x-recording-id:
+      - b96ed4e8-89c8-4c85-b606-d5880cb3ae5c
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.28.1
+      x-recording-file:
+      - sdk/devcenter/azure-developer-devcenter/tests/recordings/test_smoke_async.pyTestDevcenterSmokeAsynctest_smoke_async
+      x-recording-id:
+      - b96ed4e8-89c8-4c85-b606-d5880cb3ae5c
+      x-recording-save:
+      - 'true'
+    method: POST
+    uri: https://localhost:5001/record/stop
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Sat, 15 Oct 2022 01:00:42 GMT
+      server:
+      - Kestrel
+    status:
+      code: 200
+      message: OK
+version: 1

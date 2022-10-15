@@ -7,14 +7,12 @@
 import os
 from testcase import DevcenterPowerShellPreparer
 from testcase_async import DevcenterAsyncTest
+from devtools_testutils.aio import recorded_by_proxy_async
 
-
-class DevcenterSmokeAsyncTest(DevcenterAsyncTest):
+class TestDevcenterSmokeAsync(DevcenterAsyncTest):
     @DevcenterPowerShellPreparer()
+    @recorded_by_proxy_async
     async def test_smoke_async(self):
         dev_center = "sdk-default-dc"
         tenant_id = "88888888-8888-8888-8888-888888888888"
         client = self.create_client(tenant_id=tenant_id, dev_center=dev_center)
-        # test your code here, for example:
-        # result = await client.xxx.xx(...)
-        # assert result is not None

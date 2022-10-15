@@ -19,7 +19,7 @@ python -m pip install azure-devcenter
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - You must have [configured](https://learn.microsoft.com/azure/dev-box/quickstart-configure-dev-box-service) a DevCenter, Project, Network Connection, Dev Box Definition, and Pool before you can create Dev Boxes 
-- You must have configured a DevCenter, Project, Catalog, and Environment Type before you can create Environments
+- You must have [configured](https://learn.microsoft.com/azure/deployment-environments/) a DevCenter, Project, Catalog, and Environment Type before you can create Environments
 
 #### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
@@ -123,7 +123,7 @@ Dev Boxes refer to managed developer machines running in Azure. Dev Boxes are pr
 Environments refer to templated developer environments, which combine a template (Catalog Item) and parameters.
 
 ## Troubleshooting
-Errors can occur during inital requests and long-running operations, and will provide information about how to resolve the error. 
+Errors can occur during initial requests and long-running operations, and will provide information about how to resolve the error. 
 Be sure to confirm that dependent resources, such as pools and catalogs, are set up properly and are in a healthy state. You will not be able to create resources with the package when your dependent resources are in a failed state.
 
 ## Next Steps

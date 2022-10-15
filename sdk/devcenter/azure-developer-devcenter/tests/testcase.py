@@ -6,14 +6,11 @@
 # --------------------------------------------------------------------------
 import os
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.developer.devcenter import DevCenterClient
 
 
-class DevcenterTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(DevcenterTest, self).__init__(method_name, **kwargs)
-
+class DevcenterTest(AzureRecordedTestCase):
     def create_client(self, tenant_id, dev_center):
         credential = self.get_credential(DevCenterClient)
         return DevCenterClient(

@@ -6,14 +6,12 @@
 # -------------------------------------------------------------------------
 import os
 from testcase import DevcenterTest, DevcenterPowerShellPreparer
+from devtools_testutils import recorded_by_proxy
 
-
-class DevcenterSmokeTest(DevcenterTest):
+class TestDevcenterSmoke(DevcenterTest):
     @DevcenterPowerShellPreparer()
+    @recorded_by_proxy
     def test_smoke(self):
         dev_center = "sdk-default-dc"
         tenant_id = "88888888-8888-8888-8888-888888888888"
         client = self.create_client(tenant_id=tenant_id, dev_center=dev_center)
-        # test your code here, for example:
-        # result = client.xxx.xx(...)
-        # assert result is not None

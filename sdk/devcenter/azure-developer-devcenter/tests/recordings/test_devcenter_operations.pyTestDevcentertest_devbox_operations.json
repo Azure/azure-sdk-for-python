@@ -1,0 +1,719 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/organizations/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1589",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:23:55 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=ApueUMeYvB5IpeL0hfjMyIg; expires=Sun, 13-Nov-2022 21:23:55 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrvVrVQrI_2Y947KiFQjINiJmHE-opaOHWvL9Rg3SZLJd7m42tvlZI_2Tkrv3N-O6B-eNuCrw0T_GDSeiw-ymxf-_fvqCO8KyKz30WfKzvMELpERnOxk__2S0k9batF_d5TGQRiuOmOPYWOKTowX2fUlOdlLgRXAKHMruV0U9wu8smm8K2olh0Z6zTJsFTD1Fobcn_IIxupm-elptrJX1xiFOi-nB0Xhcj1WfRqs3Io4IgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.13777.6 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/organizations/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/{tenantid}/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/organizations/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/organizations/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/organizations/kerberos",
+        "tenant_region_scope": null,
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/organizations/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "1c493f1a-10a8-4389-acf5-760974f852fa",
+        "Connection": "keep-alive",
+        "Content-Length": "1351",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "fpc=ApueUMeYvB5IpeL0hfjMyIg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.6 (Windows-10-10.0.22000-SP0)",
+        "X-AnchorMailbox": "Oid:df428e89-1bc2-4e72-b736-032c31a6cd97@8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|832,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "win32",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.19.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=04b07795-8ddb-461a-bbee-02f9e1bf7b46\u0026grant_type=authorization_code\u0026client_info=1\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026code_verifier=Lj3qgx0MXRbQlsnZKHhGvPwaU6fTCV.k5EmWpIt-Bey\u0026code=0.ARoAHN-yiojtRkmoqeG7s-TR_ZV3sATbjRpGu-4C-eG_e0YaAHg.AgABAAIAAAD--DLA3VO7QrddgJg7WevrAgDs_wQA9P8Bwck8OmQ0Go2FbZe5nz9hxWS93mR7f1frEVsc2LaI87tFfT3tU5cGZZjmS8wSJM48i2AdrAjs3WinSCS7sLqcCXJyfJBbaz39WN-xwXo7D-AoBpF_nDdgmTf4ULdQq5RGssvmeteO3Hl07pttWu9G9DjBLrZJkJB00eyer81xLkukfoDJ7WK_Qm2WWxlPCYZy05zD6Wl-GntYUrZifDtrcV2cH3DP41JMcRrEGgX9CNzcO2hr9tu41slqmtMU0DwoVwEqP4kIwzAXD62shr8GCjvv0qjB28rCniNdzDaI37uny6_AC3FlTLbV33k1SwEhz2r5MvBF2QyLNNZ4y_-XQj7ZrVZOwcN4su7fJ4rQvoYizlLJhinhwSyi7OWt9koBSYTYVRCA1qgc0Dx7A5iN4tYEThTUu1riycV51yqAIAXYq2mmK5iZCObMFeZkEyO0mJRZwU-1OOcwvxZQeKStRNRo6cajAkXuuYcq2o-eU2aCWh6-jEbXHTfIE4d3dfyxghobVhBCetQ1fwJ711zMm6H3mI6wOhylp_JMgi44lfb4w6amnanbm_MazUoxztH6AbF-XJONLd_Do9-eIWsNty71gqqahLQBVKJXihJQ-SWL4dSnPV3iuX_FoNWdJ0cz8gJd2U45J9ujhXlByJUidn4hnbpOp2cZsA1cKVqeoePE4yqO7pdXazrBiahCne0YoCR2C9f6biTu85eTU0AHJZRl91RXmaqCoEwRJ_4A9oAi6shAjo5w9UHK02YBQ0wLGGxmPgmUvJDyXmnuHrGt2KM6ktt2EhhKR38tOTrxoMKUUANi46b3-sRuDi1aiV_Eeb14oPMX0-OjUfST0obe1-2C47xl8FrsviBAC0M3Sipe-fox\u0026redirect_uri=http%3A%2F%2Flocalhost%3A8400\u0026scope=https%3A%2F%2Fdevcenter.azure.com%2F.default\u002Boffline_access\u002Bopenid\u002Bprofile",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "1c493f1a-10a8-4389-acf5-760974f852fa",
+        "Content-Length": "1768",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:24:30 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=ApueUMeYvB5IpeL0hfjMyIi7RtQJAQAAAI7K29oOAAAA; expires=Sun, 13-Nov-2022 21:24:31 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.13777.6 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "scope": "https://devcenter.azure.com/user_impersonation https://devcenter.azure.com/.default",
+        "expires_in": 3869,
+        "ext_expires_in": 3869,
+        "access_token": "Sanitized",
+        "refresh_token": "Sanitized",
+        "foci": "1",
+        "id_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjJaUXBKM1VwYmpBWVhZR2FYRUpsOGxWMFRPSSJ9.eyJhdWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vOGFiMmRmMWMtZWQ4OC00OTQ2LWE4YTktZTFiYmIzZTRkMWZkL3YyLjAiLCJpYXQiOjE2NjU3ODIzNzAsIm5iZiI6MTY2NTc4MjM3MCwiZXhwIjoxNjY1Nzg2MjcwLCJhaW8iOiJBVFFBeS84VEFBQUF2dWxGN2YrMU55bG9ZT0srQ2tkUk9yRHJpQ1hTcVFYOGRNV0MvYTVISEhvWTdiWERNSEIxNVA4MWZ3Qk1GaFRqIiwibmFtZSI6InNka19pbnRlZ3JhdGlvbl90ZXN0XzEiLCJub25jZSI6ImM3ZDU3M2E4N2FiNmUzMjhmZTlmZmExY2I5M2ZkZWI4MmFjOTYyYzI0N2QzZDIxYjFjOGEwOWIxOGM1YmExYzAiLCJvaWQiOiJkZjQyOGU4OS0xYmMyLTRlNzItYjczNi0wMzJjMzFhNmNkOTciLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzZGtfaW50ZWdyYXRpb25fdGVzdF8xQGZpZGFsZ29wcGUwMTAub25taWNyb3NvZnQuY29tIiwicHVpZCI6IjEwMDMyMDAyMzRBRDE4OTYiLCJyaCI6IjAuQVZBQUhOLXlpb2p0Umttb3FlRzdzLVRSX1pWM3NBVGJqUnBHdS00Qy1lR19lMFpfQUZnLiIsInN1YiI6IkdVc1BmREpxRy10a2lySVlYLXZWYy1Ta183NnRRWUlReEl3ZXFrODdzeFEiLCJ0aWQiOiI4YWIyZGYxYy1lZDg4LTQ5NDYtYThhOS1lMWJiYjNlNGQxZmQiLCJ1dGkiOiJ3NjV1aWZ6d3hFZWk0ekJXMHdnaUFBIiwidmVyIjoiMi4wIn0.gPi8Y4PSk66xzhK6tF_OhVbis2SGS8JTbqtzYbyy24zxHmCnD5OLVDlgj0ri9nL1H2Kqbun7sIi1iXhfA_TyEDu-DpJdc3Amv1ojwflaJOKJeX6OdEhkAYZ1iT8ln_eHT-B1UBp6gaBpRtVYvhaZNuiIl34Q8-U9DTq8FjTfaDC4Wt6MXrMuuX5NIOsyuKUl2oQcG9qGJEaxvSDb-D_YEX1ECYVpqoqEkS8E8Suj-ScQAGA_SG5DLQaOB287oau-eyxLEHE3_8rNs8sAmAM8Zu9wHU-Bq4_3sM4PWtfdHoflxP-DiN0ujR24oQNCAxpVkdHKcFNPUNxtmjvWVy-xLQ",
+        "client_info": "eyJ1aWQiOiJkZjQyOGU4OS0xYmMyLTRlNzItYjczNi0wMzJjMzFhNmNkOTciLCJ1dGlkIjoiOGFiMmRmMWMtZWQ4OC00OTQ2LWE4YTktZTFiYmIzZTRkMWZkIn0"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/Test_DevBox?api-version=2022-03-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "32",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "poolName": "sdk-default-pool"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "842",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:24:33 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "b1b3827e-140a-43ab-b3eb-7d535eb5a60a",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "297",
+        "X-Rate-Limit-Reset": "2022-10-14T21:25:09.5934413Z"
+      },
+      "ResponseBody": {
+        "name": "Test_DevBox",
+        "projectName": "sdk-default-project",
+        "poolName": "sdk-default-pool",
+        "provisioningState": "Creating",
+        "actionState": "Unknown",
+        "uniqueId": "7e18fd68-fde0-452d-9d30-d1f063f0aa0c",
+        "location": "eastus",
+        "osType": "Windows",
+        "user": "df428e89-1bc2-4e72-b736-032c31a6cd97",
+        "hardwareProfile": {
+          "skuName": "general_a_8c32gb_v1",
+          "memoryGB": 32,
+          "vCPUs": 8
+        },
+        "storageProfile": {
+          "osDisk": {
+            "diskSizeGB": 1024
+          }
+        },
+        "imageReference": {
+          "name": "MicrosoftWindowsDesktop_windows-ent-cpc_win11-21h2-ent-cpc-m365",
+          "version": "1.0.0",
+          "operatingSystem": "Windows11",
+          "osBuildNumber": "win11-21h2-ent-cpc-m365",
+          "publishedDate": "2021-10-04T00:00:00\u002B00:00"
+        },
+        "createdTime": "2022-10-14T21:24:31.7518165\u002B00:00",
+        "localAdministrator": "Enabled"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:25:03 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "ff1b48be-5c6b-436b-b8bc-9f5e89f65670",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T21:26:03.2886553Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Running",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:25:33 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "f69148f2-5e02-402a-8702-3430a09dfc33",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "297",
+        "X-Rate-Limit-Reset": "2022-10-14T21:25:46.2575770Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Running",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:32:37 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "687e74de-b61d-4c4a-bb8c-1746d5a03e68",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T21:33:37.2625250Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Running",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:33:07 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "272d7f9e-5a62-439b-a8a0-156d63b0bb4e",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T21:34:07.4351416Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Running",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:33:37 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "a013995f-0de1-4640-8a10-7eed02e6f1f9",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T21:34:37.5838454Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Running",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:34:08 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "5924d94a-7817-4ac3-bc38-130f59fec380",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T21:35:07.8985139Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Running",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:34:38 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "fabde91a-9a21-484a-959b-a3d22b829675",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "298",
+        "X-Rate-Limit-Reset": "2022-10-14T21:35:07.4201251Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Running",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:55:18 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "675c0397-a6b3-4f6d-87ca-00f6a86b6d42",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T21:56:17.2622978Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "name": "e4686681-d55d-43c1-b72a-98970b925f27",
+        "status": "Succeeded",
+        "startTime": "2022-10-14T21:24:32.0236552\u002B00:00",
+        "endTime": "2022-10-14T21:54:48.6309353\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/Test_DevBox?api-version=2022-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:55:18 GMT",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "f97c5174-f5d0-41da-9374-014faf8a2ffe",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T21:56:18.1137538Z"
+      },
+      "ResponseBody": {
+        "name": "Test_DevBox",
+        "projectName": "sdk-default-project",
+        "poolName": "sdk-default-pool",
+        "provisioningState": "Succeeded",
+        "actionState": "Unknown",
+        "powerState": "Running",
+        "uniqueId": "7e18fd68-fde0-452d-9d30-d1f063f0aa0c",
+        "errorDetails": {},
+        "location": "eastus",
+        "osType": "Windows",
+        "user": "df428e89-1bc2-4e72-b736-032c31a6cd97",
+        "hardwareProfile": {
+          "skuName": "general_a_8c32gb_v1",
+          "memoryGB": 32,
+          "vCPUs": 8
+        },
+        "storageProfile": {
+          "osDisk": {
+            "diskSizeGB": 1024
+          }
+        },
+        "imageReference": {
+          "name": "MicrosoftWindowsDesktop_windows-ent-cpc_win11-21h2-ent-cpc-m365",
+          "version": "1.0.0",
+          "operatingSystem": "Windows11",
+          "osBuildNumber": "win11-21h2-ent-cpc-m365",
+          "publishedDate": "2021-10-04T00:00:00\u002B00:00"
+        },
+        "createdTime": "2022-10-14T21:24:31.7518165\u002B00:00",
+        "localAdministrator": "Enabled"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/users/me/devboxes/Test_DevBox?api-version=2022-03-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "891",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:55:19 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "f2520048-b7aa-43b1-b821-a2fbda0d9a0a",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "298",
+        "X-Rate-Limit-Reset": "2022-10-14T21:55:47.0669914Z"
+      },
+      "ResponseBody": {
+        "name": "Test_DevBox",
+        "projectName": "sdk-default-project",
+        "poolName": "sdk-default-pool",
+        "provisioningState": "Deleting",
+        "actionState": "Unknown",
+        "powerState": "Running",
+        "uniqueId": "7e18fd68-fde0-452d-9d30-d1f063f0aa0c",
+        "errorDetails": {},
+        "location": "eastus",
+        "osType": "Windows",
+        "user": "df428e89-1bc2-4e72-b736-032c31a6cd97",
+        "hardwareProfile": {
+          "skuName": "general_a_8c32gb_v1",
+          "memoryGB": 32,
+          "vCPUs": 8
+        },
+        "storageProfile": {
+          "osDisk": {
+            "diskSizeGB": 1024
+          }
+        },
+        "imageReference": {
+          "name": "MicrosoftWindowsDesktop_windows-ent-cpc_win11-21h2-ent-cpc-m365",
+          "version": "1.0.0",
+          "operatingSystem": "Windows11",
+          "osBuildNumber": "win11-21h2-ent-cpc-m365",
+          "publishedDate": "2021-10-04T00:00:00\u002B00:00"
+        },
+        "createdTime": "2022-10-14T21:24:31.7518165\u002B00:00",
+        "localAdministrator": "Enabled"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:55:49 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "397a7fdc-144a-4709-81c0-1541e41d9e66",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "298",
+        "X-Rate-Limit-Reset": "2022-10-14T21:56:17.2622978Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "name": "57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "status": "Running",
+        "startTime": "2022-10-14T21:55:18.4249831\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:56:19 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "14719614-f672-4e1d-9f35-da2d020ede5f",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "298",
+        "X-Rate-Limit-Reset": "2022-10-14T21:57:16.3045613Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "name": "57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "status": "Running",
+        "startTime": "2022-10-14T21:55:18.4249831\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Length": "223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 21:56:49 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-correlation-request-id": "1c8aa4e2-41a1-46df-865e-38464c1b16a7",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "298",
+        "X-Rate-Limit-Reset": "2022-10-14T21:57:31.5301354Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "name": "57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "status": "Running",
+        "startTime": "2022-10-14T21:55:18.4249831\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b1 Python/3.10.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Oct 2022 22:02:23 GMT",
+        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "x-ms-correlation-request-id": "459ba321-d3d3-4ebc-a44b-18a19e55fb91",
+        "X-Rate-Limit-Limit": "1m",
+        "X-Rate-Limit-Remaining": "299",
+        "X-Rate-Limit-Reset": "2022-10-14T22:03:22.9387752Z"
+      },
+      "ResponseBody": {
+        "id": "/projects/sdk-default-project/operationStatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "name": "57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "status": "Succeeded",
+        "startTime": "2022-10-14T21:55:18.4249831\u002B00:00",
+        "endTime": "2022-10-14T22:02:13.5259436\u002B00:00"
+      }
+    }
+  ],
+  "Variables": {}
+}

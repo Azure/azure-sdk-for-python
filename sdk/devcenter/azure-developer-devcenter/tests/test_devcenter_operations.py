@@ -8,18 +8,14 @@ import functools
 import os
 import pytest
 import logging
-from devtools_testutils import AzureTestCase, PowerShellPreparer
-from azure.identity import DefaultAzureCredential
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
+from azure.identity import InteractiveBrowserCredential 
 from azure.developer.devcenter import DevCenterClient
 from azure.core.exceptions import HttpResponseError
 
 DevcenterPowerShellPreparer = functools.partial(PowerShellPreparer, 'devcenter')
 
-class DevcenterTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(DevcenterTest, self).__init__(method_name, **kwargs)
-        self.logger = logging.getLogger(__name__)
-
+class TestDevcenter(AzureRecordedTestCase):
     def create_client(self, dev_center_name, tenant_id):
         credential = self.get_credential(DevCenterClient)
         return DevCenterClient(
@@ -29,7 +25,9 @@ class DevcenterTest(AzureTestCase):
         )
     
     @DevcenterPowerShellPreparer()
+    @recorded_by_proxy
     def test_devbox_operations(self):
+        self.logger = logging.getLogger(__name__)
         dev_center_name = os.environ.get("DEFAULT_DEVCENTER_NAME", "sdk-default-dc")
         tenant_id = os.environ.get("AZURE_TENANT_ID", "88888888-8888-8888-8888-888888888888")
         client = self.create_client(dev_center_name, tenant_id)
@@ -52,7 +50,9 @@ class DevcenterTest(AzureTestCase):
         self.logger.info("Completed deletion for the dev box.")
 
     @DevcenterPowerShellPreparer()
+    @recorded_by_proxy
     def test_environment_operations(self):
+        self.logger = logging.getLogger(__name__)
         dev_center_name = os.environ.get("DEFAULT_DEVCENTER_NAME", "sdk-default-dc")
         tenant_id = os.environ.get("AZURE_TENANT_ID", "88888888-8888-8888-8888-888888888888")
         client = self.create_client(dev_center_name, tenant_id)
