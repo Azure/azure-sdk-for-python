@@ -13,11 +13,11 @@ jobs:
     command: echo Hello World & sleep 1h
     environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
     services:
-      "my_jupyter":
-        job_service_type: "Jupyter" # Jupyter Notebook
+      "my_ssh":
+        job_service_type: "Jupyter"
       "my_tensorboard":
-        job_service_type: "TensorBoard"
+        job_service_type: "tensor_board"
         properties:
-          logDir: "~/tblog" # where you want to store the TensorBoard output
+          logDir: "~/tblog" # where you want to store the tensor_board output
       "my_jupyterlab":
-        job_service_type: "JupyterLab"
+        job_service_type: "jupyter_lab"

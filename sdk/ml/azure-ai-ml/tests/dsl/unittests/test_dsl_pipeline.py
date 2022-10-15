@@ -3700,14 +3700,14 @@ class TestDSLPipeline:
 
     def test_pipeline_with_command_services(self):
         services = {
-            "my_jupyter": {"job_service_type": "Jupyter"},
+            "my_ssh": {"job_service_type": "ssh"},
             "my_tensorboard": {
-                "job_service_type": "TensorBoard",
+                "job_service_type": "tensor_board",
                 "properties": {
                     "logDir": "~/tblog",
                 },
             },
-            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+            "my_jupyterlab": {"job_service_type": "jupyter_lab"},
         }
 
         command_func = command(
@@ -3749,7 +3749,7 @@ class TestDSLPipeline:
             assert isinstance(service, JobService)
 
         # test set services in pipeline
-        new_services = {"my_jupyter": {"job_service_type": "Jupyter"}}
+        new_services = {"my_ssh": {"job_service_type": "ssh"}}
 
         @dsl.pipeline()
         def sample_pipeline_with_new_services():

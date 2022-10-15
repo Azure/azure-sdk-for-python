@@ -72,3 +72,26 @@ class RestSparkConfKey:
     DYNAMIC_ALLOCATION_MIN_EXECUTORS = "spark.dynamicAllocation.minExecutors"
     DYNAMIC_ALLOCATION_MAX_EXECUTORS = "spark.dynamicAllocation.maxExecutors"
     DYNAMIC_ALLOCATION_ENABLED = "spark.dynamicAllocation.enabled"
+
+
+class JobServiceTypeNames:
+    class EntityNames:
+        JUPYTER_LAB = "jupyter_lab"
+        SSH = "ssh"
+        TENSOR_BOARD = "tensor_board"
+        VS_CODE = "vs_code"
+
+    class RestNames:
+        JUPYTER_LAB = "JupyterLab"
+        SSH = "SSH"
+        TENSOR_BOARD = "TensorBoard"
+        VS_CODE = "VSCode"
+
+    ENTITY_TO_REST = {
+        EntityNames.JUPYTER_LAB: RestNames.JUPYTER_LAB,
+        EntityNames.SSH: RestNames.SSH,
+        EntityNames.TENSOR_BOARD: RestNames.TENSOR_BOARD,
+        EntityNames.VS_CODE: RestNames.VS_CODE,
+    }
+
+    REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}

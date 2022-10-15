@@ -8,6 +8,7 @@ from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -37,7 +38,9 @@ class JobService(RestTranslatableMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["JupyterLab", "SSH", "TensorBoard", "VSCode"]] = None,
+        # TODO: Is VS Code allowed here?
+        # TODO: As this is a breaking change, should we still allow the old format (any-case) and deprecate in the next release?
+        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs-code"]] = None,
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -51,11 +54,14 @@ class JobService(RestTranslatableMixin):
         self.port = port
         self.properties = properties
         self._validate_nodes()
+        self._validate_job_service_type_name()
 
     def _to_rest_object(self) -> RestJobService:
         return RestJobService(
             endpoint=self.endpoint,
-            job_service_type=self.job_service_type,
+            job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
+            if self.job_service_type
+            else None,
             nodes=AllNodes() if self.nodes else None,
             status=self.status,
             port=self.port,
@@ -65,6 +71,20 @@ class JobService(RestTranslatableMixin):
     def _validate_nodes(self):
         if not self.nodes in ["all", None]:
             msg = f"nodes should be either 'all' or None, but received '{self.nodes}'."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+    def _validate_job_service_type_name(self):
+        if self.job_service_type and not self.job_service_type in JobServiceTypeNames.ENTITY_TO_REST.keys():
+            msg = (
+                f"job_service_type should be one of "
+                f"{list(JobServiceTypeNames.ENTITY_TO_REST.keys())}, but received '{self.job_service_type}'."
+            )
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
@@ -85,7 +105,10 @@ class JobService(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestJobService) -> "JobService":
         return cls(
             endpoint=obj.endpoint,
-            job_service_type=obj.job_service_type,
+            job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
+            if obj.job_service_type
+            else None,
+            # obj.job_service_type,
             # nodes="all" if isinstance(obj.nodes, AllNodes) else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
