@@ -16,6 +16,10 @@
     ([#26023](https://github.com/Azure/azure-sdk-for-python/pull/26023))
 - Implement statsbeat shutdown
     ([#26077](https://github.com/Azure/azure-sdk-for-python/pull/26077))
+- Add ApplicationInsightsSampler
+    ([#26224](https://github.com/Azure/azure-sdk-for-python/pull/26224))
+- Implement truncation logic for telemetry payload
+    ([#26257](https://github.com/Azure/azure-sdk-for-python/pull/26257))
 
 ### Breaking Changes
 

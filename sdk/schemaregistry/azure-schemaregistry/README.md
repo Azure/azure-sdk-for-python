@@ -24,7 +24,7 @@ pip install azure-schemaregistry
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service] - [Here is the quickstart guide][quickstart_guide] to create a Schema Registry group using the Azure portal.
-* Python 3.6 or later - [Install Python][python]
+* Python 3.7 or later - [Install Python][python]
 
 ### Authenticate the client
 
@@ -71,6 +71,7 @@ The following sections provide several code snippets covering some of the most c
 
 - [Register a schema](#register-a-schema)
 - [Get the schema by id](#get-the-schema-by-id)
+- [Get the schema by version](#get-the-schema-by-version)
 - [Get the id of a schema](#get-the-id-of-a-schema)
 
 ### Register a schema
@@ -123,6 +124,29 @@ schema_id = 'your-schema-id'
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
     schema = schema_registry_client.get_schema(schema_id)
+    definition = schema.definition
+    properties = schema.properties
+```
+
+### Get the schema by version
+
+Get the schema definition and its properties by schema version.
+
+```python
+import os
+
+from azure.identity import DefaultAzureCredential
+from azure.schemaregistry import SchemaRegistryClient
+
+token_credential = DefaultAzureCredential()
+fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
+group_name = os.environ["SCHEMAREGISTRY_GROUP"]
+name = "your-schema-name"
+version = int("<your schema version>")
+
+schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
+with schema_registry_client:
+    schema = schema_registry_client.get_schema_by_version(group_name, name, version)
     definition = schema.definition
     properties = schema.properties
 ```

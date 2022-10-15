@@ -19,7 +19,8 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import ValidationMetricT
 from azure.ai.ml.automl import image_instance_segmentation
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob, ImageObjectDetectionSearchSpace
+from azure.ai.ml.entities._job.automl import SearchSpace
+from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
@@ -76,7 +77,7 @@ class TestAutoMLImageInstanceSegmentation:
                 },
             ]
             """
-            search_sub_space = ImageObjectDetectionSearchSpace(
+            search_sub_space = SearchSpace(
                 model_name="maskrcnn_resnet50_fpn",
                 learning_rate=Uniform(0.0001, 0.001),
                 warmup_cosine_lr_warmup_epochs=Choice([0, 3]),

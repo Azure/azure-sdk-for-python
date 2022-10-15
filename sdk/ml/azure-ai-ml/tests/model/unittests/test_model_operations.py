@@ -5,7 +5,6 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml import load_model
-from azure.ai.ml._ml_exceptions import ErrorTarget
 from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
     ModelContainerData,
     ModelContainerDetails,
@@ -15,6 +14,7 @@ from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.exceptions import ErrorTarget
 from azure.ai.ml.operations import DatastoreOperations, ModelOperations
 
 

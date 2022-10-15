@@ -75,8 +75,11 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
         )
         sas_uri = res.blob_reference_for_consumption.credential["sasUri"]
     except HttpResponseError as e:
-        if e.status_code == 400:
+        # "Asset already exists" exception is thrown from service with error code 409, that we need to ignore
+        if e.status_code == 409:
             module_logger.debug("Skipping file upload, reason:  %s", str(e.reason))
+        else:
+            raise e
     return sas_uri
 
 

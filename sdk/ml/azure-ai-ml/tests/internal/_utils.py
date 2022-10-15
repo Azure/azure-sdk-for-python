@@ -60,6 +60,7 @@ PARAMETERS_TO_TEST = [
             "resources.instance_count": 1,  # runsettings.parallel.node_count
             "max_concurrency_per_instance": 2,  # runsettings.parallel.max_concurrency_per_instance
             "error_threshold": 5,  # runsettings.parallel.error_threshold
+            "mini_batch_size": 2,  # runsettings.parallel.mini_batch_size
             "logging_level": "DEBUG",  # runsettings.parallel.logging_level
             "retry_settings.timeout": 300,  # runsettings.parallel.run_invocation_timeout
             "retry_settings.max_retries": 2,  # runsettings.parallel.run_max_try
@@ -70,21 +71,6 @@ PARAMETERS_TO_TEST = [
             "default_datastore": None,
         },
     ),
-    # TODO: enable after PR 846024 is released
-    # (
-    #     "./tests/test_configs/internal/spark-component/spec.yaml",  # Spark
-    #     {},
-    #     {
-    #         "identity": "",  # runsettings.spark.identity
-    #         "driver_memory": "1Gi",  # runsettings.spark.driver_memory
-    #         "executor_memory": "1Gi",  # runsettings.spark.executor_memory
-    #         "executor_cores": 1,  # runsettings.spark.executor_cores
-    #         "number_executors": 1,  # runsettings.spark.number_executors
-    #         "conf": {},  # runsettings.spark.conf
-    #
-    #     },
-    #     {}
-    # ),
     (
         "./tests/test_configs/internal/scope-component/component_spec.yaml",
         {
@@ -150,7 +136,7 @@ PARAMETERS_TO_TEST = [
     (
         "./tests/test_configs/internal/data-transfer-component/component_spec.yaml",
         {
-            "source_data": Input(type=AssetTypes.MLTABLE, path="mltable_aml_component_datatransfer_folder@latest"),
+            "source_data": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
         },
         {
             "compute": ADF_NAME,

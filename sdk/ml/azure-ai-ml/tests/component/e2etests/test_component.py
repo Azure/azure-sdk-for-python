@@ -19,9 +19,8 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
 )
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
-from azure.ai.ml.entities import CommandComponent, Component
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._load_functions import load_code
+from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
+from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
@@ -117,7 +116,7 @@ class TestComponent:
     def test_command_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
-            "command": "echo Hello World & echo [${{inputs.component_in_number}}] & echo "
+            "command": "echo Hello World & echo $[[${{inputs.component_in_number}}]] & echo "
             "${{inputs.component_in_path}} & echo "
             "${{outputs.component_out_path}} > "
             "${{outputs.component_out_path}}/component_in_number",
@@ -134,7 +133,7 @@ class TestComponent:
             },
             "is_deterministic": True,
             "outputs": {"component_out_path": {"type": "uri_folder"}},
-            "resources": {"instance_count": 1, "properties": {}},
+            "resources": {"instance_count": 1},
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "type": "command",
             "version": "0.0.1",
@@ -162,6 +161,7 @@ class TestComponent:
             "is_deterministic": True,
             "max_concurrency_per_instance": 12,
             "mini_batch_error_threshold": 5,
+            "logging_level": "INFO",
             "mini_batch_size": "10240",
             "outputs": {"scored_result": {"type": "mltable"}, "scoring_summary": {"type": "uri_file"}},
             "retry_settings": {"max_retries": 10, "timeout": 3},
@@ -215,8 +215,7 @@ class TestComponent:
     @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
-            "entry": {"file": "entry.py"},
-            "jars": ["scalaproj.jar"],
+            "entry": {"file": "add_greeting_column.py"},
             "py_files": ["utils.zip"],
             "files": ["my_files.txt"],
             "conf": {
@@ -226,21 +225,21 @@ class TestComponent:
                 "spark.executor.instances": 1,
                 "spark.executor.memory": "1g",
             },
-            "args": "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
-            "description": "Aml Spark dataset test module",
+            "args": "--file_input ${{inputs.file_input}}",
+            "description": "Aml Spark add greeting column test module",
             "tags": {},
             "version": "1",
-            "$schema": "http://azureml/sdk-2-0/SparkComponent.json",
-            "display_name": "Aml Spark dataset test module",
+            "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
+            "display_name": "Aml Spark add greeting column test module",
             "is_deterministic": True,
-            "inputs": {"file_input1": {"type": "uri_file"}, "file_input2": {"type": "uri_file"}},
-            "outputs": {"output": {"type": "uri_folder"}},
+            "inputs": {"file_input": {"type": "uri_file"}},
+            "outputs": {},
             "type": "spark",
         }
         assert_component_basic_workflow(
             client=client,
             randstr=randstr,
-            path="./tests/test_configs/components/basic_spark_component.yml",
+            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml",
             expected_dict=expected_dict,
             omit_fields=["name", "creation_context", "id", "code", "environment"],
         )
@@ -270,7 +269,7 @@ class TestComponent:
         component_entity._creation_context = None
         assert target_entity.id
         # server side will remove \n from the code now. Skip them given it's not targeted to check in this test
-        omit_fields = ["id", "command"]
+        omit_fields = ["id", "command", "environment"]
         assert pydash.omit(component_entity._to_dict(), *omit_fields) == pydash.omit(
             target_entity._to_dict(), *omit_fields
         )
@@ -288,6 +287,7 @@ class TestComponent:
         assert component_resource.code
         assert is_ARM_id_for_resource(component_resource.code)
 
+    @pytest.mark.skip(reason="TODO: 1976724, will randomly break and need service-side further investigation.")
     def test_component_list(self, client: MLClient, randstr: Callable[[], str]) -> None:
         component_name = randstr()
 
@@ -296,7 +296,7 @@ class TestComponent:
 
         # list component containers
         component_containers = client.components.list()
-        assert isinstance(component_containers.next(), ComponentContainerData)
+        assert isinstance(component_containers.next(), Component)
 
         # there might be delay so getting latest version immediately after creation might get wrong result
         sleep(5)
@@ -691,7 +691,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         }
 
     def test_component_create_get_list_from_registry(
-        self, registry_client: MLClient, only_registry_client: MLClient, randstr: Callable[[], str]
+        self, only_registry_client: MLClient, randstr: Callable[[], str]
     ) -> None:
         component_name = randstr()
 
@@ -712,6 +712,16 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
     def test_simple_pipeline_component_create(self, client: MLClient, randstr: Callable[[], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
+
+        component = load_component(
+            source=component_path,
+        )
+        # Assert binding on compute not changed after resolve dependencies
+        client.components._resolve_arm_id_for_pipeline_component_jobs(
+            component.jobs, resolver=client.components._orchestrators.get_asset_arm_id
+        )
+        assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
+        # Assert E2E
         rest_pipeline_component = create_component(
             client,
             component_name=randstr(),
@@ -741,6 +751,8 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
                     "default": "10.99",
                     "description": "A number",
                 },
+                # The azureml: prefix has been resolve and removed by service
+                "node_compute": {"type": "string", "default": "cpu-cluster"},
             },
             "outputs": {},
             "type": "pipeline",
@@ -783,3 +795,19 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "type": "pipeline",
         }
         assert component_dict == expected_dict
+
+    @pytest.mark.skip("Skip for Bug https://msdata.visualstudio.com/Vienna/_workitems/edit/1969753")
+    def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr()}]
+        pipeline_job = load_job(
+            path="./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
+            params_override=params_override,
+        )
+        job = client.jobs.create_or_update(pipeline_job)
+        try:
+            client.jobs.cancel(job.name)
+        except Exception:
+            pass
+        component = PipelineComponent(name=randstr(), source_job_id=job.id)
+        rest_component = client.components.create_or_update(component)
+        assert rest_component

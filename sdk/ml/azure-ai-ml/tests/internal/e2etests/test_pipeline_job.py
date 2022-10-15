@@ -7,14 +7,15 @@ from typing import Callable
 
 import pydash
 import pytest
-from tests.internal._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
 
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
+
+from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
 
 
 @pytest.fixture
@@ -124,7 +125,7 @@ class TestPipelineJob:
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,
     )
-    def test_data_as_pipeline_inputs(
+    def test_data_as_node_inputs(
         self,
         client: MLClient,
         randstr: Callable[[], str],
@@ -141,6 +142,25 @@ class TestPipelineJob:
                 inputs[input_name] = client.data.get(data_name, version=DATA_VERSION)
 
         self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
+
+    def test_data_as_pipeline_inputs(self, client: MLClient, randstr: Callable[[], str]):
+        yaml_path = "./tests/test_configs/internal/distribution-component/component_spec.yaml"
+        node_func: InternalComponent = load_component(yaml_path)
+
+        @pipeline()
+        def pipeline_func(pipeline_input):
+            node = node_func(input_path=pipeline_input)
+            node.compute = "cpu-cluster"
+
+        dsl_pipeline: PipelineJob = pipeline_func(
+            pipeline_input=client.data.get("mltable_imdb_reviews_train", label="latest")
+        )
+
+        created_pipeline: PipelineJob = client.jobs.create_or_update(dsl_pipeline)
+        try:
+            client.jobs.cancel(created_pipeline.name)
+        except HttpResponseError as ex:
+            assert "CancelPipelineRunInTerminalStatus" in str(ex)
 
     @pytest.mark.skip(
         reason="Skip for pipeline component compute bug: https://msdata.visualstudio.com/Vienna/_workitems/edit/1920464"
@@ -205,5 +225,34 @@ class TestPipelineJob:
 
         pipeline_job = pipeline_with_command_components(tsv_file="out.tsv", content="1\t2\t3\t4")
 
+        pipeline_job = client.jobs.create_or_update(pipeline_job, experiment_name="v15_v2_interop")
+        client.jobs.cancel(pipeline_job.name)
+
+    def test_pipeline_with_setting_node_output_mode(self, client: MLClient):
+        # get dataset
+        training_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+        test_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        component_dir = (
+            Path(__file__).parent.parent.parent / "test_configs" / "internal" / "get_started_train_score_eval"
+        )
+        train_component_func = load_component(component_dir / "train.yaml")
+        score_component_func = load_component(component_dir / "score.yaml")
+        eval_component_func = load_component(component_dir / "eval.yaml")
+
+        @pipeline()
+        def training_pipeline_with_components_in_registry(input_data, test_data, learning_rate):
+            # we don't link node output with pipeline output, because pipeline output will override node output in
+            # backend and backend will set pipeline output mode as mount according to contract
+            train = train_component_func(training_data=input_data, max_epochs=5, learning_rate=learning_rate)
+            train.outputs.model_output.mode = InputOutputModes.UPLOAD
+            score = score_component_func(model_input=train.outputs.model_output, test_data=test_data)
+            eval = eval_component_func(scoring_result=score.outputs.score_output)
+            eval.outputs.eval_output.mode = InputOutputModes.UPLOAD
+
+        pipeline_job = training_pipeline_with_components_in_registry(
+            input_data=training_data, test_data=test_data, learning_rate=0.1
+        )
+        pipeline_job.settings.default_compute = "cpu-cluster"
         pipeline_job = client.jobs.create_or_update(pipeline_job, experiment_name="v15_v2_interop")
         client.jobs.cancel(pipeline_job.name)

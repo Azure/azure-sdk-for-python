@@ -9,7 +9,6 @@ from typing import Dict, Iterable, Tuple, Union
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DiagnoseRequestProperties,
@@ -29,8 +28,10 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_group_location,
 )
 from azure.ai.ml._version import VERSION
+from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.entities import Workspace
+from azure.ai.ml.entities import ManagedServiceIdentity, Workspace
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
@@ -150,7 +151,7 @@ class WorkspaceOperations:
         :rtype: LROPoller
         """
         existing_workspace = None
-        resource_group = workspace.resource_group or self._resource_group_name
+        resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
         except Exception:  # pylint: disable=broad-except
@@ -164,18 +165,22 @@ class WorkspaceOperations:
             workspace.tags = existing_workspace.tags
             workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
             workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            workspace.identity = workspace.identity or existing_workspace.identity
+            workspace.primary_user_assigned_identity = (
+                workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
+            )
             return self.begin_update(
                 workspace,
                 update_dependent_resources=update_dependent_resources,
                 kwargs=kwargs,
             )
-
         # add tag in the workspace to indicate which sdk version the workspace is created from
         if workspace.tags is None:
             workspace.tags = {}
         if workspace.tags.get("createdByToolkit") is None:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
+        workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
 
         arm_submit = ArmDeploymentExecutor(
@@ -204,7 +209,7 @@ class WorkspaceOperations:
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> Union[LROPoller, Workspace]:
-        """Update friendly name, description or tags of a workspace.
+        """Update friendly name, description, managed identities or tags of a workspace.
 
         :param workspace: Workspace resource.
         :param update_dependent_resources: gives your consent to update the workspace dependent resources.
@@ -220,18 +225,29 @@ class WorkspaceOperations:
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """
+        identity = kwargs.get("identity", workspace.identity)
+        if identity:
+            identity = identity._to_rest_object()
         update_param = WorkspaceUpdateParameters(
             tags=workspace.tags,
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
             public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
+            identity=identity,
+            primary_user_assigned_identity=kwargs.get(
+                "primary_user_assigned_identity", workspace.primary_user_assigned_identity
+            ),
         )
 
-        application_insights = kwargs.get("application_insights", workspace.application_insights)
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         old_workspace = self.get(workspace.name, **kwargs)
-        if container_registry != old_workspace.container_registry and not update_dependent_resources:
+        # Empty string is for erasing the value of container_registry, None is to be ignored value
+        if (
+            container_registry is not None
+            and container_registry != old_workspace.container_registry
+            and not update_dependent_resources
+        ):
             msg = (
                 "Updating the workspace-attached Azure Container Registry resource may break lineage of "
                 "previous jobs or your ability to rerun earlier jobs in this workspace. "
@@ -244,7 +260,13 @@ class WorkspaceOperations:
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if application_insights != old_workspace.application_insights and not update_dependent_resources:
+        application_insights = kwargs.get("application_insights", workspace.application_insights)
+        # Empty string is for erasing the value of application_insights, None is to be ignored value
+        if (
+            application_insights is not None
+            and application_insights != old_workspace.application_insights
+            and not update_dependent_resources
+        ):
             msg = (
                 "Updating the workspace-attached Azure Application Insights resource may break lineage "
                 "of deployed inference endpoints this workspace. Are you sure you want to perform this "
@@ -260,9 +282,8 @@ class WorkspaceOperations:
         update_param.application_insights = application_insights
         no_wait = kwargs.get("no_wait", False)
 
-        poller = self._operation.begin_update(
-            self._resource_group_name, workspace.name, update_param, polling=not no_wait
-        )
+        resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
+        poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=not no_wait)
 
         if not no_wait:
             return Workspace._from_rest_object(poller.result())
@@ -286,7 +307,8 @@ class WorkspaceOperations:
         :rtype: LROPoller
         """
         try:
-            workspace = self.get(name)
+            workspace = self.get(name, **kwargs)
+            resource_group = kwargs.get("resource_group") or self._resource_group_name
             if delete_dependent_resources:
                 delete_resource_by_arm_id(
                     self._credentials,
@@ -316,13 +338,13 @@ class WorkspaceOperations:
             start_time = time()
             path_format_arguments = {
                 "endpointName": name,
-                "resourceGroupName": self._resource_group_name,
+                "resourceGroupName": resource_group,
                 "workspaceName": name,
             }
             no_wait = kwargs.get("no_wait", False)
 
             delete_poller = self._operation.begin_delete(
-                resource_group_name=self._resource_group_name,
+                resource_group_name=resource_group,
                 workspace_name=name,
                 polling=AzureMLPolling(
                     LROConfigurations.POLL_INTERVAL,
@@ -358,8 +380,9 @@ class WorkspaceOperations:
         :rtype: LROPoller
         """
         no_wait = kwargs.get("no_wait", False)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
         parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())
-        poller = self._operation.begin_diagnose(self._resource_group_name, name, parameters, polling=not no_wait)
+        poller = self._operation.begin_diagnose(resource_group, name, parameters, polling=not no_wait)
         if not no_wait:
             return poller.result().value.as_dict()
         module_logger.info("Diagnose request initiated for workspace:%s`\n", name)
@@ -370,7 +393,7 @@ class WorkspaceOperations:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
-                self._credentials, self._subscription_id, self._resource_group_name
+                self._credentials, self._subscription_id, workspace.resource_group
             )
 
         template = get_template(resource_type=ArmConstants.WORKSPACE_BASE)
@@ -387,8 +410,7 @@ class WorkspaceOperations:
             _set_val(param["description"], workspace.description)
         _set_val(param["location"], workspace.location)
 
-        resource_group_for_new_resources = workspace.resource_group or self._resource_group_name
-        _set_val(param["resourceGroupName"], resource_group_for_new_resources)
+        _set_val(param["resourceGroupName"], workspace.resource_group)
 
         if workspace.key_vault:
             resource_name, group_name = get_resource_and_group_name(workspace.key_vault)
@@ -400,7 +422,7 @@ class WorkspaceOperations:
             _set_val(param["keyVaultName"], key_vault)
             _set_val(
                 param["keyVaultResourceGroupName"],
-                resource_group_for_new_resources,
+                workspace.resource_group,
             )
 
         if workspace.storage_account:
@@ -413,7 +435,7 @@ class WorkspaceOperations:
             _set_val(param["storageAccountName"], storage)
             _set_val(
                 param["storageAccountResourceGroupName"],
-                resource_group_for_new_resources,
+                workspace.resource_group,
             )
 
         if workspace.application_insights:
@@ -429,7 +451,7 @@ class WorkspaceOperations:
             _set_val(param["applicationInsightsName"], app_insights)
             _set_val(
                 param["applicationInsightsResourceGroupName"],
-                resource_group_for_new_resources,
+                workspace.resource_group,
             )
 
         if workspace.container_registry:
@@ -470,6 +492,16 @@ class WorkspaceOperations:
         if workspace.tags:
             for key, val in workspace.tags.items():
                 param["tagValues"]["value"][key] = val
+
+        identity = None
+        if workspace.identity:
+            identity = workspace.identity._to_rest_object()
+        else:
+            identity = ManagedServiceIdentity(type=ManagedServiceIdentityType.SYSTEM_ASSIGNED)._to_rest_object()
+        _set_val(param["identity"], identity)
+
+        if workspace.primary_user_assigned_identity:
+            _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

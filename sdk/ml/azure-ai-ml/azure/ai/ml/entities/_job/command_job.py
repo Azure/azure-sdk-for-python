@@ -9,7 +9,6 @@ import logging
 from pathlib import Path
 from typing import Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
@@ -25,7 +24,9 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_inputs_for_command,
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from .job import Job
@@ -169,7 +170,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             experiment_name=rest_command_job.experiment_name,
             services=rest_command_job.services,
             status=rest_command_job.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
             compute=rest_command_job.compute_id,
             environment=rest_command_job.environment_id,
@@ -241,6 +242,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             tags=self.tags,
             display_name=self.display_name,
             limits=self.limits,
+            services=self.services,
         )
 
     def _validate(self) -> None:

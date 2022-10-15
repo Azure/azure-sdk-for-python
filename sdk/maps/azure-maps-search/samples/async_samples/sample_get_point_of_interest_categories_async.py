@@ -36,5 +36,4 @@ async def get_point_of_interest_categories_async():
     # [END get_point_of_interest_categories_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_point_of_interest_categories_async())
+    asyncio.run(get_point_of_interest_categories_async())

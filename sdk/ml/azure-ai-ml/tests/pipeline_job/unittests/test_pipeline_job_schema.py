@@ -10,7 +10,6 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobService, MLTableJobInput
 from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
@@ -29,6 +28,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -63,7 +63,7 @@ class TestPipelineJobSchema:
     def test_simple_deserialize(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
         yaml_obj = load_yaml(test_path)
-        job = load_job(test_path)
+        job: PipelineJob = load_job(test_path)
         # Expected REST overrides and settings are in a JSON file "settings_overrides.json"
         with open(
             "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths_expected_settings_override.json"
@@ -76,7 +76,7 @@ class TestPipelineJobSchema:
             "job_in_string": "a_random_string",
         }
         assert job._build_inputs() == expected_inputs
-        settings = vars(job.settings)
+        settings = job.settings._to_dict()
         settings = {k: v for k, v in settings.items() if v is not None and k != "force_rerun"}
         assert settings == yaml_obj["settings"]
         # check that components were loaded correctly
@@ -606,8 +606,10 @@ class TestPipelineJobSchema:
         test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
         job = load_job(test_path)
         # make sure inline component is parsed into component entity
-        spark_component = job.jobs["spark_job"]
-        component_dict = load_yaml("./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component.yml")
+        spark_component = job.jobs["add_greeting_column"]
+        component_dict = load_yaml(
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+        )
         self.assert_inline_component(spark_component, component_dict)
 
     def test_pipeline_job_inline_component_file_with_complex_path(self):
@@ -679,6 +681,37 @@ class TestPipelineJobSchema:
         rest_job = job._to_rest_object()
         assert rest_job.properties.compute_id == "cpu-cluster"
         assert rest_job.properties.compute_id == job.compute
+
+    def test_set_unknown_pipeline_job_settings(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults.yml"
+
+        job: PipelineJob = load_job(
+            test_path,
+            params_override=[
+                {
+                    "settings._yaml_unknown": "_xxx",
+                    "settings.yaml_unknown": "xxx",
+                }
+            ],
+        )
+        job.settings.unknown_setting = "unknown"
+        job.settings._enable_dataset_mode = True
+        job.settings.foo.bar = "xxx"
+        # job.settings._foo.bar = "xxx" is not supported
+        expected_dict = {
+            "_source": "YAML.JOB",
+            "default_datastore": "workspacefilestore",
+            "default_compute": "cpu-cluster-1",
+            "continue_on_step_failure": True,
+            "unknown_setting": "unknown",
+            "_enable_dataset_mode": True,
+            "foo": {
+                "bar": "xxx",
+            },
+            "_yaml_unknown": "_xxx",
+            "yaml_unknown": "xxx",
+        }
+        assert job._to_rest_object().properties.settings == expected_dict
 
     def test_pipeline_job_settings_field_inline_commandjob(
         self, mock_machinelearning_client: MLClient, mocker: MockFixture
@@ -1116,60 +1149,116 @@ class TestPipelineJobSchema:
             "force_rerun": False,
         }
 
-    def test_command_job_in_pipeline_to_component(self):
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml"
-        )
+    @pytest.mark.parametrize(
+        "test_path, expected_components",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml",
+                {
+                    "hello_world_inline_commandjob_1": {
+                        "_source": "YAML.JOB",
+                        "code": "./",
+                        "command": "pip freeze && echo " "${{inputs.literal_input}}",
+                        "description": "Train a model on the Iris " "dataset-1.",
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "inputs": {
+                            "literal_input": {"default": "7", "type": "integer"},
+                            "test1": {"mode": "ro_mount", "type": "uri_file"},
+                            "test2": {"mode": "ro_mount", "type": "uri_file"},
+                        },
+                        "is_deterministic": True,
+                        "outputs": {"test1": {"type": "uri_file"}},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                    "hello_world_inline_commandjob_2": {
+                        "_source": "YAML.JOB",
+                        "command": "echo Hello World",
+                        "description": "Train a model on the Iris dataset-2.",
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "inputs": {
+                            "test1": {"mode": "ro_mount", "type": "uri_file"},
+                            "test2": {"type": "uri_file"},
+                            "test3": {"type": "uri_folder"},
+                        },
+                        "is_deterministic": True,
+                        "outputs": {},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                    "hello_world_inline_commandjob_3": {
+                        "_source": "YAML.JOB",
+                        "code": "./",
+                        "command": "pip freeze && echo ${{inputs.test1}}",
+                        "description": "Train a model on the Iris dataset-1.",
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
+                        "is_deterministic": True,
+                        "outputs": {"test1": {"type": "uri_folder"}},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                },
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs_2.yml",
+                {
+                    "hello_world_inline_commandjob_1": {
+                        "_source": "YAML.JOB",
+                        "code": "./",
+                        "command": "pip freeze && echo " "${{inputs.literal_input}}",
+                        "description": "Train a model on the Iris " "dataset-1.",
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "inputs": {
+                            "literal_input": {"default": "7", "type": "integer"},
+                            "test1": {"mode": "ro_mount", "type": "uri_file"},
+                            "test2": {"mode": "ro_mount", "type": "uri_file"},
+                        },
+                        "is_deterministic": True,
+                        "outputs": {"test1": {"type": "uri_file"}},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                    "hello_world_inline_commandjob_2": {
+                        "_source": "YAML.JOB",
+                        "command": "echo Hello World",
+                        "description": "Train a model on the Iris dataset-2.",
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "inputs": {
+                            "test1": {"mode": "ro_mount", "type": "uri_file"},
+                            "test2": {"type": "uri_file"},
+                            "test3": {"type": "uri_folder"},
+                        },
+                        "is_deterministic": True,
+                        "outputs": {},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                    "hello_world_inline_commandjob_3": {
+                        "_source": "YAML.JOB",
+                        "code": "./",
+                        "command": "pip freeze && echo ${{inputs.test1}}",
+                        "description": "Train a model on the Iris dataset-1.",
+                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
+                        "is_deterministic": True,
+                        "outputs": {"test1": {"type": "uri_folder", "mode": "mount"}},
+                        "tags": {},
+                        "type": "command",
+                        "version": "1",
+                    },
+                },
+            ),
+        ],
+    )
+    def test_command_job_in_pipeline_to_component(self, test_path, expected_components):
         pipeline_entity = load_job(source=test_path)
         # check component of pipeline job is expected
-        expected_components = {
-            "hello_world_inline_commandjob_1": {
-                "_source": "YAML.JOB",
-                "code": "./",
-                "command": "pip freeze && echo " "${{inputs.literal_input}}",
-                "description": "Train a model on the Iris " "dataset-1.",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-                "inputs": {
-                    "literal_input": {"default": "7", "type": "integer"},
-                    "test1": {"type": "uri_file"},
-                    "test2": {"type": "uri_file"},
-                },
-                "is_deterministic": True,
-                "outputs": {"test1": {"type": "uri_file"}},
-                "tags": {},
-                "type": "command",
-                "version": "1",
-            },
-            "hello_world_inline_commandjob_2": {
-                "_source": "YAML.JOB",
-                "command": "echo Hello World",
-                "description": "Train a model on the Iris dataset-2.",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-                "inputs": {
-                    "test1": {"type": "uri_file"},
-                    "test2": {"type": "uri_file"},
-                    "test3": {"type": "uri_folder"},
-                },
-                "is_deterministic": True,
-                "outputs": {},
-                "tags": {},
-                "type": "command",
-                "version": "1",
-            },
-            "hello_world_inline_commandjob_3": {
-                "_source": "YAML.JOB",
-                "code": "./",
-                "command": "pip freeze && echo ${{inputs.test1}}",
-                "description": "Train a model on the Iris dataset-1.",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-                "inputs": {"test1": {"type": "uri_file"}},
-                "is_deterministic": True,
-                "outputs": {"test1": {"type": "uri_folder"}},
-                "tags": {},
-                "type": "command",
-                "version": "1",
-            },
-        }
         for name, expected_dict in expected_components.items():
             actual_dict = pipeline_entity.jobs[name].component._to_rest_object().as_dict()
             omit_fields = [
@@ -1191,11 +1280,11 @@ class TestPipelineJobSchema:
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
                 "inputs": {
                     "literal_input": {"type": "integer"},
-                    "test1": {"type": "uri_file"},
-                    "test2": {"type": "uri_file"},
+                    "test1": {"type": "uri_file", "mode": "ro_mount"},
+                    "test2": {"type": "uri_file", "mode": "ro_mount"},
                 },
                 "is_deterministic": True,
-                "outputs": {"test1": {"type": "uri_folder"}},
+                "outputs": {"test1": {"type": "uri_folder", "mode": "mount"}},
                 "tags": {},
                 "type": "command",
                 "version": "1",
@@ -1205,7 +1294,7 @@ class TestPipelineJobSchema:
                 "command": "pip freeze && echo ${{inputs.test1}}",
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
                 "inputs": {
-                    "test1": {"type": "uri_file"},
+                    "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_folder"},
                     "test3": {"type": "uri_file"},
                 },
@@ -1220,7 +1309,7 @@ class TestPipelineJobSchema:
                 "command": "pip freeze && echo ${{inputs.test1}}",
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
                 "inputs": {
-                    "test1": {"type": "uri_file"},
+                    "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_file"},
                     "test3": {"type": "mltable"},
                 },
@@ -1400,6 +1489,26 @@ class TestPipelineJobSchema:
             "my_jupyterlab": {"job_service_type": "JupyterLab"},
         }
 
+    def test_command_job_node_services_in_pipeline_with_no_component(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job.yml"
+        job: PipelineJob = load_job(source=test_path)
+        node_services = job.jobs["hello_world_component_inline"].services
+
+        for name, service in node_services.items():
+            assert isinstance(service, JobService)
+
+        job_rest_obj = job._to_rest_object()
+        assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
+            "my_jupyter": {"job_service_type": "Jupyter"},
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+        }
+
     def test_dump_pipeline_inputs(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml"
         expected_inputs = {
@@ -1435,3 +1544,40 @@ class TestPipelineJobSchema:
             "component_in_path": {"path": "${{parent.jobs.node1.outputs.output_path}}"},
         }
         assert nodes["node3"]["inputs"] == expected_node3_input_dict
+
+    def test_pipeline_component_job(self):
+        test_path = "./tests/test_configs/pipeline_jobs/remote_pipeline_component_job.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        expected_job_dict = {
+            "component": "azureml://subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
+            "description": "The hello world pipeline job",
+            "inputs": {
+                "data_input": {
+                    "path": "azureml:https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+                    "type": "uri_file",
+                },
+                "int_param": 10,
+            },
+            "jobs": {},
+            "outputs": {},
+            "properties": {},
+            "settings": {"default_compute": "azureml:cpu-cluster"},
+            "tags": {"owner": "sdkteam", "tag": "tagvalue"},
+            "type": "pipeline",
+        }
+        assert job._to_dict() == expected_job_dict
+
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job.yml"
+        job: PipelineJob = load_job(source=test_path)
+        assert job._validate().passed
+        job_dict = job._to_dict()
+        assert "component" not in job_dict
+        assert "jobs" in job_dict
+        assert "component_a_job" in job_dict["jobs"]
+
+    def test_invalid_pipeline_component_job(self):
+        test_path = "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_component_job.yml"
+        with pytest.raises(Exception) as e:
+            load_job(source=test_path)
+        assert "'jobs' and 'component' are mutually exclusive fields in pipeline job" in str(e.value)

@@ -16,6 +16,7 @@ from azure.ai.ml.constants._common import AML_TOKEN_YAML, KEY, ONLINE_ENDPOINT_T
 from azure.ai.ml.constants._endpoint import EndpointKeyType
 from azure.ai.ml.entities import KubernetesOnlineEndpoint, OnlineEndpoint
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from azure.identity import EnvironmentCredential
 
 
@@ -108,14 +109,16 @@ def test_online_endpoint_e2e(
     try:
         endpoint = load_online_endpoint(endpoint_mir_yaml)
         endpoint.name = mir_endpoint_name
-        client.online_endpoints.begin_create_or_update(endpoint=endpoint)
+        endpoint_poller = client.online_endpoints.begin_create_or_update(endpoint=endpoint)
+        assert isinstance(endpoint_poller, LROPoller)
+        endpoint_poller = endpoint_poller.result()
 
         get_obj = client.online_endpoints.get(name=mir_endpoint_name)
         assert get_obj.name == mir_endpoint_name
         if isinstance(get_obj, OnlineEndpoint):
             assert get_obj.auth_mode == AML_TOKEN_YAML
 
-        credentials = client.online_endpoints.list_keys(name=mir_endpoint_name)
+        credentials = client.online_endpoints.get_keys(name=mir_endpoint_name)
         assert credentials is not None
         if get_obj.auth_mode == KEY:
             assert isinstance(credentials, EndpointAuthKeys)
@@ -123,8 +126,10 @@ def test_online_endpoint_e2e(
             assert isinstance(credentials, EndpointAuthToken)
 
         if get_obj.auth_mode == KEY:
-            client.online_endpoints.regenerate_keys(name=mir_endpoint_name, key_type=EndpointKeyType.SECONDARY_KEY_TYPE)
-            updated_credentials = client.endpoints.list_keys(name=mir_endpoint_name)
+            client.online_endpoints._regenerate_online_keys(
+                name=mir_endpoint_name, key_type=EndpointKeyType.SECONDARY_KEY_TYPE
+            )
+            updated_credentials = client.online_endpoints.get_keys(name=mir_endpoint_name)
             assert credentials.secondary_key != updated_credentials.secondary_key
             assert credentials.primary_key == updated_credentials.primary_key
 
@@ -165,7 +170,7 @@ def test_online_endpoint_e2e(
     except Exception as e:
         raise e
     finally:
-        client.online_endpoints.begin_delete(name=mir_endpoint_name, no_wait=True)
+        client.online_endpoints.begin_delete(name=mir_endpoint_name)
 
 
 @pytest.mark.skip("skip for now to run e2e in eastus2. will undo this once we go back to centraluseuap")
@@ -303,7 +308,7 @@ def run_endpoint_tests_e2e_create(
     except Exception as e:
         raise e
     finally:
-        client.endpoints.begin_delete(endpoint_type=ONLINE_ENDPOINT_TYPE, name=endpoint_name, no_wait=True)
+        client.endpoints.begin_delete(endpoint_type=ONLINE_ENDPOINT_TYPE, name=endpoint_name)
 
 
 def run_double_create_e2e(endpoint_yaml: str, endpoint_name: str, client: MLClient):

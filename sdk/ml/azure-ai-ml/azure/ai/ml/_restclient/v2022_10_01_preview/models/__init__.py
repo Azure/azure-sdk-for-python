@@ -16,6 +16,7 @@ try:
     from ._models_py3 import AksComputeSecrets
     from ._models_py3 import AksComputeSecretsProperties
     from ._models_py3 import AksNetworkingConfiguration
+    from ._models_py3 import AllNodes
     from ._models_py3 import AmlCompute
     from ._models_py3 import AmlComputeNodeInformation
     from ._models_py3 import AmlComputeNodesInformation
@@ -42,6 +43,7 @@ try:
     from ._models_py3 import AutoSeasonality
     from ._models_py3 import AutoTargetLags
     from ._models_py3 import AutoTargetRollingWindowSize
+    from ._models_py3 import AutologgerSettings
     from ._models_py3 import AzureBlobDatastore
     from ._models_py3 import AzureDataLakeGen1Datastore
     from ._models_py3 import AzureDataLakeGen2Datastore
@@ -204,7 +206,6 @@ try:
     from ._models_py3 import ImageModelSettingsObjectDetection
     from ._models_py3 import ImageObjectDetection
     from ._models_py3 import ImageObjectDetectionBase
-    from ._models_py3 import ImageSweepLimitSettings
     from ._models_py3 import ImageSweepSettings
     from ._models_py3 import ImageVertical
     from ._models_py3 import InferenceContainerProperties
@@ -266,10 +267,14 @@ try:
     from ._models_py3 import ModelVersionResourceArmPaginatedResult
     from ._models_py3 import Mpi
     from ._models_py3 import NCrossValidations
+    from ._models_py3 import NlpFixedParameters
+    from ._models_py3 import NlpParameterSubspace
+    from ._models_py3 import NlpSweepSettings
     from ._models_py3 import NlpVertical
     from ._models_py3 import NlpVerticalFeaturizationSettings
     from ._models_py3 import NlpVerticalLimitSettings
     from ._models_py3 import NodeStateCounts
+    from ._models_py3 import Nodes
     from ._models_py3 import NoneAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import NoneDatastoreCredentials
     from ._models_py3 import NotebookAccessTokenResult
@@ -368,6 +373,9 @@ try:
     from ._models_py3 import SystemCreatedStorageAccount
     from ._models_py3 import SystemData
     from ._models_py3 import SystemService
+    from ._models_py3 import TableFixedParameters
+    from ._models_py3 import TableParameterSubspace
+    from ._models_py3 import TableSweepSettings
     from ._models_py3 import TableVertical
     from ._models_py3 import TableVerticalFeaturizationSettings
     from ._models_py3 import TableVerticalLimitSettings
@@ -433,6 +441,7 @@ except (SyntaxError, ImportError):
     from ._models import AksComputeSecrets  # type: ignore
     from ._models import AksComputeSecretsProperties  # type: ignore
     from ._models import AksNetworkingConfiguration  # type: ignore
+    from ._models import AllNodes  # type: ignore
     from ._models import AmlCompute  # type: ignore
     from ._models import AmlComputeNodeInformation  # type: ignore
     from ._models import AmlComputeNodesInformation  # type: ignore
@@ -459,6 +468,7 @@ except (SyntaxError, ImportError):
     from ._models import AutoSeasonality  # type: ignore
     from ._models import AutoTargetLags  # type: ignore
     from ._models import AutoTargetRollingWindowSize  # type: ignore
+    from ._models import AutologgerSettings  # type: ignore
     from ._models import AzureBlobDatastore  # type: ignore
     from ._models import AzureDataLakeGen1Datastore  # type: ignore
     from ._models import AzureDataLakeGen2Datastore  # type: ignore
@@ -621,7 +631,6 @@ except (SyntaxError, ImportError):
     from ._models import ImageModelSettingsObjectDetection  # type: ignore
     from ._models import ImageObjectDetection  # type: ignore
     from ._models import ImageObjectDetectionBase  # type: ignore
-    from ._models import ImageSweepLimitSettings  # type: ignore
     from ._models import ImageSweepSettings  # type: ignore
     from ._models import ImageVertical  # type: ignore
     from ._models import InferenceContainerProperties  # type: ignore
@@ -683,10 +692,14 @@ except (SyntaxError, ImportError):
     from ._models import ModelVersionResourceArmPaginatedResult  # type: ignore
     from ._models import Mpi  # type: ignore
     from ._models import NCrossValidations  # type: ignore
+    from ._models import NlpFixedParameters  # type: ignore
+    from ._models import NlpParameterSubspace  # type: ignore
+    from ._models import NlpSweepSettings  # type: ignore
     from ._models import NlpVertical  # type: ignore
     from ._models import NlpVerticalFeaturizationSettings  # type: ignore
     from ._models import NlpVerticalLimitSettings  # type: ignore
     from ._models import NodeStateCounts  # type: ignore
+    from ._models import Nodes  # type: ignore
     from ._models import NoneAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import NoneDatastoreCredentials  # type: ignore
     from ._models import NotebookAccessTokenResult  # type: ignore
@@ -785,6 +798,9 @@ except (SyntaxError, ImportError):
     from ._models import SystemCreatedStorageAccount  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import SystemService  # type: ignore
+    from ._models import TableFixedParameters  # type: ignore
+    from ._models import TableParameterSubspace  # type: ignore
+    from ._models import TableSweepSettings  # type: ignore
     from ._models import TableVertical  # type: ignore
     from ._models import TableVerticalFeaturizationSettings  # type: ignore
     from ._models import TableVerticalLimitSettings  # type: ignore
@@ -844,6 +860,7 @@ except (SyntaxError, ImportError):
 from ._azure_machine_learning_workspaces_enums import (
     AllocationState,
     ApplicationSharingPolicy,
+    AssetProvisioningState,
     Autosave,
     BatchLoggingLevel,
     BatchOutputAction,
@@ -901,6 +918,7 @@ from ._azure_machine_learning_workspaces_enums import (
     LoadBalancerType,
     LogVerbosity,
     MLAssistConfigurationType,
+    MLFlowAutologgerState,
     ManagedServiceIdentityType,
     MediaType,
     ModelSize,
@@ -908,7 +926,9 @@ from ._azure_machine_learning_workspaces_enums import (
     MountState,
     NCrossValidationsMode,
     Network,
+    NlpLearningRateScheduler,
     NodeState,
+    NodesValueType,
     ObjectDetectionPrimaryMetrics,
     OperatingSystemType,
     OperationName,
@@ -933,6 +953,7 @@ from ._azure_machine_learning_workspaces_enums import (
     SamplingAlgorithmType,
     ScaleType,
     ScheduleActionType,
+    ScheduleListViewType,
     ScheduleProvisioningState,
     ScheduleProvisioningStatus,
     ScheduleStatus,
@@ -981,6 +1002,7 @@ __all__ = [
     'AksComputeSecrets',
     'AksComputeSecretsProperties',
     'AksNetworkingConfiguration',
+    'AllNodes',
     'AmlCompute',
     'AmlComputeNodeInformation',
     'AmlComputeNodesInformation',
@@ -1007,6 +1029,7 @@ __all__ = [
     'AutoSeasonality',
     'AutoTargetLags',
     'AutoTargetRollingWindowSize',
+    'AutologgerSettings',
     'AzureBlobDatastore',
     'AzureDataLakeGen1Datastore',
     'AzureDataLakeGen2Datastore',
@@ -1169,7 +1192,6 @@ __all__ = [
     'ImageModelSettingsObjectDetection',
     'ImageObjectDetection',
     'ImageObjectDetectionBase',
-    'ImageSweepLimitSettings',
     'ImageSweepSettings',
     'ImageVertical',
     'InferenceContainerProperties',
@@ -1231,10 +1253,14 @@ __all__ = [
     'ModelVersionResourceArmPaginatedResult',
     'Mpi',
     'NCrossValidations',
+    'NlpFixedParameters',
+    'NlpParameterSubspace',
+    'NlpSweepSettings',
     'NlpVertical',
     'NlpVerticalFeaturizationSettings',
     'NlpVerticalLimitSettings',
     'NodeStateCounts',
+    'Nodes',
     'NoneAuthTypeWorkspaceConnectionProperties',
     'NoneDatastoreCredentials',
     'NotebookAccessTokenResult',
@@ -1333,6 +1359,9 @@ __all__ = [
     'SystemCreatedStorageAccount',
     'SystemData',
     'SystemService',
+    'TableFixedParameters',
+    'TableParameterSubspace',
+    'TableSweepSettings',
     'TableVertical',
     'TableVerticalFeaturizationSettings',
     'TableVerticalLimitSettings',
@@ -1390,6 +1419,7 @@ __all__ = [
     'WorkspaceUpdateParameters',
     'AllocationState',
     'ApplicationSharingPolicy',
+    'AssetProvisioningState',
     'Autosave',
     'BatchLoggingLevel',
     'BatchOutputAction',
@@ -1447,6 +1477,7 @@ __all__ = [
     'LoadBalancerType',
     'LogVerbosity',
     'MLAssistConfigurationType',
+    'MLFlowAutologgerState',
     'ManagedServiceIdentityType',
     'MediaType',
     'ModelSize',
@@ -1454,7 +1485,9 @@ __all__ = [
     'MountState',
     'NCrossValidationsMode',
     'Network',
+    'NlpLearningRateScheduler',
     'NodeState',
+    'NodesValueType',
     'ObjectDetectionPrimaryMetrics',
     'OperatingSystemType',
     'OperationName',
@@ -1479,6 +1512,7 @@ __all__ = [
     'SamplingAlgorithmType',
     'ScaleType',
     'ScheduleActionType',
+    'ScheduleListViewType',
     'ScheduleProvisioningState',
     'ScheduleProvisioningStatus',
     'ScheduleStatus',

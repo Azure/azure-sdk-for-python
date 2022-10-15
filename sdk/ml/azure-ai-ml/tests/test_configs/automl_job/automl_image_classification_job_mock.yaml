@@ -39,13 +39,33 @@ training_parameters:
   evaluation_frequency: 1
 
 search_space:
-  - model_name: "choice('vitb16r224','vits16r224')"
-    learning_rate: "uniform(0.005,0.05)"
-    number_of_epochs: "choice(15,30)"
-    grad_accumulation_step: "choice(1,2)"
+  - model_name:
+      type: choice
+      values: [vitb16r224, vits16r224]
+    learning_rate:
+      type: uniform
+      min_value: 0.005
+      max_value: 0.05
+    number_of_epochs:
+      type: choice
+      values: [15, 30]
+    gradient_accumulation_step:
+      type: choice
+      values: [1, 2]
 
-  - model_name: "choice('seresnext','resnest50')"
-    learning_rate: "uniform(0.005,0.05)"
-    validation_resize_size: "choice(288,320,352)"
-    validation_crop_size: "choice(224,256)"
-    training_crop_size: "choice(224,256)"
+  - model_name:
+      type: choice
+      values: [seresnext, resnest50]
+    learning_rate:
+      type: uniform
+      min_value: 0.005
+      max_value: 0.05
+    validation_resize_size:
+      type: choice
+      values: [288, 320, 352]
+    validation_crop_size:
+      type: choice
+      values: [224, 256]
+    training_crop_size:
+      type: choice
+      values: [224, 256]

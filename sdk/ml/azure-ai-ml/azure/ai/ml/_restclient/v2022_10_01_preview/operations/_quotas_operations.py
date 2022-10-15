@@ -37,9 +37,9 @@ def build_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2022-10-01-preview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/updateQuotas')
@@ -75,7 +75,8 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = "2022-10-01-preview"
+    api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/quotas')
@@ -139,6 +140,9 @@ class QuotasOperations(object):
         :type location: str
         :param parameters: Quota update parameters.
         :type parameters: ~azure.mgmt.machinelearningservices.models.QuotaUpdateParameters
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: UpdateWorkspaceQuotasResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult
@@ -150,6 +154,7 @@ class QuotasOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'QuotaUpdateParameters')
@@ -157,6 +162,7 @@ class QuotasOperations(object):
         request = build_update_request(
             location=location,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.update.metadata['url'],
@@ -193,12 +199,17 @@ class QuotasOperations(object):
 
         :param location: The location for which resource usage is queried.
         :type location: str
+        :keyword api_version: Api Version. The default value is "2022-10-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListWorkspaceQuotas or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ListWorkspaceQuotas]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
+        api_version = kwargs.pop('api_version', "2022-10-01-preview")  # type: str
+
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListWorkspaceQuotas"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -210,6 +221,7 @@ class QuotasOperations(object):
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     location=location,
+                    api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -220,6 +232,7 @@ class QuotasOperations(object):
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     location=location,
+                    api_version=api_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

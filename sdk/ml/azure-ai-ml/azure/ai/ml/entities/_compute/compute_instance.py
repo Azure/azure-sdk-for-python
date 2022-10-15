@@ -6,22 +6,22 @@
 
 from typing import Dict, List, Optional
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceProperties
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
 )
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._identity import IdentityConfiguration
 from ._schedule import ComputeSchedules
@@ -120,6 +120,9 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
+    :param idle_time_before_shutdown: Stops compute instance after user defined period of
+        inactivity. Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+    :type idle_time_before_shutdown: Optional[str], optional
     """
 
     def __init__(
@@ -134,6 +137,7 @@ class ComputeInstance(Compute):
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
         identity: IdentityConfiguration = None,
+        idle_time_before_shutdown: Optional[str] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -154,6 +158,7 @@ class ComputeInstance(Compute):
         self.ssh_settings = ssh_settings
         self.schedules = schedules
         self.identity = identity
+        self.idle_time_before_shutdown = idle_time_before_shutdown
         self.subnet = None
 
     @property
@@ -219,8 +224,9 @@ class ComputeInstance(Compute):
             subnet=subnet_resource,
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
-            schedules=self.schedules._to_rest_object() if self.schedules else None,
+            idle_time_before_shutdown=self.idle_time_before_shutdown,
         )
+        compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,

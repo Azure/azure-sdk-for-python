@@ -111,5 +111,4 @@ async def run():
             await filesystem_client.delete_file_system()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run())
+    asyncio.run(run())

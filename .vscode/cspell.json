@@ -29,8 +29,6 @@
 
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
-    "sdk/agrifood/azure-agrifood-farming/**",
-    "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -44,25 +42,20 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-videosearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-websearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-computervision/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/**",
-    "sdk/cognitiveservices/azure-cognitiveservices-vision-face/**",
     "sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
     "sdk/communication/azure-communication-chat/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
-    "sdk/confidentialledger/azure-confidentialledger/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
-    "sdk/deviceupdate/azure-iot-deviceupdate/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventgrid/azure-eventgrid/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
-    "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
@@ -74,22 +67,19 @@
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
     "sdk/monitor/azure-monitor-query/**",
-    "sdk/purview/azure-purview-catalog/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
     "sdk/servicebus/azure-servicebus/**",
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse/**",
-    "sdk/videoanalyzer/azure-media-videoanalyzer-edge/**",
     "sdk/synapse/azure-synapse-artifacts/**",
-    "sdk/webpubsub/azure-messaging-webpubsubservice/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
-    "sdk/tables/azure-data-tables/**",
     "sdk/storage/azure-storage-blob/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
@@ -146,6 +136,7 @@
     "creds",
     "ctoring",
     "ctypes",
+    "curr",
     "dateutil",
     "ddos",
     "decryptor",
@@ -190,7 +181,9 @@
     "illumos",
     "imds",
     "inotify",
+    "ints",
     "iohttp",
+    "IOHTTP",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -224,6 +217,7 @@
     "LPCWSTR",
     "Lucene",
     "mbps",
+    "mday",
     "mibps",
     "mgmt",
     "mhsm",
@@ -238,6 +232,7 @@
     "mydirectory",
     "myfile",
     "nazsdk",
+    "nbytes",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -250,6 +245,7 @@
     "onboarded",
     "onmicrosoft",
     "owasp",
+    "ownerid",
     "PBYTE",
     "PCREDENTIAL",
     "perfmon",
@@ -263,6 +259,7 @@
     "popen",
     "prebuilts",
     "premf",
+    "prevsnapshot",
     "pschema",
     "PSECRET",
     "pyfuncitem",
@@ -299,6 +296,8 @@
     "skus",
     "southcentralus",
     "ssis",
+    "struct",
+    "STRUCT",
     "substringof",
     "systemperf",
     "tenvparallel",
@@ -310,8 +309,10 @@
     "uamqp",
     "uksouth",
     "ukwest",
+    "unpad",
     "unpadder",
     "unredacted",
+    "unseekable",
     "unsubscriptable",
     "upns",
     "upserted",
@@ -329,8 +330,10 @@
     "utid",
     "Uvsc",
     "vcrpy",
+    "vendored",
     "verifysdist",
     "verifywhl",
+    "versionid",
     "vmimage",
     "vmss",
     "vmwarecloudsimple",
@@ -367,6 +370,33 @@
       ]
     },
     {
+      "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
+      "words": [
+        "tzutc",
+        "tzoffset",
+        "BRST",
+        "uttable",
+        "pytablesync",
+        "pytableasync",
+        "mydomain",
+        "myaccount",
+        "testid",
+        "clsid",
+        "doesnt",
+        "doesntexist"
+      ]
+    },
+    {
+      "filename": "sdk/tables/azure-data-tables/**/*.py",
+      "words": [
+        "astimezone",
+        "myasynctable",
+        "mytableasync",
+        "mytable",
+        "edmtypes"
+      ]
+    },
+    {
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
         "essai"
@@ -378,7 +408,6 @@
         "Forndexter",
         "ESDNI",
         "dinero",
-        "IOHTTP",
         "Zocor",
         "dann",
         "UMLS",
@@ -472,6 +501,22 @@
       "filename": "sdk/eventhub/test-resources.json",
       "words": [
         "mmspecial"
+      ]
+    },
+    {
+      "filename": "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
+      "words": [
+        "blobstoragecs",
+        "blobstoragepm",
+        "rscc",
+        "rscd",
+        "rsce",
+        "rscl",
+        "rsct",
+        "saoid",
+        "scid",
+        "skoid",
+        "suoid"
       ]
     },
     {
@@ -592,6 +637,20 @@
       ]
     },
     {
+      "filename": "sdk/ml/test-resources.json",
+      "words": [
+        "vnext",
+        "sdkvnextcli",
+        "GZRS",
+        "RAGZRS",
+        "kvtest",
+        "amlworkspace",
+        "euap",
+        "automl",
+        "azureml"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -683,7 +742,6 @@
         "mkdtemp",
         "runit",
         "delim",
-        "curr",
         "vendored",
         "wasb",
         "cgitb",
@@ -704,7 +762,10 @@
         "fstring",
         "vals",
         "reprlib",
-        "wsid"
+        "gzrs",
+        "ragzrs",
+        "wsid",
+        "azml"
       ]
     },
     {
@@ -714,6 +775,13 @@
       ]
     },
     {
+      "filename": "sdk/agrifood/azure-agrifood-farming/**",
+      "words": [
+        "NDVI",
+        "Unhandleable"
+      ]
+     },
+     {
       "filename": "sdk/storage/azure-storage-file-share/**",
       "words": [
         "XSMB",
@@ -758,6 +826,34 @@
       ]
     },
     {
+      "filename": "sdk/attestation/azure-security-attestation/**",
+      "words": [
+        "MRENCLAVE",
+        "ECDS",
+        "kwtype",
+        "clist",
+        "mrsigner",
+        "ECDH",
+        "TPMs",
+        "getopenidmetadata",
+        "getopenidmetadataasync",
+        "aikcert",
+        "shareduks"
+      ]
+    },
+    {
+      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
+      "words": [
+        "wday",
+        "mday",
+        "unflattened",
+        "deseralize",
+        "astimezone",
+        "ctxt",
+        "Nify"
+      ]
+    },
+    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
@@ -781,7 +877,6 @@
         "Strin'g",
         "Strin",
         "qlist",
-        "curr",
         "DBA's",
         "myval",
         "mytext",
@@ -857,6 +952,122 @@
         "myid",
         "jsonify",
         "ints"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
+      "words": [
+        "responsed"
+      ]
+    },
+    {
+      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator/operations/*.py",
+      "words": [
+        "tfile"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/aio/operations/*.py",
+      "words": [
+        "struct",
+        "STRUCT",
+        "nonly",
+        "nthe",
+        "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
+      "words": [
+        "struct",
+        "structdef",
+        "STRUCT",
+        "nonly",
+        "nthe",
+        "reques"
+      ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/CHANGELOG.md",
+      "words": [
+        "ONVIF"
+      ]
+    },
+    {
+      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/samples/sample_lva.py",
+      "words": [
+        "deviceid",
+        "moduleid",
+        "onvif",
+        "Onvif"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/_operations/*.py",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "ctxt",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/aio/_operations/*.py",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/certificate/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/samples/*.py",
+      "words": [
+        "tids",
+        "MRENCLAVE",
+        "mrenclave",
+        "seqno"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/tests/*.py",
+      "words": [
+        "seqno",
+        "mrenclave",
+        "infile"
       ]
     }
   ],

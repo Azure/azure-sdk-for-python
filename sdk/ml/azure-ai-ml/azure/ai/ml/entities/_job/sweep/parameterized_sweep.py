@@ -3,8 +3,7 @@
 # ---------------------------------------------------------
 from typing import Callable, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
 from .early_termination_policy import (
@@ -41,7 +40,7 @@ SAMPLING_ALGORITHM_CONSTRUCTOR: Dict[SamplingAlgorithmType, Callable[[], Samplin
 }
 
 
-class ParameterizedSweep(LoadableMixin):
+class ParameterizedSweep:
     """Shared logic for standalone and pipeline sweep job."""
 
     def __init__(

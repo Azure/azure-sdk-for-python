@@ -13,7 +13,6 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase
@@ -41,12 +40,12 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
+from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 from .._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
-from .._job.pipeline._io import PipelineInput, PipelineOutputBase
-from .._job.pipeline._pipeline_expression import PipelineExpression
 from .._util import convert_ordered_dict_to_dict, get_rest_dict, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
 from .sweep import Sweep
@@ -57,6 +56,9 @@ module_logger = logging.getLogger(__name__)
 class Command(BaseNode):
     """Base class for command node, used for command component version
     consumption.
+
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: command.
 
     :param component: Id or instance of the command component/job to be run for the step
     :type component: CommandComponent
@@ -106,18 +108,15 @@ class Command(BaseNode):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
-                PipelineOutputBase,
                 Input,
                 str,
                 bool,
                 int,
                 float,
                 Enum,
-                "Input",
             ],
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
+        outputs: Dict[str, Union[str, Output]] = None,
         limits: CommandJobLimits = None,
         identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
         distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
@@ -165,18 +164,10 @@ class Command(BaseNode):
 
     @classmethod
     def _get_supported_inputs_types(cls):
-        # when command node is constructed inside dsl.pipeline, inputs can be PipelineInput or Output of another node
+        supported_types = super()._get_supported_inputs_types() or ()
         return (
-            PipelineInput,
-            PipelineOutputBase,
-            Input,
             SweepDistribution,
-            str,
-            bool,
-            int,
-            float,
-            Enum,
-            PipelineExpression,
+            *supported_types,
         )
 
     @classmethod
@@ -336,8 +327,8 @@ class Command(BaseNode):
         component. A command node can sweep for multiple times, and the
         generated sweep node will share the same trial component.
 
-        :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in
-        running the trial component.
+        :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in running
+            the trial component.
         :type primary_metric: str
         :param goal: goal of the sweep objective.
         :type goal: str, valid values: maximize or minimize
@@ -351,13 +342,13 @@ class Command(BaseNode):
         :type max_concurrent_trials: int
         :param max_total_trials: Sweep Job max total trials.
         :type max_total_trials: int
-        :param timeout: The max run duration in seconds , after which the job will be cancelled.
+        :param timeout: The max run duration in seconds, after which the job will be cancelled.
         :type timeout: int
         :param trial_timeout: Sweep Job Trial timeout value in seconds.
         :type trial_timeout: int
         :param early_termination_policy: early termination policy of the sweep node:
-        :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping or
-        truncation_selection.
+        :type early_termination_policy: Union[EarlyTerminationPolicy, str], valid values: bandit, median_stopping
+            or truncation_selection.
         :param identity: Identity that training job will use while running on compute.
         :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
         :return: A sweep node with component from current Command node as its trial component.
@@ -516,7 +507,7 @@ class Command(BaseNode):
             experiment_name=rest_command_job.experiment_name,
             services=rest_command_job.services,
             status=rest_command_job.status,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
             compute=rest_command_job.compute_id,
             environment=rest_command_job.environment_id,
@@ -561,9 +552,10 @@ class Command(BaseNode):
 
     def _resolve_job_services(self, services: dict) -> dict:
         """Resolve normal dict to dict[str, JobService]"""
+        # pylint disable=no-self-use
         if services is None:
             return None
-        elif not isinstance(services, dict):
+        if not isinstance(services, dict):
             msg = f"Services must be a dict, got {type(services)} instead."
             raise ValidationException(
                 message=msg,
