@@ -1,0 +1,227 @@
+interactions:
+- request:
+    body: '{"x-recording-file": "sdk/loadtestservice/azure-mgmt-loadtestservice/tests/recordings/test_loadtestresource_operations.pyLoadTestResourceOperationstest_load_test_quota_operations"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '180'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.28.1
+    method: POST
+    uri: https://localhost:5001/record/start
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Sun, 16 Oct 2022 17:20:22 GMT
+      server:
+      - Kestrel
+      x-recording-id:
+      - 033cdd6f-b662-4d27-98ca-948297bbddc3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
+      x-recording-id:
+      - 033cdd6f-b662-4d27-98ca-948297bbddc3
+      x-recording-mode:
+      - record
+      x-recording-upstream-base-uri:
+      - https://management.azure.com
+    method: GET
+    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas?api-version=2022-12-01
+  response:
+    body:
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxConcurrentTestRuns","name":"maxConcurrentTestRuns","type":"Microsoft.LoadTestService/Locations/Quotas","properties":{"usage":0,"limit":25}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxConcurrentEngineInstances","name":"maxConcurrentEngineInstances","type":"Microsoft.LoadTestService/Locations/Quotas","properties":{"usage":0,"limit":100}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxEngineInstancesPerTestRun","name":"maxEngineInstancesPerTestRun","type":"Microsoft.LoadTestService/Locations/Quotas","properties":{"usage":0,"limit":45}}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '829'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 16 Oct 2022 17:20:22 GMT
+      expires:
+      - '-1'
+      mise-correlation-id:
+      - 31abc09f-e2a7-47aa-a85c-0e2dc2afd7f9
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-providerhub-traffic:
+      - 'True'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
+      x-recording-id:
+      - 033cdd6f-b662-4d27-98ca-948297bbddc3
+      x-recording-mode:
+      - record
+      x-recording-upstream-base-uri:
+      - https://management.azure.com
+    method: GET
+    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxEngineInstancesPerTestRun?api-version=2022-12-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxEngineInstancesPerTestRun","name":"maxEngineInstancesPerTestRun","type":"Microsoft.LoadTestService/Locations/Quotas","properties":{"usage":0,"limit":45}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '276'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 16 Oct 2022 17:20:23 GMT
+      expires:
+      - '-1'
+      mise-correlation-id:
+      - 707144b1-6ff9-424f-8af9-7fec438f85f3
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-providerhub-traffic:
+      - 'True'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"properties": {"newQuota": 45}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '32'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
+      x-recording-id:
+      - 033cdd6f-b662-4d27-98ca-948297bbddc3
+      x-recording-mode:
+      - record
+      x-recording-upstream-base-uri:
+      - https://management.azure.com
+    method: POST
+    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxEngineInstancesPerTestRun/checkAvailability?api-version=2022-12-01
+  response:
+    body:
+      string: '{"properties":{"isAvailable":true,"availabilityStatus":"The requested
+        quota is available."},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxEngineInstancesPerTestRun","type":"Microsoft.LoadTestService/Locations/Quotas","name":"maxEngineInstancesPerTestRun"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '331'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 16 Oct 2022 17:20:23 GMT
+      expires:
+      - '-1'
+      mise-correlation-id:
+      - 5ef159aa-2336-4dc4-9dbc-35da78cb6810
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-providerhub-traffic:
+      - 'True'
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.28.1
+      x-recording-file:
+      - sdk/loadtestservice/azure-mgmt-loadtestservice/tests/recordings/test_loadtestresource_operations.pyLoadTestResourceOperationstest_load_test_quota_operations
+      x-recording-id:
+      - 033cdd6f-b662-4d27-98ca-948297bbddc3
+      x-recording-save:
+      - 'true'
+    method: POST
+    uri: https://localhost:5001/record/stop
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Sun, 16 Oct 2022 17:20:25 GMT
+      server:
+      - Kestrel
+    status:
+      code: 200
+      message: OK
+version: 1
