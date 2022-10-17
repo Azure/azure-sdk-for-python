@@ -138,7 +138,7 @@ def parallel_run_function(
         through PipelineParameter.
     :type mini_batch_size: str
     :param partition_keys: The keys used to partition dataset into mini-batches.
-        If specified, the data with the same key will be partitioned into the same mini-batch. 
+        If specified, the data with the same key will be partitioned into the same mini-batch.
         If both partition_keys and mini_batch_size are specified, error would be raised.
         The input(s) must be partitioned dataset(s),
         and the partition_keys must be a subset of the keys of every input dataset for this to work.
@@ -197,6 +197,7 @@ def parallel_run_function(
             mini_batch_error_threshold=mini_batch_error_threshold,
             task=task,
             mini_batch_size=mini_batch_size,
+            partition_keys=partition_keys,
             input_data=input_data,
             _source=ComponentSource.BUILDER,
             is_deterministic=is_deterministic,
