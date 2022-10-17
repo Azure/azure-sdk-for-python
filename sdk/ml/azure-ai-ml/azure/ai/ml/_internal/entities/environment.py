@@ -40,7 +40,7 @@ class InternalEnvironment:
     def _parse_file_path(value: str) -> str:
         return value[len(FILE_PREFIX) :] if value.startswith(FILE_PREFIX) else value
 
-    def _validate_conda_section(self, source_path: str) -> MutableValidationResult:
+    def _validate_conda_section(self, source_path: str, skip_path_validation: bool) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         if not self.conda:
             return validation_result
@@ -53,21 +53,21 @@ class InternalEnvironment:
             )
         if self.conda.get(self.CONDA_DEPENDENCIES_FILE):
             conda_dependencies_file = self.conda[self.CONDA_DEPENDENCIES_FILE]
-            if not (Path(source_path).parent / conda_dependencies_file).is_file():
+            if not skip_path_validation and not (Path(source_path).parent / conda_dependencies_file).is_file():
                 validation_result.append_error(
                     yaml_path=f"conda.{self.CONDA_DEPENDENCIES_FILE}",
                     message=f"Cannot find conda dependencies file: {conda_dependencies_file!r}",
                 )
         if self.conda.get(self.PIP_REQUIREMENTS_FILE):
             pip_requirements_file = self.conda[self.PIP_REQUIREMENTS_FILE]
-            if not (Path(source_path).parent / pip_requirements_file).is_file():
+            if not skip_path_validation and not (Path(source_path).parent / pip_requirements_file).is_file():
                 validation_result.append_error(
                     yaml_path=f"conda.{self.PIP_REQUIREMENTS_FILE}",
                     message=f"Cannot find pip requirements file: {pip_requirements_file!r}",
                 )
         return validation_result
 
-    def _validate_docker_section(self, source_path: str) -> MutableValidationResult:
+    def _validate_docker_section(self, source_path: str, skip_path_validation: bool) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         if not self.docker:
             return validation_result
@@ -75,22 +75,22 @@ class InternalEnvironment:
             return validation_result
         dockerfile_file = self.docker[self.BUILD][self.DOCKERFILE]
         dockerfile_file = self._parse_file_path(dockerfile_file)
-        if not (Path(source_path).parent / dockerfile_file).is_file():
+        if not skip_path_validation and not (Path(source_path).parent / dockerfile_file).is_file():
             validation_result.append_error(
                 yaml_path=f"docker.{self.BUILD}.{self.DOCKERFILE}",
                 message=f"Dockerfile not exists: {dockerfile_file}",
             )
         return validation_result
 
-    def _validate(self, source_path: str) -> MutableValidationResult:
+    def _validate(self, source_path: str, skip_path_validation: bool = False) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         if self.os is not None and self.os not in {"Linux", "Windows"}:
             validation_result.append_error(
                 yaml_path="os",
                 message=f"Only support 'Linux' and 'Windows', but got {self.os!r}",
             )
-        validation_result.merge_with(self._validate_conda_section(source_path))
-        validation_result.merge_with(self._validate_docker_section(source_path))
+        validation_result.merge_with(self._validate_conda_section(source_path, skip_path_validation))
+        validation_result.merge_with(self._validate_docker_section(source_path, skip_path_validation))
         return validation_result
 
     def _resolve_conda_section(self, source_path: str) -> None:
