@@ -112,10 +112,12 @@ class LocalPathField(fields.Str):
         return super(LocalPathField, self)._serialize(value, attr, obj, **kwargs)
 
     def _validate(self, value):
+        base_path_err_msg = ""
         try:
             path = Path(value)
             base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             if not path.is_absolute():
+                base_path_err_msg = f" Base path: {base_path}"
                 path = base_path / path
                 path.resolve()
             if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
@@ -123,10 +125,13 @@ class LocalPathField(fields.Str):
         except OSError:
             pass
         if self._allow_dir and self._allow_file:
-            raise ValidationError(f"{value} is not a valid path")
-        if self._allow_dir:
-            raise ValidationError(f"{value} is not a valid directory")
-        raise ValidationError(f"{value} is not a valid file")
+            allow_type = "directory or file"
+        elif self._allow_dir:
+            allow_type = "directory"
+        else:
+            allow_type = "file"
+        raise ValidationError(f"Value {value!r} passed is not a valid "
+                              f"{allow_type} path.{base_path_err_msg}")
 
 
 class SerializeValidatedUrl(fields.Url):
