@@ -41,6 +41,10 @@ if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
 load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
+def start_proxy(test_proxy):
+    return
+
+@pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
     tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")

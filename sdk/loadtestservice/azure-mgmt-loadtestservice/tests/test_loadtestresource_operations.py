@@ -7,26 +7,24 @@
 #--------------------------------------------------------------------------
 
 
-from json import load
 import unittest
 
 from azure.mgmt.loadtestservice import LoadTestMgmtClient
 from azure.mgmt.loadtestservice.models import LoadTestResource, LoadTestResourcePatchRequestBody, QuotaBucketRequest
-from devtools_testutils import AzureMgmtTestCase, recorded_by_proxy, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, ResourceGroupPreparer
 
 AZURE_LOCATION = 'westus2'
 LOAD_TEST_RESOURCE_NAME = 'py-sdk-testing-resource-cp'
 
-class LoadTestResourceOperations(AzureMgmtTestCase):
+class TestLoadTestResourceOperations(AzureMgmtRecordedTestCase):
     
-    def setUp(self):
-        super(LoadTestResourceOperations, self).setUp()
-
+    def setup_method(self, method):
         self.loadtestservice_client = self.create_mgmt_client(
             LoadTestMgmtClient
         )
     
     @ResourceGroupPreparer()
+    @recorded_by_proxy
     def test_load_test_resource_operations(self, resource_group):
 
         # Create a load test resource
@@ -83,6 +81,7 @@ class LoadTestResourceOperations(AzureMgmtTestCase):
         # Delete the load test resource
         self.loadtestservice_client.load_tests._delete_initial(resource_group.name, LOAD_TEST_RESOURCE_NAME)
 
+    @recorded_by_proxy
     def test_load_test_quota_operations(self):
 
         quotaBucket = "maxEngineInstancesPerTestRun"
