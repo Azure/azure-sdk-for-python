@@ -88,6 +88,7 @@ class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_ENTITY_RECOGNITION = "CustomEntityRecognition"
     CUSTOM_DOCUMENT_CLASSIFICATION = "CustomDocumentClassification"
     LANGUAGE_DETECTION = "LanguageDetection"
+    EXTRACTIVE_SUMMARIZATION = "ExtractiveSummarization"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1226,6 +1227,7 @@ class DocumentError(DictMixin):
             + AnalyzeHealthcareEntitiesResult().keys()
             + RecognizeCustomEntitiesResult().keys()
             + ClassifyDocumentResult().keys()
+            + ExtractSummaryResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -1786,6 +1788,7 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SINGLE_LABEL_CLASSIFY = "single_label_classify"
     MULTI_LABEL_CLASSIFY = "multi_label_classify"
     ANALYZE_HEALTHCARE_ENTITIES = "analyze_healthcare_entities"
+    EXTRACT_SUMMARY = "extract_summary"
 
 
 class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2566,4 +2569,188 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
             )
+        )
+
+
+class ExtractSummaryAction(DictMixin):
+    """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
+    Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
+    https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/extractive-summarization
+
+    :keyword Optional[str] model_version: The model version to use for the analysis.
+    :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :keyword Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+    :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+    :ivar Optional[str] model_version: The model version to use for the analysis.
+    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets
+    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[int] max_sentence_count: Number of sentences to return. Defaults to 3.
+    :ivar Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+
+    .. versionadded:: 2022-10-01-preview
+        The *ExtractSummaryAction* model.
+    """
+
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+        self.max_sentence_count = kwargs.get("max_sentence_count", None)
+        self.order_by = kwargs.get("order_by", None)
+
+    def __repr__(self):
+        return (
+            "ExtractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, "
+            "max_sentence_count={}, order_by={})".format(
+                self.model_version,
+                self.string_index_type,
+                self.disable_service_logs,
+                self.max_sentence_count,
+                self.order_by,
+            )[:1024]
+        )
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        return _v2022_10_01_preview_models.ExtractiveSummarizationLROTask(  # pylint: disable=no-member
+            task_name=task_id,
+            parameters=_v2022_10_01_preview_models.ExtractiveSummarizationTaskParameters(  # pylint: disable=no-member
+                model_version=self.model_version,
+                string_index_type=string_index_type_compatibility(self.string_index_type),
+                logging_opt_out=self.disable_service_logs,
+                sentence_count=self.max_sentence_count,
+                sort_by=self.order_by,
+            )
+        )
+
+
+class ExtractSummaryResult(DictMixin):
+    """ExtractSummaryResult is a result object which contains
+    the extractive text summarization from a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar sentences: A ranked list of sentences representing the extracted summary.
+    :vartype sentences: list[~azure.ai.textanalytics.SummarySentence]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain a 2 letter ISO 639-1 representation of the language detected for this
+        document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of an ExtractSummaryResult.
+    :ivar str kind: The text analysis kind - "ExtractiveSummarization".
+
+    .. versionadded:: 2022-10-01-preview
+        The *ExtractSummaryResult* model.
+    """
+
+    def __init__(self, **kwargs):
+        self.id = kwargs.get("id", None)
+        self.sentences = kwargs.get("sentences", None)
+        self.warnings = kwargs.get("warnings", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.detected_language = kwargs.get("detected_language", None)
+        self.is_error: Literal[False] = False
+        self.kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
+
+    def __repr__(self):
+        return "ExtractSummaryResult(id={}, sentences={}, warnings={}, statistics={}, detected_language={}," \
+               " is_error={})".format(
+                self.id,
+                repr(self.sentences),
+                repr(self.warnings),
+                repr(self.statistics),
+                repr(self.detected_language),
+                self.is_error,
+            )[
+            :1024
+        ]
+
+    @classmethod
+    def _from_generated(cls, summary):
+        return cls(
+            id=summary.id,
+            sentences=[
+                SummarySentence._from_generated(  # pylint: disable=protected-access
+                    sentence
+                )
+                for sentence in summary.sentences
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in summary.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                summary.statistics
+            ),
+            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+                summary.detected_language
+            ) if summary.detected_language else None
+        )
+
+
+class SummarySentence(DictMixin):
+    """Represents a single sentence from the extractive text summarization.
+
+    :ivar str text: The extracted sentence text.
+    :ivar float rank_score: A float value representing the relevance of the sentence within
+        the summary. Higher values indicate higher importance.
+    :ivar int offset: The sentence offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoint by default.
+    :ivar int length: The length of the sentence. This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
+        by default.
+
+    .. versionadded:: 2022-10-01-preview
+        The *SummarySentence* model.
+    """
+
+    def __init__(self, **kwargs):
+        self.text = kwargs.get("text", None)
+        self.rank_score = kwargs.get("rank_score", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
+
+    def __repr__(self):
+        return "SummarySentence(text={}, rank_score={}, offset={}, length={})".format(
+            self.text,
+            self.rank_score,
+            self.offset,
+            self.length,
+        )[:1024]
+
+    @classmethod
+    def _from_generated(cls, sentence):
+        return cls(
+            text=sentence.text,
+            rank_score=sentence.rank_score,
+            offset=sentence.offset,
+            length=sentence.length,
         )
