@@ -247,7 +247,11 @@ class NodeInput(InputOutputBase):
         if isinstance(self._meta, Input) and self._meta.type:
             if self._meta._is_primitive_type:
                 if not is_data_binding_expression(data):
-                    return self._meta._parse(data)
+                    try:
+                        return self._meta._parse(data)
+                    except TypeError:
+                        # to handle SweepDistribution
+                        return data
             else:
                 if not isinstance(data, str):
                     msg = "only path input is supported now but get {}: {}."
