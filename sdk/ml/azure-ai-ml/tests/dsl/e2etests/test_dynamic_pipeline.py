@@ -14,12 +14,13 @@ from azure.ai.ml.dsl._condition import condition
 
 @contextlib.contextmanager
 def include_private_preview_nodes_in_pipeline():
+    original_jobs = PipelineJobSchema._declared_fields["jobs"]
     PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
 
     try:
         yield
     finally:
-        PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
+        PipelineJobSchema._declared_fields["jobs"] = original_jobs
 
 
 @pytest.mark.usefixtures(
