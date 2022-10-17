@@ -143,6 +143,9 @@
           "200": {
             "description": "Success"
           },
+          "202": {
+            "description": "Success"
+          },
           "204": {
             "description": "No Content"
           }
@@ -255,6 +258,12 @@
             "schema": {
               "$ref": "#/definitions/RegistryTrackedResource"
             }
+          },
+          "202": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
           }
         },
         "x-ms-examples": {
@@ -324,6 +333,12 @@
             }
           },
           "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
+          },
+          "202": {
             "description": "Created",
             "schema": {
               "$ref": "#/definitions/RegistryTrackedResource"

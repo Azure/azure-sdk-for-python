@@ -134,3 +134,18 @@ class RegistryOperations:
         )
 
         return poller
+
+
+    # @monitor_with_activity(logger, "Registry.Delete", ActivityType.PUBLICAPI)
+    def delete(self, *, name: str, **kwargs: Dict) -> None:
+        """Delete a registry. Returns nothing on a successful operation.
+
+        :param name: Name of the registry
+        :type name: str
+        """
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        return self._operation.delete(
+            resource_group_name=resource_group,
+            registry_name=name,
+            **self._init_kwargs,
+        )
