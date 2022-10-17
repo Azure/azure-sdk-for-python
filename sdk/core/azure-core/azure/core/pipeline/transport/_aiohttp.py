@@ -100,7 +100,7 @@ class AioHttpTransport(AsyncHttpTransport):
             clientsession_kwargs = {
                 "trust_env": self._use_env_settings,
                 "cookie_jar": jar,
-                "auto_decompress": False,
+                "auto_decompress": True,
             }
             if self._loop is not None:
                 clientsession_kwargs["loop"] = self._loop
