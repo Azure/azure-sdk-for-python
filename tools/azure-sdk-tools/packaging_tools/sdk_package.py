@@ -52,6 +52,7 @@ def main(generate_input, generate_output):
                 package["apiViewArtifact"] = artifact
                 package["language"] = "Python"
                 break
+        package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 
     with open(generate_output, "w") as writer:
