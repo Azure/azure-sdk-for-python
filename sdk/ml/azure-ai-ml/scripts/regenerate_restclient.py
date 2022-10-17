@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 from argparse import ArgumentParser
 import logging
 import os
@@ -8,82 +12,11 @@ import sys
 import time
 from urllib.request import urlopen
 
+from utils import print_blue, run_command
+
 module_logger = logging.getLogger(__name__)
 
 MULTI_API_TAG = "multiapi"
-
-
-class Color:
-    PURPLE = "\033[95m"
-    CYAN = "\033[96m"
-    DARKCYAN = "\033[36m"
-    BLUE = "\033[94m"
-    GREEN = "\033[92m"
-    YELLOW = "\033[93m"
-    RED = "\033[91m"
-    BOLD = "\033[1m"
-    UNDERLINE = "\033[4m"
-    END = "\033[0m"
-
-
-def _run_command(
-    commands,
-    cwd=None,
-    stderr=subprocess.STDOUT,
-    shell=False,
-    env=None,
-    stream_stdout=True,
-    throw_on_retcode=True,
-    logger=None,
-):
-    if logger is None:
-        logger = module_logger
-
-    if cwd is None:
-        cwd = os.getcwd()
-
-    t0 = time.perf_counter()
-    try:
-        logger.debug("Executing {0} in {1}".format(commands, cwd))
-        out = ""
-        p = subprocess.Popen(commands, stdout=subprocess.PIPE, stderr=stderr, cwd=cwd, shell=shell, env=env)
-        for line in p.stdout:
-            line = line.decode("utf-8").rstrip()
-            if line and line.strip():
-                logger.debug(line)
-                if stream_stdout:
-                    sys.stdout.write(line)
-                    sys.stdout.write("\n")
-                out += line
-                out += "\n"
-        p.communicate()
-        retcode = p.poll()
-        if throw_on_retcode:
-            if retcode:
-                raise subprocess.CalledProcessError(retcode, p.args, output=out, stderr=p.stderr)
-        return retcode, out
-    finally:
-        t1 = time.perf_counter()
-        logger.debug("Execution took {0}s for {1} in {2}".format(t1 - t0, commands, cwd))
-
-
-def run_command(
-    commands, cwd=None, stderr=subprocess.STDOUT, shell=False, stream_stdout=True, throw_on_retcode=True, logger=None
-):
-    _, out = _run_command(
-        commands,
-        cwd=cwd,
-        stderr=stderr,
-        shell=shell,
-        stream_stdout=stream_stdout,
-        throw_on_retcode=throw_on_retcode,
-        logger=logger,
-    )
-    return out
-
-
-def print_blue(message):
-    print(Color.BLUE + message + Color.END)
 
 
 def download_file(from_url: str, to_path: Path, with_file_name: str) -> None:
