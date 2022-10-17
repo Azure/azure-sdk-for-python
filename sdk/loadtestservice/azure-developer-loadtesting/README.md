@@ -2,6 +2,12 @@
 # Azure Load Testing client library for Python
 Azure Load Testing provides client library in python to the user by which they can interact natively with Azure Load Testing service. Azure Load Testing is a fully managed load-testing service that enables you to generate high-scale load. The service simulates traffic for your applications, regardless of where they're hosted. Developers, testers, and quality assurance (QA) engineers can use it to optimize application performance, scalability, or capacity.
 
+## Documentation
+Various documentation is available to help you get started
+
+<!-- - [Source code][source_code] -->
+- [API reference documentation][api_reference_doc]
+- [Product Documentation][product_documentation]
 
 ## Getting started
 
@@ -45,6 +51,61 @@ from azure.identity import DefaultAzureCredential
 
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
+## Key concepts
+
+The following components make up the Azure Load Testing service. The Azure Load Test client library for Java allows you to interact with each of these components through the use of clients. There are two top-level clients which are the main entry points for the library
+
+- `LoadTestingClient` (`azure.developer.loadtesting.LoadTestingClient`)
+
+- Async `LoadTestingClient` (`azure.developer.loadtesting.aio.LoadTestingClient`)
+
+The two clients have similar methods in them except the methods in the async client are async as well.
+
+The top-level clients have two sub-clients
+
+- `load_test_runs` (`azure.developer.loadtesting.LoadTestingClient.load_test_runs`)
+
+- `load_test_administration` (`azure.developer.loadtesting.LoadTestingClient.load_test_administration`)
+
+These sub-clients are used for managing and using different components of the service.
+
+### Load Test Administration Client
+
+The `load_test_administration` sub-clients is used to administer and configure the load tests, app components and metrics.
+
+#### Test
+
+A test specifies the test script, and configuration settings for running a load test. You can create one or more tests in an Azure Load Testing resource.
+
+#### App Component
+
+When you run a load test for an Azure-hosted application, you can monitor resource metrics for the different Azure application components (server-side metrics). While the load test runs, and after completion of the test, you can monitor and analyze the resource metrics in the Azure Load Testing dashboard.
+
+#### Metrics
+
+During a load test, Azure Load Testing collects metrics about the test execution. There are two types of metrics:
+
+1. Client-side metrics give you details reported by the test engine. These metrics include the number of virtual users, the request response time, the number of failed requests, or the number of requests per second.
+
+2. Server-side metrics are available for Azure-hosted applications and provide information about your Azure application components. Metrics can be for the number of database reads, the type of HTTP responses, or container resource consumption.
+
+### Test Run Client
+
+The `load_test_runs` sub-clients is used to start and stop test runs corresponding to a load test. A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
+
+### Data-Plane Endpoint
+
+Data-plane of Azure Load Testing resources is addressable using the following URL format:
+
+`00000000-0000-0000-0000-000000000000.aaa.cnt-prod.loadtesting.azure.com`
+
+The first GUID `00000000-0000-0000-0000-000000000000` is the unique identifier used for accessing the Azure Load Testing resource. This is followed by  `aaa` which is the Azure region of the resource.
+
+The data-plane endpoint is obtained from Control Plane APIs.
+
+**Example:** `1234abcd-12ab-12ab-12ab-123456abcdef.eus.cnt-prod.loadtesting.azure.com`
+
+In the above example, `eus` represents the Azure region `East US`.
 
 ## Examples
 
@@ -124,33 +185,6 @@ try:
 except HttpResponseError as e:
     print("Failed with error: {}".format(e.response.json()))
 ```
-## Key concepts
-The following components make up the Azure Load Testing Service. The Azure Load Test client library for Python allows you to interact with each of these components through the use of a dedicated client object.
-
-### Load testing resource
-The Load testing resource is the top-level resource for your load-testing activities. This resource provides a centralized place to view and manage load tests, test results, and related artifacts. A load testing resource contains zero or more load tests.
-
-### Test
-A test specifies the test script, and configuration settings for running a load test. You can create one or more tests in an Azure Load Testing resource.
-
-### Test Engine
-A test engine is computing infrastructure that runs the Apache JMeter test script. You can scale out your load test by configuring the number of test engines. The test script runs in parallel across the specified number of test engines.
-
-### Test Run
-A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
-
-### App Component
-When you run a load test for an Azure-hosted application, you can monitor resource metrics for the different Azure application components (server-side metrics). While the load test runs, and after completion of the test, you can monitor and analyze the resource metrics in the Azure Load Testing dashboard.
-
-### Metrics
-During a load test, Azure Load Testing collects metrics about the test execution. There are two types of metrics:
-
-1. Client-side metrics give you details reported by the test engine. These metrics include the number of virtual users, the request response time, the number of failed requests, or the number of requests per second. 
-
-2. Server-side metrics are available for Azure-hosted applications and provide information about your Azure application components. Metrics can be for the number of database reads, the type of HTTP responses, or container resource consumption.
-
-## Troubleshooting
-More about it is coming soon...
 
 ## Next steps
 
@@ -181,3 +215,5 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+[api_reference_doc]: https://docs.microsoft.com/rest/api/loadtesting/
+[product_documentation]: https://azure.microsoft.com/services/load-testing/
