@@ -4,7 +4,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._common import AssetTypes, InputOutputModes, ModelType, TimeZone
+from ._common import AssetTypes, InputOutputModes, ModelType, TimeZone, Scope
 from ._component import ParallelTaskType
 from ._deployment import BatchDeploymentOutputAction
 from ._job import (
@@ -38,4 +38,5 @@ __all__ = [
     "AcrAccountSku",
     "NlpModels",
     "NlpLearningRateScheduler",
+    "Scope",
 ]

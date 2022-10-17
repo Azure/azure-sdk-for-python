@@ -6,20 +6,21 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, TypeVar, Union,
+from typing import (
+    Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
 
 import six
+from typing_extensions import Self
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
-
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -50,6 +51,7 @@ from ._models import (
 from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from ._models import (  # pylint: disable=unused-import
         PublicAccess,
@@ -68,9 +70,6 @@ def _get_blob_name(blob):
         return blob.get('name')
     except AttributeError:
         return blob
-
-
-ClassType = TypeVar("ClassType")
 
 
 class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # pylint: disable=too-many-public-methods
@@ -138,12 +137,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             :caption: Creating the container client directly.
     """
     def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            container_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -182,11 +180,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @classmethod
     def from_container_url(
-            cls,  # type: Type[ClassType]
-            container_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, container_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -211,11 +208,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 container_url = "https://" + container_url
         except AttributeError:
             raise ValueError("Container URL must be a string.")
-        parsed_url = urlparse(container_url.rstrip('/'))
+        parsed_url = urlparse(container_url)
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(container_url))
 
-        container_path = parsed_url.path.lstrip('/').split('/')
+        container_path = parsed_url.path.strip('/').split('/')
         account_path = ""
         if len(container_path) > 1:
             account_path = "/" + "/".join(container_path[:-1])
@@ -231,12 +228,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            container_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            container_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:

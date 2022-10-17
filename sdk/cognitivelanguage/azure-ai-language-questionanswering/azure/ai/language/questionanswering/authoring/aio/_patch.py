@@ -37,12 +37,11 @@ class AuthoringClient(AuthoringClientGenerated):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">
-    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    detection and question answering. Further documentation can be found in
+    https://learn.microsoft.com/azure/cognitive-services/language-service/overview
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
         This can be the an instance of AzureKeyCredential if using a Language API key
