@@ -6,24 +6,28 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import SendMessageRequest
-from ._models_py3 import SmsRecipient
-from ._models_py3 import SmsSendOptions
-from ._models_py3 import SmsSendResponse
-from ._models_py3 import SmsSendResponseItem
+try:
+    from ._models_py3 import SendMessageRequest
+    from ._models_py3 import SmsRecipient
+    from ._models_py3 import SmsSendOptions
+    from ._models_py3 import SmsSendResponse
+    from ._models_py3 import SmsSendResponseItem
+except (SyntaxError, ImportError):
+    from ._models import SendMessageRequest  # type: ignore
+    from ._models import SmsRecipient  # type: ignore
+    from ._models import SmsSendOptions  # type: ignore
+    from ._models import SmsSendResponse  # type: ignore
+    from ._models import SmsSendResponseItem  # type: ignore
 
-from ._azure_communication_sms_service_enums import SmsSendResponseItemRepeatabilityResult
-from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
-from ._patch import patch_sdk as _patch_sdk
+from ._azure_communication_sms_service_enums import (
+    SmsSendResponseItemRepeatabilityResult,
+)
 
 __all__ = [
-    "SendMessageRequest",
-    "SmsRecipient",
-    "SmsSendOptions",
-    "SmsSendResponse",
-    "SmsSendResponseItem",
-    "SmsSendResponseItemRepeatabilityResult",
+    'SendMessageRequest',
+    'SmsRecipient',
+    'SmsSendOptions',
+    'SmsSendResponse',
+    'SmsSendResponseItem',
+    'SmsSendResponseItemRepeatabilityResult',
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
-_patch_sdk()

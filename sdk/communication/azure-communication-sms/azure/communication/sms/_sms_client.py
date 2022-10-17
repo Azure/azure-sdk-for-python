@@ -16,9 +16,8 @@ from azure.communication.sms._models import SmsSendResult
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
 from ._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from ._version import SDK_MONIKER
-from ._api_versions import DEFAULT_VERSION
 
-class SmsClient(object):
+class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Sms gateway.
 
     This client provides operations to send an SMS via a phone number.
@@ -27,9 +26,6 @@ class SmsClient(object):
         The endpoint url for Azure Communication Service resource.
     :param TokenCredential credential:
         The TokenCredential we use to authenticate against the service.
-    :keyword api_version: Azure Communication SMS API version.
-        The default value is "2021-03-07". Note that overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
     """
     def __init__(
             self, endpoint, # type: str
@@ -48,11 +44,9 @@ class SmsClient(object):
                 "invalid credential from connection string.")
 
         self._endpoint = endpoint
-        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._authentication_policy = get_authentication_policy(endpoint, credential)
         self._sms_service_client = AzureCommunicationSMSService(
             self._endpoint,
-            api_version=self._api_version,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)

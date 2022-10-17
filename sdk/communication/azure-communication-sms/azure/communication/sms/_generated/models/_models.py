@@ -6,11 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, Union
-
 import msrest.serialization
-
-from ._azure_communication_sms_service_enums import *
 
 
 class SendMessageRequest(msrest.serialization.Model):
@@ -46,18 +42,13 @@ class SendMessageRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        from_property: str,
-        sms_recipients: List["SmsRecipient"],
-        message: str,
-        sms_send_options: Optional["SmsSendOptions"] = None,
         **kwargs
     ):
         super(SendMessageRequest, self).__init__(**kwargs)
-        self.from_property = from_property
-        self.sms_recipients = sms_recipients
-        self.message = message
-        self.sms_send_options = sms_send_options
+        self.from_property = kwargs['from_property']
+        self.sms_recipients = kwargs['sms_recipients']
+        self.message = kwargs['message']
+        self.sms_send_options = kwargs.get('sms_send_options', None)
 
 
 class SmsRecipient(msrest.serialization.Model):
@@ -92,16 +83,12 @@ class SmsRecipient(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        to: str,
-        repeatability_request_id: Optional[str] = None,
-        repeatability_first_sent: Optional[str] = None,
         **kwargs
     ):
         super(SmsRecipient, self).__init__(**kwargs)
-        self.to = to
-        self.repeatability_request_id = repeatability_request_id
-        self.repeatability_first_sent = repeatability_first_sent
+        self.to = kwargs['to']
+        self.repeatability_request_id = kwargs.get('repeatability_request_id', None)
+        self.repeatability_first_sent = kwargs.get('repeatability_first_sent', None)
 
 
 class SmsSendOptions(msrest.serialization.Model):
@@ -128,14 +115,11 @@ class SmsSendOptions(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        enable_delivery_report: bool,
-        tag: Optional[str] = None,
         **kwargs
     ):
         super(SmsSendOptions, self).__init__(**kwargs)
-        self.enable_delivery_report = enable_delivery_report
-        self.tag = tag
+        self.enable_delivery_report = kwargs['enable_delivery_report']
+        self.tag = kwargs.get('tag', None)
 
 
 class SmsSendResponse(msrest.serialization.Model):
@@ -157,12 +141,10 @@ class SmsSendResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["SmsSendResponseItem"],
         **kwargs
     ):
         super(SmsSendResponse, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
 
 
 class SmsSendResponseItem(msrest.serialization.Model):
@@ -204,19 +186,12 @@ class SmsSendResponseItem(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        to: str,
-        http_status_code: int,
-        successful: bool,
-        message_id: Optional[str] = None,
-        repeatability_result: Optional[Union[str, "SmsSendResponseItemRepeatabilityResult"]] = None,
-        error_message: Optional[str] = None,
         **kwargs
     ):
         super(SmsSendResponseItem, self).__init__(**kwargs)
-        self.to = to
-        self.message_id = message_id
-        self.http_status_code = http_status_code
-        self.repeatability_result = repeatability_result
-        self.successful = successful
-        self.error_message = error_message
+        self.to = kwargs['to']
+        self.message_id = kwargs.get('message_id', None)
+        self.http_status_code = kwargs['http_status_code']
+        self.repeatability_result = kwargs.get('repeatability_result', None)
+        self.successful = kwargs['successful']
+        self.error_message = kwargs.get('error_message', None)
