@@ -52,13 +52,13 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "597662ea-94db-44c7-bd9c-75dabe940af0",
+        "apim-request-id": "f2aa1db4-9674-4f67-a80d-cb939e6ffbe1",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 21:17:53 GMT",
+        "Date": "Mon, 17 Oct 2022 19:03:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "9"
+        "x-envoy-upstream-service-time": "7"
       },
       "ResponseBody": {
         "error": {

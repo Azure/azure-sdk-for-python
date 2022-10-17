@@ -73,18 +73,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "e1921654-7299-421a-ab8f-bd44c3e41008",
+        "apim-request-id": "a9d7b7db-d611-4e71-a3ca-b5cbe8a4270c",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 20:47:02 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f6296dba-d99b-4a69-b5df-517abd2e32ac?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:52:36 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/632ce980-ebe0-4ea4-b90c-8f7b17fc2a63?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "333"
+        "x-envoy-upstream-service-time": "284"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f6296dba-d99b-4a69-b5df-517abd2e32ac?api-version=2022-10-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/632ce980-ebe0-4ea4-b90c-8f7b17fc2a63?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -94,19 +94,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e475c69f-cf24-4f49-b19f-6f5b320bfad3",
-        "Content-Length": "2994",
+        "apim-request-id": "19ddd0f7-37b6-48a6-8530-a2732659c6c7",
+        "Content-Length": "2993",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 20:47:08 GMT",
+        "Date": "Mon, 17 Oct 2022 18:52:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "365"
+        "x-envoy-upstream-service-time": "465"
       },
       "ResponseBody": {
-        "jobId": "f6296dba-d99b-4a69-b5df-517abd2e32ac",
-        "lastUpdateDateTime": "2022-10-10T20:47:06Z",
-        "createdDateTime": "2022-10-10T20:47:02Z",
-        "expirationDateTime": "2022-10-11T20:47:02Z",
+        "jobId": "632ce980-ebe0-4ea4-b90c-8f7b17fc2a63",
+        "lastUpdateDateTime": "2022-10-17T18:52:39Z",
+        "createdDateTime": "2022-10-17T18:52:37Z",
+        "expirationDateTime": "2022-10-18T18:52:37Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -118,7 +118,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T20:47:06.8746208Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:39.7121188Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -150,7 +150,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-10-10T20:47:06.3948819Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:39.758586Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -182,7 +182,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-10-10T20:47:06.9069553Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:39.7221071Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -218,7 +218,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-10-10T20:47:06.2252957Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:39.8038608Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -250,7 +250,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-10-10T20:47:06.1312271Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:39.6114938Z",
               "status": "succeeded",
               "results": {
                 "documents": [
