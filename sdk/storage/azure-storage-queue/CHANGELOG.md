@@ -10,6 +10,7 @@
 
 ### Other Changes
 - Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
 
 ## 12.5.0 (2022-10-11)
 
