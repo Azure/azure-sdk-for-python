@@ -53,7 +53,7 @@ client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredent
 ```
 ## Key concepts
 
-The following components make up the Azure Load Testing service. The Azure Load Test client library for Java allows you to interact with each of these components through the use of clients. There are two top-level clients which are the main entry points for the library
+The following components make up te Azure Load Testing service. The Azure Load Test client library for python allows you to interact with each of these components through the use of clients. There are two top-level clients which are the main entry points for the library
 
 - `LoadTestingClient` (`azure.developer.loadtesting.LoadTestingClient`)
 
