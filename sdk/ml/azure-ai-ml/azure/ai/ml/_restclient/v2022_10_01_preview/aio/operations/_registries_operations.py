@@ -441,7 +441,7 @@ class RegistriesOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
@@ -449,6 +449,9 @@ class RegistriesOperations:
             deserialized = self._deserialize('Registry', pipeline_response)
 
         if response.status_code == 201:
+            deserialized = self._deserialize('Registry', pipeline_response)
+
+        if response.status_code == 202:
             deserialized = self._deserialize('Registry', pipeline_response)
 
         if cls:
