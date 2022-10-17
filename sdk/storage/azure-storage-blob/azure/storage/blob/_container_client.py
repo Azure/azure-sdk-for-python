@@ -762,7 +762,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
-        :paramtype include: list[str] or str
+        :type include: list[str] or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
@@ -831,7 +831,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
-            include=None, # type: Optional[Any]
+            include=None, # type: Optional[Union[List[str], str]]
             delimiter="/", # type: str
             **kwargs # type: Optional[Any]
         ):
@@ -844,9 +844,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
-        :param list[str] include:
+        :param include:
             Specifies one or more additional datasets to include in the response.
-            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted'.
+            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
+            'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
+        :type include: list[str] or str
         :param str delimiter:
             When the request includes this parameter, the operation returns a BlobPrefix
             element in the response body that acts as a placeholder for all blobs whose
