@@ -207,6 +207,9 @@ This project has adopted the
 see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
+## Troubleshooting
+More about it is coming soon...
+
 <!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
