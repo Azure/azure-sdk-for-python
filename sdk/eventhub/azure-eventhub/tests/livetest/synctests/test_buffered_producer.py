@@ -419,7 +419,7 @@ def test_send_with_timing_configuration(connection_str, uamqp_transport):
 
     with producer:
         partitions = producer.get_partition_ids()
-        producer.send_event(EventData('data'))
+        producer.send_batch([EventData('data')])
         time.sleep(5)
         assert not sent_events
         time.sleep(10)
