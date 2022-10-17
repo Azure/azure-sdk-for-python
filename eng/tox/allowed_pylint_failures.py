@@ -58,9 +58,5 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-purview-administration",
     "azure-messaging-nspkg",
     "azure-agrifood-farming",
-    "azure-ai-language-questionanswering",
-    "azure-ai-language-conversations",
-    "azure-eventhub",
-    "azure-eventhub-checkpointstoreblob-aio",
     "azure-developer-loadtesting"
 ]

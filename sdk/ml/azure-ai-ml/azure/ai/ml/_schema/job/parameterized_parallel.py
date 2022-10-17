@@ -4,21 +4,24 @@
 
 from marshmallow import INCLUDE, fields
 
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
-from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
-from azure.ai.ml.constants import LoggingLevel
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.schema import PathAwareSchema
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml.constants._common import LoggingLevel
 
 
 class ParameterizedParallelSchema(PathAwareSchema):
     logging_level = StringTransformedEnum(
         allowed_values=[LoggingLevel.DEBUG, LoggingLevel.INFO, LoggingLevel.WARN],
-        casing_transform=lambda *args: None,
+        casing_transform=lambda x: x,
         dump_default=LoggingLevel.INFO,
         metadata={
-            "description": "A string of the logging level name, which is defined in 'logging'. Possible values are 'WARNING', 'INFO', and 'DEBUG'."
+            "description": (
+                "A string of the logging level name, which is defined in 'logging'. "
+                "Possible values are 'WARNING', 'INFO', and 'DEBUG'."
+            )
         },
     )
     task = NestedField(ComponentParallelTaskSchema, unknown=INCLUDE)
@@ -26,7 +29,7 @@ class ParameterizedParallelSchema(PathAwareSchema):
         metadata={"description": "The batch size of current job."},
     )
     input_data = fields.Str()
-    resources = NestedField(ResourceConfigurationSchema)
+    resources = NestedField(JobResourceConfigurationSchema)
     retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
     max_concurrency_per_instance = fields.Integer(
         dump_default=1,
@@ -35,13 +38,24 @@ class ParameterizedParallelSchema(PathAwareSchema):
     error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
-            "description": "The number of item processing failures should be ignored. If the error_threshold is reached, the job terminates. For a list of files as inputs, one item means one file reference. This setting doesn't apply to command parallelization."
+            "description": (
+                "The number of item processing failures should be ignored. "
+                "If the error_threshold is reached, the job terminates. "
+                "For a list of files as inputs, one item means one file reference. "
+                "This setting doesn't apply to command parallelization."
+            )
         },
     )
     mini_batch_error_threshold = fields.Integer(
         dump_default=-1,
         metadata={
-            "description": "The number of mini batch processing failures should be ignored. If the mini_batch_error_threshold is reached, the job terminates. For a list of files as inputs, one item means one file reference. This setting can be used by either command or python function parallelization. Only one error_threshold setting can be used in one job."
+            "description": (
+                "The number of mini batch processing failures should be ignored. "
+                "If the mini_batch_error_threshold is reached, the job terminates. "
+                "For a list of files as inputs, one item means one file reference. "
+                "This setting can be used by either command or python function parallelization. "
+                "Only one error_threshold setting can be used in one job."
+            )
         },
     )
     environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())

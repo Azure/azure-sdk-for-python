@@ -55,7 +55,7 @@ from typing import (
     Type
 )
 
-from six.moves.http_client import HTTPResponse as _HTTPResponse
+from http.client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import (
@@ -417,7 +417,7 @@ class _HttpResponseBase(object):
         """Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
-        as enveloppe.
+        as envelope.
         """
         return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
 

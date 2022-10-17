@@ -1,0 +1,194 @@
+{
+  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/jobs/1d072f27-fcb5-4c63-9eeb-bc0573548ecc",
+  "name": "1d072f27-fcb5-4c63-9eeb-bc0573548ecc",
+  "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+  "properties": {
+    "description": null,
+    "tags": {},
+    "properties": {
+      "azureml.DevPlatv2": "true",
+      "azureml.runsource": "azureml.PipelineRun",
+      "runSource": "MFE",
+      "runType": "HTTP",
+      "azureml.parameters": "{\"target_column_name\":\"score\"}",
+      "azureml.continue_on_step_failure": "False",
+      "azureml.continue_on_failed_optional_input": "True",
+      "azureml.defaultComputeName": "mock",
+      "azureml.defaultDataStoreName": "workspaceblobstore",
+      "azureml.pipelineComponent": "pipelinerun"
+    },
+    "displayName": "red_shampoo_ybk2gdnd7z",
+    "status": "Completed",
+    "experimentName": "Default-Responsible-AI-Dashboard",
+    "services": {
+      "Tracking": {
+        "jobServiceType": "Tracking",
+        "port": null,
+        "endpoint": "",
+        "status": null,
+        "errorMessage": null,
+        "properties": null
+      },
+      "Studio": {
+        "jobServiceType": "Studio",
+        "port": null,
+        "endpoint": "",
+        "status": null,
+        "errorMessage": null,
+        "properties": null
+      }
+    },
+    "computeId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/computes/compute",
+    "isArchived": false,
+    "identity": null,
+    "componentId": null,
+    "jobType": "Pipeline",
+    "settings": {
+      "ContinueRunOnStepFailure": false
+    },
+    "jobs": {
+      "create_rai_job": {
+        "inputs": {
+          "train_dataset": {
+            "job_input_type": "literal",
+            "value": "${{parent.inputs.my_training_data}}"
+          },
+          "test_dataset": {
+            "job_input_type": "literal",
+            "value": "${{parent.inputs.my_test_data}}"
+          },
+          "target_column_name": {
+            "job_input_type": "literal",
+            "value": "${{parent.inputs.target_column_name}}"
+          },
+          "title": {
+            "job_input_type": "literal",
+            "value": "RAI Insights"
+          },
+          "task_type": {
+            "job_input_type": "literal",
+            "value": "regression"
+          },
+          "model_info": {
+            "job_input_type": "literal",
+            "value": "rai_programmer_example_reg_1659042854:1"
+          },
+          "model_input": {
+            "mode": "ReadOnlyMount",
+            "uri": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/models/rai_programmer_example_reg_1659042854/versions/1",
+            "job_input_type": "mlflow_model"
+          },
+          "categorical_column_names": {
+            "job_input_type": "literal",
+            "value": "[\"IDE\",\"Programming language\",\"location\",\"Employer\",\"OS\",\"job title\",\"style\"]"
+          }
+        },
+        "componentId": "azureml://registries/rai-test/components/microsoft_azureml_rai_tabular_insight_constructor/versions/dev.0.0.1.1662509117.preview"
+      },
+      "red_shampoo_ybk2gdnd7z": {
+        "componentId": "azureml://registries/rai-test/components/microsoft_azureml_rai_tabular_insight_gather/versions/dev.0.0.1.1662509117.preview",
+        "inputs": {
+          "constructor": {
+            "job_input_type": "literal",
+            "value": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}"
+          },
+          "insight_2": {
+            "job_input_type": "literal",
+            "value": "${{parent.jobs.counterfactual_job.outputs.counterfactual}}"
+          },
+          "insight_3": {
+            "job_input_type": "literal",
+            "value": "${{parent.jobs.error_analysis_job.outputs.error_analysis}}"
+          },
+          "insight_4": {
+            "job_input_type": "literal",
+            "value": "${{parent.jobs.explain_job.outputs.explanation}}"
+          }
+        }
+      },
+      "explain_job": {
+        "componentId": "azureml://registries/rai-test/components/microsoft_azureml_rai_tabular_explanation/versions/dev.0.0.1.1662509117.preview",
+        "inputs": {
+          "comment": {
+            "job_input_type": "literal",
+            "value": "add explanation"
+          },
+          "rai_insights_dashboard": {
+            "job_input_type": "literal",
+            "value": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}"
+          }
+        }
+      },
+      "error_analysis_job": {
+        "componentId": "azureml://registries/rai-test/components/microsoft_azureml_rai_tabular_erroranalysis/versions/dev.0.0.1.1662509117.preview",
+        "inputs": {
+          "filter_features": {
+            "job_input_type": "literal"
+          },
+          "max_depth": {
+            "job_input_type": "literal",
+            "value": 3
+          },
+          "num_leaves": {
+            "job_input_type": "literal",
+            "value": 31
+          },
+          "min_child_samples": {
+            "job_input_type": "literal",
+            "value": 20
+          },
+          "rai_insights_dashboard": {
+            "job_input_type": "literal",
+            "value": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}"
+          }
+        }
+      },
+      "counterfactual_job": {
+        "componentId": "azureml://registries/rai-test/components/microsoft_azureml_rai_tabular_counterfactual/versions/dev.0.0.1.1662509117.preview",
+        "inputs": {
+          "total_CFs": {
+            "job_input_type": "literal",
+            "value": "10"
+          },
+          "desired_range": {
+            "job_input_type": "literal",
+            "value": "[5, 10]"
+          },
+          "permitted_range": {
+            "job_input_type": "literal",
+            "value": "{}"
+          },
+          "rai_insights_dashboard": {
+            "job_input_type": "literal",
+            "value": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}"
+          }
+        }
+      }
+    },
+    "inputs": {
+      "target_column_name": {
+        "description": null,
+        "jobInputType": "literal",
+        "value": "score"
+      },
+      "my_training_data": {
+        "description": null,
+        "uri": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/data/Programmers_Train_MLTable/versions/1",
+        "mode": "Download",
+        "jobInputType": "mltable"
+      },
+      "my_test_data": {
+        "description": null,
+        "uri": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/data/Programmers_Train_MLTable/versions/1",
+        "mode": "Download",
+        "jobInputType": "mltable"
+      }
+    },
+    "sourceJobId": null
+  },
+  "systemData": {
+    "createdAt": "2022-09-12T22:33:08.1697789+00:00",
+    "createdBy": "",
+    "createdByType": "User"
+  }
+}

@@ -31,10 +31,16 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
 
+    @classmethod
+    def from_incoming_frame(cls, session, handle, frame):
+        # TODO: Assuming we establish all links for now...
+        # check link_create_from_endpoint in C lib
+        raise NotImplementedError("Pending")
+
     async def _process_incoming_message(self, frame, message):
         try:
             return await self._on_transfer(frame, message)
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Handler function failed with error: %r", e)
         return None
 
@@ -49,7 +55,7 @@ class ReceiverLink(Link):
 
     async def _incoming_transfer(self, frame):
         if self.network_trace:
-            _LOGGER.info("<- %r", TransferFrame(*frame), extra=self.network_trace_params)
+            _LOGGER.debug("<- %r", TransferFrame(*frame), extra=self.network_trace_params)
         self.current_link_credit -= 1
         self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
@@ -64,10 +70,16 @@ class ReceiverLink(Link):
             else:
                 message = decode_payload(frame[11])
                 if self.network_trace:
-                    _LOGGER.info("   %r", message, extra=self.network_trace_params)
+                    _LOGGER.debug("   %r", message, extra=self.network_trace_params)
             delivery_state = await self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
-                await self._outgoing_disposition(first=frame[1], settled=True, state=delivery_state)
+                await self._outgoing_disposition(
+                    first=frame[1],
+                    last=frame[1],
+                    settled=True,
+                    state=delivery_state,
+                    batchable=None
+                )
 
     async def _wait_for_response(self, wait: Union[bool, float]) -> None:
         if wait is True:
@@ -91,7 +103,7 @@ class ReceiverLink(Link):
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if self.network_trace:
-            _LOGGER.info("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
+            _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         await self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
 
     async def attach(self):

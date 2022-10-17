@@ -555,3 +555,25 @@ class ServiceBusClientTests(AzureMgmtTestCase):
             subscription_receiver = servicebus_client.get_subscription_receiver(topic_name, sub_name, client_identifier=custom_id)
             assert subscription_receiver.client_identifier is not None
             assert subscription_receiver.client_identifier == custom_id
+
+    @pytest.mark.skip('check that connection verify works for pyproto. Issue #26657.')
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer()
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
+    def test_connection_verify_exception(self,
+                                   servicebus_queue,
+                                   servicebus_namespace,
+                                   servicebus_namespace_key_name,
+                                   servicebus_namespace_primary_key,
+                                   servicebus_namespace_connection_string,
+                                   **kwargs):
+        hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
+        credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
+
+        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem")
+        with client:
+            with pytest.raises(ServiceBusError):
+                with client.get_queue_sender(servicebus_queue.name) as sender:
+                    sender.send_messages(ServiceBusMessage("foo"))

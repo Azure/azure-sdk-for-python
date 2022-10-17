@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 import socket
 from ssl import SSLError
 import asyncio
+from typing import Any, Tuple, Optional, NamedTuple, Union, cast
 
 from ._transport_async import AsyncTransport
 from ._sasl_async import SASLTransport, SASLWithWebSocket
@@ -29,14 +30,7 @@ from ..constants import (
     TransportType,
 )
 
-
-from ..error import (
-    AMQPException,
-    ErrorCondition,
-    AMQPConnectionError,
-    AMQPError
-)
-
+from ..error import ErrorCondition, AMQPConnectionError, AMQPError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -90,7 +84,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if custom_endpoint_address:
             custom_parsed_url = urlparse(custom_endpoint_address)
             custom_port = custom_parsed_url.port or WEBSOCKET_PORT
-            custom_endpoint = "{}:{}{}".format(custom_parsed_url.hostname, custom_port, custom_parsed_url.path)
+            custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
@@ -98,35 +92,60 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._transport = transport
         elif "sasl_credential" in kwargs:
             sasl_transport = SASLTransport
-            if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
+            if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get(
+                "http_proxy"
+            ):
                 sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
-                host=endpoint, credential=kwargs["sasl_credential"], custom_endpoint=custom_endpoint, **kwargs
+                host=endpoint,
+                credential=kwargs["sasl_credential"],
+                custom_endpoint=custom_endpoint,
+                **kwargs,
             )
         else:
-            self._transport = AsyncTransport(parsed_url.netloc, transport_type=self._transport_type, **kwargs)
+            self._transport = AsyncTransport(parsed_url.netloc, **kwargs)
 
-        self._container_id = kwargs.pop("container_id", None) or str(uuid.uuid4())  # type: str
-        self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)  # type: int
+        self._container_id = kwargs.pop("container_id", None) or str(
+            uuid.uuid4()
+        )  # type: str
+        self._max_frame_size = kwargs.pop(
+            "max_frame_size", MAX_FRAME_SIZE_BYTES
+        )  # type: int
         self._remote_max_frame_size = None  # type: Optional[int]
         self._channel_max = kwargs.pop("channel_max", MAX_CHANNELS)  # type: int
         self._idle_timeout = kwargs.pop("idle_timeout", None)  # type: Optional[int]
-        self._outgoing_locales = kwargs.pop("outgoing_locales", None)  # type: Optional[List[str]]
-        self._incoming_locales = kwargs.pop("incoming_locales", None)  # type: Optional[List[str]]
+        self._outgoing_locales = kwargs.pop(
+            "outgoing_locales", None
+        )  # type: Optional[List[str]]
+        self._incoming_locales = kwargs.pop(
+            "incoming_locales", None
+        )  # type: Optional[List[str]]
         self._offered_capabilities = None  # type: Optional[str]
-        self._desired_capabilities = kwargs.pop("desired_capabilities", None)  # type: Optional[str]
-        self._properties = kwargs.pop("properties", None)  # type: Optional[Dict[str, str]]
+        self._desired_capabilities = kwargs.pop(
+            "desired_capabilities", None
+        )  # type: Optional[str]
+        self._properties = kwargs.pop(
+            "properties", None
+        )  # type: Optional[Dict[str, str]]
 
-        self._allow_pipelined_open = kwargs.pop("allow_pipelined_open", True)  # type: bool
+        self._allow_pipelined_open = kwargs.pop(
+            "allow_pipelined_open", True
+        )  # type: bool
         self._remote_idle_timeout = None  # type: Optional[int]
         self._remote_idle_timeout_send_frame = None  # type: Optional[int]
-        self._idle_timeout_empty_frame_send_ratio = kwargs.get("idle_timeout_empty_frame_send_ratio", 0.5)
+        self._idle_timeout_empty_frame_send_ratio = kwargs.get(
+            "idle_timeout_empty_frame_send_ratio", 0.5
+        )
         self._last_frame_received_time = None  # type: Optional[float]
         self._last_frame_sent_time = None  # type: Optional[float]
         self._idle_wait_time = kwargs.get("idle_wait_time", 0.1)  # type: float
         self._network_trace = kwargs.get("network_trace", False)
-        self._network_trace_params = {"connection": self._container_id, "session": None, "link": None}
+        self._network_trace_params = {
+            "connection": self._container_id,
+            "session": None,
+            "link": None,
+        }
         self._error = None
         self._outgoing_endpoints = {}  # type: Dict[int, Session]
         self._incoming_endpoints = {}  # type: Dict[int, Session]
@@ -145,7 +164,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             return
         previous_state = self.state
         self.state = new_state
-        _LOGGER.info("Connection '%s' state changed: %r -> %r", self._container_id, previous_state, new_state)
+        _LOGGER.info(
+            "Connection '%s' state changed: %r -> %r",
+            self._container_id,
+            previous_state,
+            new_state,
+        )
         for session in self._outgoing_endpoints.values():
             await session._on_connection_state_change()  # pylint:disable=protected-access
 
@@ -170,17 +194,20 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 await self._process_incoming_frame(*(await self._read_frame(wait=True)))
                 if self.state != ConnectionState.HDR_EXCH:
                     await self._disconnect()
-                    raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
+                    raise ValueError(
+                        "Did not receive reciprocal protocol header. Disconnecting."
+                    )
             else:
                 await self._set_state(ConnectionState.HDR_SENT)
         except (OSError, IOError, SSLError, socket.error, asyncio.TimeoutError) as exc:
             raise AMQPConnectionError(
                 ErrorCondition.SocketError,
-                description="Failed to initiate the connection due to exception: " + str(exc),
+                description="Failed to initiate the connection due to exception: "
+                + str(exc),
                 error=exc,
             )
 
-    async def _disconnect(self, *args) -> None:
+    async def _disconnect(self) -> None:
         """Disconnect the transport and set state to END."""
         if self.state == ConnectionState.END:
             return
@@ -192,7 +219,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Whether the connection is in a state where it is legal to read for incoming frames."""
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
-    async def _read_frame(self, wait=True, **kwargs):
+    async def _read_frame(self, wait=True, **kwargs):  # type: ignore # TODO: missing return
         # type: (bool, Any) -> Tuple[int, Optional[Tuple[int, NamedTuple]]]
         """Read an incoming frame from the transport.
 
@@ -236,8 +263,17 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if self._can_write():
             try:
                 self._last_frame_sent_time = time.time()
-                await asyncio.wait_for(self._transport.send_frame(channel, frame, **kwargs), timeout=timeout)
-            except (OSError, IOError, SSLError, socket.error, asyncio.TimeoutError) as exc:
+                await asyncio.wait_for(
+                    self._transport.send_frame(channel, frame, **kwargs),
+                    timeout=timeout,
+                )
+            except (
+                OSError,
+                IOError,
+                SSLError,
+                socket.error,
+                asyncio.TimeoutError,
+            ) as exc:
                 self._error = AMQPConnectionError(
                     ErrorCondition.SocketError,
                     description="Can not send frame out due to exception: " + str(exc),
@@ -254,9 +290,17 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :returns: The next available outgoing channel number.
         :rtype: int
         """
-        if (len(self._incoming_endpoints) + len(self._outgoing_endpoints)) >= self._channel_max:
-            raise ValueError("Maximum number of channels ({}) has been reached.".format(self._channel_max))
-        next_channel = next(i for i in range(1, self._channel_max) if i not in self._outgoing_endpoints)
+        if (
+            len(self._incoming_endpoints) + len(self._outgoing_endpoints)
+        ) >= self._channel_max:
+            raise ValueError(
+                "Maximum number of channels ({}) has been reached.".format(
+                    self._channel_max
+                )
+            )
+        next_channel = next(
+            i for i in range(1, self._channel_max) if i not in self._outgoing_endpoints
+        )
         return next_channel
 
     async def _outgoing_empty(self):
@@ -284,7 +328,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Send the AMQP protocol header to initiate the connection."""
         self._last_frame_sent_time = time.time()
         if self._network_trace:
-            _LOGGER.info("-> header(%r)", HEADER_FRAME, extra=self._network_trace_params)
+            _LOGGER.info(
+                "-> header(%r)", HEADER_FRAME, extra=self._network_trace_params
+            )
         await self._transport.write(HEADER_FRAME)
 
     async def _incoming_header(self, _, frame):
@@ -307,11 +353,17 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             hostname=self._hostname,
             max_frame_size=self._max_frame_size,
             channel_max=self._channel_max,
-            idle_timeout=self._idle_timeout * 1000 if self._idle_timeout else None,  # Convert to milliseconds
+            idle_timeout=self._idle_timeout * 1000
+            if self._idle_timeout
+            else None,  # Convert to milliseconds
             outgoing_locales=self._outgoing_locales,
             incoming_locales=self._incoming_locales,
-            offered_capabilities=self._offered_capabilities if self.state == ConnectionState.OPEN_RCVD else None,
-            desired_capabilities=self._desired_capabilities if self.state == ConnectionState.HDR_EXCH else None,
+            offered_capabilities=self._offered_capabilities
+            if self.state == ConnectionState.OPEN_RCVD
+            else None,
+            desired_capabilities=self._desired_capabilities
+            if self.state == ConnectionState.HDR_EXCH
+            else None,
             properties=self._properties,
         )
         if self._network_trace:
@@ -345,28 +397,38 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             _LOGGER.info("<- %r", OpenFrame(*frame), extra=self._network_trace_params)
         if channel != 0:
             _LOGGER.error("OPEN frame received on a channel that is not 0.")
-            await self.close(error=AMQPError(
-                condition=ErrorCondition.NotAllowed, 
-                description="OPEN frame received on a channel that is not 0"))
+            await self.close(
+                error=AMQPError(
+                    condition=ErrorCondition.NotAllowed,
+                    description="OPEN frame received on a channel that is not 0.",
+                )
+            )
             await self._set_state(ConnectionState.END)
         if self.state == ConnectionState.OPENED:
             _LOGGER.error("OPEN frame received in the OPENED state.")
             await self.close()
         if frame[4]:
             self._remote_idle_timeout = frame[4] / 1000  # Convert to seconds
-            self._remote_idle_timeout_send_frame = self._idle_timeout_empty_frame_send_ratio * self._remote_idle_timeout
+            self._remote_idle_timeout_send_frame = (
+                self._idle_timeout_empty_frame_send_ratio * self._remote_idle_timeout
+            )
 
         if frame[2] < 512:
-            # Close with error
-            # Codes_S_R_S_CONNECTION_01_143: [If any of the values in the received open frame are invalid then the connection shall be closed.]
-            # Codes_S_R_S_CONNECTION_01_220: [The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.]
+            # Max frame size is less than supported minimum
+            # If any of the values in the received open frame are invalid then the connection shall be closed.
+            # The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.
             await self.close(
-                error=AMQPConnectionError(
-                    condition=ErrorCondition.InvalidField,
-                    description="connection_endpoint_frame_received::failed parsing OPEN frame",
+                error=cast(
+                    AMQPError,
+                    AMQPConnectionError(
+                        condition=ErrorCondition.InvalidField,
+                        description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
+                    ),
                 )
             )
-            _LOGGER.error("connection_endpoint_frame_received::failed parsing OPEN frame")
+            _LOGGER.error(
+                "Failed parsing OPEN frame: Max frame size is less than supported minimum."
+            )
         else:
             self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:
@@ -376,9 +438,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             await self._outgoing_open()
             await self._set_state(ConnectionState.OPENED)
         else:
-            await self.close(error=AMQPError(
-                condition=ErrorCondition.IllegalState, 
-                description=f"connection is an illegal state: {self.state}"))
+            await self.close(
+                error=AMQPError(
+                    condition=ErrorCondition.IllegalState,
+                    description=f"connection is an illegal state: {self.state}",
+                )
+            )
             _LOGGER.error("connection is an illegal state: %r", self.state)
 
     async def _outgoing_close(self, error=None):
@@ -415,7 +480,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         close_error = None
         if channel > self._channel_max:
             _LOGGER.error("Invalid channel")
-            close_error = AMQPError(condition=ErrorCondition.InvalidField, description="Invalid channel", info=None)
+            close_error = AMQPError(
+                condition=ErrorCondition.InvalidField,
+                description="Invalid channel",
+                info=None,
+            )
 
         await self._set_state(ConnectionState.CLOSE_RCVD)
         await self._outgoing_close(error=close_error)
@@ -423,8 +492,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         await self._set_state(ConnectionState.END)
 
         if frame[0]:
-            self._error = AMQPConnectionError(condition=frame[0][0], description=frame[0][1], info=frame[0][2])
-            _LOGGER.error("Connection error: {}".format(frame[0]))  # pylint:disable=logging-format-interpolation
+            self._error = AMQPConnectionError(
+                condition=frame[0][0], description=frame[0][1], info=frame[0][2]
+            )
+            _LOGGER.error(
+                "Connection error: %r",frame[0]
+            )
 
     async def _incoming_begin(self, channel, frame):
         # type: (int, Tuple[Any, ...]) -> None
@@ -449,9 +522,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         try:
             existing_session = self._outgoing_endpoints[frame[0]]
             self._incoming_endpoints[channel] = existing_session
-            await self._incoming_endpoints[channel]._incoming_begin(frame)  # pylint:disable=protected-access
+            await self._incoming_endpoints[channel]._incoming_begin(  # pylint:disable=protected-access
+                frame
+            )
         except KeyError:
-            new_session = Session.from_incoming_frame(self, channel, frame)
+            new_session = Session.from_incoming_frame(self, channel)
             self._incoming_endpoints[channel] = new_session
             await new_session._incoming_begin(frame)  # pylint:disable=protected-access
 
@@ -481,7 +556,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 ))
             return
 
-    async def _process_incoming_frame(self, channel, frame):  # pylint:disable=too-many-return-statements
+    async def _process_incoming_frame(
+        self, channel, frame
+    ):  # pylint:disable=too-many-return-statements
         # type: (int, Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]) -> bool
         """Process an incoming frame, either directly or by passing to the necessary Session.
 
@@ -495,25 +572,36 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
          should be interrupted.
         """
         try:
-            performative, fields = frame
+            performative, fields = cast(Union[bytes, Tuple], frame)
         except TypeError:
             return True  # Empty Frame or socket timeout
+        fields = cast(Tuple[Any, ...], fields)
         try:
             self._last_frame_received_time = time.time()
             if performative == 20:
-                await self._incoming_endpoints[channel]._incoming_transfer(fields)  # pylint:disable=protected-access
+                await self._incoming_endpoints[channel]._incoming_transfer(  # pylint:disable=protected-access
+                    fields
+                )
                 return False
             if performative == 21:
-                await self._incoming_endpoints[channel]._incoming_disposition(fields)  # pylint:disable=protected-access
+                await self._incoming_endpoints[channel]._incoming_disposition(  # pylint:disable=protected-access
+                    fields
+                )
                 return False
             if performative == 19:
-                await self._incoming_endpoints[channel]._incoming_flow(fields)  # pylint:disable=protected-access
+                await self._incoming_endpoints[channel]._incoming_flow(  # pylint:disable=protected-access
+                    fields
+                )
                 return False
             if performative == 18:
-                await self._incoming_endpoints[channel]._incoming_attach(fields)  # pylint:disable=protected-access
+                await self._incoming_endpoints[channel]._incoming_attach(  # pylint:disable=protected-access
+                    fields
+                )
                 return False
             if performative == 22:
-                await self._incoming_endpoints[channel]._incoming_detach(fields)  # pylint:disable=protected-access
+                await self._incoming_endpoints[channel]._incoming_detach(  # pylint:disable=protected-access
+                    fields
+                )
                 return True
             if performative == 17:
                 await self._incoming_begin(channel, fields)
@@ -528,15 +616,12 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 await self._incoming_close(channel, fields)
                 return True
             if performative == 0:
-                await self._incoming_header(channel, fields)
+                await self._incoming_header(channel, cast(bytes, fields))
                 return True
-            if performative == 1:  # pylint:disable=no-else-return
+            if performative == 1:
                 return False  # TODO: incoming EMPTY
-            else:
-                _LOGGER.error(
-                    "Unrecognized incoming frame: {}".format(frame)
-                )  # pylint:disable=logging-format-interpolation
-                return True
+            _LOGGER.error("Unrecognized incoming frame: %s", frame)
+            return True
         except KeyError:
             return True  # TODO: channel error
 
@@ -546,14 +631,23 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         :raises ValueError: If the connection is not open or not in a valid state.
         """
-        if not self._allow_pipelined_open and self.state in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT]:
+        if not self._allow_pipelined_open and self.state in [
+            ConnectionState.OPEN_PIPE,
+            ConnectionState.OPEN_SENT,
+        ]:
             raise ValueError("Connection not configured to allow pipeline send.")
-        if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
+        if self.state not in [
+            ConnectionState.OPEN_PIPE,
+            ConnectionState.OPEN_SENT,
+            ConnectionState.OPENED,
+        ]:
             raise ValueError("Connection not open.")
         now = time.time()
-        if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or (
-            await self._get_remote_timeout(now)
-        ):
+        if get_local_timeout(
+            now,
+            cast(float, self._idle_timeout),
+            cast(float, self._last_frame_received_time),
+        ) or (await self._get_remote_timeout(now)):
             await self.close(
                 error=AMQPError(
                     condition=ErrorCondition.ConnectionCloseForced,
@@ -578,7 +672,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         if self._remote_idle_timeout and self._last_frame_sent_time:
             time_since_last_sent = now - self._last_frame_sent_time
-            if time_since_last_sent > self._remote_idle_timeout_send_frame:
+            if time_since_last_sent > cast(int, self._remote_idle_timeout_send_frame):
                 await self._outgoing_empty()
         return False
 
@@ -631,8 +725,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
-                if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or (
-                await self._get_remote_timeout(now)):
+                if get_local_timeout(
+                    now,
+                    cast(float, self._idle_timeout),
+                    cast(float, self._last_frame_received_time),
+                ) or (await self._get_remote_timeout(now)):
                     await self.close(
                         error=AMQPError(
                             condition=ErrorCondition.ConnectionCloseForced,
@@ -642,12 +739,16 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     )
                     return
             if self.state == ConnectionState.END:
+                # TODO: check error condition
                 self._error = AMQPConnectionError(
-                    condition=ErrorCondition.ConnectionCloseForced, description="Connection was already closed."
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="Connection was already closed.",
                 )
                 return
             for _ in range(batch):
-                if await asyncio.ensure_future(self._listen_one_frame(wait=wait, **kwargs)):
+                if await asyncio.ensure_future(
+                    self._listen_one_frame(wait=wait, **kwargs)
+                ):
                     # TODO: compare the perf difference between ensure_future and direct await
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
@@ -686,7 +787,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             assigned_channel,
             network_trace=kwargs.pop("network_trace", self._network_trace),
             network_trace_params=dict(self._network_trace_params),
-            **kwargs
+            **kwargs,
         )
         self._outgoing_endpoints[assigned_channel] = session
         return session
@@ -710,7 +811,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if wait:
             await self._wait_for_response(wait, ConnectionState.OPENED)
         elif not self._allow_pipelined_open:
-            raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
+            raise ValueError(
+                "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
+            )
 
     async def close(self, error=None, wait=False):
         # type: (Optional[AMQPError], bool) -> None
@@ -722,13 +825,19 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
-        if self.state in [ConnectionState.END, ConnectionState.CLOSE_SENT, ConnectionState.DISCARDING]:
+        if self.state in [
+            ConnectionState.END,
+            ConnectionState.CLOSE_SENT,
+            ConnectionState.DISCARDING,
+        ]:
             return
         try:
             await self._outgoing_close(error=error)
             if error:
                 self._error = AMQPConnectionError(
-                    condition=error.condition, description=error.description, info=error.info
+                    condition=error.condition,
+                    description=error.description,
+                    info=error.info,
                 )
             if self.state == ConnectionState.OPEN_PIPE:
                 await self._set_state(ConnectionState.OC_PIPE)

@@ -7,6 +7,7 @@
 
 MYPY_HARD_FAILURE_OPTED = [
   "azure-core",
+  "azure-eventhub",
   "azure-identity",
   "azure-keyvault-administration",
   "azure-keyvault-certificates",
@@ -21,5 +22,6 @@ MYPY_HARD_FAILURE_OPTED = [
   "azure-appconfiguration",
   "azure-data-tables",
   "azure-mixedreality-remoterendering",
-  "azure-ai-language-conversations"
+  "azure-ai-language-conversations",
+  "azure-ai-language-questionanswering",
 ]

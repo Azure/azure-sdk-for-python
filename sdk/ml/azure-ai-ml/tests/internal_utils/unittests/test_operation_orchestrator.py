@@ -1,29 +1,30 @@
-from unittest.mock import Mock, patch
-import pytest
 from pathlib import Path
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from unittest.mock import Mock, patch
 
-from azure.ai.ml.operations import (
-    DataOperations,
-    DatastoreOperations,
-    EnvironmentOperations,
-    ModelOperations,
-    ComponentOperations,
-    OnlineEndpointOperations,
-)
-from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
-from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml.constants import (
+import pytest
+from pytest_mock import MockFixture
+from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
+
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml.constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     AzureMLResourceType,
 )
-from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
-from pytest_mock import MockFixture
+from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._assets import Model, Code, Data, Environment
+from azure.ai.ml.operations import (
+    ComponentOperations,
+    DataOperations,
+    DatastoreOperations,
+    EnvironmentOperations,
+    ModelOperations,
+    OnlineEndpointOperations,
+)
+from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 
 @pytest.fixture
@@ -147,9 +148,15 @@ def operation_container(
 
 @pytest.fixture
 def operation_orchestrator(
-    mock_workspace_scope: OperationScope, operation_container: OperationsContainer
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    operation_container: OperationsContainer,
 ) -> OperationOrchestrator:
-    yield OperationOrchestrator(operation_container=operation_container, operation_scope=mock_workspace_scope)
+    yield OperationOrchestrator(
+        operation_container=operation_container,
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+    )
 
 
 @pytest.fixture

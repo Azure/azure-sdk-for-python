@@ -16,7 +16,7 @@ from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, ca
 #from uamqp.authentication.common import AMQPAuth
 from ._pyamqp.message import Message
 from ._pyamqp.constants import SenderSettleMode
-from ._pyamqp.client import ReceiveClientSync
+from ._pyamqp.client import ReceiveClient as ReceiveClientSync
 from ._pyamqp import utils
 from ._pyamqp.error import AMQPError
 

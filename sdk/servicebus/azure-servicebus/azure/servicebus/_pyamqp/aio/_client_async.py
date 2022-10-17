@@ -17,7 +17,12 @@ from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
 from ._management_operation_async import ManagementOperation
 from ._cbs_async import CBSAuthenticator
-from ..client import AMQPClientSync, ReceiveClientSync, SendClientSync, Outcomes
+from ..client import (
+    AMQPClient as AMQPClientSync,
+    ReceiveClient as ReceiveClientSync,
+    SendClient as SendClientSync,
+    Outcomes
+)
 from ..message import _MessageDelivery
 from ..constants import (
     MessageDeliveryState,

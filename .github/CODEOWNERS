@@ -88,7 +88,7 @@
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @tjprescott @JericHunter
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @JericHunter
 
 # ServiceLabel: %Cosmos %Service Attention
 #/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
@@ -114,7 +114,10 @@
 /sdk/machinelearningcompute/                                         @shutchings
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @azureml-github @Azure/azure-ml-sdk
+/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
+
+# PRLabel: %Local Endpoints
+/sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
@@ -135,7 +138,7 @@
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
 
 # PRLabel: %Synapse
-/sdk/synapse/                                                        @wonner @idear1203 @xiangyan99
+/sdk/synapse/                                                        @wonner @yanjungao718 @xiangyan99
 
 # PRLabel: %EngSys
 /sdk/template/                                                       @scbedd @weshaggard @benbp
@@ -237,7 +240,7 @@
 #/<NotInRepo>/          @darshanhs90 @AshishGargMicrosoft
 
 # ServiceLabel: %Automation %Service Attention
-#/<NotInRepo>/          @jaspkaur28
+#/<NotInRepo>/          @jaspkaur28 @omairabdullah
 
 # ServiceLabel: %AVS %Service Attention
 #/<NotInRepo>/          @divka78 @amitchat @aishu
@@ -564,7 +567,7 @@
 #/<NotInRepo>/          @sunilagarwal @lfittl-msft @sr-msft @niklarin
 
 # ServiceLabel: %Recovery Services Backup %Service Attention
-#/<NotInRepo>/          @pvrk @adityabalaji-msft
+#/<NotInRepo>/          @pvrk @adityabalaji-msft @Daya-Patil
 
 # ServiceLabel: %Recovery Services Site-Recovery %Service Attention
 #/<NotInRepo>/          @Sharmistha-Rai
@@ -766,7 +769,7 @@
 
 
 # Management Plane
-/**/*mgmt*/                                                          @BigCat20196	 @msyyc
+/**/*mgmt*/                                                          @Wzb123456789 @msyyc
 
 
 ###########

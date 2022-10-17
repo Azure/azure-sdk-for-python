@@ -45,5 +45,4 @@ async def query_metrics():
                 print(metric_value.timestamp)
     
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(query_metrics())
+    asyncio.run(query_metrics())

@@ -1,7 +1,8 @@
 import argparse
-from sklearn.svm import SVC
+
 import mlflow.sklearn
 import numpy as np
+from sklearn.svm import SVC
 
 
 def parse_args():

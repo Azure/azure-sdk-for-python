@@ -190,7 +190,7 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.pyamqp_logging_enable
+            logging_enable=args.uamqp_logging_enable
         )
     elif args.conn_str:
         client = EventHubConsumerClientTest.from_connection_string(

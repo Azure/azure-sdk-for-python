@@ -1,48 +1,55 @@
+import json
 import os
 from pathlib import Path
-import pytest
-import json
-from marshmallow.exceptions import ValidationError
-import yaml
+from typing import List
 from unittest.mock import patch
-from azure.ai.ml._utils.utils import to_iso_duration_format_mins
-from azure.ai.ml.constants import AutoMLConstants, AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml._restclient.v2022_02_01_preview.models._models_py3 import (
-    AutoMLJob as RestAutoMLJob,
-    Classification as RestClassification,
-    ClassificationPrimaryMetrics,
-    ColumnTransformer as RestColumnTransformer,
-    DataSettings,
-    Forecasting as RestForecasting,
-    ForecastingPrimaryMetrics,
+
+import pytest
+import yaml
+from marshmallow.exceptions import ValidationError
+
+from azure.ai.ml import load_job
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import AutoNCrossValidations
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import Classification as RestClassification
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ClassificationPrimaryMetrics
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    ClassificationTrainingSettings as RestClassificationTrainingSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import CustomNCrossValidations
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ForecastingPrimaryMetrics
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ForecastingSettings as RestForecastingSettings,
-    JobBaseData,
-    LogVerbosity,
-    MLTableJobInput,
-    Regression as RestRegression,
-    RegressionPrimaryMetrics,
-    TableVerticalDataSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    ForecastingTrainingSettings as RestForecastingTrainingSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import Regression as RestRegression
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import RegressionPrimaryMetrics
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    RegressionTrainingSettings as RestRegressionTrainingSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     TableVerticalFeaturizationSettings as RestTableFeaturizationSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     TableVerticalLimitSettings as RestTableVerticalLimitSettings,
-    TableVerticalValidationDataSettings,
-    TrainingDataSettings,
-    TestDataSettings,
-    TrainingSettings as RestTrainingSettings,
-    CustomNCrossValidations,
-    AutoNCrossValidations,
 )
 from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
+from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._utils.utils import camel_to_snake, to_iso_duration_format_mins
+from azure.ai.ml.constants._job.automl import AutoMLConstants, AutoMLTransformerParameterKeys
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
-
+from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
-from azure.ai.ml import load_job
 
 
 @pytest.fixture(autouse=True)
@@ -63,8 +70,26 @@ def limits_expected() -> RestTableVerticalLimitSettings:
 
 
 @pytest.fixture
-def training_settings_expected() -> RestTrainingSettings:
-    return RestTrainingSettings(
+def classification_training_settings_expected() -> RestClassificationTrainingSettings:
+    return RestClassificationTrainingSettings(
+        enable_dnn_training=True,
+        enable_model_explainability=True,
+        ensemble_model_download_timeout="PT2M",
+    )
+
+
+@pytest.fixture
+def forecasting_training_settings_expected() -> RestForecastingTrainingSettings:
+    return RestForecastingTrainingSettings(
+        enable_dnn_training=True,
+        enable_model_explainability=True,
+        ensemble_model_download_timeout="PT2M",
+    )
+
+
+@pytest.fixture
+def regression_training_settings_expected() -> RestRegressionTrainingSettings:
+    return RestRegressionTrainingSettings(
         enable_dnn_training=True,
         enable_model_explainability=True,
         ensemble_model_download_timeout="PT2M",
@@ -77,7 +102,9 @@ def featurization_settings_expected() -> RestTableFeaturizationSettings:
         cfg = json.load(f)
     transformer_dict = {}
     for key, item in cfg["transformer_params"].items():
-        transformer_dict[key] = [RestColumnTransformer(fields=o["fields"], parameters=o["parameters"]) for o in item]
+        transformer_dict[AutoMLTransformerParameterKeys[camel_to_snake(key).upper()].value] = [
+            RestColumnTransformer(fields=o["fields"], parameters=o["parameters"]) for o in item
+        ]
     return RestTableFeaturizationSettings(
         blocked_transformers=cfg["blocked_transformers"],
         column_name_and_types=cfg["column_name_and_types"],
@@ -94,47 +121,51 @@ def compute_binding_expected(mock_workspace_scope: OperationScope) -> str:
 
 
 @pytest.fixture
-def expected_data_settings(mock_workspace_scope: OperationScope) -> DataSettings:
-    training_data = TrainingDataSettings(
-        data=Input(
-            path="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/insurance-training-data/versions/1",
-            type="mltable",
-        )
-    )
-    validation_data = TableVerticalValidationDataSettings(
-        data=Input(
-            path="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/insurance-validation-data/versions/1",
-            type="mltable",
-        ),
-        cv_split_column_names=["Quantity"],
-        n_cross_validations=CustomNCrossValidations(value=2),
-        validation_data_size=0.2,
-    )
-    test_data = TestDataSettings(
-        data=Input(
-            path="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/insurance-test-data/versions/1",
-            type="mltable",
-        )
+def expected_training_data() -> MLTableJobInput:
+    return MLTableJobInput(
+        uri="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/insurance-training-data/versions/1",
     )
 
-    data = TableVerticalDataSettings(
-        target_column_name="safedriver",
-        training_data=training_data,
-        validation_data=validation_data,
-        test_data=test_data,
+
+@pytest.fixture
+def expected_validation_data() -> MLTableJobInput:
+    return MLTableJobInput(
+        uri="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/insurance-validation-data/versions/1",
     )
-    # update data
-    data.training_data.data = MLTableJobInput(uri=data.training_data.data.path)
-    data.validation_data.data = MLTableJobInput(uri=data.validation_data.data.path)
-    data.test_data.data = MLTableJobInput(uri=data.test_data.data.path)
-    return data
+
+
+@pytest.fixture
+def expected_test_data() -> MLTableJobInput:
+    return MLTableJobInput(
+        uri="/subscriptions/test_subscription/resourceGroups/test_resource_group/providers/Microsoft.MachineLearningServices/workspaces/test_workspace_name/data/insurance-test-data/versions/1",
+    )
+
+
+@pytest.fixture
+def expected_target_column_name() -> str:
+    return "safedriver"
+
+
+@pytest.fixture
+def expected_cv_split_column_names() -> List:
+    return ["Quantity"]
+
+
+@pytest.fixture
+def expected_n_cross_validations() -> CustomNCrossValidations:
+    return CustomNCrossValidations(value=2)
+
+
+@pytest.fixture
+def expected_validation_data_size() -> int:
+    return 0.2
 
 
 @pytest.fixture
 def expected_forecasting_settings(mock_workspace_scope: OperationScope) -> RestForecastingSettings:
-    from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-        CustomTargetLags,
+    from azure.ai.ml._restclient.v2022_10_01_preview.models import (
         CustomForecastHorizon,
+        CustomTargetLags,
         CustomTargetRollingWindowSize,
     )
 
@@ -152,17 +183,29 @@ def expected_forecasting_settings(mock_workspace_scope: OperationScope) -> RestF
 def expected_regression_job(
     mock_workspace_scope: OperationScope,
     limits_expected: RestTableVerticalLimitSettings,
-    training_settings_expected: RestTrainingSettings,
+    regression_training_settings_expected: RestRegressionTrainingSettings,
     featurization_settings_expected: RestTableFeaturizationSettings,
-    expected_data_settings: DataSettings,
+    expected_training_data: MLTableJobInput,
+    expected_validation_data: MLTableJobInput,
+    expected_test_data: MLTableJobInput,
+    expected_validation_data_size: int,
+    expected_cv_split_column_names: List,
+    expected_n_cross_validations: CustomNCrossValidations,
+    expected_target_column_name: str,
     compute_binding_expected: str,
-) -> JobBaseData:
+) -> JobBase:
     return _get_rest_automl_job(
         RestRegression(
-            data_settings=expected_data_settings,
+            target_column_name=expected_target_column_name,
+            training_data=expected_training_data,
+            validation_data=expected_validation_data,
+            validation_data_size=expected_validation_data_size,
+            cv_split_column_names=expected_cv_split_column_names,
+            n_cross_validations=expected_n_cross_validations,
+            test_data=expected_test_data,
             featurization_settings=featurization_settings_expected,
             limit_settings=limits_expected,
-            training_settings=training_settings_expected,
+            training_settings=regression_training_settings_expected,
             primary_metric=RegressionPrimaryMetrics.NORMALIZED_MEAN_ABSOLUTE_ERROR,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -175,17 +218,30 @@ def expected_regression_job(
 def expected_classification_job(
     mock_workspace_scope: OperationScope,
     limits_expected: RestTableVerticalLimitSettings,
-    training_settings_expected: RestTrainingSettings,
+    classification_training_settings_expected: RestClassificationTrainingSettings,
     featurization_settings_expected: RestTableFeaturizationSettings,
-    expected_data_settings: DataSettings,
+    expected_training_data: MLTableJobInput,
+    expected_validation_data: MLTableJobInput,
+    expected_test_data: MLTableJobInput,
+    expected_validation_data_size: int,
+    expected_cv_split_column_names: List,
+    expected_n_cross_validations: CustomNCrossValidations,
+    expected_target_column_name: str,
     compute_binding_expected: str,
-) -> JobBaseData:
+) -> JobBase:
     return _get_rest_automl_job(
         RestClassification(
-            data_settings=expected_data_settings,
+            target_column_name=expected_target_column_name,
+            positive_label="label",
+            training_data=expected_training_data,
+            validation_data=expected_validation_data,
+            test_data=expected_test_data,
+            validation_data_size=expected_validation_data_size,
+            cv_split_column_names=expected_cv_split_column_names,
+            n_cross_validations=expected_n_cross_validations,
             featurization_settings=featurization_settings_expected,
             limit_settings=limits_expected,
-            training_settings=training_settings_expected,
+            training_settings=classification_training_settings_expected,
             primary_metric=ClassificationPrimaryMetrics.ACCURACY,
             log_verbosity=LogVerbosity.DEBUG,
         ),
@@ -198,18 +254,30 @@ def expected_classification_job(
 def expected_forecasting_job(
     mock_workspace_scope: OperationScope,
     limits_expected: RestTableVerticalLimitSettings,
-    training_settings_expected: RestTrainingSettings,
+    forecasting_training_settings_expected: RestForecastingTrainingSettings,
     featurization_settings_expected: RestTableFeaturizationSettings,
     expected_forecasting_settings: RestForecastingSettings,
-    expected_data_settings: DataSettings,
+    expected_training_data: MLTableJobInput,
+    expected_validation_data: MLTableJobInput,
+    expected_test_data: MLTableJobInput,
+    expected_validation_data_size: int,
+    expected_cv_split_column_names: List,
+    expected_n_cross_validations: CustomNCrossValidations,
+    expected_target_column_name: str,
     compute_binding_expected: str,
-) -> JobBaseData:
+) -> JobBase:
     return _get_rest_automl_job(
         RestForecasting(
-            data_settings=expected_data_settings,
+            target_column_name=expected_target_column_name,
+            training_data=expected_training_data,
+            validation_data=expected_validation_data,
+            test_data=expected_test_data,
+            validation_data_size=expected_validation_data_size,
+            cv_split_column_names=expected_cv_split_column_names,
+            n_cross_validations=expected_n_cross_validations,
             featurization_settings=featurization_settings_expected,
             limit_settings=limits_expected,
-            training_settings=training_settings_expected,
+            training_settings=forecasting_training_settings_expected,
             primary_metric=ForecastingPrimaryMetrics.R2_SCORE,
             forecasting_settings=expected_forecasting_settings,
             log_verbosity=LogVerbosity.DEBUG,
@@ -228,7 +296,7 @@ def _get_rest_automl_job(automl_task, name, compute_id):
         outputs={},
         tags={},
     )
-    result = JobBaseData(properties=properties)
+    result = JobBase(properties=properties)
     result.name = name
     return result
 
@@ -279,7 +347,9 @@ def loaded_regression_job_auto_fields(mock_machinelearning_client) -> AutoMLJob:
 class TestAutoMLTabularSchema:
     def _validate_automl_tabular_job(self, automl_job):
         assert isinstance(automl_job, AutoMLJob)
-        assert automl_job._data and isinstance(automl_job._data, DataSettings)
+        assert automl_job.training_data and isinstance(automl_job.training_data, Input)
+        assert automl_job.validation_data and isinstance(automl_job.validation_data, Input)
+        assert automl_job.test_data and isinstance(automl_job.test_data, Input)
         assert automl_job.limits and isinstance(automl_job.limits, TabularLimitSettings)
         assert automl_job.training and isinstance(automl_job.training, TrainingSettings)
         assert automl_job.featurization and isinstance(automl_job.featurization, TabularFeaturizationSettings)
@@ -289,7 +359,7 @@ class TestAutoMLTabularSchema:
         self,
         mock_workspace_scope: OperationScope,
         loaded_classification_full_job: AutoMLJob,
-        expected_classification_job: JobBaseData,
+        expected_classification_job: JobBase,
     ):
         self._validate_automl_tabular_job(loaded_classification_full_job)
         assert loaded_classification_full_job._to_rest_object().as_dict() == expected_classification_job.as_dict()
@@ -298,7 +368,7 @@ class TestAutoMLTabularSchema:
         self,
         mock_workspace_scope: OperationScope,
         loaded_forecasting_full_job: AutoMLJob,
-        expected_forecasting_job: JobBaseData,
+        expected_forecasting_job: JobBase,
     ):
         self._validate_automl_tabular_job(loaded_forecasting_full_job)
         assert loaded_forecasting_full_job.forecasting_settings and isinstance(
@@ -310,7 +380,7 @@ class TestAutoMLTabularSchema:
         self,
         mock_workspace_scope: OperationScope,
         loaded_regression_full_job: AutoMLJob,
-        expected_regression_job: JobBaseData,
+        expected_regression_job: JobBase,
     ):
         self._validate_automl_tabular_job(loaded_regression_full_job)
         assert loaded_regression_full_job._to_rest_object().as_dict() == expected_regression_job.as_dict()
@@ -318,7 +388,7 @@ class TestAutoMLTabularSchema:
     def test_deserialize_regression_job(
         self,
         mock_workspace_scope,
-        expected_regression_job: JobBaseData,
+        expected_regression_job: JobBase,
         loaded_regression_full_job: AutoMLJob,
     ):
         # test deserialzing an AutoML job from REST with the REST formatted featurization config
@@ -364,10 +434,10 @@ class TestAutoMLTabularSchema:
         self,
         loaded_classification_full_job: AutoMLJob,
     ):
-        loaded_classification_full_job._data.validation_data.n_cross_validations = "auto"
+        loaded_classification_full_job.n_cross_validations = "auto"
         obj = loaded_classification_full_job._to_rest_object()
         assert isinstance(
-            obj.properties.task_details.data_settings.validation_data.n_cross_validations, AutoNCrossValidations
+            obj.properties.task_details.n_cross_validations, AutoNCrossValidations
         ), "N cross validations not an object of AutoNCrossValidations"
 
     def test_value_n_cv_schema(
@@ -376,5 +446,5 @@ class TestAutoMLTabularSchema:
     ):
         obj = loaded_classification_full_job._to_rest_object()
         assert isinstance(
-            obj.properties.task_details.data_settings.validation_data.n_cross_validations, CustomNCrossValidations
+            obj.properties.task_details.n_cross_validations, CustomNCrossValidations
         ), "N cross validations not an object of CustomNCrossValidations"

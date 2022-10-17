@@ -1,0 +1,8 @@
+type: import
+name: "test1"
+display_name: "test_display_name"
+source:
+  type: azuresqldb
+output:
+  type: mltable
+  path: azureml://datastores/workspaceblobstore/paths/output_dir/azuresql/

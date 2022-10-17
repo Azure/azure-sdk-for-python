@@ -1,24 +1,23 @@
-from azure.ai.ml._schema import CommandJobSchema
-from azure.ai.ml._utils.utils import load_yaml, is_valid_uuid
-from azure.ai.ml.constants import ANONYMOUS_ENV_NAME, InputOutputModes, BASE_PATH_CONTEXT_KEY, AssetTypes
-from azure.ai.ml.entities import CommandJob, Job
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from pathlib import Path
+
+import pytest
+import yaml
+from marshmallow.exceptions import ValidationError
+
+from azure.ai.ml import load_job
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     InputDeliveryMode,
     JobInputType,
     JobOutputType,
     OutputDeliveryMode,
-    UriFolderJobOutput as RestUriFolderJobOutput,
-    AmlToken,
-    UserIdentity,
-    ManagedIdentity,
 )
-from pathlib import Path
-from azure.ai.ml import load_job
-from marshmallow.exceptions import ValidationError
-import yaml
-import pytest
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._schema import CommandJobSchema
+from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
+from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
+from azure.ai.ml.entities import CommandJob, Job
+from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 
 
 @pytest.mark.unittest
@@ -118,13 +117,13 @@ class TestCommandJob:
         code = cfg["code"]
         input_path = cfg["inputs"]["test1"]["path"]
 
-        internal_representation: CommandJob = load_job(path=test_path)
+        internal_representation: CommandJob = load_job(source=test_path)
 
         # anonymous environments are created with name CliV2AnonymousEnvironment and a guid as the version
         assert internal_representation.environment.name != envName
         assert internal_representation.environment.name == ANONYMOUS_ENV_NAME
         assert internal_representation.environment._is_anonymous
-        assert internal_representation.environment.version == "79a6980e14dbe0dac98ed0e902413f88"
+        assert internal_representation.environment.version == "a9a50ba7f515e91d558122f2c5bc70a5"
 
         assert internal_representation.inputs["test1"].path == input_path
         # Validate default dataset is mounted

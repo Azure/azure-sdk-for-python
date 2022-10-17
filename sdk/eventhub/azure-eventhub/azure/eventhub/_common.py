@@ -59,7 +59,10 @@ from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
     try:
-        from uamqp import Message as uamqp_Message, BatchMessage
+        from uamqp import (  # pylint: disable=unused-import
+            Message as uamqp_Message,
+            BatchMessage,
+        )
     except ImportError:
         uamqp_Message = None
         BatchMessage = None
@@ -131,8 +134,8 @@ class EventData(object):
         self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
             data_body=body, annotations={}, application_properties={}
         )
-        self._uamqp_message = None
-        self._message = None
+        self._uamqp_message: Optional[Union[LegacyMessage, uamqp_Message]] = None
+        self._message: Message = None  # type: ignore
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
@@ -231,7 +234,11 @@ class EventData(object):
         event_data = cls(body="")
         # pylint: disable=protected-access
         event_data._message = message
-        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
+        event_data._raw_amqp_message = (
+            raw_amqp_message
+            if raw_amqp_message
+            else AmqpAnnotatedMessage(message=message)
+        )
         return event_data
 
     def _decode_non_data_body_as_str(self, encoding: str = "UTF-8") -> str:
@@ -252,7 +259,10 @@ class EventData(object):
 
         :rtype: LegacyMessage
         """
-        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         if not self._uamqp_message:
             self._uamqp_message = LegacyMessage(
                 self._raw_amqp_message,
@@ -263,9 +273,12 @@ class EventData(object):
     @message.setter
     def message(self, value: "uamqp_Message") -> None:
         """DEPRECATED: Set the underlying Message.
-         This is deprecated and will be removed in a later release.
+        This is deprecated and will be removed in a later release.
         """
-        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         self._uamqp_message = value
 
     @property
@@ -534,14 +547,20 @@ class EventDataBatch(object):
         self._partition_key = partition_key
 
         self._message = self._amqp_transport.build_batch_message(data=[])
-        self._message = self._amqp_transport.set_message_partition_key(self._message, self._partition_key)
+        self._message = self._amqp_transport.set_message_partition_key(
+            self._message, self._partition_key
+        )
         self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
-        self.max_size_in_bytes = max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+        self.max_size_in_bytes = (
+            max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
+        )
 
         self._count = 0
         self._internal_events: List[Union[EventData, AmqpAnnotatedMessage]] = []
         self._uamqp_message = (
-            None if PyamqpTransport.TIMEOUT_FACTOR == self._amqp_transport.TIMEOUT_FACTOR else self._message
+            None
+            if PyamqpTransport.TIMEOUT_FACTOR == self._amqp_transport.TIMEOUT_FACTOR
+            else self._message
         )
 
     def __repr__(self) -> str:
@@ -557,7 +576,7 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(
         cls,
-        batch_data: Iterable[EventData],
+        batch_data: Iterable[Union[AmqpAnnotatedMessage, EventData]],
         amqp_transport: AmqpTransport,
         partition_key: Optional[AnyStr] = None,
         *,
@@ -565,7 +584,10 @@ class EventDataBatch(object):
         partition_id: Optional[str] = None,
     ) -> EventDataBatch:
         outgoing_batch_data = [
-            transform_outbound_single_message(m, EventData, amqp_transport.to_outgoing_amqp_message) for m in batch_data
+            transform_outbound_single_message(
+                m, EventData, amqp_transport.to_outgoing_amqp_message
+            )
+            for m in batch_data
         ]
         batch_data_instance = cls(
             partition_key=partition_key,
@@ -596,20 +618,27 @@ class EventDataBatch(object):
 
         :rtype: uamqp.BatchMessage or LegacyBatchMessage
         """
-        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         if not self._uamqp_message:
             message = AmqpAnnotatedMessage(message=Message(*self._message))
             self._uamqp_message = LegacyBatchMessage(
-                message, to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message
+                message,
+                to_outgoing_amqp_message=PyamqpTransport().to_outgoing_amqp_message,
             )
         return self._uamqp_message
 
     @message.setter
     def message(self, value: "BatchMessage") -> None:
         """DEPRECATED: Set the underlying BatchMessage.
-         This is deprecated and will be removed in a later release.
+        This is deprecated and will be removed in a later release.
         """
-        warnings.warn("The `message` property is deprecated and will be removed in future versions.", DeprecationWarning)
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         self._uamqp_message = value
 
     @property
@@ -638,10 +667,15 @@ class EventDataBatch(object):
         )
 
         if self._partition_key:
-            if outgoing_event_data.partition_key and outgoing_event_data.partition_key != self._partition_key:
-                raise ValueError("The partition key of event_data does not match the partition key of this batch.")
+            if (
+                outgoing_event_data.partition_key
+                and outgoing_event_data.partition_key != self._partition_key
+            ):
+                raise ValueError(
+                    "The partition key of event_data does not match the partition key of this batch."
+                )
             if not outgoing_event_data.partition_key:
-                outgoing_event_data._message = self._amqp_transport.set_message_partition_key( # pylint: disable=protected-access
+                outgoing_event_data._message = self._amqp_transport.set_message_partition_key(  # pylint: disable=protected-access
                     outgoing_event_data._message,  # pylint: disable=protected-access
                     self._partition_key,
                 )
@@ -653,11 +687,15 @@ class EventDataBatch(object):
         # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
         # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
-            self._size + event_data_size + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
+            self._size
+            + event_data_size
+            + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
         )
 
         if size_after_add > self.max_size_in_bytes:
-            raise ValueError(f"EventDataBatch has reached its size limit: {self.max_size_in_bytes}")
+            raise ValueError(
+                f"EventDataBatch has reached its size limit: {self.max_size_in_bytes}"
+            )
 
         self._amqp_transport.add_batch(self, outgoing_event_data, event_data)
         self._size = size_after_add

@@ -84,9 +84,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if custom_endpoint_address:
             custom_parsed_url = urlparse(custom_endpoint_address)
             custom_port = custom_parsed_url.port or WEBSOCKET_PORT
-            custom_endpoint = "{}:{}{}".format(
-                custom_parsed_url.hostname, custom_port, custom_parsed_url.path
-            )
+            custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
@@ -214,7 +212,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if self.state == ConnectionState.END:
             return
         await self._set_state(ConnectionState.END)
-        self._transport.close()
+        await self._transport.close()
 
     def _can_read(self):
         # type: () -> bool
@@ -498,7 +496,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
             _LOGGER.error(
-                "Connection error: {}".format(frame[0])  # pylint:disable=logging-format-interpolation
+                "Connection error: %r",frame[0]
             )
 
     async def _incoming_begin(self, channel, frame):
@@ -546,19 +544,17 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            await self._incoming_endpoints[channel]._incoming_end(  # pylint:disable=protected-access
-                frame
-            )
+            await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
             self._incoming_endpoints.pop(channel)
             self._outgoing_endpoints.pop(channel)
         except KeyError:
-            end_error = AMQPError(
-                condition=ErrorCondition.InvalidField,
-                description=f"Invalid channel {channel}",
-                info=None,
-            )
-            _LOGGER.error("Received END frame with invalid channel %s", channel)
-            await self.close(error=end_error)
+            #close the connection
+            await self.close(
+                error=AMQPError(
+                    condition=ErrorCondition.ConnectionCloseForced,
+                    description="Invalid channel number received"
+                ))
+            return
 
     async def _process_incoming_frame(
         self, channel, frame
@@ -653,7 +649,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             cast(float, self._last_frame_received_time),
         ) or (await self._get_remote_timeout(now)):
             await self.close(
-                # TODO: check error condition
                 error=AMQPError(
                     condition=ErrorCondition.ConnectionCloseForced,
                     description="No frame received for the idle timeout.",
@@ -735,7 +730,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     cast(float, self._idle_timeout),
                     cast(float, self._last_frame_received_time),
                 ) or (await self._get_remote_timeout(now)):
-                    # TODO: check error condition
                     await self.close(
                         error=AMQPError(
                             condition=ErrorCondition.ConnectionCloseForced,

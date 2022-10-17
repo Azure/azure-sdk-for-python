@@ -11,6 +11,8 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import ConversationAuthoringClient as GeneratedConversationAuthoringClient
 
+POLLING_INTERVAL_DEFAULT = 5
+
 
 def _authentication_policy(credential):
     authentication_policy = None
@@ -22,13 +24,13 @@ def _authentication_policy(credential):
         )
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
-            "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
+            "or a token credential from azure.identity"
         )
     return authentication_policy
 
 
-class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylint: disable=client-accepts-api-version-keyword
+class ConversationAuthoringClient(GeneratedConversationAuthoringClient):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -53,10 +55,16 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 

@@ -3,23 +3,30 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-
-from testcase import GlobalConversationAccountPreparer
-from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase
 
 
-class TestConversationalSummarizationAsyncTests(AsyncConversationTest):
+class TestConversationalSummarizationAsync(AzureRecordedTestCase):
 
-    @GlobalConversationAccountPreparer()
-    async def test_conversational_summarization(self, endpoint, key):
+    def test_polling_interval(self, conversation_creds):
+        # test default
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]))
+        assert client._config.polling_interval == 5
+        # test override
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
+        assert client._config.polling_interval == 1
+
+    @pytest.mark.asyncio
+    async def test_conversational_summarization(self, recorded_test, conversation_creds):
         # analyze query
-        client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"],
+            AzureKeyCredential(conversation_creds["key"])
+        )
         async with client:
             poller = await client.begin_conversation_analysis(
                 task={

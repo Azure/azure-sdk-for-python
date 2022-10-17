@@ -2,17 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import pyspark
+import argparse
 import os
 import sys
-import argparse
 
-from pyspark.sql.functions import *
+import pyspark
 from pyspark.ml.classification import *
 from pyspark.ml.evaluation import *
 from pyspark.ml.feature import *
-from pyspark.sql.types import StructType, StructField
-from pyspark.sql.types import DoubleType, IntegerType, StringType
+from pyspark.sql.functions import *
+from pyspark.sql.types import DoubleType, IntegerType, StringType, StructField, StructType
 
 # Get args
 parser = argparse.ArgumentParser()

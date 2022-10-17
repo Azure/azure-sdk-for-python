@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+# TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from collections import namedtuple
 import sys
 
@@ -14,7 +15,7 @@ _CAN_ADD_DOCSTRING = sys.version_info.major >= 3
 
 
 OpenFrame = namedtuple(
-    'open',
+    'OpenFrame',
     [
         'container_id',
         'hostname',
@@ -27,8 +28,8 @@ OpenFrame = namedtuple(
         'desired_capabilities',
         'properties'
     ])
-OpenFrame._code = 0x00000010  # pylint:disable=protected-access
-OpenFrame._definition = (  # pylint:disable=protected-access
+OpenFrame._code = 0x00000010  # type: ignore # pylint:disable=protected-access
+OpenFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("container_id", AMQPTypes.string, True, None, False),
     FIELD("hostname", AMQPTypes.string, False, None, False),
     FIELD("max_frame_size", AMQPTypes.uint, False, 4294967295, False),
@@ -103,7 +104,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 BeginFrame = namedtuple(
-    'begin',
+    'BeginFrame',
     [
         'remote_channel',
         'next_outgoing_id',
@@ -114,8 +115,8 @@ BeginFrame = namedtuple(
         'desired_capabilities',
         'properties'
     ])
-BeginFrame._code = 0x00000011  # pylint:disable=protected-access
-BeginFrame._definition = (  # pylint:disable=protected-access
+BeginFrame._code = 0x00000011  # type: ignore # pylint:disable=protected-access
+BeginFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("remote_channel", AMQPTypes.ushort, False, None, False),
     FIELD("next_outgoing_id", AMQPTypes.uint, True, None, False),
     FIELD("incoming_window", AMQPTypes.uint, True, None, False),
@@ -163,7 +164,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 AttachFrame = namedtuple(
-    'attach',
+    'AttachFrame',
     [
         'name',
         'handle',
@@ -180,8 +181,8 @@ AttachFrame = namedtuple(
         'desired_capabilities',
         'properties'
     ])
-AttachFrame._code = 0x00000012  # pylint:disable=protected-access
-AttachFrame._definition = (  # pylint:disable=protected-access
+AttachFrame._code = 0x00000012  # type: ignore # pylint:disable=protected-access
+AttachFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("name", AMQPTypes.string, True, None, False),
     FIELD("handle", AMQPTypes.uint, True, None, False),
     FIELD("role", AMQPTypes.boolean, True, None, False),
@@ -262,7 +263,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 FlowFrame = namedtuple(
-    'flow',
+    'FlowFrame',
     [
         'next_incoming_id',
         'incoming_window',
@@ -276,9 +277,9 @@ FlowFrame = namedtuple(
         'echo',
         'properties'
     ])
-FlowFrame.__new__.__defaults__ = (None, None, None, None, None, None, None)
-FlowFrame._code = 0x00000013  # pylint:disable=protected-access
-FlowFrame._definition = (  # pylint:disable=protected-access
+FlowFrame.__new__.__defaults__ = (None, None, None, None, None, None, None) # type: ignore
+FlowFrame._code = 0x00000013  # type: ignore # pylint:disable=protected-access
+FlowFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("next_incoming_id", AMQPTypes.uint, False, None, False),
     FIELD("incoming_window", AMQPTypes.uint, True, None, False),
     FIELD("next_outgoing_id", AMQPTypes.uint, True, None, False),
@@ -334,7 +335,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 TransferFrame = namedtuple(
-    'transfer',
+    'TransferFrame',
     [
         'handle',
         'delivery_id',
@@ -349,8 +350,8 @@ TransferFrame = namedtuple(
         'batchable',
         'payload'
     ])
-TransferFrame._code = 0x00000014  # pylint:disable=protected-access
-TransferFrame._definition = (  # pylint:disable=protected-access
+TransferFrame._code = 0x00000014  # type: ignore # pylint:disable=protected-access
+TransferFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("handle", AMQPTypes.uint, True, None, False),
     FIELD("delivery_id", AMQPTypes.uint, False, None, False),
     FIELD("delivery_tag", AMQPTypes.binary, False, None, False),
@@ -435,7 +436,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 DispositionFrame = namedtuple(
-    'disposition',
+    'DispositionFrame',
     [
         'role',
         'first',
@@ -444,8 +445,8 @@ DispositionFrame = namedtuple(
         'state',
         'batchable'
     ])
-DispositionFrame._code = 0x00000015  # pylint:disable=protected-access
-DispositionFrame._definition = (  # pylint:disable=protected-access
+DispositionFrame._code = 0x00000015  # type: ignore # pylint:disable=protected-access
+DispositionFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("role", AMQPTypes.boolean, True, None, False),
     FIELD("first", AMQPTypes.uint, True, None, False),
     FIELD("last", AMQPTypes.uint, False, None, False),
@@ -484,9 +485,9 @@ if _CAN_ADD_DOCSTRING:
         implementation uses when communicating delivery states, and thereby save bandwidth.
     """
 
-DetachFrame = namedtuple('detach', ['handle', 'closed', 'error'])
-DetachFrame._code = 0x00000016  # pylint:disable=protected-access
-DetachFrame._definition = (  # pylint:disable=protected-access
+DetachFrame = namedtuple('DetachFrame', ['handle', 'closed', 'error'])
+DetachFrame._code = 0x00000016  # type: ignore # pylint:disable=protected-access
+DetachFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("handle", AMQPTypes.uint, True, None, False),
     FIELD("closed", AMQPTypes.boolean, False, False, False),
     FIELD("error", ObjDefinition.error, False, None, False))
@@ -505,9 +506,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-EndFrame = namedtuple('end', ['error'])
-EndFrame._code = 0x00000017  # pylint:disable=protected-access
-EndFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # pylint:disable=protected-access
+EndFrame = namedtuple('EndFrame', ['error'])
+EndFrame._code = 0x00000017  # type: ignore # pylint:disable=protected-access
+EndFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     EndFrame.__doc__ = """
     END performative. End the Session.
@@ -520,9 +521,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-CloseFrame = namedtuple('close', ['error'])
-CloseFrame._code = 0x00000018  # pylint:disable=protected-access
-CloseFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # pylint:disable=protected-access
+CloseFrame = namedtuple('CloseFrame', ['error'])
+CloseFrame._code = 0x00000018  # type: ignore # pylint:disable=protected-access
+CloseFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     CloseFrame.__doc__ = """
     CLOSE performative. Signal a Connection close.
@@ -537,9 +538,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLMechanism = namedtuple('sasl_mechanism', ['sasl_server_mechanisms'])
-SASLMechanism._code = 0x00000040  # pylint:disable=protected-access
-SASLMechanism._definition = (FIELD('sasl_server_mechanisms', AMQPTypes.symbol, True, None, True),)  # pylint:disable=protected-access
+SASLMechanism = namedtuple('SASLMechanism', ['sasl_server_mechanisms'])
+SASLMechanism._code = 0x00000040  # type: ignore # pylint:disable=protected-access
+SASLMechanism._definition = (FIELD('sasl_server_mechanisms', AMQPTypes.symbol, True, None, True),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     SASLMechanism.__doc__ = """
     Advertise available sasl mechanisms.
@@ -554,9 +555,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLInit = namedtuple('sasl_init', ['mechanism', 'initial_response', 'hostname'])
-SASLInit._code = 0x00000041  # pylint:disable=protected-access
-SASLInit._definition = (  # pylint:disable=protected-access
+SASLInit = namedtuple('SASLInit', ['mechanism', 'initial_response', 'hostname'])
+SASLInit._code = 0x00000041  # type: ignore # pylint:disable=protected-access
+SASLInit._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD('mechanism', AMQPTypes.symbol, True, None, False),
     FIELD('initial_response', AMQPTypes.binary, False, None, False),
     FIELD('hostname', AMQPTypes.string, False, None, False))
@@ -585,9 +586,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLChallenge = namedtuple('sasl_challenge', ['challenge'])
-SASLChallenge._code = 0x00000042  # pylint:disable=protected-access
-SASLChallenge._definition = (FIELD('challenge', AMQPTypes.binary, True, None, False),)  # pylint:disable=protected-access
+SASLChallenge = namedtuple('SASLChallenge', ['challenge'])
+SASLChallenge._code = 0x00000042  # type: ignore # pylint:disable=protected-access
+SASLChallenge._definition = (FIELD('challenge', AMQPTypes.binary, True, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     SASLChallenge.__doc__ = """
     Security mechanism challenge.
@@ -599,9 +600,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLResponse = namedtuple('sasl_response', ['response'])
-SASLResponse._code = 0x00000043  # pylint:disable=protected-access
-SASLResponse._definition = (FIELD('response', AMQPTypes.binary, True, None, False),)  # pylint:disable=protected-access
+SASLResponse = namedtuple('SASLResponse', ['response'])
+SASLResponse._code = 0x00000043  # type: ignore # pylint:disable=protected-access
+SASLResponse._definition = (FIELD('response', AMQPTypes.binary, True, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     SASLResponse.__doc__ = """
     Security mechanism response.
@@ -612,9 +613,9 @@ if _CAN_ADD_DOCSTRING:
     """
 
 
-SASLOutcome = namedtuple('sasl_outcome', ['code', 'additional_data'])
-SASLOutcome._code = 0x00000044  # pylint:disable=protected-access
-SASLOutcome._definition = (  # pylint:disable=protected-access
+SASLOutcome = namedtuple('SASLOutcome', ['code', 'additional_data'])
+SASLOutcome._code = 0x00000044  # type: ignore # pylint:disable=protected-access
+SASLOutcome._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD('code', AMQPTypes.ubyte, True, None, False),
     FIELD('additional_data', AMQPTypes.binary, False, None, False))
 if _CAN_ADD_DOCSTRING:

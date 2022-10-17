@@ -6,20 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._request_builders_py3 import build_get_by_id_request
-    from ._request_builders_py3 import build_get_versions_request
-    from ._request_builders_py3 import build_query_id_by_content_request
-    from ._request_builders_py3 import build_register_request
-except (SyntaxError, ImportError):
-    from ._request_builders import build_get_by_id_request  # type: ignore
-    from ._request_builders import build_get_versions_request  # type: ignore
-    from ._request_builders import build_query_id_by_content_request  # type: ignore
-    from ._request_builders import build_register_request  # type: ignore
+from ._request_builders import build_get_by_id_request
+from ._request_builders import build_get_versions_request
+from ._request_builders import build_get_schema_version_request
+from ._request_builders import build_query_id_by_content_request
+from ._request_builders import build_register_request
 
 __all__ = [
-    'build_get_by_id_request',
-    'build_get_versions_request',
-    'build_query_id_by_content_request',
-    'build_register_request',
+    "build_get_by_id_request",
+    "build_get_versions_request",
+    "build_get_schema_version_request",
+    "build_query_id_by_content_request",
+    "build_register_request",
 ]

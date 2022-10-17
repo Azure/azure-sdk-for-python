@@ -13,23 +13,21 @@ from ._models_py3 import ResponseWithError
 from ._models_py3 import VMInsightsOnboardingStatus
 from ._models_py3 import WorkspaceInfo
 
-
-from ._monitor_management_client_enums import (
-    DataStatus,
-    OnboardingStatus,
-)
+from ._monitor_management_client_enums import DataStatus
+from ._monitor_management_client_enums import OnboardingStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'DataContainer',
-    'Error',
-    'ProxyResource',
-    'ResponseWithError',
-    'VMInsightsOnboardingStatus',
-    'WorkspaceInfo',
-    'DataStatus',
-    'OnboardingStatus',
+    "DataContainer",
+    "Error",
+    "ProxyResource",
+    "ResponseWithError",
+    "VMInsightsOnboardingStatus",
+    "WorkspaceInfo",
+    "DataStatus",
+    "OnboardingStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

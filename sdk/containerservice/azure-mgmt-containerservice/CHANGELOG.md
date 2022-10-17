@@ -1,5 +1,26 @@
 # Release History
 
+## 20.4.0 (2022-09-20)
+
+### Features Added
+
+  - Model AgentPool has a new parameter windows_profile
+  - Model ContainerServiceNetworkProfile has a new parameter kube_proxy_config
+  - Model ManagedCluster has a new parameter guardrails_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter windows_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter windows_profile
+  - Model ManagedClusterLoadBalancerProfile has a new parameter backend_pool_type
+
+## 20.3.0 (2022-08-26)
+
+### Features Added
+
+  - Added operation AgentPoolsOperations.abort_latest_operation
+  - Added operation ManagedClustersOperations.abort_latest_operation
+  - Model ManagedCluster has a new parameter azure_monitor_profile
+  - Model ManagedClusterSecurityProfile has a new parameter image_cleaner
+  - Model ManagedClusterWorkloadAutoScalerProfile has a new parameter vertical_pod_autoscaler
+
 ## 20.2.0 (2022-07-25)
 
 **Features**

@@ -1,29 +1,30 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 # pylint: disable=protected-access
-
+import typing
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import IO, AnyStr, Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob_0601
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2022_10_01.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2022_10_01.models import JobScheduleAction
+from azure.ai.ml._restclient.v2022_10_01.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_10_01.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2022_10_01.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, JobType
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
-from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
 
-from ..._ml_exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
+from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
@@ -149,10 +150,17 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
         # Load the job definition separately
+        create_job_data = data.pop(create_job_key)
+        # Save the id for remote job reference before load job, as data dict will be changed
+        job_id = create_job_data.get("id")
+        if isinstance(job_id, str) and job_id.startswith(ARM_ID_PREFIX):
+            job_id = job_id[len(ARM_ID_PREFIX) :]
         create_job = Job._load(
-            data=data.pop(create_job_key),
+            data=create_job_data,
             **kwargs,
         )
+        # Set id manually as it is a dump only field in schema
+        create_job._id = job_id
         schedule = JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             **load_from_dict(ScheduleSchema, data, context, **kwargs),
@@ -161,48 +169,68 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         schedule.create_job = create_job
         return schedule
 
-    def dump(self, path: Union[PathLike, str]) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the schedule content into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The destination to receive this schedule's content.
+            Must be either a path to a local file, or an already-open file stream.
+            If dest is a file path, a new file will be created,
+            and an exception is raised if the file exists.
+            If dest is an open file, the file will be written to directly,
+            and an exception will be raised if the file is not writable.
+        :type dest: Union[str, PathLike, IO[AnyStr]]
         """
-
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(path, yaml_serialized, default_flow_style=False)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @classmethod
     def _create_schema_for_validation(cls, context):
         return ScheduleSchema(context=context)
 
     @classmethod
+    def _get_validation_error_target(cls) -> ErrorTarget:
+        return ErrorTarget.SCHEDULE
+
+    def _customized_validate(self) -> ValidationResult:
+        """Validate the resource with customized logic."""
+        if isinstance(self.create_job, PipelineJob):
+            return self.create_job._validate()
+        return self._create_empty_validation_result()
+
+    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+        """Get the fields that should be skipped in schema validation.
+
+        Override this method to add customized validation logic.
+        """
+        return ["create_job"]
+
+    @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "JobSchedule":
         properties = obj.properties
-        action = properties.action
-        create_job = None
-        if isinstance(action, JobScheduleAction):
-            if action.job_definition is None:
-                msg = "Job definition for schedule '{}' can not be None."
-                raise ScheduleException(
-                    message=msg.format(obj.name),
-                    no_personal_data_message=msg.format("[name]"),
-                    target=ErrorTarget.JOB,
-                    error_category=ErrorCategory.SYSTEM_ERROR,
-                )
-            elif camel_to_snake(action.job_definition.job_type) != JobType.PIPELINE:
-                msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
-                raise ScheduleException(
-                    message=msg.format(obj.name),
-                    no_personal_data_message=msg.format("[name]"),
-                    target=ErrorTarget.JOB,
-                    # Classified as user_error as we may support other type afterwards.
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            # Wrap job definition with JobBase for Job._from_rest_object call.
-            create_job = RestJobBase(properties=action.job_definition)
-            # id is a readonly field so set it after init.
-            create_job.id = action.job_definition.source_job_id
-            create_job = PipelineJob._load_from_rest(create_job, new_version=True)
+        action: JobScheduleAction = properties.action
+        if action.job_definition is None:
+            msg = "Job definition for schedule '{}' can not be None."
+            raise ScheduleException(
+                message=msg.format(obj.name),
+                no_personal_data_message=msg.format("[name]"),
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.SYSTEM_ERROR,
+            )
+        if camel_to_snake(action.job_definition.job_type) != JobType.PIPELINE:
+            msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
+            raise ScheduleException(
+                message=msg.format(obj.name),
+                no_personal_data_message=msg.format("[name]"),
+                target=ErrorTarget.JOB,
+                # Classified as user_error as we may support other type afterwards.
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        # Wrap job definition with JobBase for Job._from_rest_object call.
+        create_job = RestJobBase(properties=action.job_definition)
+        # id is a readonly field so set it after init.
+        create_job.id = action.job_definition.source_job_id
+        create_job = PipelineJob._load_from_rest(create_job)
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
             create_job=create_job,
@@ -213,7 +241,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             properties=properties.properties,
             provisioning_state=properties.provisioning_state,
             is_enabled=properties.is_enabled,
-            creation_context=obj.system_data,
+            creation_context=SystemData._from_rest_object(obj.system_data),
         )
 
     def _to_rest_object(self) -> RestSchedule:
@@ -222,9 +250,11 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         :return: Rest schedule.
         """
         if isinstance(self.create_job, PipelineJob):
-            job_definition = self.create_job._to_rest_object(new_version=True).properties
+            job_definition = self.create_job._to_rest_object().properties
+            # Set the source job id, as it is used only for schedule scenario.
+            job_definition.source_job_id = self.create_job.id
         elif isinstance(self.create_job, str):  # arm id reference
-            job_definition = RestPipelineJob_0601(source_job_id=self.create_job)
+            job_definition = RestPipelineJob(source_job_id=self.create_job)
         else:
             msg = "Unsupported job type '{}' in schedule {}."
             raise ValidationException(
@@ -252,9 +282,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     def __str__(self):
         try:
             return self._to_yaml()
-        except BaseException:
+        except BaseException:  # pylint: disable=broad-except
             return super(JobSchedule, self).__str__()
 
-    def _get_telemetry_values(self):
+    def _get_telemetry_values(self, *args, **kwargs):
         """Return the telemetry values of schedule."""
         return {"trigger_type": type(self.trigger).__name__}

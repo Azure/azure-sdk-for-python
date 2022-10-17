@@ -98,7 +98,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 
 ## Prerequisites
 
-- Python 3.6 or later.
+- Python 3.7 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Service Bus, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
@@ -106,7 +106,7 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 1. Install the Azure Service Bus client library for Python with [pip](https://pypi.org/project/pip/):
 ```bash
-pip install azure-servicebus
+pip install azure-servicebus==7.9.0a1
 ```
 To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
 ```bash

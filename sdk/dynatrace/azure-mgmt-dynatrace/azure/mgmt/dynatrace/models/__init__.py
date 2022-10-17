@@ -49,93 +49,95 @@ from ._models_py3 import VMExtensionPayload
 from ._models_py3 import VMHostsListResponse
 from ._models_py3 import VMInfo
 
-
-from ._dynatrace_observability_enums import (
-    ActionType,
-    AutoUpdateSetting,
-    AvailabilityState,
-    CreatedByType,
-    LiftrResourceCategories,
-    LogModule,
-    ManagedIdentityType,
-    MarketplaceSubscriptionStatus,
-    MonitoringStatus,
-    MonitoringType,
-    Origin,
-    ProvisioningState,
-    SSOStatus,
-    SendAadLogsStatus,
-    SendActivityLogsStatus,
-    SendSubscriptionLogsStatus,
-    SendingLogsStatus,
-    SendingMetricsStatus,
-    SingleSignOnStates,
-    TagAction,
-    UpdateStatus,
-)
+from ._dynatrace_observability_mgmt_client_enums import ActionType
+from ._dynatrace_observability_mgmt_client_enums import AutoUpdateSetting
+from ._dynatrace_observability_mgmt_client_enums import AvailabilityState
+from ._dynatrace_observability_mgmt_client_enums import CreatedByType
+from ._dynatrace_observability_mgmt_client_enums import LiftrResourceCategories
+from ._dynatrace_observability_mgmt_client_enums import LogModule
+from ._dynatrace_observability_mgmt_client_enums import ManagedIdentityType
+from ._dynatrace_observability_mgmt_client_enums import MarketplaceSubscriptionStatus
+from ._dynatrace_observability_mgmt_client_enums import MonitoringStatus
+from ._dynatrace_observability_mgmt_client_enums import MonitoringType
+from ._dynatrace_observability_mgmt_client_enums import Origin
+from ._dynatrace_observability_mgmt_client_enums import ProvisioningState
+from ._dynatrace_observability_mgmt_client_enums import SSOStatus
+from ._dynatrace_observability_mgmt_client_enums import SendAadLogsStatus
+from ._dynatrace_observability_mgmt_client_enums import SendActivityLogsStatus
+from ._dynatrace_observability_mgmt_client_enums import SendSubscriptionLogsStatus
+from ._dynatrace_observability_mgmt_client_enums import SendingLogsStatus
+from ._dynatrace_observability_mgmt_client_enums import SendingMetricsStatus
+from ._dynatrace_observability_mgmt_client_enums import SingleSignOnStates
+from ._dynatrace_observability_mgmt_client_enums import TagAction
+from ._dynatrace_observability_mgmt_client_enums import UpdateStatus
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AccountInfo',
-    'AccountInfoSecure',
-    'AppServiceInfo',
-    'AppServiceListResponse',
-    'DynatraceEnvironmentProperties',
-    'DynatraceSingleSignOnProperties',
-    'DynatraceSingleSignOnResource',
-    'DynatraceSingleSignOnResourceListResult',
-    'EnvironmentInfo',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'FilteringTag',
-    'IdentityProperties',
-    'LinkableEnvironmentListResponse',
-    'LinkableEnvironmentRequest',
-    'LinkableEnvironmentResponse',
-    'LogRules',
-    'MetricRules',
-    'MonitorResource',
-    'MonitorResourceListResult',
-    'MonitorResourceUpdate',
-    'MonitoredResource',
-    'MonitoredResourceListResponse',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PlanData',
-    'ProxyResource',
-    'Resource',
-    'SSODetailsRequest',
-    'SSODetailsResponse',
-    'SystemData',
-    'TagRule',
-    'TagRuleListResult',
-    'TagRuleUpdate',
-    'TrackedResource',
-    'UserAssignedIdentity',
-    'UserInfo',
-    'VMExtensionPayload',
-    'VMHostsListResponse',
-    'VMInfo',
-    'ActionType',
-    'AutoUpdateSetting',
-    'AvailabilityState',
-    'CreatedByType',
-    'LiftrResourceCategories',
-    'LogModule',
-    'ManagedIdentityType',
-    'MarketplaceSubscriptionStatus',
-    'MonitoringStatus',
-    'MonitoringType',
-    'Origin',
-    'ProvisioningState',
-    'SSOStatus',
-    'SendAadLogsStatus',
-    'SendActivityLogsStatus',
-    'SendSubscriptionLogsStatus',
-    'SendingLogsStatus',
-    'SendingMetricsStatus',
-    'SingleSignOnStates',
-    'TagAction',
-    'UpdateStatus',
+    "AccountInfo",
+    "AccountInfoSecure",
+    "AppServiceInfo",
+    "AppServiceListResponse",
+    "DynatraceEnvironmentProperties",
+    "DynatraceSingleSignOnProperties",
+    "DynatraceSingleSignOnResource",
+    "DynatraceSingleSignOnResourceListResult",
+    "EnvironmentInfo",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "FilteringTag",
+    "IdentityProperties",
+    "LinkableEnvironmentListResponse",
+    "LinkableEnvironmentRequest",
+    "LinkableEnvironmentResponse",
+    "LogRules",
+    "MetricRules",
+    "MonitorResource",
+    "MonitorResourceListResult",
+    "MonitorResourceUpdate",
+    "MonitoredResource",
+    "MonitoredResourceListResponse",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PlanData",
+    "ProxyResource",
+    "Resource",
+    "SSODetailsRequest",
+    "SSODetailsResponse",
+    "SystemData",
+    "TagRule",
+    "TagRuleListResult",
+    "TagRuleUpdate",
+    "TrackedResource",
+    "UserAssignedIdentity",
+    "UserInfo",
+    "VMExtensionPayload",
+    "VMHostsListResponse",
+    "VMInfo",
+    "ActionType",
+    "AutoUpdateSetting",
+    "AvailabilityState",
+    "CreatedByType",
+    "LiftrResourceCategories",
+    "LogModule",
+    "ManagedIdentityType",
+    "MarketplaceSubscriptionStatus",
+    "MonitoringStatus",
+    "MonitoringType",
+    "Origin",
+    "ProvisioningState",
+    "SSOStatus",
+    "SendAadLogsStatus",
+    "SendActivityLogsStatus",
+    "SendSubscriptionLogsStatus",
+    "SendingLogsStatus",
+    "SendingMetricsStatus",
+    "SingleSignOnStates",
+    "TagAction",
+    "UpdateStatus",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

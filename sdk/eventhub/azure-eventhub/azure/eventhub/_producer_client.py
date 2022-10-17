@@ -250,7 +250,7 @@ class EventHubProducerClient(
                 max_wait_time=self._max_wait_time,
                 max_buffer_length=self._max_buffer_length,
                 executor=self._executor,
-                amqp_transport=self._amqp_transport
+                amqp_transport=self._amqp_transport,
             )
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
@@ -269,13 +269,13 @@ class EventHubProducerClient(
             to_send_batch = self.create_batch(
                 partition_id=partition_id, partition_key=partition_key
             )
-            to_send_batch._load_events( # pylint:disable=protected-access
+            to_send_batch._load_events(  # pylint:disable=protected-access
                 event_data_batch
             )
 
         return (
             to_send_batch,
-            to_send_batch._partition_id,    # pylint:disable=protected-access
+            to_send_batch._partition_id,  # pylint:disable=protected-access
             partition_key,
         )
 
@@ -674,7 +674,10 @@ class EventHubProducerClient(
                     self._on_success(batch._internal_events, pid)
             except (KeyError, AttributeError, EventHubError) as e:
                 _LOGGER.debug(
-                "Producer for partition ID '{}' not available: {}. Rebuilding new producer.".format(partition_id, e))
+                    "Producer for partition ID %s not available: %s. Rebuilding new producer.",
+                    partition_id,
+                    e,
+                )
                 self._start_producer(partition_id, send_timeout)
                 cast(EventHubProducer, self._producers[partition_id]).send(
                     batch, partition_key=pkey, timeout=send_timeout
@@ -734,7 +737,7 @@ class EventHubProducerClient(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
-            amqp_transport=self._amqp_transport
+            amqp_transport=self._amqp_transport,
         )
 
         return event_data_batch

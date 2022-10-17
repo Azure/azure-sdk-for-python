@@ -2,15 +2,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=R0902
+
 from typing import List, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    ClassificationModels,
-    ForecastingModels,
-    RegressionModels,
-    StackEnsembleSettings,
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationModels
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ForecastingModels
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ForecastingTrainingSettings as RestForecastingTrainingSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RegressionModels
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    RegressionTrainingSettings as RestRegressionTrainingSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import StackEnsembleSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TrainingSettings as RestTrainingSettings
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -62,7 +71,6 @@ class TrainingSettings(RestTranslatableMixin):
         return self._blocked_training_algorithms
 
     def _to_rest_object(self) -> RestTrainingSettings:
-        # TODO: add allowed/blocked models here once, we move to June API
         return RestTrainingSettings(
             enable_dnn_training=self.enable_dnn_training,
             enable_onnx_compatible_models=self.enable_onnx_compatible_models,
@@ -75,7 +83,6 @@ class TrainingSettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestTrainingSettings) -> "TrainingSettings":
-        # TODO: add allowed/blocked models here once, we move to June API
         return cls(
             enable_dnn_training=obj.enable_dnn_training,
             enable_onnx_compatible_models=obj.enable_onnx_compatible_models,
@@ -104,6 +111,14 @@ class TrainingSettings(RestTranslatableMixin):
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
+    @blocked_training_algorithms.setter
+    def blocked_training_algorithms(self, value):
+        self._blocked_training_algorithms = value
+
+    @allowed_training_algorithms.setter
+    def allowed_training_algorithms(self, value):
+        self._allowed_training_algorithms = value
+
 
 class ClassificationTrainingSettings(TrainingSettings):
     """Classification TrainingSettings class for Azure Machine Learning."""
@@ -130,6 +145,33 @@ class ClassificationTrainingSettings(TrainingSettings):
             else [ClassificationModels[camel_to_snake(o)] for o in blocked_model_list]
         )
 
+    def _to_rest_object(self) -> RestClassificationTrainingSettings:
+        return RestClassificationTrainingSettings(
+            enable_dnn_training=self.enable_dnn_training,
+            enable_onnx_compatible_models=self.enable_onnx_compatible_models,
+            enable_model_explainability=self.enable_model_explainability,
+            enable_stack_ensemble=self.enable_stack_ensemble,
+            enable_vote_ensemble=self.enable_vote_ensemble,
+            stack_ensemble_settings=self.stack_ensemble_settings,
+            ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
+            allowed_training_algorithms=self.allowed_training_algorithms,
+            blocked_training_algorithms=self.blocked_training_algorithms,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestClassificationTrainingSettings) -> "ClassificationTrainingSettings":
+        return cls(
+            enable_dnn_training=obj.enable_dnn_training,
+            enable_onnx_compatible_models=obj.enable_onnx_compatible_models,
+            enable_model_explainability=obj.enable_model_explainability,
+            enable_stack_ensemble=obj.enable_stack_ensemble,
+            enable_vote_ensemble=obj.enable_vote_ensemble,
+            ensemble_model_download_timeout=from_iso_duration_format_mins(obj.ensemble_model_download_timeout),
+            stack_ensemble_settings=obj.stack_ensemble_settings,
+            allowed_training_algorithms=obj.allowed_training_algorithms,
+            blocked_training_algorithms=obj.blocked_training_algorithms,
+        )
+
 
 class ForecastingTrainingSettings(TrainingSettings):
     """Forecasting TrainingSettings class for Azure Machine Learning."""
@@ -152,6 +194,33 @@ class ForecastingTrainingSettings(TrainingSettings):
             None if blocked_model_list is None else [ForecastingModels[camel_to_snake(o)] for o in blocked_model_list]
         )
 
+    def _to_rest_object(self) -> RestForecastingTrainingSettings:
+        return RestForecastingTrainingSettings(
+            enable_dnn_training=self.enable_dnn_training,
+            enable_onnx_compatible_models=self.enable_onnx_compatible_models,
+            enable_model_explainability=self.enable_model_explainability,
+            enable_stack_ensemble=self.enable_stack_ensemble,
+            enable_vote_ensemble=self.enable_vote_ensemble,
+            stack_ensemble_settings=self.stack_ensemble_settings,
+            ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
+            allowed_training_algorithms=self.allowed_training_algorithms,
+            blocked_training_algorithms=self.blocked_training_algorithms,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestForecastingTrainingSettings) -> "ForecastingTrainingSettings":
+        return cls(
+            enable_dnn_training=obj.enable_dnn_training,
+            enable_onnx_compatible_models=obj.enable_onnx_compatible_models,
+            enable_model_explainability=obj.enable_model_explainability,
+            enable_stack_ensemble=obj.enable_stack_ensemble,
+            enable_vote_ensemble=obj.enable_vote_ensemble,
+            ensemble_model_download_timeout=from_iso_duration_format_mins(obj.ensemble_model_download_timeout),
+            stack_ensemble_settings=obj.stack_ensemble_settings,
+            allowed_training_algorithms=obj.allowed_training_algorithms,
+            blocked_training_algorithms=obj.blocked_training_algorithms,
+        )
+
 
 class RegressionTrainingSettings(TrainingSettings):
     """Regression TrainingSettings class for Azure Machine Learning."""
@@ -172,4 +241,31 @@ class RegressionTrainingSettings(TrainingSettings):
     def blocked_training_algorithms(self, blocked_model_list: Union[List[str], List[ForecastingModels]]):
         self._blocked_training_algorithms = (
             None if blocked_model_list is None else [RegressionModels[camel_to_snake(o)] for o in blocked_model_list]
+        )
+
+    def _to_rest_object(self) -> RestRegressionTrainingSettings:
+        return RestRegressionTrainingSettings(
+            enable_dnn_training=self.enable_dnn_training,
+            enable_onnx_compatible_models=self.enable_onnx_compatible_models,
+            enable_model_explainability=self.enable_model_explainability,
+            enable_stack_ensemble=self.enable_stack_ensemble,
+            enable_vote_ensemble=self.enable_vote_ensemble,
+            stack_ensemble_settings=self.stack_ensemble_settings,
+            ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
+            allowed_training_algorithms=self.allowed_training_algorithms,
+            blocked_training_algorithms=self.blocked_training_algorithms,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestRegressionTrainingSettings) -> "RegressionTrainingSettings":
+        return cls(
+            enable_dnn_training=obj.enable_dnn_training,
+            enable_onnx_compatible_models=obj.enable_onnx_compatible_models,
+            enable_model_explainability=obj.enable_model_explainability,
+            enable_stack_ensemble=obj.enable_stack_ensemble,
+            enable_vote_ensemble=obj.enable_vote_ensemble,
+            ensemble_model_download_timeout=from_iso_duration_format_mins(obj.ensemble_model_download_timeout),
+            stack_ensemble_settings=obj.stack_ensemble_settings,
+            allowed_training_algorithms=obj.allowed_training_algorithms,
+            blocked_training_algorithms=obj.blocked_training_algorithms,
         )

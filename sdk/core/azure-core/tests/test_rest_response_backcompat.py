@@ -31,7 +31,7 @@ def new_response(new_request):
 def test_response_attr_parity(old_response, new_response):
     for attr in dir(old_response):
         if not attr[0] == "_":
-            # if not a private attr, we want partiy
+            # if not a private attr, we want parity
             assert hasattr(new_response, attr)
 
 def test_response_set_attrs(old_response, new_response):

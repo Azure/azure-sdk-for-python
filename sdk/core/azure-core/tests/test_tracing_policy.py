@@ -198,7 +198,7 @@ def test_span_namer(http_request, http_response):
 
         def fixed_namer(http_request):
             assert http_request is request
-            return "overridenname"
+            return "overriddenname"
 
         policy = DistributedTracingPolicy(network_span_namer=fixed_namer)
 
@@ -226,7 +226,7 @@ def test_span_namer(http_request, http_response):
 
     # Check init kwargs
     network_span = root_span.children[0]
-    assert network_span.name == "overridenname"
+    assert network_span.name == "overriddenname"
 
     # Check operation kwargs
     network_span = root_span.children[1]

@@ -10,7 +10,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.data.tables import (
     TableAccessPolicy,
@@ -413,7 +413,7 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         with pytest.raises(ValueError) as excinfo:
             async with tsc:
                 await tsc.create_table(invalid_table_name)
-            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(
                 excinfo)
     
     @tables_decorator_async
@@ -426,5 +426,5 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         with pytest.raises(ValueError) as excinfo:
             async with tsc:
                 await tsc.create_table(table_name=invalid_table_name)
-            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(
                 excinfo)
