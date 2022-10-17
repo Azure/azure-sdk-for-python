@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed invalid content range exception that gets raised when downloading empty files.
 
 ### Other Changes
 - Removed `msrest` dependency.
