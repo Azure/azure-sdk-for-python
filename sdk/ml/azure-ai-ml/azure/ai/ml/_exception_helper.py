@@ -229,6 +229,8 @@ def format_create_validation_error(
             schema_type = AzureFileSchema
         elif entity_type == ErrorTarget.ENVIRONMENT:
             schema_type = EnvironmentSchema
+        else:
+            schema_type = ""
 
         resolutions += " " + REF_DOC_ERROR_MESSAGE_MAP.get(schema_type, "")
     else:
