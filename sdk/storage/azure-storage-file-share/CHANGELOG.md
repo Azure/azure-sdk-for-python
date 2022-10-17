@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed an issue where keyword `name_starts_with` was not being passed to the service properly for the `list_shares` async API
 
 ### Other Changes
 - Removed `msrest` dependency.
