@@ -77,7 +77,7 @@ def build_delete_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
-    name,  # type: str
+    component_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -85,12 +85,12 @@ def build_delete_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -116,7 +116,7 @@ def build_get_request(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
-    name,  # type: str
+    component_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -124,12 +124,12 @@ def build_get_request(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -155,7 +155,7 @@ def build_create_or_update_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
-    name,  # type: str
+    component_name,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -164,12 +164,12 @@ def build_create_or_update_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
-        "name": _SERIALIZER.url("name", name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
+        "componentName": _SERIALIZER.url("component_name", component_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,254}$'),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -311,7 +311,7 @@ class RegistryComponentContainersOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        name,  # type: str
+        component_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -328,7 +328,7 @@ class RegistryComponentContainersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self._delete_initial.metadata['url'],
         )
@@ -356,7 +356,7 @@ class RegistryComponentContainersOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
 
     @distributed_trace
@@ -364,7 +364,7 @@ class RegistryComponentContainersOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        name,  # type: str
+        component_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller[None]
@@ -376,8 +376,8 @@ class RegistryComponentContainersOperations(object):
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param component_name: Container name.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -402,7 +402,7 @@ class RegistryComponentContainersOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                name=name,
+                component_name=component_name,
                 api_version=api_version,
                 cls=lambda x,y,z: x,
                 **kwargs
@@ -414,7 +414,7 @@ class RegistryComponentContainersOperations(object):
                 return cls(pipeline_response, None, {})
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -426,14 +426,14 @@ class RegistryComponentContainersOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    begin_delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        name,  # type: str
+        component_name,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ComponentContainer"
@@ -445,8 +445,8 @@ class RegistryComponentContainersOperations(object):
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param component_name: Container name.
+        :type component_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ComponentContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ComponentContainer
@@ -465,7 +465,7 @@ class RegistryComponentContainersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             template_url=self.get.metadata['url'],
         )
@@ -491,14 +491,14 @@ class RegistryComponentContainersOperations(object):
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
 
     def _create_or_update_initial(
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        name,  # type: str
+        component_name,  # type: str
         body,  # type: "_models.ComponentContainer"
         **kwargs  # type: Any
     ):
@@ -518,7 +518,7 @@ class RegistryComponentContainersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            name=name,
+            component_name=component_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -553,7 +553,7 @@ class RegistryComponentContainersOperations(object):
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    _create_or_update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore
 
 
     @distributed_trace
@@ -561,7 +561,7 @@ class RegistryComponentContainersOperations(object):
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
-        name,  # type: str
+        component_name,  # type: str
         body,  # type: "_models.ComponentContainer"
         **kwargs  # type: Any
     ):
@@ -574,8 +574,8 @@ class RegistryComponentContainersOperations(object):
         :type resource_group_name: str
         :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :param name: Container name.
-        :type name: str
+        :param component_name: Container name.
+        :type component_name: str
         :param body: Container entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.ComponentContainer
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -605,7 +605,7 @@ class RegistryComponentContainersOperations(object):
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
-                name=name,
+                component_name=component_name,
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -622,7 +622,7 @@ class RegistryComponentContainersOperations(object):
             return deserialized
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -634,4 +634,4 @@ class RegistryComponentContainersOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{name}"}  # type: ignore
+    begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components/{componentName}"}  # type: ignore

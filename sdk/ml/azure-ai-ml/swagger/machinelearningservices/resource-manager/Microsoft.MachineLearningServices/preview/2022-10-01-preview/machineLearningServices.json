@@ -822,6 +822,9 @@
           "Create an ComputeInstance Compute": {
             "$ref": "./examples/Compute/createOrUpdate/ComputeInstance.json"
           },
+          "Create an ComputeInstance Compute with Schedules": {
+            "$ref": "./examples/Compute/createOrUpdate/ComputeInstanceWithSchedules.json"
+          },
           "Create an AKS Compute": {
             "$ref": "./examples/Compute/createOrUpdate/BasicAKSCompute.json"
           },
@@ -3339,7 +3342,8 @@
         },
         "disableLocalAuth": {
           "type": "boolean",
-          "description": "Opt-out of local authentication and ensure customers can use only MSI and AAD exclusively for authentication."
+          "description": "Opt-out of local authentication and ensure customers can use only MSI and AAD exclusively for authentication.",
+          "readOnly": true
         }
       },
       "required": [
@@ -3703,6 +3707,11 @@
             "modelAsString": true
           }
         },
+        "autologgerSettings": {
+          "description": "Specifies settings for autologger.",
+          "$ref": "#/definitions/ComputeInstanceAutologgerSettings",
+          "x-nullable": true
+        },
         "sshSettings": {
           "description": "Specifies policy and settings for SSH access.",
           "$ref": "#/definitions/ComputeInstanceSshSettings",
@@ -3718,6 +3727,11 @@
           "x-ms-identifiers": [
             "name"
           ]
+        },
+        "osImageMetadata": {
+          "readOnly": true,
+          "description": "Returns metadata about the operating system image for this compute instance.",
+          "$ref": "#/definitions/ImageMetadata"
         },
         "connectivityEndpoints": {
           "readOnly": true,
@@ -4851,6 +4865,24 @@
       ],
       "type": "object"
     },
+    "ImageMetadata": {
+      "type": "object",
+      "description": "Returns metadata about the operating system image for this compute instance.",
+      "properties": {
+        "currentImageVersion": {
+          "type": "string",
+          "description": "Specifies the current operating system image version this compute instance is running on."
+        },
+        "latestImageVersion": {
+          "type": "string",
+          "description": "Specifies the latest available operating system image version."
+        },
+        "isLatestOsImageVersion": {
+          "type": "boolean",
+          "description": "Specifies whether this compute instance is running on the latest operating system image."
+        }
+      }
+    },
     "CustomService": {
       "type": "object",
       "description": "Specifies the custom service configuration",
@@ -5091,6 +5123,24 @@
         }
       }
     },
+    "ComputeInstanceAutologgerSettings": {
+      "type": "object",
+      "description": "Specifies settings for autologger.",
+      "properties": {
+        "mlflowAutologger": {
+          "type": "string",
+          "description": "Indicates whether mlflow autologger is enabled for notebooks.",
+          "enum": [
+            "Enabled",
+            "Disabled"
+          ],
+          "x-ms-enum": {
+            "name": "mlflowAutologger",
+            "modelAsString": true
+          }
+        }
+      }
+    },
     "ComputeInstanceSshSettings": {
       "type": "object",
       "description": "Specifies policy and settings for SSH access.",
@@ -5238,11 +5288,13 @@
       "description": "Compute start stop schedule properties",
       "properties": {
         "id": {
-          "description": "Schedule id.",
-          "readOnly": true,
-          "type": "string"
+          "description": "A system assigned id for the schedule.",
+          "type": "string",
+          "x-nullable": true,
+          "readOnly": true
         },
         "provisioningStatus": {
+          "description": "The current deployment state of schedule.",
           "type": "string",
           "enum": [
             "Completed",
@@ -5251,15 +5303,38 @@
           ],
           "x-ms-enum": {
             "name": "provisioningStatus",
-            "modelAsString": true
+            "modelAsString": true,
+            "values": [
+              {
+                "value": "Completed"
+              },
+              {
+                "value": "Provisioning"
+              },
+              {
+                "value": "Failed"
+              }
+            ]
           },
-          "readOnly": true,
-          "description": "The current deployment state of schedule."
+          "readOnly": true
+        },
+        "status": {
+          "$ref": "#/definitions/ScheduleStatus"
         },
         "action": {
           "$ref": "#/definitions/ComputePowerAction"
         },
+        "triggerType": {
+          "$ref": "./mfe.json#/definitions/TriggerType"
+        },
+        "recurrence": {
+          "$ref": "#/definitions/Recurrence"
+        },
+        "cron": {
+          "$ref": "#/definitions/Cron"
+        },
         "schedule": {
+          "description": "[Deprecated] Not used any more.",
           "$ref": "#/definitions/ScheduleBase"
         }
       }
@@ -5268,6 +5343,7 @@
       "type": "object",
       "properties": {
         "id": {
+          "description": "A system assigned id for the schedule.",
           "type": "string",
           "x-nullable": true
         },
@@ -5286,6 +5362,7 @@
         "Provisioning",
         "Failed"
       ],
+      "description": "The current deployment state of schedule.",
       "type": "string",
       "x-ms-enum": {
         "name": "ScheduleProvisioningState",
@@ -5309,6 +5386,7 @@
         "Enabled",
         "Disabled"
       ],
+      "description": "Is the schedule enabled or disabled?",
       "type": "string",
       "x-ms-enum": {
         "name": "ScheduleStatus",
@@ -5326,7 +5404,7 @@
     },
     "ComputePowerAction": {
       "type": "string",
-      "description": "The compute power action.",
+      "description": "[Required] The compute power action.",
       "enum": [
         "Start",
         "Stop"
@@ -5334,6 +5412,55 @@
       "x-ms-enum": {
         "name": "ComputePowerAction",
         "modelAsString": true
+      }
+    },
+    "Recurrence": {
+      "type": "object",
+      "description": "The workflow trigger recurrence for ComputeStartStop schedule type.",
+      "properties": {
+        "frequency": {
+          "description": "[Required] The frequency to trigger schedule.",
+          "$ref": "./mfe.json#/definitions/RecurrenceFrequency"
+        },
+        "interval": {
+          "description": "[Required] Specifies schedule interval in conjunction with frequency",
+          "type": "integer",
+          "format": "int32"
+        },
+        "startTime": {
+          "description": "The start time in yyyy-MM-ddTHH:mm:ss format.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "timeZone": {
+          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
+          "default": "UTC",
+          "type": "string"
+        },
+        "schedule": {
+          "description": "[Required] The recurrence schedule.",
+          "$ref": "./mfe.json#/definitions/RecurrenceSchedule"
+        }
+      }
+    },
+    "Cron": {
+      "type": "object",
+      "description": "The workflow trigger cron for ComputeStartStop schedule type.",
+      "properties": {
+        "startTime": {
+          "description": "The start time in yyyy-MM-ddTHH:mm:ss format.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "timeZone": {
+          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
+          "type": "string",
+          "default": "UTC"
+        },
+        "expression": {
+          "description": "[Required] Specifies cron expression of schedule.\r\nThe expression should follow NCronTab format.",
+          "type": "string"
+        }
       }
     },
     "ComputeInstanceDataMount": {
@@ -5684,7 +5811,9 @@
         "ManagedIdentity",
         "UsernamePassword",
         "None",
-        "SAS"
+        "SAS",
+        "ServicePrincipal",
+        "AccessKey"
       ],
       "type": "string",
       "description": "Authentication type of the connection target",
@@ -5694,17 +5823,8 @@
       }
     },
     "ConnectionCategory": {
-      "enum": [
-        "PythonFeed",
-        "ContainerRegistry",
-        "Git"
-      ],
       "type": "string",
-      "description": "Category of the connection",
-      "x-ms-enum": {
-        "name": "ConnectionCategory",
-        "modelAsString": true
-      }
+      "description": "Category of the connection"
     },
     "WorkspaceConnectionUsernamePassword": {
       "type": "object",
@@ -5780,6 +5900,65 @@
       },
       "additionalProperties": false,
       "x-ms-discriminator-value": "UsernamePassword"
+    },
+    "WorkspaceConnectionAccessKey": {
+      "type": "object",
+      "properties": {
+        "accessKeyId": {
+          "type": "string"
+        },
+        "secretAccessKey": {
+          "type": "string",
+          "x-ms-secret": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "AccessKeyAuthTypeWorkspaceConnectionProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/WorkspaceConnectionPropertiesV2"
+        }
+      ],
+      "properties": {
+        "credentials": {
+          "$ref": "#/definitions/WorkspaceConnectionAccessKey"
+        }
+      },
+      "additionalProperties": false,
+      "x-ms-discriminator-value": "AccessKey"
+    },
+    "WorkspaceConnectionServicePrincipal": {
+      "type": "object",
+      "properties": {
+        "clientId": {
+          "type": "string"
+        },
+        "clientSecret": {
+          "type": "string",
+          "x-ms-secret": true
+        },
+        "tenantId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ServicePrincipalAuthTypeWorkspaceConnectionProperties": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/WorkspaceConnectionPropertiesV2"
+        }
+      ],
+      "properties": {
+        "credentials": {
+          "$ref": "#/definitions/WorkspaceConnectionServicePrincipal"
+        }
+      },
+      "additionalProperties": false,
+      "x-ms-discriminator-value": "ServicePrincipal"
     },
     "WorkspaceConnectionPropertiesV2": {
       "required": [
@@ -5914,7 +6093,7 @@
       "description": "Script reference",
       "properties": {
         "scriptSource": {
-          "description": "The storage source of the script: inline, workspace.",
+          "description": "The storage source of the script: workspace.",
           "type": "string"
         },
         "scriptData": {

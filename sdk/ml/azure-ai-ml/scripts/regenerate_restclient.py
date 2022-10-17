@@ -141,7 +141,7 @@ if __name__ == "__main__":
         "--api-tag",
         required=False,
         help="""Specifies which API to generate using autorest. If not supplied, all APIs are targeted.
-            Must match the name of a tag in the autorest/machinelearningservices/resource-manager/readme.md file.""",
+            Must match the name of a tag in the sdk/ml/azure-ai-ml/swagger/machinelearningservices/resource-manager/readme.md file.""",
     )
     parser.add_argument("-v", "--verbose", action="store_true", required=False, help="turn on verbose output")
 
