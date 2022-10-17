@@ -76,10 +76,14 @@ setup(
     ]),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.24.2",
-        "msrest>=0.7.1",
+        "azure-core<2.0.0,>=1.26.0",
         "cryptography>=2.1.4",
         "typing-extensions>=4.0.1",
         "isodate>=0.6.1"
     ],
+    extras_require={
+        "aio": [
+            "azure-core[aio]<2.0.0,>=1.26.0",
+        ],
+    },
 )

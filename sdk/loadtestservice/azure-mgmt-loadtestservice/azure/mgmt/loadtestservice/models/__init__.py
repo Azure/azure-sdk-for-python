@@ -6,63 +6,74 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LoadTestResource
-    from ._models_py3 import LoadTestResourcePageList
-    from ._models_py3 import LoadTestResourcePatchRequestBody
-    from ._models_py3 import LoadTestResourcePatchRequestBodyProperties
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemAssignedServiceIdentity
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LoadTestResource  # type: ignore
-    from ._models import LoadTestResourcePageList  # type: ignore
-    from ._models import LoadTestResourcePatchRequestBody  # type: ignore
-    from ._models import LoadTestResourcePatchRequestBodyProperties  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemAssignedServiceIdentity  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import CheckQuotaAvailabilityResponse
+from ._models_py3 import EncryptionProperties
+from ._models_py3 import EncryptionPropertiesIdentity
+from ._models_py3 import EndpointDependency
+from ._models_py3 import EndpointDetail
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LoadTestResource
+from ._models_py3 import LoadTestResourcePageList
+from ._models_py3 import LoadTestResourcePatchRequestBody
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OutboundEnvironmentEndpoint
+from ._models_py3 import OutboundEnvironmentEndpointCollection
+from ._models_py3 import QuotaBucketRequest
+from ._models_py3 import QuotaBucketRequestPropertiesDimensions
+from ._models_py3 import QuotaResource
+from ._models_py3 import QuotaResourceList
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
 
-from ._load_test_client_enums import (
-    ActionType,
-    CreatedByType,
-    Origin,
-    ResourceState,
-    SystemAssignedServiceIdentityType,
-)
+from ._load_test_mgmt_client_enums import ActionType
+from ._load_test_mgmt_client_enums import CreatedByType
+from ._load_test_mgmt_client_enums import ManagedServiceIdentityType
+from ._load_test_mgmt_client_enums import Origin
+from ._load_test_mgmt_client_enums import ResourceState
+from ._load_test_mgmt_client_enums import Type
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'LoadTestResource',
-    'LoadTestResourcePageList',
-    'LoadTestResourcePatchRequestBody',
-    'LoadTestResourcePatchRequestBodyProperties',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'Resource',
-    'SystemAssignedServiceIdentity',
-    'SystemData',
-    'TrackedResource',
-    'ActionType',
-    'CreatedByType',
-    'Origin',
-    'ResourceState',
-    'SystemAssignedServiceIdentityType',
+    "CheckQuotaAvailabilityResponse",
+    "EncryptionProperties",
+    "EncryptionPropertiesIdentity",
+    "EndpointDependency",
+    "EndpointDetail",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "LoadTestResource",
+    "LoadTestResourcePageList",
+    "LoadTestResourcePatchRequestBody",
+    "ManagedServiceIdentity",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "OutboundEnvironmentEndpoint",
+    "OutboundEnvironmentEndpointCollection",
+    "QuotaBucketRequest",
+    "QuotaBucketRequestPropertiesDimensions",
+    "QuotaResource",
+    "QuotaResourceList",
+    "Resource",
+    "SystemData",
+    "TrackedResource",
+    "UserAssignedIdentity",
+    "ActionType",
+    "CreatedByType",
+    "ManagedServiceIdentityType",
+    "Origin",
+    "ResourceState",
+    "Type",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

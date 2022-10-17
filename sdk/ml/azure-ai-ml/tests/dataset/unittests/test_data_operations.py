@@ -91,8 +91,9 @@ class TestDataOperations:
 
     def test_get_no_version(self, mock_data_operations: DataOperations) -> None:
         name = "random_name"
-        with pytest.raises(Exception):
+        with pytest.raises(Exception) as ex:
             mock_data_operations.get(name=name)
+        assert "At least one required parameter is missing" in str(ex.value)
 
     def test_create_with_spec_file(
         self,

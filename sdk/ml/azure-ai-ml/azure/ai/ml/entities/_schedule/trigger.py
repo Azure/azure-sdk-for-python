@@ -121,10 +121,17 @@ class CronTrigger(TriggerBase):
     :param expression: Specifies cron expression of schedule.
         The expression should follow NCronTab format.
     :type expression: str
-    :param start_time: Specifies start time of schedule in ISO 8601 format.
+    :param start_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
+                       ``time_zone`` property to specify a time zone if needed. You can also specify this
+                       parameter as a string in this format: YYYY-MM-DDThh:mm:ss. If None is provided, the
+                       first workload is run instantly and the future workloads are run based on the schedule.
+                       If the start time is in the past, the first workload is run at the next calculated run time.
     :type start_time: Union[str, datetime]
-    :param end_time: Specifies end time of schedule in ISO 8601 format.
-        Note that end_time is not supported for compute schedules.
+    :param end_time: Accepts str or datetime object. The tzinfo should be none if a datetime object, use
+                     ``time_zone`` property to specify a time zone if needed. You can also specify this
+                     parameter as a string in this format: YYYY-MM-DDThh:mm:ss. End time in the past is invalid
+                     and will raise exception when creating schedule.
+                     Note that end_time is not supported for compute schedules.
     :type end_time: Union[str, datetime]
     :param time_zone: Time zone in which the schedule runs. Default to UTC(+00:00).
         This does apply to the start_time and end_time.

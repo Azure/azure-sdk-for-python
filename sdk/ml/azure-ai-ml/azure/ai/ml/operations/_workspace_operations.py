@@ -32,7 +32,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, Scope
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -70,7 +70,7 @@ class WorkspaceOperations:
         self.containerRegistry = "none"
 
     # @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = "resource_group") -> Iterable[Workspace]:
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
         """List all workspaces that the user has access to in the current
         resource group or subscription.
 
@@ -80,7 +80,7 @@ class WorkspaceOperations:
         :rtype: ~azure.core.paging.ItemPaged[Workspace]
         """
 
-        if scope == "subscription":
+        if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
                 cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
             )
