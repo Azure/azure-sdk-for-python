@@ -109,6 +109,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         return ParallelComponent(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             task=self.task,
             retry_settings=self.retry_settings,
