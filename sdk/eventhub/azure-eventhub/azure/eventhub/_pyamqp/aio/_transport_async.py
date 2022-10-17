@@ -486,6 +486,7 @@ class WebSocketTransportAsync(
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts,
+                heartbeat=self._connect_timeout
             )
             self.connected = True
 
@@ -505,7 +506,7 @@ class WebSocketTransportAsync(
 
         try:
             while n:
-                data = await self.ws.receive_bytes()
+                data = await self.ws.receive_bytes(timeout=self._connect_timeout * 2)
                 if len(data) <= n:
                     view[length : length + len(data)] = data
                     n -= len(data)
