@@ -89,7 +89,7 @@ async def test_basic_send_single_events_round_robin(connection_str, flush_after_
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
-    asyncio.sleep(5)
+    await asyncio.sleep(5)
     sent_events = defaultdict(list)
 
     async def on_success(events, pid):
@@ -195,7 +195,7 @@ async def test_basic_send_batch_events_round_robin(connection_str, flush_after_s
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
-    asyncio.sleep(5)
+    await asyncio.sleep(5)
     sent_events = defaultdict(list)
 
     async def on_success(events, pid):
