@@ -11,7 +11,7 @@ from devtools_testutils import recorded_by_proxy
 class TestDevcenterSmoke(DevcenterTest):
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
-    def test_smoke(self):
-        dev_center = "sdk-default-dc"
-        tenant_id = "88888888-8888-8888-8888-888888888888"
-        client = self.create_client(tenant_id=tenant_id, dev_center=dev_center)
+    def test_smoke(self, **kwargs):
+        azure_tenant_id = kwargs.pop("devcenter_tenant_id")
+        devcenter_name = kwargs.pop("devcenter_name")
+        client = self.create_client(tenant_id=azure_tenant_id, dev_center=devcenter_name)

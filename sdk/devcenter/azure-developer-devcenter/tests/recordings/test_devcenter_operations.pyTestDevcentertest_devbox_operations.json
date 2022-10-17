@@ -110,7 +110,7 @@
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "fpc=ApueUMeYvB5IpeL0hfjMyIg; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.6 (Windows-10-10.0.22000-SP0)",
-        "X-AnchorMailbox": "Oid:df428e89-1bc2-4e72-b736-032c31a6cd97@8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd",
+        "X-AnchorMailbox": "Oid:11111111-1111-1111-1111-111111111111@88888888-8888-8888-8888-888888888888",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|832,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -154,7 +154,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/Test_DevBox?api-version=2022-03-01-preview",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/11111111-1111-1111-1111-111111111111/devboxes/Test_DevBox?api-version=2022-03-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -173,8 +173,8 @@
         "Content-Length": "842",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:24:33 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "b1b3827e-140a-43ab-b3eb-7d535eb5a60a",
         "X-Rate-Limit-Limit": "1m",
@@ -190,7 +190,7 @@
         "uniqueId": "7e18fd68-fde0-452d-9d30-d1f063f0aa0c",
         "location": "eastus",
         "osType": "Windows",
-        "user": "df428e89-1bc2-4e72-b736-032c31a6cd97",
+        "user": "11111111-1111-1111-1111-111111111111",
         "hardwareProfile": {
           "skuName": "general_a_8c32gb_v1",
           "memoryGB": 32,
@@ -213,7 +213,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -228,9 +228,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:25:03 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "ff1b48be-5c6b-436b-b8bc-9f5e89f65670",
         "X-Rate-Limit-Limit": "1m",
@@ -245,7 +245,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -260,9 +260,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:25:33 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "f69148f2-5e02-402a-8702-3430a09dfc33",
         "X-Rate-Limit-Limit": "1m",
@@ -277,7 +277,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -292,9 +292,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:32:37 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "687e74de-b61d-4c4a-bb8c-1746d5a03e68",
         "X-Rate-Limit-Limit": "1m",
@@ -309,7 +309,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -324,9 +324,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:33:07 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "272d7f9e-5a62-439b-a8a0-156d63b0bb4e",
         "X-Rate-Limit-Limit": "1m",
@@ -341,7 +341,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -356,9 +356,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:33:37 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "a013995f-0de1-4640-8a10-7eed02e6f1f9",
         "X-Rate-Limit-Limit": "1m",
@@ -373,7 +373,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -388,9 +388,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:34:08 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "5924d94a-7817-4ac3-bc38-130f59fec380",
         "X-Rate-Limit-Limit": "1m",
@@ -405,7 +405,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -420,9 +420,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:34:38 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "fabde91a-9a21-484a-959b-a3d22b829675",
         "X-Rate-Limit-Limit": "1m",
@@ -437,7 +437,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -452,9 +452,9 @@
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:55:18 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/e4686681-d55d-43c1-b72a-98970b925f27",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-ms-correlation-request-id": "675c0397-a6b3-4f6d-87ca-00f6a86b6d42",
@@ -471,7 +471,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/users/df428e89-1bc2-4e72-b736-032c31a6cd97/devboxes/Test_DevBox?api-version=2022-03-01-preview",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/11111111-1111-1111-1111-111111111111/devboxes/Test_DevBox?api-version=2022-03-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -504,7 +504,7 @@
         "errorDetails": {},
         "location": "eastus",
         "osType": "Windows",
-        "user": "df428e89-1bc2-4e72-b736-032c31a6cd97",
+        "user": "11111111-1111-1111-1111-111111111111",
         "hardwareProfile": {
           "skuName": "general_a_8c32gb_v1",
           "memoryGB": 32,
@@ -527,7 +527,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/users/me/devboxes/Test_DevBox?api-version=2022-03-01-preview",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/users/me/devboxes/Test_DevBox?api-version=2022-03-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -543,8 +543,8 @@
         "Content-Length": "891",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:55:19 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "f2520048-b7aa-43b1-b821-a2fbda0d9a0a",
         "X-Rate-Limit-Limit": "1m",
@@ -562,7 +562,7 @@
         "errorDetails": {},
         "location": "eastus",
         "osType": "Windows",
-        "user": "df428e89-1bc2-4e72-b736-032c31a6cd97",
+        "user": "11111111-1111-1111-1111-111111111111",
         "hardwareProfile": {
           "skuName": "general_a_8c32gb_v1",
           "memoryGB": 32,
@@ -585,7 +585,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -600,9 +600,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:55:49 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "397a7fdc-144a-4709-81c0-1541e41d9e66",
         "X-Rate-Limit-Limit": "1m",
@@ -617,7 +617,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -632,9 +632,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:56:19 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "14719614-f672-4e1d-9f35-da2d020ede5f",
         "X-Rate-Limit-Limit": "1m",
@@ -649,7 +649,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -664,9 +664,9 @@
         "Content-Length": "223",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 21:56:49 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-correlation-request-id": "1c8aa4e2-41a1-46df-865e-38464c1b16a7",
         "X-Rate-Limit-Limit": "1m",
@@ -681,7 +681,7 @@
       }
     },
     {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+      "RequestUri": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -696,9 +696,9 @@
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Fri, 14 Oct 2022 22:02:23 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-default-devcenter.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
-        "Retry-After": "3",
+        "Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c?monitor=true",
+        "Operation-Location": "https://88888888-8888-8888-8888-888888888888-sdk-default-dc.devcenter.azure.com/projects/sdk-default-project/operationstatuses/57f6054f-c996-4799-bdc3-aeba35d5369c",
+        "retry-after": "1",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-ms-correlation-request-id": "459ba321-d3d3-4ebc-a44b-18a19e55fb91",

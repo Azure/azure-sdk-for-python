@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import os
 import functools
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.developer.devcenter import DevCenterClient
 
 
@@ -21,5 +21,5 @@ class DevcenterTest(AzureRecordedTestCase):
 
 
 DevcenterPowerShellPreparer = functools.partial(
-    PowerShellPreparer, "devcenter", dev_center=os.environ.get("DEVCENTER_NAME", "sdk-default-dc"), tenant_id=os.environ.get("AZURE_TENANT_ID", "88888888-8888-8888-8888-888888888888")
+    EnvironmentVariableLoader, "devcenter", devcenter_name="sdk-default-dc", devcenter_tenant_id="88888888-8888-8888-8888-888888888888"
 )
