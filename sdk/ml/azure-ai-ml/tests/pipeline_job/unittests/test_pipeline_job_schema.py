@@ -1099,7 +1099,33 @@ class TestPipelineJobSchema:
 
                 # Test that translating from REST preserves the inputs for each job
                 rest_component = rest_job.properties.jobs[job_name]
-                assert expected_values == rest_component[io_type]
+                assert rest_component[io_type] == expected_values
+
+    def test_pipeline_job_input_with_type_convert(
+        self,
+        mock_machinelearning_client: MLClient,
+        mocker: MockFixture,
+    ) -> None:
+        # "Upload" the dependencies so that the dataset serialization behavior can be verified
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            return_value="xxx",
+        )
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_input_type_convert.yml"
+        job: PipelineJob = load_job(test_path)
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        # Convert to REST object and check that all inputs were turned into data inputs
+        rest_jobs = job._to_rest_object().properties.jobs
+        assert rest_jobs["hello_world_primitive_inputs"]["inputs"] == {
+            'component_in_ranged_integer': {'job_input_type': 'literal', 'value': '10'},
+            'component_in_ranged_number': {'job_input_type': 'literal', 'value': '10.0'},
+            'component_in_string': {'job_input_type': 'literal', 'value': '10.0'}
+        }
+        assert rest_jobs["hello_world_inputs_binding"]["inputs"] == {
+            'component_in_ranged_integer': {'job_input_type': 'literal', 'value': '${{parent.inputs.number}}'},
+            'component_in_ranged_number': {'job_input_type': 'literal', 'value': '${{parent.inputs.integer}}'},
+            'component_in_string': {'job_input_type': 'literal', 'value': '${{parent.inputs.number}}'}
+        }
 
     def test_pipeline_job_str(self):
         test_path = (

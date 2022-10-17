@@ -243,15 +243,22 @@ class NodeInput(InputOutputBase):
             return data
         if isinstance(data, Data):
             return _data_to_input(data)
-        # self._meta.type could be None when sub pipeline has no annotation
-        if isinstance(self._meta, Input) and self._meta.type and not self._meta._is_primitive_type:
-            if isinstance(data, str):
+        # if we may get type from self._meta, we should do type check here
+        if isinstance(self._meta, Input) and self._meta.type:
+            if self._meta._is_primitive_type:
+                if not is_data_binding_expression(data):
+                    return self._meta._parse(data)
+            else:
+                if not isinstance(data, str):
+                    msg = "only path input is supported now but get {}: {}."
+                    raise UserErrorException(
+                        message=msg.format(type(data), data),
+                        no_personal_data_message=msg.format(type(data), "[data]"),
+                    )
                 return Input(type=self._meta.type, path=data)
-            msg = "only path input is supported now but get {}: {}."
-            raise UserErrorException(
-                message=msg.format(type(data), data),
-                no_personal_data_message=msg.format(type(data), "[data]"),
-            )
+
+        # self._meta.type could be None when sub pipeline has no annotation,
+        # then just return data
         return data
 
     def _to_job_input(self):

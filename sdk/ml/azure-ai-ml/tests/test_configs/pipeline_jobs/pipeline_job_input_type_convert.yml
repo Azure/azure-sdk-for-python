@@ -1,0 +1,24 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: 2a_basic_component
+description: Hello World component example
+inputs:
+  number: 10.0
+  integer: 10
+jobs:
+  hello_world_primitive_inputs:
+    type: command
+    component: ../components/input_types_component.yml
+    inputs:
+      component_in_ranged_integer: 10.0
+      component_in_ranged_number: 10
+      component_in_string: 10.0
+    compute: azureml:cpu-cluster
+  hello_world_inputs_binding:
+    type: command
+    component: ../components/input_types_component.yml
+    inputs:
+      component_in_ranged_integer: ${{parent.inputs.number}}
+      component_in_ranged_number: ${{parent.inputs.integer}}
+      component_in_string: ${{parent.inputs.number}}
+    compute: azureml:cpu-cluster
