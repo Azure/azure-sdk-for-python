@@ -212,7 +212,7 @@ class EventHubConsumer(
         )
         self._receive_start_time = self._receive_start_time or time.time()
         deadline = self._receive_start_time + (max_wait_time or 0)
-        if len(self._message_buffer) < max_batch_size:
+        if len(self._message_buffer) < max_batch_size:  #pylint: disable=too-many-nested-blocks
             # TODO: the retry here is a bit tricky as we are using low-level api from the amqp client.
             #  Currently we create a new client with the latest received event's offset per retry.
             #  Ideally we should reuse the same client reestablishing the connection/link with the latest offset.
@@ -221,16 +221,15 @@ class EventHubConsumer(
                     if self._open():
                         running = self._handler.do_work(batch=self._prefetch)  # type: ignore
                         if not running:
-                            last_exception = self._handle_exception(exception)
                             retried_times += 1
                             if retried_times > max_retries:
                                 _LOGGER.info(
                                     "%r operation has exhausted retry. Last exception: %r.",
                                     self._name,
-                                    last_exception,
+                                    ValueError,
                                 )
-                                raise last_exception
-                        # If self._shutdown is false because of a ValueError would this get propogated through
+                                # Todo propogate value error through?
+                                # If self._shutdown is false because of a ValueError would this get propogated through
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     self._amqp_transport.check_link_stolen(self, exception)
