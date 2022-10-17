@@ -31,18 +31,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "eefda19a-6747-4d4b-b16d-cf2fbc5f48d5",
-        "Date": "Mon, 10 Oct 2022 21:02:41 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/bb4561cf-5aa4-46dc-a57b-6320b42611e5",
+        "apim-request-id": "26070746-ff31-466d-8832-e0840423fb85",
+        "Date": "Mon, 17 Oct 2022 18:58:25 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/1c6b75f3-514f-4ff7-83f7-01b0528da046",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "194"
+        "x-envoy-upstream-service-time": "159"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/bb4561cf-5aa4-46dc-a57b-6320b42611e5",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/1c6b75f3-514f-4ff7-83f7-01b0528da046",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -52,19 +52,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "be5db14c-54e8-461c-bfc2-9df302f3f54d",
+        "apim-request-id": "5321e848-b955-4e40-ba88-57b1c3b76862",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 21:02:47 GMT",
+        "Date": "Mon, 17 Oct 2022 18:58:30 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "78"
+        "x-envoy-upstream-service-time": "84"
       },
       "ResponseBody": {
-        "jobId": "bb4561cf-5aa4-46dc-a57b-6320b42611e5",
-        "lastUpdateDateTime": "2022-10-10T21:02:45Z",
-        "createdDateTime": "2022-10-10T21:02:42Z",
-        "expirationDateTime": "2022-10-11T21:02:42Z",
+        "jobId": "1c6b75f3-514f-4ff7-83f7-01b0528da046",
+        "lastUpdateDateTime": "2022-10-17T18:58:27Z",
+        "createdDateTime": "2022-10-17T18:58:25Z",
+        "expirationDateTime": "2022-10-18T18:58:25Z",
         "status": "succeeded",
         "errors": [],
         "results": {

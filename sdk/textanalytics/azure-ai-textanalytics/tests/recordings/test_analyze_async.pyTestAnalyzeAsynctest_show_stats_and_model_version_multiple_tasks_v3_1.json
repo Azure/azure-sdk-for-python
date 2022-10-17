@@ -84,18 +84,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "81d1324e-a49d-4046-97f9-b76e14b7a7dc",
-        "Date": "Mon, 10 Oct 2022 20:47:09 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/0e124956-4cf1-4400-ade5-0b8c4742af47",
+        "apim-request-id": "6be35380-6b19-42bd-bed8-5611de3bc18b",
+        "Date": "Mon, 17 Oct 2022 18:52:43 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/cda1fcf9-6799-4398-8765-d589d9a8cdb3",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "793"
+        "x-envoy-upstream-service-time": "244"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/0e124956-4cf1-4400-ade5-0b8c4742af47?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/cda1fcf9-6799-4398-8765-d589d9a8cdb3?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -105,19 +105,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d56fcdf3-e26f-42f3-b766-336d55d50811",
+        "apim-request-id": "13e9fb4f-9160-4f62-970a-058384856c41",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 20:47:15 GMT",
+        "Date": "Mon, 17 Oct 2022 18:52:48 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "378"
+        "x-envoy-upstream-service-time": "306"
       },
       "ResponseBody": {
-        "jobId": "0e124956-4cf1-4400-ade5-0b8c4742af47",
-        "lastUpdateDateTime": "2022-10-10T20:47:13Z",
-        "createdDateTime": "2022-10-10T20:47:08Z",
-        "expirationDateTime": "2022-10-11T20:47:08Z",
+        "jobId": "cda1fcf9-6799-4398-8765-d589d9a8cdb3",
+        "lastUpdateDateTime": "2022-10-17T18:52:46Z",
+        "createdDateTime": "2022-10-17T18:52:43Z",
+        "expirationDateTime": "2022-10-18T18:52:43Z",
         "status": "succeeded",
         "errors": [],
         "statistics": {
@@ -133,7 +133,7 @@
           "total": 5,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:47:12.0592838Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:46.0323686Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {
@@ -188,7 +188,7 @@
           ],
           "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:47:12.7010125Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:46.2286829Z",
               "taskName": "3",
               "state": "succeeded",
               "results": {
@@ -243,7 +243,7 @@
           ],
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:47:12.2199578Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:45.81306Z",
               "taskName": "2",
               "state": "succeeded",
               "results": {
@@ -302,7 +302,7 @@
           ],
           "keyPhraseExtractionTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:47:13.4318369Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:45.9746587Z",
               "taskName": "1",
               "state": "succeeded",
               "results": {
@@ -357,7 +357,7 @@
           ],
           "sentimentAnalysisTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:47:11.5663287Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:45.6478154Z",
               "taskName": "4",
               "state": "succeeded",
               "results": {

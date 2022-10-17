@@ -37,15 +37,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f63655d0-8d1b-4f5c-b3dd-3c7ae9541907",
+        "apim-request-id": "e3f04535-163b-4cc0-ac0c-4401602debdb",
         "Content-Length": "214",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:19:54 GMT",
+        "Date": "Mon, 17 Oct 2022 19:04:20 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "13"
+        "x-envoy-upstream-service-time": "11"
       },
       "ResponseBody": {
         "kind": "EntityLinkingResults",
@@ -109,10 +109,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "46447c8f-2caa-485d-a572-37c1810132c6",
+        "apim-request-id": "c346bc4b-00ee-4d18-b5b3-e1407464b3c5",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Mon, 10 Oct 2022 21:19:54 GMT"
+        "Date": "Mon, 17 Oct 2022 19:04:20 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -158,11 +158,11 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b7e1d20f-c0bc-45ec-9cd3-3eced246a158",
+        "apim-request-id": "1ce542eb-5694-49d1-af20-eb1aa907063b",
         "Content-Length": "214",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:19:54 GMT",
+        "Date": "Mon, 17 Oct 2022 19:04:20 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",

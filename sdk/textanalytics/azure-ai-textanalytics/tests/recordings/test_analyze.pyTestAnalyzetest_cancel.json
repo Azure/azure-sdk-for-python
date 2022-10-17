@@ -154,46 +154,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "92142638-3c8e-4f3c-8fab-e7f16c8d64fe",
+        "apim-request-id": "55813ef5-d622-4287-9aa4-3d62ab699fb6",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 19:24:23 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/eda6d6d8-e66b-4962-afe3-f74a2688512f?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:51:41 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8c176324-9b0c-48a0-95e2-b6a0181387e3?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "964"
+        "x-envoy-upstream-service-time": "643"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/eda6d6d8-e66b-4962-afe3-f74a2688512f:cancel?api-version=2022-10-01-preview",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 500,
-      "ResponseHeaders": {
-        "apim-request-id": "858675c1-a56c-4116-880f-2356f7cffb9f",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 19:24:23 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "98"
-      },
-      "ResponseBody": {
-        "error": {
-          "code": "InternalServerError",
-          "message": "Could not cancel job with id eda6d6d8-e66b-4962-afe3-f74a2688512f"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/eda6d6d8-e66b-4962-afe3-f74a2688512f:cancel?api-version=2022-10-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8c176324-9b0c-48a0-95e2-b6a0181387e3:cancel?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -205,13 +177,13 @@
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "cbc1aee6-4b47-4076-859c-61e6ce2e6663",
+        "apim-request-id": "39cd9c25-9b81-4696-bb01-588a67a0d05d",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 19:24:23 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/eda6d6d8-e66b-4962-afe3-f74a2688512f?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:51:41 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8c176324-9b0c-48a0-95e2-b6a0181387e3?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "54"
+        "x-envoy-upstream-service-time": "16"
       },
       "ResponseBody": null
     }

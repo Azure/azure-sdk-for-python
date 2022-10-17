@@ -39,18 +39,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "a6529654-88f8-4844-b138-d0d9d8dbf3e2",
+        "apim-request-id": "2dc74d1d-c034-4de1-b458-14ccf73c59f5",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 19:05:42 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/af9c1d1d-058a-4deb-b618-e3415a74cf4d?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:49:00 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea195a71-941e-4512-bebb-259d9cc92911?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "295"
+        "x-envoy-upstream-service-time": "202"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/af9c1d1d-058a-4deb-b618-e3415a74cf4d?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea195a71-941e-4512-bebb-259d9cc92911?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -61,19 +61,55 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "07b44673-cb4b-4b13-925f-7aea12ad4d98",
-        "Content-Length": "2457",
+        "apim-request-id": "c2822bc1-fba8-4dcb-9adb-7053e1369caa",
+        "Content-Length": "279",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 19:05:47 GMT",
+        "Date": "Mon, 17 Oct 2022 18:49:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "42"
+        "x-envoy-upstream-service-time": "24"
       },
       "ResponseBody": {
-        "jobId": "af9c1d1d-058a-4deb-b618-e3415a74cf4d",
-        "lastUpdateDateTime": "2022-10-10T19:05:44Z",
-        "createdDateTime": "2022-10-10T19:05:42Z",
-        "expirationDateTime": "2022-10-11T19:05:42Z",
+        "jobId": "ea195a71-941e-4512-bebb-259d9cc92911",
+        "lastUpdateDateTime": "2022-10-17T18:49:02Z",
+        "createdDateTime": "2022-10-17T18:49:01Z",
+        "expirationDateTime": "2022-10-18T18:49:01Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea195a71-941e-4512-bebb-259d9cc92911?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "22ee343f-5325-49bc-9fbd-6bbf7f6d3762",
+        "Content-Length": "2457",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 18:49:11 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "92"
+      },
+      "ResponseBody": {
+        "jobId": "ea195a71-941e-4512-bebb-259d9cc92911",
+        "lastUpdateDateTime": "2022-10-17T18:49:09Z",
+        "createdDateTime": "2022-10-17T18:49:01Z",
+        "expirationDateTime": "2022-10-18T18:49:01Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -85,7 +121,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T19:05:44.5998265Z",
+              "lastUpdateDateTime": "2022-10-17T18:49:09.5177117Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "1015",
+        "Content-Length": "1003",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -30,16 +30,16 @@
             "taskName": "0",
             "kind": "CustomSingleLabelClassification",
             "parameters": {
-              "projectName": "single_category_classify_project_name",
-              "deploymentName": "single_category_classify_project_name"
+              "projectName": "single_label_classify_project_name",
+              "deploymentName": "single_label_classify_project_name"
             }
           },
           {
             "taskName": "1",
             "kind": "CustomMultiLabelClassification",
             "parameters": {
-              "projectName": "multi_category_classify_project_name",
-              "deploymentName": "multi_category_classify_project_name"
+              "projectName": "multi_label_classify_project_name",
+              "deploymentName": "multi_label_classify_project_name"
             }
           },
           {
@@ -55,40 +55,40 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "761b0e43-83cf-483b-a221-63c30f82ad51",
+        "apim-request-id": "1686d891-30cf-4089-a145-3365d5a45845",
         "Content-Length": "0",
-        "Date": "Thu, 23 Jun 2022 02:14:18 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6e1fd1a6-f7f2-440d-aba2-d57a93c45173?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 18:54:07 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d9a89d5b-cf96-4db8-a5d6-1f26b7805ed9?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "193"
+        "x-envoy-upstream-service-time": "259"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/6e1fd1a6-f7f2-440d-aba2-d57a93c45173?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d9a89d5b-cf96-4db8-a5d6-1f26b7805ed9?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "cbc7e582-e063-48d4-ba0f-e2dab6e548c9",
-        "Content-Length": "3705",
+        "apim-request-id": "92ddbf56-6691-45f3-ab71-67f22468d92a",
+        "Content-Length": "3692",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 23 Jun 2022 02:14:23 GMT",
+        "Date": "Mon, 17 Oct 2022 18:54:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "95"
+        "x-envoy-upstream-service-time": "101"
       },
       "ResponseBody": {
-        "jobId": "6e1fd1a6-f7f2-440d-aba2-d57a93c45173",
-        "lastUpdatedDateTime": "2022-06-23T02:14:20Z",
-        "createdDateTime": "2022-06-23T02:14:18Z",
-        "expirationDateTime": "2022-06-24T02:14:18Z",
+        "jobId": "d9a89d5b-cf96-4db8-a5d6-1f26b7805ed9",
+        "lastUpdateDateTime": "2022-10-17T18:54:09Z",
+        "createdDateTime": "2022-10-17T18:54:08Z",
+        "expirationDateTime": "2022-10-18T18:54:08Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -100,7 +100,7 @@
             {
               "kind": "CustomSingleLabelClassificationLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-23T02:14:19.3208436Z",
+              "lastUpdateDateTime": "2022-10-17T18:54:09.0033123Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -138,14 +138,14 @@
                     }
                   }
                 ],
-                "projectName": "single_category_classify_project_name",
-                "deploymentName": "single_category_classify_project_name"
+                "projectName": "single_label_classify_project_name",
+                "deploymentName": "single_label_classify_project_name"
               }
             },
             {
               "kind": "CustomMultiLabelClassificationLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-23T02:14:19.4132374Z",
+              "lastUpdateDateTime": "2022-10-17T18:54:08.6978075Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -178,14 +178,14 @@
                     }
                   }
                 ],
-                "projectName": "multi_category_classify_project_name",
-                "deploymentName": "multi_category_classify_project_name"
+                "projectName": "multi_label_classify_project_name",
+                "deploymentName": "multi_label_classify_project_name"
               }
             },
             {
               "kind": "CustomEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-23T02:14:20.0882905Z",
+              "lastUpdateDateTime": "2022-10-17T18:54:08.6704658Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -210,6 +210,13 @@
                         "confidenceScore": 0.05
                       },
                       {
+                        "text": "Accountability",
+                        "category": "geographic_poi",
+                        "offset": 34,
+                        "length": 14,
+                        "confidenceScore": 0.07
+                      },
+                      {
                         "text": "Office",
                         "category": "restaurant_name",
                         "offset": 49,
@@ -221,20 +228,6 @@
                         "category": "restaurant_name",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.04
-                      },
-                      {
-                        "text": "Accountability",
-                        "category": "geographic_poi",
-                        "offset": 34,
-                        "length": 14,
-                        "confidenceScore": 0.07
-                      },
-                      {
-                        "text": "natural",
-                        "category": "geographic_poi",
-                        "offset": 106,
-                        "length": 7,
                         "confidenceScore": 0.04
                       },
                       {
@@ -252,18 +245,25 @@
                         "confidenceScore": 0.03
                       },
                       {
-                        "text": "gas",
-                        "category": "restaurant_type",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.09
-                      },
-                      {
                         "text": "and",
                         "category": "served_dish",
                         "offset": 102,
                         "length": 3,
                         "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "natural",
+                        "category": "geographic_poi",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "gas",
+                        "category": "restaurant_type",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.09
                       },
                       {
                         "text": "development",
@@ -280,25 +280,11 @@
                         "confidenceScore": 0.07
                       },
                       {
-                        "text": "protection",
-                        "category": "state",
-                        "offset": 267,
-                        "length": 10,
-                        "confidenceScore": 0.05
-                      },
-                      {
                         "text": "lands",
                         "category": "poi",
                         "offset": 141,
                         "length": 5,
                         "confidenceScore": 0.04
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "poi",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.07
                       },
                       {
                         "text": "the",
@@ -313,6 +299,20 @@
                         "offset": 156,
                         "length": 14,
                         "confidenceScore": 0.54
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "poi",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "protection",
+                        "category": "state",
+                        "offset": 267,
+                        "length": 10,
+                        "confidenceScore": 0.05
                       }
                     ],
                     "warnings": []

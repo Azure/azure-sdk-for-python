@@ -65,6 +65,8 @@ from ._models import (
     ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction,
     _AnalyzeActionsType,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
 )
 from ._check import is_language_api, string_index_type_compatibility
 
@@ -81,6 +83,7 @@ AnalyzeActionsResponse = TextAnalysisLROPoller[
                 RecognizeCustomEntitiesResult,
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
+                ExtractSummaryResult,
                 DocumentError,
             ]
         ]
@@ -1075,6 +1078,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 SingleLabelClassifyAction,
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
+                ExtractSummaryAction,
             ]
         ],
         **kwargs: Any,
@@ -1090,6 +1094,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
+                    ExtractSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1118,7 +1123,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
-            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction]
+            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or ExtractSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1147,7 +1152,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.TextAnalysisLROPoller[~azure.core.paging.ItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or DocumentError]]]
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1157,6 +1162,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             *MultiLabelClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
+        .. versionadded:: 2022-10-01-preview
+            The *ExtractSummaryAction* input option and the corresponding *ExtractSummaryResult*
+            result object.
 
         .. admonition:: Example:
 
