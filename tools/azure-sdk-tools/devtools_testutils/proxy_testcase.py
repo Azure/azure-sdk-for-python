@@ -6,6 +6,7 @@
 import logging
 import requests
 import six
+import os
 from typing import TYPE_CHECKING
 import urllib.parse as url_parse
 
@@ -19,6 +20,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .config import PROXY_URL
 from .helpers import get_test_id, is_live, is_live_and_not_recording, set_recording_id
+from .proxy_startup import discovered_roots
 
 if TYPE_CHECKING:
     from typing import Callable, Dict, Tuple
@@ -34,6 +36,27 @@ RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL)
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL)
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL)
 
+def get_recording_assets(test_id: str) -> str:
+    """
+    Used to retrieve the assets.json given a PYTEST_CURRENT_TEST test id.
+    """
+    for root in discovered_roots:
+        current_dir = os.path.dirname(test_id)
+        while current_dir is not None and not (os.path.dirname(current_dir) == current_dir):
+            possible_assets = os.path.join(current_dir, "assets.json")
+            possible_root = os.path.join(current_dir, ".git")
+
+            # we need to check for assets.json first!
+            if os.path.exists(os.path.join(root, possible_assets)):
+                complete_path = os.path.abspath(os.path.join(root, possible_assets))
+                return os.path.relpath(complete_path, root).replace("\\", "/")
+            # we need the git check to prevent ascending out of the repo
+            elif os.path.exists(os.path.join(root, possible_root)):
+                return None
+            else:
+                current_dir = os.path.dirname(current_dir)
+
+    return None
 
 def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
     """Sends a request to begin recording or playing back the provided test.
@@ -42,11 +65,16 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
     test variables to values. If no variable dictionary was stored when the test was recorded, b is an empty dictionary.
     """
     variables = {}  # this stores a dictionary of test variable values that could have been stored with a recording
+    
+    json_payload = {"x-recording-file": test_id}
+    assets_json = get_recording_assets(test_id)
+    if assets_json:
+        json_payload["x-recording-assets-file"] = assets_json    
 
     if is_live():
         result = requests.post(
             RECORDING_START_URL,
-            json={"x-recording-file": test_id},
+            json=json_payload,
         )
         if result.status_code != 200:
             message = six.ensure_str(result._content)
@@ -56,7 +84,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
     else:
         result = requests.post(
             PLAYBACK_START_URL,
-            json={"x-recording-file": test_id},
+            json=json_payload,
         )
         if result.status_code != 200:
             message = six.ensure_str(result._content)

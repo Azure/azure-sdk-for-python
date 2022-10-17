@@ -1,0 +1,7 @@
+-e ../../../tools/azure-devtools
+azure-core
+azure-appconfiguration
+azure-identity
+azure-keyvault-secrets
+aiohttp>=3.0
+-e ../../../tools/azure-sdk-tools

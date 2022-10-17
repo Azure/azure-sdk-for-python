@@ -92,9 +92,6 @@ class TestImportJob(AzureRecordedTestCase):
         assert import_job_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED, JobStatus.FAILED)
 
     @pytest.mark.e2etest
-    @pytest.mark.skip(
-        "https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659"
-    )
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
 
         pipeline: PipelineJob = load_job("./tests/test_configs/import_job/import_pipeline_test.yml")
