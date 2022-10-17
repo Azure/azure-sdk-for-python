@@ -7,3 +7,4 @@ azure-storage-blob
 azure-identity
 opencensus-ext-azure
 python-dotenv
+websocket-client

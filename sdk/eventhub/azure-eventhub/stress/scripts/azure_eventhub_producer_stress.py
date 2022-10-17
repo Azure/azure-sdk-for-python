@@ -32,6 +32,14 @@ def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_me
         return 0
     raise error
 
+def on_success(events, pid):
+    # sending succeeded
+    print(events, pid)
+
+
+def on_error(events, pid, error):
+    # sending failed
+    print(events, pid, error)
 
 def stress_send_sync(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
     try:
@@ -147,6 +155,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--retry_backoff_factor", type=float, default=0.8)
         self.argument_parser.add_argument("--retry_backoff_max", type=float, default=120)
         self.argument_parser.add_argument("--ignore_send_failure", help="ignore sending failures", action="store_true")
+        self.argument_parser.add_argument("--buffered_mode", help="buffer producer", action="store_true")
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
@@ -170,8 +179,20 @@ class StressTestRunner(object):
                 "username": self.args.proxy_username,
                 "password": self.args.proxy_password,
             }
-
-        if self.args.azure_identity:
+        if self.args.buffered_mode:
+            client = client_class.from_connection_string(
+                self.args.conn_str,
+                eventhub_name=self.args.eventhub,
+                auth_timeout=self.args.auth_timeout,
+                http_proxy=http_proxy,
+                transport_type=transport_type,
+                logging_enable=self.args.uamqp_logging_enable,
+                buffered_mode=self.args.buffered_mode,
+                on_success=on_success,
+                on_error=on_error,
+                **retry_options
+            )
+        elif self.args.azure_identity:
             print("Using Azure Identity")
             client = client_class(
                 fully_qualified_namespace=self.args.hostname,

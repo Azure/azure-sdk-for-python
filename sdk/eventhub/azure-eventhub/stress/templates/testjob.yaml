@@ -6,53 +6,46 @@ metadata:
     testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
     chaos: "true"
 spec:
+  # nodeSelector:
+  #   sku: 'd4v4'
   containers:
     - name: python-eh-stress
       image: {{ .Values.image }}
       imagePullPolicy: Always
-     
-      {{ if eq .Stress.Scenario "identity" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --azure_identity True --uamqp_logging_enable --print_console --duration 7200']
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "1000m"
+        limits:
+          memory: "900Mi"
+          cpu: "2000m"
+
+      {{ if eq .Stress.Scenario "event-async" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_async --duration 259200 --uamqp_logging_enable & python azure_eventhub_consumer_stress_async.py --duration 259200 --uamqp_logging_enable']
       {{- end -}}
 
-      {{ if eq .Stress.Scenario "sendsync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      {{ if eq .Stress.Scenario "event-sync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 259200 --uamqp_logging_enable & python azure_eventhub_consumer_stress_sync.py --duration 259200 --uamqp_logging_enable']
       {{- end -}}
 
-      {{ if eq .Stress.Scenario "sendlistsync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 7200']
+      {{ if eq .Stress.Scenario "batch-async" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_async --duration 259200 --uamqp_logging_enable & python azure_eventhub_consumer_stress_async.py --duration 259200 --uamqp_logging_enable']
       {{- end -}}
 
-      {{ if eq .Stress.Scenario "sendasync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200']
+      {{ if eq .Stress.Scenario "batch-sync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 259200 --uamqp_logging_enable & python azure_eventhub_consumer_stress_sync.py --duration 259200 --uamqp_logging_enable']
       {{- end -}}
 
-      {{ if eq .Stress.Scenario "sendlistasync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_async --duration 7200']
+      {{ if eq .Stress.Scenario "bufferedproducerlistsync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 259200 --uamqp_logging_enable --buffered_mode & python azure_eventhub_consumer_stress_sync.py --duration 259200 --uamqp_logging_enable']
       {{- end -}}
 
-      {{ if eq .Stress.Scenario "sendconsumeasync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_async --duration 7200 & python azure_eventhub_consumer_stress_async.py --duration 7200']
+      {{ if eq .Stress.Scenario "bufferedproducerasync" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_async --duration 259200 --uamqp_logging_enable --buffered_mode & python azure_eventhub_consumer_stress_async.py --duration 259200 --uamqp_logging_enable']
       {{- end -}}
 
-      {{ if eq .Stress.Scenario "sendconsumesync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 7200 & python azure_eventhub_consumer_stress_sync.py --duration 7200']
-      {{- end -}}
-
-      {{ if eq .Stress.Scenario "sendlistconsumeasync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_async --duration 7200 & python azure_eventhub_consumer_stress_async.py --duration 7200']
-      {{- end -}}
-
-      {{ if eq .Stress.Scenario "sendlistconsumesync" }}
-      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_list_sync --duration 7200 & python azure_eventhub_consumer_stress_sync.py --duration 7200']
-      {{- end -}}
-
-      {{ if eq .Stress.Scenario "consumeasyncidentity" }}
-      command: ['bash', '-c', 'python azure_eventhub_consumer_stress_async.py --azure_identity True --duration 7200']
-      {{- end -}}
-
-      {{ if eq .Stress.Scenario "consumesyncidentity" }}
-      command: ['bash', '-c', 'python azure_eventhub_consumer_stress_sync.py --azure_identity True --duration 7200']
+      {{ if eq .Stress.Scenario "syncwebsockets" }}
+      command: ['bash', '-c', 'python azure_eventhub_producer_stress.py -m stress_send_sync --duration 259200 --uamqp_logging_enable --transport_type 1 & python azure_eventhub_consumer_stress_sync.py --duration 259200 --uamqp_logging_enable --transport_type 1']
       {{- end -}}
 
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
