@@ -27,7 +27,7 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
-from azure.ai.ml._utils._experimental import experimental
+from ._image_metdata import ImageMetadata
 
 
 
@@ -87,26 +87,6 @@ class AssignedUserConfiguration(DictMixin):
         self.user_tenant_id = user_tenant_id
         self.user_object_id = user_object_id
 
-@experimental
-class OsImageMetadata:
-
-    def __init__(self, *, is_latest_os_version: bool, current_os_version: str, latest_os_version: str):
-        self.is_latest_os_version = is_latest_os_version
-        self.current_os_version = current_os_version
-        self.latest_os_version = latest_os_version
-
-    @property
-    def is_latest_os_version(self) -> bool:
-        return self.is_latest_os_version
-
-    @property
-    def current_os_version(self) -> bool:
-        return self.current_os_version
-
-    @property
-    def latest_os_version(self) -> bool:
-        return self.latest_os_version
-
 class ComputeInstance(Compute):
     """Compute Instance resource.
 
@@ -164,12 +144,12 @@ class ComputeInstance(Compute):
         identity: IdentityConfiguration = None,
         idle_time_before_shutdown: Optional[str] = None,
         setup_scripts: Optional[SetupScripts] = None,
-        os_image_metadata: Optional[OsImageMetadata] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
         self._state = kwargs.pop("state", None)
         self._last_operation = kwargs.pop("last_operation", None)
+        self._os_image_metadata = kwargs.pop("os_image_metadata", None)
         self._services = kwargs.pop("services", None)
         super().__init__(
             name=name,
@@ -188,7 +168,6 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.setup_scripts = setup_scripts
         self.subnet = None
-        self.os_image_metadata = os_image_metadata
 
     @property
     def services(self) -> List[Dict[str, str]]:
@@ -216,6 +195,16 @@ class ComputeInstance(Compute):
         rtype: str
         """
         return self._state
+    
+    @property
+    def os_image_metadata(self) -> ImageMetadata:
+        """
+        Metadata about the operating system image for this compute instance.
+
+        return: Operating system image metadata.
+        rtype: ImageMetadata
+        """
+        return self._os_image_metadata
 
     def _to_rest_object(self) -> ComputeResource:
         if self.network_settings and self.network_settings.subnet:
@@ -319,8 +308,16 @@ class ComputeInstance(Compute):
                 if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
+        os_image_metadata = None
         if prop.properties and prop.properties.os_image_metadata:
-            os_image_metadata = OsImageMetadata(is_latest_os_version=prop.properties.os_image_metadata.is_latest_os_version, current_os_version=prop.properties.os_image_metadata.current_os_version, latest_os_version=prop.properties.os_image_metadata.latest_os_version)
+            metadata = prop.properties.os_image_metadata
+            os_image_metadata = ImageMetadata(
+                is_latest_os_version=metadata.is_latest_os_version
+                if metadata.is_latest_os_version else None, 
+                current_os_version=metadata.current_os_version 
+                if metadata.current_os_version else None,
+                latest_os_version=metadata.latest_os_version
+                if metadata.latest_os_version else None,)
 
         response = ComputeInstance(
             name=rest_obj.name,
