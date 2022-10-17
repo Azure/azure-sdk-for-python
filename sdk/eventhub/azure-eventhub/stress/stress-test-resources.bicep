@@ -36,8 +36,8 @@ resource eventHubsNamespace_eventHubName 'Microsoft.EventHub/namespaces/eventhub
   name: '${eventHubsNamespace_var}/${eventHubName}'
   location: location
   properties: {
-    messageRetentionInDays: 1
-    partitionCount: 32
+    messageRetentionInDays: 5
+    partitionCount: 10
   }
   dependsOn: [
     eventHubsNamespace
