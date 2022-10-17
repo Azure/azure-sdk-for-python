@@ -1,6 +1,7 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 -e ../../cosmos/azure-mgmt-cosmosdb
+-e ../../resources/azure-mgmt-resource
 ../../core/azure-core
 ../../nspkg/azure-data-nspkg
 aiohttp>=3.0
