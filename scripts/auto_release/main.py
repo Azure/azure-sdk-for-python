@@ -199,13 +199,13 @@ class CodegenTestPR:
 
         # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
-        print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.sdk_generator {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
         
-        print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.sdk_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()

@@ -22,7 +22,7 @@ def main(generate_input, generate_output):
         # Changelog
         last_version = ["first release"]
         if "azure-mgmt-" in package_name:
-            md_output = change_log_generate(package_name, last_version)
+            md_output = change_log_generate(package_name, last_version, package["tagIsStable"])
         else:
             md_output = "data-plan skip changelog generation temporarily"
         package["changelog"] = {
@@ -41,7 +41,7 @@ def main(generate_input, generate_output):
         package["result"] = "succeeded"
         # Installation package
         package["installInstructions"] = {
-            "full": "You can install the use using pip install of the artificats.",
+            "full": "You can install the use using pip install of the artifacts.",
             "lite": f"pip install {package_name}",
         }
         # to distinguish with track1
@@ -52,7 +52,6 @@ def main(generate_input, generate_output):
                 package["apiViewArtifact"] = artifact
                 package["language"] = "Python"
                 break
-        package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 
     with open(generate_output, "w") as writer:
