@@ -50,7 +50,9 @@ class TestRegistry(AzureRecordedTestCase):
         # before testing that the registry is gone with another get command
         if is_live():
             time.sleep(120)
-        with pytest.raises(ResourceNotFoundError):
-            registry = crud_registry_client.registries.get(name=reg_name)
-            # we shouldn't reach this - the call should trigger a not found error first.
-            assert registry is None
+        try:
+            deleted_registry = crud_registry_client.registries.get(name=reg_name)
+            # The above line should fail with a ResourceNotFoundError
+            assert False
+        except ResourceNotFoundError:
+            assert True

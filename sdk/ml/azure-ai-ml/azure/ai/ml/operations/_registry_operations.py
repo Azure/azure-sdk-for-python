@@ -137,13 +137,11 @@ class RegistryOperations:
 
 
     # @monitor_with_activity(logger, "Registry.Delete", ActivityType.PUBLICAPI)
-    def delete(self, *, name: str, **kwargs: Dict) -> LROPoller:
-        """Delete a registry.
+    def delete(self, *, name: str, **kwargs: Dict) -> None:
+        """Delete a registry. Returns nothing on a successful operation.
 
         :param name: Name of the registry
         :type name: str
-        :return: A poller to track the operation status.
-        :rtype: ~azure.core.polling.LROPoller[None]
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         return self._operation.delete(
