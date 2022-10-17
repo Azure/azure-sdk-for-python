@@ -79,18 +79,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "5286cee0-ae0d-4760-87bf-c4399bf75ffe",
+        "apim-request-id": "94f29874-90e3-4276-96f8-fc9b19da7735",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 20:47:16 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/71951fc9-38bb-4472-a056-c3141a932093?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:52:49 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a7f29412-9d7e-4030-a947-ec4a03f8c45d?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "530"
+        "x-envoy-upstream-service-time": "247"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/71951fc9-38bb-4472-a056-c3141a932093?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/a7f29412-9d7e-4030-a947-ec4a03f8c45d?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -100,217 +100,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "4dafd888-f90f-4c9d-b451-2bd64d3f9f35",
-        "Content-Length": "2345",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 20:47:21 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "201"
-      },
-      "ResponseBody": {
-        "jobId": "71951fc9-38bb-4472-a056-c3141a932093",
-        "lastUpdateDateTime": "2022-10-10T20:47:20Z",
-        "createdDateTime": "2022-10-10T20:47:15Z",
-        "expirationDateTime": "2022-10-11T20:47:15Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 3,
-          "failed": 0,
-          "inProgress": 2,
-          "total": 5,
-          "items": [
-            {
-              "kind": "EntityRecognitionLROResults",
-              "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T20:47:20.2444048Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "1",
-              "lastUpdateDateTime": "2022-10-10T20:47:18.6174156Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "keyPhrases": [],
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2022-10-01"
-              }
-            },
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-10-10T20:47:18.5906307Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 4,
-                  "validDocumentsCount": 4,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 4
-                },
-                "documents": [
-                  {
-                    "id": "56",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 2,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/71951fc9-38bb-4472-a056-c3141a932093?api-version=2022-10-01-preview\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "f513c2f7-d264-4ab8-b75c-3ae50ce627f3",
+        "apim-request-id": "bff9b168-a641-4003-8620-ddc291506b96",
         "Content-Length": "4674",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 20:47:27 GMT",
+        "Date": "Mon, 17 Oct 2022 18:52:54 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "425"
+        "x-envoy-upstream-service-time": "255"
       },
       "ResponseBody": {
-        "jobId": "71951fc9-38bb-4472-a056-c3141a932093",
-        "lastUpdateDateTime": "2022-10-10T20:47:26Z",
-        "createdDateTime": "2022-10-10T20:47:15Z",
-        "expirationDateTime": "2022-10-11T20:47:15Z",
+        "jobId": "a7f29412-9d7e-4030-a947-ec4a03f8c45d",
+        "lastUpdateDateTime": "2022-10-17T18:52:51Z",
+        "createdDateTime": "2022-10-17T18:52:49Z",
+        "expirationDateTime": "2022-10-18T18:52:49Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -322,7 +124,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T20:47:20.2444048Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:51.6601117Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -376,7 +178,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-10-10T20:47:18.6174156Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:51.6931838Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -430,7 +232,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-10-10T20:47:25.9867895Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:51.7570428Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -488,7 +290,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-10-10T20:47:18.5906307Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:51.9012135Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -542,7 +344,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-10-10T20:47:24.9480456Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:51.6801624Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

@@ -30,10 +30,10 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1fef7f34-2ac1-415d-b6bd-23a514b4b29d",
+        "apim-request-id": "7ea7386f-f40f-47fc-91d5-5d4112b3e538",
         "Content-Length": "862",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 21:16:47 GMT",
+        "Date": "Mon, 17 Oct 2022 19:03:13 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",

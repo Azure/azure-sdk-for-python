@@ -33,13 +33,13 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "804fdc72-a3d3-4df4-a5b6-30099a6896eb",
+        "apim-request-id": "41945808-a953-4c87-ad25-97636e7acc60",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 20:52:46 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/938acdd3-b148-430a-bf19-3d814f96e2a1?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:57:50 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/0e16d703-2177-4dc5-a473-f9757e9d842d?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "132"
+        "x-envoy-upstream-service-time": "133"
       },
       "ResponseBody": null
     }

@@ -36,6 +36,7 @@ class TestCustomText(TextAnalyticsTest):
     def _interval(self):
         return 5 if self.is_live else 0
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
