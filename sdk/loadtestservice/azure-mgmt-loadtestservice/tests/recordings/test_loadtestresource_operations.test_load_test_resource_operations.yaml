@@ -1,37 +1,5 @@
 interactions:
 - request:
-    body: '{"x-recording-file": "sdk/loadtestservice/azure-mgmt-loadtestservice/tests/recordings/test_loadtestresource_operations.pyLoadTestResourceOperationstest_load_test_resource_operations"}'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '183'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - python-requests/2.28.1
-    method: POST
-    uri: https://localhost:5001/record/start
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      date:
-      - Sun, 16 Oct 2022 17:20:27 GMT
-      server:
-      - Kestrel
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-    status:
-      code: 200
-      message: OK
-- request:
     body: '{"location": "westus2"}'
     headers:
       Accept:
@@ -46,20 +14,14 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: PUT
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-16T17:20:31.2860045Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-16T17:20:31.2860045Z"},"identity":{"type":"None"},"properties":{"description":null,"dataPlaneURI":"e08694f4-2cc0-41bc-99c6-5f2725ba7963.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Accepted"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-17T04:13:24.9987302Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-17T04:13:24.9987302Z"},"identity":{"type":"None"},"properties":{"description":null,"dataPlaneURI":"0650b48f-2230-45f0-ae98-8c16c6912fd1.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Accepted"}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/5664a4d3-8159-41db-a359-4d5d46bc5bf8*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/e143c288-712e-40d5-a06b-e98d16f345d2*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
       cache-control:
       - no-cache
       content-length:
@@ -67,17 +29,15 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:20:31 GMT
+      - Mon, 17 Oct 2022 04:13:26 GMT
       etag:
-      - '"25000762-0000-0800-0000-634c3d5f0000"'
+      - '"2b003297-0000-0800-0000-634cd6650000"'
       expires:
       - '-1'
       mise-correlation-id:
-      - 7bc01d7d-860b-424b-8c82-a1b6b2e9d84b
+      - c30dc97c-994b-4e23-8646-1c43326381b1
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -100,17 +60,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: GET
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/5664a4d3-8159-41db-a359-4d5d46bc5bf8*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/e143c288-712e-40d5-a06b-e98d16f345d2*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/5664a4d3-8159-41db-a359-4d5d46bc5bf8*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","name":"5664a4d3-8159-41db-a359-4d5d46bc5bf8*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","status":"Succeeded","startTime":"2022-10-16T17:20:31.4661019Z","endTime":"2022-10-16T17:20:32.6507253Z","properties":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/e143c288-712e-40d5-a06b-e98d16f345d2*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","name":"e143c288-712e-40d5-a06b-e98d16f345d2*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","status":"Succeeded","startTime":"2022-10-17T04:13:25.2349092Z","endTime":"2022-10-17T04:13:26.4897845Z","properties":null}'
     headers:
       cache-control:
       - no-cache
@@ -119,17 +73,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:20:32 GMT
+      - Mon, 17 Oct 2022 04:13:26 GMT
       etag:
-      - '"0700ee3e-0000-0800-0000-634c3d600000"'
+      - '"08008a27-0000-0800-0000-634cd6660000"'
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
       vary:
       - Accept-Encoding
       x-content-type-options:
@@ -148,17 +102,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: GET
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-16T17:20:31.2860045Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-16T17:20:31.2860045Z"},"identity":{"type":"None"},"properties":{"description":null,"dataPlaneURI":"e08694f4-2cc0-41bc-99c6-5f2725ba7963.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-17T04:13:24.9987302Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-17T04:13:24.9987302Z"},"identity":{"type":"None"},"properties":{"description":null,"dataPlaneURI":"0650b48f-2230-45f0-ae98-8c16c6912fd1.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -167,17 +115,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:20:32 GMT
+      - Mon, 17 Oct 2022 04:13:26 GMT
       etag:
-      - '"25001b62-0000-0800-0000-634c3d600000"'
+      - '"2b006397-0000-0800-0000-634cd6660000"'
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
       vary:
       - Accept-Encoding
       x-content-type-options:
@@ -198,17 +146,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: GET
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-16T17:20:31.2860045Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-16T17:20:31.2860045Z"},"identity":{"type":"None"},"properties":{"description":null,"dataPlaneURI":"e08694f4-2cc0-41bc-99c6-5f2725ba7963.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-17T04:13:24.9987302Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-17T04:13:24.9987302Z"},"identity":{"type":"None"},"properties":{"description":null,"dataPlaneURI":"0650b48f-2230-45f0-ae98-8c16c6912fd1.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
@@ -217,17 +159,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:20:33 GMT
+      - Mon, 17 Oct 2022 04:13:27 GMT
       etag:
-      - '"25001b62-0000-0800-0000-634c3d600000"'
+      - '"2b006397-0000-0800-0000-634cd6660000"'
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
       vary:
       - Accept-Encoding
       x-content-type-options:
@@ -252,20 +194,14 @@ interactions:
       - application/json
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: PATCH
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
   response:
     body:
       string: 'null'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
       cache-control:
       - no-cache
       content-length:
@@ -273,19 +209,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:20:36 GMT
+      - Mon, 17 Oct 2022 04:13:29 GMT
       etag:
-      - '"25006062-0000-0800-0000-634c3d650000"'
+      - '"2b009297-0000-0800-0000-634cd6690000"'
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
       mise-correlation-id:
-      - 038d7b0c-95d0-44df-a3b6-506adcf31f11
+      - f635af46-ca1e-4ec3-ace1-2b568622b8bc
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -308,17 +242,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: GET
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","name":"0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","status":"Accepted","startTime":"2022-10-16T17:20:37.0335726Z"}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","name":"965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","status":"Accepted","startTime":"2022-10-17T04:13:29.8401189Z"}'
     headers:
       cache-control:
       - no-cache
@@ -327,17 +255,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:20:36 GMT
+      - Mon, 17 Oct 2022 04:13:29 GMT
       etag:
-      - '"0700f63e-0000-0800-0000-634c3d650000"'
+      - '"08008e27-0000-0800-0000-634cd6690000"'
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
       vary:
       - Accept-Encoding
       x-content-type-options:
@@ -356,17 +284,11 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: GET
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","name":"0aa21561-271a-4fc0-ba03-41309ce53b4a*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","status":"Succeeded","startTime":"2022-10-16T17:20:37.0335726Z","endTime":"2022-10-16T17:20:38.2549475Z","properties":null}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","name":"965360e5-b628-41da-947f-7d6f434dcb74*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159","resourceId":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","status":"Succeeded","startTime":"2022-10-17T04:13:29.8401189Z","endTime":"2022-10-17T04:13:31.0878966Z","properties":null}'
     headers:
       cache-control:
       - no-cache
@@ -375,17 +297,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:21:07 GMT
+      - Mon, 17 Oct 2022 04:13:59 GMT
       etag:
-      - '"0700f93e-0000-0800-0000-634c3d660000"'
+      - '"08009327-0000-0800-0000-634cd66b0000"'
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
       vary:
       - Accept-Encoding
       x-content-type-options:
@@ -404,36 +326,30 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: GET
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
   response:
     body:
-      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-16T17:20:31.2860045Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-16T17:20:36.8834113Z"},"identity":{"principalId":"b217c1f6-954f-42ef-863d-874af57eb861","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"properties":{"description":null,"dataPlaneURI":"e08694f4-2cc0-41bc-99c6-5f2725ba7963.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Succeeded"}}'
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp","name":"py-sdk-testing-resource-cp","type":"microsoft.loadtestservice/loadtests","location":"westus2","systemData":{"createdBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","createdByType":"Application","createdAt":"2022-10-17T04:13:24.9987302Z","lastModifiedBy":"5b96bb74-67f0-463c-9319-6f766ae1c33f","lastModifiedByType":"Application","lastModifiedAt":"2022-10-17T04:13:29.68891Z"},"identity":{"principalId":"73f9142d-b1a2-4b51-8a82-284b14bb3c61","tenantId":"00000000-0000-0000-0000-000000000000","type":"SystemAssigned"},"properties":{"description":null,"dataPlaneURI":"0650b48f-2230-45f0-ae98-8c16c6912fd1.westus2.cnt-prod.loadtesting.azure.com","encryption":null,"provisioningState":"Succeeded"}}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '926'
+      - '924'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:21:07 GMT
+      - Mon, 17 Oct 2022 04:14:00 GMT
       etag:
-      - '"25006d62-0000-0800-0000-634c3d660000"'
+      - '"2b009d97-0000-0800-0000-634cd66b0000"'
       expires:
       - '-1'
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
       vary:
       - Accept-Encoding
       x-content-type-options:
@@ -456,20 +372,14 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-mgmt-loadtestservice/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-mode:
-      - record
-      x-recording-upstream-base-uri:
-      - https://management.azure.com
     method: DELETE
-    uri: https://localhost:5001/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_loadtestresource_operations_test_load_test_resource_operationsb90b1c01/providers/Microsoft.LoadTestService/loadTests/py-sdk-testing-resource-cp?api-version=2022-12-01
   response:
     body:
       string: 'null'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/ec4f97da-cd7c-427e-8019-6545dfd9bcc1*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/558c137e-88df-46db-85bb-10a166be625d*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
       cache-control:
       - no-cache
       content-length:
@@ -477,19 +387,17 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 16 Oct 2022 17:21:08 GMT
+      - Mon, 17 Oct 2022 04:14:00 GMT
       etag:
-      - '"25006763-0000-0800-0000-634c3d840000"'
+      - '"2b00a998-0000-0800-0000-634cd6890000"'
       expires:
       - '-1'
       location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/ec4f97da-cd7c-427e-8019-6545dfd9bcc1*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/WESTUS2/operationStatuses/558c137e-88df-46db-85bb-10a166be625d*E99A9C4E3FBA27DDE5C919EF5FF330F4581833127095D4C5391AE10A265DD159?api-version=2022-12-01
       mise-correlation-id:
-      - 8fc54de2-dc7c-4531-9dfb-c9292b4456e8
+      - 27e46ffd-7781-4a80-838b-050c7e42ec37
       pragma:
       - no-cache
-      server:
-      - Kestrel
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
@@ -501,40 +409,4 @@ interactions:
     status:
       code: 202
       message: Accepted
-- request:
-    body: '{}'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '2'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - python-requests/2.28.1
-      x-recording-file:
-      - sdk/loadtestservice/azure-mgmt-loadtestservice/tests/recordings/test_loadtestresource_operations.pyLoadTestResourceOperationstest_load_test_resource_operations
-      x-recording-id:
-      - 1143388d-bce7-4557-9488-3cff58892ac0
-      x-recording-save:
-      - 'true'
-    method: POST
-    uri: https://localhost:5001/record/stop
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      date:
-      - Sun, 16 Oct 2022 17:21:09 GMT
-      server:
-      - Kestrel
-    status:
-      code: 200
-      message: OK
 version: 1

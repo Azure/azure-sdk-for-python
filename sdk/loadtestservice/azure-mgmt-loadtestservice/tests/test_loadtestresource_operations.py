@@ -27,7 +27,6 @@ class LoadTestResourceOperations(AzureMgmtTestCase):
         )
     
     @ResourceGroupPreparer()
-    @recorded_by_proxy
     def test_load_test_resource_operations(self, resource_group):
 
         # Create a load test resource
@@ -84,7 +83,6 @@ class LoadTestResourceOperations(AzureMgmtTestCase):
         # Delete the load test resource
         self.loadtestservice_client.load_tests._delete_initial(resource_group.name, LOAD_TEST_RESOURCE_NAME)
 
-    @recorded_by_proxy
     def test_load_test_quota_operations(self):
 
         quotaBucket = "maxEngineInstancesPerTestRun"
