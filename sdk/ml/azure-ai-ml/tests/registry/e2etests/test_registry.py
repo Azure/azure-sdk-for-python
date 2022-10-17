@@ -51,7 +51,7 @@ class TestRegistry(AzureRecordedTestCase):
         if is_live():
             time.sleep(120)
         try:
-            deleted_registry = crud_registry_client.registries.get(name=reg_name)
+            crud_registry_client.registries.get(name=reg_name)
             # The above line should fail with a ResourceNotFoundError
             assert False
         except ResourceNotFoundError:
