@@ -607,3 +607,31 @@ class TestDSLPipelineJobValidate:
         with pytest.raises(ValidationException) as ex:
             pipeline_with_use_node_with_multiple_output_as_input(10, "test")
             assert "Exactly 1 output is required, got 2. ({'component_out_path_1': <azure.ai.m" in ex.__str__()
+
+    @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    def test_dsl_pipeline_with_compute_binding(self):
+        path = "./tests/test_configs/components/merge_outputs_component.yml"
+        component_func1 = load_component(path)
+
+        @dsl.pipeline
+        def sub_pipeline_with_compute_binding(compute_name: str):
+            node1 = component_func1(
+                component_in_number=1,
+                component_in_path_1="test",
+                component_in_path_2="test2",
+            )
+            node1.compute = compute_name
+
+        @dsl.pipeline
+        def pipeline_with_compute_binding(compute_name: str):
+            node1 = component_func1(
+                component_in_number=1,
+                component_in_path_1="test",
+                component_in_path_2="test2",
+            )
+            node1.compute = compute_name
+            sub_pipeline_with_compute_binding(compute_name)
+
+        pipeline_job = pipeline_with_compute_binding('cpu-cluster')
+        # Assert compute binding validate not raise error when validate
+        assert pipeline_job._validate().passed

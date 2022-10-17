@@ -35,9 +35,8 @@ from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from .._models import (  # pylint: disable=unused-import
-        ContentSettings)
 
 
 class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
@@ -82,11 +81,11 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
      """
 
     def __init__(
-            self, account_url,  # type: str
-            file_system_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-    ):
+        self, account_url: str,
+        file_system_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         # type: (...) -> None
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(FileSystemClient, self).__init__(

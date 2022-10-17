@@ -1,6 +1,7 @@
 import pytest
 
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _resolve_builders_2_data_bindings
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
 
 from .._util import _DSL_TIMEOUT_SECOND
 
