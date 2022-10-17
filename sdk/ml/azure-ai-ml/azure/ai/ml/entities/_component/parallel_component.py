@@ -4,7 +4,7 @@
 
 import os
 import re
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, List
 
 from marshmallow import Schema
 
@@ -53,6 +53,12 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter.
     :type mini_batch_size: str
+    :param partition_keys:  The keys used to partition dataset into mini-batches.
+        If specified, the data with the same key will be partitioned into the same mini-batch.
+        If both partition_keys and mini_batch_size are specified, error would be raised.
+        The input(s) must be partitioned dataset(s),
+        and the partition_keys must be a subset of the keys of every input dataset for this to work.
+    :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
     :param resources: Compute Resource configuration for the component.
@@ -86,6 +92,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         mini_batch_error_threshold: int = None,
         task: ParallelTask = None,
         mini_batch_size: str = None,
+        partition_keys: List = None,
         input_data: str = None,
         resources: JobResourceConfiguration = None,
         inputs: Dict = None,
@@ -116,6 +123,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         # and fill in later with job defaults.
         self.task = task
         self.mini_batch_size = mini_batch_size
+        self.partition_keys = partition_keys
         self.input_data = input_data
         self.retry_settings = retry_settings
         self.logging_level = logging_level
@@ -136,6 +144,14 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         self.instance_count = instance_count
         self.code = code
 
+        if self.mini_batch_size is not None and self.partition_keys is not None:
+            msg = "mini_batch_size and partition_keys are mutually exclusive"
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.COMPONENT,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         if self.mini_batch_size is not None:
             # Convert str to int.
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")

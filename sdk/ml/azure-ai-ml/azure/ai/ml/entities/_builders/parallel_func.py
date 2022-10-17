@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Union
+from typing import Dict, Union, List
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
 from azure.ai.ml.constants._component import ComponentSource
@@ -31,6 +31,7 @@ def parallel_run_function(
     mini_batch_error_threshold: int = None,
     task: RunFunction = None,
     mini_batch_size: str = None,
+    partition_keys: List = None,
     input_data: str = None,
     inputs: Dict = None,
     outputs: Dict = None,
@@ -136,6 +137,12 @@ def parallel_run_function(
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter.
     :type mini_batch_size: str
+    :param partition_keys: The keys used to partition dataset into mini-batches.
+        If specified, the data with the same key will be partitioned into the same mini-batch. 
+        If both partition_keys and mini_batch_size are specified, error would be raised.
+        The input(s) must be partitioned dataset(s),
+        and the partition_keys must be a subset of the keys of every input dataset for this to work.
+    :type partition_keys: List
     :param input_data: The input data.
     :type input_data: str
     :param inputs: a dict of inputs used by this parallel.

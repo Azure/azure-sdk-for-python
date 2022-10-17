@@ -35,6 +35,11 @@ class ParallelComponentSchema(ComponentSchema):
     mini_batch_size = fields.Str(
         metadata={"description": "The The batch size of current job."},
     )
+    partition_keys = fields.List(
+        fields.Str(),
+        metadata={"description": "The keys used to partition input data into mini-batches"}
+    )
+
     input_data = fields.Str()
     retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
     max_concurrency_per_instance = fields.Integer(

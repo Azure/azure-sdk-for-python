@@ -54,6 +54,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type task: ParallelTask
     :param mini_batch_size: The mini batch size.
     :type mini_batch_size: str
+    :param partition_keys: The partition keys.
+    :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
     :param inputs: Inputs of the job.
