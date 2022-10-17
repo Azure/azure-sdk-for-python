@@ -7,7 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-- Fixed invalid content range exception that gets raised when downloading empty files.
+- Fixed possible invalid content range exception that gets raised when downloading empty blobs through Azurite.
 
 ### Other Changes
 - Removed `msrest` dependency.
