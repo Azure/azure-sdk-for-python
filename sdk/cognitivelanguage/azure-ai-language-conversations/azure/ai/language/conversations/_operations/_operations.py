@@ -478,13 +478,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
-        executed. For examples on calling this method, see the docs.
-
-        Conversation summarization:
-        https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/summarization/quickstart?tabs=conversation-summarization&pivots=rest-api
-        Conversation PII:
-        https://learn.microsoft.com/azure/cognitive-services/language-service/personally-identifiable-information/how-to-call-for-conversations?tabs=rest-api
-        Conversation sentiment analysis: TODO.
+        executed. See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for
+        more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -604,13 +599,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
-        executed. For examples on calling this method, see the docs.
-
-        Conversation summarization:
-        https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/summarization/quickstart?tabs=conversation-summarization&pivots=rest-api
-        Conversation PII:
-        https://learn.microsoft.com/azure/cognitive-services/language-service/personally-identifiable-information/how-to-call-for-conversations?tabs=rest-api
-        Conversation sentiment analysis: TODO.
+        executed. See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for
+        more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -715,13 +705,8 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Submit analysis job for conversations.
 
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
-        executed. For examples on calling this method, see the docs.
-
-        Conversation summarization:
-        https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/summarization/quickstart?tabs=conversation-summarization&pivots=rest-api
-        Conversation PII:
-        https://learn.microsoft.com/azure/cognitive-services/language-service/personally-identifiable-information/how-to-call-for-conversations?tabs=rest-api
-        Conversation sentiment analysis: TODO.
+        executed. See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for
+        more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute. Is
          either a model type or a IO type. Required.

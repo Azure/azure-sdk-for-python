@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview",
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Content-Length": "945",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "0000000000000000",
-        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "displayName": "Analyze PII in conversation",
@@ -65,41 +65,78 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8db09768-ac12-4baa-89d9-fd9114ab9bdc",
+        "apim-request-id": "4853f800-1dbe-408c-ad7d-854c0a0e0f2d",
         "Content-Length": "0",
-        "Date": "Tue, 06 Sep 2022 19:07:47 GMT",
-        "operation-location": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/ce985d51-0534-428f-9afc-514d9b6dbd0f?api-version=2022-05-15-preview",
+        "Date": "Mon, 17 Oct 2022 22:09:52 GMT",
+        "operation-location": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/32504518-601b-4126-a03d-1d4ba4b73cdb?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "208"
+        "x-envoy-upstream-service-time": "233"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/ce985d51-0534-428f-9afc-514d9b6dbd0f?api-version=2022-05-15-preview",
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/32504518-601b-4126-a03d-1d4ba4b73cdb?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Ocp-Apim-Subscription-Key": "0000000000000000",
-        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "47cb20fe-0cd1-4159-a972-a371913cd5af",
-        "Content-Length": "1528",
+        "apim-request-id": "f5b547fd-bc59-48eb-bb96-3dd85f281fe8",
+        "Content-Length": "324",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 06 Sep 2022 19:08:17 GMT",
+        "Date": "Mon, 17 Oct 2022 22:09:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "40"
+        "x-envoy-upstream-service-time": "138"
       },
       "ResponseBody": {
-        "jobId": "ce985d51-0534-428f-9afc-514d9b6dbd0f",
-        "lastUpdatedDateTime": "2022-09-06T19:07:48Z",
-        "createdDateTime": "2022-09-06T19:07:47Z",
-        "expirationDateTime": "2022-09-07T19:07:47Z",
+        "jobId": "32504518-601b-4126-a03d-1d4ba4b73cdb",
+        "lastUpdatedDateTime": "2022-10-17T22:09:53Z",
+        "createdDateTime": "2022-10-17T22:09:52Z",
+        "expirationDateTime": "2022-10-18T22:09:52Z",
+        "status": "running",
+        "errors": [],
+        "displayName": "Analyze PII in conversation",
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/32504518-601b-4126-a03d-1d4ba4b73cdb?api-version=2022-10-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Ocp-Apim-Subscription-Key": "0000000000000000",
+        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "ab90cc66-81a8-4668-9f70-b2f56f902afd",
+        "Content-Length": "1529",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 22:09:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "92"
+      },
+      "ResponseBody": {
+        "jobId": "32504518-601b-4126-a03d-1d4ba4b73cdb",
+        "lastUpdatedDateTime": "2022-10-17T22:09:53Z",
+        "createdDateTime": "2022-10-17T22:09:52Z",
+        "expirationDateTime": "2022-10-18T22:09:52Z",
         "status": "succeeded",
         "errors": [],
         "displayName": "Analyze PII in conversation",
@@ -111,12 +148,12 @@
           "items": [
             {
               "kind": "conversationalPIIResults",
-              "lastUpdateDateTime": "2022-09-06T19:07:48.0750104Z",
+              "lastUpdateDateTime": "2022-10-17T22:09:53.527091Z",
               "status": "succeeded",
               "results": {
                 "conversations": [
                   {
-                    "id": "1",
+                    "id": "1.0",
                     "conversationItems": [
                       {
                         "id": "1",

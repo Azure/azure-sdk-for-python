@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-05-15-preview",
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -10,7 +10,7 @@
         "Content-Length": "692",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "0000000000000000",
-        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "displayName": "Analyze conversations from xxx",
@@ -57,42 +57,80 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "a994e213-581b-47c4-b1ad-325b6e8fb2c7",
+        "apim-request-id": "3f5270da-dc02-43b5-bc36-7e6644bdd1f2",
         "Content-Length": "0",
-        "Date": "Tue, 06 Sep 2022 19:08:18 GMT",
-        "operation-location": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/191e8239-00a6-4c34-a775-121eb654d665?api-version=2022-05-15-preview",
+        "Date": "Mon, 17 Oct 2022 22:09:58 GMT",
+        "operation-location": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/2b72ef0f-d157-4f53-ad76-bcd05260cd0d?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "165"
+        "x-envoy-upstream-service-time": "130"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/191e8239-00a6-4c34-a775-121eb654d665?api-version=2022-05-15-preview",
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/2b72ef0f-d157-4f53-ad76-bcd05260cd0d?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Ocp-Apim-Subscription-Key": "0000000000000000",
-        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1a1cd267-02c5-4a5d-8f4f-792dd61ca2d6",
-        "Content-Length": "756",
+        "apim-request-id": "c67b4ae9-1818-4816-bba6-f3d51561763e",
+        "Content-Length": "330",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 06 Sep 2022 19:08:47 GMT",
+        "Date": "Mon, 17 Oct 2022 22:09:58 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "170"
+        "x-envoy-upstream-service-time": "8"
       },
       "ResponseBody": {
-        "jobId": "191e8239-00a6-4c34-a775-121eb654d665",
-        "lastUpdatedDateTime": "2022-09-06T19:08:20Z",
-        "createdDateTime": "2022-09-06T19:08:18Z",
-        "expirationDateTime": "2022-09-07T19:08:18Z",
+        "jobId": "2b72ef0f-d157-4f53-ad76-bcd05260cd0d",
+        "lastUpdatedDateTime": "2022-10-17T22:09:59Z",
+        "createdDateTime": "2022-10-17T22:09:59Z",
+        "expirationDateTime": "2022-10-18T22:09:59Z",
+        "status": "notStarted",
+        "errors": [],
+        "displayName": "Analyze conversations from xxx",
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/2b72ef0f-d157-4f53-ad76-bcd05260cd0d?api-version=2022-10-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "0000000000000000",
+        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "bba29e4f-29ec-4047-9963-98a34531598c",
+        "Content-Length": "807",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 22:10:04 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "31"
+      },
+      "ResponseBody": {
+        "jobId": "2b72ef0f-d157-4f53-ad76-bcd05260cd0d",
+        "lastUpdatedDateTime": "2022-10-17T22:10:00Z",
+        "createdDateTime": "2022-10-17T22:09:59Z",
+        "expirationDateTime": "2022-10-18T22:09:59Z",
         "status": "succeeded",
         "errors": [],
         "displayName": "Analyze conversations from xxx",
@@ -105,27 +143,40 @@
             {
               "kind": "conversationalSummarizationResults",
               "taskName": "analyze 1",
-              "lastUpdateDateTime": "2022-09-06T19:08:20.2969073Z",
+              "lastUpdateDateTime": "2022-10-17T22:10:00.8411219Z",
               "status": "succeeded",
               "results": {
                 "conversations": [
                   {
-                    "id": "conversation1",
                     "summaries": [
                       {
-                        "aspect": "issue",
-                        "text": "Customer wants to upgrade Office"
-                      },
-                      {
-                        "aspect": "resolution",
-                        "text": "Asked for the error message | Asked for help to upgrade Office"
+                        "aspect": "chapterTitle",
+                        "text": "How to Upgrade Office",
+                        "contexts": [
+                          {
+                            "conversationItemId": "1",
+                            "offset": 0,
+                            "length": 26
+                          },
+                          {
+                            "conversationItemId": "2",
+                            "offset": 0,
+                            "length": 65
+                          },
+                          {
+                            "conversationItemId": "3",
+                            "offset": 0,
+                            "length": 74
+                          }
+                        ]
                       }
                     ],
+                    "id": "conversation1",
                     "warnings": []
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2022-05-15-preview"
+                "modelVersion": "latest"
               }
             }
           ]

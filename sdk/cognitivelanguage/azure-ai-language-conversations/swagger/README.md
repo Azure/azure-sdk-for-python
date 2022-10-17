@@ -82,7 +82,7 @@ directive:
 
 - where-operation: AnalyzeConversation_SubmitJob
   transform: >
-    $.description = $.description + " For examples on calling this method, see the docs.\n\nConversation summarization: https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/summarization/quickstart?tabs=conversation-summarization&pivots=rest-api \nConversation PII: https://learn.microsoft.com/azure/cognitive-services/language-service/personally-identifiable-information/how-to-call-for-conversations?tabs=rest-api \nConversation sentiment analysis: TODO";
+    $.description = $.description + " See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more information.";
 - where-operation: ConversationAnalysis_AnalyzeConversation
   transform: >
     $.description = $.description + " See https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation for more information.";
