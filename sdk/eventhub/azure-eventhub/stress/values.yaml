@@ -2,7 +2,11 @@
 # one for each scenario in the list. The pod spec can then be configured to pass the
 # scenario name down to the test command, e.g. `command: ["node", "{{ .Scenario }}.js"]`
 scenarios:
-- "sendconsumeasync"
-- "sendconsumesync"
-- "sendlistconsumeasync"
-- "sendlistconsumesync"
+- "event-async"
+- "event-sync"
+- "batch-async"
+- "batch-sync"
+- "bufferedproducerlistsync"
+- "bufferedproducerasync"
+- "syncwebsockets"
+- "asyncwebsockets"
