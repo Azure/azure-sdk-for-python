@@ -4,11 +4,11 @@
 # pylint: disable=protected-access
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputePowerAction
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeSchedules as RestComputeSchedules
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ScheduleStatus as ScheduleState
-from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeSchedules as RestComputeSchedules
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -79,7 +79,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestComputeStartStopSchedule) -> "ComputeStartStopSchedule":
         schedule = ComputeStartStopSchedule(
             action=obj.action,
-            state=obj.status,
+            state=obj.provisioning_status,
             schedule_id=obj.id,
             provisioning_state=obj.provisioning_status,
         )
