@@ -2,8 +2,6 @@ import contextlib
 import pytest
 
 from azure.ai.ml._schema.pipeline import PipelineJobSchema
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
-from azure.ai.ml.dsl._utils import environment_variable_overwrite
 from .._util import _DSL_TIMEOUT_SECOND
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineJobsField
@@ -16,8 +14,7 @@ from azure.ai.ml.dsl._condition import condition
 
 @contextlib.contextmanager
 def include_private_preview_nodes_in_pipeline():
-    with environment_variable_overwrite(AZUREML_PRIVATE_FEATURES_ENV_VAR, "True"):
-        PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
+    PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
 
     try:
         yield

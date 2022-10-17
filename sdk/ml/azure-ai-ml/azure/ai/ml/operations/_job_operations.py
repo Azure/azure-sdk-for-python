@@ -420,6 +420,7 @@ class JobOperations(_ScopeDependentOperations):
 
             for node_name, node in job.jobs.items():
                 try:
+                    # TODO(1979547): refactor, not all nodes have compute
                     if not isinstance(node, (DoWhile, ConditionNode)):
                         node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
