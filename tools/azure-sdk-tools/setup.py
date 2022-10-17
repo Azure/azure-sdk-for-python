@@ -17,11 +17,7 @@ DEPENDENCIES = [
     "pytest-cov",
     "pytest>=3.5.1",
     "readme_renderer",
-    "azure-storage-common<1.4.1",
     "pyopenssl",
-    "azure-mgmt-resource",
-    "azure-mgmt-storage",
-    "azure-mgmt-keyvault",
     "python-dotenv",
     "PyYAML",
 ]
