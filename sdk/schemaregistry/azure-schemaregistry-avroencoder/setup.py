@@ -65,7 +65,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        'pytyped': ['py.typed'],
+        "pytyped": ["py.typed"],
     },
     install_requires=install_packages
 )

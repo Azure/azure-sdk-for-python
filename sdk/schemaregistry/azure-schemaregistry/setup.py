@@ -64,6 +64,9 @@ setup(
     ],
     python_requires=">=3.7",
     zip_safe=False,
+    package_data={
+        "pytyped": ["py.typed"],
+    },
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
         'msrest>=0.6.21',
