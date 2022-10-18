@@ -540,6 +540,7 @@ class TestAnalyze(TextAnalyticsTest):
         for document_results in response:
             for doc in document_results:
                 assert doc.is_error
+                assert doc.error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
