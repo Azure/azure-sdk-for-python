@@ -31,9 +31,10 @@ def InputsField(**kwargs):
                         # https://github.com/marshmallow-code/marshmallow/pull/755
                         # Use DumpableIntegerField to make sure there will be validation error when
                         # loading/dumping a float to int.
+                        # note that this field can serialize bool instance but cannot deserialize bool instance.
                         DumpableIntegerField(strict=True),
-                        # Use DumpableFloatField to avoid '1'(str) serialized to 1.0(float)
-                        DumpableFloatField(),
+                        # Use DumpableFloatField with strict of True to avoid '1'(str) serialized to 1.0(float)
+                        DumpableFloatField(strict=True),
                         # put string schema after Int and Float to make sure they won't dump to string
                         fields.Str(),
                         # fields.Bool comes last since it'll parse anything non-falsy to True

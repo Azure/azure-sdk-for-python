@@ -6,6 +6,7 @@
 
 import copy
 import logging
+import numbers
 import os
 import re
 import typing
@@ -675,15 +676,23 @@ class VersionField(Field):
 class DumpableIntegerField(fields.Integer):
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if self.strict and not isinstance(value, int):
-            raise ValidationError("Given value is not an integer")
+            # this implementation can serialize bool to bool
+            raise self.make_error("invalid", input=value)
         return super()._serialize(value, attr, obj, **kwargs)
 
 
 class DumpableFloatField(fields.Float):
+    def __init__(self, *, strict: bool = False, allow_nan: bool = False, as_string: bool = False, **kwargs):
+        self.strict = strict
+        super().__init__(allow_nan=allow_nan, as_string=as_string, **kwargs)
+
+    def _validated(self, value):
+        if self.strict and not isinstance(value, float):
+            raise self.make_error("invalid", input=value)
+        return super()._validated(value)
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
-        if not isinstance(value, float):
-            raise ValidationError("Given value is not a float")
-        return super()._serialize(value, attr, obj, **kwargs)
+        return super()._serialize(self._validated(value), attr, obj, **kwargs)
 
 
 class DumpableStringField(fields.String):

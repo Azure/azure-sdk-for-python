@@ -1729,6 +1729,7 @@ class TestPipelineJobSchema:
             "integer_input": 15,
             "bool_input": False,
             "string_input": "hello",
+            "string_integer_input": "43",
         }
 
         job = load_job(test_path, params_override=[{"inputs": expected_inputs}])
