@@ -59,7 +59,6 @@ class SharePropertiesPaged(AsyncPageIterator):
             return await self._command(
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
-                prefix=self.prefix,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except HttpResponseError as error:

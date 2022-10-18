@@ -4,7 +4,6 @@
 
 ### Bugs Fixed
 - Fixed possible `ValueError` for invalid content range that gets raised when downloading empty files through Azurite.
-- Fixed an issue where keyword `name_starts_with` was not being passed to the service properly for the `list_shares` async API.
 
 ## 12.10.0 (2022-10-11)
 
