@@ -31,6 +31,7 @@ def main(generate_input, generate_output):
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
+    spec_word = "readmeMd"
     if "relatedReadmeMdFiles" in data:
         readme_files = data["relatedReadmeMdFiles"]
     elif "relatedReadmeMdFile" in data:
@@ -43,6 +44,7 @@ def main(generate_input, generate_output):
     else:
         # ["specification/confidentialledger/ConfientialLedger"]
         readme_files = data["relatedCadlProjectFolder"]
+        spec_word = "cadlProject"
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
@@ -74,12 +76,12 @@ def main(generate_input, generate_output):
                 package_entry = {}
                 package_entry["packageName"] = package_name
                 package_entry["path"] = [folder_name]
-                package_entry["readmeMd"] = [input_readme]
+                package_entry[spec_word] = [input_readme]
                 package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
                 result[package_name] = package_entry
             else:
                 result[package_name]["path"].append(folder_name)
-                result[package_name]["readmeMd"].append(input_readme)
+                result[package_name][spec_word].append(input_readme)
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
