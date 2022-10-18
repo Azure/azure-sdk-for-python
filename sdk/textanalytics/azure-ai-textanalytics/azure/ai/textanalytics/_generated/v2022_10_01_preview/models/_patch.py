@@ -8,7 +8,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List
 from ._models_py3 import (
-    BaseResolution as GeneratedBaseResolution,
     AgeResolution as GeneratedAgeResolution,
     AreaResolution as GeneratedAreaResolution,
     BooleanResolution as GeneratedBooleanResolution,
@@ -29,7 +28,6 @@ from ...._dict_mixin import DictMixin
 
 
 # add dict-like capabilities that all other exposed models have in the TA library
-class BaseResolution(GeneratedBaseResolution, DictMixin): ...
 class AgeResolution(GeneratedAgeResolution, DictMixin): ...
 class AreaResolution(GeneratedAreaResolution, DictMixin): ...
 class BooleanResolution(GeneratedBooleanResolution, DictMixin): ...
@@ -48,7 +46,6 @@ class WeightResolution(GeneratedWeightResolution, DictMixin): ...
 
 
 __all__: List[str] = [
-    "BaseResolution",
     "AgeResolution",
     "AreaResolution",
     "BooleanResolution",
