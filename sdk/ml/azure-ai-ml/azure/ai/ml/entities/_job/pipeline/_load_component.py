@@ -20,6 +20,7 @@ from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, 
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._util import extract_label
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -171,6 +172,16 @@ class _PipelineNodeFactory:
             _type = data[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in data else NodeType.COMMAND
         else:
             data[CommonYamlFields.TYPE] = _type
+
+        # parse component
+        component_key = "component"
+        if component_key in data and isinstance(data[component_key], dict):
+            data[component_key] = component_factory.load_from_dict(
+                data=data[component_key],
+                context={
+                    BASE_PATH_CONTEXT_KEY: data[component_key].get(BASE_PATH_CONTEXT_KEY, None),
+                }
+            )
 
         new_instance = self.get_create_instance_func(_type)()
         new_instance.__init__(**data)

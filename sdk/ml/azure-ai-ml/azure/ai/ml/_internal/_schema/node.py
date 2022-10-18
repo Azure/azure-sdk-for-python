@@ -6,7 +6,7 @@ from marshmallow import INCLUDE, fields, post_load, pre_dump
 
 from azure.ai.ml._schema import ArmVersionedStr, NestedField, RegistryStr, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, BASE_PATH_CONTEXT_KEY
 
 from .component import InternalBaseComponentSchema, NodeType
 
@@ -40,7 +40,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
         # dict to node object
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
-        return pipeline_node_factory.load_from_dict(data)  # pylint: disable=E1125, too-many-function-args
+        return pipeline_node_factory.load_from_dict(data=data)
 
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):  # pylint: disable=unused-argument, no-self-use
