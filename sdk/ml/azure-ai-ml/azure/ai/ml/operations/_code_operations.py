@@ -20,6 +20,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
 from azure.ai.ml.entities._assets import Code
@@ -60,7 +61,7 @@ class CodeOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
-    # @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, code: Code) -> Code:
         """Returns created or updated code asset.
 
@@ -139,7 +140,7 @@ class CodeOperations(_ScopeDependentOperations):
                     )
             raise ex
 
-    # @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Code.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: str) -> Code:
         """Returns information about the specified code asset.
 

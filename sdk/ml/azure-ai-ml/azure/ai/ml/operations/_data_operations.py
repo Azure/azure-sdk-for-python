@@ -20,6 +20,7 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -50,7 +51,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
@@ -64,7 +65,7 @@ class DataOperations(_ScopeDependentOperations):
     ):
 
         super(DataOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
@@ -74,7 +75,7 @@ class DataOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -106,7 +107,7 @@ class DataOperations(_ScopeDependentOperations):
             **self._scope_kwargs,
         )
 
-    # @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
         """Get the specified data asset.
 
@@ -155,7 +156,7 @@ class DataOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
         """Returns created or updated data asset.
 
@@ -216,7 +217,7 @@ class DataOperations(_ScopeDependentOperations):
                     )
             raise ex
 
-    # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
         if not data.path:
             msg = "Missing data path. Path is required for data."
@@ -243,7 +244,7 @@ class DataOperations(_ScopeDependentOperations):
                     metadata_yaml_path = None
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
-                    module_logger.info(
+                    logger.info(
                         "Unable to access MLTable metadata at path %s",
                         asset_path,
                         exc_info=1,
@@ -277,14 +278,14 @@ class DataOperations(_ScopeDependentOperations):
         try:
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
-            module_logger.info(
+            logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
                 mltable_schema_url,
                 exc_info=1,
             )
             return None
 
-    # @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str, version: str = None, label: str = None) -> None:
         """Archive a data asset.
 
@@ -307,7 +308,7 @@ class DataOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str, version: str = None, label: str = None) -> None:
         """Restore an archived data asset.
 

@@ -11,6 +11,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule
 from azure.core.credentials import TokenCredential
@@ -25,7 +26,7 @@ from ._job_ops_helper import stream_logs_until_completion
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.logger, ops_logger.module_logger
 
 
 class ScheduleOperations(_ScopeDependentOperations):
@@ -47,7 +48,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self.service_client = service_client_10_2022.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
@@ -69,7 +70,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -114,7 +115,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.Delete", ActivityType.PUBLICAPI)
     def begin_delete(
         self,
         name,
@@ -134,7 +135,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Schedule.Get", ActivityType.PUBLICAPI)
     def get(
         self,
         name,
@@ -155,7 +156,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Schedule.CreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         schedule,
@@ -187,7 +188,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return poller
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.Enable", ActivityType.PUBLICAPI)
     def begin_enable(
         self,
         name,
@@ -204,7 +205,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         return self.begin_create_or_update(schedule)
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Schedule.Disable", ActivityType.PUBLICAPI)
     def begin_disable(
         self,
         name,
