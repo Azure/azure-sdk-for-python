@@ -43,6 +43,7 @@ from ._upload_helpers import (
 )
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from .._models import (  # pylint: disable=unused-import
         ContentSettings,
@@ -115,14 +116,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             :caption: Creating the BlobClient from a SAS URL to a blob.
     """
     def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            blob_name,  # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            container_name: str,
+            blob_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(BlobClient, self).__init__(
             account_url,

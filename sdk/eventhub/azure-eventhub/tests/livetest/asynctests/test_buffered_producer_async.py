@@ -415,7 +415,7 @@ async def test_send_with_timing_configuration(connection_str, uamqp_transport):
 
     async with producer:
         partitions = await producer.get_partition_ids()
-        await producer.send_event(EventData('data'))
+        await producer.send_batch([EventData('data')])
         await asyncio.sleep(5)
         assert not sent_events
         await asyncio.sleep(20)
@@ -501,6 +501,7 @@ async def test_long_sleep(connection_str, uamqp_transport):
     await consumer.close()
     await receive_thread
 
+@pytest.mark.skip('not testing correctly + flaky, fix during MQ')
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_long_wait_small_buffer(connection_str, uamqp_transport):

@@ -24,6 +24,7 @@ USAGE:
     8) COMMUNICATION_MSAL_USERNAME - the username for authenticating via MSAL library
     9) COMMUNICATION_MSAL_PASSWORD - the password for authenticating via MSAL library
 """
+from datetime import timedelta
 import os
 from azure.communication.identity._shared.utils import parse_connection_str
 from msal import PublicClientApplication
@@ -56,6 +57,24 @@ class CommunicationIdentityClientSamples(object):
         print("Getting token for: " + user.properties.get('id'))
         tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         print("Token issued with value: " + tokenresponse.token)
+        
+    def get_token_with_custom_expiration(self):
+        from azure.communication.identity import (
+            CommunicationIdentityClient,
+            CommunicationTokenScope
+        )
+
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+            from azure.identity import DefaultAzureCredential
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
+        else:
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
+        user = identity_client.create_user()
+        print("Getting token for: " + user.properties.get('id'))
+        token_expires_in = timedelta(hours=1)
+        tokenresponse = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+        print("Issued token with custom expiration" + tokenresponse.token)
 
     def revoke_tokens(self):
         from azure.communication.identity import (
@@ -103,6 +122,23 @@ class CommunicationIdentityClientSamples(object):
         user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
         print("User created with id:" + user.properties.get('id'))
         print("Token issued with value: " + tokenresponse.token)
+        
+    def create_user_and_token_with_custom_expiration(self):
+        from azure.communication.identity import (
+            CommunicationIdentityClient,
+            CommunicationTokenScope
+        )
+        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
+            from azure.identity import DefaultAzureCredential
+            endpoint, _ = parse_connection_str(self.connection_string)
+            identity_client = CommunicationIdentityClient(endpoint, DefaultAzureCredential())
+        else:
+            identity_client = CommunicationIdentityClient.from_connection_string(self.connection_string)
+        print("Creating new user with token")
+        token_expires_in = timedelta(hours=1)
+        user, tokenresponse = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
+        print("User created with id:" + user.properties.get('id'))
+        print("Issued token with custom expiration: " + tokenresponse.token)
 
     def delete_user(self):
         from azure.communication.identity import CommunicationIdentityClient

@@ -56,7 +56,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
+class AuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
@@ -464,7 +464,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         return cast(JSON, deserialized)
 
-    async def _delete_project_initial(self, project_name: str, **kwargs: Any) -> Optional[JSON]:
+    async def _delete_project_initial(  # pylint: disable=inconsistent-return-statements
+        self, project_name: str, **kwargs: Any
+    ) -> None:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -476,7 +478,7 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_project_request(
             project_name=project_name,
@@ -495,30 +497,18 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if response.status_code == 202:
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
+            return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[JSON]:
+    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete the project.
 
         See
@@ -534,59 +524,14 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "createdDateTime": "2020-02-20 00:00:00",  # Required.
-                    "jobId": "str",  # Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # Required.
-                    "status": "str",  # Job Status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
-                    "errors": [
-                        {
-                            "code": "str",  # One of a server-defined set of error codes.
-                              Required. Known values are: "InvalidRequest", "InvalidArgument",
-                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
-                              "OperationNotFound", "AzureCognitiveSearchNotFound",
-                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
-                              "AzureCognitiveSearchThrottling",
-                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError", and
-                              "ServiceUnavailable".
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
-                            "details": [
-                                ...
-                            ],
-                            "innererror": {
-                                "code": "str",  # One of a server-defined set of
-                                  error codes. Required. Known values are: "InvalidRequest",
-                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
-                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling", and
-                                  "ExtractionFailure".
-                                "message": "str",  # Error message. Required.
-                                "details": {
-                                    "str": "str"  # Optional. Error details.
-                                },
-                                "innererror": ...,
-                                "target": "str"  # Optional. Error target.
-                            },
-                            "target": "str"  # Optional. The target of the error.
-                        }
-                    ],
-                    "expirationDateTime": "2020-02-20 00:00:00"  # Optional.
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -596,15 +541,9 @@ class QuestionAnsweringAuthoringClientOperationsMixin(MixinABC):  # pylint: disa
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
+                return cls(pipeline_response, None, {})
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),

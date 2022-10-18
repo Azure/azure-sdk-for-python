@@ -56,7 +56,7 @@ setup(
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
@@ -75,8 +75,14 @@ setup(
     ]),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.24.2",
-        "msrest>=0.7.1",
-        "azure-storage-blob<13.0.0,>=12.14.0b1"
+        "azure-core<2.0.0,>=1.26.0",
+        "azure-storage-blob<13.0.0,>=12.14.0",
+        "typing-extensions>=4.0.1",
+        "isodate>=0.6.1"
     ],
+    extras_require={
+        "aio": [
+            "azure-core[aio]<2.0.0,>=1.26.0",
+        ],
+    },
 )
