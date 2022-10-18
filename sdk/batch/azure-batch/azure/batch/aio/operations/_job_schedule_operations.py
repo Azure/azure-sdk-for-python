@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -64,12 +64,12 @@ class JobScheduleOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def exists(  # pylint: disable=inconsistent-return-statements
+    async def exists(
         self,
         job_schedule_id: str,
         job_schedule_exists_options: Optional[_models.JobScheduleExistsOptions] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> bool:
         """Checks the specified Job Schedule exists.
 
         Checks the specified Job Schedule exists.
@@ -79,8 +79,8 @@ class JobScheduleOperations:
         :param job_schedule_exists_options: Parameter group. Default value is None.
         :type job_schedule_exists_options: ~azure-batch.models.JobScheduleExistsOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: bool or the result of cls(response)
+        :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -156,6 +156,7 @@ class JobScheduleOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+        return 200 <= response.status_code <= 299
 
     exists.metadata = {"url": "/jobschedules/{jobScheduleId}"}  # type: ignore
 
@@ -1025,10 +1026,17 @@ class JobScheduleOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url(

@@ -209,7 +209,7 @@ class PoolPreparer(AzureMgmtPreparer):
                             sku='18.04-LTS'
                         ),
                         node_agent_sku_id='batch.node.ubuntu 18.04'))
-            parameters = models.BatchPool(
+            parameters = models.Pool(
                 display_name="test_pool",
                 vm_size=vm_size,
                 user_accounts=[user],

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 import datetime
 from typing import Any, Callable, Dict, Iterable, Iterator, Optional, TypeVar
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -680,14 +680,14 @@ class FileOperations:
     get_from_task.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
 
     @distributed_trace
-    def get_properties_from_task(  # pylint: disable=inconsistent-return-statements
+    def get_properties_from_task(
         self,
         job_id: str,
         task_id: str,
         file_path: str,
         file_get_properties_from_task_options: Optional[_models.FileGetPropertiesFromTaskOptions] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> bool:
         """Gets the properties of the specified Task file.
 
         :param job_id: The ID of the Job that contains the Task. Required.
@@ -700,8 +700,8 @@ class FileOperations:
         :type file_get_properties_from_task_options:
          ~azure-batch.models.FileGetPropertiesFromTaskOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: bool or the result of cls(response)
+        :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -780,6 +780,7 @@ class FileOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+        return 200 <= response.status_code <= 299
 
     get_properties_from_task.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
 
@@ -992,14 +993,14 @@ class FileOperations:
     get_from_compute_node.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
 
     @distributed_trace
-    def get_properties_from_compute_node(  # pylint: disable=inconsistent-return-statements
+    def get_properties_from_compute_node(
         self,
         pool_id: str,
         node_id: str,
         file_path: str,
         file_get_properties_from_compute_node_options: Optional[_models.FileGetPropertiesFromComputeNodeOptions] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> bool:
         """Gets the properties of the specified Compute Node file.
 
         :param pool_id: The ID of the Pool that contains the Compute Node. Required.
@@ -1013,8 +1014,8 @@ class FileOperations:
         :type file_get_properties_from_compute_node_options:
          ~azure-batch.models.FileGetPropertiesFromComputeNodeOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: bool or the result of cls(response)
+        :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1093,6 +1094,7 @@ class FileOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+        return 200 <= response.status_code <= 299
 
     get_properties_from_compute_node.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"}  # type: ignore
 
@@ -1178,10 +1180,17 @@ class FileOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url(
@@ -1299,10 +1308,17 @@ class FileOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 path_format_arguments = {
                     "batchUrl": self._serialize.url(

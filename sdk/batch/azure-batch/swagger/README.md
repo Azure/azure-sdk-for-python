@@ -5,7 +5,7 @@
 ### Settings
 
 ```yaml
-input-file: E:\dev\git\Batch-Service2\src\xstore\watask\Client\Swagger\DataPlane\Azure.Batch\preview\2022-01-01.15.0\BatchService.json
+input-file: https://github.com/wiboris/azure-rest-api-specs/blob/SwaggerRefactor/specification/batch/data-plane/Microsoft.Batch/stable/2022-12-01/BatchService.json
 output-folder: ../azure/batch
 namespace: azure-batch
 package-name: azure-batch
@@ -20,4 +20,5 @@ package-version: 13.0.0
 add-credential: false
 models-mode: msrest
 combine-operation-files: false
+head-as-boolean: true
 ```

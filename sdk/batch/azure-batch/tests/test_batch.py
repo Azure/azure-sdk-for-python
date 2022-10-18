@@ -16,6 +16,8 @@ import azure.batch
 from azure.core.paging import ItemPaged
 from azure.batch import models
 
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+
 from batch_preparers import (
     AccountPreparer,
     PoolPreparer,
@@ -31,7 +33,7 @@ from devtools_testutils import (
 )
 
 
-AZURE_LOCATION = 'southcentralus'
+AZURE_LOCATION = 'eastus'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 DEFAULT_VM_SIZE = 'standard_d2_v2'
@@ -64,11 +66,11 @@ class BatchTest(AzureMgmtTestCase):
     def assertBatchError(self, code, func, *args, **kwargs):
         try:
             func(*args, **kwargs)
-            self.fail("HttpResponseError expected but not raised")
-        except HttpResponseError as err:
+            self.fail("CreateTasksErrorException expected but not raised")
+        except models.CreateTasksErrorException as err:
             self.assertEqual(err.error.code, code)
         except Exception as err:
-            self.fail("Expected azure.core.exceptions.HttpResponseError, instead got: {!r}".format(err))
+            self.fail("Expected CreateTasksErrorException, instead got: {!r}".format(err))
 
     def assertCreateTasksError(self, code, func, *args, **kwargs):
         try:
@@ -80,9 +82,9 @@ class BatchTest(AzureMgmtTestCase):
                 if code:
                     self.assertEqual(batch_error.error.code, code)
             except IndexError:
-                self.fail("Inner HttpResponseError expected but not exist")
+                self.fail("Inner CreateTasksErrorException expected but not exist")
         except Exception as err:
-            self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
+            self.fail("Expected CreateTasksErrorException, instead got: {!r}".format(err))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
@@ -352,7 +354,7 @@ class BatchTest(AzureMgmtTestCase):
     def test_batch_update_pools(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Create Paas Pool
-        test_paas_pool = models.Pool(
+        test_paas_pool = models.BatchPool(
             id=self.get_resource_name('batch_paas_'),
             vm_size=DEFAULT_VM_SIZE,
             cloud_service_configuration=models.CloudServiceConfiguration(
@@ -373,7 +375,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
         # Test Update Pool Parameters
-        params = models.Pool(
+        params = models.BatchPool(
             certificate_references=[], 
             application_package_references=[], 
             metadata=[models.MetadataItem(name='foo', value='bar')])
@@ -381,7 +383,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
         # Test Patch Pool Parameters
-        params = models.PoolUpdate(metadata=[models.MetadataItem(name='foo2', value='bar2')])
+        params = models.BatchPoolUpdate(metadata=[models.MetadataItem(name='foo2', value='bar2')])
         response = client.pool.patch(test_paas_pool.id, params)
         self.assertIsNone(response)
 
@@ -391,7 +393,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Get Pool
         pool = client.pool.get(test_paas_pool.id)
-        self.assertIsInstance(pool, models.Pool)
+        self.assertIsInstance(pool, models.BatchPool)
         self.assertEqual(pool.id, test_paas_pool.id)
         self.assertEqual(pool.state, models.PoolState.active)
         self.assertEqual(pool.allocation_state, models.AllocationState.steady)
@@ -404,7 +406,7 @@ class BatchTest(AzureMgmtTestCase):
         # Test Get Pool with OData Clauses
         options = models.PoolGetOptions(select='id,state', expand='stats')
         pool = client.pool.get(test_paas_pool.id, options)
-        self.assertIsInstance(pool, models.Pool)
+        self.assertIsInstance(pool, models.BatchPool)
         self.assertEqual(pool.id, test_paas_pool.id)
         self.assertEqual(pool.state, models.PoolState.active)
         self.assertIsNone(pool.allocation_state)
@@ -421,19 +423,21 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_sharedkey_client(**kwargs)
         # Test Enable Autoscale
         interval = datetime.timedelta(minutes=6)
-        response = client.pool.enable_auto_scale(
-            batch_pool.name,
-            auto_scale_formula='$TargetDedicatedNodes=2',
+
+        parameters = models.BatchPoolEnableAutoScaleParameters(auto_scale_formula='$TargetDedicatedNodes=2',
             auto_scale_evaluation_interval=interval)
+        response = client.pool.enable_auto_scale(
+            pool_id=batch_pool.name,
+            parameters=parameters)
 
         self.assertIsNone(response)
 
         # Test Evaluate Autoscale
-        result = client.pool.evaluate_auto_scale(batch_pool.name, '$TargetDedicatedNodes=3')
+        result = client.pool.evaluate_auto_scale(batch_pool.name, models.BatchPoolEnableAutoScaleParameters(auto_scale_formula='$TargetDedicatedNodes=6'))
         self.assertIsInstance(result, models.AutoScaleRun)
         self.assertEqual(
             result.results,
-            '$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue')
+            '$TargetDedicatedNodes=6;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue')
         
         # Test Disable Autoscale
         pool = client.pool.get(batch_pool.name)
@@ -448,7 +452,7 @@ class BatchTest(AzureMgmtTestCase):
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
             pool = client.pool.get(batch_pool.name)
-        params = models.PoolResizeParameters(target_dedicated_nodes=0, target_low_priority_nodes=2)
+        params = models.BatchPoolResizeParameters(target_dedicated_nodes=1, target_low_priority_nodes=0)
         response = client.pool.resize(batch_pool.name, params)
         self.assertIsNone(response)
 
@@ -487,7 +491,7 @@ class BatchTest(AzureMgmtTestCase):
             start_window=datetime.timedelta(hours=1),
             recurrence_interval=datetime.timedelta(days=1)
         )
-        params = models.JobSchedule(
+        params = models.BatchJobSchedule(
             id=schedule_id,
             schedule=schedule,
             job_specification=job_spec
@@ -501,7 +505,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Get Job Schedule
         schedule = client.job_schedule.get(schedule_id)
-        self.assertIsInstance(schedule, models.JobSchedule)
+        self.assertIsInstance(schedule, models.BatchJobSchedule)
         self.assertEqual(schedule.id, schedule_id)
         self.assertEqual(schedule.state, models.JobScheduleState.active)
 
@@ -528,7 +532,7 @@ class BatchTest(AzureMgmtTestCase):
         schedule = models.Schedule(
             recurrence_interval=datetime.timedelta(hours=10)
         )
-        params = models.JobSchedule(schedule=schedule, job_specification=job_spec)
+        params = models.BatchJobSchedule(schedule=schedule, job_specification=job_spec)
         response = client.job_schedule.update(schedule_id, params)
         self.assertIsNone(response)
 
@@ -536,7 +540,7 @@ class BatchTest(AzureMgmtTestCase):
         schedule = models.Schedule(
             recurrence_interval=datetime.timedelta(hours=5)
         )
-        params = models.JobSchedulePatchParameter(schedule=schedule)
+        params = models.BatchJobScheduleUpdate(schedule=schedule)
         response = client.job_schedule.patch(schedule_id, params)
         self.assertIsNone(response)
 
@@ -580,7 +584,7 @@ class BatchTest(AzureMgmtTestCase):
                 offer="UbuntuServer",
                 sku="18.04-LTS")
         )
-        pool = models.Pool(
+        pool = models.BatchPool(
             id=self.get_resource_name('batch_network_'),
             target_dedicated_nodes=1,
             vm_size=DEFAULT_VM_SIZE,
@@ -600,7 +604,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsInstance(nodes[0], models.ComputeNode)
         self.assertEqual(len(nodes[0].endpoint_configuration.inbound_endpoints), 2)
         self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].name, 'TestEndpointConfig.0')
-        self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].protocol.value, 'udp')
+        self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].protocol, 'udp')
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -653,7 +657,7 @@ class BatchTest(AzureMgmtTestCase):
                               node_reimage_option=models.ComputeNodeReimageOption.terminate)
 
         # Test Remove Nodes
-        options = models.NodeRemoveParameter(node_list=[n.id for n in nodes])
+        options = models.NodeRemoveParameters(node_list=[n.id for n in nodes])
         response = client.pool.remove_nodes(batch_pool.name, options)
         self.assertIsNone(response)
 
@@ -676,7 +680,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
         # Test Update User
-        user = models.NodeUpdateUserParameter(password='liilef#$DdRGSa_ewkjh')
+        user = models.NodeUpdateUserParameters(password='liilef#$DdRGSa_ewkjh')
         response = client.compute_node.update_user(batch_pool.name, nodes[0].id, user_name, user)
         self.assertIsNone(response)
 
@@ -719,17 +723,15 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test File Properties from Compute Node
         props = client.file.get_properties_from_compute_node(
-            batch_pool.name, node, only_files[0].name, raw=True)
-        self.assertTrue('Content-Length' in props.headers)
-        self.assertTrue('Content-Type' in props.headers)
-
+            batch_pool.name, node, only_files[0].name)
+        self.assertTrue(props)
         # Test Get File from Compute Node
         file_length = 0
         with io.BytesIO() as file_handle:
             response = client.file.get_from_compute_node(batch_pool.name, node, only_files[0].name)
             for data in response:
                 file_length += len(data)
-        self.assertEqual(file_length, props.headers['Content-Length'])
+        self.assertEqual(file_length, int(props.headers['Content-Length']))
 
         # Test Delete File from Compute Node
         response = client.file.delete_from_compute_node(batch_pool.name, node, only_files[0].name)
@@ -742,7 +744,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test File Properties from Task
         props = client.file.get_properties_from_task(
-            batch_job.id, task_id, only_files[0].name, raw=True)
+            batch_job.id, task_id, only_files[0].name)
         self.assertTrue('Content-Length' in props.headers)
         self.assertTrue('Content-Type' in props.headers)
 
@@ -752,7 +754,7 @@ class BatchTest(AzureMgmtTestCase):
             response = client.file.get_from_task(batch_job.id, task_id, only_files[0].name)
             for data in response:
                 file_length += len(data)
-        self.assertEqual(file_length, props.headers['Content-Length'])
+        self.assertEqual(file_length, int(props.headers['Content-Length']))
 
         # Test Delete File from Task
         response = client.file.delete_from_task(batch_job.id, task_id, only_files[0].name)
@@ -835,12 +837,12 @@ class BatchTest(AzureMgmtTestCase):
             id=self.get_resource_name('batch_task4_'),
             command_line='cmd /c "echo hello world"',
             authentication_token_settings=models.AuthenticationTokenSettings(
-                access=[models.AccessScope.job])
+                access=["job"])
         )
         client.task.add(batch_job.id, task_param)
         task = client.task.get(batch_job.id, task_param.id)
         self.assertIsInstance(task, models.BatchTask)
-        self.assertEqual(task.authentication_token_settings.access[0], models.AccessScope.job)
+        self.assertEqual(task.authentication_token_settings.access[0], "job")
 
         # Test Create Task with Container Settings
         task_param = models.BatchTask(
@@ -873,10 +875,10 @@ class BatchTest(AzureMgmtTestCase):
             tasks.append(models.BatchTask(
                 id=self.get_resource_name('batch_task{}_'.format(i)),
                 command_line='cmd /c "echo hello world"'))
-        result = client.task.add_collection(batch_job.id, tasks)
+        result = client.task.add_collection(job_id=batch_job.id,task_collection=models.BatchTaskCollection(value=tasks))
         self.assertIsInstance(result, models.TaskAddCollectionResult)
         self.assertEqual(len(result.value), 3)
-        self.assertEqual(result.value[0].status, models.TaskAddStatus.success)
+        self.assertEqual(result.value[0].status, "Success")
 
         # Test List Tasks
         tasks = list(client.task.list(batch_job.id))
@@ -902,14 +904,14 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Update Task
         response = client.task.update(
-            batch_job.id, task_param.id,
-            constraints=models.TaskConstraints(max_task_retry_count=1))
+            job_id=batch_job.id, task_id=task_param.id,
+            task=models.BatchTask(constraints=models.TaskConstraints(max_task_retry_count=1)))
         self.assertIsNone(response)
 
         # Test Get Subtasks
         # TODO: Test with actual subtasks
         subtasks = client.task.list_subtasks(batch_job.id, task_param.id)
-        self.assertIsInstance(subtasks, models.TaskListSubtasksResult)
+        self.assertIsInstance(subtasks, models.BatchTaskListSubtasksResult)
         self.assertEqual(subtasks.value, [])
 
         # Test Delete Task
@@ -934,12 +936,12 @@ class BatchTest(AzureMgmtTestCase):
             "RequestBodyTooLarge",
             client.task.add_collection,
             batch_job.id,
-            tasks_to_add)
+            models.BatchTaskCollection(value=tasks_to_add))
         self.assertCreateTasksError(
             "RequestBodyTooLarge",
             client.task.add_collection,
             batch_job.id,
-            tasks_to_add,
+            models.BatchTaskCollection(value=tasks_to_add),
             threads=3)
 
         # Test Bulk Add Task Success
@@ -957,12 +959,12 @@ class BatchTest(AzureMgmtTestCase):
                 command_line="sleep 1",
                 resource_files=resource_files)
             tasks_to_add.append(task)
-        result = client.task.add_collection(batch_job.id, tasks_to_add)
+        result = client.task.add_collection(batch_job.id, models.BatchTaskCollection(value=tasks_to_add))
         self.assertIsInstance(result, models.TaskAddCollectionResult)
         self.assertEqual(len(result.value), 733)
-        self.assertEqual(result.value[0].status, models.TaskAddStatus.success)
+        self.assertEqual(result.value[0].status, "Success")
         self.assertTrue(
-            all(t.status == models.TaskAddStatus.success for t in result.value))
+            all(t.status == "Success" for t in result.value))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1004,7 +1006,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
 
         # Test Patch Job
-        options = models.JobUpdate(priority=900)
+        options = models.BatchJobUpdate(priority=900)
         response = client.job.patch(job_param.id, options)
         self.assertIsNone(response)
 
@@ -1032,11 +1034,13 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test List Jobs
         jobs = client.job.list()
-        self.assertIsInstance(jobs, models.CloudJobPaged)
+
+        self.assertIsInstance(jobs, Iterable)
         self.assertEqual(len(list(jobs)), 2)
 
+
         # Test Disable Job
-        response = client.job.disable(job_param.id, models.DisableJobOption.requeue)
+        response = client.job.disable(job_id=job_param.id,parameters=models.BatchJobDisableParameters(disable_tasks="requeue"))
         self.assertIsNone(response)
 
         # Test Enable Job
@@ -1045,7 +1049,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Prep and release task status
         task_status = client.job.list_preparation_and_release_task_status(job_param.id)
-        self.assertIsInstance(task_status, models.JobPreparationAndReleaseTaskExecutionInformationPaged)
+        self.assertIsInstance(task_status, Iterable)
         self.assertEqual(list(task_status), [])
 
         # Test Terminate Job

@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"id": "batch_iaas_449c15bb", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
+    body: '{"id": "batch_iaas_449c15bb", "vmSize": "standard_d2_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "MicrosoftWindowsServer", "offer": "WindowsServer",
       "sku": "2016-Datacenter-smalldisk"}, "nodeAgentSKUId": "batch.node.windows amd64",
       "windowsConfiguration": {"enableAutomaticUpdates": true}}, "taskSchedulingPolicy":
@@ -17,14 +17,11 @@ interactions:
       Content-Length:
       - '588'
       Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
+      - application/json; odata=minimalmetadata
       User-Agent:
-      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/12.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/13.0.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 13 Jan 2022 07:05:08 GMT
+      - Wed, 12 Oct 2022 01:20:09 GMT
     method: POST
     uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
@@ -36,15 +33,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jan 2022 07:05:08 GMT
+      - Wed, 12 Oct 2022 01:20:09 GMT
       etag:
-      - '0x8D9D66308BBCA09'
+      - '0x8DAABEFE7A4E354'
       last-modified:
-      - Thu, 13 Jan 2022 07:05:08 GMT
+      - Wed, 12 Oct 2022 01:20:09 GMT
       location:
       - https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb
       request-id:
-      - 9996c072-b4e7-4da2-a413-7aa74d79d349
+      - 7924cefc-6278-493f-b925-27d121aef0d9
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -66,17 +63,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/12.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/13.0.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 13 Jan 2022 07:05:08 GMT
+      - Wed, 12 Oct 2022 01:20:09 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8D9D66308BBCA09\",\"lastModified\":\"2022-01-13T07:05:08.6266889Z\",\"creationTime\":\"2022-01-13T07:05:08.6266889Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8DAABEFE7A4E354\",\"lastModified\":\"2022-10-12T01:20:09.8222932Z\",\"creationTime\":\"2022-10-12T01:20:09.8222932Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-12T01:20:09.8222932Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-10-12T01:20:09.8222932Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Pack\"\r\n  },\"virtualMachineConfiguration\":{\r\n
         \   \"imageReference\":{\r\n      \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
         \   },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\n
@@ -89,13 +83,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jan 2022 07:05:08 GMT
+      - Wed, 12 Oct 2022 01:20:09 GMT
       etag:
-      - '0x8D9D66308BBCA09'
+      - '0x8DAABEFE7A4E354'
       last-modified:
-      - Thu, 13 Jan 2022 07:05:08 GMT
+      - Wed, 12 Oct 2022 01:20:09 GMT
       request-id:
-      - e2ddb328-8ea3-44b2-a2aa-3392fda84059
+      - 6213b71d-5838-44a4-8d72-cf57e8418a08
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
