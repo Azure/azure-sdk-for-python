@@ -43,10 +43,12 @@ Note that the metadata under `products` must match an existing product slug foun
 ## Capturing code snippets in reference documentation
 Code snippets from samples can be captured as [examples][qa_example] in our reference documentation.
 To do this, place `# [START <keyword>]` and `# [END <keyword>]` comments which span the lines you want to show up in the reference documentation example.
+Note that the <keyword> used should be unique across all sync/async samples added to a client library.
 
 [Sample Example][qa_code_snippet]
 
 The given `START`/`END` keywords can be used in a [sphinx literalinclude][sphinx] directive in the docstring where the code snippet should be rendered in the reference documentation.
+Note that the keywords used should be unique across samples (including async).
 
 [Literalinclude example][literalinclude]
 
@@ -96,4 +98,4 @@ For general how-to with the Python SDK, see the [Azure SDK for Python Overview][
 [example_samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/b191c54ba9e6001a6f896d05bafd119dbe82ce63/sdk/translation/azure-ai-translation-document/samples/README.md
 [example_sample_sync]: https://github.com/Azure/azure-sdk-for-python/blob/b191c54ba9e6001a6f896d05bafd119dbe82ce63/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation.py
 [example_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_begin_translation_async.py
-[sphinx]: https://www.sphinx-doc.org/master/usage/restructuredtext/directives.html#directive-literalinclude
+[sphinx]: https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-literalinclude
