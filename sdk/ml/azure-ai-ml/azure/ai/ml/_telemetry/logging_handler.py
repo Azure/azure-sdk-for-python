@@ -12,7 +12,8 @@ from os import getenv
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
-from .._user_agent import USER_AGENT
+from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._utils._logger_utils import in_jupyter_notebook
 
 
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
@@ -22,7 +23,7 @@ INSTRUMENTATION_KEY = "71b954a8-6b7d-43f5-986c-3d3a6605d803"
 
 AZUREML_SDKV2_TELEMETRY_OPTOUT_ENV_VAR = "AZUREML_SDKV2_TELEMETRY_OPTOUT"
 
-# open census logger name
+# application insight logger name
 LOGGER_NAME = "ApplicationInsightLogger"
 
 SUCCESS = True
@@ -75,6 +76,8 @@ def get_appinsights_log_handler(
 
     Enable diagnostics collection with the :func:`azureml.telemetry.set_diagnostics_collection` function.
 
+    :param user_agent: Information about the user's browser.
+    :type user_agent: Dict[str: str]
     :param instrumentation_key: The Application Insights instrumentation key.
     :type instrumentation_key: str
     :param component_name: The component name.
@@ -91,6 +94,9 @@ def get_appinsights_log_handler(
             instrumentation_key = INSTRUMENTATION_KEY
 
         if is_telemetry_collection_disabled():
+            return logging.NullHandler()
+
+        if not in_jupyter_notebook():  # logging is not allowed in non-Jupyter contexts
             return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
