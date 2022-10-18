@@ -47,7 +47,7 @@ test_subscriptions = [
 class CustomDimensionsFilter(logging.Filter):
     """Add application-wide properties to AzureLogHandler records"""
 
-    def __init__(self, custom_dimensions=None):
+    def __init__(self, custom_dimensions=None):  # pylint: disable=super-init-not-called
         self.custom_dimensions = custom_dimensions or {}
 
     def filter(self, record):
@@ -88,10 +88,10 @@ def get_appinsights_log_handler(
     """
     try:
         if instrumentation_key is None:
-           instrumentation_key = INSTRUMENTATION_KEY
+            instrumentation_key = INSTRUMENTATION_KEY
 
         if is_telemetry_collection_disabled():
-           return logging.NullHandler()
+            return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
             return logging.NullHandler()
