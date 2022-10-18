@@ -173,17 +173,19 @@ class _PipelineNodeFactory:
         else:
             data[CommonYamlFields.TYPE] = _type
 
-        # parse component
-        component_key = "component"
-        if component_key in data and isinstance(data[component_key], dict):
-            data[component_key] = component_factory.load_from_dict(
-                data=data[component_key],
-                context={
-                    BASE_PATH_CONTEXT_KEY: data[component_key].get(BASE_PATH_CONTEXT_KEY, None),
-                }
-            )
+        new_instance: Union[BaseNode, AutoMLJob] = self.get_create_instance_func(_type)()
 
-        new_instance = self.get_create_instance_func(_type)()
+        if isinstance(new_instance, BaseNode):
+            # parse component
+            component_key = new_instance._get_component_attr_name()
+            if component_key in data and isinstance(data[component_key], dict):
+                data[component_key] = component_factory.load_from_dict(
+                    data=data[component_key],
+                    context={
+                        BASE_PATH_CONTEXT_KEY: data[component_key].get(BASE_PATH_CONTEXT_KEY, None),
+                    }
+                )
+
         new_instance.__init__(**data)
         return new_instance
 
