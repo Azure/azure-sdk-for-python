@@ -23,7 +23,7 @@ INSTRUMENTATION_KEY = "71b954a8-6b7d-43f5-986c-3d3a6605d803"
 AZUREML_SDKV2_TELEMETRY_OPTOUT_ENV_VAR = "AZUREML_SDKV2_TELEMETRY_OPTOUT"
 
 # open census logger name
-LOGGER_NAME = "OpenCensusLogger"
+LOGGER_NAME = "ApplicationInsightLogger"
 
 SUCCESS = True
 FAILURE = False
@@ -52,9 +52,9 @@ class CustomDimensionsFilter(logging.Filter):
 
     def filter(self, record):
         """Adds the default custom_dimensions into the current log record"""
-        cdim = self.custom_dimensions.copy()
-        cdim.update(getattr(record, 'custom_dimensions', {}))
-        record.custom_dimensions = cdim
+        custom_dimensions = self.custom_dimensions.copy()
+        custom_dimensions.update(getattr(record, 'custom_dimensions', {}))
+        record.custom_dimensions = custom_dimensions
 
         return True
 
@@ -71,7 +71,7 @@ def get_appinsights_log_handler(
      component_name=None,
      **kwargs
  ):
-    """Enable the OpenCensus logging handler for specified logger and instrumentation key.
+    """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
 
     Enable diagnostics collection with the :func:`azureml.telemetry.set_diagnostics_collection` function.
 
