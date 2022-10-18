@@ -357,9 +357,10 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     if Path(output_path / "output.yaml").exists():
         os.remove(Path(output_path / "output.yaml"))
 
+    # get version of @azure-tools/cadl-python used in generation
+    cadl_python_version = getoutput(f"npm view {cadl_python} version").split('\n')[-1]
+
     # return to original folder
     os.chdir(origin_path)
 
-    # get version of @azure-tools/cadl-python used in generation
-    cadl_python_version = getoutput(f"npm view {cadl_python} version").split('\n')[-1]
     return {cadl_python: cadl_python_version}
