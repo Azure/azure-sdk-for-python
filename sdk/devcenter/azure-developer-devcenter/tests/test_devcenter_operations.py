@@ -8,22 +8,11 @@ import functools
 import os
 import pytest
 import logging
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.identity import InteractiveBrowserCredential 
 from azure.developer.devcenter import DevCenterClient
 from azure.core.exceptions import HttpResponseError
-
-DevcenterPowerShellPreparer = functools.partial(
-    EnvironmentVariableLoader, 
-    'devcenter', 
-    devcenter_name="sdk-default-dc",
-    devcenter_tenant_id="88888888-8888-8888-8888-888888888888",
-    devcenter_project_name="sdk-default-project",
-    devcenter_pool_name="sdk-default-pool",
-    devcenter_test_user_id="11111111-1111-1111-1111-111111111111",
-    devcenter_environment_type_name="sdk-default-environment-type",
-    devcenter_catalog_name="sdk-default-catalog",
-    devcenter_catalog_item_name="Empty")
+from testcase import DevcenterPowerShellPreparer
 
 class TestDevcenter(AzureRecordedTestCase):
     def create_client(self, dev_center_name, devcenter_tenant_id):
