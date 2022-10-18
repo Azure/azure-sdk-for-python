@@ -1,0 +1,19 @@
+parameters:
+  ServiceDirectory: ''
+  ValidateFormatting: false
+  EnvVars: {}
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7'
+    inputs:
+     versionSpec: '3.7'
+    condition: succeededOrFailed()
+
+  - task: PythonScript@0
+    displayName: 'Run python_snippet_updater.py'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/python_snippet_updater.py'
+      arguments: >-
+        ${{ parameters.ServiceDirectory }}
+    condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))

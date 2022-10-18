@@ -115,6 +115,11 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
+  - template: ../steps/update_snippet.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
