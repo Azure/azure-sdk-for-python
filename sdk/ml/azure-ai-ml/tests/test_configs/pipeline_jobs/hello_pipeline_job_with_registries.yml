@@ -8,7 +8,6 @@ inputs:
 jobs:
   a:
     component: azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1
-    command: echo hello ${{inputs.hello_string}}
     environment: azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6
   b:
     command: echo "world" >> ${{outputs.world_output}}/world.txt
