@@ -32,13 +32,16 @@ def main(generate_input, generate_output):
     package_total = set()
     if "relatedReadmeMdFiles" in data:
         readme_files = data["relatedReadmeMdFiles"]
-    else:
+    elif "relatedReadmeMdFile" in data:
         input_readme = data["relatedReadmeMdFile"]
         if "specification" in spec_folder:
             spec_folder = str(Path(spec_folder.split("specification")[0]))
         if "specification" not in input_readme:
             input_readme = str(Path("specification") / input_readme)
         readme_files = [input_readme]
+    else:
+        # ["specification/confidentialledger/ConfientialLedger"]
+        readme_files = [data["relatedCadlProjectFolder"]]
 
     for input_readme in readme_files:
         relative_path_readme = str(Path(spec_folder, input_readme))
@@ -53,8 +56,10 @@ def main(generate_input, generate_output):
                 force_generation=True,
                 python_tag=python_tag,
             )
-        else:
+        elif "data-plane" in input_readme:
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+        else:
+            config = gen_cadl(input_readme, spec_folder)
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
