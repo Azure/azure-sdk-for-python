@@ -39,7 +39,7 @@ def in_jupyter_notebook() -> bool:
     """
     try:
         from IPython import get_ipython
-        if 'IPKernelApp' not in get_ipython().config:  # pragma: no cover
+        if 'IPKernelApp' not in get_ipython().config:
             return False
     except ImportError:
         return False
