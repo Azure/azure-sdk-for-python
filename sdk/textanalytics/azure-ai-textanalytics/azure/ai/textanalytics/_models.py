@@ -661,7 +661,8 @@ class CategorizedEntity(DictMixin):
     :ivar confidence_score: Confidence score between 0 and 1 of the extracted
         entity.
     :vartype confidence_score: float
-    :ivar resolutions: The collection of entity resolution objects.
+    :ivar resolutions: The collection of entity resolution objects. More information can be found here:
+        https://aka.ms/azsdk/language/ner-resolutions
     :vartype resolutions: Optional[list[AgeResolution or AreaResolution or BooleanResolution or
         CurrencyResolution or DateTimeResolution or InformationResolution or LengthResolution or
         NumberResolution or NumericRangeResolution or OrdinalResolution or SpeedResolution or
