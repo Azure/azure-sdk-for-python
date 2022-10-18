@@ -46,8 +46,6 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
     :param api_version: Anomaly Detector API version (for example, v1.1). "v1.1" Default value is
      "v1.1".
     :type api_version: str
-    :keyword endpoint: Service URL. Required. Default value is "".
-    :paramtype endpoint: str
     """
 
     def __init__(
