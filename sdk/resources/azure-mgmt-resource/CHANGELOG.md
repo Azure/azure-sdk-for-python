@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2022-10-18)
+## 21.2.1 (2022-10-18)
 
+### Bugs Fixed
 
+  - Fixed urlencode in `next_link` of paging operation
 
 ## 21.2.0 (2022-10-10)
 
