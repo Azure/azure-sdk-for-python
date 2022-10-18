@@ -13,7 +13,6 @@ from os import getenv
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 from azure.ai.ml._user_agent import USER_AGENT
-from azure.ai.ml._utils._logger_utils import in_jupyter_notebook
 
 
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
@@ -63,6 +62,24 @@ class CustomDimensionsFilter(logging.Filter):
 def is_telemetry_collection_disabled():
     telemetry_disabled = getenv(AZUREML_SDKV2_TELEMETRY_OPTOUT_ENV_VAR)
     return telemetry_disabled and (telemetry_disabled.lower() == "true" or telemetry_disabled == "1")
+
+
+def in_jupyter_notebook() -> bool:
+    """
+    Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
+    non-Jupyter contexts.
+
+    Adapted from https://stackoverflow.com/a/22424821
+    """
+    try:  # cspell:ignore ipython
+        from IPython import get_ipython
+        if 'IPKernelApp' not in get_ipython().config:
+            return False
+    except ImportError:
+        return False
+    except AttributeError:
+        return False
+    return True
 
 
 def get_appinsights_log_handler(
