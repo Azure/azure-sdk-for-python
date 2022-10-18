@@ -188,7 +188,4 @@ class TestOpentelemetryWrapper:
             assert wrapped_class.kind == SpanKind.INTERNAL
 
             with pytest.raises(ValueError):
-                # TODO: what should be done here?
-                # spell-checker:disable
                 wrapped_class.kind = "somethingstuid"
-                # spell-checker:enable

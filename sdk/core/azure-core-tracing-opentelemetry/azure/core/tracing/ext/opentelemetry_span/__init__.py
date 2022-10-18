@@ -83,7 +83,6 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
                 # assuming user knows what they are doing.
                 kwargs.setdefault('links', links)
         self._span_instance = span or current_tracer.start_span(name=name, kind=kind, **kwargs)
-        # spell-checker:ignore ctxt
         self._current_ctxt_manager = None
 
     @property

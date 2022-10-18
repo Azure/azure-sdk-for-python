@@ -412,6 +412,13 @@
       ]
     },
     {
+      "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
+      "words": [
+        "ctxt",
+        "somethingstuid"
+      ]
+    },
+    {
       "filename": "sdk/communication/azure-communication-identity/tests/**",
       "words": [
         "XVCJ",
