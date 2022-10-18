@@ -5,6 +5,7 @@
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
 - Most configuration classes from the entity package now implement the standard mapping protocol.
+- Add registry delete operation.
 
 ### Breaking Changes
 
