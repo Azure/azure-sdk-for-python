@@ -90,18 +90,13 @@ class BufferedProducerDispatcher:
     async def flush(self, timeout_time=None):
         # flush all the buffered producer, the method will block until finishes or times out
         async with self._lock:
-            futures = []
-            for pid, producer in self._buffered_producers.items():
-                # call each producer's flush method
-                futures.append(
-                    (
-                        pid,
-                        asyncio.ensure_future(
-                            producer.flush(timeout_time=timeout_time)
-                        ),
-                    )
-                )
-
+            futures = [
+                (
+                    pid,
+                    asyncio.ensure_future(producer.flush(timeout_time=timeout_time)),
+                ) 
+                for pid, producer in self._buffered_producers.items()
+            ]
             # gather results
             exc_results = {}
             for pid, future in futures:
@@ -125,12 +120,9 @@ class BufferedProducerDispatcher:
     async def close(self, *, flush=True, timeout_time=None, raise_error=False):
 
         async with self._lock:
-
-            futures = []
             # stop all buffered producers
-            for pid, producer in self._buffered_producers.items():
-                futures.append(
-                    (
+            futures = [
+                (
                         pid,
                         asyncio.ensure_future(
                             producer.stop(
@@ -139,9 +131,10 @@ class BufferedProducerDispatcher:
                                 raise_error=raise_error,
                             )
                         ),
-                    )
                 )
-
+                for pid, producer in self._buffered_producers.items()
+            ]
+            
             exc_results = {}
             # gather results
             for pid, future in futures:
