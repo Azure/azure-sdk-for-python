@@ -2033,3 +2033,34 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
             assert not document_results[1][0].is_error
             assert isinstance(document_results[1][0], ExtractSummaryResult)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_entity_action_resolutions(self, client):
+        docs = [
+            "The cat is 1 year old and weighs 10 pounds."
+        ]
+        async with client:
+            poller = await client.begin_analyze_actions(
+                docs,
+                actions=[RecognizeEntitiesAction(
+                    model_version="2022-10-01-preview"
+                )],
+                polling_interval=self._interval(),
+            )
+            response = await poller.result()
+
+        async for document_results in response:
+            document_result = document_results[0]
+            for entity in document_result.entities:
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
+                for res in entity.resolutions:
+                    assert res.resolution_kind in ["WeightResolution", "AgeResolution"]
+                    if res.resolution_kind == "WeightResolution":
+                        assert res.value == 10
+                    if res.resolution_kind == "AgeResolution":
+                        assert res.value == 1
