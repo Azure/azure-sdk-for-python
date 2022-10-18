@@ -1,5 +1,11 @@
 # Release History
 
+## 2.8.1 (2022-10-17)
+
+### Other Changes
+
+  - Changed type of stored_procedure_parameters to json-like object
+
 ## 2.8.0 (2022-09-13)
 
 ### Features Added

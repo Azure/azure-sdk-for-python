@@ -562,3 +562,8 @@ class RollingRate:
     DAY = "day"
     HOUR = "hour"
     MINUTE = "minute"
+
+
+class Scope:
+    SUBSCRIPTION="subscription"
+    RESOURCE_GROUP="resource_group"
