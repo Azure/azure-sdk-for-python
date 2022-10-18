@@ -20,7 +20,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_
     LearningRateScheduler,
     StochasticOptimizer,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import ComponentJobConstants
