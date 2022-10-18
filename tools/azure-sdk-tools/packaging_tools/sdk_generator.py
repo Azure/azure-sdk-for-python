@@ -110,7 +110,7 @@ def main(generate_input, generate_output):
     # remove duplicates
     for value in result.values():
         value["path"] = list(set(value["path"]))
-        value["readmeMd"] = list(set(value["readmeMd"]))
+        value[spec_word] = list(set(value[spec_word]))
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
