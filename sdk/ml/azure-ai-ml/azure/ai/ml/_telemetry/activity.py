@@ -22,10 +22,11 @@ from uuid import uuid4
 
 from marshmallow import ValidationError
 
-from azure.ai.ml.exceptions import ErrorCategory, MlException
 from azure.core.exceptions import HttpResponseError
 
-from .._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
+from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
+from azure.ai.ml._utils._logger_utils import in_jupyter_notebook
+from azure.ai.ml.exceptions import ErrorCategory, MlException
 
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
 IS_IN_CI_PIPELINE = _str_to_bool(os.environ.get("IS_IN_CI_PIPELINE", "False"))
@@ -167,6 +168,9 @@ def log_activity(
     :param custom_dimensions: The custom properties of the activity.
     :type custom_dimensions: dict
     """
+    if not in_jupyter_notebook():  # logging is not allowed in non-Jupyter contexts
+        return 
+
     activity_info = dict(
         activity_id=str(uuid.uuid4()),
         activity_name=activity_name,

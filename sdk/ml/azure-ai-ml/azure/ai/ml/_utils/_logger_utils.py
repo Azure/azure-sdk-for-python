@@ -28,3 +28,21 @@ class OpsLogger:
     def update_info(self, data: dict) -> None:
         if "app_insights_handler" in data:
             self.logger.addHandler(data.pop("app_insights_handler"))
+
+
+def in_jupyter_notebook() -> bool:
+    """
+    Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in 
+    non-Jupyter contexts.
+
+    Adapted from https://stackoverflow.com/a/22424821
+    """
+    try:
+        from IPython import get_ipython
+        if 'IPKernelApp' not in get_ipython().config:  # pragma: no cover
+            return False
+    except ImportError:
+        return False
+    except AttributeError:
+        return False
+    return True
