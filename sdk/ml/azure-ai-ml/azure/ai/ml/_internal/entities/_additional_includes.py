@@ -12,6 +12,7 @@ from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
+PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 
 
 class _AdditionalIncludes:
@@ -41,7 +42,7 @@ class _AdditionalIncludes:
         if self.__yaml_path is None:
             # if yaml path is not specified, use a not created
             # temp file name
-            return Path(tempfile.mktemp())
+            return Path.cwd() / PLACEHOLDER_FILE_NAME
         return Path(self.__yaml_path)
 
     @property
