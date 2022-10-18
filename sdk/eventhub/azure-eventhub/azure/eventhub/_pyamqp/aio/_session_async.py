@@ -268,15 +268,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 frame
             )
         else:
-            futures = []
-            for link in self._output_handles.values():
-                if (
-                    self.remote_incoming_window > 0
-                    and not link._is_closed  # pylint: disable=protected-access
-                ):
-                    futures.append(
-                        link._incoming_flow(frame)  # pylint: disable=protected-access
-                    )
+            futures = [
+                link._incoming_flow(frame) # pylint: disable=protected-access
+                for link in self._output_handles.values() # pylint: disable=protected-access
+                if self.remote_incoming_window > 0 and not link._is_closed # pylint: disable=protected-access
+            ]
             await asyncio.gather(*futures)
 
     async def _outgoing_transfer(self, delivery):
@@ -384,11 +380,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             _LOGGER.info(
                 "<- %r", DispositionFrame(*frame), extra=self.network_trace_params
             )
-        futures = []
-        for link in self._input_handles.values():
+        futures = [
             asyncio.ensure_future(
-                link._incoming_disposition(frame)  # pylint: disable=protected-access
-            )
+                link._incoming_disposition(frame)) for link in self._input_handles.values() # pylint: disable=protected-access
+        ]
         await asyncio.gather(*futures)
 
     async def _outgoing_detach(self, frame):
