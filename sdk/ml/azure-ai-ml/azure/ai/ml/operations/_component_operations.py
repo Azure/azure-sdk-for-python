@@ -37,11 +37,13 @@ from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarge
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
+from ..entities._builders.condition_node import ConditionNode
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ..entities._job.pipeline._attr_dict import has_attr_safe
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -488,14 +490,14 @@ class ComponentOperations(_ScopeDependentOperations):
         def preprocess_job(node):
             """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
             # compute binding to pipeline input is supported on node.
-            supported_fields = ["compute"]
+            supported_fields = ["compute", "compute_name"]
             for field_name in supported_fields:
                 val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
                 if isinstance(val, PipelineInput):
                     # Put binding string to field
                     setattr(node, field_name, val._data_binding())
 
-        def resolve_base_node(name, node):
+        def resolve_base_node(name, node: BaseNode):
             """Resolve node name, compute and component for base node."""
             # Set display name as node name
             if (
@@ -513,6 +515,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 if not is_data_binding_expression(node.compute):
                     # Get compute for each job
                     node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
+                if has_attr_safe(node, "compute_name") and not is_data_binding_expression(node.compute_name):
+                    node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
             # Get the component id for each job's component
             # Note: do not use node.component as Sweep don't have that
             node._component = resolver(
@@ -528,6 +532,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):
                 resolve_base_node(key, job_instance)
+            elif isinstance(job_instance, ConditionNode):
+                pass
             else:
                 msg = f"Non supported job type in Pipeline: {type(job_instance)}"
                 raise ComponentException(

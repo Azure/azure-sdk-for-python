@@ -420,7 +420,7 @@ class SchemaValidatableMixin:
         :type raise_error: bool
         return type: ValidationResult
         """
-        result = self._schema_validate()
+        result = self.__schema_validate()
         result.merge_with(self._customized_validate())
         return result.try_raise(
             raise_error=raise_error, error_target=self._get_validation_error_target()
@@ -443,7 +443,7 @@ class SchemaValidatableMixin:
         """
         return []
 
-    def _schema_validate(self) -> MutableValidationResult:
+    def __schema_validate(self) -> MutableValidationResult:
         """Validate the resource with the schema.
 
         return type: ValidationResult
@@ -483,35 +483,65 @@ class _ValidationResultBuilder:
         return obj
 
     @classmethod
-    def from_validation_error(cls, error: ValidationError, source_path: str = None):
+    def from_validation_error(
+        cls,
+        error: ValidationError,
+        *,
+        source_path: str = None,
+        error_on_unknown_field=False
+    ):
         """Create a validation result from a ValidationError, which will be
         raised in marshmallow.Schema.load. Please use this function only for
         exception in loading file.
 
         param error: ValidationError raised by marshmallow.Schema.load.
+        type error: ValidationError
+        param error_on_unknown_field: whether to raise error if there
+        are unknown field diagnostics.
+        type error_on_unknown_field: bool
         """
-        obj = cls.from_validation_messages(error.messages, data=error.data)
+        obj = cls.from_validation_messages(
+            error.messages, data=error.data,
+            error_on_unknown_field=error_on_unknown_field
+        )
         if source_path:
             obj.resolve_location_for_diagnostics(source_path, resolve_value=True)
         return obj
 
     @classmethod
-    def from_validation_messages(cls, errors: typing.Dict, data: typing.Dict):
+    def from_validation_messages(
+        cls,
+        errors: typing.Dict,
+        data: typing.Dict,
+        *,
+        error_on_unknown_field: bool = False
+    ):
         """Create a validation result from error messages, which will be
         returned by marshmallow.Schema.validate.
 
         param errors: error message returned by
-        marshmallow.Schema.validate. param data: serialized data to
-        validate
+        marshmallow.Schema.validate.
+        type errors: dict
+        param data: serialized data to validate
+        type data: dict
+        param error_on_unknown_field: whether to raise error if there
+        are unknown field diagnostics.
+        type error_on_unknown_field: bool
         """
         instance = MutableValidationResult(target_obj=data)
         errors = copy.deepcopy(errors)
-        cls._from_validation_messages_recursively(errors, [], instance)
+        cls._from_validation_messages_recursively(
+            errors, [], instance, error_on_unknown_field=error_on_unknown_field
+        )
         return instance
 
     @classmethod
     def _from_validation_messages_recursively(
-        cls, errors, path_stack, instance: MutableValidationResult
+        cls,
+        errors: typing.Union[typing.Dict, typing.List, str],
+        path_stack: typing.List[str],
+        instance: MutableValidationResult,
+        error_on_unknown_field: bool,
     ):
         cur_path = ".".join(path_stack) if path_stack else "*"
         # single error message
@@ -526,17 +556,17 @@ class _ValidationResultBuilder:
                 # fields.Dict
                 if field in ["key", "value"]:
                     cls._from_validation_messages_recursively(
-                        msgs, path_stack, instance
+                        msgs, path_stack, instance, error_on_unknown_field
                     )
                 else:
                     path_stack.append(field)
                     cls._from_validation_messages_recursively(
-                        msgs, path_stack, instance
+                        msgs, path_stack, instance, error_on_unknown_field
                     )
                     path_stack.pop()
         # detailed error message
         elif isinstance(errors, list) and all(isinstance(msg, str) for msg in errors):
-            if cls.UNKNOWN_MESSAGE in errors:
+            if cls.UNKNOWN_MESSAGE in errors and not error_on_unknown_field:
                 # Unknown field is not a real error, so we should remove it and append a warning.
                 errors.remove(cls.UNKNOWN_MESSAGE)
                 instance.append_warning(message=cls.UNKNOWN_MESSAGE, yaml_path=cur_path)

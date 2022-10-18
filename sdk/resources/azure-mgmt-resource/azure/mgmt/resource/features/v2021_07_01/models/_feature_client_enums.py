@@ -7,21 +7,19 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class SubscriptionFeatureRegistrationApprovalType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The feature approval type.
-    """
+class SubscriptionFeatureRegistrationApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The feature approval type."""
 
     NOT_SPECIFIED = "NotSpecified"
     APPROVAL_REQUIRED = "ApprovalRequired"
     AUTO_APPROVAL = "AutoApproval"
 
-class SubscriptionFeatureRegistrationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The state.
-    """
+
+class SubscriptionFeatureRegistrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state."""
 
     NOT_SPECIFIED = "NotSpecified"
     NOT_REGISTERED = "NotRegistered"

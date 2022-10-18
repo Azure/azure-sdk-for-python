@@ -134,7 +134,7 @@ def image_segmentation_dataset() -> Tuple[str, str]:
 @pytest.fixture
 def newsgroup() -> Tuple[Input, Input, str]:
     training_data = Input(type=AssetTypes.MLTABLE, path=NEWSGROUP_TRAIN_DATASET_PATH)
-    validation_data = Input(type=AssetTypes.MLTABLE, path=NEWSGROUP_TRAIN_DATASET_PATH)
+    validation_data = Input(type=AssetTypes.MLTABLE, path=NEWSGROUP_VALID_DATASET_PATH)
     target_column_name = "y"
 
     return training_data, validation_data, target_column_name

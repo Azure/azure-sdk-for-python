@@ -1,9 +1,9 @@
 
 from ._models import (
-    Geolocation
+    CountryRegionResult
 )
 
 
 __all__ = [
-    'Geolocation'
+    'CountryRegionResult'
 ]

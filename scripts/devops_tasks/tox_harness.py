@@ -165,7 +165,6 @@ def individual_workload(tox_command_tuple, workload_results):
         if in_ci():
             shutil.rmtree(tox_dir)
 
-
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
     workload_results = {}
@@ -255,6 +254,7 @@ def build_whl_for_req(req, package_path):
         return whl_path
     else:
         return req
+
 
 def replace_dev_reqs(file, pkg_root):
     adjusted_req_lines = []
@@ -355,12 +355,12 @@ def collect_log_files(working_dir):
     for f in glob.glob(os.path.join(root_dir, "_tox_logs", "*")):
         logging.info("Log file: {}".format(f))
 
-
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
+        clone_dir = os.path.abspath(os.path.join(cmd_tuple[1], "..", "..", "..", "l"))
         logging.info("tox_dir: {}".format(tox_dir))
 
         logging.info(
@@ -377,6 +377,16 @@ def execute_tox_serial(tox_command_tuples):
         if in_ci():
             collect_log_files(cmd_tuple[1])
             shutil.rmtree(tox_dir)
+
+            if os.path.exists(clone_dir):
+                try:
+                    shutil.rmtree(clone_dir)
+                except Exception as e:
+                    # git has a permissions problem. one of the files it drops
+                    # cannot be removed as no one has the permission to do so.
+                    # lets log just in case, but this should really only affect windows machines.
+                    logging.info(e)
+                    pass
 
     return return_code
 

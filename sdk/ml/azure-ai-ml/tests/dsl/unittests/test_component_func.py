@@ -1,18 +1,16 @@
 from pathlib import Path
 from typing import Callable, Union
 
-import marshmallow
 import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import PyTorchDistribution, load_component
-from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException, UnexpectedAttributeError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -156,7 +154,22 @@ class TestComponentFunc:
 
         # configure mode and default Output is built
         component.outputs.component_out_path.mode = "upload"
-        assert component._build_outputs() == {"component_out_path": Output(mode="upload")}
+        assert component._build_outputs() == {"component_out_path": Output(type=None, mode="upload")}
+
+        test_output_path = "azureml://datastores/workspaceblobstore/paths/azureml/ps_copy_component/outputs/output_dir"
+        component: Command = component_func()
+
+        # configure path and default Output is built
+        component.outputs.component_out_path.path = test_output_path
+        assert component._build_outputs() == {"component_out_path": Output(type=None, path=test_output_path)}
+
+        # non-existent output
+        with pytest.raises(
+                UnexpectedAttributeError,
+                match="Got an unexpected attribute 'component_out_path_non', "
+                      "valid attributes: 'component_out_path'."
+        ):
+            component.outputs["component_out_path_non"].path = test_output_path
 
         # configure data
         component: Command = component_func()

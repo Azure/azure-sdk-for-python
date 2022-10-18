@@ -101,16 +101,18 @@ class DatastoreOperations(_ScopeDependentOperations):
         :return: Datastore with the specified name.
         :rtype: Datastore
         """
-
-        datastore_resource = self._operation.get(
-            name=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            **self._init_kwargs
-        )
-        if include_secrets:
-            self._fetch_and_populate_secret(datastore_resource)
-        return Datastore._from_rest_object(datastore_resource)
+        try:
+            datastore_resource = self._operation.get(
+                name=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._init_kwargs
+            )
+            if include_secrets:
+                self._fetch_and_populate_secret(datastore_resource)
+            return Datastore._from_rest_object(datastore_resource)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     def _fetch_and_populate_secret(self, datastore_resource: DatastoreData) -> None:
         if datastore_resource.name and not isinstance(
@@ -128,16 +130,18 @@ class DatastoreOperations(_ScopeDependentOperations):
         :return: The default datastore.
         :rtype: Datastore
         """
-
-        datastore_resource = self._operation.list(
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            is_default=True,
-            **self._init_kwargs
-        ).next()
-        if include_secrets:
-            self._fetch_and_populate_secret(datastore_resource)
-        return Datastore._from_rest_object(datastore_resource)
+        try:
+            datastore_resource = self._operation.list(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                is_default=True,
+                **self._init_kwargs
+            ).next()
+            if include_secrets:
+                self._fetch_and_populate_secret(datastore_resource)
+            return Datastore._from_rest_object(datastore_resource)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, datastore: Datastore) -> Datastore:

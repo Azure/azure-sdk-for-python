@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-identity/1.12.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 06 Sep 2022 19:09:21 GMT",
+        "Date": "Mon, 17 Oct 2022 22:16:34 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13622.4 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13845.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -100,7 +100,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "Cookie": "fpc=AtedNJ6kcrlPteM1g0ztO_g; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -110,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 06 Sep 2022 19:09:21 GMT",
+        "Date": "Mon, 17 Oct 2022 22:16:34 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13562.12 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13845.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -166,7 +167,7 @@
       }
     },
     {
-      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-05-01",
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/:analyze-conversations?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -174,7 +175,7 @@
         "Connection": "keep-alive",
         "Content-Length": "314",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+        "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "kind": "Conversation",
@@ -194,102 +195,19 @@
           "verbose": true
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "0b30f86a-91f7-4fc2-a518-4ce5bc976907",
-        "Cache-Control": "no-store, proxy-revalidate, no-cache, max-age=0, private",
-        "Content-Type": "application/json; charset=utf-8",
-        "csp-billing-usage": "CognitiveServices.TextAnalytics.Language.ConversationalLanguageUnderstanding.Prediction=1",
-        "Date": "Tue, 06 Sep 2022 19:09:21 GMT",
-        "Pragma": "no-cache",
-        "request-id": "0b30f86a-91f7-4fc2-a518-4ce5bc976907",
+        "apim-request-id": "bc42c361-4863-4ea4-a711-c4ad92a286d1",
+        "Content-Length": "203",
+        "Content-Type": "application/json",
+        "Date": "Mon, 17 Oct 2022 22:16:35 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "Transfer-Encoding": "chunked",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "537"
+        "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "kind": "ConversationResult",
-        "result": {
-          "query": "Send an email to Carol about the tomorrow\u0027s demo",
-          "prediction": {
-            "topIntent": "Send",
-            "projectKind": "Conversation",
-            "intents": [
-              {
-                "category": "Send",
-                "confidenceScore": 0.9053172
-              },
-              {
-                "category": "Read",
-                "confidenceScore": 0.44011447
-              },
-              {
-                "category": "Setup",
-                "confidenceScore": 0.41303915
-              },
-              {
-                "category": "Set",
-                "confidenceScore": 0.21186642
-              },
-              {
-                "category": "None",
-                "confidenceScore": 0.20198277
-              },
-              {
-                "category": "Find",
-                "confidenceScore": 0.19216746
-              },
-              {
-                "category": "Call",
-                "confidenceScore": 0.16446844
-              },
-              {
-                "category": "Play",
-                "confidenceScore": 0.15655291
-              },
-              {
-                "category": "Open",
-                "confidenceScore": 0.08699014
-              }
-            ],
-            "entities": [
-              {
-                "category": "Contact",
-                "text": "Carol",
-                "offset": 17,
-                "length": 5,
-                "confidenceScore": 1,
-                "extraInformation": [
-                  {
-                    "extraInformationKind": "EntitySubtype",
-                    "value": "person.name"
-                  }
-                ]
-              },
-              {
-                "category": "MeetingDate",
-                "text": "tomorrow",
-                "offset": 33,
-                "length": 8,
-                "confidenceScore": 1,
-                "resolutions": [
-                  {
-                    "resolutionKind": "DateTimeResolution",
-                    "dateTimeSubKind": "Date",
-                    "timex": "2022-09-07",
-                    "value": "2022-09-07"
-                  }
-                ],
-                "extraInformation": [
-                  {
-                    "extraInformationKind": "EntitySubtype",
-                    "value": "datetime.date"
-                  }
-                ]
-              }
-            ]
-          }
+        "error": {
+          "code": "API operation not supported for token authentication",
+          "message": "ApiId Language-2022-10-01-preview OperationId ConversationAnalysis_AnalyzeConversation not supported for CheckAccess."
         }
       }
     }

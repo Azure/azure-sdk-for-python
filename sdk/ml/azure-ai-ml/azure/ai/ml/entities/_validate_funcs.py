@@ -30,7 +30,7 @@ def validate_common(cls, path, validate_func, params_override=None) -> Validatio
     except ValidationException as err:
         return _ValidationResultBuilder.from_single_message(err.message)
     except ValidationError as err:
-        return _ValidationResultBuilder.from_validation_error(err, path)
+        return _ValidationResultBuilder.from_validation_error(err, source_path=path)
 
 
 def validate_component(path, ml_client=None, params_override=None) -> ValidationResult:
