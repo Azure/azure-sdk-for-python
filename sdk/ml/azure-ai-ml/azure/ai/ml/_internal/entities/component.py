@@ -4,9 +4,7 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
-from pathlib import Path
 from typing import Dict, Union
-import os
 
 from marshmallow import INCLUDE, Schema
 

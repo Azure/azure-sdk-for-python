@@ -34,7 +34,7 @@ class _AdditionalIncludes:
 
     @property
     def with_includes(self):
-        return len(self._includes) is not 0
+        return len(self._includes) != 0
 
     @property
     def _yaml_path(self) -> Path:
