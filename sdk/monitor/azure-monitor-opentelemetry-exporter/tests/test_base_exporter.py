@@ -84,7 +84,7 @@ class TestBaseExporter(unittest.TestCase):
             storage_maintenance_period=30,
             storage_max_size=1000,
             storage_min_retry_interval=100,
-            storage_path="test/path",
+            storage_directory="test/path",
             storage_retention_period=2000,
         )
         self.assertEqual(
@@ -102,7 +102,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._timeout, 10)
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
-        self.assertEqual(base._storage_path, "test/path")
+        self.assertEqual(base._storage_directory, "test/path")
 
     def test_transmit_from_storage_success(self):
         exporter = BaseExporter()
