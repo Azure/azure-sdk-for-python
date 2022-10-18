@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     UserCreatedStorageAccount as RestUserCreatedStorageAccount)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
+from .util import make_rest_user_storage_from_id
 
 
 # This exists despite not being used by the schema validator because this entire
@@ -93,6 +94,7 @@ class SystemCreatedStorageAccount:
         storage_account_hns: bool,
         storage_account_type: StorageAccountType,
         arm_resource_id: str = None,
+        replication_count = 1,
     ):
         """
         :param arm_resource_id: Resource ID of the storage account.
@@ -104,10 +106,14 @@ class SystemCreatedStorageAccount:
             "Standard_GRS, "Standard_RAGRS", "Standard_ZRS", "Standard_GZRS",
             "Standard_RAGZRS", "Premium_LRS", "Premium_ZRS"
         :type storage_account_type: StorageAccountType
+        :param replication_count: The number of replicas of this storage account
+            that should be created. Defaults to 1. Values less than 1 are invalid.
+        :type replication_count: int
         """
         self.arm_resource_id = arm_resource_id
         self.storage_account_hns = storage_account_hns
         self.storage_account_type = storage_account_type
+        self.replication_count = replication_count
 
     # storage should technically be a union between str and SystemCreatedStorageAccount,
     # but python doesn't accept self class references apparently.
@@ -210,10 +216,32 @@ class RegistryRegionDetails:
                 acr) for acr in self.acr_config]
         storages = []
         if self.storage_config:
-            storages = [SystemCreatedStorageAccount._to_rest_object(
+            storages = [SystemCreatedStorageAccount._to_rest_object( # todo for tomorrow miles - augment storage (and acr?) conversion to operate on entire list, will allow easier use of replication count and differentiating type.
                 storage) for storage in self.storage_config]
         return RestRegistryRegionArmDetails(
             acr_details=converted_acr_details,
             location=self.location,
             storage_account_details=storages,
         )
+
+
+    def _storage_config_to_rest_object(self) -> List[RestStorageAccountDetails]:
+        storage = self.storage_config
+        # storage_config can either be a single system-created storage account,
+        # or list of user-inputted id's.
+        if hasattr(storage, "storage_account_type"):
+
+            # We DO NOT want to set the arm_resource_id. The backend provides very
+            # unhelpful errors if you provide an empty/null/invalid resource ID,
+            # and ignores the value otherwise. It's better to avoid setting it in
+            # the conversion in this direction at all.
+            # We don't bother processing storage_account_type because the
+            # rest version is case insensitive.
+            account = RestStorageAccountDetails(RestSystemCreatedStorageAccount(
+                storage_account_hns_enabled=storage.storage_account_hns,
+                storage_account_type=storage.storage_account_type,
+            ))
+            count = storage.replication_count
+            return [account for _ in range(0, count)]
+        else:
+            return [make_rest_user_storage_from_id(id) for id in storage]    
