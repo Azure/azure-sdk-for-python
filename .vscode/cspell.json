@@ -50,6 +50,7 @@
     "sdk/communication/azure-communication-sms/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
+    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
@@ -457,6 +458,10 @@
         "fhir",
         "FHIR"
       ]
+    },
+    {
+      "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
+      "words": ["ctxt", "somethingstuid"]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
