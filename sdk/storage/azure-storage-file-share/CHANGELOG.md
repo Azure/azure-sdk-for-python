@@ -1,5 +1,10 @@
 # Release History
 
+## 12.10.1 (Unreleased)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty files through Azurite.
+
 ## 12.10.0 (2022-10-11)
 
 ### Features Added
