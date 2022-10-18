@@ -513,9 +513,16 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics:
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar fhir_bundle: If `fhir_version` is passed, this will contain a
+        FHIR compatible object for consumption in other Healthcare tools. For additional
+        information see https://www.hl7.org/fhir/overview.html.
+    :vartype fhir_bundle: Optional[dict[str, any]]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
     :ivar str kind: The text analysis kind - "Healthcare".
+
+    .. versionadded:: 2022-10-01-preview
+        The *fhir_bundle* property.
     """
 
     def __init__(self, **kwargs):
@@ -524,6 +531,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         self.entity_relations = kwargs.get("entity_relations", None)
         self.warnings = kwargs.get("warnings", [])
         self.statistics = kwargs.get("statistics", None)
+        self.fhir_bundle = kwargs.get("fhir_bundle", None)
         self.is_error: Literal[False] = False
         self.kind: Literal["Healthcare"] = "Healthcare"
 
@@ -539,7 +547,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             )
             for r in healthcare_result.relations
         ]
-
+        fhir_bundle = healthcare_result.fhir_bundle if hasattr(healthcare_result, "fhir_bundle") else None
         return cls(
             id=healthcare_result.id,
             entities=entities,
@@ -553,17 +561,19 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
                 healthcare_result.statistics
             ),
+            fhir_bundle=fhir_bundle,
         )
 
     def __repr__(self):
         return (
             "AnalyzeHealthcareEntitiesResult(id={}, entities={}, entity_relations={}, warnings={}, "
-            "statistics={}, is_error={})".format(
+            "statistics={}, fhir_bundle={}, is_error={})".format(
                 self.id,
                 repr(self.entities),
                 repr(self.entity_relations),
                 repr(self.warnings),
                 repr(self.statistics),
+                self.fhir_bundle,
                 self.is_error,
             )[:1024]
         )
@@ -582,11 +592,17 @@ class HealthcareRelation(DictMixin):
     :ivar roles: The roles present in this relation. I.e., in the document
         "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication".
     :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
+    :ivar confidence_score: Confidence score between 0 and 1 of the extracted relation.
+    :vartype confidence_score: Optional[float]
+
+    .. versionadded:: 2022-10-01-preview
+        The *confidence_score* property.
     """
 
     def __init__(self, **kwargs):
         self.relation_type = kwargs.get("relation_type")
         self.roles = kwargs.get("roles")
+        self.confidence_score = kwargs.get("confidence_score")
 
     @classmethod
     def _from_generated(cls, healthcare_relation_result, entities):
@@ -596,15 +612,19 @@ class HealthcareRelation(DictMixin):
             )
             for r in healthcare_relation_result.entities
         ]
+        confidence_score = healthcare_relation_result.confidence_score \
+            if hasattr(healthcare_relation_result, "confidence_score") else None
         return cls(
             relation_type=healthcare_relation_result.relation_type,
             roles=roles,
+            confidence_score=confidence_score,
         )
 
     def __repr__(self):
-        return "HealthcareRelation(relation_type={}, roles={})".format(
+        return "HealthcareRelation(relation_type={}, roles={}, confidence_score={})".format(
             self.relation_type,
             repr(self.roles),
+            self.confidence_score,
         )[:1024]
 
 
@@ -2529,6 +2549,14 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+    :keyword Optional[str] fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
+    :keyword document_type: Document type that can be provided as input for Fhir Documents. Expect to
+        have fhir_version provided when used. Behavior of using None enum is the same as not using the
+        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+        "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
+    :paramtype document_type: Optional[str or ~azure.ai.textanalytics.HealthcareDocumentType]
     :ivar Optional[str] model_version: The model version to use for the analysis.
     :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -2542,22 +2570,36 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[str] fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None.
+    :ivar Optional[str] document_type: Document type that can be provided as input for Fhir Documents. Expect to
+        have fhir_version provided when used. Behavior of using None enum is the same as not using the
+        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+        "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
 
     .. versionadded:: 2022-05-01
         The *AnalyzeHealthcareEntitiesAction* model.
+    .. versionadded:: 2022-10-01-preview
+        The *fhir_version* and *document_type* keyword arguments.
     """
 
     def __init__(self, **kwargs):
         self.model_version = kwargs.get("model_version", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = kwargs.get("disable_service_logs", None)
+        self.fhir_version = kwargs.get("fhir_version", None)
+        self.document_type = kwargs.get("document_type", None)
 
     def __repr__(self):
         return (
-            "AnalyzeHealthcareEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})".format(
+            "AnalyzeHealthcareEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={}, "
+            "fhir_version={}, document_type={})".format(
                 self.model_version,
                 self.string_index_type,
                 self.disable_service_logs,
+                self.fhir_version,
+                self.document_type
             )[:1024]
         )
 
@@ -2568,6 +2610,8 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
+                fhir_version=self.fhir_version,
+                document_type=self.document_type,
             )
         )
 

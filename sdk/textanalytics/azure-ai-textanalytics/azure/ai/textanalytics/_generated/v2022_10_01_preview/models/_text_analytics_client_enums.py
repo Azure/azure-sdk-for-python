@@ -145,22 +145,6 @@ class DocumentSentimentValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NEGATIVE = "negative"
     MIXED = "mixed"
 
-class DocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Document type that can be provided as input for Fhir Documents. Expect to have fhirVersion
-    provided when used. Behavior of using None enum is the same as not using the documentType
-    parameter.
-    """
-
-    NONE = "None"
-    CLINICAL_TRIAL = "ClinicalTrial"
-    DISCHARGE_SUMMARY = "DischargeSummary"
-    PROGRESS_NOTE = "ProgressNote"
-    HISTORY_AND_PHYSICAL = "HistoryAndPhysical"
-    CONSULT = "Consult"
-    IMAGING = "Imaging"
-    PATHOLOGY = "Pathology"
-    PROCEDURE_NOTE = "ProcedureNote"
-
 class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code.
     """
@@ -200,6 +184,22 @@ class FhirVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FOUR0_1 = "4.0.1"
+
+class HealthcareDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Document type that can be provided as input for Fhir Documents. Expect to have fhirVersion
+    provided when used. Behavior of using None enum is the same as not using the documentType
+    parameter.
+    """
+
+    NONE = "None"
+    CLINICAL_TRIAL = "ClinicalTrial"
+    DISCHARGE_SUMMARY = "DischargeSummary"
+    PROGRESS_NOTE = "ProgressNote"
+    HISTORY_AND_PHYSICAL = "HistoryAndPhysical"
+    CONSULT = "Consult"
+    IMAGING = "Imaging"
+    PATHOLOGY = "Pathology"
+    PROCEDURE_NOTE = "ProcedureNote"
 
 class HealthcareEntityCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Healthcare Entity Category.

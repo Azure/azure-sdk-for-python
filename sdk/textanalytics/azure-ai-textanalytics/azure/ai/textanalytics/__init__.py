@@ -61,7 +61,7 @@ from ._models import (
     ExtractSummaryResult,
     SummarySentence,
 )
-
+from ._generated.models import HealthcareDocumentType
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
 __all__ = [
@@ -123,6 +123,7 @@ __all__ = [
     "ExtractSummaryAction",
     "ExtractSummaryResult",
     "SummarySentence",
+    "HealthcareDocumentType",
 ]
 
 __version__ = VERSION
