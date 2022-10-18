@@ -4,7 +4,7 @@ This cheat sheet details guidance for typing as it relates to the Python SDK. Us
 
 ### General guidance
 
-- Do provide type annotations (per PEP 484) to public APIs in the client library.
+- Do provide type annotations (per [PEP 484](https://peps.python.org/pep-0484/)) to public APIs in the client library.
 - You do not need to annotate internal functions in a client library, but you should provide type hints where unit tests are worth writing or where type annotations will assist in understanding of the code.
 - Do not use comment style type hints. Use inline, annotation style.
   

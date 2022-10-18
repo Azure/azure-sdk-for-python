@@ -36,7 +36,7 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https:/
       - [Use runtime_checkable to do simple, runtime structural checks on Protocols](#use-runtime_checkable-to-do-simple-runtime-structural-checks-on-protocols)
     - [Use typing.Literal to restrict based on exact values](#use-typingliteral-to-restrict-based-on-exact-values)
     - [Use typing.NewType to restrict a type to a specific context](#use-typingnewtype-to-restrict-a-type-to-a-specific-context)
-    - [Use typing.Final and @final to restrict types from changes](#use-typingfinal-and-@final-to-restrict-types-from-changes)
+    - [Use typing.Final and @final to restrict types from changes](#use-typingfinal-and-final-to-restrict-types-from-changes)
     - [Debug type checking with reveal_type and reveal_locals](#debug-type-checking-with-reveal_type-and-reveal_locals)
   - [Additional Resources](#additional-resources)
 
@@ -70,6 +70,7 @@ def download_blob_from_url(
         blob_url: str,
         output: str,
         credential: Union[AzureNamedKeyCredential, TokenCredential],
+        overwrite: bool = False,
         **kwargs: Any
 ) -> None:
     ...
@@ -78,7 +79,7 @@ def download_blob_from_url(
 > Note: Do not use comment style type hints (`# type: str`). Some of our libraries use type comments due to legacy code supporting Python 2, but these will be updated to annotation style.
 
 A fully annotated signature includes type annotations for all parameters and the return type. The type of a parameter
-should follow the `:` syntax and a default argument can be supplied like in the `credential` parameter above. A return
+should follow the `:` syntax and a default argument can be supplied like in the `overwrite` parameter above. A return
 type follows the function def with an arrow `->`, its type, and then closes with `:`.
 
 It is also possible to add type annotations to variables. The syntax follows the same as
@@ -107,9 +108,11 @@ given the expressiveness of Python as a language. So, in practice, what should y
    type checker, follow the steps per [PEP 561](https://mypy.readthedocs.io/en/stable/installed_packages.html#creating-pep-561-compatible-packages) below:
 
     - add an empty `py.typed` file to your package directory. E.g. `.../sdk/azure-core/azure/core/py.typed`
-    - include `py.typed` under `package_data` in your setup.py (`package_data={"azure-core": ["py.typed"]}`) ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/setup.py))
     - include the `py.typed` file in the
-      MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in))
+      MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in)).
+      This is important as it ensures the `py.typed` is included in both the sdist/bdist.
+    - include `py.typed` under `package_data` in your setup.py (`package_data={"azure.core": ["py.typed"]}`).
+      Note that the key should be the namespace of where the `py.typed` file is found.
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
    for your library so focusing typing on high density/important areas of the code helps in detecting bugs.
@@ -150,7 +153,8 @@ else:
 from typing_extensions import Protocol
 ```
 
-If using `typing-extensions`, you must add it to the install dependencies for your library (do not rely on install by `azure-core`). 
+If using `typing-extensions`, you must add it to the install dependencies for your library (do not rely on install by `azure-core`)
+[[example](https://github.com/Azure/azure-sdk-for-python/blob/5fd52b9ee039f8711322bd7ea43af763d326291a/sdk/eventhub/azure-eventhub/setup.py#L73)].
 When importing a backported type into code, `typing-extensions` does a try/except on your behalf (either importing
 from `typing` if supported, or `typing-extensions` if the Python version is too old) so there is no need to do this
 check yourself.
@@ -189,7 +193,8 @@ If you don't want to use `tox` you can also install and run mypy on its own:
 
 Note that you may see different errors if running a different version of mypy than the one in CI.
 
-Configuration of mypy is handled globally for the repo, but if specific configuration of mypy is needed for your library, use a `mypy.ini` file at the package level:
+Configuration of mypy is handled globally for the repo, but if specific configuration of mypy is needed for your library, use a `mypy.ini` file
+([example](https://github.com/Azure/azure-sdk-for-python/blob/1c8862a74543dd2a979f3c485c3ae69cef4bc7ee/sdk/textanalytics/azure-ai-textanalytics/mypy.ini)) at the package level:
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics/mypy.ini`
 
@@ -740,7 +745,7 @@ class TreeHouse:
         return cls()
 ```
 
-Since the behavior of this import is subject to change in the future (see [PEP 649](https://peps.python.org/pep-0649/),
+Since the behavior of this import is subject to change in the future (see [PEP 649](https://peps.python.org/pep-0649/)),
 it is recommended to use a forward reference to solve this for now.
 
 At import time, the default behavior in Python is to read in all type hints and store them in `__annotations__` as their actual types.
@@ -813,11 +818,9 @@ from typing import overload, Union
 def analyze_text(text: str, analysis_kind: LanguageDetection) -> LanguageDetectionResult:
     ...
 
-
 @overload
 def analyze_text(text: str, analysis_kind: EntityRecognition) -> EntityRecognitionResult:
     ...
-
 
 @overload
 def analyze_text(text: str, analysis_kind: SentimentAnalysis) -> SentimentResult:
@@ -918,7 +921,7 @@ If you are using cast often, it might be an indication that the code should be o
 Note that `typing.cast` is only used by the type checker and does not affect code or slow down the implementation at
 runtime.
 
-### Use TypeVar for generic type hinting
+### Use typing.TypeVar and typing.Generic for generic type hinting
 
 `TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the
 parameter type reflected on the result type:
