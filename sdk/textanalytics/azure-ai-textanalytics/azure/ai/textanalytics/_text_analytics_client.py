@@ -65,6 +65,8 @@ from ._models import (
     ClassifyDocumentResult,
     AnalyzeHealthcareEntitiesAction,
     _AnalyzeActionsType,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
 )
 from ._check import is_language_api, string_index_type_compatibility
 
@@ -81,6 +83,7 @@ AnalyzeActionsResponse = TextAnalysisLROPoller[
                 RecognizeCustomEntitiesResult,
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
+                ExtractSummaryResult,
                 DocumentError,
             ]
         ]
@@ -614,7 +617,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @distributed_trace
     @validate_multiapi_args(
         version_method_added="v3.1",
-        args_mapping={"2022-05-01": ["display_name"]}
+        args_mapping={
+            "2022-10-01-preview": ["fhir_version", "document_type"],
+            "2022-05-01": ["display_name"]
+        }
     )
     def begin_analyze_healthcare_entities(
         self,
@@ -664,6 +670,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
+        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+            on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+            The only acceptable values to pass in are None and "4.0.1". The default value is None.
+        :keyword document_type: Document type that can be provided as input for Fhir Documents. Expect to
+            have fhir_version provided when used. Behavior of using None enum is the same as not using the
+            document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+            "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
+        :paramtype document_type: str or ~azure.ai.textanalytics.HealthcareDocumentType
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
@@ -677,6 +691,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             The *begin_analyze_healthcare_entities* client method.
         .. versionadded:: 2022-05-01
             The *display_name* keyword argument.
+        .. versionadded:: 2022-10-01-preview
+            The *fhir_version* and *document_type* keyword arguments.
 
         .. admonition:: Example:
 
@@ -696,6 +712,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type = kwargs.pop("string_index_type", self._string_index_type_default)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         display_name = kwargs.pop("display_name", None)
+        fhir_version = kwargs.pop("fhir_version", None)
+        document_type = kwargs.pop("document_type", None)
 
         if continuation_token:
             return cast(
@@ -745,6 +763,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                                         model_version=model_version,
                                         logging_opt_out=disable_service_logs,
                                         string_index_type=string_index_type_compatibility(string_index_type),
+                                        fhir_version=fhir_version,
+                                        document_type=document_type,
                                     )
                                 )
                             ]
@@ -1058,6 +1078,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 SingleLabelClassifyAction,
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
+                ExtractSummaryAction,
             ]
         ],
         **kwargs: Any,
@@ -1073,6 +1094,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
+                    ExtractSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1101,7 +1123,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
-            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction]
+            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or ExtractSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1130,7 +1152,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.TextAnalysisLROPoller[~azure.core.paging.ItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or DocumentError]]]
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1140,6 +1162,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             *MultiLabelClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
+        .. versionadded:: 2022-10-01-preview
+            The *ExtractSummaryAction* input option and the corresponding *ExtractSummaryResult*
+            result object.
 
         .. admonition:: Example:
 

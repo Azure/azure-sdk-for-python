@@ -33,18 +33,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "feb31451-e862-4e55-83ee-4143b1b3278e",
+        "apim-request-id": "c6780745-8e63-4c92-92d8-fd0821176b78",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 20:52:15 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b11eee8a-c9d3-4837-b18d-cd66d70e1378?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:56:42 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3696b2ce-634c-4026-9a60-65db315afe06?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "120"
+        "x-envoy-upstream-service-time": "93"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b11eee8a-c9d3-4837-b18d-cd66d70e1378?api-version=2022-10-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3696b2ce-634c-4026-9a60-65db315afe06?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -55,19 +55,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "022cdf97-1a0b-4bb7-ac6c-4b65e12be09e",
+        "apim-request-id": "12d67335-8a8a-4ac6-ae09-8f35ec589f5c",
         "Content-Length": "1228",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 20:52:20 GMT",
+        "Date": "Mon, 17 Oct 2022 18:56:48 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "34"
+        "x-envoy-upstream-service-time": "50"
       },
       "ResponseBody": {
-        "jobId": "b11eee8a-c9d3-4837-b18d-cd66d70e1378",
-        "lastUpdateDateTime": "2022-10-10T20:52:17Z",
-        "createdDateTime": "2022-10-10T20:52:15Z",
-        "expirationDateTime": "2022-10-11T20:52:15Z",
+        "jobId": "3696b2ce-634c-4026-9a60-65db315afe06",
+        "lastUpdateDateTime": "2022-10-17T18:56:45Z",
+        "createdDateTime": "2022-10-17T18:56:43Z",
+        "expirationDateTime": "2022-10-18T18:56:43Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -79,7 +79,7 @@
             {
               "kind": "HealthcareLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T20:52:17.4353581Z",
+              "lastUpdateDateTime": "2022-10-17T18:56:45.1240168Z",
               "status": "succeeded",
               "results": {
                 "documents": [

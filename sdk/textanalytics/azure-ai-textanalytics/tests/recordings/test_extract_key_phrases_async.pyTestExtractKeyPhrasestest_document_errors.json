@@ -35,14 +35,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0f5eceaf-da93-499c-adde-6b54c2019872",
+        "apim-request-id": "48d8d890-0a1b-4abb-8449-b26a2603c8fc",
         "Content-Length": "1199",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 21:16:58 GMT",
+        "Date": "Mon, 17 Oct 2022 19:03:21 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "5"
+        "x-envoy-upstream-service-time": "3"
       },
       "ResponseBody": {
         "kind": "KeyPhraseExtractionResults",

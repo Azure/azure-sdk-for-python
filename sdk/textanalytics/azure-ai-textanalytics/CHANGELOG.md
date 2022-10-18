@@ -3,6 +3,12 @@
 ## 5.3.0b1 (Unreleased)
 
 ### Features Added
+- Added the Extractive Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`.
+  Access the feature through the `begin_analyze_actions` API.
+- Added keyword arguments `fhir_version` and `document_type` to `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`.
+- Added property `fhir_bundle` to `AnalyzeHealthcareEntitiesResult`.
+- Added property `confidence_score` to `HealthcareRelation`.
+- Added enum `HealthcareDocumentType`.
 - Added property `resolutions` to `CategorizedEntity`.
 - Added models and enums related to resolutions: `BaseResolution`, `ResolutionKind`, `AgeResolution`, `AreaResolution`, 
   `BooleanResolution`, `CurrencyResolution`, `DateTimeResolution`, `InformationResolution`, `LengthResolution`,

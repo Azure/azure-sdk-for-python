@@ -37,15 +37,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "7855865e-44e6-41cd-959f-0a1e12dc9105",
+        "apim-request-id": "e0ba3f8f-1edc-416c-8b1e-e61aaaca0b32",
         "Content-Length": "955",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:12:14 GMT",
+        "Date": "Mon, 17 Oct 2022 19:00:48 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "36"
+        "x-envoy-upstream-service-time": "17"
       },
       "ResponseBody": {
         "kind": "SentimentAnalysisResults",
@@ -163,10 +163,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "65bef889-8f98-46a7-ab7b-3d199693f421",
+        "apim-request-id": "cc1ce105-67f0-4f8b-a36d-9bd88698fbfd",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Mon, 10 Oct 2022 21:12:14 GMT"
+        "Date": "Mon, 17 Oct 2022 19:00:48 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -212,15 +212,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b75e57bf-0e77-4bd6-a0b8-edbe6d3ad62f",
+        "apim-request-id": "a385f39b-48f4-4b79-a2ae-638aba969f08",
         "Content-Length": "955",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:12:14 GMT",
+        "Date": "Mon, 17 Oct 2022 19:00:48 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "29"
+        "x-envoy-upstream-service-time": "16"
       },
       "ResponseBody": {
         "kind": "SentimentAnalysisResults",

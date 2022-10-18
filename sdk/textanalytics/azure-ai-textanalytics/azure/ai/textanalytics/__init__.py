@@ -57,8 +57,12 @@ from ._models import (
     ClassificationCategory,
     AnalyzeHealthcareEntitiesAction,
     TextAnalysisKind,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    SummarySentence,
 )
 from ._generated.models import (
+    HealthcareDocumentType,
     BaseResolution,
     ResolutionKind,
     AgeResolution,
@@ -147,6 +151,10 @@ __all__ = [
     "AnalyzeHealthcareEntitiesAction",
     "TextAnalysisLROPoller",
     "TextAnalysisKind",
+    "ExtractSummaryAction",
+    "ExtractSummaryResult",
+    "SummarySentence",
+    "HealthcareDocumentType",
     "BaseResolution",
     "ResolutionKind",
     "AgeResolution",

@@ -22,8 +22,7 @@ from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase
 
 
 def is_public_cloud():
-    return False  # running in PPE at the moment so no custom text tasks
-    # return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
+    return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
 
 
 TextAnalyticsPreparer = functools.partial(

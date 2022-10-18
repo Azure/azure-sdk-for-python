@@ -42,18 +42,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "794992ed-2a9e-49fe-ab01-323f1bb024f9",
+        "apim-request-id": "53336579-aa54-43dc-9fb6-ba2682641af6",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 20:46:49 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/46cbf39e-bdb9-4c36-b39e-f2a0f4c1b78b?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:52:19 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8843ea2e-ea0a-4383-bf85-cda952193049?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "217"
+        "x-envoy-upstream-service-time": "190"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/46cbf39e-bdb9-4c36-b39e-f2a0f4c1b78b?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8843ea2e-ea0a-4383-bf85-cda952193049?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -63,19 +63,54 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "77e98689-fc88-4a0f-8faf-e0b4868972ef",
-        "Content-Length": "2018",
+        "apim-request-id": "6bcfdb50-ee5f-4e14-a7d8-e11ba10ea7d7",
+        "Content-Length": "279",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 20:46:54 GMT",
+        "Date": "Mon, 17 Oct 2022 18:52:25 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "61"
+        "x-envoy-upstream-service-time": "7"
       },
       "ResponseBody": {
-        "jobId": "46cbf39e-bdb9-4c36-b39e-f2a0f4c1b78b",
-        "lastUpdateDateTime": "2022-10-10T20:46:53Z",
-        "createdDateTime": "2022-10-10T20:46:49Z",
-        "expirationDateTime": "2022-10-11T20:46:49Z",
+        "jobId": "8843ea2e-ea0a-4383-bf85-cda952193049",
+        "lastUpdateDateTime": "2022-10-17T18:52:21Z",
+        "createdDateTime": "2022-10-17T18:52:20Z",
+        "expirationDateTime": "2022-10-18T18:52:20Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8843ea2e-ea0a-4383-bf85-cda952193049?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "6e7bc14e-940a-41bd-9b27-42e13485e51e",
+        "Content-Length": "2018",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 18:52:30 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "57"
+      },
+      "ResponseBody": {
+        "jobId": "8843ea2e-ea0a-4383-bf85-cda952193049",
+        "lastUpdateDateTime": "2022-10-17T18:52:28Z",
+        "createdDateTime": "2022-10-17T18:52:20Z",
+        "expirationDateTime": "2022-10-18T18:52:20Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -87,7 +122,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T20:46:53.4272762Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:28.4763779Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
