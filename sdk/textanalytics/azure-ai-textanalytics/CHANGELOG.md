@@ -3,7 +3,7 @@
 ## 5.2.1 (Unreleased)
 
 ### Bugs Fixed
-- Returns a more helpful message in the document error when all documents fail for all actions in the `begin_analyze_actions` API.
+- Returns a more helpful message in the document error when all documents fail for an action in the `begin_analyze_actions` API.
 
 ## 5.2.0 (2022-09-08)
 
