@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 from .util import make_rest_user_storage_from_id
+from functools import reduce
 
 
 # This exists despite not being used by the schema validator because this entire
@@ -216,8 +217,7 @@ class RegistryRegionDetails:
                 acr) for acr in self.acr_config]
         storages = []
         if self.storage_config:
-            storages = [SystemCreatedStorageAccount._to_rest_object( # todo for tomorrow miles - augment storage (and acr?) conversion to operate on entire list, will allow easier use of replication count and differentiating type.
-                storage) for storage in self.storage_config]
+            storages = self._storage_config_to_rest_object()
         return RestRegistryRegionArmDetails(
             acr_details=converted_acr_details,
             location=self.location,
@@ -245,3 +245,34 @@ class RegistryRegionDetails:
             return [account for _ in range(0, count)]
         else:
             return [make_rest_user_storage_from_id(id) for id in storage]    
+
+    @classmethod
+    def _storage_config_from_rest_object(rest_configs: List[RestStorageAccountDetails]) -> Union[List[str], SystemCreatedStorageAccount]:
+        if not rest_configs or len(rest_configs) == 0:
+            return None
+        # configs should be mono-typed. Either they're all system created
+        # or all user created.
+        if reduce(lambda x, y: x and y, [hasattr(config, "system_created_storage_account") for config in rest_configs]):
+            # System created case - assume all elements are duplicates
+            # of a single storage configuration.
+            # Convert back into a single local representation by 
+            # combining id's into a list, and using the first element's 
+            # account type and hns.
+            first_config = rest_configs[0].system_created_storage_account
+            result = SystemCreatedStorageAccount(storage_account_hns=first_config.storage_account_hns_enabled
+                storage_account_type=first_config.storage_account_type,
+                arm_resource_id=first_config.arm_resource_id.resource_id)
+            resource_id = None
+            if first_config.system_created_storage_account.arm_resource_id:
+                resource_id = first_config.system_created_storage_account.arm_resource_id.resource_id
+            return SystemCreatedStorageAccount(
+                storage_account_hns=first_config.system_created_storage_account.storage_account_hns_enabled,
+                storage_account_type=StorageAccountType(
+                    first_config.system_created_storage_account.storage_account_type.lower()
+                ),  # TODO validate storage account type? GI
+                arm_resource_id=resource_id,
+            )
+        elif  reduce(lambda x, y: x and y, [hasattr(config, "user_created_storage_account") for config in rest_configs]):
+            return [config.user_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
+        else:
+            return None  # TODO should this throw an error instead?     
