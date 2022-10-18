@@ -6,7 +6,7 @@ from marshmallow import INCLUDE, fields, post_load, pre_dump
 
 from azure.ai.ml._schema import ArmVersionedStr, NestedField, RegistryStr, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
-from azure.ai.ml.constants._common import AzureMLResourceType, BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 from .component import InternalBaseComponentSchema, NodeType
 
