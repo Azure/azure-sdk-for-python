@@ -330,7 +330,7 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> None:
         project_yaml = yaml.safe_load(file_in)
     if not project_yaml.get("emitters", {}).get("@azure-tools/cadl-python"):
         return
-    if project_yaml["emitters"]["@azure-tools/cadl-python"].get("sdk-folder"):
+    if not project_yaml["emitters"]["@azure-tools/cadl-python"].get("sdk-folder"):
         raise Exception("no sdk-folder is defined")
     output_path = Path(os.getcwd()) / project_yaml["emitters"]["@azure-tools/cadl-python"]["sdk-folder"]
     project_yaml["emitters"]["@azure-tools/cadl-python"].pop("sdk-folder")
@@ -340,11 +340,11 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> None:
 
     # npm install tool
     origin_path = os.getcwd()
-    os.chdir(str(cadl_folder))
-    check_call("npm install", shell=True)
+    os.chdir(cadl_folder)
+    # check_call("npm install", shell=True)
 
     # generate code
-    check_call("npx cadl compile . --emit @azure-tools/cadl-python", shell=True)
+    # check_call("npx cadl compile . --emit @azure-tools/cadl-python", shell=True)
 
     # return to original folder
     os.chdir(origin_path)

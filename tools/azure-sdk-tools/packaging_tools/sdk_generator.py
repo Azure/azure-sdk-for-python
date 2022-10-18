@@ -16,6 +16,7 @@ from .generate_utils import (
     format_samples,
     gen_dpg,
     dpg_relative_folder,
+    gen_cadl
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -41,12 +42,12 @@ def main(generate_input, generate_output):
         readme_files = [input_readme]
     else:
         # ["specification/confidentialledger/ConfientialLedger"]
-        readme_files = [data["relatedCadlProjectFolder"]]
+        readme_files = data["relatedCadlProjectFolder"]
 
     for input_readme in readme_files:
-        relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         if "resource-manager" in input_readme:
+            relative_path_readme = str(Path(spec_folder, input_readme))
             config = generate(
                 CONFIG_FILE,
                 sdk_folder,
