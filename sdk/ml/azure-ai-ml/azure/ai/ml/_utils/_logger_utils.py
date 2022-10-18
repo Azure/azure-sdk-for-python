@@ -5,7 +5,7 @@
 import logging
 import sys
 
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE
+from azure.ai.ml._telemetry.logging_handler import AML_INTERNAL_LOGGER_NAMESPACE
 
 
 def initialize_logger_info(module_logger: logging.Logger, terminator="\n") -> None:
@@ -32,12 +32,12 @@ class OpsLogger:
 
 def in_jupyter_notebook() -> bool:
     """
-    Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in 
+    Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
     non-Jupyter contexts.
 
     Adapted from https://stackoverflow.com/a/22424821
     """
-    try:
+    try:  # cspell:ignore ipython
         from IPython import get_ipython
         if 'IPKernelApp' not in get_ipython().config:
             return False
