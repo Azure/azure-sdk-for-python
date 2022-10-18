@@ -15,3 +15,4 @@ class TestDevcenterSmoke(DevcenterTest):
         azure_tenant_id = kwargs.pop("devcenter_tenant_id")
         devcenter_name = kwargs.pop("devcenter_name")
         client = self.create_client(tenant_id=azure_tenant_id, dev_center=devcenter_name)
+        assert client is not None
