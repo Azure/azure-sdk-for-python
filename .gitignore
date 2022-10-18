@@ -37,6 +37,7 @@ build/
 # Test results
 TestResults/
 ENV_DIR/
+.assets/
 
 # Perf test profiling
 cProfile-*.pstats
