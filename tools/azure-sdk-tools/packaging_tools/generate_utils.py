@@ -76,6 +76,7 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
             "readme": input_readme,
         })
     else:
+        metadata["cadl_src"] = input_readme
         metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
