@@ -1,6 +1,6 @@
 # Release History
 
-## 12.14.1 (Unreleased)
+## 12.14.1 (2022-10-18)
 
 ### Bugs Fixed
 - Fixed possible `ValueError` for invalid content range that gets raised when downloading empty blobs through Azurite.
