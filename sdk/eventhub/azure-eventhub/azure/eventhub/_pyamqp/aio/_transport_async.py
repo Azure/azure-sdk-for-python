@@ -218,7 +218,6 @@ class AsyncTransport(
 
         self.connect_timeout = connect_timeout
         self.socket_settings = socket_settings
-        self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
         self.sslopts = self._build_ssl_opts(ssl_opts)
 
@@ -258,10 +257,12 @@ class AsyncTransport(
         e = None
         addr_types = (socket.AF_INET, socket.AF_INET6)
         addr_types_num = len(addr_types)
+        loop = asyncio.get_running_loop()
+
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                entries = await self.loop.getaddrinfo(
+                entries = await loop.getaddrinfo(
                     host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP
                 )
                 entries_num = len(entries)
@@ -283,7 +284,7 @@ class AsyncTransport(
                     except NotImplementedError:
                         pass
                     self.sock.settimeout(timeout)
-                    await self.loop.sock_connect(self.sock, sa)
+                    await loop.sock_connect(self.sock, sa)
                 except socket.error as ex:
                     e = ex
                     if self.sock is not None:
