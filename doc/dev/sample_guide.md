@@ -48,7 +48,6 @@ Note that the <keyword> used should be unique across all sync/async samples adde
 [Sample Example][qa_code_snippet]
 
 The given `START`/`END` keywords can be used in a [sphinx literalinclude][sphinx] directive in the docstring where the code snippet should be rendered in the reference documentation.
-Note that the keywords used should be unique across samples (including async).
 
 [Literalinclude example][literalinclude]
 
