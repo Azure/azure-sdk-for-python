@@ -31,6 +31,8 @@ class TokenCachePersistenceOptions(object):
     .. warning:: The cache contains authentication secrets. If the cache is not encrypted, protecting it is the
        application's responsibility. A breach of its contents will fully compromise accounts.
 
+    .. admonition:: Example:
+
         .. literalinclude:: ../tests/test_persistent_cache.py
             :start-after: [START snippet]
             :end-before: [END snippet]

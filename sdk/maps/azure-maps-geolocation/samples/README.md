@@ -17,7 +17,7 @@ Authenticate the client with a Azure Maps Geolocation [API Key Credential](https
 
 Then for common Azure Maps Geolocation operations:
 
-* Perform get geolocation: [sample_get_geolocation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-geolocation/samples/sample_get_geolocation.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-geolocation/samples/async_samples/sample_get_geolocation_async.py))
+* Perform get geolocation: [sample_get_country_code.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-geolocation/samples/sample_get_country_code.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-geolocation/samples/async_samples/sample_get_country_code_async.py))
 
 ## Prerequisites
 
@@ -40,7 +40,7 @@ Then for common Azure Maps Geolocation operations:
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_get_geolocation.py`
+3. Follow the usage described in the file, e.g. `python sample_get_country_code.py`
 
 ## Next steps
 

@@ -331,7 +331,7 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
 
 ## Distributed Tracing with EventGrid
 
-You can use opentelemetry for Python as usual with EventGrid since it's compatible with azure-core tracing integration.
+You can use OpenTelemetry for Python as usual with EventGrid since it's compatible with azure-core tracing integration.
 
 Here is an example of using OpenTelemetry to trace sending a CloudEvent.
 
@@ -351,7 +351,7 @@ This example uses a simple console exporter to export the traces. Any exporter c
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor  # this requires opentelemtry >= 1.0.0
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor  # this requires opentelemetry >= 1.0.0
 
 # Simple console exporter
 exporter = ConsoleSpanExporter()

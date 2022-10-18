@@ -277,7 +277,14 @@ class PipelineComponentBuilder:
         return output_dict
 
     def _get_group_parameter_defaults(self):
-        return {key: copy.deepcopy(val.default) for key, val in self.inputs.items() if isinstance(val, GroupInput)}
+        group_defaults = {}
+        for key, val in self.inputs.items():
+            if not isinstance(val, GroupInput):
+                continue
+            # Copy and insert top-level parameter name into group names for all items
+            group_defaults[key] = copy.deepcopy(val.default)
+            group_defaults[key].insert_group_name_for_items(key)
+        return group_defaults
 
     def _update_nodes_variable_names(self, func_variables: dict):
         """Update nodes list to ordered dict with variable name key and

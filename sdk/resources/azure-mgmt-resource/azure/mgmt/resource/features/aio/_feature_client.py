@@ -11,18 +11,16 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import FeatureClientConfiguration
 from ._operations_mixin import FeatureClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -43,9 +41,9 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Azure subscription ID.
+    :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -113,6 +111,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
             from ..v2021_07_01.aio.operations import FeaturesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'features'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -126,6 +125,7 @@ class FeatureClient(FeatureClientOperationsMixin, MultiApiClientMixin, _SDKClien
             from ..v2021_07_01.aio.operations import SubscriptionFeatureRegistrationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'subscription_feature_registrations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

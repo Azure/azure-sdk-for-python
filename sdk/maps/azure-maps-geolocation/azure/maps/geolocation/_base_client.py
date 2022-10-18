@@ -25,7 +25,7 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-class GeolocationClientBase:
+class MapsGeolocationClientBase:
     def __init__(
         self,
         credential: Union[AzureKeyCredential, TokenCredential],
