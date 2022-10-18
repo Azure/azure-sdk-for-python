@@ -132,9 +132,10 @@ class SenderLink(Link):
         self._pending_deliveries = unsettled
 
     async def _remove_pending_deliveries(self):
-        futures = []
-        for delivery in self._pending_deliveries:
-            futures.append(asyncio.ensure_future(delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)))
+        futures = [
+            asyncio.ensure_future(delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)) 
+            for delivery in self._pending_deliveries
+        ]
         await asyncio.gather(*futures)
         self._pending_deliveries = []
 
