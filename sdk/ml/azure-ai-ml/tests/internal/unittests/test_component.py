@@ -29,6 +29,12 @@ class TestComponent:
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
         load_component(yaml_path)
 
+    def test_validate_internal_component(self):
+        yaml_path = r"./tests/test_configs/internal/component_with_code/component_spec.yaml"
+        from azure.ai.ml.entities._validate_funcs import validate_component
+        validation_result = validate_component(yaml_path)
+        assert validation_result.passed, repr(validation_result)
+
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
         yaml_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"

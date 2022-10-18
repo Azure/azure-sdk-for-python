@@ -117,9 +117,9 @@ class LocalPathField(fields.Str):
             path = Path(value)
             base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             if not path.is_absolute():
-                base_path_err_msg = f" Base path: {base_path}"
                 path = base_path / path
                 path.resolve()
+                base_path_err_msg = f" Resolved absolute path: {path.absolute()}"
             if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
                 return super(LocalPathField, self)._validate(value)
         except OSError:
