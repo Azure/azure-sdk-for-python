@@ -5,10 +5,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-TYPE_CHECKING_OPT_OUT = [
+MYPY_OPT_OUT = [
 
 ]
 
+PYRIGHT_OPT_OUT = [
+
+]
 
 MYPY_HARD_FAILURE_OPTED = [
   "azure-core",

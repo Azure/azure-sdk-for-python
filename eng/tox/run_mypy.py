@@ -13,7 +13,7 @@ import os
 import logging
 import sys
 
-from type_checking_opt_out_packages import TYPE_CHECKING_OPT_OUT
+from allowed_type_checking_failures import MYPY_OPT_OUT
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
-    if package_name not in TYPE_CHECKING_OPT_OUT:
+    if package_name not in MYPY_OPT_OUT:
         logging.info("Package {} has opted to run mypy".format(package_name))
         check_call(
             [
