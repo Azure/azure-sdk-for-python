@@ -1,6 +1,6 @@
 # Release History
 
-## 8.0.0 (2022-10-18)
+# 7.1.0 (2022-10-18)
 
 ### Features Added
 
@@ -16,9 +16,6 @@
   - Model ScriptPackage has a new parameter uri
   - Model VmHostPlacementPolicyProperties has a new parameter affinity_strength
   - Model VmHostPlacementPolicyProperties has a new parameter azure_hybrid_benefit_type
-
-### Breaking Changes
-
   - Operation LocationsOperations.check_trial_availability has a new parameter sku
 
 ## 7.0.0 (2021-11-11)
