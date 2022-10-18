@@ -134,7 +134,7 @@ All configuration options can be passed through the constructors of exporters th
 
 `connection_string`: The connection string used for your Application Insights resource.
 `disable_offline_storage`: Boolean value to determine whether to disable storing failed telemetry records for retry. Defaults to `False`.
-`storage_directory`: Storage directory in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+`storage_directory`: Storage directory in which to store retry files. Defaults to `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
 
 ## Examples
 

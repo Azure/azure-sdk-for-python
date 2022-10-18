@@ -10,7 +10,7 @@
 ### Breaking Changes
 
 - Rename local storage configuration, change default path
-    ([#26771](https://github.com/Azure/azure-sdk-for-python/pull/26771))
+    ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
 
 ### Bugs Fixed
 
