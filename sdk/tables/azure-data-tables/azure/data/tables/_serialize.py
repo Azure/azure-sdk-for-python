@@ -34,10 +34,8 @@ def _get_match_headers(etag, match_condition):
 
 def _prepare_key(keyvalue):
     """Duplicate the single quote char to escape."""
-    if isinstance(keyvalue, UUID):
-        keyvalue = str(keyvalue)
     try:
-        return keyvalue.replace("'", "''")
+        return str(keyvalue).replace("'", "''")
     except AttributeError:
         raise TypeError('PartitionKey or RowKey must be of type string.')
 

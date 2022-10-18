@@ -969,14 +969,23 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             }
             await self.table.upsert_entity(entity)
             
-            result = await self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+            result = await self.table.get_entity(TEST_GUID, TEST_GUID)
             assert result is not None
 
             # Act
+            # test delete with "entity"
             await self.table.delete_entity(entity=entity)
 
             with pytest.raises(ResourceNotFoundError):
-                result = await self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+                result = await self.table.get_entity(TEST_GUID, TEST_GUID)
+
+            await self.table.upsert_entity(entity)
+            # Act
+            # test delete with "PartitionKey" and "RowKey"
+            await self.table.delete_entity(TEST_GUID, TEST_GUID)
+
+            with pytest.raises(ResourceNotFoundError):
+                result = await self.table.get_entity(TEST_GUID, TEST_GUID)
         finally:
             await self._tear_down()
 

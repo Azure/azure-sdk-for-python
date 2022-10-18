@@ -1233,14 +1233,23 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             }
             self.table.upsert_entity(entity)
             
-            result = self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+            result = self.table.get_entity(TEST_GUID, TEST_GUID)
             assert result is not None
 
             # Act
+            # test delete with "entity"
             self.table.delete_entity(entity=entity)
 
             with pytest.raises(ResourceNotFoundError):
-                result = self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+                result = self.table.get_entity(TEST_GUID, TEST_GUID)
+
+            self.table.upsert_entity(entity)
+            # Act
+            # test delete with "PartitionKey" and "RowKey"
+            self.table.delete_entity(TEST_GUID, TEST_GUID)
+
+            with pytest.raises(ResourceNotFoundError):
+                result = self.table.get_entity(TEST_GUID, TEST_GUID)
         finally:
             self._tear_down()
 

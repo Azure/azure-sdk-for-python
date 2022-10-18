@@ -905,24 +905,33 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity = {
+            entity1 = {
                 u"PartitionKey": str(TEST_GUID),
                 u"RowKey": str(TEST_GUID),
             }
-            await self.table.upsert_entity(entity)
+            await self.table.upsert_entity(entity1)
             
-            result = await self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+            result = await self.table.get_entity(TEST_GUID, TEST_GUID)
             assert result is not None
 
-            entity = {
+            entity2 = {
                 u"PartitionKey": TEST_GUID,
                 u"RowKey": TEST_GUID,
             }
             # Act
-            await self.table.delete_entity(entity=entity)
+            # test delete with "entity"
+            await self.table.delete_entity(entity=entity2)
 
             with pytest.raises(ResourceNotFoundError):
-                result = await self.table.get_entity(str(TEST_GUID), str(TEST_GUID))
+                result = await self.table.get_entity(TEST_GUID, TEST_GUID)
+
+            await self.table.upsert_entity(entity1)
+            # Act
+            # test delete with "PartitionKey" and "RowKey"
+            await self.table.delete_entity(TEST_GUID, TEST_GUID)
+
+            with pytest.raises(ResourceNotFoundError):
+                result = await self.table.get_entity(TEST_GUID, TEST_GUID)
         finally:
             await self._tear_down()
 
