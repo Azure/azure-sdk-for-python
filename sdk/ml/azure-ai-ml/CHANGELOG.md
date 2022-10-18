@@ -11,6 +11,7 @@
 
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
+- Fixed job inputs not accepting datastores or job inputs.
 
 ### Other Changes
 
