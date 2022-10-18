@@ -1,4 +1,3 @@
-import logging
 import os
 from functools import partial
 from io import StringIO
@@ -585,7 +584,7 @@ class TestDSLPipeline:
             }
 
         job_yaml = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_data_options.yml"
-        pipeline_job = load_job(source=job_yaml)
+        pipeline_job: PipelineJob = load_job(source=job_yaml)
 
         pipeline = pipeline(**{key: val for key, val in pipeline_job._build_inputs().items()})
         pipeline.inputs.job_in_data_by_store_path_and_mount.mode = "ro_mount"
@@ -605,6 +604,8 @@ class TestDSLPipeline:
         actual_outputs = pipeline._build_outputs()
         for k, v in actual_outputs.items():
             v.mode = v.mode.lower()
+            # outputs defined in yaml are all uri_folder, while its default value in dsl is None
+            v.type = "uri_folder"
         assert pipeline_job._build_outputs() == actual_outputs
 
         component_job = next(iter(pipeline_job.jobs.values()))._to_rest_object()

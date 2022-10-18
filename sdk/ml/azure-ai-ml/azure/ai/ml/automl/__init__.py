@@ -34,6 +34,7 @@ from azure.ai.ml.entities._job.automl.tabular import (
     TabularLimitSettings
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from .._restclient.v2022_10_01_preview.models import (
     BlockedTransformers,
     ClassificationModels,
@@ -111,6 +112,7 @@ __all__ = [
     "regression",
     "forecasting",
     "SearchSpace",
+    "StackEnsembleSettings",
     "BlockedTransformers",
     "ClassificationJob",
     "ForecastingJob",

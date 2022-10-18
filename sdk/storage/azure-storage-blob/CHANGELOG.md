@@ -1,6 +1,21 @@
 # Release History
 
-## 12.14.0 (Unreleased)
+## 12.14.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed possible invalid content range exception that gets raised when downloading empty blobs through Azurite.
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-blob[aio]` to install.
+
+## 12.14.0 (2022-10-11)
 
 ### Features Added
 - Stable release of features from 12.14.0b1 and 12.14.0b2.

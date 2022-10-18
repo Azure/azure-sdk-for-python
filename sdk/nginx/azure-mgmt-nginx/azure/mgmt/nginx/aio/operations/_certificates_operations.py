@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -31,7 +31,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._certificates_operations import (
-    build_create_request,
+    build_create_or_update_request,
     build_delete_request,
     build_get_request,
     build_list_request,
@@ -129,7 +129,7 @@ class CertificatesOperations:
 
     get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
 
-    async def _create_initial(
+    async def _create_or_update_initial(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -163,7 +163,7 @@ class CertificatesOperations:
             else:
                 _json = None
 
-        request = build_create_request(
+        request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             certificate_name=certificate_name,
@@ -172,7 +172,7 @@ class CertificatesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
+            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -203,10 +203,10 @@ class CertificatesOperations:
 
         return deserialized
 
-    _create_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
+    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
 
     @overload
-    async def begin_create(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -247,7 +247,7 @@ class CertificatesOperations:
         """
 
     @overload
-    async def begin_create(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -288,7 +288,7 @@ class CertificatesOperations:
         """
 
     @distributed_trace_async
-    async def begin_create(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -335,7 +335,7 @@ class CertificatesOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._create_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 deployment_name=deployment_name,
                 certificate_name=certificate_name,
@@ -373,7 +373,7 @@ class CertificatesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
+    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, deployment_name: str, certificate_name: str, **kwargs: Any
@@ -541,10 +541,17 @@ class CertificatesOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"

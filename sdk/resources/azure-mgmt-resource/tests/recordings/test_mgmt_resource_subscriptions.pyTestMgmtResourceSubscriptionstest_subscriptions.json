@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.9.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.11.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 28 Apr 2022 02:47:02 GMT",
+        "Date": "Mon, 10 Oct 2022 03:21:12 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13845.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -86,7 +86,7 @@
           "email"
         ],
         "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
-        "tenant_region_scope": "NA",
+        "tenant_region_scope": "WW",
         "cloud_instance_name": "microsoftonline.com",
         "cloud_graph_host_name": "graph.windows.net",
         "msgraph_host": "graph.microsoft.com",
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.11.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 28 Apr 2022 02:47:02 GMT",
+        "Date": "Mon, 10 Oct 2022 03:21:12 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.7 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13777.6 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,28 +172,28 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "ea67dc02-cd32-4632-9f26-1422e7c6583d",
+        "client-request-id": "197f64d0-3745-4e74-9edf-4d69588c5a6c",
         "Connection": "keep-alive",
-        "Content-Length": "286",
+        "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.9.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
+        "User-Agent": "azsdk-python-identity/1.11.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
         "x-client-os": "linux",
         "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.17.0",
+        "x-client-ver": "1.20.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=o0XWF_siD-FhI.5AE83-u0GaQHW_GP7cjy\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "ea67dc02-cd32-4632-9f26-1422e7c6583d",
-        "Content-Length": "93",
+        "client-request-id": "197f64d0-3745-4e74-9edf-4d69588c5a6c",
+        "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 28 Apr 2022 02:47:02 GMT",
+        "Date": "Mon, 10 Oct 2022 03:21:12 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,13 +201,14 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12651.9 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13845.9 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
-        "expires_in": 3599,
-        "ext_expires_in": 3599,
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
         "access_token": "access_token"
       }
     },
@@ -218,39 +219,34 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.2.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "500",
+        "Content-Length": "464",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 28 Apr 2022 02:47:02 GMT",
+        "Date": "Mon, 10 Oct 2022 03:21:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c5b76a04-0c0b-4ad5-ac38-2bdafd78b890",
+        "x-ms-correlation-request-id": "d4fd32ed-620a-4bb1-9552-01973d773b7f",
         "x-ms-ratelimit-remaining-tenant-reads": "11999",
-        "x-ms-routing-request-id": "WESTUS:20220428T024703Z:c5b76a04-0c0b-4ad5-ac38-2bdafd78b890"
+        "x-ms-routing-request-id": "WESTUS:20221010T032113Z:d4fd32ed-620a-4bb1-9552-01973d773b7f"
       },
       "ResponseBody": {
         "value": [
           {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000",
             "authorizationSource": "RoleBased",
-            "managedByTenants": [
-              {
-                "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
-              }
-            ],
-            "tags": {},
+            "managedByTenants": [],
             "subscriptionId": "00000000-0000-0000-0000-000000000000",
             "tenantId": "00000000-0000-0000-0000-000000000000",
-            "displayName": "AzureSDKTest",
+            "displayName": "Python Mgmt SDK Test with TTL = 1 Day",
             "state": "Enabled",
             "subscriptionPolicies": {
               "locationPlacementId": "Internal_2014-09-01",
@@ -272,24 +268,24 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.2.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "30916",
+        "Content-Length": "31667",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 28 Apr 2022 02:47:03 GMT",
+        "Date": "Mon, 10 Oct 2022 03:21:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "e4b9bb64-cb0c-4e95-bb26-0eedfd59e57a",
-        "x-ms-ratelimit-remaining-subscription-reads": "11956",
-        "x-ms-routing-request-id": "WESTUS:20220428T024703Z:e4b9bb64-cb0c-4e95-bb26-0eedfd59e57a"
+        "x-ms-correlation-request-id": "d7ea79b9-9761-42d9-98b7-7a32ee10e5bd",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
+        "x-ms-routing-request-id": "WESTUS:20221010T032114Z:d7ea79b9-9761-42d9-98b7-7a32ee10e5bd"
       },
       "ResponseBody": {
         "value": [
@@ -735,6 +731,48 @@
             }
           },
           {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandnorth",
+            "name": "switzerlandnorth",
+            "type": "Region",
+            "displayName": "Switzerland North",
+            "regionalDisplayName": "(Europe) Switzerland North",
+            "metadata": {
+              "regionType": "Physical",
+              "regionCategory": "Recommended",
+              "geographyGroup": "Europe",
+              "longitude": "8.564572",
+              "latitude": "47.451542",
+              "physicalLocation": "Zurich",
+              "pairedRegion": [
+                {
+                  "name": "switzerlandwest",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandwest"
+                }
+              ]
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaenorth",
+            "name": "uaenorth",
+            "type": "Region",
+            "displayName": "UAE North",
+            "regionalDisplayName": "(Middle East) UAE North",
+            "metadata": {
+              "regionType": "Physical",
+              "regionCategory": "Recommended",
+              "geographyGroup": "Middle East",
+              "longitude": "55.316666",
+              "latitude": "25.266666",
+              "physicalLocation": "Dubai",
+              "pairedRegion": [
+                {
+                  "name": "uaecentral",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaecentral"
+                }
+              ]
+            }
+          },
+          {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/brazilsouth",
             "name": "brazilsouth",
             "type": "Region",
@@ -771,6 +809,27 @@
                 {
                   "name": "centraluseuap",
                   "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/centraluseuap"
+                }
+              ]
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/qatarcentral",
+            "name": "qatarcentral",
+            "type": "Region",
+            "displayName": "Qatar Central",
+            "regionalDisplayName": "(Middle East) Qatar Central",
+            "metadata": {
+              "regionType": "Physical",
+              "regionCategory": "Recommended",
+              "geographyGroup": "Middle East",
+              "longitude": "51.439327",
+              "latitude": "25.551462",
+              "physicalLocation": "Doha",
+              "pairedRegion": [
+                {
+                  "name": "westeurope",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westeurope"
                 }
               ]
             }
@@ -1003,6 +1062,17 @@
             }
           },
           {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/singapore",
+            "name": "singapore",
+            "type": "Region",
+            "displayName": "Singapore",
+            "regionalDisplayName": "Singapore",
+            "metadata": {
+              "regionType": "Logical",
+              "regionCategory": "Other"
+            }
+          },
+          {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafrica",
             "name": "southafrica",
             "type": "Region",
@@ -1093,6 +1163,48 @@
             }
           },
           {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastusstg",
+            "name": "eastusstg",
+            "type": "Region",
+            "displayName": "East US STG",
+            "regionalDisplayName": "(US) East US STG",
+            "metadata": {
+              "regionType": "Physical",
+              "regionCategory": "Other",
+              "geographyGroup": "US",
+              "longitude": "-79.8164",
+              "latitude": "37.3719",
+              "physicalLocation": "Virginia",
+              "pairedRegion": [
+                {
+                  "name": "southcentralusstg",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/southcentralusstg"
+                }
+              ]
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/southcentralusstg",
+            "name": "southcentralusstg",
+            "type": "Region",
+            "displayName": "South Central US STG",
+            "regionalDisplayName": "(US) South Central US STG",
+            "metadata": {
+              "regionType": "Physical",
+              "regionCategory": "Other",
+              "geographyGroup": "US",
+              "longitude": "-98.5",
+              "latitude": "29.4167",
+              "physicalLocation": "Texas",
+              "pairedRegion": [
+                {
+                  "name": "eastusstg",
+                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastusstg"
+                }
+              ]
+            }
+          },
+          {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/northcentralus",
             "name": "northcentralus",
             "type": "Region",
@@ -1151,48 +1263,6 @@
                 {
                   "name": "jioindiacentral",
                   "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/jioindiacentral"
-                }
-              ]
-            }
-          },
-          {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandnorth",
-            "name": "switzerlandnorth",
-            "type": "Region",
-            "displayName": "Switzerland North",
-            "regionalDisplayName": "(Europe) Switzerland North",
-            "metadata": {
-              "regionType": "Physical",
-              "regionCategory": "Other",
-              "geographyGroup": "Europe",
-              "longitude": "8.564572",
-              "latitude": "47.451542",
-              "physicalLocation": "Zurich",
-              "pairedRegion": [
-                {
-                  "name": "switzerlandwest",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandwest"
-                }
-              ]
-            }
-          },
-          {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaenorth",
-            "name": "uaenorth",
-            "type": "Region",
-            "displayName": "UAE North",
-            "regionalDisplayName": "(Middle East) UAE North",
-            "metadata": {
-              "regionType": "Physical",
-              "regionCategory": "Other",
-              "geographyGroup": "Middle East",
-              "longitude": "55.316666",
-              "latitude": "25.266666",
-              "physicalLocation": "Dubai",
-              "pairedRegion": [
-                {
-                  "name": "uaecentral",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/uaecentral"
                 }
               ]
             }
@@ -1512,27 +1582,6 @@
             }
           },
           {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/swedensouth",
-            "name": "swedensouth",
-            "type": "Region",
-            "displayName": "Sweden South",
-            "regionalDisplayName": "(Europe) Sweden South",
-            "metadata": {
-              "regionType": "Physical",
-              "regionCategory": "Other",
-              "geographyGroup": "Europe",
-              "longitude": "13.0007",
-              "latitude": "55.6059",
-              "physicalLocation": "Malmo",
-              "pairedRegion": [
-                {
-                  "name": "swedencentral",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/swedencentral"
-                }
-              ]
-            }
-          },
-          {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/switzerlandwest",
             "name": "switzerlandwest",
             "type": "Region",
@@ -1615,27 +1664,6 @@
                 }
               ]
             }
-          },
-          {
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/qatarcentral",
-            "name": "qatarcentral",
-            "type": "Region",
-            "displayName": "Qatar Central",
-            "regionalDisplayName": "(Europe) Qatar Central",
-            "metadata": {
-              "regionType": "Physical",
-              "regionCategory": "Other",
-              "geographyGroup": "Europe",
-              "longitude": "51.439327",
-              "latitude": "25.551462",
-              "physicalLocation": "Doha",
-              "pairedRegion": [
-                {
-                  "name": "westeurope",
-                  "id": "/subscriptions/00000000-0000-0000-0000-000000000000/locations/westeurope"
-                }
-              ]
-            }
           }
         ]
       }
@@ -1647,37 +1675,32 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/0.0.0 Python/3.8.12 (Linux-5.13.0-1021-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/21.2.0 Python/3.8.14 (Linux-5.15.0-1020-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "453",
+        "Content-Length": "417",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 28 Apr 2022 02:47:03 GMT",
+        "Date": "Mon, 10 Oct 2022 03:21:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "286de730-5e3a-460d-a830-f3d2d6402218",
-        "x-ms-ratelimit-remaining-subscription-reads": "11955",
-        "x-ms-routing-request-id": "WESTUS:20220428T024703Z:286de730-5e3a-460d-a830-f3d2d6402218"
+        "x-ms-correlation-request-id": "c3e1441a-dd36-41f2-9fcd-6eb89abb311b",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-routing-request-id": "WESTUS:20221010T032114Z:c3e1441a-dd36-41f2-9fcd-6eb89abb311b"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000",
         "authorizationSource": "RoleBased",
-        "managedByTenants": [
-          {
-            "tenantId": "2f4a9838-26b7-47ee-be60-ccc1fdec5953"
-          }
-        ],
-        "tags": {},
+        "managedByTenants": [],
         "subscriptionId": "00000000-0000-0000-0000-000000000000",
         "tenantId": "00000000-0000-0000-0000-000000000000",
-        "displayName": "AzureSDKTest",
+        "displayName": "Python Mgmt SDK Test with TTL = 1 Day",
         "state": "Enabled",
         "subscriptionPolicies": {
           "locationPlacementId": "Internal_2014-09-01",
