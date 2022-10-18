@@ -27,7 +27,7 @@ import json
 
 from helpers import base64url_decode
 
-
+''' cSpell:disable '''
 _open_enclave_report = (
     "AQAAAAIAAADkEQAAAAAAAAMAAg"
     + "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g"
@@ -123,7 +123,7 @@ _open_enclave_report = (
     + "RHZvOGgyazVkdTFpV0RkQmtBbiswaWlBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0"
     + "tLQoA"
 )
-
+''' cSpell:enable '''
 
 _runtime_data = (
     "CiAgICAgICAgewogI"

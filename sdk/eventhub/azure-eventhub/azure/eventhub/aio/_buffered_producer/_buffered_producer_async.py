@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import asyncio
 import logging
 import queue
@@ -14,6 +15,7 @@ from ..._common import EventDataBatch
 from ...exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
+    from .._transport._base_async import AmqpTransportAsync
     from ..._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
@@ -165,7 +167,10 @@ class BufferedProducer:
                         self.partition_id,
                         len(batch),
                     )
-                    await self._on_success(batch._internal_events, self.partition_id)
+                    try:
+                        await self._on_success(batch._internal_events, self.partition_id)
+                    except AttributeError:
+                        await self._on_success(batch, self.partition_id)
                 except Exception as exc:  # pylint: disable=broad-except
                     _LOGGER.info(
                         "Partition %r sending %r events failed due to exception: %r",
@@ -173,7 +178,10 @@ class BufferedProducer:
                         len(batch),
                         exc,
                     )
-                    await self._on_error(batch._internal_events, self.partition_id, exc)
+                    try:
+                        await self._on_error(batch._internal_events, self.partition_id, exc)
+                    except AttributeError:
+                        await self._on_error(batch, self.partition_id, exc)
                 finally:
                     self._cur_buffered_len -= len(batch)
             # If flush could not get the semaphore, we log and raise error if wanted

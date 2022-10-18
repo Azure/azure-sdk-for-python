@@ -16,7 +16,7 @@ except ImportError:  # 2.7
 import os
 from typing import TYPE_CHECKING, cast, IO
 
-from six.moves.http_client import HTTPConnection
+from http.client import HTTPConnection
 
 try:
     binary_type = str
@@ -232,12 +232,12 @@ def _decode_parts_helper(
     Rebuild an HTTP response from pure string.
     """
     responses = []
-    for index, raw_reponse in enumerate(message.get_payload()):
-        content_type = raw_reponse.get_content_type()
+    for index, raw_response in enumerate(message.get_payload()):
+        content_type = raw_response.get_content_type()
         if content_type == "application/http":
             responses.append(
                 deserialize_response(
-                    raw_reponse.get_payload(decode=True),
+                    raw_response.get_payload(decode=True),
                     requests[index],
                     http_response_type=http_response_type,
                 )
@@ -245,7 +245,7 @@ def _decode_parts_helper(
         elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
             # The message batch contains one or more change sets
             changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
-            changeset_responses = response._decode_parts(raw_reponse, http_response_type, changeset_requests)  # pylint: disable=protected-access
+            changeset_responses = response._decode_parts(raw_response, http_response_type, changeset_requests)  # pylint: disable=protected-access
             responses.extend(changeset_responses)
         else:
             raise ValueError(
@@ -259,7 +259,7 @@ def _get_raw_parts_helper(response, http_response_type):
     Assuming this body is multipart, return the iterator or parts.
 
     If parts are application/http use http_response_type or HttpClientTransportResponse
-    as enveloppe.
+    as envelope.
     """
     body_as_bytes = response.body()
     # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
@@ -338,7 +338,7 @@ def _aiohttp_body_helper(response):
     """Helper for body method of Aiohttp responses.
 
     Since aiohttp body methods need decompression work synchronously,
-    need to share thid code across old and new aiohttp transport responses
+    need to share this code across old and new aiohttp transport responses
     for backcompat.
 
     :rtype: bytes

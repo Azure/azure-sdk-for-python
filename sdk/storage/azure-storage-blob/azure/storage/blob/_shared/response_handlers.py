@@ -82,6 +82,10 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
     return response.http_response.location_mode, deserialized
 
 
+def return_raw_deserialized(response, *_):
+    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
+
+
 def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False

@@ -547,7 +547,8 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
         """
-
+        if not self.finished():
+            self.update_status()
         while not self.finished():
             self._delay()
             self.update_status()

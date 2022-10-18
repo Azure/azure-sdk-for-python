@@ -1,0 +1,77 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+
+display_name: pipeline_with_do_while_node
+experiment_name: pipeline_with_do_while_node
+type: pipeline
+
+inputs:
+  job_in_path:
+    type: uri_folder
+    path: ./
+  job_in_number: 3
+
+outputs:
+  output_in_number:
+    mode: upload
+  output_in_path:
+    mode: upload
+
+settings:
+  default_datastore: azureml:workspaceblobstore
+  default_compute: azureml:cpu-cluster
+  continue_on_step_failure: false
+  force_rerun: true
+
+jobs:
+  pipeline_body_node:
+    type: pipeline
+    component: ./components/do_while_body_pipeline_component.yml
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+
+  do_while_job_with_pipeline_job:
+    type: do_while
+    body: ${{parent.jobs.pipeline_body_node}}
+    limits:
+      max_iteration_count: 5
+    condition: ${{parent.jobs.pipeline_body_node.outputs.is_number_larger_than_zero}}
+    mapping:
+      ${{parent.jobs.pipeline_body_node.outputs.output_in_number}}:
+        - ${{parent.jobs.pipeline_body_node.inputs.job_in_number}}
+        - job_in_number_1
+      output_in_path: job_in_path
+
+  command_component_body_node:
+    type: command
+    component: ./components/basic_component.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.inputs.job_in_number}}
+      component_in_number_1: ${{parent.inputs.job_in_number}}
+      component_in_path: ${{parent.inputs.job_in_path}}
+
+  do_while_job_with_command_component:
+    type: do_while
+    body: ${{parent.jobs.command_component_body_node}}
+    limits:
+      max_iteration_count: 5
+    condition: ${{parent.jobs.command_component_body_node.outputs.is_number_larger_than_zero}}
+    mapping:
+      ${{parent.jobs.command_component_body_node.outputs.output_in_number}}:
+        - ${{parent.jobs.command_component_body_node.inputs.component_in_number}}
+        - component_in_number_1
+      output_in_path: component_in_path
+
+  get_do_while_result:
+    type: command
+    component: ./components/basic_component.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      component_in_number: ${{parent.jobs.pipeline_body_node.outputs.output_in_number}}
+      component_in_number_1: ${{parent.jobs.command_component_body_node.outputs.output_in_number}}
+      component_in_path: ${{parent.jobs.pipeline_body_node.outputs.output_in_path}}
+    outputs:
+      output_in_number: ${{parent.outputs.output_in_number}}
+      output_in_path: ${{parent.outputs.output_in_path}}

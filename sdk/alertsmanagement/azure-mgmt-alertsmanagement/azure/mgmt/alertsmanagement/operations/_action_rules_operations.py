@@ -8,7 +8,13 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -20,8 +26,9 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ActionRulesOperations(object):
     """ActionRulesOperations operations.
@@ -93,49 +100,57 @@ class ActionRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.alertsmanagement.models.ActionRulesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionRulesList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ActionRulesList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-05-05-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_subscription.metadata['url']  # type: ignore
+                url = self.list_by_subscription.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+                    ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if target_resource_group is not None:
-                    query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
+                    query_parameters["targetResourceGroup"] = self._serialize.query(
+                        "target_resource_group", target_resource_group, "str"
+                    )
                 if target_resource_type is not None:
-                    query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
+                    query_parameters["targetResourceType"] = self._serialize.query(
+                        "target_resource_type", target_resource_type, "str"
+                    )
                 if target_resource is not None:
-                    query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
+                    query_parameters["targetResource"] = self._serialize.query(
+                        "target_resource", target_resource, "str"
+                    )
                 if severity is not None:
-                    query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
+                    query_parameters["severity"] = self._serialize.query("severity", severity, "str")
                 if monitor_service is not None:
-                    query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
+                    query_parameters["monitorService"] = self._serialize.query(
+                        "monitor_service", monitor_service, "str"
+                    )
                 if impacted_scope is not None:
-                    query_parameters['impactedScope'] = self._serialize.query("impacted_scope", impacted_scope, 'str')
+                    query_parameters["impactedScope"] = self._serialize.query("impacted_scope", impacted_scope, "str")
                 if description is not None:
-                    query_parameters['description'] = self._serialize.query("description", description, 'str')
+                    query_parameters["description"] = self._serialize.query("description", description, "str")
                 if alert_rule_id is not None:
-                    query_parameters['alertRuleId'] = self._serialize.query("alert_rule_id", alert_rule_id, 'str')
+                    query_parameters["alertRuleId"] = self._serialize.query("alert_rule_id", alert_rule_id, "str")
                 if action_group is not None:
-                    query_parameters['actionGroup'] = self._serialize.query("action_group", action_group, 'str')
+                    query_parameters["actionGroup"] = self._serialize.query("action_group", action_group, "str")
                 if name is not None:
-                    query_parameters['name'] = self._serialize.query("name", name, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                    query_parameters["name"] = self._serialize.query("name", name, "str")
+                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -145,7 +160,7 @@ class ActionRulesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ActionRulesList', pipeline_response)
+            deserialized = self._deserialize("ActionRulesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -164,10 +179,9 @@ class ActionRulesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/actionRules'}  # type: ignore
+        return ItemPaged(get_next, extract_data)
+
+    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/actionRules"}  # type: ignore
 
     def list_by_resource_group(
         self,
@@ -221,50 +235,58 @@ class ActionRulesOperations(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.alertsmanagement.models.ActionRulesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionRulesList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ActionRulesList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-05-05-preview"
         accept = "application/json"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_resource_group.metadata['url']  # type: ignore
+                url = self.list_by_resource_group.metadata["url"]  # type: ignore
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+                    ),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if target_resource_group is not None:
-                    query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
+                    query_parameters["targetResourceGroup"] = self._serialize.query(
+                        "target_resource_group", target_resource_group, "str"
+                    )
                 if target_resource_type is not None:
-                    query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
+                    query_parameters["targetResourceType"] = self._serialize.query(
+                        "target_resource_type", target_resource_type, "str"
+                    )
                 if target_resource is not None:
-                    query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
+                    query_parameters["targetResource"] = self._serialize.query(
+                        "target_resource", target_resource, "str"
+                    )
                 if severity is not None:
-                    query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
+                    query_parameters["severity"] = self._serialize.query("severity", severity, "str")
                 if monitor_service is not None:
-                    query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
+                    query_parameters["monitorService"] = self._serialize.query(
+                        "monitor_service", monitor_service, "str"
+                    )
                 if impacted_scope is not None:
-                    query_parameters['impactedScope'] = self._serialize.query("impacted_scope", impacted_scope, 'str')
+                    query_parameters["impactedScope"] = self._serialize.query("impacted_scope", impacted_scope, "str")
                 if description is not None:
-                    query_parameters['description'] = self._serialize.query("description", description, 'str')
+                    query_parameters["description"] = self._serialize.query("description", description, "str")
                 if alert_rule_id is not None:
-                    query_parameters['alertRuleId'] = self._serialize.query("alert_rule_id", alert_rule_id, 'str')
+                    query_parameters["alertRuleId"] = self._serialize.query("alert_rule_id", alert_rule_id, "str")
                 if action_group is not None:
-                    query_parameters['actionGroup'] = self._serialize.query("action_group", action_group, 'str')
+                    query_parameters["actionGroup"] = self._serialize.query("action_group", action_group, "str")
                 if name is not None:
-                    query_parameters['name'] = self._serialize.query("name", name, 'str')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                    query_parameters["name"] = self._serialize.query("name", name, "str")
+                query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
                 request = self._client.get(url, query_parameters, header_parameters)
             else:
@@ -274,7 +296,7 @@ class ActionRulesOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('ActionRulesList', pipeline_response)
+            deserialized = self._deserialize("ActionRulesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -293,10 +315,9 @@ class ActionRulesOperations(object):
 
             return pipeline_response
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules'}  # type: ignore
+        return ItemPaged(get_next, extract_data)
+
+    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules"}  # type: ignore
 
     def get_by_name(
         self,
@@ -318,30 +339,30 @@ class ActionRulesOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.ActionRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionRule"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ActionRule"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-05-05-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_by_name.metadata['url']  # type: ignore
+        url = self.get_by_name.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionRuleName': self._serialize.url("action_rule_name", action_rule_name, 'str'),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+            ),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
+            "actionRuleName": self._serialize.url("action_rule_name", action_rule_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -353,14 +374,15 @@ class ActionRulesOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        deserialized = self._deserialize('ActionRule', pipeline_response)
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        deserialized = self._deserialize("ActionRule", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    get_by_name.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}  # type: ignore
+
+    get_by_name.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}"}  # type: ignore
 
     def create_update(
         self,
@@ -385,36 +407,36 @@ class ActionRulesOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.ActionRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionRule"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ActionRule"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-05-05-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.create_update.metadata['url']  # type: ignore
+        url = self.create_update.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionRuleName': self._serialize.url("action_rule_name", action_rule_name, 'str'),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+            ),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
+            "actionRuleName": self._serialize.url("action_rule_name", action_rule_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(action_rule, 'ActionRule')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(action_rule, "ActionRule")
+        body_content_kwargs["content"] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -425,14 +447,15 @@ class ActionRulesOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        deserialized = self._deserialize('ActionRule', pipeline_response)
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        deserialized = self._deserialize("ActionRule", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    create_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}  # type: ignore
+
+    create_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}"}  # type: ignore
 
     def delete(
         self,
@@ -454,30 +477,30 @@ class ActionRulesOperations(object):
         :rtype: bool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[bool]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[bool]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-05-05-preview"
         accept = "application/json"
 
         # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
+        url = self.delete.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionRuleName': self._serialize.url("action_rule_name", action_rule_name, 'str'),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+            ),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
+            "actionRuleName": self._serialize.url("action_rule_name", action_rule_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -489,14 +512,15 @@ class ActionRulesOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        deserialized = self._deserialize('bool', pipeline_response)
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        deserialized = self._deserialize("bool", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}  # type: ignore
+
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}"}  # type: ignore
 
     def update(
         self,
@@ -521,36 +545,36 @@ class ActionRulesOperations(object):
         :rtype: ~azure.mgmt.alertsmanagement.models.ActionRule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ActionRule"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ActionRule"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
         api_version = "2019-05-05-preview"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.update.metadata['url']  # type: ignore
+        url = self.update.metadata["url"]  # type: ignore
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'actionRuleName': self._serialize.url("action_rule_name", action_rule_name, 'str'),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str", min_length=1
+            ),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
+            "actionRuleName": self._serialize.url("action_rule_name", action_rule_name, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters["api-version"] = self._serialize.query("api_version", api_version, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
+        header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(action_rule_patch, 'PatchObject')
-        body_content_kwargs['content'] = body_content
+        body_content = self._serialize.body(action_rule_patch, "PatchObject")
+        body_content_kwargs["content"] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -561,11 +585,12 @@ class ActionRulesOperations(object):
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        deserialized = self._deserialize('ActionRule', pipeline_response)
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        deserialized = self._deserialize("ActionRule", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}  # type: ignore
+
+    update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}"}  # type: ignore

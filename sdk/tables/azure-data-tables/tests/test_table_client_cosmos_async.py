@@ -15,11 +15,7 @@ from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION, TableTransactionError
 
 from _shared.asynctestcase import AsyncTableTestCase
-from _shared.testcase import SLEEP_DELAY
 from async_preparers import cosmos_decorator_async
-from devtools_testutils import AzureTestCase
-
-# ------------------------------------------------------------------------------
 
 SERVICES = {
     TableServiceClient: 'cosmos',
@@ -29,6 +25,7 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
+
 
 class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
@@ -109,7 +106,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     async def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
         
-        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
+        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', trailing space, and less than 255 chars.
         invalid_table_names = ["\\", "//", "#", "?", "- "]
         for invalid_name in invalid_table_names:
             client = TableClient(

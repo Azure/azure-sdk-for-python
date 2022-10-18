@@ -7,32 +7,36 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class IdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IdentityType."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class NginxPrivateIPAllocationMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class NginxPrivateIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NginxPrivateIPAllocationMethod."""
 
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ProvisioningState."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"

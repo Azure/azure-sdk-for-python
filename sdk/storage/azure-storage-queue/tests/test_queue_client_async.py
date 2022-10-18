@@ -51,8 +51,8 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         self.assertEqual(service.account_name, storage_account_name)
         self.assertEqual(service.credential.account_name, storage_account_name)
         self.assertEqual(service.credential.account_key, storage_account_key)
-        self.assertTrue('{}.{}.core.windows.net'.format(storage_account_name, url_type) in service.url)
-        self.assertTrue('{}-secondary.{}.core.windows.net'.format(storage_account_name, url_type) in service.secondary_endpoint)
+        self.assertTrue(f'{storage_account_name}.{url_type}.core.windows.net' in service.url)
+        self.assertTrue(f'{storage_account_name}-secondary.{url_type}.core.windows.net' in service.secondary_endpoint)
 
     # --Direct Parameters Test Cases --------------------------------------------
     @QueuePreparer()
@@ -135,9 +135,9 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             self.assertEqual(service.credential.account_name, storage_account_name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith(
-                'https://{}.{}.core.chinacloudapi.cn'.format(storage_account_name, service_type[1])))
+                f'https://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn'))
             self.assertTrue(service.secondary_endpoint.startswith(
-                'https://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account_name, service_type[1])))
+                f'https://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn'))
 
     @QueuePreparer()
     def test_create_service_protocol(self, storage_account_name, storage_account_key):
@@ -187,8 +187,10 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     def test_create_service_with_connection_string_key(self, storage_account_name, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};'.format(storage_account_name, storage_account_key)
-
+        conn_string = (
+            f'AccountName={storage_account_name};'
+            f'AccountKey={storage_account_key};'
+            )
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(conn_string, queue_name='foo')
@@ -200,7 +202,10 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     def test_create_service_with_connection_string_sas(self, storage_account_name, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(storage_account_name, self.sas_token)
+        conn_string = (
+            f'AccountName={storage_account_name};'
+            f'SharedAccessSignature={self.sas_token};'
+            )
 
         for service_type in SERVICES:
             # Act
@@ -216,8 +221,11 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     def test_create_service_with_conn_str_endpoint_protocol(self, storage_account_name, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            storage_account_name, storage_account_key)
+        conn_string = (
+            f'AccountName={storage_account_name};'
+            f'AccountKey={storage_account_key};'
+            'DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'
+            )
 
         for service_type in SERVICES.items():
             # Act
@@ -230,17 +238,17 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(
                 service.primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn/'.format(storage_account_name, service_type[1])))
+                    f'http://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn/'))
             self.assertTrue(
                 service.secondary_endpoint.startswith(
-                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account_name, service_type[1])))
+                    f'http://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn'))
             self.assertEqual(service.scheme, 'http')
 
     @QueuePreparer()
-    def test_create_service_with_connection_string_emulated(self, storage_account_name, storage_account_key):
+    def test_create_service_with_connection_string_emulated(self, *args):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(storage_account_name, storage_account_key)
+            conn_string = 'UseDevelopmentStorage=true;'
 
             # Act
             with self.assertRaises(ValueError):
@@ -250,8 +258,10 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     def test_create_service_with_connection_string_custom_domain(self, storage_account_name, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com;'.format(
-                storage_account_name, storage_account_key)
+            conn_string = (
+                f'AccountName={storage_account_name};'
+                f'AccountKey={storage_account_key};'
+                'QueueEndpoint=www.mydomain.com;')
 
             # Act
             service = service_type[0].from_connection_string(conn_string, queue_name="foo")
@@ -262,14 +272,16 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             self.assertEqual(service.credential.account_name, storage_account_name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account_name + '-secondary.queue.core.windows.net'))
+            self.assertTrue(service.secondary_endpoint.startswith(f'https://{storage_account_name}-secondary.queue.core.windows.net'))
 
     @QueuePreparer()
     def test_create_serv_with_cs_custom_dmn_trlng_slash(self, storage_account_name, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com/;'.format(
-                storage_account_name, storage_account_key)
+            conn_string = (
+                f'AccountName={storage_account_name};'
+                f'AccountKey={storage_account_key};'
+                'QueueEndpoint=www.mydomain.com/;')
 
             # Act
             service = service_type[0].from_connection_string(conn_string, queue_name="foo")
@@ -280,15 +292,17 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             self.assertEqual(service.credential.account_name, storage_account_name)
             self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account_name + '-secondary.queue.core.windows.net'))
+            self.assertTrue(service.secondary_endpoint.startswith(f'https://{storage_account_name}-secondary.queue.core.windows.net'))
 
 
     @QueuePreparer()
     def test_create_service_with_cs_custom_dmn_sec_override(self, storage_account_name, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com/;'.format(
-                storage_account_name, storage_account_key)
+            conn_string = (
+                f'AccountName={storage_account_name};'
+                f'AccountKey={storage_account_key};'
+                'QueueEndpoint=www.mydomain.com/;')
 
             # Act
             service = service_type[0].from_connection_string(
@@ -306,9 +320,10 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     def test_create_service_with_cs_fails_if_sec_without_prim(self, storage_account_name, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
-            conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                storage_account_name, storage_account_key,
-                _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
+            conn_string = (
+                f'AccountName={storage_account_name};'
+                f'AccountKey={storage_account_key};'
+                f'{_CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1])}=www.mydomain.com;')
 
             # Act
 
@@ -320,11 +335,11 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     def test_create_service_with_cs_succeeds_if_sec_with_prim(self, storage_account_name, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
-            conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                storage_account_name,
-                storage_account_key,
-                _CONNECTION_ENDPOINTS.get(service_type[1]),
-                _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
+            conn_string = (
+                f'AccountName={storage_account_name};'
+                f'AccountKey={storage_account_key};'
+                f'{_CONNECTION_ENDPOINTS.get(service_type[1])}=www.mydomain.com;'
+                f'{_CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1])}=www-sec.mydomain.com;')
 
             # Act
             service = service_type[0].from_connection_string(conn_string, queue_name="foo")
@@ -341,8 +356,10 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     def test_create_service_with_custom_account_endpoint_path(self, storage_account_name, storage_account_key):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
-            conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};QueueEndpoint={};'.format(
-                storage_account_name, storage_account_key, custom_account_url)
+            conn_string = (
+                f'DefaultEndpointsProtocol=http;AccountName={storage_account_name};'
+                f'AccountKey={storage_account_key};'
+                f'QueueEndpoint={custom_account_url};')
 
             # Act
             service = service_type[0].from_connection_string(conn_string, queue_name="foo")
@@ -416,7 +433,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            assert "azsdk-python-storage-queue/{}".format(VERSION) in response.http_request.headers['User-Agent']
+            assert f"azsdk-python-storage-queue/{VERSION}" in response.http_request.headers['User-Agent']
 
         await service.get_service_properties(raw_response_hook=callback)
 
@@ -429,19 +446,19 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            assert ("TestApp/v1.0 azsdk-python-storage-queue/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())) in response.http_request.headers['User-Agent']
+            assert (
+                f"TestApp/v1.0 azsdk-python-storage-queue/{VERSION} "
+                f"Python/{platform.python_version()} "
+                f"({platform.platform()})") in response.http_request.headers['User-Agent']
 
         await service.get_service_properties(raw_response_hook=callback)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            assert ("TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-queue/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())) in response.http_request.headers['User-Agent']
+            assert (
+                f"TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-queue/{VERSION} "
+                f"Python/{platform.python_version()} ({platform.platform()})"
+                ) in response.http_request.headers['User-Agent']
 
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
@@ -452,10 +469,9 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
-            assert ("customer_user_agent azsdk-python-storage-queue/{} Python/{} ({})".format(
-                    VERSION,
-                    platform.python_version(),
-                    platform.platform())) in response.http_request.headers['User-Agent']
+            assert (f"customer_user_agent azsdk-python-storage-queue/{VERSION} "
+                    f"Python/{platform.python_version()} ({platform.platform()})"
+                ) in response.http_request.headers['User-Agent']
 
         await service.get_service_properties(raw_response_hook=callback, user_agent='customer_user_agent')
 

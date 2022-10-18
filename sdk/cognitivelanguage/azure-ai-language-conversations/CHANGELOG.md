@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+* This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 
 ## 1.1.0b2 (2022-07-01)
 

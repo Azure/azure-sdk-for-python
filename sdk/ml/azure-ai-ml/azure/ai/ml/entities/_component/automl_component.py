@@ -7,7 +7,8 @@ from marshmallow import Schema
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.component.automl_component import AutoMLComponentSchema
-from azure.ai.ml.constants import COMPONENT_TYPE, NodeType
+from azure.ai.ml.constants._common import COMPONENT_TYPE
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
 
 

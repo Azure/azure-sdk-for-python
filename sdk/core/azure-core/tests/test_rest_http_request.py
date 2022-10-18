@@ -321,7 +321,7 @@ def test_use_custom_json_encoder():
     # since json can't serialize bytes by default but AzureJSONEncoder can,
     # we pass in bytes and check that they are serialized
     request = HttpRequest("GET", "/headers", json=bytearray("mybytes", "utf-8"))
-    assert request.content == '"bXlieXRlcw=="'
+    assert request.content == '"bXlieXRlcw=="' # cspell:disable-line
 
 def test_request_policies_raw_request_hook(port):
     # test that the request all the way through the pipeline is a new request
@@ -385,7 +385,7 @@ def test_request_policies_chain(port):
     with pytest.raises(ValueError) as ex:
         client.send_request(
             request,
-            content="I should be overriden",
+            content="I should be overridden",
         )
     assert "Passed through the policies!" in str(ex.value)
 

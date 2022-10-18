@@ -72,7 +72,7 @@ def get_python_release_pipeline(output_folder):
 
 
 # Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag=""):
+def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo_hash=""):
     paramaters = {
         "stages_to_skip": [],
         "resources": {
@@ -101,6 +101,10 @@ def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag=""):
             },
             "PYTHON_TAG": {
                 "value": python_tag,
+                "isSecret": False
+            },
+            "REST_REPO_HASH": {
+                "value": rest_repo_hash,
                 "isSecret": False
             }
         }

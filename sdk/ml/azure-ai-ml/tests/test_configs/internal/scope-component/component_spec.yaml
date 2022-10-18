@@ -16,7 +16,7 @@ description: Convert adls test data to SS format
 
 inputs:
   TextData:
-    type: string
+    type: [AnyFile, AnyDirectory]
     description: text file on ADLS storage
   ExtractionClause:
     type: string

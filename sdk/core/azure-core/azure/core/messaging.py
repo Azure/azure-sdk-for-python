@@ -28,7 +28,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
     All required parameters must be populated in order to send to Azure.
 
     :param source: Required. Identifies the context in which an event happened. The combination of id and source must
-     be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+     be unique for each distinct event. If publishing to a domain topic, source must be the domain topic name.
     :type source: str
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
@@ -53,7 +53,7 @@ class CloudEvent(object):  # pylint:disable=too-many-instance-attributes
      and must not exceed the length of 20 characters.
     :type extensions: Optional[Dict]
     :ivar source: Identifies the context in which an event happened. The combination of id and source must
-     be unique for each distinct event. If publishing to a domain topic, source must be the domain name.
+     be unique for each distinct event. If publishing to a domain topic, source must be the domain topic name.
     :vartype source: str
     :ivar data: Event data specific to the event type.
     :vartype data: object

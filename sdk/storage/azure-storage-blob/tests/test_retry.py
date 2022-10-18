@@ -11,35 +11,35 @@ from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError
+    ResourceExistsError,
+    ServiceResponseError
 )
 from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob import (
-    BlobClient,
     BlobServiceClient,
-    ContainerClient,
     ExponentialRetry,
     LinearRetry,
     LocationMode
 )
 from requests import Response
-from requests.exceptions import ContentDecodingError, ChunkedEncodingError
+from requests.exceptions import ContentDecodingError, ChunkedEncodingError, ReadTimeout
 
 from devtools_testutils import RetryCounter, ResponseCallback, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 
-class RetryRequestTransport(RequestsTransport):
-    """Transport to test retry"""
+class TimeoutRequestsTransport(RequestsTransport):
+    """Transport to test read timeout"""
     def __init__(self, *args, **kwargs):
-        super(RetryRequestTransport, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.count = 0
 
     def send(self, request, **kwargs):
         self.count += 1
-        response = super(RetryRequestTransport, self).send(request, **kwargs)
-        return response
+        timeout_error = ReadTimeout("Read timed out", request=request)
+        raise ServiceResponseError(timeout_error, error=timeout_error)
+
 
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetry(StorageRecordedTestCase):
@@ -120,7 +120,6 @@ class TestStorageRetry(StorageRecordedTestCase):
             assert kwargs.get('response') is not None
             assert kwargs['response'].status_code == 408
 
-
         # Act
         try:
             # The initial create will return 201, but we overwrite it and retry.
@@ -144,31 +143,28 @@ class TestStorageRetry(StorageRecordedTestCase):
         # Upload a blob that can be downloaded to test read timeout
         service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
         container = service.create_container(container_name)
-        container.upload_blob(blob_name, b'a' * 5 * 1025, overwrite=True)
+        container.upload_blob(blob_name, b'Hello World', overwrite=True)
 
         retry = LinearRetry(backoff=1, random_jitter_range=1)
-        retry_transport = RetryRequestTransport(connection_timeout=11, read_timeout=0.000000000001)
-        # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
-        service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, transport=retry_transport)
-        blob = service.get_blob_client(container_name, blob_name)
-
-        assert service._client._client._pipeline._transport.connection_config.timeout == 11
-        assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
+        timeout_transport = TimeoutRequestsTransport()
+        timeout_service = self._create_storage_service(
+            BlobServiceClient,
+            storage_account_name,
+            storage_account_key,
+            retry_policy=retry,
+            transport=timeout_transport)
+        blob = timeout_service.get_blob_client(container_name, blob_name)
 
         # Act
         try:
-            with pytest.raises(AzureError) as error:
+            with pytest.raises(AzureError):
                 blob.download_blob()
             # Assert
             # 3 retries + 1 original == 4
-            assert retry_transport.count == 4
-            # This call should succeed on the server side, but fail on the client side due to socket timeout
-            assert 'read timeout' in str(error.value.args[0]), 'Expected socket timeout but got different exception.'
+            assert timeout_transport.count == 4
 
         finally:
-            # we must make the timeout normal again to let the delete operation succeed
-            service.delete_container(container_name, connection_timeout=(11, 11))
+            service.delete_container(container_name)
 
     @BlobPreparer()
     @recorded_by_proxy

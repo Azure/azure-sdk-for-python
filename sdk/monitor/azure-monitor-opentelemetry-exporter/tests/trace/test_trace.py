@@ -19,6 +19,7 @@ from opentelemetry.trace.status import Status, StatusCode
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
+    _check_instrumentation_span,
     _get_trace_export_result,
 )
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
@@ -41,6 +42,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorTraceExporter()
 
     @classmethod
@@ -974,6 +976,34 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertFalse(envelope.data.base_data.success)
 
+    def test_span_to_envelope_sample_rate(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "test": "asd",
+                "http.method": "GET",
+                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
+                "http.status_code": 200,
+                "_MS.sampleRate": 50,
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.sample_rate, 50)
+        self.assertIsNone(envelope.data.base_data.properties.get("_MS.sampleRate"))
+
     def test_span_to_envelope_properties(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -1161,3 +1191,21 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             SpanExportResult.FAILURE,
         )
         self.assertEqual(_get_trace_export_result(None), None)
+
+    def test_check_instrumentation_span(self):
+        span = mock.Mock()
+        span.instrumentation_scope.name = "opentelemetry.instrumentation.test"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_called_once_with("test")
+
+    def test_check_instrumentation_span_not_instrumentation(self):
+        span = mock.Mock()
+        span.instrumentation_scope.name = "__main__"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_not_called()

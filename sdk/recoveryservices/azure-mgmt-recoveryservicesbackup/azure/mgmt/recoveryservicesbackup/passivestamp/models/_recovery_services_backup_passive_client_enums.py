@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class BackupManagementType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BackupManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup management type to execute the current job.
     """
 
@@ -25,7 +24,7 @@ class BackupManagementType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_WORKLOAD = "AzureWorkload"
     DEFAULT_BACKUP = "DefaultBackup"
 
-class CopyOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CopyOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Options to resolve copy conflicts.
     """
 
@@ -35,7 +34,7 @@ class CopyOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OVERWRITE = "Overwrite"
     FAIL_ON_CONFLICT = "FailOnConflict"
 
-class CreateMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Create mode to indicate recovery of existing soft deleted data source or creation of new data
     source.
     """
@@ -44,7 +43,7 @@ class CreateMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DEFAULT = "Default"
     RECOVER = "Recover"
 
-class DataSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of workload this item represents.
     """
 
@@ -64,7 +63,7 @@ class DataSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SAP_HANA_DATABASE = "SAPHanaDatabase"
     SAP_ASE_DATABASE = "SAPAseDatabase"
 
-class HealthState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health State for the backed up item.
     """
 
@@ -73,7 +72,7 @@ class HealthState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACTION_SUGGESTED = "ActionSuggested"
     INVALID = "Invalid"
 
-class HealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """backups running status for this backup item.
     """
 
@@ -82,7 +81,7 @@ class HealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACTION_SUGGESTED = "ActionSuggested"
     INVALID = "Invalid"
 
-class JobOperationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of operation.
     """
 
@@ -98,7 +97,7 @@ class JobOperationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNDELETE = "Undelete"
     UPDATE_CUSTOMER_MANAGED_KEY = "UpdateCustomerManagedKey"
 
-class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the job.
     """
 
@@ -110,13 +109,13 @@ class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CANCELLED = "Cancelled"
     CANCELLING = "Cancelling"
 
-class JobSupportedAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class JobSupportedAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INVALID = "Invalid"
     CANCELLABLE = "Cancellable"
     RETRIABLE = "Retriable"
 
-class LastBackupStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class LastBackupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Last backup operation status. Possible values: Healthy, Unhealthy.
     """
 
@@ -125,7 +124,7 @@ class LastBackupStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNHEALTHY = "Unhealthy"
     IR_PENDING = "IRPending"
 
-class MabServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class MabServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Server type of MAB container.
     """
 
@@ -145,7 +144,7 @@ class MabServerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STORAGE_CONTAINER = "StorageContainer"
     GENERIC_CONTAINER = "GenericContainer"
 
-class OperationStatusValues(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatusValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operation status.
     """
 
@@ -155,7 +154,7 @@ class OperationStatusValues(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class OverwriteOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class OverwriteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Can Overwrite if Target DataBase already exists
     """
 
@@ -163,7 +162,7 @@ class OverwriteOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAIL_ON_CONFLICT = "FailOnConflict"
     OVERWRITE = "Overwrite"
 
-class ProtectedItemHealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProtectedItemHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health status of the backup item, evaluated based on last heartbeat received
     """
 
@@ -173,7 +172,7 @@ class ProtectedItemHealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     NOT_REACHABLE = "NotReachable"
     IR_PENDING = "IRPending"
 
-class ProtectedItemState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProtectedItemState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup state of the backed up item.
     """
 
@@ -184,7 +183,7 @@ class ProtectedItemState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
 
-class ProtectionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup state of this backup item.
     """
 
@@ -195,7 +194,7 @@ class ProtectionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
 
-class RecoveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RecoveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines whether the current recovery mode is file restore or database restore
     """
 
@@ -203,7 +202,7 @@ class RecoveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FILE_RECOVERY = "FileRecovery"
     WORKLOAD_RECOVERY = "WorkloadRecovery"
 
-class RecoveryPointTierStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RecoveryPointTierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recovery point tier status.
     """
 
@@ -213,7 +212,7 @@ class RecoveryPointTierStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     DELETED = "Deleted"
     REHYDRATED = "Rehydrated"
 
-class RecoveryPointTierType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RecoveryPointTierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recovery point tier type.
     """
 
@@ -222,7 +221,7 @@ class RecoveryPointTierType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     HARDENED_RP = "HardenedRP"
     ARCHIVED_RP = "ArchivedRP"
 
-class RecoveryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of this recovery.
     """
 
@@ -232,7 +231,7 @@ class RecoveryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RESTORE_DISKS = "RestoreDisks"
     OFFLINE = "Offline"
 
-class ResourceHealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource Health Status
     """
 
@@ -243,7 +242,7 @@ class ResourceHealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PERSISTENT_UNHEALTHY = "PersistentUnhealthy"
     INVALID = "Invalid"
 
-class RestorePointQueryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RestorePointQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RestorePoint type
     """
 
@@ -255,7 +254,7 @@ class RestorePointQueryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ALL = "All"
     INCREMENTAL = "Incremental"
 
-class RestorePointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RestorePointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of restore point
     """
 
@@ -265,7 +264,7 @@ class RestorePointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DIFFERENTIAL = "Differential"
     INCREMENTAL = "Incremental"
 
-class RestoreRequestType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class RestoreRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Restore Type (FullShareRestore or ItemLevelRestore)
     """
 
@@ -273,7 +272,7 @@ class RestoreRequestType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FULL_SHARE_RESTORE = "FullShareRestore"
     ITEM_LEVEL_RESTORE = "ItemLevelRestore"
 
-class SQLDataDirectoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of data directory mapping
     """
 
@@ -281,7 +280,7 @@ class SQLDataDirectoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATA = "Data"
     LOG = "Log"
 
-class StorageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage type
     """
 
@@ -291,7 +290,7 @@ class StorageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ZONE_REDUNDANT = "ZoneRedundant"
     READ_ACCESS_GEO_ZONE_REDUNDANT = "ReadAccessGeoZoneRedundant"
 
-class StorageTypeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class StorageTypeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Locked or Unlocked. Once a machine is registered against a resource, the storageTypeState is
     always Locked.
     """
@@ -300,7 +299,7 @@ class StorageTypeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LOCKED = "Locked"
     UNLOCKED = "Unlocked"
 
-class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup management type for this container.
     """
 
@@ -308,7 +307,7 @@ class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BACKUP_PROTECTED_ITEM_COUNT_SUMMARY = "BackupProtectedItemCountSummary"
     BACKUP_PROTECTION_CONTAINER_COUNT_SUMMARY = "BackupProtectionContainerCountSummary"
 
-class UsagesUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class UsagesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unit of the usage.
     """
 
@@ -319,7 +318,7 @@ class UsagesUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
 
-class WorkloadType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Workload type of backup item.
     """
 

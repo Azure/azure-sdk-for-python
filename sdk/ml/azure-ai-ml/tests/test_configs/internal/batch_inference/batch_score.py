@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft. All rights reserved.
 # Licensed under the MIT license.
 
-import os
 import argparse
+import os
 from uuid import uuid4
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf

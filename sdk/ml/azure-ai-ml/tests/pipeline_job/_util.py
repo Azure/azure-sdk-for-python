@@ -1,4 +1,49 @@
-import signal
+from azure.ai.ml.exceptions import JobException
+from azure.core.exceptions import HttpResponseError
 
 _PIPELINE_JOB_TIMEOUT_SECOND = 20 * 60  # timeout for pipeline job's tests, unit in second.
-_PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
+
+DATABINDING_EXPRESSION_TEST_CASES = [
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
+        None,
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
+        None,
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
+        HttpResponseError(),
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
+        None,
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
+        HttpResponseError(),
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
+        HttpResponseError(),
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
+        None,
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
+        JobException("", no_personal_data_message=""),
+    ),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_literal.yml",
+        None,
+    ),
+    ("./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml", None),
+    (
+        "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
+        JobException("", no_personal_data_message=""),
+    ),
+    ("./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml", None),
+]

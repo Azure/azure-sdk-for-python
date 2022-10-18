@@ -8,10 +8,15 @@ import logging
 from typing import Dict, Iterable
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._utils.utils import _snake_to_camel
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
-from azure.identity import ChainedTokenCredential
+from azure.core.credentials import TokenCredential
 
 module_logger = logging.getLogger(__name__)
 
@@ -27,12 +32,13 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: ServiceClient052022,
         all_operations: OperationsContainer,
-        credentials: ChainedTokenCredential = None,
+        credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        super(WorkspaceConnectionsOperations, self).__init__(operation_scope)
+        super(WorkspaceConnectionsOperations, self).__init__(operation_scope, operation_config)
         self._all_operations = all_operations
         self._operation = service_client.workspace_connections
         self._credentials = credentials
@@ -92,7 +98,6 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     def list(
         self,
         connection_type=None,
-        **kwargs,
     ) -> Iterable[WorkspaceConnection]:
         """List all environment assets in workspace.
 

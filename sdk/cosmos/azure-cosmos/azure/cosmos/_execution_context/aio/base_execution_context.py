@@ -84,7 +84,7 @@ class _QueryExecutionContextBase(object):
     async def _fetch_next_block(self):
         raise NotImplementedError
 
-    async def __aiter__(self):
+    def __aiter__(self):
         """Returns itself as an iterator"""
         return self
 

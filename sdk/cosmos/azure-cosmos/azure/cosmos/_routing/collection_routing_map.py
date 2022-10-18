@@ -54,12 +54,12 @@ class CollectionRoutingMap(object):
         self._collectionUniqueId = collection_unique_id
 
     @classmethod
-    def CompleteRoutingMap(cls, partition_key_range_info_tupple_list, collection_unique_id):
+    def CompleteRoutingMap(cls, partition_key_range_info_tuple_list, collection_unique_id):
         rangeById = {}
         rangeByInfo = {}
 
         sortedRanges = []
-        for r in partition_key_range_info_tupple_list:
+        for r in partition_key_range_info_tuple_list:
             rangeById[r[0][PartitionKeyRange.Id]] = r
             rangeByInfo[r[1]] = r[0]
             sortedRanges.append(r)

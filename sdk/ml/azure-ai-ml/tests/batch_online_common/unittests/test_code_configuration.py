@@ -1,8 +1,5 @@
 import pytest
-import yaml
 
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
-from marshmallow import RAISE
 from azure.ai.ml.entities import CodeConfiguration
 
 

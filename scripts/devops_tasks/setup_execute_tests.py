@@ -26,7 +26,7 @@ from common_tasks import (
     create_code_coverage_params
 )
 from tox_harness import prep_and_run_tox
-from ci_tools.functions import discover_targeted_packages, filter_packages_by_compatibility_override
+from ci_tools.functions import discover_targeted_packages
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -280,9 +280,8 @@ if __name__ == "__main__":
         dest="filter_type",
         default='Build',
         help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
-        choices=['Build', "Docs", "Regression", "Omit_management"]
+        choices=['Build', "Docs", "Regression", "Omit_management", "None"]
     )
-
     parser.add_argument(
         "-d",
         "--dest-dir",
@@ -301,21 +300,23 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = discover_targeted_packages(args.glob_string, target_dir, "", args.filter_type)
-    compatible_targeted_packages = filter_packages_by_compatibility_override(targeted_packages)
+    if args.filter_type == "None":
+        args.filter_type = "Build"
+        compatibility_filter = False
+    else:
+        compatibility_filter = True
 
-    if targeted_packages != compatible_targeted_packages:
-        logging.info("At least one package incompatible with current platform was detected. Skipping: {}".format(set(targeted_packages) - set(compatible_targeted_packages)))
+    targeted_packages = discover_targeted_packages(args.glob_string, target_dir, "", args.filter_type, compatibility_filter)
 
     extended_pytest_args = []
 
-    if len(compatible_targeted_packages) == 0:
+    if len(targeted_packages) == 0:
         exit(0)
 
     if args.xdist:
         extended_pytest_args.extend(["-n", "8", "--dist=loadscope"])
 
     if args.runtype != "none":
-        execute_global_install_and_test(args, compatible_targeted_packages, extended_pytest_args)
+        execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
     else:
-        prep_and_run_tox(compatible_targeted_packages, args, extended_pytest_args)
+        prep_and_run_tox(targeted_packages, args, extended_pytest_args)

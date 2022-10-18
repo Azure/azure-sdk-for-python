@@ -1,20 +1,19 @@
+import json
+from pathlib import Path
 from unittest import mock
 
-import json
 import pydash
-import yaml
-from pathlib import Path
 import pytest
+import yaml
 
 from azure.ai.ml import MLClient
 from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
-
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.component import COMPONENT_PLACEHOLDER
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -108,6 +107,7 @@ class TestParallelComponent:
         )
 
         assert component_dict == expected_dict
+        assert component_dict["logging_level"] == "INFO"
 
         assert component_entity.code
         assert component_entity.code == f"{str(Path('./tests/test_configs/python').resolve())}:1"

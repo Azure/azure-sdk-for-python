@@ -1,34 +1,22 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase
-from settings.testcase import BlobPreparer
 from azure.storage.blob import BlobProperties
 from azure.storage.blob.aio import BlobServiceClient
 
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 
 # ------------------------------------------------------------------------------
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
 
 
-class StorageObjectReplicationTest(AsyncStorageTestCase):
+class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
     SRC_CONTAINER = "test1"
     DST_CONTAINER = "test2"
     BLOB_NAME = "bla.txt"
@@ -39,56 +27,60 @@ class StorageObjectReplicationTest(AsyncStorageTestCase):
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_ors_source(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_ors_source(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+        )
         blob = bsc.get_blob_client(container=self.SRC_CONTAINER, blob=self.BLOB_NAME)
 
         # Act
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertIsInstance(props, BlobProperties)
-        self.assertIsNotNone(props.object_replication_source_properties)
+        assert isinstance(props, BlobProperties)
+        assert props.object_replication_source_properties is not None
         for replication_policy in props.object_replication_source_properties:
-            self.assertNotEqual(replication_policy.policy_id, '')
-            self.assertIsNotNone(replication_policy.rules)
+            assert replication_policy.policy_id != ''
+            assert replication_policy.rules is not None
 
             for rule in replication_policy.rules:
-                self.assertNotEqual(rule.rule_id, '')
-                self.assertIsNotNone(rule.status)
-                self.assertNotEqual(rule.status, '')
+                assert rule.rule_id != ''
+                assert rule.status is not None
+                assert rule.status != ''
 
         # Check that the download function gives back the same result
         stream = await blob.download_blob()
-        self.assertEqual(stream.properties.object_replication_source_properties,
-                         props.object_replication_source_properties)
+        assert stream.properties.object_replication_source_properties == props.object_replication_source_properties
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_ors_destination(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_ors_destination(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key,
-            transport=AiohttpTestTransport(connection_data_block_size=1024))
+        )
         blob = bsc.get_blob_client(container=self.DST_CONTAINER, blob=self.BLOB_NAME)
 
         # Act
         props = await blob.get_blob_properties()
 
         # Assert
-        self.assertIsInstance(props, BlobProperties)
-        self.assertIsNotNone(props.object_replication_destination_policy)
+        assert isinstance(props, BlobProperties)
+        assert props.object_replication_destination_policy is not None
 
         # Check that the download function gives back the same result
         stream = await blob.download_blob()
-        self.assertEqual(stream.properties.object_replication_destination_policy,
-                         props.object_replication_destination_policy)
+        assert stream.properties.object_replication_destination_policy == props.object_replication_destination_policy
 
 # ------------------------------------------------------------------------------

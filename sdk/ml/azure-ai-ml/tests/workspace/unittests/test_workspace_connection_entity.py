@@ -1,8 +1,13 @@
+from pathlib import Path
+
 import pytest
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory, ConnectionAuthType
-from azure.ai.ml.entities import WorkspaceConnection
-from azure.ai.ml.entities._workspace.connections.credentials import PatTokenCredentials
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.entities._credentials import PatTokenConfiguration
+from test_utilities.utils import verify_entity_load_and_dump
+
 from azure.ai.ml import load_workspace_connection
+from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml.entities import WorkspaceConnection
 
 
 @pytest.mark.unittest
@@ -10,58 +15,65 @@ class TestWorkspaceConnectionEntity:
     def test_workspace_connection_constructor(self):
         ws_connection = WorkspaceConnection(
             target="dummy_target",
-            type=ConnectionCategory.PYTHON_FEED,
-            credentials=PatTokenCredentials(pat="dummy_pat"),
+            type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
+            credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
             metadata=None,
         )
 
         assert ws_connection.name == "dummy_connection"
-        assert ws_connection.type == ConnectionCategory.PYTHON_FEED
-        assert ws_connection.credentials.type == ConnectionAuthType.PAT
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert ws_connection.credentials.pat == "dummy_pat"
         assert ws_connection.target == "dummy_target"
         assert ws_connection.metadata is None
 
-    def test_workspace_connection_entity_load(self):
-        ws_connection = load_workspace_connection(path="./tests/test_configs/workspace_connection/git_pat.yaml")
+    def test_workspace_connection_entity_load_and_dump(self):
+        def simple_workspace_connection_validation(ws_connection):
+            assert ws_connection.name == "test_ws_conn_git_pat"
+            assert ws_connection.target == "https://test-git-feed.com"
+            assert ws_connection.type == camel_to_snake(ConnectionCategory.GIT)
+            assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
+            assert ws_connection.credentials.pat == "dummy_pat"
+            assert ws_connection.metadata is None
 
-        assert ws_connection.name == "test_ws_conn_git_pat"
-        assert ws_connection.target == "https://test-git-feed.com"
-        assert ws_connection.type == ConnectionCategory.GIT
-        assert ws_connection.credentials.type == ConnectionAuthType.PAT
-        assert ws_connection.credentials.pat == "dummy_pat"
-        assert ws_connection.metadata is None
-
-        ws_connection = load_workspace_connection(
-            path="./tests/test_configs/workspace_connection/container_registry_managed_identity.yaml"
+        verify_entity_load_and_dump(
+            load_workspace_connection,
+            simple_workspace_connection_validation,
+            "./tests/test_configs/workspace_connection/git_pat.yaml",
         )
 
-        assert ws_connection.type == ConnectionCategory.CONTAINER_REGISTRY
-        assert ws_connection.credentials.type == ConnectionAuthType.MANAGED_IDENTITY
+        ws_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/container_registry_managed_identity.yaml"
+        )
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.CONTAINER_REGISTRY)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
         assert ws_connection.credentials.client_id == "client_id"
         assert ws_connection.credentials.resource_id == "resource_id"
         assert ws_connection.name == "test_ws_conn_cr_managed"
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.metadata is None
 
-        ws_connection = load_workspace_connection(path="./tests/test_configs/workspace_connection/python_feed_pat.yaml")
+        ws_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"
+        )
 
-        assert ws_connection.type == ConnectionCategory.PYTHON_FEED
-        assert ws_connection.credentials.type == ConnectionAuthType.PAT
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.PYTHON_FEED)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.PAT)
         assert ws_connection.credentials.pat == "dummy_pat"
         assert ws_connection.name == "test_ws_conn_python_pat"
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.metadata is None
 
         ws_connection = load_workspace_connection(
-            path="./tests/test_configs/workspace_connection/fs_service_principal.yaml"
+            source="./tests/test_configs/workspace_connection/fs_service_principal.yaml"
         )
 
         assert ws_connection.name == "test_ws_conn_fs_sp"
         assert ws_connection.target == "azureml://featurestores/featurestore"
-        assert ws_connection.type == ConnectionCategory.FEATURE_STORE
-        assert ws_connection.credentials.type == ConnectionAuthType.SERVICE_PRINCIPAL
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.FEATURE_STORE)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL)
         assert ws_connection.credentials.client_id == "client_id"
         assert ws_connection.credentials.client_secret == "PasswordPlaceHolder"
         assert ws_connection.credentials.tenant_id == "tenant_id"

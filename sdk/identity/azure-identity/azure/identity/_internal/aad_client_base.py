@@ -7,6 +7,7 @@ import base64
 import json
 import time
 from uuid import uuid4
+from typing import TYPE_CHECKING, List
 
 import six
 from msal import TokenCache
@@ -19,19 +20,9 @@ from . import get_default_authority, normalize_authority
 from .._internal import resolve_tenant
 from .._internal.aadclient_certificate import AadClientCertificate
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Optional, Union
+    from typing import Any, Iterable, Optional, Union
     from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
@@ -43,24 +34,35 @@ if TYPE_CHECKING:
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
 
-class AadClientBase(ABC):
+class AadClientBase(abc.ABC):
     _POST = ["POST"]
 
     def __init__(
-        self, tenant_id, client_id, authority=None, cache=None, **kwargs
-    ):
-        # type: (str, str, Optional[str], Optional[TokenCache], **Any) -> None
+            self,
+            tenant_id: str,
+            client_id: str,
+            authority: str = None,
+            cache: TokenCache = None,
+            *,
+            additionally_allowed_tenants: List[str] = None,
+            **kwargs
+    ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
         self._tenant_id = tenant_id
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
     def get_cached_access_token(self, scopes, **kwargs):
         # type: (Iterable[str], **Any) -> Optional[AccessToken]
-        tenant = resolve_tenant(self._tenant_id, **kwargs)
+        tenant = resolve_tenant(
+            self._tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
         tokens = self._cache.find(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
@@ -276,7 +278,11 @@ class AadClientBase(ABC):
 
     def _get_token_url(self, **kwargs):
         # type: (**Any) -> str
-        tenant = resolve_tenant(self._tenant_id, **kwargs)
+        tenant = resolve_tenant(
+            self._tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
         return "/".join((self._authority, tenant, "oauth2/v2.0/token"))
 
     def _post(self, data, **kwargs):

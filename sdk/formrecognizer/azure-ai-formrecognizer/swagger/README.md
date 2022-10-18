@@ -1,9 +1,9 @@
 ## Python Form Recognizer
 
-To generate this file, simply type
+To generate this file, simply type:
 
 ```
-autorest swagger/README.md --python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>
+autorest --use=@autorest/python@5.16.0 swagger/README.md --python-sdks-folder=<path to the root directory of your azure-sdk-for-python clone>
 ```
 
 We automatically hardcode in that this is `python` and `multiapi`.
@@ -20,6 +20,8 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 multiapi: true
+version-tolerant: false
+python3-only: true
 ```
 
 ## Multiapi Batch Execution
@@ -28,7 +30,7 @@ multiapi: true
 batch:
   - tag: release_2_0
   - tag: release_2_1
-  - tag: release_2022_06_30_preview
+  - tag: release_2022_08_31
   - multiapiscript: true
 ```
 
@@ -64,12 +66,12 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 
 ## Release 3.1-preview
 
-These settings apply only when `--tag=release_2022_06_30_preview` is specified on the command line.
+These settings apply only when `--tag=release_2022_08_31` is specified on the command line.
 
-``` yaml $(tag) == 'release_2022_06_30_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-06-30-preview/FormRecognizer.json
-namespace: azure.ai.formrecognizer.v2022_06_30_preview
-output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2022_06_30_preview
+``` yaml $(tag) == 'release_2022_08_31'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/b1e128f86879ba5a07502abe60577300eb9ec392/specification/cognitiveservices/data-plane/FormRecognizer/stable/2022-08-31/FormRecognizer.json?token=GHSAT0AAAAAABUYDSJIPTM5ED3IVOUKSYP2YX24EKA
+namespace: azure.ai.formrecognizer.v2022_08_31
+output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2022_08_31
 ```
 
 

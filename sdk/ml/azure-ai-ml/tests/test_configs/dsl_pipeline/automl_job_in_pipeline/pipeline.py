@@ -1,9 +1,9 @@
-from azure.ai.ml import dsl, Input, command, Output
-from azure.ai.ml.automl import regression
-from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.constants import AssetTypes
 from pathlib import Path
 
+from azure.ai.ml import Input, Output, command, dsl
+from azure.ai.ml.automl import regression
+from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._job.automl.tabular import TabularFeaturizationSettings
 
 input_data_dir = str(Path(__file__).parent.parent.parent / "automl_job/test_datasets/house_pricing")
@@ -34,6 +34,8 @@ def generate_dsl_pipeline() -> PipelineJob:
             environment="azureml:AzureML-Minimal:1",
         )
         show_output = command_func(automl_output=hello_automl_regression.outputs.best_model)
+        # show_output variable is required for test_automl_job_in_pipeline. Cannot remove unused variable.
+        print(show_output)
         return {"best_model": hello_automl_regression.outputs.best_model}
 
     pipeline = automl_node_in_pipeline(

@@ -23,10 +23,10 @@ from azure.data.tables import (
     generate_account_sas,
     ResourceTypes
 )
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceExistsError
 
-from _shared.testcase import TableTestCase, TEST_TABLE_PREFIX
+from _shared.testcase import TableTestCase
 from preparers import tables_decorator, tables_decorator
 
 # ------------------------------------------------------------------------------
@@ -466,7 +466,7 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
         with pytest.raises(ValueError) as excinfo:
             tsc.create_table(invalid_table_name)
-            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(
                 excinfo)
     
     @tables_decorator
@@ -478,5 +478,5 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
 
         with pytest.raises(ValueError) as excinfo:
             tsc.create_table(invalid_table_name)
-            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(
                 excinfo)

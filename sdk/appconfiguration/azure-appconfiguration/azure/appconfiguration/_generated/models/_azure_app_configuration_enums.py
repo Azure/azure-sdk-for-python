@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class Enum4(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Enum6(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum6."""
 
     KEY = "key"
     LABEL = "label"
@@ -37,7 +22,9 @@ class Enum4(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOCKED = "locked"
     ETAG = "etag"
 
-class Enum5(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum7(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum7."""
 
     KEY = "key"
     LABEL = "label"
@@ -48,7 +35,15 @@ class Enum5(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOCKED = "locked"
     ETAG = "etag"
 
-class Get6ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class Get5ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Get5ItemsItem."""
+
+    NAME = "name"
+
+
+class Get6ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Get6ItemsItem."""
 
     KEY = "key"
     LABEL = "label"
@@ -59,7 +54,9 @@ class Get6ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOCKED = "locked"
     ETAG = "etag"
 
-class Get7ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class Get7ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Get7ItemsItem."""
 
     KEY = "key"
     LABEL = "label"
@@ -70,7 +67,15 @@ class Get7ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOCKED = "locked"
     ETAG = "etag"
 
-class Head6ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class Head5ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Head5ItemsItem."""
+
+    NAME = "name"
+
+
+class Head6ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Head6ItemsItem."""
 
     KEY = "key"
     LABEL = "label"
@@ -81,7 +86,9 @@ class Head6ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LOCKED = "locked"
     ETAG = "etag"
 
-class Head7ItemsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class Head7ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Head7ItemsItem."""
 
     KEY = "key"
     LABEL = "label"

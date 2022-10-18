@@ -5,7 +5,6 @@ import shutil
 import re
 import multiprocessing
 import glob
-import pdb
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -166,7 +165,6 @@ def individual_workload(tox_command_tuple, workload_results):
         if in_ci():
             shutil.rmtree(tox_dir)
 
-
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
     workload_results = {}
@@ -208,9 +206,11 @@ def inject_custom_reqs(file, injected_packages, package_dir):
         )
         with open(file, "r") as f:
             for line in f:
+                logging.info("Attempting to parse {}".format(line))
                 try:
                     parsed_req = [req for req in parse_requirements(line)]
-                except RequirementParseError as e:
+                except Exception as e:
+                    logging.error(e)
                     parsed_req = [None]
                 req_lines.append((line, parsed_req))
 
@@ -225,6 +225,8 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             ]
         else:
             all_adjustments = injected_packages
+
+        logging.info("Generated Custom Reqs: {}".format(req_lines))
 
         with open(file, "w") as f:
             # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
@@ -252,6 +254,7 @@ def build_whl_for_req(req, package_path):
         return whl_path
     else:
         return req
+
 
 def replace_dev_reqs(file, pkg_root):
     adjusted_req_lines = []
@@ -352,12 +355,12 @@ def collect_log_files(working_dir):
     for f in glob.glob(os.path.join(root_dir, "_tox_logs", "*")):
         logging.info("Log file: {}".format(f))
 
-
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
+        clone_dir = os.path.abspath(os.path.join(cmd_tuple[1], "..", "..", "..", "l"))
         logging.info("tox_dir: {}".format(tox_dir))
 
         logging.info(
@@ -374,6 +377,16 @@ def execute_tox_serial(tox_command_tuples):
         if in_ci():
             collect_log_files(cmd_tuple[1])
             shutil.rmtree(tox_dir)
+
+            if os.path.exists(clone_dir):
+                try:
+                    shutil.rmtree(clone_dir)
+                except Exception as e:
+                    # git has a permissions problem. one of the files it drops
+                    # cannot be removed as no one has the permission to do so.
+                    # lets log just in case, but this should really only affect windows machines.
+                    logging.info(e)
+                    pass
 
     return return_code
 

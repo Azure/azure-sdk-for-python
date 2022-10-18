@@ -80,14 +80,6 @@ def all_files(path: str, files: List[str]):
             files.append(folder)
 
 
-def checkout_azure_default_branch():
-    usr = 'Azure'
-    branch = 'main'
-    print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
-    print_check(f'git fetch {usr} {branch}')
-    print_check(f'git checkout {usr}/{branch}')
-
-
 def modify_file(file_path: str, func: Any):
     with open(file_path, 'r') as file_in:
         content = file_in.readlines()
@@ -168,8 +160,27 @@ class CodegenTestPR:
         generate_result = self.get_autorest_result()
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
+    @staticmethod
+    def checkout_branch(env_key: str, repo: str):
+        env_var = os.getenv(env_key, "")
+        usr = env_var.split(":")[0] or "Azure"
+        branch = env_var.split(":")[-1] or "main"
+        print_exec(f'git remote add {usr} https://github.com/{usr}/{repo}.git')
+        print_check(f'git fetch {usr} {branch}')
+        print_check(f'git checkout {usr}/{branch}')
+
+    @return_origin_path
+    def checkout_azure_default_branch(self):
+        # checkout branch in sdk repo
+        self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
+
+        # checkout branch in rest repo
+        if self.spec_repo:
+            os.chdir(Path(self.spec_repo))
+            self.checkout_branch("DEBUG_REST_BRANCH", "azure-rest-api-specs")
+
     def generate_code(self):
-        checkout_azure_default_branch()
+        self.checkout_azure_default_branch()
 
         # prepare input data
         input_data = {
@@ -188,13 +199,13 @@ class CodegenTestPR:
 
         # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
-        print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.sdk_generator {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
         
-        print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.sdk_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
@@ -412,6 +423,17 @@ class CodegenTestPR:
         self.check_ci_file_proc(target_msrest)
         self.check_ci_file_proc(target_mgmt_core)
 
+    def check_dev_requirement(self):
+        file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
+        content = [
+            "-e ../../../tools/azure-sdk-tools\n",
+            "-e ../../../tools/azure-devtools\n",
+            "../../identity/azure-identity\n"
+        ]
+        if not file.exists():
+            with open(file, "w") as file_out:
+                file_out.writelines(content)
+
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
@@ -419,6 +441,7 @@ class CodegenTestPR:
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
+        self.check_dev_requirement()
 
     def sdk_code_path(self) -> str:
         return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
@@ -483,7 +506,7 @@ class CodegenTestPR:
         self.pr_number = res_create.number
 
     def zero_version_policy(self):
-        if self.next_version == '0.0.0':
+        if re.match(re.compile('0\.0\.0'), self.next_version):
             api_request = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
             issue_number = int(self.issue_link.split('/')[-1])
             api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])

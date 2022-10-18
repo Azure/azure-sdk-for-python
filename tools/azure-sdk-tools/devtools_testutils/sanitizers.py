@@ -475,6 +475,7 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
 
     certificates = kwargs.pop("certificates", None)
     tls_certificate = kwargs.pop("tls_certificate", None)
+    tls_certificate_host = kwargs.pop("tls_certificate_host", None)
     request_args = _get_request_args(**kwargs)
 
     if certificates or tls_certificate:
@@ -486,6 +487,9 @@ def _get_recording_option_args(**kwargs: "Any") -> dict:
 
         if tls_certificate:
             transport["TLSValidationCert"] = tls_certificate
+
+        if tls_certificate_host:
+            transport["TSLValidationCertHost"] = tls_certificate_host
 
         request_args["Transport"] = transport
 
@@ -567,11 +571,7 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
     if is_live_and_not_recording():
         return
 
-    response = requests.post(
-        f"{PROXY_URL}/Admin/SetRecordingOptions",
-        headers=headers,
-        json=parameters
-    )
+    response = requests.post(f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, json=parameters)
     response.raise_for_status()
 
 

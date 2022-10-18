@@ -85,17 +85,39 @@ class RecoveryServicesBackupPassiveClient:    # pylint: disable=too-many-instanc
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(self._client, self._config, self._serialize, self._deserialize)
-        self.aad_properties = AadPropertiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.cross_region_restore = CrossRegionRestoreOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_crr_job_details = BackupCrrJobDetailsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_crr_jobs = BackupCrrJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.crr_operation_results = CrrOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.crr_operation_status = CrrOperationStatusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points = RecoveryPointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points_crr = RecoveryPointsCrrOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.aad_properties = AadPropertiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cross_region_restore = CrossRegionRestoreOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_crr_job_details = BackupCrrJobDetailsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_crr_jobs = BackupCrrJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.crr_operation_results = CrrOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.crr_operation_status = CrrOperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points = RecoveryPointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points_crr = RecoveryPointsCrrOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
     def _send_request(

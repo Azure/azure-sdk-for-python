@@ -50,7 +50,8 @@ from .sanitizers import (
     set_headerless_matcher,
     set_session_recording_options,
 )
-from .helpers import ResponseCallback, RetryCounter
+from .cert import create_combined_bundle
+from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording
 from .fake_credentials import FakeTokenCredential
 
 __all__ = [
@@ -107,4 +108,6 @@ __all__ = [
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
+    "create_combined_bundle",
+    "is_live_and_not_recording"
 ]

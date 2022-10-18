@@ -176,10 +176,10 @@ def test_multitenant_authentication_class():
         token = AzureCliCredential().get_token("scope")
         assert token.token == first_token
 
-        token = AzureCliCredential(tenant_id= default_tenant).get_token("scope")
+        token = AzureCliCredential(tenant_id=default_tenant).get_token("scope")
         assert token.token == first_token
 
-        token = AzureCliCredential(tenant_id= second_tenant).get_token("scope")
+        token = AzureCliCredential(tenant_id=second_tenant).get_token("scope")
         assert token.token == second_token
         
 def test_multitenant_authentication():

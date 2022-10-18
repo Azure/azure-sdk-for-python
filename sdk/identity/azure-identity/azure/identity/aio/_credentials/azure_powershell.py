@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING, List
 
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
@@ -20,7 +20,7 @@ from ..._internal import resolve_tenant
 
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
-    from typing import Any, List
+    from typing import Any
     from azure.core.credentials import AccessToken
 
 
@@ -28,7 +28,17 @@ class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
+
+    :keyword str tenant_id: Optional tenant to include in the token request.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
+
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+
+        self.tenant_id = tenant_id
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
     @log_get_token_async
     async def get_token(
@@ -53,7 +63,11 @@ class AzurePowerShellCredential(AsyncContextManager):
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token(*scopes, **kwargs)
 
-        tenant_id = resolve_tenant("", **kwargs)
+        tenant_id = resolve_tenant(
+            default_tenant=self.tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
         command_line = get_command_line(scopes, tenant_id)
         output = await run_command_line(command_line)
         token = parse_token(output)

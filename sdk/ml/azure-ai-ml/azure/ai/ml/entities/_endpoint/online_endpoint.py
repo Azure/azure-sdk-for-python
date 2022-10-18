@@ -2,29 +2,37 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-member
+
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthMode,
-    IdentityConfiguration,
     OnlineEndpointData,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
-from azure.ai.ml._utils.utils import convert_identity_dict, dict_eq
-from azure.ai.ml.constants import (
+from azure.ai.ml._utils.utils import dict_eq
+from azure.ai.ml.constants._common import (
     AAD_TOKEN_YAML,
     AML_TOKEN_YAML,
     BASE_PATH_CONTEXT_KEY,
     KEY,
     PARAMS_OVERRIDE_KEY,
-    EndpointYamlFields,
 )
+from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+    EndpointAuthKeys as RestEndpointAuthKeys,
+    EndpointAuthToken as RestEndpointAuthToken
+)
 
 from ._endpoint_helpers import validate_endpoint_or_deployment_name, validate_identity_type_defined
 from .endpoint import Endpoint
@@ -49,18 +57,20 @@ class OnlineEndpoint(Endpoint):
     :type location: str, optional
     :param traffic:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
     :type traffic: Dict[str, int], optional
-    :param mirror_traffic: Duplicated life traffic used to train a single deployment, defaults to {}
+    :param mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to {}
     :type mirror_traffic: Dict[str, int], optional
     :param provisioning_state: str, provisioning state, readonly
     :type provisioning_state: str, optional
     :param identity: defaults to SystemAssigned
     :type identity: IdentityConfiguration, optional
-    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
+    :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints,
+        defaults to None.
     :type kind: str, optional
     """
 
     def __init__(
         self,
+        *,
         name: str = None,
         tags: Dict[str, Any] = None,
         properties: Dict[str, Any] = None,
@@ -71,7 +81,7 @@ class OnlineEndpoint(Endpoint):
         mirror_traffic: Dict[str, int] = None,
         identity: IdentityConfiguration = None,
         scoring_uri: str = None,
-        swagger_uri: str = None,
+        openapi_uri: str = None,
         provisioning_state: str = None,
         kind: str = None,
         **kwargs,
@@ -86,7 +96,7 @@ class OnlineEndpoint(Endpoint):
             description=description,
             location=location,
             scoring_uri=scoring_uri,
-            swagger_uri=swagger_uri,
+            openapi_uri=openapi_uri,
             provisioning_state=provisioning_state,
             **kwargs,
         )
@@ -106,7 +116,12 @@ class OnlineEndpoint(Endpoint):
         return self._provisioning_state
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
-        self.identity = convert_identity_dict(self.identity)
+        # pylint: disable=protected-access
+        identity = (
+            self.identity._to_online_endpoint_rest_object()
+            if self.identity
+            else RestManagedServiceIdentityConfiguration(type="SystemAssigned")
+        )
         validate_endpoint_or_deployment_name(self.name)
         validate_identity_type_defined(self.identity)
         properties = RestOnlineEndpoint(
@@ -122,7 +137,7 @@ class OnlineEndpoint(Endpoint):
         return OnlineEndpointData(
             location=location,
             properties=properties,
-            identity=self.identity,
+            identity=identity,
             tags=self.tags,
         )
 
@@ -168,14 +183,11 @@ class OnlineEndpoint(Endpoint):
         return switcher.get(yaml_auth_mode, yaml_auth_mode)
 
     @classmethod
-    def _from_rest_object(
-        cls,
-        resource: OnlineEndpointData,
-    ):
-
-        from azure.ai.ml.entities import KubernetesOnlineEndpoint, ManagedOnlineEndpoint
-
+    def _from_rest_object(cls, resource: OnlineEndpointData):  # pylint: disable=arguments-renamed
         auth_mode = cls._rest_auth_mode_to_yaml_auth_mode(resource.properties.auth_mode)
+        # pylint: disable=protected-access
+        identity = IdentityConfiguration._from_online_endpoint_rest_object(
+            resource.identity) if resource.identity else None
         if resource.properties.compute:
             endpoint = KubernetesOnlineEndpoint(
                 id=resource.id,
@@ -189,8 +201,8 @@ class OnlineEndpoint(Endpoint):
                 traffic=resource.properties.traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
-                identity=resource.identity,
+                openapi_uri=resource.properties.swagger_uri,
+                identity=identity,
                 kind=resource.kind,
             )
         else:
@@ -206,8 +218,8 @@ class OnlineEndpoint(Endpoint):
                 mirror_traffic=resource.properties.mirror_traffic,
                 provisioning_state=resource.properties.provisioning_state,
                 scoring_uri=resource.properties.scoring_uri,
-                swagger_uri=resource.properties.swagger_uri,
-                identity=resource.identity,
+                openapi_uri=resource.properties.swagger_uri,
+                identity=identity,
                 kind=resource.kind,
                 public_network_access=resource.properties.public_network_access,
             )
@@ -234,11 +246,12 @@ class OnlineEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: dict,
+        data: Dict = None,
         yaml_path: Union[PathLike, str] = None,
         params_override: list = None,
         **kwargs,
     ) -> "Endpoint":
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path.cwd(),
@@ -247,8 +260,8 @@ class OnlineEndpoint(Endpoint):
 
         if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(params_override):
             return load_from_dict(KubernetesOnlineEndpointSchema, data, context)
-        else:
-            return load_from_dict(ManagedOnlineEndpointSchema, data, context)
+
+        return load_from_dict(ManagedOnlineEndpointSchema, data, context)
 
 
 class KubernetesOnlineEndpoint(OnlineEndpoint):
@@ -308,7 +321,11 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
         self.compute = compute
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(
+        self,
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return KubernetesOnlineEndpointSchema(context=context).dump(self)
 
@@ -359,7 +376,10 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     :param identity: defaults to SystemAssigned
     :type identity: IdentityConfiguration, optional
     :param kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-    :type kind: str, optional
+    :type kind: str, optional,
+    :param public_network_access: Whether to allow public endpoint connectivity
+        Allowed values are: "enabled", "disabled"
+    :type public_network_access: str
     """
 
     def __init__(
@@ -375,9 +395,10 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         mirror_traffic: Dict[str, int] = None,
         identity: IdentityConfiguration = None,
         kind: str = None,
+        public_network_access = None,
         **kwargs,
     ):
-        self.public_network_access = kwargs.pop("public_network_access", None)
+        self.public_network_access = public_network_access
 
         super(ManagedOnlineEndpoint, self).__init__(
             name=name,
@@ -393,9 +414,99 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
             **kwargs,
         )
 
-    def dump(self) -> Dict[str, Any]:
+    def dump(
+        self,
+        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
         return ManagedOnlineEndpointSchema(context=context).dump(self)
 
     def _to_dict(self) -> Dict:
         return ManagedOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+
+
+class EndpointAuthKeys(RestTranslatableMixin):
+    """Keys for endpoint authentication.
+
+    :ivar primary_key: The primary key.
+    :vartype primary_key: str
+    :ivar secondary_key: The secondary key.
+    :vartype secondary_key: str
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword primary_key: The primary key.
+        :paramtype primary_key: str
+        :keyword secondary_key: The secondary key.
+        :paramtype secondary_key: str
+        """
+        self.primary_key = kwargs.get('primary_key', None)
+        self.secondary_key = kwargs.get('secondary_key', None)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestEndpointAuthKeys) -> "EndpointAuthKeys":
+        return cls(
+            primary_key=obj.primary_key,
+            secondary_key=obj.secondary_key
+        )
+
+    def _to_rest_object(self) -> RestEndpointAuthKeys:
+        return RestEndpointAuthKeys(
+            primary_key=self.primary_key,
+            secondary_key=self.secondary_key
+        )
+
+
+class EndpointAuthToken(RestTranslatableMixin):
+    """Endpoint authentication token.
+
+    :ivar access_token: Access token for endpoint authentication.
+    :vartype access_token: str
+    :ivar expiry_time_utc: Access token expiry time (UTC).
+    :vartype expiry_time_utc: long
+    :ivar refresh_after_time_utc: Refresh access token after time (UTC).
+    :vartype refresh_after_time_utc: long
+    :ivar token_type: Access token type.
+    :vartype token_type: str
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword access_token: Access token for endpoint authentication.
+        :paramtype access_token: str
+        :keyword expiry_time_utc: Access token expiry time (UTC).
+        :paramtype expiry_time_utc: long
+        :keyword refresh_after_time_utc: Refresh access token after time (UTC).
+        :paramtype refresh_after_time_utc: long
+        :keyword token_type: Access token type.
+        :paramtype token_type: str
+        """
+        self.access_token = kwargs.get('access_token', None)
+        self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
+        self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)
+        self.token_type = kwargs.get('token_type', None)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestEndpointAuthToken) -> "EndpointAuthToken":
+        return cls(
+            access_token=obj.access_token,
+            expiry_time_utc=obj.expiry_time_utc,
+            refresh_after_time_utc=obj.refresh_after_time_utc,
+            token_type=obj.token_type,
+        )
+
+    def _to_rest_object(self) -> RestEndpointAuthToken:
+        return RestEndpointAuthToken(
+            access_token=self.access_token,
+            expiry_time_utc=self.expiry_time_utc,
+            refresh_after_time_utc=self.refresh_after_time_utc,
+            token_type=self.token_type,
+        )

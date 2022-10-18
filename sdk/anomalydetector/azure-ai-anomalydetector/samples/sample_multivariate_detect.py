@@ -135,7 +135,7 @@ class MultivariateSample:
 
     def delete_model(self, model_id):
 
-        # Delete the mdoel
+        # Delete the model
         self.ad_client.delete_multivariate_model(model_id)
         model_list_after_delete = list(self.ad_client.list_multivariate_model(skip=0, top=10000))
         print("{:d} available models after deletion.".format(len(model_list_after_delete)))

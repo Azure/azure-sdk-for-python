@@ -1,17 +1,19 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.3.0 (2022-10-13)
 
 ### Features Added
 
-- Exported types `MicrosoftTeamsUserIdentifier`, `PhoneNumberIdentifier`, `UnknownIdentifier` for non Azure Communication Services `CommunicationIdentifier` identities.
+- Added support to customize the Communication Identity access token's validity period:
+    - `create_user_and_token` and `get_token` methods in both sync and async clients can now accept keyword argument `token_expires_in: ~datetime.timedelta` that provides the ability to create a Communication Identity access token with custom expiration.
+- Added a new API version `ApiVersion.V2022_10_01` that is now the default API version.
+
+## 1.2.0 (2022-08-24)
+
+### Features Added
+
+- Exported types `MicrosoftTeamsUserIdentifier`, `PhoneNumberIdentifier`, `UnknownIdentifier` for non Azure Communication Services `CommunicationIdentifier` identities. Exported related types: `MicrosoftTeamsUserProperties` and `PhoneNumberProperties`.
 - Added `identifier_from_raw_id` and ensured that `CommunicationIdentifier.raw_id` is populated on creation. Together, these can be used to translate between a `CommunicationIdentifier` and its underlying canonical raw ID representation. Developers can now use the raw ID as an encoded format for identifiers to store in their databases or as stable keys in general.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.1.0 (2022-08-01)
 

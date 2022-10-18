@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,14 +9,14 @@
 
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """Reference to another subresource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -30,30 +31,26 @@ class SubResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SubResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class AgentPool(SubResource):
+class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
     """Agent Pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -105,7 +102,7 @@ class AgentPool(SubResource):
      "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
      "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
      "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
     :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
     :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
@@ -117,7 +114,7 @@ class AgentPool(SubResource):
     :ivar max_pods: Maximum number of pods that can run on a node.
     :vartype max_pods: int
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
     :ivar max_count: Maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -126,7 +123,7 @@ class AgentPool(SubResource):
     :ivar enable_auto_scaling: Whether to enable auto-scaler.
     :vartype enable_auto_scaling: bool
     :ivar type_properties_type: AgentPoolType represents types of an agent pool. Known values are:
-     "VirtualMachineScaleSets", "AvailabilitySet".
+     "VirtualMachineScaleSets" and "AvailabilitySet".
     :vartype type_properties_type: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolType
     :ivar orchestrator_version: Version of orchestrator specified when creating the managed
@@ -141,21 +138,19 @@ class AgentPool(SubResource):
     :ivar enable_node_public_ip: Enable public IP for nodes.
     :vartype enable_node_public_ip: bool
     :ivar scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-     priority. Default to regular. Known values are: "Spot", "Low", "Regular". Default value:
-     "Regular".
+     priority. Default to regular. Known values are: "Spot", "Low", and "Regular".
     :vartype scale_set_priority: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetPriority
     :ivar scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction policy
      for Spot or low priority virtual machine scale set. Default to Delete. Known values are:
-     "Delete", "Deallocate". Default value: "Delete".
+     "Delete" and "Deallocate".
     :vartype scale_set_eviction_policy: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetEvictionPolicy
     :ivar spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing to
      pay in US Dollars. Possible values are any decimal value greater than zero or -1 which
      indicates default price to be up-to on-demand.
     :vartype spot_max_price: float
-    :ivar tags: A set of tags. Agent pool tags to be persisted on the agent pool virtual machine
-     scale set.
+    :ivar tags: Agent pool tags to be persisted on the agent pool virtual machine scale set.
     :vartype tags: dict[str, str]
     :ivar node_labels: Agent pool node labels to be persisted across all nodes in agent pool.
     :vartype node_labels: dict[str, str]
@@ -165,37 +160,37 @@ class AgentPool(SubResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'os_disk_size_gb': {'maximum': 1023, 'minimum': 0},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "os_disk_size_gb": {"maximum": 1023, "minimum": 0},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'count': {'key': 'properties.count', 'type': 'int'},
-        'vm_size': {'key': 'properties.vmSize', 'type': 'str'},
-        'os_disk_size_gb': {'key': 'properties.osDiskSizeGB', 'type': 'int'},
-        'vnet_subnet_id': {'key': 'properties.vnetSubnetID', 'type': 'str'},
-        'max_pods': {'key': 'properties.maxPods', 'type': 'int'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'max_count': {'key': 'properties.maxCount', 'type': 'int'},
-        'min_count': {'key': 'properties.minCount', 'type': 'int'},
-        'enable_auto_scaling': {'key': 'properties.enableAutoScaling', 'type': 'bool'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'orchestrator_version': {'key': 'properties.orchestratorVersion', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'availability_zones': {'key': 'properties.availabilityZones', 'type': '[str]'},
-        'enable_node_public_ip': {'key': 'properties.enableNodePublicIP', 'type': 'bool'},
-        'scale_set_priority': {'key': 'properties.scaleSetPriority', 'type': 'str'},
-        'scale_set_eviction_policy': {'key': 'properties.scaleSetEvictionPolicy', 'type': 'str'},
-        'spot_max_price': {'key': 'properties.spotMaxPrice', 'type': 'float'},
-        'tags': {'key': 'properties.tags', 'type': '{str}'},
-        'node_labels': {'key': 'properties.nodeLabels', 'type': '{str}'},
-        'node_taints': {'key': 'properties.nodeTaints', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "count": {"key": "properties.count", "type": "int"},
+        "vm_size": {"key": "properties.vmSize", "type": "str"},
+        "os_disk_size_gb": {"key": "properties.osDiskSizeGB", "type": "int"},
+        "vnet_subnet_id": {"key": "properties.vnetSubnetID", "type": "str"},
+        "max_pods": {"key": "properties.maxPods", "type": "int"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "max_count": {"key": "properties.maxCount", "type": "int"},
+        "min_count": {"key": "properties.minCount", "type": "int"},
+        "enable_auto_scaling": {"key": "properties.enableAutoScaling", "type": "bool"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "orchestrator_version": {"key": "properties.orchestratorVersion", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "availability_zones": {"key": "properties.availabilityZones", "type": "[str]"},
+        "enable_node_public_ip": {"key": "properties.enableNodePublicIP", "type": "bool"},
+        "scale_set_priority": {"key": "properties.scaleSetPriority", "type": "str"},
+        "scale_set_eviction_policy": {"key": "properties.scaleSetEvictionPolicy", "type": "str"},
+        "spot_max_price": {"key": "properties.spotMaxPrice", "type": "float"},
+        "tags": {"key": "properties.tags", "type": "{str}"},
+        "node_labels": {"key": "properties.nodeLabels", "type": "{str}"},
+        "node_taints": {"key": "properties.nodeTaints", "type": "[str]"},
     }
 
     def __init__(
@@ -206,7 +201,7 @@ class AgentPool(SubResource):
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
         max_pods: Optional[int] = None,
-        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
+        os_type: Union[str, "_models.OSType"] = "Linux",
         max_count: Optional[int] = None,
         min_count: Optional[int] = None,
         enable_auto_scaling: Optional[bool] = None,
@@ -214,9 +209,9 @@ class AgentPool(SubResource):
         orchestrator_version: Optional[str] = None,
         availability_zones: Optional[List[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
-        scale_set_priority: Optional[Union[str, "_models.ScaleSetPriority"]] = "Regular",
-        scale_set_eviction_policy: Optional[Union[str, "_models.ScaleSetEvictionPolicy"]] = "Delete",
-        spot_max_price: Optional[float] = -1,
+        scale_set_priority: Union[str, "_models.ScaleSetPriority"] = "Regular",
+        scale_set_eviction_policy: Union[str, "_models.ScaleSetEvictionPolicy"] = "Delete",
+        spot_max_price: float = -1,
         tags: Optional[Dict[str, str]] = None,
         node_labels: Optional[Dict[str, str]] = None,
         node_taints: Optional[List[str]] = None,
@@ -263,7 +258,7 @@ class AgentPool(SubResource):
          "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
          "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
          "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
         :paramtype vm_size: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
         :keyword os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
@@ -275,7 +270,7 @@ class AgentPool(SubResource):
         :keyword max_pods: Maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux" and "Windows".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
         :keyword max_count: Maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -284,7 +279,7 @@ class AgentPool(SubResource):
         :keyword enable_auto_scaling: Whether to enable auto-scaler.
         :paramtype enable_auto_scaling: bool
         :keyword type_properties_type: AgentPoolType represents types of an agent pool. Known values
-         are: "VirtualMachineScaleSets", "AvailabilitySet".
+         are: "VirtualMachineScaleSets" and "AvailabilitySet".
         :paramtype type_properties_type: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolType
         :keyword orchestrator_version: Version of orchestrator specified when creating the managed
@@ -296,21 +291,19 @@ class AgentPool(SubResource):
         :keyword enable_node_public_ip: Enable public IP for nodes.
         :paramtype enable_node_public_ip: bool
         :keyword scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-         priority. Default to regular. Known values are: "Spot", "Low", "Regular". Default value:
-         "Regular".
+         priority. Default to regular. Known values are: "Spot", "Low", and "Regular".
         :paramtype scale_set_priority: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetPriority
         :keyword scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction
          policy for Spot or low priority virtual machine scale set. Default to Delete. Known values are:
-         "Delete", "Deallocate". Default value: "Delete".
+         "Delete" and "Deallocate".
         :paramtype scale_set_eviction_policy: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetEvictionPolicy
         :keyword spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing
          to pay in US Dollars. Possible values are any decimal value greater than zero or -1 which
          indicates default price to be up-to on-demand.
         :paramtype spot_max_price: float
-        :keyword tags: A set of tags. Agent pool tags to be persisted on the agent pool virtual machine
-         scale set.
+        :keyword tags: Agent pool tags to be persisted on the agent pool virtual machine scale set.
         :paramtype tags: dict[str, str]
         :keyword node_labels: Agent pool node labels to be persisted across all nodes in agent pool.
         :paramtype node_labels: dict[str, str]
@@ -318,7 +311,7 @@ class AgentPool(SubResource):
          key=value:NoSchedule.
         :paramtype node_taints: list[str]
         """
-        super(AgentPool, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
         self.os_disk_size_gb = os_disk_size_gb
@@ -341,7 +334,7 @@ class AgentPool(SubResource):
         self.node_taints = node_taints
 
 
-class AgentPoolAvailableVersions(msrest.serialization.Model):
+class AgentPoolAvailableVersions(_serialization.Model):
     """The list of available versions for an agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -358,16 +351,19 @@ class AgentPoolAvailableVersions(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'agent_pool_versions': {'key': 'properties.agentPoolVersions', 'type': '[AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "agent_pool_versions": {
+            "key": "properties.agentPoolVersions",
+            "type": "[AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]",
+        },
     }
 
     def __init__(
@@ -381,14 +377,14 @@ class AgentPoolAvailableVersions(msrest.serialization.Model):
         :paramtype agent_pool_versions:
          list[~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem]
         """
-        super(AgentPoolAvailableVersions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.agent_pool_versions = agent_pool_versions
 
 
-class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(msrest.serialization.Model):
+class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_serialization.Model):
     """AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem.
 
     :ivar default: Whether this version is the default agent pool version.
@@ -400,9 +396,9 @@ class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(msrest.serializa
     """
 
     _attribute_map = {
-        'default': {'key': 'default', 'type': 'bool'},
-        'kubernetes_version': {'key': 'kubernetesVersion', 'type': 'str'},
-        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        "default": {"key": "default", "type": "bool"},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+        "is_preview": {"key": "isPreview", "type": "bool"},
     }
 
     def __init__(
@@ -421,13 +417,13 @@ class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(msrest.serializa
         :keyword is_preview: Whether Kubernetes version is currently in preview.
         :paramtype is_preview: bool
         """
-        super(AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default = default
         self.kubernetes_version = kubernetes_version
         self.is_preview = is_preview
 
 
-class AgentPoolListResult(msrest.serialization.Model):
+class AgentPoolListResult(_serialization.Model):
     """The response from the List Agent Pools operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -439,30 +435,25 @@ class AgentPoolListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AgentPool]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AgentPool]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.AgentPool"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.AgentPool"]] = None, **kwargs):
         """
         :keyword value: The list of agent pools.
         :paramtype value: list[~azure.mgmt.containerservice.v2020_02_01.models.AgentPool]
         """
-        super(AgentPoolListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class AgentPoolUpgradeProfile(msrest.serialization.Model):
+class AgentPoolUpgradeProfile(_serialization.Model):
     """The list of available upgrades for an agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -475,10 +466,10 @@ class AgentPoolUpgradeProfile(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of the agent pool upgrade profile.
     :vartype type: str
-    :ivar kubernetes_version: Required. Kubernetes version (major, minor, patch).
+    :ivar kubernetes_version: Kubernetes version (major, minor, patch). Required.
     :vartype kubernetes_version: str
-    :ivar os_type: Required. OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+    :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
+     Linux. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
     :ivar upgrades: List of orchestrator types and versions available for upgrade.
     :vartype upgrades:
@@ -486,20 +477,20 @@ class AgentPoolUpgradeProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kubernetes_version': {'required': True},
-        'os_type': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kubernetes_version": {"required": True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'upgrades': {'key': 'properties.upgrades', 'type': '[AgentPoolUpgradeProfilePropertiesUpgradesItem]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kubernetes_version": {"key": "properties.kubernetesVersion", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "upgrades": {"key": "properties.upgrades", "type": "[AgentPoolUpgradeProfilePropertiesUpgradesItem]"},
     }
 
     def __init__(
@@ -511,16 +502,16 @@ class AgentPoolUpgradeProfile(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword kubernetes_version: Required. Kubernetes version (major, minor, patch).
+        :keyword kubernetes_version: Kubernetes version (major, minor, patch). Required.
         :paramtype kubernetes_version: str
-        :keyword os_type: Required. OsType to be used to specify os type. Choose from Linux and
-         Windows. Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+        :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
+         to Linux. Known values are: "Linux" and "Windows".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
         :keyword upgrades: List of orchestrator types and versions available for upgrade.
         :paramtype upgrades:
          list[~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolUpgradeProfilePropertiesUpgradesItem]
         """
-        super(AgentPoolUpgradeProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -529,7 +520,7 @@ class AgentPoolUpgradeProfile(msrest.serialization.Model):
         self.upgrades = upgrades
 
 
-class AgentPoolUpgradeProfilePropertiesUpgradesItem(msrest.serialization.Model):
+class AgentPoolUpgradeProfilePropertiesUpgradesItem(_serialization.Model):
     """AgentPoolUpgradeProfilePropertiesUpgradesItem.
 
     :ivar kubernetes_version: Kubernetes version (major, minor, patch).
@@ -539,29 +530,23 @@ class AgentPoolUpgradeProfilePropertiesUpgradesItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'kubernetes_version': {'key': 'kubernetesVersion', 'type': 'str'},
-        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+        "is_preview": {"key": "isPreview", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        kubernetes_version: Optional[str] = None,
-        is_preview: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kubernetes_version: Optional[str] = None, is_preview: Optional[bool] = None, **kwargs):
         """
         :keyword kubernetes_version: Kubernetes version (major, minor, patch).
         :paramtype kubernetes_version: str
         :keyword is_preview: Whether Kubernetes version is currently in preview.
         :paramtype is_preview: bool
         """
-        super(AgentPoolUpgradeProfilePropertiesUpgradesItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kubernetes_version = kubernetes_version
         self.is_preview = is_preview
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """An error response from the Container service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -578,10 +563,10 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -606,87 +591,76 @@ class CloudErrorBody(msrest.serialization.Model):
         :keyword details: A list of additional details about the error.
         :paramtype details: list[~azure.mgmt.containerservice.v2020_02_01.models.CloudErrorBody]
         """
-        super(CloudErrorBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class ContainerServiceDiagnosticsProfile(msrest.serialization.Model):
+class ContainerServiceDiagnosticsProfile(_serialization.Model):
     """Profile for diagnostics on the container service cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar vm_diagnostics: Required. Profile for diagnostics on the container service VMs.
+    :ivar vm_diagnostics: Profile for diagnostics on the container service VMs. Required.
     :vartype vm_diagnostics:
      ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMDiagnostics
     """
 
     _validation = {
-        'vm_diagnostics': {'required': True},
+        "vm_diagnostics": {"required": True},
     }
 
     _attribute_map = {
-        'vm_diagnostics': {'key': 'vmDiagnostics', 'type': 'ContainerServiceVMDiagnostics'},
+        "vm_diagnostics": {"key": "vmDiagnostics", "type": "ContainerServiceVMDiagnostics"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_diagnostics: "_models.ContainerServiceVMDiagnostics",
-        **kwargs
-    ):
+    def __init__(self, *, vm_diagnostics: "_models.ContainerServiceVMDiagnostics", **kwargs):
         """
-        :keyword vm_diagnostics: Required. Profile for diagnostics on the container service VMs.
+        :keyword vm_diagnostics: Profile for diagnostics on the container service VMs. Required.
         :paramtype vm_diagnostics:
          ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMDiagnostics
         """
-        super(ContainerServiceDiagnosticsProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vm_diagnostics = vm_diagnostics
 
 
-class ContainerServiceLinuxProfile(msrest.serialization.Model):
+class ContainerServiceLinuxProfile(_serialization.Model):
     """Profile for Linux VMs in the container service cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar admin_username: Required. The administrator username to use for Linux VMs.
+    :ivar admin_username: The administrator username to use for Linux VMs. Required.
     :vartype admin_username: str
-    :ivar ssh: Required. SSH configuration for Linux-based VMs running on Azure.
+    :ivar ssh: SSH configuration for Linux-based VMs running on Azure. Required.
     :vartype ssh: ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceSshConfiguration
     """
 
     _validation = {
-        'admin_username': {'required': True, 'pattern': r'^[A-Za-z][-A-Za-z0-9_]*$'},
-        'ssh': {'required': True},
+        "admin_username": {"required": True, "pattern": r"^[A-Za-z][-A-Za-z0-9_]*$"},
+        "ssh": {"required": True},
     }
 
     _attribute_map = {
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'ssh': {'key': 'ssh', 'type': 'ContainerServiceSshConfiguration'},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "ssh": {"key": "ssh", "type": "ContainerServiceSshConfiguration"},
     }
 
-    def __init__(
-        self,
-        *,
-        admin_username: str,
-        ssh: "_models.ContainerServiceSshConfiguration",
-        **kwargs
-    ):
+    def __init__(self, *, admin_username: str, ssh: "_models.ContainerServiceSshConfiguration", **kwargs):
         """
-        :keyword admin_username: Required. The administrator username to use for Linux VMs.
+        :keyword admin_username: The administrator username to use for Linux VMs. Required.
         :paramtype admin_username: str
-        :keyword ssh: Required. SSH configuration for Linux-based VMs running on Azure.
+        :keyword ssh: SSH configuration for Linux-based VMs running on Azure. Required.
         :paramtype ssh:
          ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceSshConfiguration
         """
-        super(ContainerServiceLinuxProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.admin_username = admin_username
         self.ssh = ssh
 
 
-class ContainerServiceMasterProfile(msrest.serialization.Model):
+class ContainerServiceMasterProfile(_serialization.Model):
     """Profile for the container service master.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -694,11 +668,11 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar count: Number of masters (VMs) in the container service cluster. Allowed values are 1, 3,
-     and 5. The default value is 1. Known values are: 1, 3, 5. Default value: "1".
+     and 5. The default value is 1. Known values are: 1, 3, and 5.
     :vartype count: int or ~azure.mgmt.containerservice.v2020_02_01.models.Count
-    :ivar dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
+    :ivar dns_prefix: DNS prefix to be used to create the FQDN for the master pool. Required.
     :vartype dns_prefix: str
-    :ivar vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+    :ivar vm_size: Size of agent VMs. Required. Known values are: "Standard_A1", "Standard_A10",
      "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
      "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
      "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -735,7 +709,7 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
      "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
      "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
      "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
     :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
     :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
@@ -749,7 +723,7 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
     :vartype first_consecutive_static_ip: str
     :ivar storage_profile: Storage profile specifies what kind of storage used. Choose from
      StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
-     orchestrator choice. Known values are: "StorageAccount", "ManagedDisks".
+     orchestrator choice. Known values are: "StorageAccount" and "ManagedDisks".
     :vartype storage_profile: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceStorageProfileTypes
     :ivar fqdn: FQDN for the master pool.
@@ -757,21 +731,21 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'dns_prefix': {'required': True},
-        'vm_size': {'required': True},
-        'os_disk_size_gb': {'maximum': 1023, 'minimum': 0},
-        'fqdn': {'readonly': True},
+        "dns_prefix": {"required": True},
+        "vm_size": {"required": True},
+        "os_disk_size_gb": {"maximum": 1023, "minimum": 0},
+        "fqdn": {"readonly": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'dns_prefix': {'key': 'dnsPrefix', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
-        'first_consecutive_static_ip': {'key': 'firstConsecutiveStaticIP', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        "count": {"key": "count", "type": "int"},
+        "dns_prefix": {"key": "dnsPrefix", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "os_disk_size_gb": {"key": "osDiskSizeGB", "type": "int"},
+        "vnet_subnet_id": {"key": "vnetSubnetID", "type": "str"},
+        "first_consecutive_static_ip": {"key": "firstConsecutiveStaticIP", "type": "str"},
+        "storage_profile": {"key": "storageProfile", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
     }
 
     def __init__(
@@ -779,20 +753,20 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         *,
         dns_prefix: str,
         vm_size: Union[str, "_models.ContainerServiceVMSizeTypes"],
-        count: Optional[Union[int, "_models.Count"]] = 1,
+        count: Union[int, "_models.Count"] = 1,
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
-        first_consecutive_static_ip: Optional[str] = "10.240.255.5",
+        first_consecutive_static_ip: str = "10.240.255.5",
         storage_profile: Optional[Union[str, "_models.ContainerServiceStorageProfileTypes"]] = None,
         **kwargs
     ):
         """
         :keyword count: Number of masters (VMs) in the container service cluster. Allowed values are 1,
-         3, and 5. The default value is 1. Known values are: 1, 3, 5. Default value: "1".
+         3, and 5. The default value is 1. Known values are: 1, 3, and 5.
         :paramtype count: int or ~azure.mgmt.containerservice.v2020_02_01.models.Count
-        :keyword dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
+        :keyword dns_prefix: DNS prefix to be used to create the FQDN for the master pool. Required.
         :paramtype dns_prefix: str
-        :keyword vm_size: Required. Size of agent VMs. Known values are: "Standard_A1", "Standard_A10",
+        :keyword vm_size: Size of agent VMs. Required. Known values are: "Standard_A1", "Standard_A10",
          "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2", "Standard_A2m_v2",
          "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2", "Standard_A5",
          "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2", "Standard_A8m_v2",
@@ -829,7 +803,7 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
          "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
          "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
          "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
         :paramtype vm_size: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
         :keyword os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
@@ -843,11 +817,11 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         :paramtype first_consecutive_static_ip: str
         :keyword storage_profile: Storage profile specifies what kind of storage used. Choose from
          StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
-         orchestrator choice. Known values are: "StorageAccount", "ManagedDisks".
+         orchestrator choice. Known values are: "StorageAccount" and "ManagedDisks".
         :paramtype storage_profile: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceStorageProfileTypes
         """
-        super(ContainerServiceMasterProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
         self.dns_prefix = dns_prefix
         self.vm_size = vm_size
@@ -858,17 +832,17 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         self.fqdn = None
 
 
-class ContainerServiceNetworkProfile(msrest.serialization.Model):
+class ContainerServiceNetworkProfile(_serialization.Model):
     """Profile of network configuration.
 
     :ivar network_plugin: Network plugin used for building Kubernetes network. Known values are:
-     "azure", "kubenet". Default value: "kubenet".
+     "azure" and "kubenet".
     :vartype network_plugin: str or ~azure.mgmt.containerservice.v2020_02_01.models.NetworkPlugin
     :ivar network_policy: Network policy used for building Kubernetes network. Known values are:
-     "calico", "azure".
+     "calico" and "azure".
     :vartype network_policy: str or ~azure.mgmt.containerservice.v2020_02_01.models.NetworkPolicy
     :ivar network_mode: Network mode used for building Kubernetes network. Known values are:
-     "transparent", "bridge".
+     "transparent" and "bridge".
     :vartype network_mode: str or ~azure.mgmt.containerservice.v2020_02_01.models.NetworkMode
     :ivar pod_cidr: A CIDR notation IP range from which to assign pod IPs when kubenet is used.
     :vartype pod_cidr: str
@@ -881,11 +855,11 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
     :ivar docker_bridge_cidr: A CIDR notation IP range assigned to the Docker bridge network. It
      must not overlap with any Subnet IP ranges or the Kubernetes service address range.
     :vartype docker_bridge_cidr: str
-    :ivar outbound_type: The outbound (egress) routing method. Known values are: "loadBalancer",
-     "userDefinedRouting". Default value: "loadBalancer".
+    :ivar outbound_type: The outbound (egress) routing method. Known values are: "loadBalancer" and
+     "userDefinedRouting".
     :vartype outbound_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OutboundType
     :ivar load_balancer_sku: The load balancer sku for the managed cluster. Known values are:
-     "standard", "basic".
+     "standard" and "basic".
     :vartype load_balancer_sku: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.LoadBalancerSku
     :ivar load_balancer_profile: Profile of the cluster load balancer.
@@ -894,49 +868,51 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'pod_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
-        'service_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
-        'dns_service_ip': {'pattern': r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'},
-        'docker_bridge_cidr': {'pattern': r'^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'},
+        "pod_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
+        "service_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
+        "dns_service_ip": {
+            "pattern": r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+        },
+        "docker_bridge_cidr": {"pattern": r"^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$"},
     }
 
     _attribute_map = {
-        'network_plugin': {'key': 'networkPlugin', 'type': 'str'},
-        'network_policy': {'key': 'networkPolicy', 'type': 'str'},
-        'network_mode': {'key': 'networkMode', 'type': 'str'},
-        'pod_cidr': {'key': 'podCidr', 'type': 'str'},
-        'service_cidr': {'key': 'serviceCidr', 'type': 'str'},
-        'dns_service_ip': {'key': 'dnsServiceIP', 'type': 'str'},
-        'docker_bridge_cidr': {'key': 'dockerBridgeCidr', 'type': 'str'},
-        'outbound_type': {'key': 'outboundType', 'type': 'str'},
-        'load_balancer_sku': {'key': 'loadBalancerSku', 'type': 'str'},
-        'load_balancer_profile': {'key': 'loadBalancerProfile', 'type': 'ManagedClusterLoadBalancerProfile'},
+        "network_plugin": {"key": "networkPlugin", "type": "str"},
+        "network_policy": {"key": "networkPolicy", "type": "str"},
+        "network_mode": {"key": "networkMode", "type": "str"},
+        "pod_cidr": {"key": "podCidr", "type": "str"},
+        "service_cidr": {"key": "serviceCidr", "type": "str"},
+        "dns_service_ip": {"key": "dnsServiceIP", "type": "str"},
+        "docker_bridge_cidr": {"key": "dockerBridgeCidr", "type": "str"},
+        "outbound_type": {"key": "outboundType", "type": "str"},
+        "load_balancer_sku": {"key": "loadBalancerSku", "type": "str"},
+        "load_balancer_profile": {"key": "loadBalancerProfile", "type": "ManagedClusterLoadBalancerProfile"},
     }
 
     def __init__(
         self,
         *,
-        network_plugin: Optional[Union[str, "_models.NetworkPlugin"]] = "kubenet",
+        network_plugin: Union[str, "_models.NetworkPlugin"] = "kubenet",
         network_policy: Optional[Union[str, "_models.NetworkPolicy"]] = None,
         network_mode: Optional[Union[str, "_models.NetworkMode"]] = None,
-        pod_cidr: Optional[str] = "10.244.0.0/16",
-        service_cidr: Optional[str] = "10.0.0.0/16",
-        dns_service_ip: Optional[str] = "10.0.0.10",
-        docker_bridge_cidr: Optional[str] = "172.17.0.1/16",
-        outbound_type: Optional[Union[str, "_models.OutboundType"]] = "loadBalancer",
+        pod_cidr: str = "10.244.0.0/16",
+        service_cidr: str = "10.0.0.0/16",
+        dns_service_ip: str = "10.0.0.10",
+        docker_bridge_cidr: str = "172.17.0.1/16",
+        outbound_type: Union[str, "_models.OutboundType"] = "loadBalancer",
         load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = None,
         load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = None,
         **kwargs
     ):
         """
         :keyword network_plugin: Network plugin used for building Kubernetes network. Known values are:
-         "azure", "kubenet". Default value: "kubenet".
+         "azure" and "kubenet".
         :paramtype network_plugin: str or ~azure.mgmt.containerservice.v2020_02_01.models.NetworkPlugin
         :keyword network_policy: Network policy used for building Kubernetes network. Known values are:
-         "calico", "azure".
+         "calico" and "azure".
         :paramtype network_policy: str or ~azure.mgmt.containerservice.v2020_02_01.models.NetworkPolicy
         :keyword network_mode: Network mode used for building Kubernetes network. Known values are:
-         "transparent", "bridge".
+         "transparent" and "bridge".
         :paramtype network_mode: str or ~azure.mgmt.containerservice.v2020_02_01.models.NetworkMode
         :keyword pod_cidr: A CIDR notation IP range from which to assign pod IPs when kubenet is used.
         :paramtype pod_cidr: str
@@ -949,18 +925,18 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
         :keyword docker_bridge_cidr: A CIDR notation IP range assigned to the Docker bridge network. It
          must not overlap with any Subnet IP ranges or the Kubernetes service address range.
         :paramtype docker_bridge_cidr: str
-        :keyword outbound_type: The outbound (egress) routing method. Known values are: "loadBalancer",
-         "userDefinedRouting". Default value: "loadBalancer".
+        :keyword outbound_type: The outbound (egress) routing method. Known values are: "loadBalancer"
+         and "userDefinedRouting".
         :paramtype outbound_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OutboundType
         :keyword load_balancer_sku: The load balancer sku for the managed cluster. Known values are:
-         "standard", "basic".
+         "standard" and "basic".
         :paramtype load_balancer_sku: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.LoadBalancerSku
         :keyword load_balancer_profile: Profile of the cluster load balancer.
         :paramtype load_balancer_profile:
          ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterLoadBalancerProfile
         """
-        super(ContainerServiceNetworkProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.network_plugin = network_plugin
         self.network_policy = network_policy
         self.network_mode = network_mode
@@ -973,113 +949,98 @@ class ContainerServiceNetworkProfile(msrest.serialization.Model):
         self.load_balancer_profile = load_balancer_profile
 
 
-class ContainerServiceSshConfiguration(msrest.serialization.Model):
+class ContainerServiceSshConfiguration(_serialization.Model):
     """SSH configuration for Linux-based VMs running on Azure.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar public_keys: Required. The list of SSH public keys used to authenticate with Linux-based
-     VMs. Only expect one key specified.
+    :ivar public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. Only
+     expect one key specified. Required.
     :vartype public_keys:
      list[~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceSshPublicKey]
     """
 
     _validation = {
-        'public_keys': {'required': True},
+        "public_keys": {"required": True},
     }
 
     _attribute_map = {
-        'public_keys': {'key': 'publicKeys', 'type': '[ContainerServiceSshPublicKey]'},
+        "public_keys": {"key": "publicKeys", "type": "[ContainerServiceSshPublicKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_keys: List["_models.ContainerServiceSshPublicKey"],
-        **kwargs
-    ):
+    def __init__(self, *, public_keys: List["_models.ContainerServiceSshPublicKey"], **kwargs):
         """
-        :keyword public_keys: Required. The list of SSH public keys used to authenticate with
-         Linux-based VMs. Only expect one key specified.
+        :keyword public_keys: The list of SSH public keys used to authenticate with Linux-based VMs.
+         Only expect one key specified. Required.
         :paramtype public_keys:
          list[~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceSshPublicKey]
         """
-        super(ContainerServiceSshConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.public_keys = public_keys
 
 
-class ContainerServiceSshPublicKey(msrest.serialization.Model):
+class ContainerServiceSshPublicKey(_serialization.Model):
     """Contains information about SSH certificate public key data.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_data: Required. Certificate public key used to authenticate with VMs through SSH. The
-     certificate must be in PEM format with or without headers.
+    :ivar key_data: Certificate public key used to authenticate with VMs through SSH. The
+     certificate must be in PEM format with or without headers. Required.
     :vartype key_data: str
     """
 
     _validation = {
-        'key_data': {'required': True},
+        "key_data": {"required": True},
     }
 
     _attribute_map = {
-        'key_data': {'key': 'keyData', 'type': 'str'},
+        "key_data": {"key": "keyData", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_data: str,
-        **kwargs
-    ):
+    def __init__(self, *, key_data: str, **kwargs):
         """
-        :keyword key_data: Required. Certificate public key used to authenticate with VMs through SSH.
-         The certificate must be in PEM format with or without headers.
+        :keyword key_data: Certificate public key used to authenticate with VMs through SSH. The
+         certificate must be in PEM format with or without headers. Required.
         :paramtype key_data: str
         """
-        super(ContainerServiceSshPublicKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_data = key_data
 
 
-class ContainerServiceVMDiagnostics(msrest.serialization.Model):
+class ContainerServiceVMDiagnostics(_serialization.Model):
     """Profile for diagnostics on the container service VMs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. Whether the VM diagnostic agent is provisioned on the VM.
+    :ivar enabled: Whether the VM diagnostic agent is provisioned on the VM. Required.
     :vartype enabled: bool
     :ivar storage_uri: The URI of the storage account where diagnostics are stored.
     :vartype storage_uri: str
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'storage_uri': {'readonly': True},
+        "enabled": {"required": True},
+        "storage_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'storage_uri': {'key': 'storageUri', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "storage_uri": {"key": "storageUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: bool, **kwargs):
         """
-        :keyword enabled: Required. Whether the VM diagnostic agent is provisioned on the VM.
+        :keyword enabled: Whether the VM diagnostic agent is provisioned on the VM. Required.
         :paramtype enabled: bool
         """
-        super(ContainerServiceVMDiagnostics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.storage_uri = None
 
 
-class CredentialResult(msrest.serialization.Model):
+class CredentialResult(_serialization.Model):
     """The credential result response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1087,31 +1048,27 @@ class CredentialResult(msrest.serialization.Model):
     :ivar name: The name of the credential.
     :vartype name: str
     :ivar value: Base64-encoded Kubernetes configuration file.
-    :vartype value: bytearray
+    :vartype value: bytes
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'bytearray'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CredentialResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class CredentialResults(msrest.serialization.Model):
+class CredentialResults(_serialization.Model):
     """The list of credential result response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1121,24 +1078,20 @@ class CredentialResults(msrest.serialization.Model):
     """
 
     _validation = {
-        'kubeconfigs': {'readonly': True},
+        "kubeconfigs": {"readonly": True},
     }
 
     _attribute_map = {
-        'kubeconfigs': {'key': 'kubeconfigs', 'type': '[CredentialResult]'},
+        "kubeconfigs": {"key": "kubeconfigs", "type": "[CredentialResult]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CredentialResults, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.kubeconfigs = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The Resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1151,41 +1104,35 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1193,7 +1140,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ManagedCluster(Resource):
+class ManagedCluster(Resource):  # pylint: disable=too-many-instance-attributes
     """Managed cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1206,9 +1153,9 @@ class ManagedCluster(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The identity of the managed cluster, if configured.
     :vartype identity: ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterIdentity
@@ -1269,46 +1216,58 @@ class ManagedCluster(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'max_agent_pools': {'readonly': True},
-        'fqdn': {'readonly': True},
-        'private_fqdn': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "max_agent_pools": {"readonly": True},
+        "fqdn": {"readonly": True},
+        "private_fqdn": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedClusterIdentity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'max_agent_pools': {'key': 'properties.maxAgentPools', 'type': 'int'},
-        'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
-        'dns_prefix': {'key': 'properties.dnsPrefix', 'type': 'str'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'private_fqdn': {'key': 'properties.privateFQDN', 'type': 'str'},
-        'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ManagedClusterAgentPoolProfile]'},
-        'linux_profile': {'key': 'properties.linuxProfile', 'type': 'ContainerServiceLinuxProfile'},
-        'windows_profile': {'key': 'properties.windowsProfile', 'type': 'ManagedClusterWindowsProfile'},
-        'service_principal_profile': {'key': 'properties.servicePrincipalProfile', 'type': 'ManagedClusterServicePrincipalProfile'},
-        'addon_profiles': {'key': 'properties.addonProfiles', 'type': '{ManagedClusterAddonProfile}'},
-        'node_resource_group': {'key': 'properties.nodeResourceGroup', 'type': 'str'},
-        'enable_rbac': {'key': 'properties.enableRBAC', 'type': 'bool'},
-        'enable_pod_security_policy': {'key': 'properties.enablePodSecurityPolicy', 'type': 'bool'},
-        'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
-        'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
-        'auto_scaler_profile': {'key': 'properties.autoScalerProfile', 'type': 'ManagedClusterPropertiesAutoScalerProfile'},
-        'api_server_access_profile': {'key': 'properties.apiServerAccessProfile', 'type': 'ManagedClusterAPIServerAccessProfile'},
-        'disk_encryption_set_id': {'key': 'properties.diskEncryptionSetID', 'type': 'str'},
-        'identity_profile': {'key': 'properties.identityProfile', 'type': '{ManagedClusterPropertiesIdentityProfileValue}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedClusterIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "max_agent_pools": {"key": "properties.maxAgentPools", "type": "int"},
+        "kubernetes_version": {"key": "properties.kubernetesVersion", "type": "str"},
+        "dns_prefix": {"key": "properties.dnsPrefix", "type": "str"},
+        "fqdn": {"key": "properties.fqdn", "type": "str"},
+        "private_fqdn": {"key": "properties.privateFQDN", "type": "str"},
+        "agent_pool_profiles": {"key": "properties.agentPoolProfiles", "type": "[ManagedClusterAgentPoolProfile]"},
+        "linux_profile": {"key": "properties.linuxProfile", "type": "ContainerServiceLinuxProfile"},
+        "windows_profile": {"key": "properties.windowsProfile", "type": "ManagedClusterWindowsProfile"},
+        "service_principal_profile": {
+            "key": "properties.servicePrincipalProfile",
+            "type": "ManagedClusterServicePrincipalProfile",
+        },
+        "addon_profiles": {"key": "properties.addonProfiles", "type": "{ManagedClusterAddonProfile}"},
+        "node_resource_group": {"key": "properties.nodeResourceGroup", "type": "str"},
+        "enable_rbac": {"key": "properties.enableRBAC", "type": "bool"},
+        "enable_pod_security_policy": {"key": "properties.enablePodSecurityPolicy", "type": "bool"},
+        "network_profile": {"key": "properties.networkProfile", "type": "ContainerServiceNetworkProfile"},
+        "aad_profile": {"key": "properties.aadProfile", "type": "ManagedClusterAADProfile"},
+        "auto_scaler_profile": {
+            "key": "properties.autoScalerProfile",
+            "type": "ManagedClusterPropertiesAutoScalerProfile",
+        },
+        "api_server_access_profile": {
+            "key": "properties.apiServerAccessProfile",
+            "type": "ManagedClusterAPIServerAccessProfile",
+        },
+        "disk_encryption_set_id": {"key": "properties.diskEncryptionSetID", "type": "str"},
+        "identity_profile": {
+            "key": "properties.identityProfile",
+            "type": "{ManagedClusterPropertiesIdentityProfileValue}",
+        },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -1333,9 +1292,9 @@ class ManagedCluster(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: The identity of the managed cluster, if configured.
         :paramtype identity: ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterIdentity
@@ -1386,7 +1345,7 @@ class ManagedCluster(Resource):
         :paramtype identity_profile: dict[str,
          ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPropertiesIdentityProfileValue]
         """
-        super(ManagedCluster, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.max_agent_pools = None
@@ -1410,14 +1369,14 @@ class ManagedCluster(Resource):
         self.identity_profile = identity_profile
 
 
-class ManagedClusterAADProfile(msrest.serialization.Model):
+class ManagedClusterAADProfile(_serialization.Model):
     """AADProfile specifies attributes for Azure Active Directory integration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar client_app_id: Required. The client AAD application ID.
+    :ivar client_app_id: The client AAD application ID. Required.
     :vartype client_app_id: str
-    :ivar server_app_id: Required. The server AAD application ID.
+    :ivar server_app_id: The server AAD application ID. Required.
     :vartype server_app_id: str
     :ivar server_app_secret: The server AAD application secret.
     :vartype server_app_secret: str
@@ -1427,15 +1386,15 @@ class ManagedClusterAADProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'client_app_id': {'required': True},
-        'server_app_id': {'required': True},
+        "client_app_id": {"required": True},
+        "server_app_id": {"required": True},
     }
 
     _attribute_map = {
-        'client_app_id': {'key': 'clientAppID', 'type': 'str'},
-        'server_app_id': {'key': 'serverAppID', 'type': 'str'},
-        'server_app_secret': {'key': 'serverAppSecret', 'type': 'str'},
-        'tenant_id': {'key': 'tenantID', 'type': 'str'},
+        "client_app_id": {"key": "clientAppID", "type": "str"},
+        "server_app_id": {"key": "serverAppID", "type": "str"},
+        "server_app_secret": {"key": "serverAppSecret", "type": "str"},
+        "tenant_id": {"key": "tenantID", "type": "str"},
     }
 
     def __init__(
@@ -1448,9 +1407,9 @@ class ManagedClusterAADProfile(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword client_app_id: Required. The client AAD application ID.
+        :keyword client_app_id: The client AAD application ID. Required.
         :paramtype client_app_id: str
-        :keyword server_app_id: Required. The server AAD application ID.
+        :keyword server_app_id: The server AAD application ID. Required.
         :paramtype server_app_id: str
         :keyword server_app_secret: The server AAD application secret.
         :paramtype server_app_secret: str
@@ -1458,7 +1417,7 @@ class ManagedClusterAADProfile(msrest.serialization.Model):
          tenant of the deployment subscription.
         :paramtype tenant_id: str
         """
-        super(ManagedClusterAADProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_app_id = client_app_id
         self.server_app_id = server_app_id
         self.server_app_secret = server_app_secret
@@ -1478,58 +1437,53 @@ class ManagedClusterAccessProfile(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar kube_config: Base64-encoded Kubernetes configuration file.
-    :vartype kube_config: bytearray
+    :vartype kube_config: bytes
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kube_config': {'key': 'properties.kubeConfig', 'type': 'bytearray'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kube_config": {"key": "properties.kubeConfig", "type": "bytearray"},
     }
 
     def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        kube_config: Optional[bytearray] = None,
-        **kwargs
+        self, *, location: str, tags: Optional[Dict[str, str]] = None, kube_config: Optional[bytes] = None, **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword kube_config: Base64-encoded Kubernetes configuration file.
-        :paramtype kube_config: bytearray
+        :paramtype kube_config: bytes
         """
-        super(ManagedClusterAccessProfile, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.kube_config = kube_config
 
 
-class ManagedClusterAddonProfile(msrest.serialization.Model):
+class ManagedClusterAddonProfile(_serialization.Model):
     """A Kubernetes add-on profile for a managed cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar enabled: Required. Whether the add-on is enabled or not.
+    :ivar enabled: Whether the add-on is enabled or not. Required.
     :vartype enabled: bool
     :ivar config: Key-value pairs for configuring an add-on.
     :vartype config: dict[str, str]
@@ -1539,36 +1493,30 @@ class ManagedClusterAddonProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'enabled': {'required': True},
-        'identity': {'readonly': True},
+        "enabled": {"required": True},
+        "identity": {"readonly": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'config': {'key': 'config', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'ManagedClusterAddonProfileIdentity'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "config": {"key": "config", "type": "{str}"},
+        "identity": {"key": "identity", "type": "ManagedClusterAddonProfileIdentity"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        config: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: bool, config: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword enabled: Required. Whether the add-on is enabled or not.
+        :keyword enabled: Whether the add-on is enabled or not. Required.
         :paramtype enabled: bool
         :keyword config: Key-value pairs for configuring an add-on.
         :paramtype config: dict[str, str]
         """
-        super(ManagedClusterAddonProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.config = config
         self.identity = None
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """UserAssignedIdentity.
 
     :ivar resource_id: The resource id of the user assigned identity.
@@ -1580,9 +1528,9 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
     }
 
     def __init__(
@@ -1601,7 +1549,7 @@ class UserAssignedIdentity(msrest.serialization.Model):
         :keyword object_id: The object id of the user assigned identity.
         :paramtype object_id: str
         """
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.client_id = client_id
         self.object_id = object_id
@@ -1619,9 +1567,9 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
     }
 
     def __init__(
@@ -1640,10 +1588,10 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
         :keyword object_id: The object id of the user assigned identity.
         :paramtype object_id: str
         """
-        super(ManagedClusterAddonProfileIdentity, self).__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
+        super().__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
 
 
-class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
+class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties for the container service agent pool profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1688,7 +1636,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
      "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
      "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
      "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
     :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
     :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
@@ -1700,7 +1648,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
     :ivar max_pods: Maximum number of pods that can run on a node.
     :vartype max_pods: int
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
     :ivar max_count: Maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -1709,7 +1657,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
     :ivar enable_auto_scaling: Whether to enable auto-scaler.
     :vartype enable_auto_scaling: bool
     :ivar type: AgentPoolType represents types of an agent pool. Known values are:
-     "VirtualMachineScaleSets", "AvailabilitySet".
+     "VirtualMachineScaleSets" and "AvailabilitySet".
     :vartype type: str or ~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolType
     :ivar orchestrator_version: Version of orchestrator specified when creating the managed
      cluster.
@@ -1723,21 +1671,19 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
     :ivar enable_node_public_ip: Enable public IP for nodes.
     :vartype enable_node_public_ip: bool
     :ivar scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-     priority. Default to regular. Known values are: "Spot", "Low", "Regular". Default value:
-     "Regular".
+     priority. Default to regular. Known values are: "Spot", "Low", and "Regular".
     :vartype scale_set_priority: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetPriority
     :ivar scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction policy
      for Spot or low priority virtual machine scale set. Default to Delete. Known values are:
-     "Delete", "Deallocate". Default value: "Delete".
+     "Delete" and "Deallocate".
     :vartype scale_set_eviction_policy: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetEvictionPolicy
     :ivar spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing to
      pay in US Dollars. Possible values are any decimal value greater than zero or -1 which
      indicates default price to be up-to on-demand.
     :vartype spot_max_price: float
-    :ivar tags: A set of tags. Agent pool tags to be persisted on the agent pool virtual machine
-     scale set.
+    :ivar tags: Agent pool tags to be persisted on the agent pool virtual machine scale set.
     :vartype tags: dict[str, str]
     :ivar node_labels: Agent pool node labels to be persisted across all nodes in agent pool.
     :vartype node_labels: dict[str, str]
@@ -1747,31 +1693,31 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'os_disk_size_gb': {'maximum': 1023, 'minimum': 0},
-        'provisioning_state': {'readonly': True},
+        "os_disk_size_gb": {"maximum": 1023, "minimum": 0},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
-        'max_pods': {'key': 'maxPods', 'type': 'int'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'max_count': {'key': 'maxCount', 'type': 'int'},
-        'min_count': {'key': 'minCount', 'type': 'int'},
-        'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
-        'type': {'key': 'type', 'type': 'str'},
-        'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
-        'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
-        'scale_set_priority': {'key': 'scaleSetPriority', 'type': 'str'},
-        'scale_set_eviction_policy': {'key': 'scaleSetEvictionPolicy', 'type': 'str'},
-        'spot_max_price': {'key': 'spotMaxPrice', 'type': 'float'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'node_labels': {'key': 'nodeLabels', 'type': '{str}'},
-        'node_taints': {'key': 'nodeTaints', 'type': '[str]'},
+        "count": {"key": "count", "type": "int"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "os_disk_size_gb": {"key": "osDiskSizeGB", "type": "int"},
+        "vnet_subnet_id": {"key": "vnetSubnetID", "type": "str"},
+        "max_pods": {"key": "maxPods", "type": "int"},
+        "os_type": {"key": "osType", "type": "str"},
+        "max_count": {"key": "maxCount", "type": "int"},
+        "min_count": {"key": "minCount", "type": "int"},
+        "enable_auto_scaling": {"key": "enableAutoScaling", "type": "bool"},
+        "type": {"key": "type", "type": "str"},
+        "orchestrator_version": {"key": "orchestratorVersion", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
+        "enable_node_public_ip": {"key": "enableNodePublicIP", "type": "bool"},
+        "scale_set_priority": {"key": "scaleSetPriority", "type": "str"},
+        "scale_set_eviction_policy": {"key": "scaleSetEvictionPolicy", "type": "str"},
+        "spot_max_price": {"key": "spotMaxPrice", "type": "float"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "node_labels": {"key": "nodeLabels", "type": "{str}"},
+        "node_taints": {"key": "nodeTaints", "type": "[str]"},
     }
 
     def __init__(
@@ -1782,7 +1728,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
         max_pods: Optional[int] = None,
-        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
+        os_type: Union[str, "_models.OSType"] = "Linux",
         max_count: Optional[int] = None,
         min_count: Optional[int] = None,
         enable_auto_scaling: Optional[bool] = None,
@@ -1790,9 +1736,9 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         orchestrator_version: Optional[str] = None,
         availability_zones: Optional[List[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
-        scale_set_priority: Optional[Union[str, "_models.ScaleSetPriority"]] = "Regular",
-        scale_set_eviction_policy: Optional[Union[str, "_models.ScaleSetEvictionPolicy"]] = "Delete",
-        spot_max_price: Optional[float] = -1,
+        scale_set_priority: Union[str, "_models.ScaleSetPriority"] = "Regular",
+        scale_set_eviction_policy: Union[str, "_models.ScaleSetEvictionPolicy"] = "Delete",
+        spot_max_price: float = -1,
         tags: Optional[Dict[str, str]] = None,
         node_labels: Optional[Dict[str, str]] = None,
         node_taints: Optional[List[str]] = None,
@@ -1839,7 +1785,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
          "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
          "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
          "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
         :paramtype vm_size: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
         :keyword os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
@@ -1851,7 +1797,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         :keyword max_pods: Maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux" and "Windows".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
         :keyword max_count: Maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -1860,7 +1806,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         :keyword enable_auto_scaling: Whether to enable auto-scaler.
         :paramtype enable_auto_scaling: bool
         :keyword type: AgentPoolType represents types of an agent pool. Known values are:
-         "VirtualMachineScaleSets", "AvailabilitySet".
+         "VirtualMachineScaleSets" and "AvailabilitySet".
         :paramtype type: str or ~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolType
         :keyword orchestrator_version: Version of orchestrator specified when creating the managed
          cluster.
@@ -1871,21 +1817,19 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         :keyword enable_node_public_ip: Enable public IP for nodes.
         :paramtype enable_node_public_ip: bool
         :keyword scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-         priority. Default to regular. Known values are: "Spot", "Low", "Regular". Default value:
-         "Regular".
+         priority. Default to regular. Known values are: "Spot", "Low", and "Regular".
         :paramtype scale_set_priority: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetPriority
         :keyword scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction
          policy for Spot or low priority virtual machine scale set. Default to Delete. Known values are:
-         "Delete", "Deallocate". Default value: "Delete".
+         "Delete" and "Deallocate".
         :paramtype scale_set_eviction_policy: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetEvictionPolicy
         :keyword spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing
          to pay in US Dollars. Possible values are any decimal value greater than zero or -1 which
          indicates default price to be up-to on-demand.
         :paramtype spot_max_price: float
-        :keyword tags: A set of tags. Agent pool tags to be persisted on the agent pool virtual machine
-         scale set.
+        :keyword tags: Agent pool tags to be persisted on the agent pool virtual machine scale set.
         :paramtype tags: dict[str, str]
         :keyword node_labels: Agent pool node labels to be persisted across all nodes in agent pool.
         :paramtype node_labels: dict[str, str]
@@ -1893,7 +1837,7 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
          key=value:NoSchedule.
         :paramtype node_taints: list[str]
         """
-        super(ManagedClusterAgentPoolProfileProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
         self.os_disk_size_gb = os_disk_size_gb
@@ -1916,7 +1860,9 @@ class ManagedClusterAgentPoolProfileProperties(msrest.serialization.Model):
         self.node_taints = node_taints
 
 
-class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
+class ManagedClusterAgentPoolProfile(
+    ManagedClusterAgentPoolProfileProperties
+):  # pylint: disable=too-many-instance-attributes
     """Profile for the container service agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1963,7 +1909,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
      "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
      "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+     "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
     :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
     :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
@@ -1975,7 +1921,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar max_pods: Maximum number of pods that can run on a node.
     :vartype max_pods: int
     :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
-     Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+     Linux. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
     :ivar max_count: Maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -1984,7 +1930,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar enable_auto_scaling: Whether to enable auto-scaler.
     :vartype enable_auto_scaling: bool
     :ivar type: AgentPoolType represents types of an agent pool. Known values are:
-     "VirtualMachineScaleSets", "AvailabilitySet".
+     "VirtualMachineScaleSets" and "AvailabilitySet".
     :vartype type: str or ~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolType
     :ivar orchestrator_version: Version of orchestrator specified when creating the managed
      cluster.
@@ -1998,60 +1944,58 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar enable_node_public_ip: Enable public IP for nodes.
     :vartype enable_node_public_ip: bool
     :ivar scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-     priority. Default to regular. Known values are: "Spot", "Low", "Regular". Default value:
-     "Regular".
+     priority. Default to regular. Known values are: "Spot", "Low", and "Regular".
     :vartype scale_set_priority: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetPriority
     :ivar scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction policy
      for Spot or low priority virtual machine scale set. Default to Delete. Known values are:
-     "Delete", "Deallocate". Default value: "Delete".
+     "Delete" and "Deallocate".
     :vartype scale_set_eviction_policy: str or
      ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetEvictionPolicy
     :ivar spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing to
      pay in US Dollars. Possible values are any decimal value greater than zero or -1 which
      indicates default price to be up-to on-demand.
     :vartype spot_max_price: float
-    :ivar tags: A set of tags. Agent pool tags to be persisted on the agent pool virtual machine
-     scale set.
+    :ivar tags: Agent pool tags to be persisted on the agent pool virtual machine scale set.
     :vartype tags: dict[str, str]
     :ivar node_labels: Agent pool node labels to be persisted across all nodes in agent pool.
     :vartype node_labels: dict[str, str]
     :ivar node_taints: Taints added to new nodes during node pool create and scale. For example,
      key=value:NoSchedule.
     :vartype node_taints: list[str]
-    :ivar name: Required. Unique name of the agent pool profile in the context of the subscription
-     and resource group.
+    :ivar name: Unique name of the agent pool profile in the context of the subscription and
+     resource group. Required.
     :vartype name: str
     """
 
     _validation = {
-        'os_disk_size_gb': {'maximum': 1023, 'minimum': 0},
-        'provisioning_state': {'readonly': True},
-        'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
+        "os_disk_size_gb": {"maximum": 1023, "minimum": 0},
+        "provisioning_state": {"readonly": True},
+        "name": {"required": True, "pattern": r"^[a-z][a-z0-9]{0,11}$"},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'os_disk_size_gb': {'key': 'osDiskSizeGB', 'type': 'int'},
-        'vnet_subnet_id': {'key': 'vnetSubnetID', 'type': 'str'},
-        'max_pods': {'key': 'maxPods', 'type': 'int'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'max_count': {'key': 'maxCount', 'type': 'int'},
-        'min_count': {'key': 'minCount', 'type': 'int'},
-        'enable_auto_scaling': {'key': 'enableAutoScaling', 'type': 'bool'},
-        'type': {'key': 'type', 'type': 'str'},
-        'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
-        'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
-        'scale_set_priority': {'key': 'scaleSetPriority', 'type': 'str'},
-        'scale_set_eviction_policy': {'key': 'scaleSetEvictionPolicy', 'type': 'str'},
-        'spot_max_price': {'key': 'spotMaxPrice', 'type': 'float'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'node_labels': {'key': 'nodeLabels', 'type': '{str}'},
-        'node_taints': {'key': 'nodeTaints', 'type': '[str]'},
-        'name': {'key': 'name', 'type': 'str'},
+        "count": {"key": "count", "type": "int"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "os_disk_size_gb": {"key": "osDiskSizeGB", "type": "int"},
+        "vnet_subnet_id": {"key": "vnetSubnetID", "type": "str"},
+        "max_pods": {"key": "maxPods", "type": "int"},
+        "os_type": {"key": "osType", "type": "str"},
+        "max_count": {"key": "maxCount", "type": "int"},
+        "min_count": {"key": "minCount", "type": "int"},
+        "enable_auto_scaling": {"key": "enableAutoScaling", "type": "bool"},
+        "type": {"key": "type", "type": "str"},
+        "orchestrator_version": {"key": "orchestratorVersion", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "availability_zones": {"key": "availabilityZones", "type": "[str]"},
+        "enable_node_public_ip": {"key": "enableNodePublicIP", "type": "bool"},
+        "scale_set_priority": {"key": "scaleSetPriority", "type": "str"},
+        "scale_set_eviction_policy": {"key": "scaleSetEvictionPolicy", "type": "str"},
+        "spot_max_price": {"key": "spotMaxPrice", "type": "float"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "node_labels": {"key": "nodeLabels", "type": "{str}"},
+        "node_taints": {"key": "nodeTaints", "type": "[str]"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
@@ -2063,7 +2007,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
         max_pods: Optional[int] = None,
-        os_type: Optional[Union[str, "_models.OSType"]] = "Linux",
+        os_type: Union[str, "_models.OSType"] = "Linux",
         max_count: Optional[int] = None,
         min_count: Optional[int] = None,
         enable_auto_scaling: Optional[bool] = None,
@@ -2071,9 +2015,9 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         orchestrator_version: Optional[str] = None,
         availability_zones: Optional[List[str]] = None,
         enable_node_public_ip: Optional[bool] = None,
-        scale_set_priority: Optional[Union[str, "_models.ScaleSetPriority"]] = "Regular",
-        scale_set_eviction_policy: Optional[Union[str, "_models.ScaleSetEvictionPolicy"]] = "Delete",
-        spot_max_price: Optional[float] = -1,
+        scale_set_priority: Union[str, "_models.ScaleSetPriority"] = "Regular",
+        scale_set_eviction_policy: Union[str, "_models.ScaleSetEvictionPolicy"] = "Delete",
+        spot_max_price: float = -1,
         tags: Optional[Dict[str, str]] = None,
         node_labels: Optional[Dict[str, str]] = None,
         node_taints: Optional[List[str]] = None,
@@ -2120,7 +2064,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
          "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
          "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
          "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
-         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", and "Standard_NV6".
         :paramtype vm_size: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ContainerServiceVMSizeTypes
         :keyword os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
@@ -2132,7 +2076,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :keyword max_pods: Maximum number of pods that can run on a node.
         :paramtype max_pods: int
         :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
-         to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+         to Linux. Known values are: "Linux" and "Windows".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
         :keyword max_count: Maximum number of nodes for auto-scaling.
         :paramtype max_count: int
@@ -2141,7 +2085,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :keyword enable_auto_scaling: Whether to enable auto-scaler.
         :paramtype enable_auto_scaling: bool
         :keyword type: AgentPoolType represents types of an agent pool. Known values are:
-         "VirtualMachineScaleSets", "AvailabilitySet".
+         "VirtualMachineScaleSets" and "AvailabilitySet".
         :paramtype type: str or ~azure.mgmt.containerservice.v2020_02_01.models.AgentPoolType
         :keyword orchestrator_version: Version of orchestrator specified when creating the managed
          cluster.
@@ -2152,36 +2096,55 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         :keyword enable_node_public_ip: Enable public IP for nodes.
         :paramtype enable_node_public_ip: bool
         :keyword scale_set_priority: ScaleSetPriority to be used to specify virtual machine scale set
-         priority. Default to regular. Known values are: "Spot", "Low", "Regular". Default value:
-         "Regular".
+         priority. Default to regular. Known values are: "Spot", "Low", and "Regular".
         :paramtype scale_set_priority: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetPriority
         :keyword scale_set_eviction_policy: ScaleSetEvictionPolicy to be used to specify eviction
          policy for Spot or low priority virtual machine scale set. Default to Delete. Known values are:
-         "Delete", "Deallocate". Default value: "Delete".
+         "Delete" and "Deallocate".
         :paramtype scale_set_eviction_policy: str or
          ~azure.mgmt.containerservice.v2020_02_01.models.ScaleSetEvictionPolicy
         :keyword spot_max_price: SpotMaxPrice to be used to specify the maximum price you are willing
          to pay in US Dollars. Possible values are any decimal value greater than zero or -1 which
          indicates default price to be up-to on-demand.
         :paramtype spot_max_price: float
-        :keyword tags: A set of tags. Agent pool tags to be persisted on the agent pool virtual machine
-         scale set.
+        :keyword tags: Agent pool tags to be persisted on the agent pool virtual machine scale set.
         :paramtype tags: dict[str, str]
         :keyword node_labels: Agent pool node labels to be persisted across all nodes in agent pool.
         :paramtype node_labels: dict[str, str]
         :keyword node_taints: Taints added to new nodes during node pool create and scale. For example,
          key=value:NoSchedule.
         :paramtype node_taints: list[str]
-        :keyword name: Required. Unique name of the agent pool profile in the context of the
-         subscription and resource group.
+        :keyword name: Unique name of the agent pool profile in the context of the subscription and
+         resource group. Required.
         :paramtype name: str
         """
-        super(ManagedClusterAgentPoolProfile, self).__init__(count=count, vm_size=vm_size, os_disk_size_gb=os_disk_size_gb, vnet_subnet_id=vnet_subnet_id, max_pods=max_pods, os_type=os_type, max_count=max_count, min_count=min_count, enable_auto_scaling=enable_auto_scaling, type=type, orchestrator_version=orchestrator_version, availability_zones=availability_zones, enable_node_public_ip=enable_node_public_ip, scale_set_priority=scale_set_priority, scale_set_eviction_policy=scale_set_eviction_policy, spot_max_price=spot_max_price, tags=tags, node_labels=node_labels, node_taints=node_taints, **kwargs)
+        super().__init__(
+            count=count,
+            vm_size=vm_size,
+            os_disk_size_gb=os_disk_size_gb,
+            vnet_subnet_id=vnet_subnet_id,
+            max_pods=max_pods,
+            os_type=os_type,
+            max_count=max_count,
+            min_count=min_count,
+            enable_auto_scaling=enable_auto_scaling,
+            type=type,
+            orchestrator_version=orchestrator_version,
+            availability_zones=availability_zones,
+            enable_node_public_ip=enable_node_public_ip,
+            scale_set_priority=scale_set_priority,
+            scale_set_eviction_policy=scale_set_eviction_policy,
+            spot_max_price=spot_max_price,
+            tags=tags,
+            node_labels=node_labels,
+            node_taints=node_taints,
+            **kwargs
+        )
         self.name = name
 
 
-class ManagedClusterAPIServerAccessProfile(msrest.serialization.Model):
+class ManagedClusterAPIServerAccessProfile(_serialization.Model):
     """Access profile for managed cluster API server.
 
     :ivar authorized_ip_ranges: Authorized IP Ranges to kubernetes API server.
@@ -2191,8 +2154,8 @@ class ManagedClusterAPIServerAccessProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'authorized_ip_ranges': {'key': 'authorizedIPRanges', 'type': '[str]'},
-        'enable_private_cluster': {'key': 'enablePrivateCluster', 'type': 'bool'},
+        "authorized_ip_ranges": {"key": "authorizedIPRanges", "type": "[str]"},
+        "enable_private_cluster": {"key": "enablePrivateCluster", "type": "bool"},
     }
 
     def __init__(
@@ -2208,12 +2171,12 @@ class ManagedClusterAPIServerAccessProfile(msrest.serialization.Model):
         :keyword enable_private_cluster: Whether to create the cluster as a private cluster or not.
         :paramtype enable_private_cluster: bool
         """
-        super(ManagedClusterAPIServerAccessProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.authorized_ip_ranges = authorized_ip_ranges
         self.enable_private_cluster = enable_private_cluster
 
 
-class ManagedClusterIdentity(msrest.serialization.Model):
+class ManagedClusterIdentity(_serialization.Model):
     """Identity for the managed cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2227,41 +2190,36 @@ class ManagedClusterIdentity(msrest.serialization.Model):
     :ivar type: The type of identity used for the managed cluster. Type 'SystemAssigned' will use
      an implicitly created identity in master components and an auto-created user assigned identity
      in MC_ resource group in agent nodes. Type 'None' will not use MSI for the managed cluster,
-     service principal will be used instead. Known values are: "SystemAssigned", "None".
+     service principal will be used instead. Known values are: "SystemAssigned" and "None".
     :vartype type: str or ~azure.mgmt.containerservice.v2020_02_01.models.ResourceIdentityType
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "_models.ResourceIdentityType"]] = None, **kwargs):
         """
         :keyword type: The type of identity used for the managed cluster. Type 'SystemAssigned' will
          use an implicitly created identity in master components and an auto-created user assigned
          identity in MC_ resource group in agent nodes. Type 'None' will not use MSI for the managed
-         cluster, service principal will be used instead. Known values are: "SystemAssigned", "None".
+         cluster, service principal will be used instead. Known values are: "SystemAssigned" and "None".
         :paramtype type: str or ~azure.mgmt.containerservice.v2020_02_01.models.ResourceIdentityType
         """
-        super(ManagedClusterIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class ManagedClusterListResult(msrest.serialization.Model):
+class ManagedClusterListResult(_serialization.Model):
     """The response from the List Managed Clusters operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2273,30 +2231,25 @@ class ManagedClusterListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedCluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ManagedCluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ManagedCluster"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ManagedCluster"]] = None, **kwargs):
         """
         :keyword value: The list of managed clusters.
         :paramtype value: list[~azure.mgmt.containerservice.v2020_02_01.models.ManagedCluster]
         """
-        super(ManagedClusterListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ManagedClusterLoadBalancerProfile(msrest.serialization.Model):
+class ManagedClusterLoadBalancerProfile(_serialization.Model):
     """Profile of the managed cluster load balancer.
 
     :ivar managed_outbound_i_ps: Desired managed outbound IPs for the cluster load balancer.
@@ -2322,17 +2275,23 @@ class ManagedClusterLoadBalancerProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'allocated_outbound_ports': {'maximum': 64000, 'minimum': 0},
-        'idle_timeout_in_minutes': {'maximum': 120, 'minimum': 4},
+        "allocated_outbound_ports": {"maximum": 64000, "minimum": 0},
+        "idle_timeout_in_minutes": {"maximum": 120, "minimum": 4},
     }
 
     _attribute_map = {
-        'managed_outbound_i_ps': {'key': 'managedOutboundIPs', 'type': 'ManagedClusterLoadBalancerProfileManagedOutboundIPs'},
-        'outbound_ip_prefixes': {'key': 'outboundIPPrefixes', 'type': 'ManagedClusterLoadBalancerProfileOutboundIPPrefixes'},
-        'outbound_i_ps': {'key': 'outboundIPs', 'type': 'ManagedClusterLoadBalancerProfileOutboundIPs'},
-        'effective_outbound_i_ps': {'key': 'effectiveOutboundIPs', 'type': '[ResourceReference]'},
-        'allocated_outbound_ports': {'key': 'allocatedOutboundPorts', 'type': 'int'},
-        'idle_timeout_in_minutes': {'key': 'idleTimeoutInMinutes', 'type': 'int'},
+        "managed_outbound_i_ps": {
+            "key": "managedOutboundIPs",
+            "type": "ManagedClusterLoadBalancerProfileManagedOutboundIPs",
+        },
+        "outbound_ip_prefixes": {
+            "key": "outboundIPPrefixes",
+            "type": "ManagedClusterLoadBalancerProfileOutboundIPPrefixes",
+        },
+        "outbound_i_ps": {"key": "outboundIPs", "type": "ManagedClusterLoadBalancerProfileOutboundIPs"},
+        "effective_outbound_i_ps": {"key": "effectiveOutboundIPs", "type": "[ResourceReference]"},
+        "allocated_outbound_ports": {"key": "allocatedOutboundPorts", "type": "int"},
+        "idle_timeout_in_minutes": {"key": "idleTimeoutInMinutes", "type": "int"},
     }
 
     def __init__(
@@ -2342,8 +2301,8 @@ class ManagedClusterLoadBalancerProfile(msrest.serialization.Model):
         outbound_ip_prefixes: Optional["_models.ManagedClusterLoadBalancerProfileOutboundIPPrefixes"] = None,
         outbound_i_ps: Optional["_models.ManagedClusterLoadBalancerProfileOutboundIPs"] = None,
         effective_outbound_i_ps: Optional[List["_models.ResourceReference"]] = None,
-        allocated_outbound_ports: Optional[int] = 0,
-        idle_timeout_in_minutes: Optional[int] = 30,
+        allocated_outbound_ports: int = 0,
+        idle_timeout_in_minutes: int = 30,
         **kwargs
     ):
         """
@@ -2369,7 +2328,7 @@ class ManagedClusterLoadBalancerProfile(msrest.serialization.Model):
          must be in the range of 4 to 120 (inclusive). The default value is 30 minutes.
         :paramtype idle_timeout_in_minutes: int
         """
-        super(ManagedClusterLoadBalancerProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.managed_outbound_i_ps = managed_outbound_i_ps
         self.outbound_ip_prefixes = outbound_ip_prefixes
         self.outbound_i_ps = outbound_i_ps
@@ -2378,7 +2337,7 @@ class ManagedClusterLoadBalancerProfile(msrest.serialization.Model):
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
 
 
-class ManagedClusterLoadBalancerProfileManagedOutboundIPs(msrest.serialization.Model):
+class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_serialization.Model):
     """Desired managed outbound IPs for the cluster load balancer.
 
     :ivar count: Desired number of outbound IP created/managed by Azure for the cluster load
@@ -2387,29 +2346,24 @@ class ManagedClusterLoadBalancerProfileManagedOutboundIPs(msrest.serialization.M
     """
 
     _validation = {
-        'count': {'maximum': 100, 'minimum': 1},
+        "count": {"maximum": 100, "minimum": 1},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: Optional[int] = 1,
-        **kwargs
-    ):
+    def __init__(self, *, count: int = 1, **kwargs):
         """
         :keyword count: Desired number of outbound IP created/managed by Azure for the cluster load
          balancer. Allowed values must be in the range of 1 to 100 (inclusive). The default value is 1.
         :paramtype count: int
         """
-        super(ManagedClusterLoadBalancerProfileManagedOutboundIPs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(msrest.serialization.Model):
+class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_serialization.Model):
     """Desired outbound IP Prefix resources for the cluster load balancer.
 
     :ivar public_ip_prefixes: A list of public IP prefix resources.
@@ -2418,25 +2372,20 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(msrest.serialization.M
     """
 
     _attribute_map = {
-        'public_ip_prefixes': {'key': 'publicIPPrefixes', 'type': '[ResourceReference]'},
+        "public_ip_prefixes": {"key": "publicIPPrefixes", "type": "[ResourceReference]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_ip_prefixes: Optional[List["_models.ResourceReference"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_ip_prefixes: Optional[List["_models.ResourceReference"]] = None, **kwargs):
         """
         :keyword public_ip_prefixes: A list of public IP prefix resources.
         :paramtype public_ip_prefixes:
          list[~azure.mgmt.containerservice.v2020_02_01.models.ResourceReference]
         """
-        super(ManagedClusterLoadBalancerProfileOutboundIPPrefixes, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.public_ip_prefixes = public_ip_prefixes
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPs(msrest.serialization.Model):
+class ManagedClusterLoadBalancerProfileOutboundIPs(_serialization.Model):
     """Desired outbound IP resources for the cluster load balancer.
 
     :ivar public_i_ps: A list of public IP resources.
@@ -2444,34 +2393,29 @@ class ManagedClusterLoadBalancerProfileOutboundIPs(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'public_i_ps': {'key': 'publicIPs', 'type': '[ResourceReference]'},
+        "public_i_ps": {"key": "publicIPs", "type": "[ResourceReference]"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_i_ps: Optional[List["_models.ResourceReference"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, public_i_ps: Optional[List["_models.ResourceReference"]] = None, **kwargs):
         """
         :keyword public_i_ps: A list of public IP resources.
         :paramtype public_i_ps: list[~azure.mgmt.containerservice.v2020_02_01.models.ResourceReference]
         """
-        super(ManagedClusterLoadBalancerProfileOutboundIPs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.public_i_ps = public_i_ps
 
 
-class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
+class ManagedClusterPoolUpgradeProfile(_serialization.Model):
     """The list of available upgrade versions.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kubernetes_version: Required. Kubernetes version (major, minor, patch).
+    :ivar kubernetes_version: Kubernetes version (major, minor, patch). Required.
     :vartype kubernetes_version: str
     :ivar name: Pool name.
     :vartype name: str
-    :ivar os_type: Required. OsType to be used to specify os type. Choose from Linux and Windows.
-     Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+    :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
+     Linux. Known values are: "Linux" and "Windows".
     :vartype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
     :ivar upgrades: List of orchestrator types and versions available for upgrade.
     :vartype upgrades:
@@ -2479,15 +2423,15 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'kubernetes_version': {'required': True},
-        'os_type': {'required': True},
+        "kubernetes_version": {"required": True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
-        'kubernetes_version': {'key': 'kubernetesVersion', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'upgrades': {'key': 'upgrades', 'type': '[ManagedClusterPoolUpgradeProfileUpgradesItem]'},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "upgrades": {"key": "upgrades", "type": "[ManagedClusterPoolUpgradeProfileUpgradesItem]"},
     }
 
     def __init__(
@@ -2500,25 +2444,25 @@ class ManagedClusterPoolUpgradeProfile(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword kubernetes_version: Required. Kubernetes version (major, minor, patch).
+        :keyword kubernetes_version: Kubernetes version (major, minor, patch). Required.
         :paramtype kubernetes_version: str
         :keyword name: Pool name.
         :paramtype name: str
-        :keyword os_type: Required. OsType to be used to specify os type. Choose from Linux and
-         Windows. Default to Linux. Known values are: "Linux", "Windows". Default value: "Linux".
+        :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
+         to Linux. Known values are: "Linux" and "Windows".
         :paramtype os_type: str or ~azure.mgmt.containerservice.v2020_02_01.models.OSType
         :keyword upgrades: List of orchestrator types and versions available for upgrade.
         :paramtype upgrades:
          list[~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPoolUpgradeProfileUpgradesItem]
         """
-        super(ManagedClusterPoolUpgradeProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kubernetes_version = kubernetes_version
         self.name = name
         self.os_type = os_type
         self.upgrades = upgrades
 
 
-class ManagedClusterPoolUpgradeProfileUpgradesItem(msrest.serialization.Model):
+class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):
     """ManagedClusterPoolUpgradeProfileUpgradesItem.
 
     :ivar kubernetes_version: Kubernetes version (major, minor, patch).
@@ -2528,29 +2472,23 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'kubernetes_version': {'key': 'kubernetesVersion', 'type': 'str'},
-        'is_preview': {'key': 'isPreview', 'type': 'bool'},
+        "kubernetes_version": {"key": "kubernetesVersion", "type": "str"},
+        "is_preview": {"key": "isPreview", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        kubernetes_version: Optional[str] = None,
-        is_preview: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kubernetes_version: Optional[str] = None, is_preview: Optional[bool] = None, **kwargs):
         """
         :keyword kubernetes_version: Kubernetes version (major, minor, patch).
         :paramtype kubernetes_version: str
         :keyword is_preview: Whether Kubernetes version is currently in preview.
         :paramtype is_preview: bool
         """
-        super(ManagedClusterPoolUpgradeProfileUpgradesItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kubernetes_version = kubernetes_version
         self.is_preview = is_preview
 
 
-class ManagedClusterPropertiesAutoScalerProfile(msrest.serialization.Model):
+class ManagedClusterPropertiesAutoScalerProfile(_serialization.Model):
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :ivar scan_interval:
@@ -2572,14 +2510,14 @@ class ManagedClusterPropertiesAutoScalerProfile(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scan_interval': {'key': 'scan-interval', 'type': 'str'},
-        'scale_down_delay_after_add': {'key': 'scale-down-delay-after-add', 'type': 'str'},
-        'scale_down_delay_after_delete': {'key': 'scale-down-delay-after-delete', 'type': 'str'},
-        'scale_down_delay_after_failure': {'key': 'scale-down-delay-after-failure', 'type': 'str'},
-        'scale_down_unneeded_time': {'key': 'scale-down-unneeded-time', 'type': 'str'},
-        'scale_down_unready_time': {'key': 'scale-down-unready-time', 'type': 'str'},
-        'scale_down_utilization_threshold': {'key': 'scale-down-utilization-threshold', 'type': 'str'},
-        'max_graceful_termination_sec': {'key': 'max-graceful-termination-sec', 'type': 'str'},
+        "scan_interval": {"key": "scan-interval", "type": "str"},
+        "scale_down_delay_after_add": {"key": "scale-down-delay-after-add", "type": "str"},
+        "scale_down_delay_after_delete": {"key": "scale-down-delay-after-delete", "type": "str"},
+        "scale_down_delay_after_failure": {"key": "scale-down-delay-after-failure", "type": "str"},
+        "scale_down_unneeded_time": {"key": "scale-down-unneeded-time", "type": "str"},
+        "scale_down_unready_time": {"key": "scale-down-unready-time", "type": "str"},
+        "scale_down_utilization_threshold": {"key": "scale-down-utilization-threshold", "type": "str"},
+        "max_graceful_termination_sec": {"key": "max-graceful-termination-sec", "type": "str"},
     }
 
     def __init__(
@@ -2613,7 +2551,7 @@ class ManagedClusterPropertiesAutoScalerProfile(msrest.serialization.Model):
         :keyword max_graceful_termination_sec:
         :paramtype max_graceful_termination_sec: str
         """
-        super(ManagedClusterPropertiesAutoScalerProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.scan_interval = scan_interval
         self.scale_down_delay_after_add = scale_down_delay_after_add
         self.scale_down_delay_after_delete = scale_down_delay_after_delete
@@ -2636,9 +2574,9 @@ class ManagedClusterPropertiesIdentityProfileValue(UserAssignedIdentity):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
     }
 
     def __init__(
@@ -2657,48 +2595,42 @@ class ManagedClusterPropertiesIdentityProfileValue(UserAssignedIdentity):
         :keyword object_id: The object id of the user assigned identity.
         :paramtype object_id: str
         """
-        super(ManagedClusterPropertiesIdentityProfileValue, self).__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
+        super().__init__(resource_id=resource_id, client_id=client_id, object_id=object_id, **kwargs)
 
 
-class ManagedClusterServicePrincipalProfile(msrest.serialization.Model):
+class ManagedClusterServicePrincipalProfile(_serialization.Model):
     """Information about a service principal identity for the cluster to use for manipulating Azure APIs.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar client_id: Required. The ID for the service principal.
+    :ivar client_id: The ID for the service principal. Required.
     :vartype client_id: str
     :ivar secret: The secret password associated with the service principal in plain text.
     :vartype secret: str
     """
 
     _validation = {
-        'client_id': {'required': True},
+        "client_id": {"required": True},
     }
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'secret': {'key': 'secret', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: str,
-        secret: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_id: str, secret: Optional[str] = None, **kwargs):
         """
-        :keyword client_id: Required. The ID for the service principal.
+        :keyword client_id: The ID for the service principal. Required.
         :paramtype client_id: str
         :keyword secret: The secret password associated with the service principal in plain text.
         :paramtype secret: str
         """
-        super(ManagedClusterServicePrincipalProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_id = client_id
         self.secret = secret
 
 
-class ManagedClusterUpgradeProfile(msrest.serialization.Model):
+class ManagedClusterUpgradeProfile(_serialization.Model):
     """The list of available upgrades for compute pools.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2711,29 +2643,29 @@ class ManagedClusterUpgradeProfile(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of upgrade profile.
     :vartype type: str
-    :ivar control_plane_profile: Required. The list of available upgrade versions for the control
-     plane.
+    :ivar control_plane_profile: The list of available upgrade versions for the control plane.
+     Required.
     :vartype control_plane_profile:
      ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPoolUpgradeProfile
-    :ivar agent_pool_profiles: Required. The list of available upgrade versions for agent pools.
+    :ivar agent_pool_profiles: The list of available upgrade versions for agent pools. Required.
     :vartype agent_pool_profiles:
      list[~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPoolUpgradeProfile]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'control_plane_profile': {'required': True},
-        'agent_pool_profiles': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "control_plane_profile": {"required": True},
+        "agent_pool_profiles": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'control_plane_profile': {'key': 'properties.controlPlaneProfile', 'type': 'ManagedClusterPoolUpgradeProfile'},
-        'agent_pool_profiles': {'key': 'properties.agentPoolProfiles', 'type': '[ManagedClusterPoolUpgradeProfile]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "control_plane_profile": {"key": "properties.controlPlaneProfile", "type": "ManagedClusterPoolUpgradeProfile"},
+        "agent_pool_profiles": {"key": "properties.agentPoolProfiles", "type": "[ManagedClusterPoolUpgradeProfile]"},
     }
 
     def __init__(
@@ -2744,15 +2676,15 @@ class ManagedClusterUpgradeProfile(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword control_plane_profile: Required. The list of available upgrade versions for the
-         control plane.
+        :keyword control_plane_profile: The list of available upgrade versions for the control plane.
+         Required.
         :paramtype control_plane_profile:
          ~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPoolUpgradeProfile
-        :keyword agent_pool_profiles: Required. The list of available upgrade versions for agent pools.
+        :keyword agent_pool_profiles: The list of available upgrade versions for agent pools. Required.
         :paramtype agent_pool_profiles:
          list[~azure.mgmt.containerservice.v2020_02_01.models.ManagedClusterPoolUpgradeProfile]
         """
-        super(ManagedClusterUpgradeProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -2760,18 +2692,18 @@ class ManagedClusterUpgradeProfile(msrest.serialization.Model):
         self.agent_pool_profiles = agent_pool_profiles
 
 
-class ManagedClusterWindowsProfile(msrest.serialization.Model):
+class ManagedClusterWindowsProfile(_serialization.Model):
     """Profile for Windows VMs in the container service cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar admin_username: Required. Specifies the name of the administrator account.
-     :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-     **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-     "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-     "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-     "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-     character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
+    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
+     **restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
+     "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1",
+     "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest",
+     "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2",
+     "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1 character
+     :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
     :vartype admin_username: str
     :ivar admin_password: Specifies the password of the administrator account.
      :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
@@ -2784,29 +2716,23 @@ class ManagedClusterWindowsProfile(msrest.serialization.Model):
     """
 
     _validation = {
-        'admin_username': {'required': True},
+        "admin_username": {"required": True},
     }
 
     _attribute_map = {
-        'admin_username': {'key': 'adminUsername', 'type': 'str'},
-        'admin_password': {'key': 'adminPassword', 'type': 'str'},
+        "admin_username": {"key": "adminUsername", "type": "str"},
+        "admin_password": {"key": "adminPassword", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        admin_username: str,
-        admin_password: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, admin_username: str, admin_password: Optional[str] = None, **kwargs):
         """
-        :keyword admin_username: Required. Specifies the name of the administrator account.
+        :keyword admin_username: Specifies the name of the administrator account.
          :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
          **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
          "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
          "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
          "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-         character :code:`<br>`:code:`<br>` **Max-length:** 20 characters.
+         character :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
         :paramtype admin_username: str
         :keyword admin_password: Specifies the password of the administrator account.
          :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
@@ -2817,12 +2743,12 @@ class ManagedClusterWindowsProfile(msrest.serialization.Model):
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str
         """
-        super(ManagedClusterWindowsProfile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.admin_username = admin_username
         self.admin_password = admin_password
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """The List Compute Operation operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2832,24 +2758,20 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationValue]'},
+        "value": {"key": "value", "type": "[OperationValue]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class OperationValue(msrest.serialization.Model):
+class OperationValue(_serialization.Model):
     """Describes the properties of a Compute Operation value.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2869,30 +2791,26 @@ class OperationValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'origin': {'readonly': True},
-        'name': {'readonly': True},
-        'operation': {'readonly': True},
-        'resource': {'readonly': True},
-        'description': {'readonly': True},
-        'provider': {'readonly': True},
+        "origin": {"readonly": True},
+        "name": {"readonly": True},
+        "operation": {"readonly": True},
+        "resource": {"readonly": True},
+        "description": {"readonly": True},
+        "provider": {"readonly": True},
     }
 
     _attribute_map = {
-        'origin': {'key': 'origin', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'operation': {'key': 'display.operation', 'type': 'str'},
-        'resource': {'key': 'display.resource', 'type': 'str'},
-        'description': {'key': 'display.description', 'type': 'str'},
-        'provider': {'key': 'display.provider', 'type': 'str'},
+        "origin": {"key": "origin", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "operation": {"key": "display.operation", "type": "str"},
+        "resource": {"key": "display.resource", "type": "str"},
+        "description": {"key": "display.description", "type": "str"},
+        "provider": {"key": "display.provider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.origin = None
         self.name = None
         self.operation = None
@@ -2901,7 +2819,7 @@ class OperationValue(msrest.serialization.Model):
         self.provider = None
 
 
-class ResourceReference(msrest.serialization.Model):
+class ResourceReference(_serialization.Model):
     """A reference to an Azure resource.
 
     :ivar id: The fully qualified Azure resource id.
@@ -2909,43 +2827,33 @@ class ResourceReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: The fully qualified Azure resource id.
         :paramtype id: str
         """
-        super(ResourceReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class TagsObject(msrest.serialization.Model):
+class TagsObject(_serialization.Model):
     """Tags object for patch operations.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TagsObject, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags

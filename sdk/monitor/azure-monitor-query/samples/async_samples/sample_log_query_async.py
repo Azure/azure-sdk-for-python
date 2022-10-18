@@ -48,5 +48,4 @@ async def logs_query():
         print (err)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(logs_query())
+    asyncio.run(logs_query())

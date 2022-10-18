@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import pytest
 
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file

@@ -11,7 +11,7 @@ from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.schedule.create_job import CreateJobFileRefField, PipelineCreateJobSchema
 from azure.ai.ml._schema.schedule.trigger import CronTriggerSchema, RecurrenceTriggerSchema
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 
 class ScheduleSchema(ResourceSchema):

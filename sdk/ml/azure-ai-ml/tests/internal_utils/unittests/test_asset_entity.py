@@ -1,8 +1,9 @@
-import pytest
 import unittest
 
-from azure.ai.ml.entities import Environment
+import pytest
+
 from azure.ai.ml._utils.utils import is_valid_uuid
+from azure.ai.ml.entities import Environment
 
 
 @pytest.mark.unittest

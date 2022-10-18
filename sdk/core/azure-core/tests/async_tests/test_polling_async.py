@@ -40,7 +40,7 @@ from msrest.serialization import Model
 
 @pytest.fixture
 def client():
-    # The poller itself don't use it, so we don't need something functionnal
+    # The poller itself don't use it, so we don't need something functional
     return AsyncPipelineClient("https://baseurl")
 
 
