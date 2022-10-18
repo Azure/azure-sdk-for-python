@@ -189,7 +189,7 @@ class InternalComponent(Component):
         if isinstance(self.environment, InternalEnvironment):
             validation_result.merge_with(
                 self.environment._validate(
-                    self._source_path,
+                    self._base_path,
                     skip_path_validation=skip_path_validation
                 ),
                 field_name="environment",
@@ -208,8 +208,6 @@ class InternalComponent(Component):
         )
 
     def _to_rest_object(self) -> ComponentVersionData:
-        if isinstance(self.environment, InternalEnvironment):
-            self.environment.resolve(self._source_path)
         component = convert_ordered_dict_to_dict(self._to_dict())
 
         properties = ComponentVersionDetails(
@@ -226,6 +224,13 @@ class InternalComponent(Component):
     @contextmanager
     def _resolve_local_code(self):
         self._additional_includes.resolve()
+
+        # file dependency in code will be read during internal environment resolution
+        # for example, docker file of the environment may be in additional includes
+        # and it will be read then insert to the environment object during resolution
+        # so we need to resolve environment based on the temporary code path
+        if isinstance(self.environment, InternalEnvironment):
+            self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
         yield self._additional_includes.code.absolute()
         self._additional_includes.cleanup()
