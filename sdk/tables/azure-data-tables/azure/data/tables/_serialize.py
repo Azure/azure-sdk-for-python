@@ -35,8 +35,10 @@ def _get_match_headers(etag, match_condition):
 def _prepare_key(keyvalue):
     """Duplicate the single quote char to escape."""
     try:
-        return str(keyvalue).replace("'", "''")
+        return keyvalue.replace("'", "''")
     except AttributeError:
+        if isinstance(keyvalue, UUID):
+            return str(keyvalue).replace("'", "''")
         raise TypeError('PartitionKey or RowKey must be of type string.')
 
 
@@ -208,7 +210,9 @@ def _add_entity_properties(source):
     properties = {}
 
     to_send = dict(source)  # shallow copy
-
+    properties["PartitionKey"] = to_send.pop("PartitionKey", None)
+    properties["RowKey"] = to_send.pop("RowKey", None)
+ 
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
     for name, value in to_send.items():
