@@ -322,10 +322,11 @@ def healthcare_relation_role(healthcare_entity):
 def healthcare_relation(healthcare_relation_role):
     model = _models.HealthcareRelation(
         relation_type="DOSAGE",
-        roles=[healthcare_relation_role[0]]
+        roles=[healthcare_relation_role[0]],
+        confidence_score=1.0
     )
 
-    model_repr = f"HealthcareRelation(relation_type=DOSAGE, roles=[{healthcare_relation_role[1]}])"
+    model_repr = f"HealthcareRelation(relation_type=DOSAGE, roles=[{healthcare_relation_role[1]}], confidence_score=1.0)"
 
     assert repr(model) == model_repr
     return model, model_repr
@@ -449,12 +450,13 @@ class TestRepr():
             entity_relations=[healthcare_relation[0]],
             warnings=[text_analytics_warning[0]],
             statistics=text_document_statistics[0],
+            fhir_bundle="{}",
             is_error=False
         )
 
         model_repr = (
-            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, is_error=False)".format(
-                healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1]
+            "AnalyzeHealthcareEntitiesResult(id=1, entities=[{}], entity_relations=[{}], warnings=[{}], statistics={}, fhir_bundle={}, is_error=False)".format(
+                healthcare_entity[1], healthcare_relation[1], text_analytics_warning[1], text_document_statistics[1], "{}"
             )
         )
 

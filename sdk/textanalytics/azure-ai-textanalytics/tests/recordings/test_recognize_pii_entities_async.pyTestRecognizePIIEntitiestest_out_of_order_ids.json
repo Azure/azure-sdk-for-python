@@ -47,15 +47,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "003cab8c-0a9d-439a-a4ce-d3cd2aba367f",
+        "apim-request-id": "70ffb468-e6af-4f67-a4db-03006678d74a",
         "Content-Length": "505",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=4,CognitiveServices.TextAnalytics.TextRecords=4",
-        "Date": "Mon, 10 Oct 2022 21:23:32 GMT",
+        "Date": "Mon, 17 Oct 2022 19:04:48 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "26"
+        "x-envoy-upstream-service-time": "30"
       },
       "ResponseBody": {
         "kind": "PiiEntityRecognitionResults",

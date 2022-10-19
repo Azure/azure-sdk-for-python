@@ -5486,7 +5486,8 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
      have fhirVersion provided when used. Behavior of using None enum is the same as not using the
      documentType parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
      "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
-    :vartype document_type: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentType
+    :vartype document_type: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareDocumentType
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
      https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
@@ -5509,7 +5510,7 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
         logging_opt_out: bool = False,
         model_version: str = "latest",
         fhir_version: Optional[Union[str, "_models.FhirVersion"]] = None,
-        document_type: Optional[Union[str, "_models.DocumentType"]] = None,
+        document_type: Optional[Union[str, "_models.HealthcareDocumentType"]] = None,
         string_index_type: Union[str, "_models.StringIndexType"] = "TextElements_v8",
         **kwargs
     ):
@@ -5526,7 +5527,7 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
          the documentType parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
          "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
         :paramtype document_type: str or
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentType
+         ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareDocumentType
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
          https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",

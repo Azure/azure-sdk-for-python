@@ -154,18 +154,78 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "09f2c392-896c-47ec-a2db-f84d1b29c235",
+        "apim-request-id": "2c446596-2f55-4ebb-a4f9-6fbfc55655fa",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 19:24:41 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:51:42 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d921422b-1534-48e4-aaac-c01197aa3c93?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "960"
+        "x-envoy-upstream-service-time": "626"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8c176324-9b0c-48a0-95e2-b6a0181387e3?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "apim-request-id": "6f71bbe9-beeb-4cc7-9d33-4c2865442df7",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 18:51:46 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "13"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "6f71bbe9-beeb-4cc7-9d33-4c2865442df7"
+          },
+          "message": "Internal server error"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8c176324-9b0c-48a0-95e2-b6a0181387e3?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "apim-request-id": "7b7c1035-f76d-4d70-87b7-b98b1bf79ad4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 18:51:46 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "15"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "7b7c1035-f76d-4d70-87b7-b98b1bf79ad4"
+          },
+          "message": "Internal server error"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d921422b-1534-48e4-aaac-c01197aa3c93?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -176,31 +236,489 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "745226d2-9929-4a0e-924b-50d40e5ec594",
-        "Content-Length": "12732",
+        "apim-request-id": "d1e9ea91-dc97-4624-acc5-56225645c2ca",
+        "Content-Length": "19188",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 19:24:46 GMT",
+        "Date": "Mon, 17 Oct 2022 18:51:47 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "298"
+        "x-envoy-upstream-service-time": "452"
       },
       "ResponseBody": {
-        "jobId": "14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62",
-        "lastUpdateDateTime": "2022-10-10T19:24:46Z",
-        "createdDateTime": "2022-10-10T19:24:40Z",
-        "expirationDateTime": "2022-10-11T19:24:40Z",
+        "jobId": "d921422b-1534-48e4-aaac-c01197aa3c93",
+        "lastUpdateDateTime": "2022-10-17T18:51:48Z",
+        "createdDateTime": "2022-10-17T18:51:42Z",
+        "expirationDateTime": "2022-10-18T18:51:42Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 1,
+          "completed": 2,
           "failed": 0,
-          "inProgress": 4,
+          "inProgress": 3,
           "total": 5,
           "items": [
             {
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-10-17T18:51:47.5939675Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 20,
+                  "validDocumentsCount": 20,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 20
+                },
+                "documents": [
+                  {
+                    "id": "0",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "6",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "7",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "8",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "9",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "10",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "11",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "12",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "13",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "14",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "15",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "16",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "17",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "18",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "keyPhrases": [
+                      "Government Accountability Office",
+                      "natural gas development",
+                      "past six years",
+                      "environmental protection responsibilities",
+                      "recent report",
+                      "dramatic increase",
+                      "federal lands",
+                      "GAO",
+                      "oil",
+                      "staff",
+                      "BLM",
+                      "point"
+                    ],
+                    "statistics": {
+                      "charactersCount": 295,
+                      "transactionsCount": 1
+                    },
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-10-01"
+              }
+            },
+            {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-10-10T19:24:46.2269118Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:46.1155693Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -760,7 +1278,67 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8c176324-9b0c-48a0-95e2-b6a0181387e3?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "apim-request-id": "de08d470-fbd2-486f-a339-387c25b80d08",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 18:51:49 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "15"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "de08d470-fbd2-486f-a339-387c25b80d08"
+          },
+          "message": "Internal server error"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8c176324-9b0c-48a0-95e2-b6a0181387e3?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "apim-request-id": "cd05f48e-e1b1-4440-a4c7-40c1b98f0906",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 18:51:52 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "10"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "cd05f48e-e1b1-4440-a4c7-40c1b98f0906"
+          },
+          "message": "Internal server error"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d921422b-1534-48e4-aaac-c01197aa3c93?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -771,19 +1349,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9badcad1-52dd-4021-a101-a833f6751866",
-        "Content-Length": "55951",
+        "apim-request-id": "19a6824c-d0e6-46e2-ac83-2b54d86656e1",
+        "Content-Length": "55952",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 19:24:53 GMT",
+        "Date": "Mon, 17 Oct 2022 18:51:54 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1112"
+        "x-envoy-upstream-service-time": "1184"
       },
       "ResponseBody": {
-        "jobId": "14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62",
-        "lastUpdateDateTime": "2022-10-10T19:24:51Z",
-        "createdDateTime": "2022-10-10T19:24:40Z",
-        "expirationDateTime": "2022-10-11T19:24:40Z",
+        "jobId": "d921422b-1534-48e4-aaac-c01197aa3c93",
+        "lastUpdateDateTime": "2022-10-17T18:51:53Z",
+        "createdDateTime": "2022-10-17T18:51:42Z",
+        "expirationDateTime": "2022-10-18T18:51:42Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -795,7 +1373,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T19:24:49.3966449Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:51.9826537Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -832,14 +1410,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -853,14 +1431,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -882,7 +1460,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -914,14 +1492,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -935,14 +1513,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -964,7 +1542,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -996,14 +1574,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1017,14 +1595,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1046,7 +1624,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1078,14 +1656,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1099,14 +1677,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1128,7 +1706,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1160,14 +1738,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1181,14 +1759,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1210,7 +1788,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1242,14 +1820,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1263,14 +1841,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1292,7 +1870,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1324,14 +1902,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1345,14 +1923,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1374,7 +1952,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1406,14 +1984,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1427,14 +2005,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1456,7 +2034,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1488,14 +2066,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1509,14 +2087,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1538,7 +2116,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1570,14 +2148,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1591,14 +2169,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1620,7 +2198,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1652,14 +2230,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1673,14 +2251,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1702,7 +2280,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1734,14 +2312,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1755,14 +2333,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1784,7 +2362,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1816,14 +2394,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1837,14 +2415,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1866,7 +2444,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1898,14 +2476,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -1919,14 +2497,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -1948,7 +2526,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -1980,14 +2558,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -2001,14 +2579,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -2030,7 +2608,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -2062,14 +2640,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -2083,14 +2661,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -2112,7 +2690,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -2144,14 +2722,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -2165,14 +2743,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -2194,7 +2772,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -2226,14 +2804,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -2247,14 +2825,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -2276,7 +2854,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -2308,14 +2886,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -2329,14 +2907,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -2358,7 +2936,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -2390,14 +2968,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -2411,14 +2989,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -2440,7 +3018,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -2453,7 +3031,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-10-10T19:24:47.750531Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:47.5939675Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2911,7 +3489,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-10-10T19:24:50.1112505Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:49.0936394Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3769,7 +4347,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-10-10T19:24:46.2269118Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:46.1155693Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -4329,7 +4907,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d921422b-1534-48e4-aaac-c01197aa3c93?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -4340,19 +4918,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c8cc6b0b-a99f-4f6a-b94d-d70f28f17173",
-        "Content-Length": "72710",
+        "apim-request-id": "3bb5b50b-06a9-4850-bbaf-2fb73bfbd33f",
+        "Content-Length": "72711",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 19:24:59 GMT",
+        "Date": "Mon, 17 Oct 2022 18:52:01 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1356"
+        "x-envoy-upstream-service-time": "1165"
       },
       "ResponseBody": {
-        "jobId": "14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62",
-        "lastUpdateDateTime": "2022-10-10T19:24:53Z",
-        "createdDateTime": "2022-10-10T19:24:40Z",
-        "expirationDateTime": "2022-10-11T19:24:40Z",
+        "jobId": "d921422b-1534-48e4-aaac-c01197aa3c93",
+        "lastUpdateDateTime": "2022-10-17T18:51:54Z",
+        "createdDateTime": "2022-10-17T18:51:42Z",
+        "expirationDateTime": "2022-10-18T18:51:42Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -4364,7 +4942,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T19:24:49.3966449Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:51.9826537Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -4401,14 +4979,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4422,14 +5000,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -4451,7 +5029,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -4483,14 +5061,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4504,14 +5082,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -4533,7 +5111,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -4565,14 +5143,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4586,14 +5164,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -4615,7 +5193,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -4647,14 +5225,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4668,14 +5246,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -4697,7 +5275,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -4729,14 +5307,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4750,14 +5328,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -4779,7 +5357,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -4811,14 +5389,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4832,14 +5410,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -4861,7 +5439,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -4893,14 +5471,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4914,14 +5492,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -4943,7 +5521,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -4975,14 +5553,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -4996,14 +5574,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5025,7 +5603,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5057,14 +5635,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5078,14 +5656,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5107,7 +5685,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5139,14 +5717,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5160,14 +5738,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5189,7 +5767,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5221,14 +5799,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5242,14 +5820,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5271,7 +5849,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5303,14 +5881,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5324,14 +5902,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5353,7 +5931,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5385,14 +5963,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5406,14 +5984,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5435,7 +6013,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5467,14 +6045,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5488,14 +6066,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5517,7 +6095,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5549,14 +6127,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5570,14 +6148,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5599,7 +6177,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5631,14 +6209,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5652,14 +6230,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5681,7 +6259,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5713,14 +6291,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5734,14 +6312,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5763,7 +6341,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5795,14 +6373,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5816,14 +6394,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5845,7 +6423,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5877,14 +6455,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5898,14 +6476,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -5927,7 +6505,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -5959,14 +6537,14 @@
                         "category": "Organization",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.93
+                        "confidenceScore": 0.94
                       },
                       {
                         "text": "oil",
                         "category": "Product",
                         "offset": 98,
                         "length": 3,
-                        "confidenceScore": 0.68
+                        "confidenceScore": 0.67
                       },
                       {
                         "text": "natural",
@@ -5980,14 +6558,14 @@
                         "category": "Skill",
                         "offset": 114,
                         "length": 3,
-                        "confidenceScore": 0.58
+                        "confidenceScore": 0.57
                       },
                       {
                         "text": "development",
                         "category": "Skill",
                         "offset": 118,
                         "length": 11,
-                        "confidenceScore": 0.47
+                        "confidenceScore": 0.48
                       },
                       {
                         "text": "past six years",
@@ -6009,7 +6587,7 @@
                         "category": "Skill",
                         "offset": 253,
                         "length": 24,
-                        "confidenceScore": 0.82
+                        "confidenceScore": 0.79
                       }
                     ],
                     "warnings": []
@@ -6022,7 +6600,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-10-10T19:24:47.750531Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:47.5939675Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -6480,7 +7058,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-10-10T19:24:53.0479145Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:54.0521961Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -7298,7 +7876,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-10-10T19:24:50.1112505Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:49.0936394Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -8156,7 +8734,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-10-10T19:24:46.2269118Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:46.1155693Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -8716,7 +9294,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62:cancel?api-version=2022-10-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/d921422b-1534-48e4-aaac-c01197aa3c93:cancel?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -8728,18 +9306,18 @@
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "8b12ae65-7b13-4f12-b0b8-f168c45d1a75",
+        "apim-request-id": "effb55fd-c803-4457-9756-cb8ee5904221",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 19:25:00 GMT",
+        "Date": "Mon, 17 Oct 2022 18:52:01 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "37"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Failed to cancel job with job id 14f8daf0-40a7-4d0f-a94b-f2cdcf50ae62 as its already completed."
+          "message": "Failed to cancel job with job id d921422b-1534-48e4-aaac-c01197aa3c93 as its already completed."
         }
       }
     }

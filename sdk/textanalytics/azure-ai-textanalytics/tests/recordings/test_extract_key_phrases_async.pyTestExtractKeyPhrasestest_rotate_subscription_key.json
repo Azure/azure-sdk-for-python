@@ -35,15 +35,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "04e0c887-284a-4bd5-94b9-ee87bafd3f19",
+        "apim-request-id": "ce1022b9-adc0-4c3f-9430-969f026cd697",
         "Content-Length": "263",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:16:55 GMT",
+        "Date": "Mon, 17 Oct 2022 19:03:18 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "16"
+        "x-envoy-upstream-service-time": "10"
       },
       "ResponseBody": {
         "kind": "KeyPhraseExtractionResults",
@@ -112,10 +112,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "07fc1ff1-9260-48a9-85f5-f9f22939bc60",
+        "apim-request-id": "c904d167-b2ea-4c3c-bf03-7d5e8189aa0e",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Mon, 10 Oct 2022 21:16:55 GMT"
+        "Date": "Mon, 17 Oct 2022 19:03:19 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -159,15 +159,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1ed92ded-89f6-4f54-82b7-12e6b222672f",
+        "apim-request-id": "36b96297-35c9-4933-9f91-f6440d882a65",
         "Content-Length": "263",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:16:55 GMT",
+        "Date": "Mon, 17 Oct 2022 19:03:19 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "14"
+        "x-envoy-upstream-service-time": "13"
       },
       "ResponseBody": {
         "kind": "KeyPhraseExtractionResults",

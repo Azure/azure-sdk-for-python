@@ -187,3 +187,13 @@ directive:
     where: $.definitions.JobState
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
 ```
+
+### Rename enum DocumentType to HealthcareDocumentType
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["HealthcareTaskParameters"]["properties"]["documentType"]["x-ms-enum"]["name"] = "healthcareDocumentType";
+```
