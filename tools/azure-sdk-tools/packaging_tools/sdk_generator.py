@@ -16,6 +16,7 @@ from .generate_utils import (
     format_samples,
     gen_dpg,
     dpg_relative_folder,
+    gen_cadl
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,20 +31,28 @@ def main(generate_input, generate_output):
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
+    spec_word = "readmeMd"
     if "relatedReadmeMdFiles" in data:
         readme_files = data["relatedReadmeMdFiles"]
-    else:
+    elif "relatedReadmeMdFile" in data:
         input_readme = data["relatedReadmeMdFile"]
         if "specification" in spec_folder:
             spec_folder = str(Path(spec_folder.split("specification")[0]))
         if "specification" not in input_readme:
             input_readme = str(Path("specification") / input_readme)
         readme_files = [input_readme]
+    else:
+        # ["specification/confidentialledger/ConfientialLedger"]
+        if isinstance(data["relatedCadlProjectFolder"], str):
+            readme_files = [data["relatedCadlProjectFolder"]]
+        else:
+            readme_files = data["relatedCadlProjectFolder"]
+        spec_word = "cadlProject"
 
     for input_readme in readme_files:
-        relative_path_readme = str(Path(spec_folder, input_readme))
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         if "resource-manager" in input_readme:
+            relative_path_readme = str(Path(spec_folder, input_readme))
             config = generate(
                 CONFIG_FILE,
                 sdk_folder,
@@ -53,8 +62,10 @@ def main(generate_input, generate_output):
                 force_generation=True,
                 python_tag=python_tag,
             )
-        else:
+        elif "data-plane" in input_readme:
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
+        else:
+            config = gen_cadl(input_readme, spec_folder)
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -68,12 +79,12 @@ def main(generate_input, generate_output):
                 package_entry = {}
                 package_entry["packageName"] = package_name
                 package_entry["path"] = [folder_name]
-                package_entry["readmeMd"] = [input_readme]
+                package_entry[spec_word] = [input_readme]
                 package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path)
                 result[package_name] = package_entry
             else:
                 result[package_name]["path"].append(folder_name)
-                result[package_name]["readmeMd"].append(input_readme)
+                result[package_name][spec_word].append(input_readme)
 
             # Generate some necessary file for new service
             init_new_service(package_name, folder_name)
@@ -102,7 +113,7 @@ def main(generate_input, generate_output):
     # remove duplicates
     for value in result.values():
         value["path"] = list(set(value["path"]))
-        value["readmeMd"] = list(set(value["readmeMd"]))
+        value[spec_word] = list(set(value[spec_word]))
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
