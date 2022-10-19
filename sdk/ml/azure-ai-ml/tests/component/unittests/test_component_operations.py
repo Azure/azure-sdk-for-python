@@ -110,6 +110,15 @@ class TestComponentOperation:
         assert "version='1'" in create_call_args_str
         mock_component_entity._from_rest_object.assert_called_once()
 
+    def test_get_default(self, mock_component_operation: ComponentOperations) -> None:
+        with patch("azure.ai.ml.operations._component_operations.Component") as mock_component_entity:
+            mock_component_operation.get("mock_component")
+
+        mock_component_operation._version_operation.get.assert_called_once()
+        create_call_args_str = str(mock_component_operation._version_operation.get.call_args)
+        assert "name='mock_component'" in create_call_args_str
+        mock_component_entity._from_rest_object.assert_called_once()
+
     def test_archive_version(self, mock_component_operation: ComponentOperations):
         name = "random_name"
         component = Mock(ComponentVersionData(properties=Mock(ComponentVersionDetails())))
