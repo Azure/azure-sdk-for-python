@@ -7,8 +7,6 @@ from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
-from azure.core.paging import ItemPaged
-from azure.mgmt.storage import StorageManagementClient
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 
