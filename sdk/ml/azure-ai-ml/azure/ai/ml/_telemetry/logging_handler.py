@@ -91,10 +91,8 @@ def get_appinsights_log_handler(
  ):
     """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
 
-    Enable diagnostics collection with the :func:`azureml.telemetry.set_diagnostics_collection` function.
-
     :param user_agent: Information about the user's browser.
-    :type user_agent: Dict[str: str]
+    :type user_agent: Dict[str, str]
     :param instrumentation_key: The Application Insights instrumentation key.
     :type instrumentation_key: str
     :param component_name: The component name.
@@ -104,7 +102,7 @@ def get_appinsights_log_handler(
     :param kwargs: Optional keyword arguments for adding additional information to messages.
     :type kwargs: dict
     :return: The logging handler.
-    :rtype: logging.Handler
+    :rtype: opencensus.ext.azure.log_exporter.AzureLogHandler
     """
     try:
         if instrumentation_key is None:
