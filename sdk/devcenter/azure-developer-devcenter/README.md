@@ -41,7 +41,7 @@ Use the returned token credential to authenticate the client:
 >>> from azure.developer.devcenter import DevCenterClient
 >>> from azure.identity import DefaultAzureCredential
 >>> tenant_id = os.environ['AZURE_TENANT_ID']
->>> client = DevCenterClient(tenant_id: tenant_id, dev_center: "my_dev_center", credential=DefaultAzureCredential())
+>>> client = DevCenterClient(tenant_id=tenant_id, dev_center="my_dev_center", credential=DefaultAzureCredential())
 ```
 
 ## Examples
