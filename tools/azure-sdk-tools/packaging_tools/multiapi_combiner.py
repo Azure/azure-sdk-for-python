@@ -252,7 +252,8 @@ class Serializer:
             lstrip_blocks=True,
         )
 
-    def _copy_file_contents(self, filename: str, async_mode: bool):
+    def _copy_file_contents(self, filename: str, async_mode: bool, module: Optional[Path] = None):
+        module = module or self.code_model.root_of_code
         root_of_code = (self.code_model.root_of_code / Path("aio")) if async_mode else self.code_model.root_of_code
         default_api_version_folder = self.code_model.root_of_code / Path(self.code_model.default_api_version)
         default_api_version_root_of_code = (
@@ -269,7 +270,7 @@ class Serializer:
         module_stem = module_name.strip(f"{self.code_model.module_name}.")
         if strip_api_version:
             module_stem = module_stem.strip(f"{self.code_model.default_api_version}.")
-        return self.code_model.root_of_code / Path(module_stem.replace(".", "/") + ".py")
+        return self.code_model.root_of_code / Path(module_stem.replace(".", "/"))
 
     def serialize_operations_folder(self, async_mode: bool):
         template = self.env.get_template("operation_groups.py.jinja2")
@@ -280,6 +281,9 @@ class Serializer:
         Path(operations_folder).mkdir(parents=True, exist_ok=True)
         with open(f"{operations_folder}/_operations.py", "w") as fd:
             fd.write(template.render(code_model=self.code_model, setup=setup, async_mode=async_mode))
+        with open(f"{operations_folder}/__init__.py", "w") as wfd:
+            with open(f"{self._get_file_path_from_module(operations_folder_module, strip_api_version=False)}/__init__.py", "r") as rfd:
+                wfd.write(rfd.read())
 
 
     def serialize_client(self, async_mode: bool):
@@ -296,11 +300,7 @@ class Serializer:
 
         main_client_source = main_client_source[len(imports):]
 
-        client_initialization = re.search('.*class(.*)@classmethod', main_client_source)
-        a = re.search('class(.*)@classmethod', main_client_source)
-
-        b = "c"
-
+        client_initialization = re.search(r'((?s).*?)    @classmethod', main_client_source).group(1)
 
         # TODO: switch to current file path
         with open(f"{self.code_model.root_of_code}/{'aio/' if async_mode else ''}_client.py", "w") as fd:
