@@ -306,34 +306,32 @@ class PhoneNumberCost(_serialization.Model):
 class PhoneNumberCountries(_serialization.Model):
     """Represents a wrapper around a list of countries.
 
-    :ivar phone_number_countries: Represents the underlying list of countries.
-    :vartype phone_number_countries:
-     list[~azure.communication.phonenumbers.models.PhoneNumberCountry]
+    :ivar countries: Represents the underlying list of countries.
+    :vartype countries: list[~azure.communication.phonenumbers.models.PhoneNumberCountry]
     :ivar next_link: Represents the URL link to the next page.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "phone_number_countries": {"key": "phoneNumberCountries", "type": "[PhoneNumberCountry]"},
+        "countries": {"key": "countries", "type": "[PhoneNumberCountry]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        phone_number_countries: Optional[List["_models.PhoneNumberCountry"]] = None,
+        countries: Optional[List["_models.PhoneNumberCountry"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword phone_number_countries: Represents the underlying list of countries.
-        :paramtype phone_number_countries:
-         list[~azure.communication.phonenumbers.models.PhoneNumberCountry]
+        :keyword countries: Represents the underlying list of countries.
+        :paramtype countries: list[~azure.communication.phonenumbers.models.PhoneNumberCountry]
         :keyword next_link: Represents the URL link to the next page.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.phone_number_countries = phone_number_countries
+        self.countries = countries
         self.next_link = next_link
 
 

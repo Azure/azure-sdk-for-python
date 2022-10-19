@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -27,13 +28,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ...models._models import (
-    AreaCodes,
-    PhoneNumberCountries,
-    PhoneNumberLocalities,
-    PhoneNumberOfferings,
-    PurchasedPhoneNumbers,
-)
 from ...operations._operations import (
     build_phone_numbers_cancel_operation_request,
     build_phone_numbers_get_by_number_request,
@@ -95,9 +89,14 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[PhoneNumberCountries]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PhoneNumberCountries]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -119,10 +118,17 @@ class PhoneNumbersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -133,8 +139,10 @@ class PhoneNumbersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PhoneNumberCountries", pipeline_response)
-            list_of_elem = deserialized.phone_number_countries
+            deserialized = self._deserialize(
+                _models._models.PhoneNumberCountries, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.countries
             if cls:
                 list_of_elem = cls(list_of_elem)
             return deserialized.next_link or None, AsyncList(list_of_elem)
@@ -189,9 +197,14 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[PhoneNumberLocalities]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PhoneNumberLocalities]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -202,6 +215,7 @@ class PhoneNumbersOperations:
                     accept_language=accept_language,
                     skip=skip,
                     administrative_division=administrative_division,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -214,10 +228,17 @@ class PhoneNumbersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -228,7 +249,9 @@ class PhoneNumbersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PhoneNumberLocalities", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.PhoneNumberLocalities, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.phone_number_localities
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -257,8 +280,8 @@ class PhoneNumbersOperations:
         country_code: str,
         *,
         skip: int = 0,
-        phone_number_type: Optional[Union[str, "_models.PhoneNumberType"]] = None,
-        assignment_type: Optional[Union[str, "_models.PhoneNumberAssignmentType"]] = None,
+        phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
+        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         locality: Optional[str] = None,
         administrative_division: Optional[str] = None,
         **kwargs: Any
@@ -293,9 +316,14 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[AreaCodes]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AreaCodes]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -321,10 +349,17 @@ class PhoneNumbersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -335,7 +370,9 @@ class PhoneNumbersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AreaCodes", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.AreaCodes, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.area_codes
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -363,8 +400,8 @@ class PhoneNumbersOperations:
         self,
         country_code: str,
         *,
-        phone_number_type: Optional[Union[str, "_models.PhoneNumberType"]] = None,
-        assignment_type: Optional[Union[str, "_models.PhoneNumberAssignmentType"]] = None,
+        phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
+        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         skip: int = 0,
         **kwargs: Any
     ) -> AsyncIterable["_models.PhoneNumberOffering"]:
@@ -392,9 +429,14 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[PhoneNumberOfferings]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PhoneNumberOfferings]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -418,10 +460,17 @@ class PhoneNumbersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -432,7 +481,9 @@ class PhoneNumbersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PhoneNumberOfferings", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.PhoneNumberOfferings, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.phone_number_offerings
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -458,7 +509,12 @@ class PhoneNumbersOperations:
     async def _search_available_phone_numbers_initial(
         self, country_code: str, body: Union[_models.PhoneNumberSearchRequest, IO], **kwargs: Any
     ) -> _models.PhoneNumberSearchResult:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -675,7 +731,12 @@ class PhoneNumbersOperations:
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumberSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -715,7 +776,12 @@ class PhoneNumbersOperations:
     async def _purchase_phone_numbers_initial(  # pylint: disable=inconsistent-return-statements
         self, body: Union[_models.PhoneNumberPurchaseRequest, IO], **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -890,7 +956,12 @@ class PhoneNumbersOperations:
         :rtype: ~azure.communication.phonenumbers.models.PhoneNumberOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -944,7 +1015,12 @@ class PhoneNumbersOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -980,7 +1056,12 @@ class PhoneNumbersOperations:
     async def _update_capabilities_initial(
         self, phone_number: str, body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO]] = None, **kwargs: Any
     ) -> _models.PurchasedPhoneNumber:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1215,7 +1296,12 @@ class PhoneNumbersOperations:
         :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1256,7 +1342,12 @@ class PhoneNumbersOperations:
     async def _release_phone_number_initial(  # pylint: disable=inconsistent-return-statements
         self, phone_number: str, **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1377,9 +1468,14 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[PurchasedPhoneNumbers]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PurchasedPhoneNumbers]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -1402,10 +1498,17 @@ class PhoneNumbersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1416,7 +1519,9 @@ class PhoneNumbersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PurchasedPhoneNumbers", pipeline_response)
+            deserialized = self._deserialize(
+                _models._models.PurchasedPhoneNumbers, pipeline_response  # pylint: disable=protected-access
+            )
             list_of_elem = deserialized.phone_numbers
             if cls:
                 list_of_elem = cls(list_of_elem)
