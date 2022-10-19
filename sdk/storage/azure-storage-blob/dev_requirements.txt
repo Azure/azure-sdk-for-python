@@ -5,4 +5,3 @@
 azure-identity
 -e ../../storage/azure-mgmt-storage
 aiohttp>=3.0
-azure-mgmt-resource<=21.1.0
