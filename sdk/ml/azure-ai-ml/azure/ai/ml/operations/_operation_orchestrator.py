@@ -15,6 +15,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsC
 from azure.ai.ml._utils._arm_id_utils import (
     AMLNamedArmId,
     AMLVersionedArmId,
+    AMLLabelledArmId,
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
@@ -23,7 +24,6 @@ from azure.ai.ml._utils._arm_id_utils import (
 )
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
-from azure.ai.ml._utils.utils import is_private_preview_enabled # pylint: disable=unused-import
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -36,6 +36,7 @@ from azure.ai.ml.constants._common import (
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
+    LABELLED_RESOURCE_NAME,
     AzureMLResourceType,
 )
 from azure.ai.ml.entities import Component
@@ -394,6 +395,12 @@ class OperationOrchestrator(object):
                     return arm_id
                 if self._match(arm_id_obj):
                     return VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version)
+            except ValidationException:
+                pass  # fall back to named arm id
+            try:
+                arm_id_obj = AMLLabelledArmId(arm_id)
+                if self._match(arm_id_obj):
+                    return LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label)
             except ValidationException:
                 pass  # fall back to named arm id
             try:
