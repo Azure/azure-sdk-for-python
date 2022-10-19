@@ -331,8 +331,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
-            # no input to validate job
             _validate_job = self.jobs[_validate_job_name]
+            # no input to validate job
             for _input_name in _validate_job.inputs:
                 if not hasattr(_validate_job.inputs[_input_name]._data, "_data_binding"):
                     continue
@@ -348,6 +348,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                         return False
             return True
+        
+        def _is_control_flow_node(_validate_job_name: str) -> bool:
+            from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+
+            _validate_job = self.jobs[_validate_job_name]
+            return issubclass(type(_validate_job), ControlFlowNode)
 
         # validate on_init
         if on_init is not None:
@@ -356,6 +362,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             else:
                 if not _is_isolated_job(on_init):
                     append_on_init_error("On_init job should not have connection to other execution node.")
+                if _is_control_flow_node(on_init):
+                    append_on_init_error("On_init job should not be a control flow node.")
         # validate on_finalize
         if on_finalize is not None:
             if on_finalize not in self.jobs:
@@ -363,6 +371,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             else:
                 if not _is_isolated_job(on_finalize):
                     append_on_finalize_error("On_finalize job should not have connection to other execution node.")
+                if _is_control_flow_node(on_finalize):
+                    append_on_finalize_error("On_finalize job should not be a control flow node.")
         return validation_result
 
     def _remove_pipeline_input(self):
