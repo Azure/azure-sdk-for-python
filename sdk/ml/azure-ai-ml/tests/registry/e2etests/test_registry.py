@@ -7,8 +7,9 @@ import pytest
 from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.core.paging import ItemPaged
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-
+from azure.core.exceptions import ResourceNotFoundError
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
+import time
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
@@ -19,7 +20,10 @@ class TestRegistry(AzureRecordedTestCase):
         crud_registry_client: MLClient,
         randstr: Callable[[], str],
     ) -> None:
-        reg_name = f"e2etest{randstr('reg_name')}"
+        # Registries cannot currently handle names with underscores,
+        # so remove it from the randomly generated registry name
+        # to avoid problems.
+        reg_name = "".join(f"{randstr('reg_name')}".split("_"))
         params_override = [
             {
                 "name": reg_name,
@@ -39,3 +43,16 @@ class TestRegistry(AzureRecordedTestCase):
 
         registry = crud_registry_client.registries.get(name=reg_name)
         assert registry.name == reg_name
+
+        registry = crud_registry_client.registries.delete(name=reg_name)
+        assert registry is None
+        # give the delete operation time to fully take place in the backend
+        # before testing that the registry is gone with another get command
+        if is_live():
+            time.sleep(120)
+        try:
+            crud_registry_client.registries.get(name=reg_name)
+            # The above line should fail with a ResourceNotFoundError
+            assert False
+        except ResourceNotFoundError:
+            assert True

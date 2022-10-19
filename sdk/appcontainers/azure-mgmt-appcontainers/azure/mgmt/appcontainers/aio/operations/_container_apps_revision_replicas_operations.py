@@ -8,93 +8,105 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._container_apps_revision_replicas_operations import build_get_replica_request, build_list_replicas_request
-T = TypeVar('T')
+from ...operations._container_apps_revision_replicas_operations import (
+    build_get_replica_request,
+    build_list_replicas_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
+
 class ContainerAppsRevisionReplicasOperations:
-    """ContainerAppsRevisionReplicasOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.appcontainers.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.appcontainers.aio.ContainerAppsAPIClient`'s
+        :attr:`container_apps_revision_replicas` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get_replica(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        revision_name: str,
-        replica_name: str,
-        **kwargs: Any
-    ) -> "_models.Replica":
+        self, resource_group_name: str, container_app_name: str, revision_name: str, replica_name: str, **kwargs: Any
+    ) -> _models.Replica:
         """Get a replica for a Container App Revision.
 
         Get a replica for a Container App Revision.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param container_app_name: Name of the Container App.
+        :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
-        :param revision_name: Name of the Container App Revision.
+        :param revision_name: Name of the Container App Revision. Required.
         :type revision_name: str
-        :param replica_name: Name of the Container App Revision Replica.
+        :param replica_name: Name of the Container App Revision Replica. Required.
         :type replica_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Replica, or the result of cls(response)
+        :return: Replica or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.Replica
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Replica"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Replica]
+
         request = build_get_replica_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
             replica_name=replica_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_replica.metadata['url'],
+            template_url=self.get_replica.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -102,64 +114,66 @@ class ContainerAppsRevisionReplicasOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Replica', pipeline_response)
+        deserialized = self._deserialize("Replica", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_replica.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{replicaName}"}  # type: ignore
-
+    get_replica.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas/{replicaName}"}  # type: ignore
 
     @distributed_trace_async
     async def list_replicas(
-        self,
-        resource_group_name: str,
-        container_app_name: str,
-        revision_name: str,
-        **kwargs: Any
-    ) -> "_models.ReplicaCollection":
+        self, resource_group_name: str, container_app_name: str, revision_name: str, **kwargs: Any
+    ) -> _models.ReplicaCollection:
         """List replicas for a Container App Revision.
 
         List replicas for a Container App Revision.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param container_app_name: Name of the Container App.
+        :param container_app_name: Name of the Container App. Required.
         :type container_app_name: str
-        :param revision_name: Name of the Container App Revision.
+        :param revision_name: Name of the Container App Revision. Required.
         :type revision_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ReplicaCollection, or the result of cls(response)
+        :return: ReplicaCollection or the result of cls(response)
         :rtype: ~azure.mgmt.appcontainers.models.ReplicaCollection
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ReplicaCollection"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        api_version = kwargs.pop('api_version', "2022-03-01")  # type: str
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ReplicaCollection]
+
         request = build_list_replicas_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             container_app_name=container_app_name,
             revision_name=revision_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.list_replicas.metadata['url'],
+            template_url=self.list_replicas.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -167,12 +181,11 @@ class ContainerAppsRevisionReplicasOperations:
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ReplicaCollection', pipeline_response)
+        deserialized = self._deserialize("ReplicaCollection", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_replicas.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas"}  # type: ignore
-
+    list_replicas.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas"}  # type: ignore

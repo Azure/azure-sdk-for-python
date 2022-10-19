@@ -12,6 +12,8 @@ from .component import InternalBaseComponentSchema, NodeType
 
 
 class InternalBaseNodeSchema(BaseNodeSchema):
+    class Meta:
+        unknown = INCLUDE
     component = UnionField(
         [
             # for registry type assets
@@ -38,7 +40,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
         # dict to node object
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
-        return pipeline_node_factory.load_from_dict(data)  # pylint: disable=E1125, too-many-function-args
+        return pipeline_node_factory.load_from_dict(data=data)
 
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):  # pylint: disable=unused-argument, no-self-use
@@ -56,6 +58,7 @@ class ScopeSchema(InternalBaseNodeSchema):
 class HDInsightSchema(InternalBaseNodeSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.HDI], casing_transform=lambda x: x)
 
+    compute_name = fields.Str()
     queue = fields.Str()
     driver_memory = fields.Str()
     driver_cores = fields.Int()

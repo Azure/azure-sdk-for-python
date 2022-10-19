@@ -1593,7 +1593,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
@@ -2024,7 +2023,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.jobs.get(child.name)
             client.jobs.get(child.name)._repr_html_()
 
-    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     def test_dsl_pipeline_without_setting_binding_node(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_without_setting_binding_node,
@@ -2077,7 +2075,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_pipeline_level,
@@ -2130,7 +2127,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient) -> None:
         # Todo: checkout run priority when backend is ready
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
@@ -2194,7 +2190,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     def test_dsl_pipeline_with_setting_binding_node_and_pipeline_level(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_setting_binding_node_and_pipeline_level,
@@ -2415,3 +2410,25 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert actual_job["inputs"] == expected_job_inputs
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
+
+    def test_dsl_pipeline_with_default_component(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        yaml_path: str = "./tests/test_configs/components/helloworld_component.yml"
+        component_name = randstr("component_name")
+        component: Component = load_component(source=yaml_path, params_override=[{"name": component_name}])
+        client.components.create_or_update(component)
+
+        default_component_func = client.components.get(component_name)
+
+        @dsl.pipeline()
+        def pipeline_with_default_component():
+            node1 = default_component_func(component_in_path=job_input)
+            node1.compute = "cpu-cluster"
+
+        # component from client.components.get
+        pipeline_job = client.jobs.create_or_update(pipeline_with_default_component())
+        created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
+        assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"

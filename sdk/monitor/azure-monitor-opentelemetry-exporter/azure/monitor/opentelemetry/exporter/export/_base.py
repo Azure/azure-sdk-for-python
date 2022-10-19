@@ -39,6 +39,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 
 logger = logging.getLogger(__name__)
 
+_AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 
@@ -58,23 +59,26 @@ class BaseExporter:
         """Azure Monitor base exporter for OpenTelemetry.
 
         :keyword str api_version: The service API version used. Defaults to latest.
+        :keyword str connection_string: The connection string used for your Application Insights resource.
+        :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
+        :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
         self._consecutive_redirects = 0  # To prevent circular redirects
-        self._enable_local_storage = kwargs.get('enable_local_storage', True)
+        self._disable_offline_storage = kwargs.get('disable_offline_storage', False)
         self._endpoint = parsed_connection_string.endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._storage_maintenance_period = kwargs.get('storage_maintenance_period', 60)  # Maintenance interval in seconds.
         self._storage_max_size = kwargs.get('storage_max_size', 50 * 1024 * 1024)  # Maximum size in bytes (default 50MiB)
         self._storage_min_retry_interval = kwargs.get('storage_min_retry_interval', 60)  # minimum retry interval in seconds
         temp_suffix = self._instrumentation_key or ""
-        default_storage_path = os.path.join(
-            tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
+        default_storage_directory = os.path.join(
+            tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
         )
-        self._storage_path = kwargs.get('storage_path', default_storage_path)  # Storage path in which to store retry files.
+        self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
         self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
@@ -98,9 +102,9 @@ class BaseExporter:
         self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
         self.storage = None
-        if self._enable_local_storage:
+        if not self._disable_offline_storage:
             self.storage = LocalFileStorage(
-                path=self._storage_path,
+                path=self._storage_directory,
                 max_size=self._storage_max_size,
                 maintenance_period=self._storage_maintenance_period,
                 retention_period=self._storage_retention_period,
@@ -118,7 +122,7 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = [TelemetryItem(**x) for x in blob.get()]
+                envelopes = [TelemetryItem.from_dict(x) for x in blob.get()]
                 result = self._transmit(list(envelopes))
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
