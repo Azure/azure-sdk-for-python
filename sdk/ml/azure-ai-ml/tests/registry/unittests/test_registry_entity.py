@@ -79,7 +79,6 @@ class TestRegistryEntity:
                             ),
                         ],
                         storage_account_details=[
-                            StorageAccountDetails(user_created_storage_account=UserCreatedStorageAccount(arm_resource_id=RestArmResourceId(resource_id=storage_id_1))),
                             StorageAccountDetails(
                                 system_created_storage_account=RestSystemCreatedStorageAccount(
                                     arm_resource_id=RestArmResourceId(resource_id=storage_id_2),
@@ -120,12 +119,13 @@ class TestRegistryEntity:
         assert acrs[1].arm_resource_id == acr_id_2
         assert acrs[1].acr_account_sku == sku
 
-        storages = details[0].storage_config
-        assert len(storages) == 2
-        assert storages[0] == storage_id_1
-        assert storages[1].arm_resource_id == storage_id_2
-        assert storages[1].storage_account_hns == hns
-        assert storages[1].storage_account_type == StorageAccountType.PREMIUM_LRS
+        storage = details[0].storage_config
+        assert isinstance(storage, SystemCreatedStorageAccount)
+        assert storage.arm_resource_id == storage_id_2
+        assert storage.storage_account_hns == hns
+        assert storage.storage_account_type == StorageAccountType.PREMIUM_LRS
+        assert storage.replication_count == 1
+        assert storage.replicated_ids == None
 
     def test_registry_load_from_dict(self):
         registry_as_dict = {
@@ -178,32 +178,66 @@ class TestRegistryEntity:
         assert new_system_acr.arm_resource_id == None
         assert new_system_acr_2.arm_resource_id == "another id"
 
-    def test_system_storage_serialization(self):
-        user_storage = "some user storage id"
-        system_storage = SystemCreatedStorageAccount(storage_account_hns=True, storage_account_type=StorageAccountType.PREMIUM_LRS, arm_resource_id="some managed storage id")
+    def test_system_user_storage_serialization(self):
+        user_storage = ["some user storage id"]
+        user_details = RegistryRegionDetails(storage_config=user_storage)
+        rest_user_storage = user_details._storage_config_to_rest_object()
+        assert len(rest_user_storage) == 1
+        assert rest_user_storage[0].user_created_storage_account.arm_resource_id.resource_id == "some user storage id"
+        new_user_storage = RegistryRegionDetails._storage_config_from_rest_object(rest_user_storage)
+        assert new_user_storage[0] == "some user storage id"
 
-        rest_user_storage = SystemCreatedStorageAccount._to_rest_object(user_storage)
-        rest_system_storage = SystemCreatedStorageAccount._to_rest_object(system_storage)
-        assert rest_user_storage.user_created_storage_account.arm_resource_id.resource_id == "some user storage id"
-        assert rest_system_storage.system_created_storage_account.storage_account_hns_enabled == True
-        assert rest_system_storage.system_created_storage_account.storage_account_type == StorageAccountType.PREMIUM_LRS
+    def test_system_managed_storage_serialization(self):
+
+        system_storage = SystemCreatedStorageAccount(storage_account_hns=True, storage_account_type=StorageAccountType.PREMIUM_LRS, arm_resource_id="some managed storage id")
+        system_details = RegistryRegionDetails(storage_config=system_storage)
+        rest_system_storage = system_details._storage_config_to_rest_object()
+        assert len(rest_system_storage) == 1
+        assert rest_system_storage[0].system_created_storage_account.storage_account_hns_enabled == True
+        assert rest_system_storage[0].system_created_storage_account.storage_account_type == StorageAccountType.PREMIUM_LRS
         # Ensure that arm_resource_id is never set by entity->rest converter.
-        assert rest_system_storage.system_created_storage_account.arm_resource_id == None
+        assert rest_system_storage[0].system_created_storage_account.arm_resource_id == None
 
         # ... but still test that ID is set in the other direction
-        rest_system_storage.system_created_storage_account.arm_resource_id = RestArmResourceId(resource_id="another storage id")
-        new_user_storage = SystemCreatedStorageAccount._from_rest_object(rest_user_storage)
-        new_system_storage = SystemCreatedStorageAccount._from_rest_object(rest_system_storage)
+        rest_system_storage[0].system_created_storage_account.arm_resource_id = RestArmResourceId(resource_id="another storage id")
+        new_system_storage = RegistryRegionDetails._storage_config_from_rest_object(rest_system_storage)
 
-        assert new_user_storage == "some user storage id"
         assert new_system_storage.arm_resource_id == "another storage id"
         assert new_system_storage.storage_account_hns == True
         assert new_system_storage.storage_account_type == StorageAccountType.PREMIUM_LRS
 
+    def test_system_replicated_managed_storage_serialization(self):
+        system_storage = SystemCreatedStorageAccount(storage_account_hns=False, storage_account_type=StorageAccountType.PREMIUM_ZRS, arm_resource_id="some managed storage id", replication_count=3)
+        system_details = RegistryRegionDetails(storage_config=system_storage)
+        rest_system_storage = system_details._storage_config_to_rest_object()
+        assert len(rest_system_storage) == 3
+        assert rest_system_storage[0].system_created_storage_account.storage_account_hns_enabled == False
+        assert rest_system_storage[0].system_created_storage_account.storage_account_type == StorageAccountType.PREMIUM_ZRS
+        # Ensure that arm_resource_id is never set by entity->rest converter.
+        assert rest_system_storage[0].system_created_storage_account.arm_resource_id == None
+        assert rest_system_storage[0] == rest_system_storage[1]
+        assert rest_system_storage[0] == rest_system_storage[2]
+
+        # ... but still test that ID is set in the other direction
+        expected_ids = ["another storage id", "a second storage id", "a third storage id"]
+        rest_system_storage[0].system_created_storage_account.arm_resource_id = RestArmResourceId(resource_id=expected_ids[0])
+        # and that replicated ID's are populated properly
+        rest_system_storage[1].system_created_storage_account.arm_resource_id = RestArmResourceId(resource_id=expected_ids[1])
+        rest_system_storage[2].system_created_storage_account.arm_resource_id = RestArmResourceId(resource_id=expected_ids[2])
+        new_system_storage = RegistryRegionDetails._storage_config_from_rest_object(rest_system_storage)
+
+        assert new_system_storage.arm_resource_id == expected_ids[0]
+        assert new_system_storage.storage_account_hns == False
+        assert new_system_storage.storage_account_type == StorageAccountType.PREMIUM_ZRS
+        assert new_system_storage.replication_count == 3
+        
+        for expected_id in expected_ids:
+            assert expected_id in new_system_storage.replicated_ids
+
     def test_system_region_details_serialization(self):
         region_detail = RegistryRegionDetails(acr_config=[SystemCreatedAcrAccount(acr_account_sku="Premium")],
             location="USEast2",
-            storage_config=[SystemCreatedStorageAccount(storage_account_hns=False, storage_account_type=StorageAccountType.PREMIUM_LRS)])
+            storage_config=SystemCreatedStorageAccount(storage_account_hns=False, storage_account_type=StorageAccountType.PREMIUM_LRS))
         rest_region_detail = region_detail._to_rest_object()
 
         assert rest_region_detail.acr_details[0].system_created_acr_account.acr_account_sku == "Premium"
@@ -214,4 +248,4 @@ class TestRegistryEntity:
 
         assert new_region_detail.acr_config[0].acr_account_sku == "Premium"
         assert new_region_detail.location == "USEast2"
-        assert new_region_detail.storage_config[0].storage_account_type == StorageAccountType.PREMIUM_LRS
+        assert new_region_detail.storage_config.storage_account_type == StorageAccountType.PREMIUM_LRS

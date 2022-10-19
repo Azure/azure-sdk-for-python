@@ -18,7 +18,9 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 from .util import make_rest_user_storage_from_id
 from functools import reduce
-
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._exception_helper import log_and_raise_error
+from copy import deepcopy
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
@@ -95,6 +97,7 @@ class SystemCreatedStorageAccount:
         storage_account_hns: bool,
         storage_account_type: StorageAccountType,
         arm_resource_id: str = None,
+        replicated_ids: List[str] = None,
         replication_count = 1,
     ):
         """
@@ -110,59 +113,16 @@ class SystemCreatedStorageAccount:
         :param replication_count: The number of replicas of this storage account
             that should be created. Defaults to 1. Values less than 1 are invalid.
         :type replication_count: int
+        :param replicated_ids: If this storage was replicated, then this is a 
+            list of all storage IDs with these settings for this registry.
+            Defaults to none for unreplicated storage accounts.
+        :type replicated_ids: List[str]
         """
         self.arm_resource_id = arm_resource_id
         self.storage_account_hns = storage_account_hns
         self.storage_account_type = storage_account_type
         self.replication_count = replication_count
-
-    # storage should technically be a union between str and SystemCreatedStorageAccount,
-    # but python doesn't accept self class references apparently.
-    # Class method instead of normal function to accept possible
-    # string input.
-
-    @classmethod
-    def _to_rest_object(cls, storage) -> RestStorageAccountDetails:
-        if hasattr(storage, "storage_account_type") and storage.storage_account_type is not None:
-
-            # We DO NOT want to set the arm_resource_id. The backend provides very
-            # unhelpful errors if you provide an empty/null/invalid resource ID,
-            # and ignores the value otherwise. It's better to avoid setting it in
-            # the conversion in this direction at all.
-            # We don't bother processing storage_account_type because the
-            # rest version is case insensitive.
-            account = RestSystemCreatedStorageAccount(
-                storage_account_hns_enabled=storage.storage_account_hns,
-                storage_account_type=storage.storage_account_type,
-            )
-            return RestStorageAccountDetails(system_created_storage_account=account)
-        else:
-            return RestStorageAccountDetails(
-                user_created_storage_account=RestUserCreatedStorageAccount(
-                    arm_resource_id=RestArmResourceId(resource_id=storage)
-                )
-            )
-
-    @classmethod
-    def _from_rest_object(cls, rest_obj: RestStorageAccountDetails) -> "Union[str, SystemCreatedStorageAccount]":
-        if not rest_obj:
-            return None
-        # TODO should we even bother check if both values are set and throw an error? This shouldn't be possible.
-        if rest_obj.system_created_storage_account:
-            resource_id = None
-            if rest_obj.system_created_storage_account.arm_resource_id:
-                resource_id = rest_obj.system_created_storage_account.arm_resource_id.resource_id
-            return SystemCreatedStorageAccount(
-                storage_account_hns=rest_obj.system_created_storage_account.storage_account_hns_enabled,
-                storage_account_type=StorageAccountType(
-                    rest_obj.system_created_storage_account.storage_account_type.lower()
-                ),  # TODO validate storage account type?
-                arm_resource_id=resource_id,
-            )
-        elif rest_obj.user_created_storage_account:
-            return rest_obj.user_created_storage_account.arm_resource_id.resource_id
-        else:
-            return None  # TODO should this throw an error instead?
+        self.replicated_ids = replicated_ids
 
 
 # Per-region information for registries.
@@ -204,10 +164,12 @@ class RegistryRegionDetails:
                 acr) for acr in rest_obj.acr_details]
         storages = []
         if rest_obj.storage_account_details:
-            storages = [SystemCreatedStorageAccount._from_rest_object(
-                storages) for storages in rest_obj.storage_account_details]
+            storages = cls._storage_config_from_rest_object(rest_obj.storage_account_details)
+        
         return RegistryRegionDetails(
-            acr_config=converted_acr_details, location=rest_obj.location, storage_config=storages
+            acr_config=converted_acr_details, 
+            location=rest_obj.location, 
+            storage_config=storages
         )
 
     def _to_rest_object(self) -> RestRegistryRegionArmDetails:
@@ -229,7 +191,7 @@ class RegistryRegionDetails:
         storage = self.storage_config
         # storage_config can either be a single system-created storage account,
         # or list of user-inputted id's.
-        if hasattr(storage, "storage_account_type"):
+        if hasattr(storage, "storage_account_type") and storage.storage_account_type is not None:
 
             # We DO NOT want to set the arm_resource_id. The backend provides very
             # unhelpful errors if you provide an empty/null/invalid resource ID,
@@ -237,42 +199,60 @@ class RegistryRegionDetails:
             # the conversion in this direction at all.
             # We don't bother processing storage_account_type because the
             # rest version is case insensitive.
-            account = RestStorageAccountDetails(RestSystemCreatedStorageAccount(
+            account = RestStorageAccountDetails(system_created_storage_account=RestSystemCreatedStorageAccount(
                 storage_account_hns_enabled=storage.storage_account_hns,
                 storage_account_type=storage.storage_account_type,
             ))
+            # duplicate this value based on the replication_count
             count = storage.replication_count
-            return [account for _ in range(0, count)]
+            return [deepcopy(account) for _ in range(0, count)]
         else:
             return [make_rest_user_storage_from_id(id) for id in storage]    
 
     @classmethod
-    def _storage_config_from_rest_object(rest_configs: List[RestStorageAccountDetails]) -> Union[List[str], SystemCreatedStorageAccount]:
-        if not rest_configs or len(rest_configs) == 0:
+    def _storage_config_from_rest_object(cls, rest_configs: List[RestStorageAccountDetails]) -> Union[List[str], SystemCreatedStorageAccount]:
+        if not rest_configs:
             return None
+        num_configs = len(rest_configs)
+        if num_configs == 0:
+            return None
+        system_created_count = reduce(lambda x, y: int(x) + int(y), 
+            [hasattr(config, "system_created_storage_account") and config.system_created_storage_account is not None
+            for config in rest_configs])
         # configs should be mono-typed. Either they're all system created
         # or all user created.
-        if reduce(lambda x, y: x and y, [hasattr(config, "system_created_storage_account") for config in rest_configs]):
+        if system_created_count == num_configs:
             # System created case - assume all elements are duplicates
             # of a single storage configuration.
             # Convert back into a single local representation by 
             # combining id's into a list, and using the first element's 
             # account type and hns.
             first_config = rest_configs[0].system_created_storage_account
-            result = SystemCreatedStorageAccount(storage_account_hns=first_config.storage_account_hns_enabled
-                storage_account_type=first_config.storage_account_type,
-                arm_resource_id=first_config.arm_resource_id.resource_id)
             resource_id = None
-            if first_config.system_created_storage_account.arm_resource_id:
-                resource_id = first_config.system_created_storage_account.arm_resource_id.resource_id
+            if first_config.arm_resource_id:
+                resource_id = first_config.arm_resource_id.resource_id
+            # account for ids of duplicated if they exist
+            replicated_ids = None
+            if num_configs > 1:
+                replicated_ids = [config.system_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
             return SystemCreatedStorageAccount(
-                storage_account_hns=first_config.system_created_storage_account.storage_account_hns_enabled,
+                storage_account_hns=first_config.storage_account_hns_enabled,
                 storage_account_type=StorageAccountType(
-                    first_config.system_created_storage_account.storage_account_type.lower()
+                    first_config.storage_account_type.lower()
                 ),  # TODO validate storage account type? GI
                 arm_resource_id=resource_id,
+                replication_count=num_configs,
+                replicated_ids=replicated_ids
             )
-        elif  reduce(lambda x, y: x and y, [hasattr(config, "user_created_storage_account") for config in rest_configs]):
+        elif  system_created_count == 0:
             return [config.user_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
         else:
-            return None  # TODO should this throw an error instead?     
+            msg = f"tried reading in a registry whose storage accounts were not mono-managed or user-created. {system_created_count} out of {num_configs} were managed."
+            err = ValidationException(
+                message=msg,
+                target=ErrorTarget.REGISTRY,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+            log_and_raise_error(err)
