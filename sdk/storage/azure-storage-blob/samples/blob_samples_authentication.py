@@ -144,7 +144,6 @@ class AuthSamples(object):
 
 if __name__ == '__main__':
     sample = AuthSamples()
-    # Uncomment the methods you want to execute.
     sample.auth_connection_string()
     sample.auth_active_directory()
     sample.auth_shared_access_signature()
