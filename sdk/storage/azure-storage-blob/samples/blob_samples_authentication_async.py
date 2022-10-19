@@ -141,6 +141,7 @@ async def main():
     await sample.auth_active_directory_async()
     await sample.auth_shared_access_signature_async()
     await sample.auth_blob_url_async()
+    await sample.auth_default_azure_credential()
 
 if __name__ == '__main__':
     asyncio.run(main())
