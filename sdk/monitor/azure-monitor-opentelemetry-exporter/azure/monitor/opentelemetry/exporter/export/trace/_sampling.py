@@ -15,6 +15,8 @@ from opentelemetry.sdk.trace.sampling import (
 from opentelemetry.trace.span import TraceState
 from opentelemetry.util.types import Attributes
 
+from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
+
 
 _HASH = 5381
 _INTEGER_MAX = Int32.maxval
@@ -62,7 +64,7 @@ class ApplicationInsightsSampler(Sampler):
         # Add sample rate as span attribute
         if attributes is None:
             attributes = {}
-        attributes["sampleRate"] = self._sample_rate
+        attributes[_SAMPLE_RATE_KEY] = self._sample_rate
         return SamplingResult(
             decision,
             attributes,

@@ -9,8 +9,8 @@ interactions:
       Connection:
       - keep-alive
       Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrfy1R_EdtIH7tUQmIKDCXzVEf6-gRl_BHUnAnXHWifFxIbTAr1a0MlmcQZEPbex1m1yFWYhdG0qb6vcxpL42MlSEk7lSG0wHp69Ue8q3GI82isqwHRe0JPUO166OsQqyXzLT9xflSnyp6opgANftH0oLhQvKkvhtcR62F2sP7DB0gAA;
-        fpc=AlQE6VbK5EdJjUOrnF3mqxU; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrpdPFSh6mFZuYJTNgxHaNF7rAJmhQqPG9R09PZ-4-xFRKNIUGZrj2GNM2JXK9rI7QhNkiKq6_sebFMAhRgCl9lWLQPVs-L-9EgMe0NiLHM_lQSVT0U45wz8592qLWJFlK1lwcilEBz7AtF4d-8Oz4ZMKGq477WCUEcZK39L_M75l60X4eN0QZqbE8xO6WpqLyN9M0aBrvHmGZuDRLSC7MHdaUUn7Cwqw4xWZQEMAROpAgAA;
+        fpc=AjdyfPIOJKxBqdCYeyPndsQ; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
       User-Agent:
       - python-requests/2.28.1
     method: GET
@@ -29,7 +29,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 03 Aug 2022 09:15:26 GMT
+      - Fri, 07 Oct 2022 14:38:05 GMT
       expires:
       - '-1'
       p3p:
@@ -37,7 +37,7 @@ interactions:
       pragma:
       - no-cache
       set-cookie:
-      - fpc=AlQE6VbK5EdJjUOrnF3mqxU; expires=Fri, 02-Sep-2022 09:15:26 GMT; path=/;
+      - fpc=AjdyfPIOJKxBqdCYeyPndsQ; expires=Sun, 06-Nov-2022 14:38:06 GMT; path=/;
         secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -46,7 +46,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.13355.6 - NEULR1 ProdSlices
+      - 2.1.13777.6 - WEULR2 ProdSlices
       x-xss-protection:
       - '0'
     status:
@@ -62,30 +62,30 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2199'
+      - '2156'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.3.0 Python/3.10.0 (macOS-12.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 03 Aug 2022 09:15:26 GMT
+      - Fri, 07 Oct 2022 14:38:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-10-01
   response:
     body:
       string: '{"error": {"code": "ValidationError", "message": "AAD application is
         not the expected one.", "target": "appId"}}'
     headers:
       api-supported-versions:
-      - 2021-10-31-preview, 2022-06-01
+      - 2021-10-31-preview, 2022-06-01, 2022-10-01
       content-type:
       - application/json
       date:
-      - Wed, 03 Aug 2022 09:15:27 GMT
+      - Fri, 07 Oct 2022 14:38:05 GMT
       ms-cv:
-      - mYnXYtD5r0G2A0SY15d5oQ.0
+      - WIWvnUGMsUKg4j1Vituukw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -95,7 +95,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 39ms
+      - 115ms
     status:
       code: 400
       message: Bad Request

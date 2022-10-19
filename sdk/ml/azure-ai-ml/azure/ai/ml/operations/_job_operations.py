@@ -63,7 +63,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import Compute, Job, PipelineJob
+from azure.ai.ml.entities import Compute, Job, PipelineJob, ValidationResult, ServiceInstance
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -73,9 +73,11 @@ from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
-from azure.ai.ml.entities._job.service_instance import ServiceInstance
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
+from azure.ai.ml.entities._validation import (
+    SchemaValidatableMixin,
+    _ValidationResultBuilder,
+)
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -97,7 +99,6 @@ from azure.core.tracing.decorator import distributed_trace
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
 from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
-from ..entities._validation import ValidationResult, _ValidationResultBuilder
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
@@ -283,14 +284,15 @@ class JobOperations(_ScopeDependentOperations):
 
         return job
 
-    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.INTERNALCALL)
-    def _show_services(self, name: str, node_index: int):
+    @distributed_trace
+    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
+    def show_services(self, name: str, node_index: int = 0) -> Dict[str, ServiceInstance]:
         """Get services associated with a job's node.
 
         :param str name: Name of the job.
         :param int node_index: Index of the node.
         :return: The Services associated with the job for the given node.
-        :rtype: ServiceInstance
+        :rtype: Dict[str, ServiceInstance] Map of service names to ServiceInstance.
         """
 
         service_instances_dict = self._runs_operations._operation.get_run_service_instances(
@@ -644,7 +646,8 @@ class JobOperations(_ScopeDependentOperations):
         """
         job_details = self.get(name)
         # job is reused, get reused job to download
-        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE:
+        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE and \
+                PipelineConstants.REUSED_JOB_ID in job_details.properties:
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
             reused_job_detail = self.get(reused_job_name)
             module_logger.info("job %s reuses previous job %s, download from the reused job.", name, reused_job_name)

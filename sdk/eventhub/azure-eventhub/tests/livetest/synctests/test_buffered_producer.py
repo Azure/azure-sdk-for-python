@@ -423,7 +423,7 @@ def test_send_with_timing_configuration(connection_str, uamqp_transport):
 
     with producer:
         partitions = producer.get_partition_ids()
-        producer.send_event(EventData('data'))
+        producer.send_batch([EventData('data')])
         time.sleep(5)
         assert not sent_events
         time.sleep(10)
@@ -510,6 +510,7 @@ def test_long_sleep(connection_str, uamqp_transport):
     consumer.close()
     receive_thread.join()
 
+@pytest.mark.skip('not testing correctly + flaky, fix during MQ')
 @pytest.mark.liveTest
 def test_long_wait_small_buffer(connection_str, uamqp_transport):
     received_events = defaultdict(list)

@@ -26,6 +26,10 @@
 ####
 # Service team
 ####
+
+# PRLabel: %AgriFood
+/sdk/agrifood/azure-agrifood-farming                                 @bhargav-kansagara
+
 # PRLabel: %Azure.Identity
 /sdk/identity/                                                       @mccoyp @schaabs @xiangyan99
 
@@ -38,17 +42,35 @@
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                               @xiangyan99 @YalinLi0312
 
+# PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
+
+# PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/azure-loganalytics/                                @omziv @anatse @raronen @ischrei @danhadari @azmonapplicationinsights
 
-/sdk/attestation/azure-security-attestation                          @anilba06 @Azure/azure-sdk-write-attestation @gkostal
+# PRLabel: %Attestation
+/sdk/attestation/azure-security-attestation                          @anilba06 @Azure/azure-sdk-write-attestation @gkostal @larryo
 
 # PRLabel: %Batch
 /sdk/batch/                                                          @cRui861 @paterasMSFT @dpwatrous @gingi @zfengms
-/sdk/cognitiveservices/azure-cognitiveservices-vision-customvision/  @areddish
+
+# PRLabel: %CognitiveServices
+/sdk/cognitiveservices/                                              @kristapratico
+
+# PRLabel: %Communication - Chat
+/sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
+
+# PRLabel: %Communication - Email
+/sdk/communication/azure-communication-email/                        @yogeshmo
+
+# PRLabel: %Communication - Job Router
+/sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi
 
 # PRLabel: %Communication - Phone Numbers
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+
+# PRLabel: %Communication - Rooms
+/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
 
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
@@ -65,8 +87,14 @@
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
 
+# PRLabel: %Confidential Ledger
+sdk/confidentialledger/azure-confidentialledger                      @lynshi
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
+
+# PRLabel: %Load Testing
+/sdk/loadtestservice/azure-developer-loadtesting                     @msyyc @iscai-msft
 
 # PRLabel: %Monitor - LogAnalytics
 /sdk/loganalytics/                                                   @alexeldeib
@@ -74,8 +102,11 @@
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter                    @rakshith91 @lmazuel @lzchen @hectorhdzg @jeremydvoss
 
-# PRLabel: %Monitor - Log
+# PRLabel: %Monitor - Query
 /sdk/monitor/azure-monitor-query                                     @rakshith91
+
+# PRLabel: %Monitor - Ingestion
+/sdk/monitor/azure-monitor-ingestion                                 @rakshith91
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -84,7 +115,9 @@
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @djyou
+/sdk/containerregistry/                                              @djyou @YalinLi0312
+
+# PRLabel: %Container Service
 /sdk/containerservice/                                               @samkreter @zqingqing1 @GaneshaThirumurthi
 
 # PRLabel: %Cosmos
@@ -98,7 +131,7 @@
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
 
-# ServiceLabel: %Device Update for IoT Hub %Service Attention
+# PRLabel: %Device Update
 /sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
@@ -116,14 +149,38 @@
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
 
-# PRLabel: %Local Endpoints
+# PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
+
+# PRLabel: %ML-Jobs
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job                          @DouglasXiaoMS @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job                        @DouglasXiaoMS @TonyJ1 @wangchao1230
+
+# PRLabel: %ML-Pipelines
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline                     @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component                    @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule                     @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/dsl                                  @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule                   @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component                  @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders                   @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_internal                            @wangchao1230
+
+# PRLabel: %Maps
+/sdk/maps/                                                           @alextts627
+
+# PRLabel: %Mixed Reality
+/sdk/mixedreality/azure-mixedreality-authentication                  @crtreasu
+/sdk/remoterendering/                                                @rikogeln
+
+# PRLabel: %Purview
+/sdk/purview/                                                        @iscai-msft @msyyc
 
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/                                               @DheerendraRathor
 
 # PRLabel: %Schema Registry
-/sdk/schemaregistry/                                                 @kashifkhan
+/sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
 # PRLabel: %Search
 /sdk/search/                                                         @rakshith91
@@ -144,13 +201,13 @@
 /sdk/template/                                                       @scbedd @weshaggard @benbp
 
 # PRLabel: %Cognitive - Text Analytics
-/sdk/textanalytics/                                                  @kristapratico @iscai-msft @abhahn
+/sdk/textanalytics/                                                  @kristapratico @iscai-msft
 
 # PRLabel: %Cognitive - Form Recognizer
 /sdk/formrecognizer/                                                 @kristapratico @iscai-msft @catalinaperalta
 
 # PRLabel: %Cognitive - Metrics Advisor
-/sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
+/sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico @iscai-msft
 
 # PRLabel: %Cognitive - Anomaly Detector
 /sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
@@ -160,6 +217,9 @@
 
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
+
+# PRLabel: %Graph
+sdk/graphrbac/                                                       @msyyc @Wzb123456789
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
@@ -270,7 +330,7 @@
 #/<NotInRepo>/          @assafi
 
 # ServiceLabel: %Cognitive - Form Recognizer %Service Attention
-#/<NotInRepo>/          @ctstone @anrothMSFT
+#/<NotInRepo>/          @ctstone @vkurpad
 
 # ServiceLabel: %Cognitive - Anomaly Detector %Service Attention
 #/<NotInRepo>/          @yingqunpku @bowgong

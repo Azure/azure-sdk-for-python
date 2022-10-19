@@ -30,6 +30,43 @@ class TestValidation:
             "result": "Failed",
         }
 
+    def test_from_validation_error_2(self):
+        validation_error = ValidationError(
+            field="_schema",
+            message={
+                "outputs": {
+                    "primitive_is_control": {
+                        "value": {
+                            "is_control": ["Unknown field."],
+                        }
+                    }
+                }
+            },
+        )
+        result = _ValidationResultBuilder.from_validation_error(validation_error, error_on_unknown_field=True)
+        assert result._to_dict() == {
+            "errors": [
+                {
+                    "message": "Unknown field.",
+                    "path": "outputs.primitive_is_control.is_control",
+                    "value": None,
+                },
+            ],
+            "result": "Failed",
+        }
+
+        result = _ValidationResultBuilder.from_validation_error(validation_error)
+        assert result._to_dict() == {
+            "warnings": [
+                {
+                    "message": "Unknown field.",
+                    "path": "outputs.primitive_is_control.is_control",
+                    "value": None,
+                },
+            ],
+            "result": "Succeeded",
+        }
+
     def test_from_validation_error_union_field(self):
         validation_error = ValidationError(
             field="_schema",

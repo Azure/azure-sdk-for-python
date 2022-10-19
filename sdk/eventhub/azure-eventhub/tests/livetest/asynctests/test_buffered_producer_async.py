@@ -89,7 +89,7 @@ async def test_basic_send_single_events_round_robin(connection_str, flush_after_
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
-    asyncio.sleep(5)
+    await asyncio.sleep(5)
     sent_events = defaultdict(list)
 
     async def on_success(events, pid):
@@ -195,7 +195,7 @@ async def test_basic_send_batch_events_round_robin(connection_str, flush_after_s
     consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group="$default", uamqp_transport=uamqp_transport)
     receive_thread = asyncio.ensure_future(consumer.receive(on_event=on_event))
 
-    asyncio.sleep(5)
+    await asyncio.sleep(5)
     sent_events = defaultdict(list)
 
     async def on_success(events, pid):
@@ -415,7 +415,7 @@ async def test_send_with_timing_configuration(connection_str, uamqp_transport):
 
     async with producer:
         partitions = await producer.get_partition_ids()
-        await producer.send_event(EventData('data'))
+        await producer.send_batch([EventData('data')])
         await asyncio.sleep(5)
         assert not sent_events
         await asyncio.sleep(20)
@@ -501,6 +501,7 @@ async def test_long_sleep(connection_str, uamqp_transport):
     await consumer.close()
     await receive_thread
 
+@pytest.mark.skip('not testing correctly + flaky, fix during MQ')
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_long_wait_small_buffer(connection_str, uamqp_transport):

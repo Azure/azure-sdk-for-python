@@ -31,7 +31,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 # pylint: disable=protected-access, redefined-builtin
@@ -251,7 +251,7 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> ValidationResult:
+    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> MutableValidationResult:
         """Validate input/output names, raise exception if invalid."""
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
@@ -378,7 +378,7 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
         # If private features are enable and component has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationError

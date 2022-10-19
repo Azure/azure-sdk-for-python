@@ -1,16 +1,22 @@
 # Release History
 
-## 0.2.0 (Unreleased)
+## 1.1.0 (Unreleased)
 
 ### Features Added
+- Registry list operation now accepts scope value to allow subscription-only based requests.
+- Most configuration classes from the entity package now implement the standard mapping protocol.
+- Add registry delete operation.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
 
-## 0.1.0 (In Progress)
+## 1.0.0 (2022-10-10)
+- GA release
+- Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
 ### Features Added
 
@@ -25,9 +31,9 @@
 
 ### Other Changes
  - Switched Compute operations to use Oct preview API version.
+ - Updated batch deployment/endpoint invoke and list-jobs function signatures with curated BatchJob class.
 
-
-## 0.1.0b8 (In Progress)
+## 0.1.0b8 (2022-10-07)
 
 ### Features Added
  - Support passing JobService as argument to Command()
@@ -36,6 +42,7 @@
  - Support `month_days` in `RecurrencePattern` when using `RecurrenceSchedule`.
  - Support `ml_client.schedules.list` with `list_view_type`, default to `ENABLED_ONLY`.
  - Add support for model sweeping and hyperparameter tuning in AutoML NLP jobs.
+ - Added `ml_client.jobs.show_services()` operation.
 
 ### Breaking Changes
 - ComputeOperations.attach has been renamed to begin_attach.
