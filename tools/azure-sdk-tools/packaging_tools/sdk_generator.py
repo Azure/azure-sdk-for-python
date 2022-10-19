@@ -43,7 +43,10 @@ def main(generate_input, generate_output):
         readme_files = [input_readme]
     else:
         # ["specification/confidentialledger/ConfientialLedger"]
-        readme_files = data["relatedCadlProjectFolder"]
+        if isinstance(data["relatedCadlProjectFolder"], str):
+            readme_files = [data["relatedCadlProjectFolder"]]
+        else:
+            readme_files = data["relatedCadlProjectFolder"]
         spec_word = "cadlProject"
 
     for input_readme in readme_files:
