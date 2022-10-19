@@ -42,19 +42,19 @@ def main():
     # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
     # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, DEVCENTER_NAME
     try:
-        tenantId = os.environ["AZURE_TENANT_ID"]
+        tenant_id = os.environ["AZURE_TENANT_ID"]
     except KeyError:
         LOG.error("Missing environment variable 'AZURE_TENANT_ID' - please set it before running the example")
         exit()
 
     try:
-        devCenterName = os.environ["DEVCENTER_NAME"]
+        dev_center_name = os.environ["DEVCENTER_NAME"]
     except KeyError:
         LOG.error("Missing environment variable 'DEVCENTER_NAME' - please set it before running the example")
         exit()
 
     # Build a client through AAD
-    client = DevCenterClient(tenantId, devCenterName, credential=DefaultAzureCredential())
+    client = DevCenterClient(tenant_id, dev_center_name, credential=DefaultAzureCredential())
 
     # Fetch control plane resource dependencies
     projects = list(client.dev_center.list_projects(top=1))

@@ -11,7 +11,7 @@ Use the package for Azure DevCenter to:
 ### Installating the package
 
 ```bash
-python -m pip install azure-devcenter
+python -m pip install azure-developer-devcenter
 ```
 
 #### Prequisites
@@ -53,7 +53,7 @@ Use the returned token credential to authenticate the client:
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 >>> tenant_id = os.environ['AZURE_TENANT_ID']
->>> client = DevCenterClient(tenant_id: tenant_id, dev_center: "my_dev_center", credential=DefaultAzureCredential())
+>>> client = DevCenterClient(tenant_id=tenant_id, dev_center="my_dev_center", credential=DefaultAzureCredential())
 >>> try:
         # Fetch control plane resource dependencies
         projects = list(client.dev_center.list_projects(top=1))
@@ -88,7 +88,7 @@ Use the returned token credential to authenticate the client:
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 >>> tenant_id = os.environ['AZURE_TENANT_ID']
->>> client = DevCenterClient(tenant_id: tenant_id, dev_center: "my_dev_center", credential=DefaultAzureCredential())
+>>> client = DevCenterClient(tenant_id=tenant_id, dev_center="my_dev_center", credential=DefaultAzureCredential())
 >>> try:
         # Fetch control plane resource dependencies
         target_project_name = list(client.dev_center.list_projects(top=1))[0]['name']
