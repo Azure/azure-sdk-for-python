@@ -116,7 +116,7 @@ def pipeline(
     def pipeline_decorator(func: _TFunc) -> _TFunc:
         if not isinstance(func, Callable): # pylint: disable=isinstance-second-argument-not-valid-type
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
-        if non_pipeline_parameters and not isinstance(non_pipeline_parameters, List) or any(not isinstance(param, str) for param in non_pipeline_parameters):
+        if non_pipeline_parameters and not isinstance(non_pipeline_parameters, List) and any(not isinstance(param, str) for param in non_pipeline_parameters):
             raise UnExpectedNonPipelineParameterTypeError()
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
         # to support legacy usage, we support them with priority.
