@@ -14,6 +14,7 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 """
 import os
 import time
+from typing import Dict
 from azure.eventhub import EventHubConsumerClient
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
@@ -23,7 +24,7 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
-partition_last_checkpoint_time = dict()
+partition_last_checkpoint_time: Dict[str, float] = dict()
 checkpoint_time_interval = 15
 
 
