@@ -360,19 +360,19 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             if on_init not in self.jobs:
                 append_on_init_error(f"On_init job name {on_init} not exists in jobs.")
             else:
-                if not _is_isolated_job(on_init):
-                    append_on_init_error("On_init job should not have connection to other execution node.")
                 if _is_control_flow_node(on_init):
                     append_on_init_error("On_init job should not be a control flow node.")
+                elif not _is_isolated_job(on_init):
+                    append_on_init_error("On_init job should not have connection to other execution node.")
         # validate on_finalize
         if on_finalize is not None:
             if on_finalize not in self.jobs:
                 append_on_finalize_error(f"On_finalize job name {on_finalize} not exists in jobs.")
             else:
-                if not _is_isolated_job(on_finalize):
-                    append_on_finalize_error("On_finalize job should not have connection to other execution node.")
                 if _is_control_flow_node(on_finalize):
                     append_on_finalize_error("On_finalize job should not be a control flow node.")
+                elif not _is_isolated_job(on_finalize):
+                    append_on_finalize_error("On_finalize job should not have connection to other execution node.")
         return validation_result
 
     def _remove_pipeline_input(self):
