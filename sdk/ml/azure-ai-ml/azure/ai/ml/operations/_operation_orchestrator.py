@@ -38,6 +38,8 @@ from azure.ai.ml.constants._common import (
     VERSIONED_RESOURCE_NAME,
     LABELLED_RESOURCE_NAME,
     AzureMLResourceType,
+    LABELLED_RESOURCE_ID_FORMAT,
+    DEFAULT_LABEL_NAME,
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
@@ -150,6 +152,19 @@ class OperationOrchestrator(object):
                         "CLI and SDK. Learn more at aka.ms/curatedenv"
                     )
                     return f"azureml:{asset}"
+
+                name, label = parse_name_label(asset)
+                # TODO: remove this condition after label is fully supported for all versioned resources
+                if label == DEFAULT_LABEL_NAME and azureml_type == AzureMLResourceType.COMPONENT:
+                    return LABELLED_RESOURCE_ID_FORMAT.format(
+                        self._operation_scope.subscription_id,
+                        self._operation_scope.resource_group_name,
+                        AZUREML_RESOURCE_PROVIDER,
+                        self._operation_scope.workspace_name,
+                        azureml_type,
+                        name,
+                        label,
+                    )
                 name, version = self._resolve_name_version_from_name_label(asset, azureml_type)
                 if not version:
                     name, version = parse_prefixed_name_version(asset)
