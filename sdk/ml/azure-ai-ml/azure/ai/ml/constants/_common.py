@@ -132,6 +132,8 @@ STORAGE_ACCOUNT_URLS = {
     "AzureFile": "https://{}.file.{}",
 }
 
+DEFAULT_LABEL_NAME = "default"
+DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
