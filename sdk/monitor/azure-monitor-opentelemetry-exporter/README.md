@@ -133,8 +133,8 @@ For more information about these resources, see [What is Azure Monitor?][product
 All configuration options can be passed through the constructors of exporters through `kwargs`. Below is a list of configurable options.
 
 `connection_string`: The connection string used for your Application Insights resource.
-`enable_local_storage`: Boolean value to determine whether to store failed telemetry records for retry. Defaults to `True`.
-`storage_path`: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
+`disable_offline_storage`: Boolean value to determine whether to disable storing failed telemetry records for retry. Defaults to `False`.
+`storage_directory`: Storage directory in which to store retry files. Defaults to `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
 
 ## Examples
 

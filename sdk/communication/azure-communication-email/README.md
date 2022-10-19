@@ -144,7 +144,7 @@ The result from the `send` call contains a `message_id` which can be used to que
 
 ```python
 response = client.send(message)
-status = client.get_sent_status(response.message_id)
+status = client.get_send_status(response.message_id)
 ```
 
 ## Troubleshooting
