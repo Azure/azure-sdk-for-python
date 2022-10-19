@@ -33,9 +33,9 @@ stages:
     - job: Emulator
       strategy:
         matrix:
-          Windows_Python37:
+          Windows_Python36:
             OSVmImage: 'windows-2019'
-            PythonVersion: '3.7'
+            PythonVersion: '3.6'
       pool:
         vmImage: $(OSVmImage)
 
