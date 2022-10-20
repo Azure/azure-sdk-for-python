@@ -217,6 +217,7 @@ class EventHubConsumer(
             #  Currently we create a new client with the latest received event's offset per retry.
             #  Ideally we should reuse the same client reestablishing the connection/link with the latest offset.
             while retried_times <= max_retries:
+                print(f"Num retries {retried_times}")
                 try:
                     if self._open():
                         self._handler.do_work(batch=self._prefetch)  # type: ignore
