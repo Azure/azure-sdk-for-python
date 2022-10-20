@@ -416,9 +416,11 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             offset = frame_header[4]
             frame_type = frame_header[5]
             if verify_frame_type is not None and frame_type != verify_frame_type:
-                raise ValueError(
-                    f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                )
+                print("Ran into invalid frame type")
+                pass
+                # raise ValueError(
+                #     f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                # )
 
             # >I is an unsigned int, but the argument to sock.recv is signed,
             # so we know the size can be at most 2 * SIGNED_INT_MAX
