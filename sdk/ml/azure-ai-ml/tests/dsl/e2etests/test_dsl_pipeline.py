@@ -1061,6 +1061,21 @@ class TestDSLPipeline(AzureRecordedTestCase):
             in e.value.message
         )
 
+        @dsl.pipeline(non_pipeline_parameters=['param'])
+        def pipeline_with_non_pipeline_parameters(
+            required_input: Input,
+            required_param: str,
+            param: str,
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_non_pipeline_parameters)
+        assert "Cannot register pipeline component 'pipeline_func' with non_pipeline_parameters." in e.value.message
+
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 

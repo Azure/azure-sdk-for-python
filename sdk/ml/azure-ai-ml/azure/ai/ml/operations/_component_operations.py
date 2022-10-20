@@ -577,9 +577,21 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+    def check_non_pipeline_parameters(f):
+        """Check whether non_pipeline_parameters exist in pipeline builder."""
+        if f._pipeline_builder.non_pipeline_parameter_names:
+            msg = "Cannot register pipeline component {!r} with non_pipeline_parameters."
+            raise ValidationException(
+                message=msg.format(f.__name__),
+                no_personal_data_message=msg.format(""),
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
     if hasattr(component_func, "_is_mldesigner_component") and component_func._is_mldesigner_component:
         return component_func.component
     if hasattr(component_func, "_is_dsl_func") and component_func._is_dsl_func:
+        check_non_pipeline_parameters(component_func)
         check_parameter_type(component_func)
         if component_func._job_settings:
             module_logger.warning(
