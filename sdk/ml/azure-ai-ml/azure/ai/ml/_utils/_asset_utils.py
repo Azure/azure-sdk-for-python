@@ -103,14 +103,15 @@ class IgnoreFile(object):
         if not self._path_spec:
             self._path_spec = self._create_pathspec()
         file_path = Path(file_path)
+        ignore_dirname = self._path.parent
+
         if file_path.is_absolute():
             file_path = file_path.resolve()
             ignore_dirname = self._path.parent
             if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
                 return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
 
-        file_path = str(file_path)
+        file_path = os.path.relpath(file_path, ignore_dirname)
         norm_file = normalize_file(file_path)
         for pattern in self._path_spec:
             if pattern.include is not None:

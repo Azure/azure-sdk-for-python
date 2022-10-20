@@ -103,6 +103,14 @@ class TestAssetUtils:
         amlignore_hash = get_object_hash(path=storage_test_directory, ignore_file=amlignore_file)
         gitignore_hash = get_object_hash(path=storage_test_directory, ignore_file=gitignore_file)
 
+        storage_test_directory_abs = os.path.abspath(storage_test_directory)
+        storage_test_directory_abs = (os.path.sep).join(storage_test_directory_abs.split(os.path.sep)[:3] + ['..', '..'] + storage_test_directory_abs.split(os.path.sep)[1:])
+        aialtered_hash = get_object_hash(
+            path=storage_test_directory_abs, 
+            ignore_file=amlignore_file
+        )
+
+        assert amlignore_hash == aialtered_hash
         assert no_ignore_hash != amlignore_hash != gitignore_hash
 
     def test_exclude(
