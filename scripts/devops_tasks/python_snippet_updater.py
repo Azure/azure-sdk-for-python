@@ -34,7 +34,7 @@ def get_snippet(file):
         if snippet[-1] == "\n":
             snippet = snippet[:-1]
 
-        file_name = str(file)[:-3]
+        file_name = str(file.name)[:-3]
         identifier = ".".join([file_name, name])
         if identifier in snippets.keys():
             print(f'Warning: found duplicated snippet name "{identifier}".')
@@ -46,13 +46,14 @@ def get_snippet(file):
 def update_snippet(file):
     with open(file, 'r') as f:
         content = f.read()
-    pattern = "<!-- SNIPPET:[A-Z a-z0-9_]+-->[\\s\\S]*?<!-- END SNIPPET -->"
+    pattern = "<!-- SNIPPET:[A-Z a-z0-9_.]+-->[\\s\\S]*?<!-- END SNIPPET -->"
     matches = re.findall(pattern, content)
     for match in matches:
         s = match
         pos1 = s.index("-->")
         header = s[:pos1+3]
         name = s[13:pos1].strip()
+        # print(f"Info: found name: {name}")
         if name not in snippets.keys():
             print(f'Warning: cannot found snippet name "{name}".')
             exit(1)
