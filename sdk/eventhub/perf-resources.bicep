@@ -14,7 +14,7 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2015-08-01' = {
   }
 
   resource eventHub 'eventhubs' = {
-    name: '32'
+    name: 'eh-${baseName}-hub'
     properties: {
       partitionCount: 32
     }
