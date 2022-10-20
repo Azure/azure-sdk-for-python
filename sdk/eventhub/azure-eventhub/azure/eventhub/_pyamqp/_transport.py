@@ -416,7 +416,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             offset = frame_header[4]
             frame_type = frame_header[5]
             if verify_frame_type is not None and frame_type != verify_frame_type:
-                raise AMQPError(condition=ErrorCondition.DecodeError, description="Invalid Frame Type")
+                # raise AMQPError(condition=ErrorCondition.DecodeError, description="Invalid Frame Type")
                 print("Ran into invalid frame type")
                 pass
                 # raise ValueError(
@@ -706,7 +706,7 @@ class WebSocketTransport(_AbstractTransport):
 
     def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-        from websocket import WebSocketTimeoutException
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException, SocketError
 
         length = 0
         view = buffer or memoryview(bytearray(n))
@@ -725,13 +725,29 @@ class WebSocketTransport(_AbstractTransport):
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
-        except WebSocketTimeoutException:
-            raise TimeoutError()
+        except WebSocketTimeoutException as e:
+            raise TimeoutError('recv timed out (%s)' % e)
+        except SSLError as e:
+            raise ConnectionError('recv disconnected by SSL (%s)' % e)
+        except WebSocketConnectionClosedException as e:
+            raise ConnectionError('recv disconnected (%s)' % e)
+        except SocketError as e:
+            raise ConnectionError('recv disconnected (%s)' % e)
 
     def _shutdown_transport(self):
         # TODO Sync and Async close functions named differently
         """Do any preliminary work in shutting down the connection."""
-        self.ws.close()
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException, SocketError
+        try:
+            self.ws.close()
+        except WebSocketTimeoutException as e:
+            raise TimeoutError('recv timed out (%s)' % e)
+        except SSLError as e:
+            raise ConnectionError('recv disconnected by SSL (%s)' % e)
+        except WebSocketConnectionClosedException as e:
+            raise ConnectionError('recv disconnected (%s)' % e)
+        except SocketError as e:
+            raise ConnectionError('recv disconnected (%s)' % e)
 
     def _write(self, s):
         """Completely write a string to the peer.
@@ -739,4 +755,14 @@ class WebSocketTransport(_AbstractTransport):
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        self.ws.send_binary(s)
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException, SocketError
+        try:
+            self.ws.send_binary(s)
+        except WebSocketTimeoutException as e:
+            raise TimeoutError('recv timed out (%s)' % e)
+        except SSLError as e:
+            raise ConnectionError('recv disconnected by SSL (%s)' % e)
+        except WebSocketConnectionClosedException as e:
+            raise ConnectionError('recv disconnected (%s)' % e)
+        except SocketError as e:
+            raise ConnectionError('recv disconnected (%s)' % e)
