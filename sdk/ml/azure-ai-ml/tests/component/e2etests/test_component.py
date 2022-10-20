@@ -132,6 +132,7 @@ def assert_component_basic_workflow(
     "mock_component_hash",
     "enable_environment_id_arm_expansion",
 )
+@pytest.mark.pipeline_test
 class TestComponent(AzureRecordedTestCase):
     def test_command_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_dict = {
@@ -850,3 +851,28 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         component = PipelineComponent(name=name, source_job_id=job.id)
         rest_component = client.components.create_or_update(component)
         assert rest_component.name == name
+
+    def test_component_with_default_label(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        yaml_path: str = "./tests/test_configs/components/helloworld_component.yml"
+        component_name = randstr("component_name")
+
+        create_component(client, component_name, path=yaml_path)
+
+        target_component = client.components.get(component_name, label="latest")
+
+        for default_component in [
+            client.components.get(component_name),
+            client.components.get(component_name, label="default"),
+        ]:
+            expected_component_dict = target_component._to_dict()
+            default_component_dict = default_component._to_dict()
+            assert pydash.omit(default_component_dict, "id") == pydash.omit(expected_component_dict, "id")
+
+            assert default_component.id.endswith(f"/components/{component_name}/labels/default")
+
+            node = default_component()
+            assert node._to_rest_object()["componentId"] == default_component.id

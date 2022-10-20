@@ -94,6 +94,7 @@ def bodiless_matching(test_proxy):
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_create(
         self,
@@ -1542,6 +1543,17 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
+    def test_pipeline_node_with_default_component(self, client: MLClient, randstr: Callable[[str], str]):
+        params_override = [{"name": randstr("job_name")}]
+        pipeline_job = load_job(
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_default_component.yml",
+            params_override=params_override,
+        )
+
+        created_pipeline_job = client.jobs.create_or_update(pipeline_job)
+        assert created_pipeline_job.jobs["hello_world_component"].component == \
+               "microsoftsamples_command_component_basic@default"
+
 
 @pytest.mark.usefixtures(
     "recorded_test",
@@ -1552,6 +1564,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJobReuse(AzureRecordedTestCase):
     @pytest.mark.skip(reason="flaky test")
     def test_reused_pipeline_child_job_download(

@@ -431,7 +431,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 # Parse the total file size and adjust the download size if ranges
                 # were specified
                 self._file_size = parse_length_from_content_range(response.properties.content_range)
-                if not self._file_size:
+                if self._file_size is None:
                     raise ValueError("Required Content-Range response header is missing or malformed.")
                 # Remove any extra encryption data size from blob size
                 self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
