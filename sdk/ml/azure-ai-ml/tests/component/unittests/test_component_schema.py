@@ -194,7 +194,7 @@ class TestCommandComponent:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
         # make sure default code has generated with name and version as content
         assert component_entity.code
-        assert COMPONENT_CODE_PLACEHOLDER == component_entity.code
+        assert component_entity.code == COMPONENT_CODE_PLACEHOLDER
 
     def test_serialize_deserialize_input_output_path(self, mock_machinelearning_client: MLClient):
         expected_value_dict = {

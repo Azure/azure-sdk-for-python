@@ -19,6 +19,8 @@ from azure.ai.ml._schema._sweep.search_space import (
     QUniformSchema,
     RandintSchema,
     UniformSchema,
+    IntegerQUniformSchema,
+    IntegerQNormalSchema
 )
 from azure.ai.ml._schema.core.fields import (
     DumpableIntegerField,
@@ -44,7 +46,10 @@ def get_choice_schema_of_type(cls, **kwargs):
 
 
 def get_choice_and_single_value_schema_of_type(cls, **kwargs):
-    return UnionField([cls(**kwargs), NestedField(get_choice_schema_of_type(cls, **kwargs))])
+    #Reshuffling the order of fields for allowing choice of booleans.
+    #The reason is, while dumping [Bool, Choice[Bool]] is parsing even dict as True.
+    #Since all unionFields are parsed sequentially, to avoid this, we are giving the "type" field at the end.
+    return UnionField([NestedField(get_choice_schema_of_type(cls, **kwargs)), cls(**kwargs)])
 
 
 FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
@@ -66,6 +71,8 @@ INT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
         DumpableIntegerField(strict=True),
         NestedField(get_choice_schema_of_type(DumpableIntegerField, strict=True)),
         NestedField(RandintSchema()),
+        NestedField(IntegerQUniformSchema()),
+        NestedField(IntegerQNormalSchema()),
     ]
 )
 

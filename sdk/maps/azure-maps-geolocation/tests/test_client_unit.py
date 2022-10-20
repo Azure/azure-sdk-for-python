@@ -4,18 +4,18 @@ from unittest.mock import Mock
 from devtools_testutils import AzureTestCase
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
-from azure.maps.geolocation import GeolocationClient
+from azure.maps.geolocation import MapsGeolocationClient
 
 
 # cSpell:disable
 def create_mock_client():
-    return GeolocationClient(credential= Mock(AzureKeyCredential))
+    return MapsGeolocationClient(credential= Mock(AzureKeyCredential))
 
-class AzureGeolocationClientUnitTest(AzureTestCase):
-    def test_get_geolocation(self):
+class AzureMapsGeolocationClientUnitTest(AzureTestCase):
+    def test_get_country_code(self):
         client = create_mock_client()
         with pytest.raises(ServiceRequestError):
-            client.get_geolocation(ip_address="12345123")
+            client.get_country_code(ip_address="12345123")
 
 
 if __name__ == "__main__" :

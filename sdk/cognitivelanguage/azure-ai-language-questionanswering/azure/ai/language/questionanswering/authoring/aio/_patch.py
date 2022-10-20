@@ -10,7 +10,7 @@ from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
-from ._client import QuestionAnsweringAuthoringClient as QuestionAnsweringAuthoringClientGenerated
+from ._client import AuthoringClient as AuthoringClientGenerated
 from .._patch import POLLING_INTERVAL_DEFAULT
 
 
@@ -33,16 +33,15 @@ def _authentication_policy(credential, **kwargs):
     return authentication_policy
 
 
-class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated):
+class AuthoringClient(AuthoringClientGenerated):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">
-    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    detection and question answering. Further documentation can be found in
+    https://learn.microsoft.com/azure/cognitive-services/language-service/overview
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
         This can be the an instance of AzureKeyCredential if using a Language API key
@@ -72,7 +71,7 @@ class QuestionAnsweringAuthoringClient(QuestionAnsweringAuthoringClientGenerated
 
 
 __all__: List[str] = [
-    "QuestionAnsweringAuthoringClient"
+    "AuthoringClient"
 ]  # Add all objects you want publicly available to users at this package level
 
 

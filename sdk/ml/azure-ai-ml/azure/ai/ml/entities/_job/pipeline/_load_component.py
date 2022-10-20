@@ -17,9 +17,11 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
 from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
+from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._util import extract_label
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -79,6 +81,12 @@ class _PipelineNodeFactory:
             _type=ControlFlowType.DO_WHILE,
             create_instance_func=None,
             load_from_rest_object_func=DoWhile._from_rest_object,
+            nested_schema=None,
+        )
+        self.register_type(
+            _type=ControlFlowType.IF_ELSE,
+            create_instance_func=None,
+            load_from_rest_object_func=ConditionNode._from_rest_object,
             nested_schema=None,
         )
 
@@ -172,7 +180,19 @@ class _PipelineNodeFactory:
         else:
             data[CommonYamlFields.TYPE] = _type
 
-        new_instance = self.get_create_instance_func(_type)()
+        new_instance: Union[BaseNode, AutoMLJob] = self.get_create_instance_func(_type)()
+
+        if isinstance(new_instance, BaseNode):
+            # parse component
+            component_key = new_instance._get_component_attr_name()
+            if component_key in data and isinstance(data[component_key], dict):
+                data[component_key] = component_factory.load_from_dict(
+                    data=data[component_key],
+                    context={
+                        BASE_PATH_CONTEXT_KEY: data[component_key].get(BASE_PATH_CONTEXT_KEY, None),
+                    }
+                )
+
         new_instance.__init__(**data)
         return new_instance
 
