@@ -2822,7 +2822,7 @@ class AbstractSummaryResult(DictMixin):
             id=result.id,
             detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
                 result.detected_language
-            ),
+            ) if result.detected_language else None,
             warnings=[
                 TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
                     w
