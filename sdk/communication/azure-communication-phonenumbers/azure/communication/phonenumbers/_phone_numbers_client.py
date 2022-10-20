@@ -360,7 +360,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         )
 
     @distributed_trace
-    def list_available_toll_free_area_codes(
+    def list_available_area_codes(
         self,
         two_letter_iso_country_name, # type: str
         **kwargs # type: Any
@@ -387,7 +387,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         )
 
     @distributed_trace
-    def list_available_geographic_area_codes(
+    def list_available_area_codes(
         self,
         two_letter_iso_country_name, # type: str
         phone_number_assignment_type, #type: PhoneNumberAssignmentType
