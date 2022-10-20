@@ -45,6 +45,7 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
+from socket import error as SocketError
 
 import certifi
 from .error import AMQPError, ErrorCondition
@@ -417,7 +418,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             frame_type = frame_header[5]
             if verify_frame_type is not None and frame_type != verify_frame_type:
                 # raise AMQPError(condition=ErrorCondition.DecodeError, description="Invalid Frame Type")
-                print("Ran into invalid frame type")
+                # print("Ran into invalid frame type")
                 pass
                 # raise ValueError(
                 #     f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
@@ -706,7 +707,7 @@ class WebSocketTransport(_AbstractTransport):
 
     def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException, SocketError
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
 
         length = 0
         view = buffer or memoryview(bytearray(n))
@@ -737,7 +738,7 @@ class WebSocketTransport(_AbstractTransport):
     def _shutdown_transport(self):
         # TODO Sync and Async close functions named differently
         """Do any preliminary work in shutting down the connection."""
-        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException, SocketError
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
         try:
             self.ws.close()
         except WebSocketTimeoutException as e:
@@ -755,7 +756,7 @@ class WebSocketTransport(_AbstractTransport):
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException, SocketError
+        from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
         try:
             self.ws.send_binary(s)
         except WebSocketTimeoutException as e:
