@@ -115,9 +115,6 @@ def pipeline(
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_parameters = kwargs.get("non_pipeline_parameters", [])
-        if not isinstance(non_pipeline_parameters, List) or \
-                any(not isinstance(param, str) for param in non_pipeline_parameters):
-            raise UnExpectedNonPipelineParameterTypeError()
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
         # to support legacy usage, we support them with priority.
         compute = kwargs.get("compute", None)
@@ -225,6 +222,9 @@ def pipeline(
 
 def _validate_args(func, args, kwargs, non_pipeline_parameters):
     """Validate customer function args and convert them to kwargs."""
+    if not isinstance(non_pipeline_parameters, List) or \
+            any(not isinstance(param, str) for param in non_pipeline_parameters):
+        raise UnExpectedNonPipelineParameterTypeError()
     # Positional arguments validate
     all_parameters = [param for _, param in signature(func).parameters.items()]
     # Implicit parameter are *args and **kwargs
