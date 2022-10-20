@@ -7,7 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-* Allow passing `TableEntity`'s with non-string Partion/RowKey fields to `delete_entity` ([#26360](https://github.com/Azure/azure-sdk-for-python/issues/26360))
+* Allow passing `TableEntity` with Partion/RowKey in type UUID in `create_entity`, `upsert_entity` and `delete_entity`. ([#26360](https://github.com/Azure/azure-sdk-for-python/issues/26360)) Thanks @mtin
 
 ### Other Changes
 
