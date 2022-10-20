@@ -11,7 +11,7 @@ steps:
     condition: succeededOrFailed()
 
   - task: PythonScript@0
-    displayName: 'Run python_snippet_updater.py'
+    displayName: 'Update Snippets'
     inputs:
       scriptPath: 'scripts/devops_tasks/python_snippet_updater.py'
       arguments: >-
