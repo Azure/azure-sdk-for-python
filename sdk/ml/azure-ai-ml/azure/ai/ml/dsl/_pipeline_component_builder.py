@@ -393,7 +393,7 @@ def _build_pipeline_parameter(func, kwargs=None, non_pipeline_parameter_dict=Non
     #   component_func(input=param.key)  <--- param.key should be val.
 
     # transform kwargs
-    transformed_kwargs = non_pipeline_parameter_dict
+    transformed_kwargs = non_pipeline_parameter_dict or {}
     if kwargs:
         transformed_kwargs.update(
             {
