@@ -28,6 +28,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJobValidate:
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error",
@@ -244,6 +245,7 @@ class TestPipelineJobValidate:
 
 
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipelineJobValidate:
     def test_pipeline_str(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
