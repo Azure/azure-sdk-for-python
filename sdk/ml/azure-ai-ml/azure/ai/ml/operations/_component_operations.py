@@ -51,7 +51,7 @@ from ._operation_orchestrator import OperationOrchestrator
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):

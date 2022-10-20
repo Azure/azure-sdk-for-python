@@ -23,7 +23,7 @@ from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations, Scope
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 @experimental
