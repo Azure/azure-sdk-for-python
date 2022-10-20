@@ -6,6 +6,8 @@
 
 - Add validation logic to ApplicationInsightsSampler
     ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
+- Change default temporality of metrics to follow OTLP
+    ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
 
 ### Breaking Changes
 
