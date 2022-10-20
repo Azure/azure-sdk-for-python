@@ -173,7 +173,7 @@ class SipRoutingClient(object):
         return await self._get_trunks_(**kwargs)
 
     @distributed_trace_async
-    async def get_routes(
+    async def list_routes(
         self,
         **kwargs  # type: Any
     ):  # type: (...) -> Iterable[SipTrunkRoute]

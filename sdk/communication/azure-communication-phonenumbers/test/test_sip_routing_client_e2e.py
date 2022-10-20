@@ -45,16 +45,16 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         assert trunks is not None, "No trunks were returned."
         self._trunks_are_equal(trunks,self.TRUNKS)
 
-    def test_get_routes(self):
+    def test_list_routes(self):
         self._sip_routing_client.set_routes(self.ROUTES)
-        routes = self._sip_routing_client.get_routes()
+        routes = self._sip_routing_client.list_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
 
-    def test_get_routes_from_managed_identity(self):
+    def test_list_routes_from_managed_identity(self):
         client = self._get_sip_client_managed_identity()
         client.set_routes(self.ROUTES)
-        routes = client.get_routes()
+        routes = client.list_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
 
@@ -77,7 +77,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
         self._sip_routing_client.set_routes(self.ROUTES)
         self._sip_routing_client.set_routes(new_routes)
-        result_routes = self._sip_routing_client.get_routes()
+        result_routes = self._sip_routing_client.list_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes)
 
@@ -86,7 +86,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         client = self._get_sip_client_managed_identity()
         client.set_routes(self.ROUTES)
         client.set_routes(new_routes)
-        result_routes = client.get_routes()
+        result_routes = client.list_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes)
 

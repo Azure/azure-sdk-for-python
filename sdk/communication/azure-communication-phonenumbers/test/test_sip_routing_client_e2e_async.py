@@ -52,19 +52,19 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         self._trunks_are_equal(trunks,self.TRUNKS), "Trunks are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_get_routes(self):
+    async def test_list_routes(self):
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes(self.ROUTES)
-            routes = await self._sip_routing_client.get_routes()
+            routes = await self._sip_routing_client.list_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES), "Routes are not equal."
 
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_get_routes_from_managed_identity(self):
+    async def test_list_routes_from_managed_identity(self):
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes(self.ROUTES)
-            routes = await self._sip_routing_client.get_routes()
+            routes = await self._sip_routing_client.list_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES), "Routes are not equal."
 
@@ -93,7 +93,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes(self.ROUTES)
             await self._sip_routing_client.set_routes(new_routes)
-            result_routes = await self._sip_routing_client.get_routes()
+            result_routes = await self._sip_routing_client.list_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
@@ -104,7 +104,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes(self.ROUTES)
             await self._sip_routing_client.set_routes(new_routes)
-            result_routes = await self._sip_routing_client.get_routes()
+            result_routes = await self._sip_routing_client.list_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
