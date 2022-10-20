@@ -796,7 +796,7 @@ class ReceiveClient(AMQPClient):
         try:
             self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
-        except AMQPException:
+        except ValueError:
             _logger.info("Timeout reached, closing receiver.")
             self._shutdown = True
             return False
