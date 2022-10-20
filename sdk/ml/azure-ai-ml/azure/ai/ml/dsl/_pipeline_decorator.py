@@ -115,7 +115,7 @@ def pipeline(
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_parameters = kwargs.get("non_pipeline_parameters", [])
-        if not isinstance(non_pipeline_parameters, List) and \
+        if not isinstance(non_pipeline_parameters, List) or \
                 any(not isinstance(param, str) for param in non_pipeline_parameters):
             raise UnExpectedNonPipelineParameterTypeError()
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
