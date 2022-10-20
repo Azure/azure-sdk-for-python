@@ -115,7 +115,8 @@ def pipeline(
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_parameters = kwargs.get("non_pipeline_parameters", [])
-        if not isinstance(non_pipeline_parameters, List) and any(not isinstance(param, str) for param in non_pipeline_parameters):
+        if not isinstance(non_pipeline_parameters, List) and \
+                any(not isinstance(param, str) for param in non_pipeline_parameters):
             raise UnExpectedNonPipelineParameterTypeError()
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
         # to support legacy usage, we support them with priority.
@@ -262,7 +263,8 @@ def _validate_args(func, args, kwargs, non_pipeline_parameters):
 
     for pipeline_input_name in provided_args:
         data = provided_args[pipeline_input_name]
-        if data is not None and not _is_supported_data_type(data) and pipeline_input_name not in non_pipeline_parameters:
+        if data is not None and not _is_supported_data_type(data) and \
+                pipeline_input_name not in non_pipeline_parameters:
             msg = (
                 "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), "
                 "but got type {}."

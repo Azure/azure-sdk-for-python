@@ -395,7 +395,12 @@ def _build_pipeline_parameter(func, kwargs=None, non_pipeline_parameter_dict=Non
     # transform kwargs
     transformed_kwargs = non_pipeline_parameter_dict
     if kwargs:
-        transformed_kwargs.update({key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items() if key not in non_pipeline_parameter_dict})
+        transformed_kwargs.update(
+            {
+                key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items()
+                if key not in non_pipeline_parameter_dict
+            }
+        )
 
     def all_params(parameters):
         for value in parameters.values():
