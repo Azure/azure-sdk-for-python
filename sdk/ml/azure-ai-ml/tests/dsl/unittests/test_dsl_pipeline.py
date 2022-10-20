@@ -28,7 +28,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, NonExistParamValueError, UnExpectedNonPipelineParameterTypeError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -1940,3 +1940,53 @@ class TestDSLPipeline:
         pipeline_job = pipeline_func(component_in_path=Data(name="test", version="1", type=AssetTypes.MLTABLE))
         result = pipeline_job._validate()
         assert result._to_dict() == {"result": "Succeeded"}
+
+    def test_pipeline_with_non_pipeline_parameters(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
+        component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
+
+        @dsl.pipeline(non_pipeline_parameters=["other_params"])
+        def pipeline_func(job_in_number, job_in_path, other_params):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func2(component_in_number=other_params, component_in_path=job_in_path)
+
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15)
+        assert "other_params" not in pipeline.inputs
+        assert isinstance(pipeline.jobs[component_func1.name].inputs["component_in_number"]._data, PipelineInput)
+        assert pipeline.jobs[component_func2.name].inputs["component_in_number"]._data == 15
+
+    def test_pipeline_with_invalid_non_pipeline_parameters(self):
+
+        @dsl.pipeline(non_pipeline_parameters=[123])
+        def pipeline_func():
+            pass
+
+        with pytest.raises(UnExpectedNonPipelineParameterTypeError) as error_info:
+            pipeline_func()
+        assert "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string" in str(error_info)
+
+        @dsl.pipeline(non_pipeline_parameters=["non_exist_param1", "non_exist_param2"])
+        def pipeline_func():
+            pass
+
+        with pytest.raises(NonExistParamValueError) as error_info:
+            pipeline_func()
+        assert "pipeline_func() got unexpected params in non_pipeline_parameters ['non_exist_param1', 'non_exist_param2']" in str(error_info)
+
+    def test_component_func_as_non_pipeline_parameters(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
+        component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
+
+        @dsl.pipeline(non_pipeline_parameters=["component_func"])
+        def pipeline_func(job_in_number, job_in_path, component_func):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func(component_in_number=job_in_number, component_in_path=job_in_path)
+
+        pipeline = pipeline_func(
+            job_in_number=10,
+            job_in_path=Input(path="/a/path/on/ds"),
+            component_func=component_func2)
+        assert len(pipeline.jobs) == 2
+        assert component_func2.name in pipeline.jobs
