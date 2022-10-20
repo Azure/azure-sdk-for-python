@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AreaCodeResult(_serialization.Model):
+class AreaCodeItem(_serialization.Model):
     """An area code.
 
     :ivar area_code: An area code as a string.
@@ -43,7 +43,7 @@ class AreaCodes(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar area_codes: Represents a list of available toll-free area codes. Required.
-    :vartype area_codes: list[~azure.communication.phonenumbers.models.AreaCodeResult]
+    :vartype area_codes: list[~azure.communication.phonenumbers.models.AreaCodeItem]
     :ivar next_link: Represents the URL link to the next page of phone number results.
     :vartype next_link: str
     """
@@ -53,14 +53,14 @@ class AreaCodes(_serialization.Model):
     }
 
     _attribute_map = {
-        "area_codes": {"key": "areaCodes", "type": "[AreaCodeResult]"},
+        "area_codes": {"key": "areaCodes", "type": "[AreaCodeItem]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, area_codes: List["_models.AreaCodeResult"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, area_codes: List["_models.AreaCodeItem"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword area_codes: Represents a list of available toll-free area codes. Required.
-        :paramtype area_codes: list[~azure.communication.phonenumbers.models.AreaCodeResult]
+        :paramtype area_codes: list[~azure.communication.phonenumbers.models.AreaCodeItem]
         :keyword next_link: Represents the URL link to the next page of phone number results.
         :paramtype next_link: str
         """

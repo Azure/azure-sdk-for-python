@@ -285,7 +285,7 @@ class PhoneNumbersOperations:
         locality: Optional[str] = None,
         administrative_division: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AreaCodeResult"]:
+    ) -> AsyncIterable["_models.AreaCodeItem"]:
         """Gets the list of available area codes.
 
         Gets the list of available area codes.
@@ -308,9 +308,9 @@ class PhoneNumbersOperations:
         :keyword administrative_division: The name of the state or province in which to search for the
          area code. e.g. California. Default value is None.
         :paramtype administrative_division: str
-        :return: An iterator like instance of AreaCodeResult
+        :return: An iterator like instance of AreaCodeItem
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AreaCodeItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}

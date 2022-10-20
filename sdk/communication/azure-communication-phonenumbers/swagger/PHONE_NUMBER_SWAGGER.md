@@ -23,3 +23,11 @@ python: true
 title: Phone Numbers Client
 models-mode: msrest
 ```
+### Change naming of AreaCodeResult to AreaCodeItem
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.AreaCodeResult"
+  transform: >
+    $["x-ms-client-name"] = "AreaCodeItem";
+```

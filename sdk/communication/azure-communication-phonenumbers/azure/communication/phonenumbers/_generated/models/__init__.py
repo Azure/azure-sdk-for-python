@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AreaCodeResult
+from ._models import AreaCodeItem
 from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
 from ._models import PhoneNumberAdministrativeDivision
@@ -33,7 +33,7 @@ from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AreaCodeResult",
+    "AreaCodeItem",
     "CommunicationError",
     "CommunicationErrorResponse",
     "PhoneNumberAdministrativeDivision",

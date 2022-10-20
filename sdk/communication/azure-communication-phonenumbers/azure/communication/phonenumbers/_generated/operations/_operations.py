@@ -643,7 +643,7 @@ class PhoneNumbersOperations:
         locality: Optional[str] = None,
         administrative_division: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.AreaCodeResult"]:
+    ) -> Iterable["_models.AreaCodeItem"]:
         """Gets the list of available area codes.
 
         Gets the list of available area codes.
@@ -666,8 +666,8 @@ class PhoneNumbersOperations:
         :keyword administrative_division: The name of the state or province in which to search for the
          area code. e.g. California. Default value is None.
         :paramtype administrative_division: str
-        :return: An iterator like instance of AreaCodeResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
+        :return: An iterator like instance of AreaCodeItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
