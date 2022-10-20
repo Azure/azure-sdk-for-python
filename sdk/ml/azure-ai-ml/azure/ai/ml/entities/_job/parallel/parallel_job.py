@@ -140,6 +140,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             inputs=self.inputs,
             outputs=self.outputs,
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             # task will be inherited from component & base_path will be set correctly.
             retry_settings=self.retry_settings,
