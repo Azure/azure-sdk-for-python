@@ -13,6 +13,8 @@
 
 - Rename local storage configuration, change default path
     ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
+- Change default storage retention period to 48 hours
+    ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
 
 ### Bugs Fixed
 
