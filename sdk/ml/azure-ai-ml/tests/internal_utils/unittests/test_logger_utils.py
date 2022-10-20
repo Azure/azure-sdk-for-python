@@ -28,8 +28,8 @@ class TestOpsLogger:
         test_logger = OpsLogger(name=test_name)
 
         assert test_logger is not None
-        assert test_logger.logger.name == AML_INTERNAL_LOGGER_NAMESPACE + test_name
-        assert not test_logger.logger.propagate
+        assert test_logger.package_logger.name == AML_INTERNAL_LOGGER_NAMESPACE + test_name
+        assert not test_logger.package_logger.propagate
         assert test_logger.module_logger.name == test_name
         assert len(test_logger.custom_dimensions) == 0
 
@@ -42,5 +42,5 @@ class TestOpsLogger:
         test_logger.update_info(test_data)
 
         assert len(test_data) == 0
-        assert test_logger.logger.hasHandlers()
-        assert test_logger.logger.handlers[0] == test_handler
+        assert test_logger.package_logger.hasHandlers()
+        assert test_logger.package_logger.handlers[0] == test_handler
