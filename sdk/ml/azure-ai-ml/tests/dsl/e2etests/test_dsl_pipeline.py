@@ -2410,3 +2410,25 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert actual_job["inputs"] == expected_job_inputs
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
+
+    def test_dsl_pipeline_with_default_component(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        yaml_path: str = "./tests/test_configs/components/helloworld_component.yml"
+        component_name = randstr("component_name")
+        component: Component = load_component(source=yaml_path, params_override=[{"name": component_name}])
+        client.components.create_or_update(component)
+
+        default_component_func = client.components.get(component_name)
+
+        @dsl.pipeline()
+        def pipeline_with_default_component():
+            node1 = default_component_func(component_in_path=job_input)
+            node1.compute = "cpu-cluster"
+
+        # component from client.components.get
+        pipeline_job = client.jobs.create_or_update(pipeline_with_default_component())
+        created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
+        assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"

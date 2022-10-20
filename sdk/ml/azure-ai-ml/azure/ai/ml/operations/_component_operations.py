@@ -35,7 +35,8 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, DEFAULT_LABEL_NAME, \
+    DEFAULT_COMPONENT_VERSION
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
@@ -176,17 +177,16 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+        if not version and not label:
+            label = DEFAULT_LABEL_NAME
+
+        if label == DEFAULT_LABEL_NAME:
+            label = None
+            version = DEFAULT_COMPONENT_VERSION
+
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        if not version:
-            msg = "Must provide either version or label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
         result = (
             self._version_operation.get(
                 name=name,

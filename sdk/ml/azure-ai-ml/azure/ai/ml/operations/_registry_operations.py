@@ -26,7 +26,6 @@ ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
-@experimental
 class RegistryOperations:
     """RegistryOperations.
 
@@ -54,6 +53,7 @@ class RegistryOperations:
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
+    @experimental
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current
         resource group or subscription.
@@ -71,6 +71,7 @@ class RegistryOperations:
             resource_group_name=self._resource_group_name)
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
+    @experimental
     def get(self, name: str = None) -> Registry:
         """Get a registry by name.
 
@@ -111,6 +112,7 @@ class RegistryOperations:
         )
 
     @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
+    @experimental
     def begin_create(
         self,
         registry: Registry,
@@ -139,6 +141,7 @@ class RegistryOperations:
 
 
     @monitor_with_activity(logger, "Registry.Delete", ActivityType.PUBLICAPI)
+    @experimental
     def delete(self, *, name: str, **kwargs: Dict) -> None:
         """Delete a registry. Returns nothing on a successful operation.
 
