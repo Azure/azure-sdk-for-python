@@ -28,6 +28,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJobValidate:
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error",
@@ -60,7 +61,7 @@ class TestPipelineJobValidate:
                 # only type matched error message in "component
                 {
                     "location": f"{Path('./tests/test_configs/components/invalid/combo.yml').absolute()}#line 35",
-                    "message": "azureml:name-only is not a valid path; Not a valid "
+                    "message": "Not a valid "
                     "URL.; In order to specify a git path, please provide "
                     "the correct path prefixed with 'git+\n"
                     "; In order to specify an existing codes, please "
@@ -244,6 +245,7 @@ class TestPipelineJobValidate:
 
 
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipelineJobValidate:
     def test_pipeline_str(self):
         path = "./tests/test_configs/components/helloworld_component.yml"

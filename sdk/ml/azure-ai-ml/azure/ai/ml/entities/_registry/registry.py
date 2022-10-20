@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
-from azure.ai.ml._schema.registry.registry import RegistrySchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -103,6 +102,8 @@ class Registry(Resource):
     # represented by the registry API, which differs from how registries
     # are represented in YAML. This function converts those differences.
     def _to_dict(self) -> Dict:
+        # JIT import to avoid experimental warnings on unrelated calls
+        from azure.ai.ml._schema.registry.registry import RegistrySchema
         # pylint: disable=no-member
         schema = RegistrySchema(context={BASE_PATH_CONTEXT_KEY: "./"})
 
@@ -142,6 +143,8 @@ class Registry(Resource):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
+        # JIT import to avoid experimental warnings on unrelated calls
+        from azure.ai.ml._schema.registry.registry import RegistrySchema
         loaded_schema = load_from_dict(RegistrySchema, data, context, **kwargs)
         cls._convert_yaml_dict_to_entity_input(loaded_schema)
         return Registry(**loaded_schema)

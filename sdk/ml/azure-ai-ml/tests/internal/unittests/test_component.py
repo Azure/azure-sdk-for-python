@@ -24,10 +24,17 @@ from .._utils import PARAMETERS_TO_TEST
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponent:
     def test_load_v2_component(self):
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
         load_component(yaml_path)
+
+    def test_validate_internal_component(self):
+        yaml_path = r"./tests/test_configs/internal/component_with_code/component_spec.yaml"
+        from azure.ai.ml.entities._validate_funcs import validate_component
+        validation_result = validate_component(yaml_path)
+        assert validation_result.passed, repr(validation_result)
 
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
@@ -265,7 +272,7 @@ class TestComponent:
     )
     def test_environment_dependencies_resolve(self, yaml_path: str, expected_dict: Dict) -> None:
         component: InternalComponent = load_component(source=yaml_path)
-        component.environment.resolve(component._source_path)
+        component.environment.resolve(component._base_path)
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
 
@@ -356,10 +363,44 @@ class TestComponent:
                 assert code_path.resolve() == specified_code_path.resolve()
 
     def test_docker_file_in_additional_includes(self):
-        yaml_path = "./tests/test_configs/internal/component_with_docker_file_" \
-                    "in_additional_includes/helloworld_additional_includes.yml"
+        yaml_path = "./tests/test_configs/internal/component_with_dependency_" \
+                    "in_additional_includes/with_docker_file.yml"
+
+        docker_file_path = "./tests/test_configs/internal/additional_includes/docker/DockerFile"
+        with open(docker_file_path, "r") as docker_file:
+            docker_file_content = docker_file.read()
+
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code():
+            environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
+            assert environment_rest_obj == {
+                "docker": {
+                    "build": {
+                        "dockerfile": docker_file_content,
+                    }
+                },
+                "os": "Linux",
+            }
+
+    def test_conda_pip_in_additional_includes(self):
+        yaml_path = "./tests/test_configs/internal/component_with_dependency_" \
+                    "in_additional_includes/with_conda_pip.yml"
+
+        conda_file_path = "./tests/test_configs/internal/env-conda-dependencies/conda.yaml"
+        with open(conda_file_path, "r") as conda_file:
+            conda_file_content = yaml.safe_load(conda_file)
+
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code():
+            environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
+            assert environment_rest_obj == {
+                "conda": {
+                    "conda_dependencies": conda_file_content,
+                },
+                "os": "Linux",
+            }
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
