@@ -294,7 +294,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     @distributed_trace
     def list_available_localities(
         self,
-        two_letter_iso_country_name, # type: str
+        country_code, # type: str
         administrative_division = None, # type: str
         **kwargs # type: Any
     ):
@@ -303,8 +303,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         Gets the list of cities or towns with available phone numbers.
 
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
+        :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
+        :type country_code: str
         :param administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :type administrative_division: str
@@ -317,7 +317,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_available_localities(
-            two_letter_iso_country_name,
+            country_code,
             administrative_division=administrative_division,
             accept_language=self._accepted_language,
             **kwargs
@@ -326,7 +326,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     @distributed_trace
     def list_available_offerings(
         self,
-        two_letter_iso_country_name, # type: str
+        country_code, # type: str
         phone_number_type = None, # type: PhoneNumberType
         phone_number_assignment_type = None, # type: PhoneNumberAssignmentType
         **kwargs
@@ -336,8 +336,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         List available offerings of capabilities with rates for the given country/region.
 
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
+        :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
+        :type country_code: str
         :param phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
          are: "geographic" and "tollFree". Default value is None.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
@@ -353,7 +353,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_offerings(
-            two_letter_iso_country_name,
+            country_code,
             phone_number_type=phone_number_type,
             phone_number_assignment_type=phone_number_assignment_type,
             **kwargs
@@ -362,7 +362,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     @distributed_trace
     def list_available_area_codes(
         self,
-        two_letter_iso_country_name, # type: str
+        country_code, # type: str
         **kwargs # type: Any
     ):
         # type: (...) -> ItemPaged[AreaCodeItem]
@@ -370,8 +370,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         Gets the list of available toll free area codes.
 
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
+        :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
+        :type country_code: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -380,7 +380,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_area_codes(
-            two_letter_iso_country_name,
+            country_code,
             phone_number_type=PhoneNumberType.GEOGRAPHIC,
             assignment_type=PhoneNumberAssignmentType.APPLICATION,
             **kwargs
@@ -389,7 +389,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     @distributed_trace
     def list_available_area_codes(
         self,
-        two_letter_iso_country_name, # type: str
+        country_code, # type: str
         phone_number_assignment_type, #type: PhoneNumberAssignmentType
         locality, # type: str
         administrative_division = None, # type: str
@@ -400,8 +400,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         Gets the list of available geographic area codes.
 
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
+        :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
+        :type country_code: str
         :param phone_number_assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
          "person" and "application". Default value is None.
         :type phone_number_assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
@@ -419,7 +419,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_area_codes(
-            two_letter_iso_country_name,
+            country_code,
             phone_number_type=PhoneNumberType.GEOGRAPHIC,
             assignment_type= phone_number_assignment_type,
             locality=locality,
