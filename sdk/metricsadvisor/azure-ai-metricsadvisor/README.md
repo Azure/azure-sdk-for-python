@@ -38,10 +38,14 @@ We can use the keys to create a new `MetricsAdvisorClient` or `MetricsAdvisorAdm
 
 <!-- SNIPPET: sample_authentication.authentication_client_with_metrics_advisor_credential -->
 ```python
-from azure.core.pipeline.transport import TrioRequestsTransport
+from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
-async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
-    return await pipeline.run(request)
+service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
+subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
+api_key = os.getenv("METRICS_ADVISOR_API_KEY")
+
+client = MetricsAdvisorClient(service_endpoint,
+                              MetricsAdvisorKeyCredential(subscription_key, api_key))
 ```
 <!-- END SNIPPET -->
 
