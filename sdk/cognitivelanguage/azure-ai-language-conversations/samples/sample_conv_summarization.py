@@ -32,7 +32,7 @@ def sample_conv_summarization():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    # analyze quey
+    # analyze query
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
         poller = client.begin_conversation_analysis(
@@ -72,7 +72,7 @@ def sample_conv_summarization():
                         "taskName": "analyze 1",
                         "kind": "ConversationalSummarizationTask",
                         "parameters": {
-                            "summaryAspects": ["Issue, Resolution"]
+                            "summaryAspects": ["issue", "resolution"]
                         }
                     }
                 ]

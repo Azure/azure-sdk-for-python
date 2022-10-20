@@ -6,7 +6,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "692",
+        "Content-Length": "694",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "0000000000000000",
         "User-Agent": "azsdk-python-ai-language-conversations/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
@@ -48,7 +48,8 @@
             "kind": "ConversationalSummarizationTask",
             "parameters": {
               "summaryAspects": [
-                "Issue, Resolution"
+                "Issue",
+                "Resolution"
               ]
             }
           }
@@ -56,18 +57,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "1a7d6c01-5e86-4cf1-8729-981ec07d1c2f",
+        "apim-request-id": "a08dbe88-1f66-40ee-8b30-2979bd3dc9df",
         "Content-Length": "0",
-        "Date": "Mon, 17 Oct 2022 22:10:04 GMT",
-        "operation-location": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/e3e2175e-8ff4-44bd-844c-69938cfafbb6?api-version=2022-10-01-preview",
+        "Date": "Thu, 20 Oct 2022 18:38:43 GMT",
+        "operation-location": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/24820f41-5551-46ee-b60c-52bf3677fa33?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "106"
+        "x-envoy-upstream-service-time": "283"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/e3e2175e-8ff4-44bd-844c-69938cfafbb6?api-version=2022-10-01-preview",
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/24820f41-5551-46ee-b60c-52bf3677fa33?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -78,20 +79,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "62bff25e-a45d-420a-80b6-d3a171eb5a22",
-        "Content-Length": "330",
+        "apim-request-id": "51c64d4d-a54e-407e-bf69-627974880b48",
+        "Content-Length": "327",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Oct 2022 22:10:04 GMT",
+        "Date": "Thu, 20 Oct 2022 18:38:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "129"
       },
       "ResponseBody": {
-        "jobId": "e3e2175e-8ff4-44bd-844c-69938cfafbb6",
-        "lastUpdatedDateTime": "2022-10-17T22:10:05Z",
-        "createdDateTime": "2022-10-17T22:10:04Z",
-        "expirationDateTime": "2022-10-18T22:10:04Z",
-        "status": "notStarted",
+        "jobId": "24820f41-5551-46ee-b60c-52bf3677fa33",
+        "lastUpdatedDateTime": "2022-10-20T18:38:44Z",
+        "createdDateTime": "2022-10-20T18:38:43Z",
+        "expirationDateTime": "2022-10-21T18:38:43Z",
+        "status": "running",
         "errors": [],
         "displayName": "Analyze conversations from xxx",
         "tasks": {
@@ -104,7 +105,7 @@
       }
     },
     {
-      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/e3e2175e-8ff4-44bd-844c-69938cfafbb6?api-version=2022-10-01-preview",
+      "RequestUri": "https://test-resource.api.cognitive.microsoft.com/language/analyze-conversations/jobs/24820f41-5551-46ee-b60c-52bf3677fa33?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -115,19 +116,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "4c140fb4-1634-4d32-9e42-651eaa54ce85",
-        "Content-Length": "807",
+        "apim-request-id": "0969c98f-ed79-490e-95c3-d8572685354d",
+        "Content-Length": "915",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 17 Oct 2022 22:10:10 GMT",
+        "Date": "Thu, 20 Oct 2022 18:38:49 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "125"
+        "x-envoy-upstream-service-time": "140"
       },
       "ResponseBody": {
-        "jobId": "e3e2175e-8ff4-44bd-844c-69938cfafbb6",
-        "lastUpdatedDateTime": "2022-10-17T22:10:06Z",
-        "createdDateTime": "2022-10-17T22:10:04Z",
-        "expirationDateTime": "2022-10-18T22:10:04Z",
+        "jobId": "24820f41-5551-46ee-b60c-52bf3677fa33",
+        "lastUpdatedDateTime": "2022-10-20T18:38:46Z",
+        "createdDateTime": "2022-10-20T18:38:43Z",
+        "expirationDateTime": "2022-10-21T18:38:43Z",
         "status": "succeeded",
         "errors": [],
         "displayName": "Analyze conversations from xxx",
@@ -140,36 +141,31 @@
             {
               "kind": "conversationalSummarizationResults",
               "taskName": "analyze 1",
-              "lastUpdateDateTime": "2022-10-17T22:10:06.6652137Z",
+              "lastUpdateDateTime": "2022-10-20T18:38:46.9365153Z",
               "status": "succeeded",
               "results": {
                 "conversations": [
                   {
-                    "summaries": [
-                      {
-                        "aspect": "chapterTitle",
-                        "text": "How to Upgrade Office",
-                        "contexts": [
-                          {
-                            "conversationItemId": "1",
-                            "offset": 0,
-                            "length": 26
-                          },
-                          {
-                            "conversationItemId": "2",
-                            "offset": 0,
-                            "length": 65
-                          },
-                          {
-                            "conversationItemId": "3",
-                            "offset": 0,
-                            "length": 74
-                          }
-                        ]
-                      }
-                    ],
+                    "summaries": [],
                     "id": "conversation1",
-                    "warnings": []
+                    "warnings": [
+                      {
+                        "code": "GenerationFailure",
+                        "message": "Insufficient content to generate summary."
+                      },
+                      {
+                        "code": "GenerationFailure",
+                        "message": "No relevant summary could be generated."
+                      },
+                      {
+                        "code": "GenerationFailure",
+                        "message": "Insufficient content to generate summary."
+                      },
+                      {
+                        "code": "GenerationFailure",
+                        "message": "No relevant summary could be generated."
+                      }
+                    ]
                   }
                 ],
                 "errors": [],

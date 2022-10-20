@@ -62,7 +62,7 @@ class TestConversationalSummarization(AzureRecordedTestCase):
                             "taskName": "analyze 1",
                             "kind": "ConversationalSummarizationTask",
                             "parameters": {
-                                "summaryAspects": ["Issue, Resolution"]
+                                "summaryAspects": ["Issue", "Resolution"]
                             }
                         }
                     ]
