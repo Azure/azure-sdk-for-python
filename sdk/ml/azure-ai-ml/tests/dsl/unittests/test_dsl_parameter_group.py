@@ -17,6 +17,7 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipeline:
     def test_validate_conflict_key(self) -> None:
         def validator(keys, assert_valid=True):

@@ -21,6 +21,7 @@ def bodiless_matching(test_proxy):
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.data_experiences_test
 class TestData(AzureRecordedTestCase):
     def test_data_upload_file(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         f = tmp_path / "data_local.yaml"
