@@ -295,7 +295,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     def list_available_localities(
         self,
         country_code, # type: str
-        administrative_division = None, # type: str
         **kwargs # type: Any
     ):
         # type: (...) -> ItemPaged[PhoneNumberLocality]
@@ -318,7 +317,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         """
         return self._phone_number_client.phone_numbers.list_available_localities(
             country_code,
-            administrative_division=administrative_division,
+            administrative_division= kwargs.pop("administrative_division", None),
             accept_language=self._accepted_language,
             **kwargs
         )
@@ -327,8 +326,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     def list_available_offerings(
         self,
         country_code, # type: str
-        phone_number_type = None, # type: PhoneNumberType
-        phone_number_assignment_type = None, # type: PhoneNumberAssignmentType
         **kwargs
     ):
         # type: (...) -> ItemPaged[PhoneNumberOffering]
@@ -354,8 +351,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         """
         return self._phone_number_client.phone_numbers.list_offerings(
             country_code,
-            phone_number_type=phone_number_type,
-            phone_number_assignment_type=phone_number_assignment_type,
+            phone_number_type= kwargs.pop("phone_number_type", None),
+            phone_number_assignment_type= kwargs.pop("phone_number_assignment_type", None),
             **kwargs
         )
 
@@ -392,7 +389,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         country_code, # type: str
         phone_number_assignment_type, #type: PhoneNumberAssignmentType
         locality, # type: str
-        administrative_division = None, # type: str
         **kwargs # type: Any
     ):
         # type: (...) -> ItemPaged[AreaCodeItem]
@@ -423,6 +419,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             phone_number_type=PhoneNumberType.GEOGRAPHIC,
             assignment_type= phone_number_assignment_type,
             locality=locality,
-            administrative_division=administrative_division,
+            administrative_division= kwargs.pop("administrative_division", None),
             **kwargs
         )
