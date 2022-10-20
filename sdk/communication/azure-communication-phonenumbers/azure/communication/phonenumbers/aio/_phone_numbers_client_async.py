@@ -340,9 +340,9 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :param phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
          are: "geographic" and "tollFree". Default value is None.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :param phone_number_assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
-        :type phone_number_assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -354,7 +354,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         return self._phone_number_client.phone_numbers.list_offerings(
             country_code,
             phone_number_type=kwargs.pop("phone_number_type", None),
-            phone_number_assignment_type=kwargs.pop("phone_number_assignment_type", None),
+            assignment_type=kwargs.pop("assignment_type", None),
             **kwargs
         )
 
@@ -390,7 +390,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     def list_available_area_codes(
         self,
         country_code, # type: str
-        phone_number_assignment_type, #type: PhoneNumberAssignmentType
+        assignment_type, #type: PhoneNumberAssignmentType
         locality, # type: str
         **kwargs # type: Any
     ):
@@ -401,9 +401,9 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
         :type country_code: str
-        :param phone_number_assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
+        :param assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
          "person" and "application". Default value is None.
-        :type phone_number_assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :param locality: The name of locality in which to search for the area code. e.g. Seattle.
          This is required if the phone number type is Geographic. Default value is None.
         :type locality: str
@@ -421,7 +421,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         return self._phone_number_client.phone_numbers.list_area_codes(
             country_code,
             phone_number_type=PhoneNumberType.GEOGRAPHIC,
-            assignment_type= phone_number_assignment_type,
+            assignment_type= assignment_type,
             locality=locality,
             administrative_division= kwargs.pop("administrative_division", None),
             **kwargs
