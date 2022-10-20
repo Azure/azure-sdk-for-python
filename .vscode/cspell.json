@@ -1117,6 +1117,16 @@
         "mrenclave",
         "infile"
       ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+	  "deseralize",
+	  "wday"
+      ]
     }
   ],
   "allowCompoundWords": true
