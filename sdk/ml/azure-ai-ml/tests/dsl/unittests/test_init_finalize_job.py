@@ -20,6 +20,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestInitFinalizeJob:
     component_func = partial(
         load_component(str(components_dir / "echo_string_component.yml")),

@@ -62,6 +62,7 @@ def create_internal_sample_dependent_datasets(client: MLClient):
 )
 @pytest.mark.skipif(condition=not is_live(), reason="Works in live mode, does not work in playback")
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
     @classmethod
     def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client: MLClient):
