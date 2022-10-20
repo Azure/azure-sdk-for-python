@@ -9,6 +9,9 @@
 
 ### Breaking Changes
 
+- Rename local storage configuration, change default path
+    ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
+
 ### Bugs Fixed
 
 - Fixed sampleRate field in ApplicationInsightsSampler, changed attribute to `_MS.sampleRate`
