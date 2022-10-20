@@ -48,6 +48,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipelineWithSpecificNodes:
     def test_dsl_pipeline_sweep_node(self) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
