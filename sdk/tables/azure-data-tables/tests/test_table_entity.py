@@ -1223,7 +1223,7 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_delete_entity_with_keys_in_uuid(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_entity_with_keys_in_uuid(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -1231,12 +1231,13 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
                 u"PartitionKey": TEST_GUID,
                 u"RowKey": TEST_GUID,
             }
-            self.table.upsert_entity(entity)
-            
+
+            # Act
+            self.table.create_entity(entity)
+
             result = self.table.get_entity(TEST_GUID, TEST_GUID)
             assert result is not None
 
-            # Act
             # test delete with "entity"
             self.table.delete_entity(entity=entity)
 
@@ -1244,7 +1245,10 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
                 result = self.table.get_entity(TEST_GUID, TEST_GUID)
 
             self.table.upsert_entity(entity)
-            # Act
+
+            result = self.table.get_entity(TEST_GUID, TEST_GUID)
+            assert result is not None
+
             # test delete with "PartitionKey" and "RowKey"
             self.table.delete_entity(TEST_GUID, TEST_GUID)
 

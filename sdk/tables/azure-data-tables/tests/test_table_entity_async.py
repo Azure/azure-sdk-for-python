@@ -959,7 +959,7 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_entity_with_keys_in_uuid(self, tables_storage_account_name, tables_primary_storage_account_key):
+    async def test_entity_with_keys_in_uuid(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
@@ -967,12 +967,12 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 u"PartitionKey": TEST_GUID,
                 u"RowKey": TEST_GUID,
             }
-            await self.table.upsert_entity(entity)
-            
+            # Act
+            await self.table.create_entity(entity)
+
             result = await self.table.get_entity(TEST_GUID, TEST_GUID)
             assert result is not None
 
-            # Act
             # test delete with "entity"
             await self.table.delete_entity(entity=entity)
 
@@ -980,7 +980,10 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 result = await self.table.get_entity(TEST_GUID, TEST_GUID)
 
             await self.table.upsert_entity(entity)
-            # Act
+
+            result = await self.table.get_entity(TEST_GUID, TEST_GUID)
+            assert result is not None
+
             # test delete with "PartitionKey" and "RowKey"
             await self.table.delete_entity(TEST_GUID, TEST_GUID)
 

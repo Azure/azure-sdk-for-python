@@ -901,32 +901,31 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_delete_entity_with_keys_in_uuid(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_entity_with_keys_in_uuid(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity1 = {
-                u"PartitionKey": str(TEST_GUID),
-                u"RowKey": str(TEST_GUID),
-            }
-            await self.table.upsert_entity(entity1)
-            
-            result = await self.table.get_entity(TEST_GUID, TEST_GUID)
-            assert result is not None
-
-            entity2 = {
+            entity = {
                 u"PartitionKey": TEST_GUID,
                 u"RowKey": TEST_GUID,
             }
             # Act
+            await self.table.create_entity(entity)
+
+            result = await self.table.get_entity(TEST_GUID, TEST_GUID)
+            assert result is not None
+
             # test delete with "entity"
-            await self.table.delete_entity(entity=entity2)
+            await self.table.delete_entity(entity=entity)
 
             with pytest.raises(ResourceNotFoundError):
                 result = await self.table.get_entity(TEST_GUID, TEST_GUID)
 
-            await self.table.upsert_entity(entity1)
-            # Act
+            await self.table.upsert_entity(entity)
+
+            result = await self.table.get_entity(TEST_GUID, TEST_GUID)
+            assert result is not None
+
             # test delete with "PartitionKey" and "RowKey"
             await self.table.delete_entity(TEST_GUID, TEST_GUID)
 
