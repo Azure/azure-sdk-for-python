@@ -21,4 +21,4 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2015-08-01' = {
   }
 }
 
-output EVENTHUB_NAMESPACE_CONNECTION_STRING string = listkeys(eventHubsAuthRuleResourceId, '2015-08-01').primaryConnectionString
+output AZURE_EVENTHUB_CONNECTION_STRING string = listkeys(eventHubsAuthRuleResourceId, '2015-08-01').primaryConnectionString
