@@ -33,7 +33,10 @@ if __name__ == "__main__":
     print("Set the following certificate paths:")
     print("\tSSL_CERT_DIR={}".format(os.path.dirname(COMBINED_LOCATION)))
     print("\tREQUESTS_CA_BUNDLE={}".format(COMBINED_LOCATION))
+    print("\tDEFAULT_CA_BUNDLE_PATH={}".format(COMBINED_LOCATION))
 
     if os.getenv('TF_BUILD', False):
         print("##vso[task.setvariable variable=SSL_CERT_DIR]{}".format(os.path.dirname(COMBINED_LOCATION)))
         print("##vso[task.setvariable variable=REQUESTS_CA_BUNDLE]{}".format(COMBINED_LOCATION))
+        print("##vso[task.setvariable variable=DEFAULT_CA_BUNDLE_PATH]{}".format(COMBINED_LOCATION))
+
