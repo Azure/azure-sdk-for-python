@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+* `AzureCliCredential` now works even when `az` prints warnings to stderr.
+
 ### Other Changes
 
 ## 1.12.0b2 (2022-10-11)
