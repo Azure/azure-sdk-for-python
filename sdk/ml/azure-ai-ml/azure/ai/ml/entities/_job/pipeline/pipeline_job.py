@@ -348,7 +348,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                     if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                         return False
             return True
-        
+
         def _is_control_flow_node(_validate_job_name: str) -> bool:
             from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 
