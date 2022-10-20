@@ -41,7 +41,7 @@ class TestRegistrySchema:
             assert isinstance(storages, SystemCreatedStorageAccount)
             assert not storages.storage_account_hns
             assert storages.storage_account_type == StorageAccountType.STANDARD_RAGRS
-            #assert storages.replication_count == 1
+            assert storages.replication_count == 1
 
     def test_deserialize_from_yaml_with_system_acr(self) -> None:
         path = Path("./tests/test_configs/registry/registry_valid_2.yaml")

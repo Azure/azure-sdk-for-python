@@ -20,6 +20,7 @@ class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
         allowed_values=[accountType.value for accountType in StorageAccountType], casing_transform=lambda x: x.lower()
     )
     replication_count = fields.Int(load_default=1, validate=lambda count : count > 0)
+    replicated_ids = fields.List(fields.Str(), dump_only=True)
 
     @post_load
     def make(self, data, **kwargs):

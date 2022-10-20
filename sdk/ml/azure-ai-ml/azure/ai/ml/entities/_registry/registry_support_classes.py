@@ -115,7 +115,7 @@ class SystemCreatedStorageAccount:
         :type replication_count: int
         :param replicated_ids: If this storage was replicated, then this is a 
             list of all storage IDs with these settings for this registry.
-            Defaults to none for unreplicated storage accounts.
+            Defaults to none for un-replicated storage accounts.
         :type replicated_ids: List[str]
         """
         self.arm_resource_id = arm_resource_id
