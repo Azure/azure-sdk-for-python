@@ -24,13 +24,14 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._generated.models import (
-        AreaCodeResult,
-        PhoneNumberLocality,
+        AreaCodeItem,
+        PhoneNumberAdministrativeDivision,
+        PhoneNumberCapabilities,
+        PhoneNumberCapabilityType,
         PhoneNumberCountry,
         PhoneNumberOffering,
-        PhoneNumberCapabilities,
+        PhoneNumberLocality,
         PhoneNumberSearchResult,
-        PhoneNumberCapabilityType,
         PurchasedPhoneNumber,
     )
 
@@ -48,6 +49,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         self,
         endpoint, # type: str
         credential, # type: TokenCredential
+        accepted_language, # type: str
         **kwargs # type: Any
     ):
         # type: (...) -> None
@@ -62,7 +64,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._accepted_language = kwargs.pop("accepted_language", None)
+        self._accepted_language = accepted_language
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
             authentication_policy=get_authentication_policy(endpoint, credential),
@@ -142,6 +144,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             phone_number_type, # type: str
             assignment_type, # type: str
             capabilities, # type: PhoneNumberCapabilities
+            locality, # type: PhoneNumberLocality
+            administrative_division, # type: PhoneNumberAdministrativeDivision
             **kwargs # type: Any
     ):
         # type: (...) -> LROPoller[PhoneNumberSearchResult]
@@ -175,7 +179,9 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             assignment_type=assignment_type,
             capabilities=capabilities,
             quantity=kwargs.pop('quantity', None),
-            area_code=kwargs.pop('area_code', None)
+            area_code=kwargs.pop('area_code', None),
+            locality=locality,
+            administrative_division=administrative_division
         )
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
@@ -359,7 +365,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         two_letter_iso_country_name, # type: str
         **kwargs # type: Any
     ):
-        # type: (...) -> ItemPaged[AreaCodeResult]
+        # type: (...) -> ItemPaged[AreaCodeItem]
         """Gets the list of available toll free area codes.
 
         Gets the list of available toll free area codes.
@@ -369,8 +375,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
-        :return: An iterator like instance of AreaCodeResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
+        :return: An iterator like instance of AreaCodeItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_area_codes(
@@ -389,7 +395,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         administrative_division = None, # type: str
         **kwargs # type: Any
     ):
-        # type: (...) -> ItemPaged[AreaCodeResult]
+        # type: (...) -> ItemPaged[AreaCodeItem]
         """Gets the list of available geographic area codes.
 
         Gets the list of available geographic area codes.
@@ -408,8 +414,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
-        :return: An iterator like instance of AreaCodeResult
-        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
+        :return: An iterator like instance of AreaCodeItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_area_codes(
