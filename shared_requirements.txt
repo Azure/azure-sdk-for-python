@@ -197,6 +197,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoretable azure-core<2.0.0,>=1.14.0
 #override azure-eventhub uamqp>=1.6.0,<2.0.0
 #override azure-appconfiguration azure-core<2.0.0,>=1.24.0
+
+#override azure-mgmt-datadog azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-appconfiguration-provider azure-appconfiguration<2.0.0,>=1.3.0
 #override azure-appconfiguration-provider azure-keyvault-secrets<5.0.0,>=4.3.0
 #override azure-servicebus uamqp>=1.5.1,<2.0.0
@@ -344,6 +346,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-cognitiveservices-search-newssearch azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-search-videosearch azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-search-visualsearch azure-mgmt-core>=1.2.0,<2.0.0
+
+#override azure-mgmt-datadog msrest>=0.7.1
 #override azure-cognitiveservices-search-websearch azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-vision-contentmoderator azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-vision-customvision azure-mgmt-core>=1.2.0,<2.0.0
