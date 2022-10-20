@@ -40,7 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     resource_group_name: str,
     managed_instance_name: str,
-    authentication_name: Union[str, "_models.AuthenticationName"],
+    authentication_name: Union[str, _models.AuthenticationName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -76,7 +76,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     managed_instance_name: str,
-    authentication_name: Union[str, "_models.AuthenticationName"],
+    authentication_name: Union[str, _models.AuthenticationName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -115,7 +115,7 @@ def build_create_or_update_request(
 def build_delete_request(
     resource_group_name: str,
     managed_instance_name: str,
-    authentication_name: Union[str, "_models.AuthenticationName"],
+    authentication_name: Union[str, _models.AuthenticationName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -197,7 +197,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         **kwargs: Any
     ) -> _models.ManagedInstanceAzureADOnlyAuthentication:
         """Gets a specific Azure Active Directory only authentication property.
@@ -265,7 +265,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: Union[_models.ManagedInstanceAzureADOnlyAuthentication, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedInstanceAzureADOnlyAuthentication]:
@@ -337,7 +337,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: _models.ManagedInstanceAzureADOnlyAuthentication,
         *,
         content_type: str = "application/json",
@@ -380,7 +380,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -423,7 +423,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: Union[_models.ManagedInstanceAzureADOnlyAuthentication, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedInstanceAzureADOnlyAuthentication]:
@@ -509,7 +509,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -559,7 +559,7 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes an existing server Active Directory only authentication property.

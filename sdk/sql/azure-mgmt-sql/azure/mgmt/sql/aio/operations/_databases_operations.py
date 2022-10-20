@@ -1189,7 +1189,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        replica_type: Optional[Union[str, _models.ReplicaType]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -1241,7 +1241,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        replica_type: Optional[Union[str, _models.ReplicaType]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Failovers a database.

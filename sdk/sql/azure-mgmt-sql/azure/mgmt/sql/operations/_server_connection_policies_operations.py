@@ -40,7 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     resource_group_name: str,
     server_name: str,
-    connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+    connection_policy_name: Union[str, _models.ConnectionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -76,7 +76,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
-    connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+    connection_policy_name: Union[str, _models.ConnectionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -167,7 +167,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         **kwargs: Any
     ) -> _models.ServerConnectionPolicy:
         """Gets a server connection policy.
@@ -234,7 +234,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: Union[_models.ServerConnectionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.ServerConnectionPolicy]:
@@ -303,7 +303,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: _models.ServerConnectionPolicy,
         *,
         content_type: str = "application/json",
@@ -342,7 +342,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -381,7 +381,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: Union[_models.ServerConnectionPolicy, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ServerConnectionPolicy]:

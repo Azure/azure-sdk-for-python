@@ -64,7 +64,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedInstanceLongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
         **kwargs: Any
     ) -> _models.ManagedInstanceLongTermRetentionPolicy:
         """Gets a managed database's long term retention policy.
@@ -135,7 +135,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedInstanceLongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
         parameters: Union[_models.ManagedInstanceLongTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedInstanceLongTermRetentionPolicy]:
@@ -206,7 +206,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedInstanceLongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
         parameters: _models.ManagedInstanceLongTermRetentionPolicy,
         *,
         content_type: str = "application/json",
@@ -249,7 +249,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedInstanceLongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -292,7 +292,7 @@ class ManagedInstanceLongTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedInstanceLongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedInstanceLongTermRetentionPolicyName],
         parameters: Union[_models.ManagedInstanceLongTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceLongTermRetentionPolicy]:

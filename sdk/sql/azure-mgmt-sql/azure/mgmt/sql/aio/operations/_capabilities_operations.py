@@ -52,7 +52,7 @@ class CapabilitiesOperations:
 
     @distributed_trace_async
     async def list_by_location(
-        self, location_name: str, include: Optional[Union[str, "_models.CapabilityGroup"]] = None, **kwargs: Any
+        self, location_name: str, include: Optional[Union[str, _models.CapabilityGroup]] = None, **kwargs: Any
     ) -> _models.LocationCapabilities:
         """Gets the subscription capabilities available for the specified location.
 

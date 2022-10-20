@@ -273,9 +273,9 @@ def build_list_by_managed_instance_request(
     databases: Optional[str] = None,
     start_time: Optional[str] = None,
     end_time: Optional[str] = None,
-    interval: Optional[Union[str, "_models.QueryTimeGrainType"]] = None,
-    aggregation_function: Optional[Union[str, "_models.AggregationFunctionType"]] = None,
-    observation_metric: Optional[Union[str, "_models.MetricType"]] = None,
+    interval: Optional[Union[str, _models.QueryTimeGrainType]] = None,
+    aggregation_function: Optional[Union[str, _models.AggregationFunctionType]] = None,
+    observation_metric: Optional[Union[str, _models.MetricType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -325,7 +325,7 @@ def build_failover_request(
     managed_instance_name: str,
     subscription_id: str,
     *,
-    replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+    replica_type: Optional[Union[str, _models.ReplicaType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1217,9 +1217,9 @@ class ManagedInstancesOperations:
         databases: Optional[str] = None,
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
-        interval: Optional[Union[str, "_models.QueryTimeGrainType"]] = None,
-        aggregation_function: Optional[Union[str, "_models.AggregationFunctionType"]] = None,
-        observation_metric: Optional[Union[str, "_models.MetricType"]] = None,
+        interval: Optional[Union[str, _models.QueryTimeGrainType]] = None,
+        aggregation_function: Optional[Union[str, _models.AggregationFunctionType]] = None,
+        observation_metric: Optional[Union[str, _models.MetricType]] = None,
         **kwargs: Any
     ) -> Iterable["_models.TopQueries"]:
         """Get top resource consuming queries of a managed instance.
@@ -1325,7 +1325,7 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        replica_type: Optional[Union[str, _models.ReplicaType]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -1375,7 +1375,7 @@ class ManagedInstancesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        replica_type: Optional[Union[str, _models.ReplicaType]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Failovers a managed instance.

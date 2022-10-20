@@ -38,7 +38,7 @@ def build_list_by_location_request(
     location_name: str,
     subscription_id: str,
     *,
-    include: Optional[Union[str, "_models.CapabilityGroup"]] = None,
+    include: Optional[Union[str, _models.CapabilityGroup]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -90,7 +90,7 @@ class CapabilitiesOperations:
 
     @distributed_trace
     def list_by_location(
-        self, location_name: str, include: Optional[Union[str, "_models.CapabilityGroup"]] = None, **kwargs: Any
+        self, location_name: str, include: Optional[Union[str, _models.CapabilityGroup]] = None, **kwargs: Any
     ) -> _models.LocationCapabilities:
         """Gets the subscription capabilities available for the specified location.
 

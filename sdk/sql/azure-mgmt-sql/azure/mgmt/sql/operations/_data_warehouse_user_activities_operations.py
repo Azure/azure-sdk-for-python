@@ -39,7 +39,7 @@ def build_get_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    data_warehouse_user_activity_name: Union[str, "_models.DataWarehouseUserActivityName"],
+    data_warehouse_user_activity_name: Union[str, _models.DataWarehouseUserActivityName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -132,7 +132,7 @@ class DataWarehouseUserActivitiesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        data_warehouse_user_activity_name: Union[str, "_models.DataWarehouseUserActivityName"],
+        data_warehouse_user_activity_name: Union[str, _models.DataWarehouseUserActivityName],
         **kwargs: Any
     ) -> _models.DataWarehouseUserActivities:
         """Gets the user activities of a data warehouse which includes running and suspended queries.

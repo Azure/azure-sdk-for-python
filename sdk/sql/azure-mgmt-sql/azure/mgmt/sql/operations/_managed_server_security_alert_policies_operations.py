@@ -40,7 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     resource_group_name: str,
     managed_instance_name: str,
-    security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+    security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -76,7 +76,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     managed_instance_name: str,
-    security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+    security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -167,7 +167,7 @@ class ManagedServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         **kwargs: Any
     ) -> _models.ManagedServerSecurityAlertPolicy:
         """Get a managed server's threat detection policy.
@@ -234,7 +234,7 @@ class ManagedServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: Union[_models.ManagedServerSecurityAlertPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedServerSecurityAlertPolicy]:
@@ -303,7 +303,7 @@ class ManagedServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: _models.ManagedServerSecurityAlertPolicy,
         *,
         content_type: str = "application/json",
@@ -342,7 +342,7 @@ class ManagedServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -381,7 +381,7 @@ class ManagedServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: Union[_models.ManagedServerSecurityAlertPolicy, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedServerSecurityAlertPolicy]:

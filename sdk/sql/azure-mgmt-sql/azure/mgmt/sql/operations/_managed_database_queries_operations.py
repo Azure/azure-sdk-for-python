@@ -82,7 +82,7 @@ def build_list_by_query_request(
     *,
     start_time: Optional[str] = None,
     end_time: Optional[str] = None,
-    interval: Optional[Union[str, "_models.QueryTimeGrainType"]] = None,
+    interval: Optional[Union[str, _models.QueryTimeGrainType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -216,7 +216,7 @@ class ManagedDatabaseQueriesOperations:
         query_id: str,
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
-        interval: Optional[Union[str, "_models.QueryTimeGrainType"]] = None,
+        interval: Optional[Union[str, _models.QueryTimeGrainType]] = None,
         **kwargs: Any
     ) -> Iterable["_models.QueryStatistics"]:
         """Get query execution statistics by query id.

@@ -253,7 +253,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists all long term retention backups for a managed database.
@@ -347,7 +347,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         location_name: str,
         managed_instance_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for a given managed instance.
@@ -437,7 +437,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         self,
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for managed databases in a given location.
@@ -735,7 +735,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         managed_instance_name: str,
         database_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists all long term retention backups for a managed database.
@@ -834,7 +834,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         location_name: str,
         managed_instance_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for a given managed instance.
@@ -929,7 +929,7 @@ class LongTermRetentionManagedInstanceBackupsOperations:
         resource_group_name: str,
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ManagedInstanceLongTermRetentionBackup"]:
         """Lists the long term retention backups for managed databases in a given location.

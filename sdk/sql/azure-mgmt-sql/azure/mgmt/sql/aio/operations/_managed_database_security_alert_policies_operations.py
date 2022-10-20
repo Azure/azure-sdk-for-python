@@ -62,7 +62,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         **kwargs: Any
     ) -> _models.ManagedDatabaseSecurityAlertPolicy:
         """Gets a managed database's security alert policy.
@@ -135,7 +135,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: _models.ManagedDatabaseSecurityAlertPolicy,
         *,
         content_type: str = "application/json",
@@ -170,7 +170,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -205,7 +205,7 @@ class ManagedDatabaseSecurityAlertPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: Union[_models.ManagedDatabaseSecurityAlertPolicy, IO],
         **kwargs: Any
     ) -> _models.ManagedDatabaseSecurityAlertPolicy:

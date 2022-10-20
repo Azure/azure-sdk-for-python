@@ -39,7 +39,7 @@ def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
+    geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -80,7 +80,7 @@ def build_get_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
+    geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -171,7 +171,7 @@ class GeoBackupPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
+        geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
         parameters: _models.GeoBackupPolicy,
         *,
         content_type: str = "application/json",
@@ -206,7 +206,7 @@ class GeoBackupPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
+        geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -241,7 +241,7 @@ class GeoBackupPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
+        geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
         parameters: Union[_models.GeoBackupPolicy, IO],
         **kwargs: Any
     ) -> _models.GeoBackupPolicy:
@@ -336,7 +336,7 @@ class GeoBackupPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        geo_backup_policy_name: Union[str, "_models.GeoBackupPolicyName"],
+        geo_backup_policy_name: Union[str, _models.GeoBackupPolicyName],
         **kwargs: Any
     ) -> _models.GeoBackupPolicy:
         """Gets a geo backup policy.

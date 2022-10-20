@@ -756,7 +756,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackup"]:
         """Lists all long term retention backups for a database.
@@ -848,7 +848,7 @@ class LongTermRetentionBackupsOperations:
         self,
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given location.
@@ -935,7 +935,7 @@ class LongTermRetentionBackupsOperations:
         location_name: str,
         long_term_retention_server_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given server.
@@ -1749,7 +1749,7 @@ class LongTermRetentionBackupsOperations:
         long_term_retention_server_name: str,
         long_term_retention_database_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackup"]:
         """Lists all long term retention backups for a database.
@@ -1846,7 +1846,7 @@ class LongTermRetentionBackupsOperations:
         resource_group_name: str,
         location_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given location.
@@ -1938,7 +1938,7 @@ class LongTermRetentionBackupsOperations:
         location_name: str,
         long_term_retention_server_name: str,
         only_latest_per_database: Optional[bool] = None,
-        database_state: Optional[Union[str, "_models.DatabaseState"]] = None,
+        database_state: Optional[Union[str, _models.DatabaseState]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given server.

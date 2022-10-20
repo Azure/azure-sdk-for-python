@@ -63,7 +63,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -113,7 +113,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Revalidates an existing encryption protector.
@@ -264,7 +264,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> _models.ManagedInstanceEncryptionProtector:
         """Gets a managed instance encryption protector.
@@ -332,7 +332,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.ManagedInstanceEncryptionProtector, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedInstanceEncryptionProtector]:
@@ -401,7 +401,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: _models.ManagedInstanceEncryptionProtector,
         *,
         content_type: str = "application/json",
@@ -442,7 +442,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -483,7 +483,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.ManagedInstanceEncryptionProtector, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceEncryptionProtector]:

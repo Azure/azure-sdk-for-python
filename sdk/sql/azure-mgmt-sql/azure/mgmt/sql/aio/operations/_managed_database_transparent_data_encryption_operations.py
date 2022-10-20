@@ -62,7 +62,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        tde_name: Union[str, "_models.TransparentDataEncryptionName"],
+        tde_name: Union[str, _models.TransparentDataEncryptionName],
         **kwargs: Any
     ) -> _models.ManagedTransparentDataEncryption:
         """Gets a managed database's transparent data encryption.
@@ -135,7 +135,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        tde_name: Union[str, "_models.TransparentDataEncryptionName"],
+        tde_name: Union[str, _models.TransparentDataEncryptionName],
         parameters: _models.ManagedTransparentDataEncryption,
         *,
         content_type: str = "application/json",
@@ -170,7 +170,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        tde_name: Union[str, "_models.TransparentDataEncryptionName"],
+        tde_name: Union[str, _models.TransparentDataEncryptionName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -205,7 +205,7 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        tde_name: Union[str, "_models.TransparentDataEncryptionName"],
+        tde_name: Union[str, _models.TransparentDataEncryptionName],
         parameters: Union[_models.ManagedTransparentDataEncryption, IO],
         **kwargs: Any
     ) -> _models.ManagedTransparentDataEncryption:

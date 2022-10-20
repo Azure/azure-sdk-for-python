@@ -142,7 +142,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         **kwargs: Any
     ) -> _models.ManagedInstanceAdvancedThreatProtection:
         """Get a managed instance's Advanced Threat Protection state.
@@ -211,7 +211,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: Union[_models.ManagedInstanceAdvancedThreatProtection, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedInstanceAdvancedThreatProtection]:
@@ -280,7 +280,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: _models.ManagedInstanceAdvancedThreatProtection,
         *,
         content_type: str = "application/json",
@@ -322,7 +322,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -364,7 +364,7 @@ class ManagedInstanceAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: Union[_models.ManagedInstanceAdvancedThreatProtection, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceAdvancedThreatProtection]:

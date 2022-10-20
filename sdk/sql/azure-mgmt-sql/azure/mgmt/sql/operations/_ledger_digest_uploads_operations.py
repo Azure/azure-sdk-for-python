@@ -41,7 +41,7 @@ def build_get_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+    ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -79,7 +79,7 @@ def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+    ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -152,7 +152,7 @@ def build_disable_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+    ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -211,7 +211,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
         **kwargs: Any
     ) -> _models.LedgerDigestUploads:
         """Gets the current ledger digest upload configuration for a database.
@@ -282,7 +282,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
         parameters: Union[_models.LedgerDigestUploads, IO],
         **kwargs: Any
     ) -> Optional[_models.LedgerDigestUploads]:
@@ -353,7 +353,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
         parameters: _models.LedgerDigestUploads,
         *,
         content_type: str = "application/json",
@@ -396,7 +396,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -439,7 +439,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
         parameters: Union[_models.LedgerDigestUploads, IO],
         **kwargs: Any
     ) -> LROPoller[_models.LedgerDigestUploads]:
@@ -606,7 +606,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
         **kwargs: Any
     ) -> Optional[_models.LedgerDigestUploads]:
         error_map = {
@@ -664,7 +664,7 @@ class LedgerDigestUploadsOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        ledger_digest_uploads: Union[str, "_models.LedgerDigestUploadsName"],
+        ledger_digest_uploads: Union[str, _models.LedgerDigestUploadsName],
         **kwargs: Any
     ) -> LROPoller[_models.LedgerDigestUploads]:
         """Disables uploading ledger digests to an Azure Storage account or an Azure Confidential Ledger

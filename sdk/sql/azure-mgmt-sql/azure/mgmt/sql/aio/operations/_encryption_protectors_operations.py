@@ -141,7 +141,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> _models.EncryptionProtector:
         """Gets a server encryption protector.
@@ -209,7 +209,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.EncryptionProtector, IO],
         **kwargs: Any
     ) -> Optional[_models.EncryptionProtector]:
@@ -278,7 +278,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: _models.EncryptionProtector,
         *,
         content_type: str = "application/json",
@@ -318,7 +318,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -358,7 +358,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.EncryptionProtector, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EncryptionProtector]:
@@ -442,7 +442,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -492,7 +492,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Revalidates an existing encryption protector.

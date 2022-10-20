@@ -63,7 +63,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         **kwargs: Any
     ) -> _models.ServerConnectionPolicy:
         """Gets a server connection policy.
@@ -130,7 +130,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: Union[_models.ServerConnectionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.ServerConnectionPolicy]:
@@ -199,7 +199,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: _models.ServerConnectionPolicy,
         *,
         content_type: str = "application/json",
@@ -238,7 +238,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -277,7 +277,7 @@ class ServerConnectionPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        connection_policy_name: Union[str, "_models.ConnectionPolicyName"],
+        connection_policy_name: Union[str, _models.ConnectionPolicyName],
         parameters: Union[_models.ServerConnectionPolicy, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerConnectionPolicy]:

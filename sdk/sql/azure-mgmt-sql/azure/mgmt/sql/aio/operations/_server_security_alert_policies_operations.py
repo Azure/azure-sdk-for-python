@@ -63,7 +63,7 @@ class ServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         **kwargs: Any
     ) -> _models.ServerSecurityAlertPolicy:
         """Get a server's security alert policy.
@@ -130,7 +130,7 @@ class ServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: Union[_models.ServerSecurityAlertPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.ServerSecurityAlertPolicy]:
@@ -199,7 +199,7 @@ class ServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: _models.ServerSecurityAlertPolicy,
         *,
         content_type: str = "application/json",
@@ -238,7 +238,7 @@ class ServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -277,7 +277,7 @@ class ServerSecurityAlertPoliciesOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        security_alert_policy_name: Union[str, "_models.SecurityAlertPolicyName"],
+        security_alert_policy_name: Union[str, _models.SecurityAlertPolicyName],
         parameters: Union[_models.ServerSecurityAlertPolicy, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerSecurityAlertPolicy]:

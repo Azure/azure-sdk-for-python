@@ -144,7 +144,7 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         **kwargs: Any
     ) -> _models.ManagedDatabaseAdvancedThreatProtection:
         """Gets a managed database's Advanced Threat Protection state.
@@ -218,7 +218,7 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: _models.ManagedDatabaseAdvancedThreatProtection,
         *,
         content_type: str = "application/json",
@@ -254,7 +254,7 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -290,7 +290,7 @@ class ManagedDatabaseAdvancedThreatProtectionSettingsOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: Union[_models.ManagedDatabaseAdvancedThreatProtection, IO],
         **kwargs: Any
     ) -> _models.ManagedDatabaseAdvancedThreatProtection:

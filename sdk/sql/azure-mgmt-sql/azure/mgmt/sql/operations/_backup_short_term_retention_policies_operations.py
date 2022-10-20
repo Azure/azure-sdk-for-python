@@ -41,7 +41,7 @@ def build_get_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+    policy_name: Union[str, _models.ShortTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -79,7 +79,7 @@ def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+    policy_name: Union[str, _models.ShortTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -120,7 +120,7 @@ def build_update_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+    policy_name: Union[str, _models.ShortTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -214,7 +214,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         **kwargs: Any
     ) -> _models.BackupShortTermRetentionPolicy:
         """Gets a database's short term retention policy.
@@ -285,7 +285,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: Union[_models.BackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.BackupShortTermRetentionPolicy]:
@@ -356,7 +356,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: _models.BackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
@@ -398,7 +398,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -440,7 +440,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: Union[_models.BackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> LROPoller[_models.BackupShortTermRetentionPolicy]:
@@ -527,7 +527,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: Union[_models.BackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.BackupShortTermRetentionPolicy]:
@@ -598,7 +598,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: _models.BackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
@@ -640,7 +640,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -682,7 +682,7 @@ class BackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ShortTermRetentionPolicyName],
         parameters: Union[_models.BackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> LROPoller[_models.BackupShortTermRetentionPolicy]:

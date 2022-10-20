@@ -64,7 +64,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         **kwargs: Any
     ) -> _models.LongTermRetentionPolicy:
         """Gets a database's long term retention policy.
@@ -135,7 +135,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: Union[_models.LongTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.LongTermRetentionPolicy]:
@@ -206,7 +206,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: _models.LongTermRetentionPolicy,
         *,
         content_type: str = "application/json",
@@ -248,7 +248,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -290,7 +290,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: Union[_models.LongTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.LongTermRetentionPolicy]:

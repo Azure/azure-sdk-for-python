@@ -142,7 +142,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         **kwargs: Any
     ) -> _models.ServerAdvancedThreatProtection:
         """Get a server's Advanced Threat Protection state.
@@ -211,7 +211,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: Union[_models.ServerAdvancedThreatProtection, IO],
         **kwargs: Any
     ) -> Optional[_models.ServerAdvancedThreatProtection]:
@@ -280,7 +280,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: _models.ServerAdvancedThreatProtection,
         *,
         content_type: str = "application/json",
@@ -322,7 +322,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -364,7 +364,7 @@ class ServerAdvancedThreatProtectionSettingsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        advanced_threat_protection_name: Union[str, "_models.AdvancedThreatProtectionName"],
+        advanced_threat_protection_name: Union[str, _models.AdvancedThreatProtectionName],
         parameters: Union[_models.ServerAdvancedThreatProtection, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerAdvancedThreatProtection]:

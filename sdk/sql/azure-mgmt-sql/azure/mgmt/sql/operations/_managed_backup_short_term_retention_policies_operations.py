@@ -41,7 +41,7 @@ def build_get_request(
     resource_group_name: str,
     managed_instance_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+    policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -79,7 +79,7 @@ def build_create_or_update_request(
     resource_group_name: str,
     managed_instance_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+    policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -120,7 +120,7 @@ def build_update_request(
     resource_group_name: str,
     managed_instance_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+    policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -214,7 +214,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         **kwargs: Any
     ) -> _models.ManagedBackupShortTermRetentionPolicy:
         """Gets a managed database's short term retention policy.
@@ -285,7 +285,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedBackupShortTermRetentionPolicy]:
@@ -356,7 +356,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: _models.ManagedBackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
@@ -399,7 +399,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -442,7 +442,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedBackupShortTermRetentionPolicy]:
@@ -530,7 +530,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedBackupShortTermRetentionPolicy]:
@@ -601,7 +601,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: _models.ManagedBackupShortTermRetentionPolicy,
         *,
         content_type: str = "application/json",
@@ -644,7 +644,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -687,7 +687,7 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         resource_group_name: str,
         managed_instance_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.ManagedShortTermRetentionPolicyName"],
+        policy_name: Union[str, _models.ManagedShortTermRetentionPolicyName],
         parameters: Union[_models.ManagedBackupShortTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedBackupShortTermRetentionPolicy]:

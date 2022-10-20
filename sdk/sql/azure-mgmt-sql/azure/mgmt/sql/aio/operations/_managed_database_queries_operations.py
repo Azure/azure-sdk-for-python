@@ -128,7 +128,7 @@ class ManagedDatabaseQueriesOperations:
         query_id: str,
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
-        interval: Optional[Union[str, "_models.QueryTimeGrainType"]] = None,
+        interval: Optional[Union[str, _models.QueryTimeGrainType]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.QueryStatistics"]:
         """Get query execution statistics by query id.

@@ -144,7 +144,7 @@ def build_list_logs_request(
     *,
     start_time: str,
     end_time: str,
-    type: Union[str, "_models.SyncGroupsType"],
+    type: Union[str, _models.SyncGroupsType],
     continuation_token_parameter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -733,7 +733,7 @@ class SyncGroupsOperations:
         sync_group_name: str,
         start_time: str,
         end_time: str,
-        type: Union[str, "_models.SyncGroupsType"],
+        type: Union[str, _models.SyncGroupsType],
         continuation_token_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable["_models.SyncGroupLogProperties"]:

@@ -64,7 +64,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         **kwargs: Any
     ) -> _models.ServerAzureADOnlyAuthentication:
         """Gets a specific Azure Active Directory only authentication property.
@@ -132,7 +132,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: Union[_models.ServerAzureADOnlyAuthentication, IO],
         **kwargs: Any
     ) -> Optional[_models.ServerAzureADOnlyAuthentication]:
@@ -204,7 +204,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: _models.ServerAzureADOnlyAuthentication,
         *,
         content_type: str = "application/json",
@@ -247,7 +247,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -290,7 +290,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         parameters: Union[_models.ServerAzureADOnlyAuthentication, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerAzureADOnlyAuthentication]:
@@ -376,7 +376,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -426,7 +426,7 @@ class ServerAzureADOnlyAuthenticationsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        authentication_name: Union[str, "_models.AuthenticationName"],
+        authentication_name: Union[str, _models.AuthenticationName],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing server Active Directory only authentication property.

@@ -304,7 +304,7 @@ def build_failover_request(
     database_name: str,
     subscription_id: str,
     *,
-    replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+    replica_type: Optional[Union[str, _models.ReplicaType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1681,7 +1681,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        replica_type: Optional[Union[str, _models.ReplicaType]] = None,
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -1733,7 +1733,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        replica_type: Optional[Union[str, "_models.ReplicaType"]] = None,
+        replica_type: Optional[Union[str, _models.ReplicaType]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Failovers a database.

@@ -40,7 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(
     resource_group_name: str,
     server_name: str,
-    administrator_name: Union[str, "_models.AdministratorName"],
+    administrator_name: Union[str, _models.AdministratorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -76,7 +76,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
-    administrator_name: Union[str, "_models.AdministratorName"],
+    administrator_name: Union[str, _models.AdministratorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -115,7 +115,7 @@ def build_create_or_update_request(
 def build_delete_request(
     resource_group_name: str,
     server_name: str,
-    administrator_name: Union[str, "_models.AdministratorName"],
+    administrator_name: Union[str, _models.AdministratorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -197,7 +197,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         **kwargs: Any
     ) -> _models.ServerAzureADAdministrator:
         """Gets a Azure Active Directory administrator.
@@ -265,7 +265,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: Union[_models.ServerAzureADAdministrator, IO],
         **kwargs: Any
     ) -> Optional[_models.ServerAzureADAdministrator]:
@@ -337,7 +337,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: _models.ServerAzureADAdministrator,
         *,
         content_type: str = "application/json",
@@ -377,7 +377,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -417,7 +417,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: Union[_models.ServerAzureADAdministrator, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ServerAzureADAdministrator]:
@@ -501,7 +501,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -551,7 +551,7 @@ class ServerAzureADAdministratorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes the Azure Active Directory administrator with the given name.

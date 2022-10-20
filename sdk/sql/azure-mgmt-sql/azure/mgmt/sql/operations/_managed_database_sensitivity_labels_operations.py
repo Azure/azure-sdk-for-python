@@ -42,7 +42,7 @@ def build_get_request(
     schema_name: str,
     table_name: str,
     column_name: str,
-    sensitivity_label_source: Union[str, "_models.SensitivityLabelSource"],
+    sensitivity_label_source: Union[str, _models.SensitivityLabelSource],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -394,7 +394,7 @@ class ManagedDatabaseSensitivityLabelsOperations:
         schema_name: str,
         table_name: str,
         column_name: str,
-        sensitivity_label_source: Union[str, "_models.SensitivityLabelSource"],
+        sensitivity_label_source: Union[str, _models.SensitivityLabelSource],
         **kwargs: Any
     ) -> _models.SensitivityLabel:
         """Gets the sensitivity label of a given column.

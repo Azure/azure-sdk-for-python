@@ -71,7 +71,7 @@ def build_list_by_server_request(
 def build_get_request(
     resource_group_name: str,
     server_name: str,
-    encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+    encryption_protector_name: Union[str, _models.EncryptionProtectorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -107,7 +107,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
-    encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+    encryption_protector_name: Union[str, _models.EncryptionProtectorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -146,7 +146,7 @@ def build_create_or_update_request(
 def build_revalidate_request(
     resource_group_name: str,
     server_name: str,
-    encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+    encryption_protector_name: Union[str, _models.EncryptionProtectorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -274,7 +274,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> _models.EncryptionProtector:
         """Gets a server encryption protector.
@@ -342,7 +342,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.EncryptionProtector, IO],
         **kwargs: Any
     ) -> Optional[_models.EncryptionProtector]:
@@ -411,7 +411,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: _models.EncryptionProtector,
         *,
         content_type: str = "application/json",
@@ -451,7 +451,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -491,7 +491,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.EncryptionProtector, IO],
         **kwargs: Any
     ) -> LROPoller[_models.EncryptionProtector]:
@@ -575,7 +575,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -625,7 +625,7 @@ class EncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Revalidates an existing encryption protector.

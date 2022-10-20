@@ -71,7 +71,7 @@ def build_list_by_instance_request(
 def build_get_request(
     resource_group_name: str,
     managed_instance_name: str,
-    administrator_name: Union[str, "_models.AdministratorName"],
+    administrator_name: Union[str, _models.AdministratorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -107,7 +107,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     managed_instance_name: str,
-    administrator_name: Union[str, "_models.AdministratorName"],
+    administrator_name: Union[str, _models.AdministratorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -146,7 +146,7 @@ def build_create_or_update_request(
 def build_delete_request(
     resource_group_name: str,
     managed_instance_name: str,
-    administrator_name: Union[str, "_models.AdministratorName"],
+    administrator_name: Union[str, _models.AdministratorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -275,7 +275,7 @@ class ManagedInstanceAdministratorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         **kwargs: Any
     ) -> _models.ManagedInstanceAdministrator:
         """Gets a managed instance administrator.
@@ -342,7 +342,7 @@ class ManagedInstanceAdministratorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: Union[_models.ManagedInstanceAdministrator, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedInstanceAdministrator]:
@@ -414,7 +414,7 @@ class ManagedInstanceAdministratorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: _models.ManagedInstanceAdministrator,
         *,
         content_type: str = "application/json",
@@ -453,7 +453,7 @@ class ManagedInstanceAdministratorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -492,7 +492,7 @@ class ManagedInstanceAdministratorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         parameters: Union[_models.ManagedInstanceAdministrator, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedInstanceAdministrator]:
@@ -575,7 +575,7 @@ class ManagedInstanceAdministratorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -625,7 +625,7 @@ class ManagedInstanceAdministratorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        administrator_name: Union[str, "_models.AdministratorName"],
+        administrator_name: Union[str, _models.AdministratorName],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes a managed instance administrator.

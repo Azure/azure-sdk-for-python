@@ -137,11 +137,7 @@ class ManagedInstanceDtcsOperations:
 
     @distributed_trace_async
     async def get(
-        self,
-        resource_group_name: str,
-        managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
-        **kwargs: Any
+        self, resource_group_name: str, managed_instance_name: str, dtc_name: Union[str, _models.DtcName], **kwargs: Any
     ) -> _models.ManagedInstanceDtc:
         """Gets managed instance DTC settings.
 
@@ -207,7 +203,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: Union[_models.ManagedInstanceDtc, IO],
         **kwargs: Any
     ) -> _models.ManagedInstanceDtc:
@@ -274,7 +270,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: _models.ManagedInstanceDtc,
         *,
         content_type: str = "application/json",
@@ -313,7 +309,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -352,7 +348,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: Union[_models.ManagedInstanceDtc, IO],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagedInstanceDtc]:

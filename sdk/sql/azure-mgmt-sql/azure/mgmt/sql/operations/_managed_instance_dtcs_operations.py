@@ -71,7 +71,7 @@ def build_list_by_managed_instance_request(
 def build_get_request(
     resource_group_name: str,
     managed_instance_name: str,
-    dtc_name: Union[str, "_models.DtcName"],
+    dtc_name: Union[str, _models.DtcName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -107,7 +107,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     managed_instance_name: str,
-    dtc_name: Union[str, "_models.DtcName"],
+    dtc_name: Union[str, _models.DtcName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -241,11 +241,7 @@ class ManagedInstanceDtcsOperations:
 
     @distributed_trace
     def get(
-        self,
-        resource_group_name: str,
-        managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
-        **kwargs: Any
+        self, resource_group_name: str, managed_instance_name: str, dtc_name: Union[str, _models.DtcName], **kwargs: Any
     ) -> _models.ManagedInstanceDtc:
         """Gets managed instance DTC settings.
 
@@ -311,7 +307,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: Union[_models.ManagedInstanceDtc, IO],
         **kwargs: Any
     ) -> _models.ManagedInstanceDtc:
@@ -378,7 +374,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: _models.ManagedInstanceDtc,
         *,
         content_type: str = "application/json",
@@ -417,7 +413,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -456,7 +452,7 @@ class ManagedInstanceDtcsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        dtc_name: Union[str, "_models.DtcName"],
+        dtc_name: Union[str, _models.DtcName],
         parameters: Union[_models.ManagedInstanceDtc, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedInstanceDtc]:

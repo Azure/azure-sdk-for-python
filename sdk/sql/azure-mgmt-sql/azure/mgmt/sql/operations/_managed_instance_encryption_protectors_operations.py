@@ -40,7 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_revalidate_request(
     resource_group_name: str,
     managed_instance_name: str,
-    encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+    encryption_protector_name: Union[str, _models.EncryptionProtectorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -101,7 +101,7 @@ def build_list_by_instance_request(
 def build_get_request(
     resource_group_name: str,
     managed_instance_name: str,
-    encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+    encryption_protector_name: Union[str, _models.EncryptionProtectorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -137,7 +137,7 @@ def build_get_request(
 def build_create_or_update_request(
     resource_group_name: str,
     managed_instance_name: str,
-    encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+    encryption_protector_name: Union[str, _models.EncryptionProtectorName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -196,7 +196,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -246,7 +246,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Revalidates an existing encryption protector.
@@ -396,7 +396,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         **kwargs: Any
     ) -> _models.ManagedInstanceEncryptionProtector:
         """Gets a managed instance encryption protector.
@@ -464,7 +464,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.ManagedInstanceEncryptionProtector, IO],
         **kwargs: Any
     ) -> Optional[_models.ManagedInstanceEncryptionProtector]:
@@ -533,7 +533,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: _models.ManagedInstanceEncryptionProtector,
         *,
         content_type: str = "application/json",
@@ -574,7 +574,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -615,7 +615,7 @@ class ManagedInstanceEncryptionProtectorsOperations:
         self,
         resource_group_name: str,
         managed_instance_name: str,
-        encryption_protector_name: Union[str, "_models.EncryptionProtectorName"],
+        encryption_protector_name: Union[str, _models.EncryptionProtectorName],
         parameters: Union[_models.ManagedInstanceEncryptionProtector, IO],
         **kwargs: Any
     ) -> LROPoller[_models.ManagedInstanceEncryptionProtector]:

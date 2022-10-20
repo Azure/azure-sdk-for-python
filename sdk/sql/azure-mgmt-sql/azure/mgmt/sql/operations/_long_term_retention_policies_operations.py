@@ -41,7 +41,7 @@ def build_get_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+    policy_name: Union[str, _models.LongTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -79,7 +79,7 @@ def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
     database_name: str,
-    policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+    policy_name: Union[str, _models.LongTermRetentionPolicyName],
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -173,7 +173,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         **kwargs: Any
     ) -> _models.LongTermRetentionPolicy:
         """Gets a database's long term retention policy.
@@ -244,7 +244,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: Union[_models.LongTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> Optional[_models.LongTermRetentionPolicy]:
@@ -315,7 +315,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: _models.LongTermRetentionPolicy,
         *,
         content_type: str = "application/json",
@@ -357,7 +357,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: IO,
         *,
         content_type: str = "application/json",
@@ -399,7 +399,7 @@ class LongTermRetentionPoliciesOperations:
         resource_group_name: str,
         server_name: str,
         database_name: str,
-        policy_name: Union[str, "_models.LongTermRetentionPolicyName"],
+        policy_name: Union[str, _models.LongTermRetentionPolicyName],
         parameters: Union[_models.LongTermRetentionPolicy, IO],
         **kwargs: Any
     ) -> LROPoller[_models.LongTermRetentionPolicy]:
