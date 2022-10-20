@@ -13,6 +13,8 @@
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
+- Switched compute operations to go through 2022-10-01-preview API version.
+
 
 ## 1.0.0 (2022-10-10)
 - GA release
