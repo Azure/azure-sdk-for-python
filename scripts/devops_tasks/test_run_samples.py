@@ -136,6 +136,8 @@ IGNORED_SAMPLES = {
     "azure-ai-language-conversations": [
         "sample_import_train_deploy_project_async.py",
         "sample_import_train_deploy_project.py",
+        "sample_conv_summarization.py",
+        "sample_conv_summarization_async.py"
     ],
     "azure-ai-textanalytics": [
         "sample_analyze_healthcare_entities_with_cancellation.py",

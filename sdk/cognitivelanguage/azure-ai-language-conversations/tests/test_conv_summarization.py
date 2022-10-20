@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import pytest
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureRecordedTestCase
@@ -18,6 +19,7 @@ class TestConversationalSummarization(AzureRecordedTestCase):
         client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
         assert client._config.polling_interval == 1
 
+    @pytest.mark.skip("Returning warnings instead of issue/resolutions in 2022-10-01-preview")
     def test_conversational_summarization(self, recorded_test, conversation_creds):
         # analyze query
         client = ConversationAnalysisClient(
@@ -82,4 +84,8 @@ class TestConversationalSummarization(AzureRecordedTestCase):
             # assert - conv result
             conversation_result = task_result["results"]["conversations"][0]
             summaries = conversation_result["summaries"]
-            assert summaries is not None
+            assert summaries
+            for summary in summaries:
+                assert summary["aspect"] in ["issue", "resolution"]
+                assert summary["text"]
+
