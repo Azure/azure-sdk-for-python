@@ -1,6 +1,8 @@
 from packaging.version import parse as Version
 import sys
-
+import pdb
+from urllib3 import Retry, PoolManager
+import json
 
 def get_pypi_xmlrpc_client():
     """This is actually deprecated client."""
@@ -11,26 +13,24 @@ def get_pypi_xmlrpc_client():
 
 class PyPIClient:
     def __init__(self, host="https://pypi.org"):
-        import requests
-
         self._host = host
-        self._session = requests.Session()
+        self._http = PoolManager(retries=Retry(raise_on_status=True))
 
     def project(self, package_name):
-        response = self._session.get(
+        response = self._http.request(
+            'get',
             "{host}/pypi/{project_name}/json".format(host=self._host, project_name=package_name)
         )
-        response.raise_for_status()
-        return response.json()
+        return json.loads(response.data.decode('utf-8'))
 
     def project_release(self, package_name, version):
-        response = self._session.get(
+        response = self._http.request(
+            'get',
             "{host}/pypi/{project_name}/{version}/json".format(
                 host=self._host, project_name=package_name, version=version
             )
         )
-        response.raise_for_status()
-        return response.json()
+        return json.loads(response.data.decode('utf-8'))
 
     def filter_packages_for_compatibility(self, package_name, version_set):
         # only need the packaging.specifiers import if we're actually executing this filter.
