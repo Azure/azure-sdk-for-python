@@ -8,7 +8,7 @@ import pydash
 import pytest
 import yaml
 
-from azure.ai.ml import Input, load_component
+from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
     AISuperComputerConfiguration,
     AISuperComputerScalePolicy,
@@ -592,3 +592,18 @@ class TestPipelineJob:
         copy_file.outputs.output_dir.path = "path_on_datastore"
         assert copy_file.outputs.output_dir.path == "path_on_datastore"
         assert copy_file.outputs.output_dir.type == "path"
+
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(
+            source="./tests/test_configs/internal/pipeline_jobs/pipeline_job_with_properties.yml"
+        )
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]
+

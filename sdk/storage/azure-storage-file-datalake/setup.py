@@ -77,7 +77,8 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.26.0",
         "azure-storage-blob<13.0.0,>=12.14.0",
-        "typing-extensions>=4.0.1"
+        "typing-extensions>=4.0.1",
+        "isodate>=0.6.1"
     ],
     extras_require={
         "aio": [
