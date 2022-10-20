@@ -44,6 +44,7 @@ from azure.eventhub._pyamqp.error import AMQPError, ErrorCondition
 
 
 import certifi
+from ..error import AMQPError, ErrorCondition
 
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame

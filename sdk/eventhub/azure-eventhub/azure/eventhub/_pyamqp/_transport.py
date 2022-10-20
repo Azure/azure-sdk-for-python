@@ -47,7 +47,7 @@ import logging
 from threading import Lock
 
 import certifi
-
+from .error import AMQPError, ErrorCondition
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP
 from ._encode import encode_frame
 from ._decode import decode_frame, decode_empty_frame
