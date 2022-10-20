@@ -81,7 +81,7 @@ class IdentifierRawIdTest(unittest.TestCase):
             PhoneNumberIdentifier(
                 value='+112345556789'
             ),
-            '4:112345556789'
+            '4:+112345556789'
         )
         _assert_raw_id(
             PhoneNumberIdentifier(
@@ -95,6 +95,27 @@ class IdentifierRawIdTest(unittest.TestCase):
                 raw_id='4:otherFormat'
             ),
             '4:otherFormat'
+        )
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value='otherFormat',
+                raw_id='4:207ffef6-9444-41fb-92ab-20eacaae2768'
+            ),
+            '4:207ffef6-9444-41fb-92ab-20eacaae2768'
+        )
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value='otherFormat',
+                raw_id='4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768'
+            ),
+            '4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768'
+        )
+        _assert_raw_id(
+            PhoneNumberIdentifier(
+                value='otherFormat',
+                raw_id='4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768'
+            ),
+            '4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768'
         )
         _assert_raw_id(
             UnknownIdentifier(
@@ -174,15 +195,39 @@ class IdentifierRawIdTest(unittest.TestCase):
             )
         )
         _assert_communication_identifier(
-            '4:112345556789',
+            '4:+112345556789', 
             PhoneNumberIdentifier(
                 value='+112345556789'
+                )
+            )
+        _assert_communication_identifier(
+            '4:112345556789',
+            PhoneNumberIdentifier(
+                value='112345556789'
             )
         )
         _assert_communication_identifier(
             '4:otherFormat',
             PhoneNumberIdentifier(
-                value='+otherFormat'
+                value='otherFormat'
+            )
+        )
+        _assert_communication_identifier(
+            '4:207ffef6-9444-41fb-92ab-20eacaae2768',
+            PhoneNumberIdentifier(
+                value='207ffef6-9444-41fb-92ab-20eacaae2768'
+            )
+        )
+        _assert_communication_identifier(
+            '4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768',
+            PhoneNumberIdentifier(
+                value='207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768'
+            )
+        )
+        _assert_communication_identifier(
+            '4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768',
+            PhoneNumberIdentifier(
+                value='+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768'
             )
         )
         _assert_communication_identifier(
@@ -211,8 +256,12 @@ class IdentifierRawIdTest(unittest.TestCase):
         _assert_roundtrip('8:gcch:45ab2481-1c1c-4005-be24-0ffb879b1130')
         _assert_roundtrip('8:teamsvisitor:45ab2481-1c1c-4005-be24-0ffb879b1130')
         _assert_roundtrip('8:orgid:legacyFormat')
+        _assert_roundtrip('4:+112345556789')
         _assert_roundtrip('4:112345556789')
         _assert_roundtrip('4:otherFormat')
+        _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768");
+        _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768");
+        _assert_roundtrip("4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768");
         _assert_roundtrip('28:45ab2481-1c1c-4005-be24-0ffb879b1130')
         _assert_roundtrip('')
 
