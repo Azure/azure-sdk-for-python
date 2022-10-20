@@ -2,7 +2,6 @@ param baseName string = resourceGroup().name
 param location string = resourceGroup().location
 
 var namespaceName = 'eh-${baseName}'
-var eventHubName = '32'
 var eventHubsAuthRuleResourceId = resourceId('Microsoft.EventHub/namespaces/authorizationRules', namespaceName, 'RootManageSharedAccessKey')
 
 resource eventHubNamespace 'Microsoft.EventHub/namespaces@2015-08-01' = {
@@ -15,7 +14,7 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2015-08-01' = {
   }
 
   resource eventHub 'eventhubs' = {
-    name: eventHubName
+    name: '32'
     properties: {
       partitionCount: 32
     }
@@ -24,4 +23,4 @@ resource eventHubNamespace 'Microsoft.EventHub/namespaces@2015-08-01' = {
 
 
 output AZURE_EVENTHUB_CONNECTION_STRING string = listkeys(eventHubsAuthRuleResourceId, '2015-08-01').primaryConnectionString
-output AZURE_EVENTHUB_NAME string = eventHubName
+output AZURE_EVENTHUB_NAME string = eventHubNamespace::eventHub.name
