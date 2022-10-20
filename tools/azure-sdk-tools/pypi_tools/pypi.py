@@ -14,7 +14,7 @@ def get_pypi_xmlrpc_client():
 class PyPIClient:
     def __init__(self, host="https://pypi.org"):
         self._host = host
-        self._http = PoolManager(retries=Retry(raise_on_status=True))
+        self._http = PoolManager(retries=Retry(total=3, raise_on_status=True))
 
     def project(self, package_name):
         response = self._http.request(
