@@ -166,10 +166,11 @@ def pipeline(
             # Because we only want to enable dsl settings on top level pipeline
             _dsl_settings_stack.push()  # use this stack to track on_init/on_finalize settings
             try:
-                provided_positional_args = _validate_args(func, args, kwargs, non_pipeline_parameters)
+                non_pipeline_params = non_pipeline_parameters or []
+                provided_positional_args = _validate_args(func, args, kwargs, non_pipeline_params)
                 # Convert args to kwargs
                 kwargs.update(provided_positional_args)
-                non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_parameters}
+                non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_params}
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(non_pipeline_params_dict=non_pipeline_params_dict)
@@ -232,6 +233,7 @@ def _validate_args(func, args, kwargs, non_pipeline_parameters):
         raise UnsupportedParameterKindError(func.__name__)
 
     all_parameter_keys = [param.name for param in all_parameters]
+    non_pipeline_parameters = non_pipeline_parameters or []
     unexpected_non_pipeline_parameters = [param for param in non_pipeline_parameters if param not in all_parameter_keys]
     if unexpected_non_pipeline_parameters:
         raise NonExistParamValueError(func.__name__, unexpected_non_pipeline_parameters)
