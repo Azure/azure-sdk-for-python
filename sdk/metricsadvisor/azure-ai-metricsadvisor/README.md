@@ -36,18 +36,24 @@ You will need two keys to authenticate the client:
 
 We can use the keys to create a new `MetricsAdvisorClient` or `MetricsAdvisorAdministrationClient`.
 
-<!-- SNIPPET: sample_authentication.authentication_client_with_metrics_advisor_credential -->
-```python
-from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
+```py
+import os
+from azure.ai.metricsadvisor import (
+    MetricsAdvisorKeyCredential,
+    MetricsAdvisorClient,
+    MetricsAdvisorAdministrationClient,
+)
 
-service_endpoint = os.getenv("METRICS_ADVISOR_ENDPOINT")
-subscription_key = os.getenv("METRICS_ADVISOR_SUBSCRIPTION_KEY")
-api_key = os.getenv("METRICS_ADVISOR_API_KEY")
+service_endpoint = os.getenv("ENDPOINT")
+subscription_key = os.getenv("SUBSCRIPTION_KEY")
+api_key = os.getenv("API_KEY")
 
 client = MetricsAdvisorClient(service_endpoint,
-                              MetricsAdvisorKeyCredential(subscription_key, api_key))
+                            MetricsAdvisorKeyCredential(subscription_key, api_key))
+
+admin_client = MetricsAdvisorAdministrationClient(service_endpoint,
+                            MetricsAdvisorKeyCredential(subscription_key, api_key))
 ```
-<!-- END SNIPPET -->
 
 ## Key concepts
 
