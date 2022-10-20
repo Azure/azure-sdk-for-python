@@ -416,6 +416,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             offset = frame_header[4]
             frame_type = frame_header[5]
             if verify_frame_type is not None and frame_type != verify_frame_type:
+                raise AMQPError(condition=ErrorCondition.DecodeError, description="Invalid Frame Type")
                 print("Ran into invalid frame type")
                 pass
                 # raise ValueError(
