@@ -15,5 +15,5 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/python_snippet_updater.py'
       arguments: >-
-        ${{ parameters.ServiceDirectory }}
+        ${{ parameters.ScanPath }}
     condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))

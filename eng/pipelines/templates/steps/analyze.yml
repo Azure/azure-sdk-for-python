@@ -117,7 +117,7 @@ steps:
 
   - template: ../steps/update_snippet.yml
     parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
   - template: ../steps/run_breaking_changes.yml
