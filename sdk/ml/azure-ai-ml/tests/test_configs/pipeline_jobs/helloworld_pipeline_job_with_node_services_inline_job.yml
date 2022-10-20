@@ -13,8 +13,6 @@ jobs:
     command: echo Hello World & sleep 1h
     environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
     services:
-      "my_ssh":
-        job_service_type: "Jupyter"
       "my_tensorboard":
         job_service_type: "tensor_board"
         properties:

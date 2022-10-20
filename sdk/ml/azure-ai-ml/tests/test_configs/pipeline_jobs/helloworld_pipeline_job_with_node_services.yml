@@ -18,8 +18,6 @@ jobs:
       environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
       code: "./"
     services:
-      "my_ssh":
-        job_service_type: "Jupyter"
       "my_tensorboard":
         job_service_type: "tensor_board"
         properties:

@@ -76,18 +76,27 @@ class RestSparkConfKey:
 
 class JobServiceTypeNames:
     class EntityNames:
+        CUSTOM = "custom"
+        TRACKING = "tracking"
+        STUDIO = "studio"
         JUPYTER_LAB = "jupyter_lab"
         SSH = "ssh"
         TENSOR_BOARD = "tensor_board"
         VS_CODE = "vs_code"
 
     class RestNames:
+        CUSTOM = "Custom"
+        TRACKING = "Tracking"
+        STUDIO = "Studio"
         JUPYTER_LAB = "JupyterLab"
         SSH = "SSH"
         TENSOR_BOARD = "TensorBoard"
         VS_CODE = "VSCode"
 
     ENTITY_TO_REST = {
+        EntityNames.CUSTOM: RestNames.CUSTOM,
+        EntityNames.TRACKING: RestNames.TRACKING,
+        EntityNames.STUDIO: RestNames.STUDIO,
         EntityNames.JUPYTER_LAB: RestNames.JUPYTER_LAB,
         EntityNames.SSH: RestNames.SSH,
         EntityNames.TENSOR_BOARD: RestNames.TENSOR_BOARD,
@@ -95,3 +104,5 @@ class JobServiceTypeNames:
     }
 
     REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
+
+    NAMES_ALLOWED_FOR_PUBLIC = [EntityNames.JUPYTER_LAB, EntityNames.SSH, EntityNames.TENSOR_BOARD, EntityNames.VS_CODE]

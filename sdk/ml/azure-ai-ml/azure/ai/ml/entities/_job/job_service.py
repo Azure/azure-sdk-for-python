@@ -38,9 +38,7 @@ class JobService(RestTranslatableMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        # TODO: Is VS Code allowed here?
-        # TODO: As this is a breaking change, should we still allow the old format (any-case) and deprecate in the next release?
-        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs-code"]] = None,
+        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None,
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -83,7 +81,7 @@ class JobService(RestTranslatableMixin):
         if self.job_service_type and not self.job_service_type in JobServiceTypeNames.ENTITY_TO_REST.keys():
             msg = (
                 f"job_service_type should be one of "
-                f"{list(JobServiceTypeNames.ENTITY_TO_REST.keys())}, but received '{self.job_service_type}'."
+                f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.job_service_type}'."
             )
             raise ValidationException(
                 message=msg,
