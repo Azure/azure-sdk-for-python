@@ -6,7 +6,7 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
-from test_utilities.utils import verify_entity_load_and_dump
+from test_utilities.utils import verify_entity_load_and_dump, omit_with_wildcard
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData as FebRestJob
@@ -161,16 +161,16 @@ class TestPipelineJobEntity:
         "rest_job_file, node_name",
         [
             (
-                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.json",
-                "hello_automl_regression",
+                    "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.json",
+                    "hello_automl_regression",
             ),
             (
-                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output_binding.json",
-                "classification_node",
+                    "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output_binding.json",
+                    "classification_node",
             ),
             (
-                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output.json",
-                "hello_automl_regression",
+                    "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output.json",
+                    "hello_automl_regression",
             ),
         ],
     )
@@ -344,7 +344,7 @@ class TestPipelineJobEntity:
         }
 
     def test_automl_node_in_pipeline_text_classification(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification.yml"
         job = load_job(source=test_path)
@@ -376,7 +376,7 @@ class TestPipelineJobEntity:
         }
 
     def test_automl_node_in_pipeline_text_classification_multilabel(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification_multilabel.yml"
@@ -440,11 +440,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multiclass_classification(
-        self,
-        mock_machinelearning_client: MLClient,
-        mocker: MockFixture,
-        run_type: str,
-        tmp_path: Path,
+            self,
+            mock_machinelearning_client: MLClient,
+            mocker: MockFixture,
+            run_type: str,
+            tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml"
 
@@ -517,11 +517,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multilabel_classification(
-        self,
-        mock_machinelearning_client: MLClient,
-        mocker: MockFixture,
-        run_type: str,
-        tmp_path: Path,
+            self,
+            mock_machinelearning_client: MLClient,
+            mocker: MockFixture,
+            run_type: str,
+            tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml"
 
@@ -594,7 +594,7 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_object_detection(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type: str, tmp_path: Path
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type: str, tmp_path: Path
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml"
 
@@ -668,11 +668,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_instance_segmentation(
-        self,
-        mock_machinelearning_client: MLClient,
-        mocker: MockFixture,
-        run_type: str,
-        tmp_path: Path,
+            self,
+            mock_machinelearning_client: MLClient,
+            mocker: MockFixture,
+            run_type: str,
+            tmp_path: Path,
     ):
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml"
@@ -873,8 +873,8 @@ class TestPipelineJobEntity:
                     "_source": "YAML.JOB",
                     "archives": None,
                     "args": "--input1 ${{inputs.input1}} --output2 "
-                    "${{outputs.output1}} --my_sample_rate "
-                    "${{inputs.sample_rate}}",
+                            "${{outputs.output1}} --my_sample_rate "
+                            "${{inputs.sample_rate}}",
                     "computeId": None,
                     "conf": {
                         "spark.driver.cores": 1,
@@ -910,7 +910,7 @@ class TestPipelineJobEntity:
         }
 
     def test_spark_node_in_pipeline_with_dynamic_allocation_disabled(
-        self,
+            self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
         job = load_job(test_path)
@@ -919,7 +919,7 @@ class TestPipelineJobEntity:
             assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
 
     def test_spark_node_in_pipeline_with_invalid_code(
-        self,
+            self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_code.yml"
         job = load_job(test_path)
@@ -928,85 +928,85 @@ class TestPipelineJobEntity:
             assert ve.message == "Entry doesn't exist"
 
     def test_spark_node_in_pipeline_with_git_code(
-        self,
+            self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_git_code.yml"
         job = load_job(test_path)
         job._validate()
 
     def test_infer_pipeline_output_type_as_node_type(
-        self,
+            self,
     ) -> None:
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
         )
         assert (
-            pipeline_job.jobs["hello_world_inline_parallel_tabular_job_1"].outputs["job_output_file"].type
-            == AssetTypes.URI_FILE
+                pipeline_job.jobs["hello_world_inline_parallel_tabular_job_1"].outputs["job_output_file"].type
+                == AssetTypes.URI_FILE
         )
 
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_type, expected_components",
         [
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
-                "uri_folder",
-                {
-                    "score_job": {
-                        "_source": "YAML.JOB",
-                        "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-                        "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
-                        "is_deterministic": True,
-                        "outputs": {"score_output": {"type": "uri_folder"}},
-                        "tags": {},
-                        "type": "command",
-                        "version": "1",
+                    "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
+                    "uri_folder",
+                    {
+                        "score_job": {
+                            "_source": "YAML.JOB",
+                            "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                            "is_deterministic": True,
+                            "outputs": {"score_output": {"type": "uri_folder"}},
+                            "tags": {},
+                            "type": "command",
+                            "version": "1",
+                        },
                     },
-                },
             ),
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input2.yml",
-                "mltable",
-                {
-                    "score_job": {
-                        "_source": "YAML.JOB",
-                        "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-                        "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
-                        "is_deterministic": True,
-                        "outputs": {"score_output": {"type": "uri_folder"}},
-                        "tags": {},
-                        "type": "command",
-                        "version": "1",
+                    "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input2.yml",
+                    "mltable",
+                    {
+                        "score_job": {
+                            "_source": "YAML.JOB",
+                            "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
+                            "is_deterministic": True,
+                            "outputs": {"score_output": {"type": "uri_folder"}},
+                            "tags": {},
+                            "type": "command",
+                            "version": "1",
+                        },
                     },
-                },
             ),
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_output_binding_to_inline_job_input.yml",
-                "uri_folder",
-                {
-                    "score_job": {
-                        "_source": "YAML.JOB",
-                        "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-                        "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
-                        "is_deterministic": True,
-                        "outputs": {"score_output": {"type": "uri_folder"}},
-                        "tags": {},
-                        "type": "command",
-                        "version": "1",
+                    "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_output_binding_to_inline_job_input.yml",
+                    "uri_folder",
+                    {
+                        "score_job": {
+                            "_source": "YAML.JOB",
+                            "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                            "is_deterministic": True,
+                            "outputs": {"score_output": {"type": "uri_folder"}},
+                            "tags": {},
+                            "type": "command",
+                            "version": "1",
+                        },
                     },
-                },
             ),
         ],
     )
     def test_pipeline_job_with_inline_command_job_input_binding_to_registered_component_job_output(
-        self,
-        client: MLClient,
-        pipeline_job_path: str,
-        expected_type,
-        expected_components,
+            self,
+            client: MLClient,
+            pipeline_job_path: str,
+            expected_type,
+            expected_components,
     ) -> None:
         pipeline_job = load_job(
             source=pipeline_job_path,
@@ -1084,7 +1084,7 @@ class TestPipelineJobEntity:
         }
 
     def test_pipeline_with_only_setting_pipeline_level(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_pipeline_level.yml"
         job = load_job(source=test_path)
@@ -1214,7 +1214,7 @@ class TestPipelineJobEntity:
         }
 
     def test_pipeline_with_setting_binding_node_and_pipeline_level(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_setting_binding_node_and_pipeline_level.yml"
         job = load_job(source=test_path)
@@ -1282,7 +1282,7 @@ class TestPipelineJobEntity:
         }
 
     def test_pipeline_with_inline_job_setting_binding_node_and_pipeline_level(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_inline_job_setting_binding_node_and_pipeline_level.yml"
         job = load_job(source=test_path)
@@ -1471,4 +1471,64 @@ class TestPipelineJobEntity:
             pipeline.jobs["merge_component_outputs"].outputs["component_out_path_1"].path = "xxx"
 
     def test_pipeline_node_with_identity(self):
-        pass
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_identity.yml"
+        pipeline_job: PipelineJob = load_job(source=test_path)
+
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
+        assert actual_dict["jobs"] == {
+            'hello_world_component': {
+                'computeId': 'cpu-cluster',
+                'display_name': None,
+                'distribution': None,
+                'environment_variables': {},
+                'identity': {'type': 'user_identity'},
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '${{parent.inputs.job_in_number}}'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.inputs.job_in_path}}'}},
+                'limits': None,
+                'name': 'hello_world_component',
+                'outputs': {},
+                'properties': {},
+                'resources': None,
+                'tags': {},
+                'type': 'command'},
+            'hello_world_component_2': {
+                'computeId': 'cpu-cluster',
+                'display_name': None,
+                'distribution': None,
+                'environment_variables': {},
+                'identity': {'type': 'aml_token'},
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '${{parent.inputs.job_in_other_number}}'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.inputs.job_in_path}}'}},
+                'limits': None,
+                'name': 'hello_world_component_2',
+                'outputs': {},
+                'properties': {},
+                'resources': None,
+                'tags': {},
+                'type': 'command'},
+            'hello_world_component_3': {
+                'computeId': 'cpu-cluster',
+                'display_name': None,
+                'distribution': None,
+                'environment_variables': {},
+                'identity': {'type': 'user_identity'},
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '${{parent.inputs.job_in_other_number}}'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.inputs.job_in_path}}'}},
+                'limits': None,
+                'name': 'hello_world_component_3',
+                'outputs': {},
+                'properties': {},
+                'resources': None,
+                'tags': {},
+                'type': 'command'}
+        }
