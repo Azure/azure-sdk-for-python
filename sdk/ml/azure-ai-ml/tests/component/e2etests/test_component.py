@@ -132,6 +132,7 @@ def assert_component_basic_workflow(
     "mock_component_hash",
     "enable_environment_id_arm_expansion",
 )
+@pytest.mark.pipeline_test
 class TestComponent(AzureRecordedTestCase):
     def test_command_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_dict = {

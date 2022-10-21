@@ -22,6 +22,7 @@ from azure.ai.ml.sweep import (
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestSweepJob:
     def test_sweep_job_top_level_properties(self):
         command_job = CommandJob(

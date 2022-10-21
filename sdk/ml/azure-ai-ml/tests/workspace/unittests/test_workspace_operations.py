@@ -34,6 +34,7 @@ def mock_workspace_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestWorkspaceOperation:
     @pytest.mark.parametrize("arg", ["resource_group", "subscription", "other_rand_str"])
     def test_list(self, arg: str, mock_workspace_operation: WorkspaceOperations) -> None:

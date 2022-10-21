@@ -83,7 +83,7 @@ class LocalFileStorage:
         path,
         max_size=50 * 1024 * 1024,  # 50MiB
         maintenance_period=60,  # 1 minute
-        retention_period=7 * 24 * 60 * 60,  # 7 days
+        retention_period=48 * 60 * 60,  # 48 hours
         write_timeout=60,  # 1 minute,
         name=None,
         lease_period=60,  # 1 minute
