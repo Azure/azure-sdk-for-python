@@ -30,28 +30,34 @@ from ._edge_nodes_operations import EdgeNodesOperations
 from ._policies_operations import PoliciesOperations
 from ._managed_rule_sets_operations import ManagedRuleSetsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'CdnManagementClientOperationsMixin',
-    'AFDProfilesOperations',
-    'AFDCustomDomainsOperations',
-    'AFDEndpointsOperations',
-    'AFDOriginGroupsOperations',
-    'AFDOriginsOperations',
-    'RoutesOperations',
-    'RuleSetsOperations',
-    'RulesOperations',
-    'SecurityPoliciesOperations',
-    'SecretsOperations',
-    'ValidateOperations',
-    'LogAnalyticsOperations',
-    'ProfilesOperations',
-    'EndpointsOperations',
-    'OriginsOperations',
-    'OriginGroupsOperations',
-    'CustomDomainsOperations',
-    'ResourceUsageOperations',
-    'Operations',
-    'EdgeNodesOperations',
-    'PoliciesOperations',
-    'ManagedRuleSetsOperations',
+    "CdnManagementClientOperationsMixin",
+    "AFDProfilesOperations",
+    "AFDCustomDomainsOperations",
+    "AFDEndpointsOperations",
+    "AFDOriginGroupsOperations",
+    "AFDOriginsOperations",
+    "RoutesOperations",
+    "RuleSetsOperations",
+    "RulesOperations",
+    "SecurityPoliciesOperations",
+    "SecretsOperations",
+    "ValidateOperations",
+    "LogAnalyticsOperations",
+    "ProfilesOperations",
+    "EndpointsOperations",
+    "OriginsOperations",
+    "OriginGroupsOperations",
+    "CustomDomainsOperations",
+    "ResourceUsageOperations",
+    "Operations",
+    "EdgeNodesOperations",
+    "PoliciesOperations",
+    "ManagedRuleSetsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
