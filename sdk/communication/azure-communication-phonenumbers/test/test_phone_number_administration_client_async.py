@@ -27,7 +27,7 @@ INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does n
 SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
-API_VERSION = "2022-01-11-preview2"
+API_VERSION = "2022-12-01"
 
 def get_test_phone_number():
     if SKIP_UPDATE_CAPABILITIES_TESTS:
@@ -264,3 +264,22 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_toll_free_area_codes(self):
+        async with self.phone_number_client:
+            area_codes = self.phone_number_client.list_available_area_codes("US")
+            items = []
+            async for item in area_codes:
+                items.append(item)
+        assert len(items) > 0  
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_geographic_area_codes(self):
+        async with self.phone_number_client:
+            area_codes = self.phone_number_client.list_available_area_codes("US", "person", "Seattle")
+            items = []
+            async for item in area_codes:
+                items.append(item)
+        assert len(items) > 0
+
