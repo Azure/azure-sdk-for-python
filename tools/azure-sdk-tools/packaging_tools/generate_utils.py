@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+import time
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
@@ -354,6 +355,8 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     output_path = Path(os.getcwd()) / project_yaml["emitters"][cadl_python]["sdk-folder"]
     if not output_path.exists():
         os.makedirs(output_path)
+        while(not output_path.exists()):
+            time.sleep(1)
 
     project_yaml["emitters"][cadl_python].pop("sdk-folder")
     project_yaml["emitters"][cadl_python]["output-path"] = str(output_path)
