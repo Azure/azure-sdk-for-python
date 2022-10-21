@@ -884,6 +884,16 @@ class TestCommandFunction:
             },
             "my_jupyterlab": {"job_service_type": "jupyter_lab"},
         }
+        rest_services = {
+            "my_ssh": {"job_service_type": "SSH"},
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+        }
         node = command(
             name="interactive-command-job",
             description="description",
@@ -901,7 +911,7 @@ class TestCommandFunction:
             assert isinstance(service, JobService)
 
         node_rest_obj = node._to_rest_object()
-        assert node_rest_obj["services"] == services
+        assert node_rest_obj["services"] == rest_services
 
         # test invalid services
         invalid_services_0 = "ssh"
