@@ -144,7 +144,7 @@ class TestInitFinalizeJob:
             subgraph_with_init_func()
         assert str(e.value) == "On_init/on_finalize is not supported for pipeline component."
 
-    def test_init_finalize_job_with_subgraph(self, caplog) -> None:
+    def test_init_finalize_job_with_subgraph(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
 
         # happy path
