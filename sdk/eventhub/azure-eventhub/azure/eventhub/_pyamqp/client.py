@@ -377,7 +377,7 @@ class AMQPClient(
         :raises: TimeoutError if CBS authentication timeout reached.
         """
         if self._shutdown:
-            print("returning false")
+            # print("returning false")
             return False
         if not self.client_ready():
             return True
