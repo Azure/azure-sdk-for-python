@@ -231,6 +231,6 @@ class Registry(Resource):
                 managed_resource_group=self.managed_resource_group,
                 ml_flow_registry_uri=self.mlflow_registry_uri,
                 region_details=replication_locations,
-                managed_resource_group_tags=self.tags, 
+                managed_resource_group_tags=self.tags,
             ),
         )
