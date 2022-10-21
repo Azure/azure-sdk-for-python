@@ -52,6 +52,7 @@
     "sdk/communication/azure-communication-sms/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
+    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
@@ -473,6 +474,10 @@
       ]
     },
     {
+      "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
+      "words": ["ctxt", "somethingstuid"]
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
       "words": ["conv"],
       "caseSensitive": false
@@ -820,6 +825,12 @@
       ]
     },
     {
+      "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
+      "words":[
+        "sharedwus"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/test-resources.bicep",
       "words": [
         "pysdkci"
@@ -1119,6 +1130,16 @@
         "seqno",
         "mrenclave",
         "infile"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+	  "deseralize",
+	  "wday"
       ]
     }
   ],

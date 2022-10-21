@@ -264,9 +264,9 @@ class Command(BaseNode):
         if isinstance(self.component, Component):
             self.component.command = value
         else:
-            msg = "Can't set command property for a registered component {}"
+            msg = "Can't set command property for a registered component {}. Tried to set it to {}."
             raise ValidationException(
-                message=msg.format(self.component),
+                message=msg.format(self.component, value),
                 no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,

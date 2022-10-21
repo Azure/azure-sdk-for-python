@@ -41,6 +41,7 @@ def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJobEntity:
     def test_automl_node_in_pipeline_regression(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.yml"

@@ -28,6 +28,7 @@ def bodiless_matching(test_proxy):
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
 )
+@pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
