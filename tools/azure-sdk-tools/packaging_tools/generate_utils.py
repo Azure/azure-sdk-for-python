@@ -6,7 +6,7 @@ import re
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_call, getoutput
+from subprocess import check_call
 from typing import List, Dict, Any
 from glob import glob
 import yaml
@@ -329,8 +329,16 @@ def format_samples(sdk_code_path) -> None:
 
     _LOGGER.info(f"format generated_samples successfully")
 
-def get_npm_package_version(package: str) -> str:
-    return getoutput(f"npm list {package} --depth=0").split('\n')[-1].split(f'{package}@')[-1]
+def get_npm_package_version(package: str) -> Dict[any, any]:
+    temp_file = "python_temp.json"
+    check_call(f"npm list {package} -json > {temp_file}", shell=True)
+    with open(temp_file, "r") as file_in:
+        data = json.load(file_in)
+    if "dependencies" not in data:
+        _LOGGER.info(f"can not find {package}: {data}")
+        return {}
+    
+    return data["dependencies"]
 
 def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     # update config file
@@ -363,10 +371,9 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
         os.remove(Path(output_path / "output.yaml"))
 
     # get version of codegen used in generation
-    cadl_python_version = get_npm_package_version(cadl_python)
-    autorest_python_version = get_npm_package_version(autorest_python)
+    npm_package_verstion = get_npm_package_version(autorest_python)
 
     # return to original folder
     os.chdir(origin_path)
 
-    return {cadl_python: cadl_python_version, autorest_python: autorest_python_version}
+    return npm_package_verstion
