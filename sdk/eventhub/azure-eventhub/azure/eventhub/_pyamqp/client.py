@@ -377,6 +377,7 @@ class AMQPClient(
         :raises: TimeoutError if CBS authentication timeout reached.
         """
         if self._shutdown:
+            print("returning false")
             return False
         if not self.client_ready():
             return True
@@ -824,6 +825,7 @@ class ReceiveClient(AMQPClient):
         timeout = time.time() + timeout if timeout else 0
         receiving = True
         batch = []
+        _logger.debug("From receive call")
         self.open()
         while len(batch) < max_batch_size:
             try:
