@@ -197,6 +197,7 @@ class EventHubConsumer(
                 host=self._client._address.hostname, auth=auth
             )
             self._handler = cast("ReceiveClient", self._handler)
+            _LOGGER.debug("from consumer call")
             self._handler.open(connection=conn)
             while not self._handler.client_ready():
                 time.sleep(0.05)

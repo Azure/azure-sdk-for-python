@@ -535,6 +535,7 @@ class ConsumerProducerMixin(object):
             conn = self._client._conn_manager.get_connection(  # pylint: disable=protected-access
                 host=self._client._address.hostname, auth=auth
             )
+            _LOGGER.debug("from client base call")
             self._handler.open(connection=conn)
             while not self._handler.client_ready():
                 time.sleep(0.05)
