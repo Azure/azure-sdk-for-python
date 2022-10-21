@@ -61,7 +61,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             form_recognizer_account,
             AzureKeyCredential(form_recognizer_account_key),
             polling_interval=polling_interval,
-            logging_enable=True if ENABLE_LOGGER == "True" else False,
+            logging_enable=True,
             **self.client_kwargs
         )
         kwargs.update({"client": client})

@@ -79,7 +79,7 @@ def skip_flaky_test(f):
             elif "Timeout" in error.message.casefold():
                 pytest.mark.skip("flaky service response: {}".format(error))
                 logger.debug("flaky service response: {}".format(error))
-            elif "InvalidImage" in error.message.casefold():
+            elif "(InvalidImage)" in error.message.casefold():
                 pytest.mark.skip("flaky service response: {}".format(error))
                 logger.debug("flaky service response: {}".format(error))
 
