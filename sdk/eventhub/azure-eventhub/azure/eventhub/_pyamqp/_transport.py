@@ -705,13 +705,13 @@ class WebSocketTransport(_AbstractTransport):
             # )
             self.ws = WebSocketApp(
                 url="wss://{}".format(self._custom_endpoint or self._host),
-                subprotocols=[AMQP_WS_SUBPROTOCOL],
-                timeout=self._connect_timeout,
-                skip_utf8_validation=True,
-                sslopt=self.sslopts,
-                http_proxy_host=http_proxy_host,
-                http_proxy_port=http_proxy_port,
-                http_proxy_auth=http_proxy_auth,
+                # subprotocols=[AMQP_WS_SUBPROTOCOL],
+                # timeout=self._connect_timeout,
+                # skip_utf8_validation=True,
+                # sslopt=self.sslopts,
+                # http_proxy_host=http_proxy_host,
+                # http_proxy_port=http_proxy_port,
+                # http_proxy_auth=http_proxy_auth,
                 on_close=self.on_close
                 )
         except ImportError:
