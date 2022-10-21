@@ -17,7 +17,7 @@ class PyPIClient:
     def __init__(self, host="https://pypi.org"):
         self._host = host
         self._http = PoolManager(
-            retries=Retry(total=3, raise_on_status=True), ca_cert_file=os.getenv("REQUESTS_CA_BUNDLE", None)
+            retries=Retry(total=3, raise_on_status=True), ca_certs=os.getenv("REQUESTS_CA_BUNDLE", None)
         )
 
     def project(self, package_name):
