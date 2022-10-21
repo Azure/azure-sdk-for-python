@@ -419,10 +419,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             if verify_frame_type is not None and frame_type != verify_frame_type:
                 # raise AMQPError(condition=ErrorCondition.DecodeError, description="Invalid Frame Type")
                 # print("Ran into invalid frame type")
-                # pass
-                raise ValueError(
-                    f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                )
+                pass
+                # raise ValueError(
+                #     f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                # )
 
             # >I is an unsigned int, but the argument to sock.recv is signed,
             # so we know the size can be at most 2 * SIGNED_INT_MAX
