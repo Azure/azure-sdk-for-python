@@ -706,7 +706,7 @@ class WebSocketTransport(_AbstractTransport):
             # )
             self.ws = WebSocketApp(
                 url="wss://{}".format(self._custom_endpoint or self._host),
-                # subprotocols=[AMQP_WS_SUBPROTOCOL],
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
                 # timeout=self._connect_timeout,
                 # skip_utf8_validation=True,
                 # sslopt=self.sslopts,
@@ -716,7 +716,6 @@ class WebSocketTransport(_AbstractTransport):
                 on_close=self.on_close
                 )
             self.ws.run_forever(dispatcher=rel,    
-                # subprotocols=[AMQP_WS_SUBPROTOCOL],
                 ping_timeout=self._connect_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
@@ -785,7 +784,8 @@ class WebSocketTransport(_AbstractTransport):
         """
         from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
         try:
-            self.ws.send_binary(s)
+            self.ws.send(s)
+            # self.ws.send_binary(s)
         except WebSocketTimeoutException as e:
             raise TimeoutError('recv timed out (%s)' % e)
         except SSLError as e:
