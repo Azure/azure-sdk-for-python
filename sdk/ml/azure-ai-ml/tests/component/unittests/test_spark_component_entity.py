@@ -12,6 +12,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestSparkComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected

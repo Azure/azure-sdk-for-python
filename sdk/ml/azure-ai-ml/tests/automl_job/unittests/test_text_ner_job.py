@@ -29,6 +29,7 @@ from azure.ai.ml.entities._job.automl.nlp.text_ner_job import TextNerJob
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLTextNerJob:
     """Tests for AutoML NLP Text NER Job."""

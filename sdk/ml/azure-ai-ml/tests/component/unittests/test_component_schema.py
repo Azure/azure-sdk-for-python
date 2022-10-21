@@ -93,6 +93,7 @@ def load_component_entity_from_rest_json(path) -> Component:
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestCommandComponent:
     def test_serialize_deserialize_basic(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"

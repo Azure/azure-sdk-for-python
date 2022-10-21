@@ -79,7 +79,7 @@ class BaseExporter:
             tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
         )
         self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
-        self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
+        self._storage_retention_period = kwargs.get('storage_retention_period', 48 * 60 * 60)  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)

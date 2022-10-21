@@ -343,6 +343,7 @@ def loaded_regression_job_auto_fields(mock_machinelearning_client) -> AutoMLJob:
     return job
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLTabularSchema:
     def _validate_automl_tabular_job(self, automl_job):
