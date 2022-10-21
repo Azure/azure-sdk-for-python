@@ -143,14 +143,6 @@ class OperationOrchestrator(object):
                     azureml_type == "environments"
                     and asset.startswith(CURATED_ENV_PREFIX)
                 ):
-                    module_logger.warning(
-                        "This job/deployment uses curated environments. The syntax for using curated "
-                        "environments has changed to include azureml registry name: "
-                        "azureml:registries/azureml/environments//versions/ or "
-                        "azureml:registries/azureml/environments/labels/latest. "
-                        "Support for format you are using will be removed in future versions of the "
-                        "CLI and SDK. Learn more at aka.ms/curatedenv"
-                    )
                     return f"azureml:{asset}"
 
                 name, label = parse_name_label(asset)
