@@ -13,6 +13,7 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.skip(reason="not able to re-record")
+@pytest.mark.pipeline_test
 class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
     def test_pipeline_job_create_with_registered_component_on_registry(
         self,
