@@ -281,7 +281,7 @@ class AMQPClient(
         if self._session:
             return  # already open.
         _logger.debug("Opening client connection.")
-        if connection and not self._shutdown:
+        if connection:
             self._connection = connection
             self._external_connection = True
         elif not self._connection:
