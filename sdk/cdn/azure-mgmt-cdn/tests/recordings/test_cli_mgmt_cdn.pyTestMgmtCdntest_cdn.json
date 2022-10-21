@@ -221,7 +221,7 @@
         "Connection": "keep-alive",
         "Content-Length": "59",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "location": "WestUs",
@@ -11899,7 +11899,7 @@
         "Connection": "keep-alive",
         "Content-Length": "59",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "location": "WestUs",
@@ -11947,7 +11947,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -11982,7 +11982,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12017,7 +12017,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12062,7 +12062,7 @@
         "Connection": "keep-alive",
         "Content-Length": "400",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "location": "WestUs",
@@ -12167,7 +12167,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12202,7 +12202,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12237,7 +12237,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12317,7 +12317,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12366,7 +12366,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12446,7 +12446,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12491,7 +12491,7 @@
         "Connection": "keep-alive",
         "Content-Length": "49",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "properties": {
@@ -12546,7 +12546,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12581,7 +12581,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12616,7 +12616,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12667,7 +12667,7 @@
         "Connection": "keep-alive",
         "Content-Length": "34",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "hostName": "www.someDomain.com"
@@ -12704,7 +12704,7 @@
         "Connection": "keep-alive",
         "Content-Length": "30",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "contentPaths": [
@@ -12737,7 +12737,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12772,7 +12772,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12807,7 +12807,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12842,7 +12842,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12877,7 +12877,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -12958,7 +12958,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
@@ -13039,7 +13039,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13074,7 +13074,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13109,7 +13109,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13190,7 +13190,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
@@ -13271,7 +13271,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13306,7 +13306,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13341,7 +13341,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13423,7 +13423,7 @@
         "Connection": "keep-alive",
         "Content-Length": "30",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "contentPaths": [
@@ -13456,7 +13456,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13491,7 +13491,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13526,7 +13526,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13561,7 +13561,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13596,7 +13596,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13631,7 +13631,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13666,7 +13666,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13701,7 +13701,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13736,7 +13736,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13817,7 +13817,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13853,7 +13853,7 @@
         "Connection": "keep-alive",
         "Content-Length": "43",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "tags": {
@@ -13938,7 +13938,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -13971,7 +13971,7 @@
         "Connection": "keep-alive",
         "Content-Length": "43",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "tags": {
@@ -14021,7 +14021,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -14056,7 +14056,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -14091,7 +14091,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -14138,7 +14138,7 @@
         "Connection": "keep-alive",
         "Content-Length": "66",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "name": "sampleName",
@@ -14176,7 +14176,7 @@
         "Connection": "keep-alive",
         "Content-Length": "42",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "probeURL": "https://www.bing.com/image"
@@ -14213,7 +14213,7 @@
         "Connection": "keep-alive",
         "Content-Length": "66",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "name": "sampleName",
@@ -14250,7 +14250,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 204,
@@ -14276,7 +14276,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
@@ -14305,7 +14305,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -14340,7 +14340,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -14376,7 +14376,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
@@ -14405,7 +14405,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -14440,7 +14440,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-cdn/13.0.0 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-cdn/12.1.0b1 Python/3.8.14 (Linux-5.15.0-1022-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
