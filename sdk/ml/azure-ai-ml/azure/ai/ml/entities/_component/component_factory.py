@@ -186,7 +186,8 @@ class _ComponentFactory:
         if _type == "parallel":
             import json
             if "partition_keys" in rest_component_version.component_spec:
-                rest_component_version.component_spec["partition_keys"] = json.loads(rest_component_version.component_spec["partition_keys"])
+                rest_component_version.component_spec["partition_keys"] \
+                    = json.loads(rest_component_version.component_spec["partition_keys"])
 
         new_instance = create_instance_func()
         init_kwargs = dict(

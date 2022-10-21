@@ -144,14 +144,6 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         self.instance_count = instance_count
         self.code = code
 
-        #if self.mini_batch_size is not None and self.partition_keys is not None:
-        #    msg = "mini_batch_size and partition_keys are mutually exclusive"
-        #    raise ValidationException(
-        #        message=msg,
-        #       target=ErrorTarget.COMPONENT,
-        #        no_personal_data_message=msg,
-        #        error_category=ErrorCategory.USER_ERROR,
-        #   )
         if self.mini_batch_size is not None:
             # Convert str to int.
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
