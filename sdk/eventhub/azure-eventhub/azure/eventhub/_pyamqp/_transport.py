@@ -678,6 +678,9 @@ class WebSocketTransport(_AbstractTransport):
         self.ws = None
         self._http_proxy = kwargs.get("http_proxy", None)
 
+    def on_close(self):
+        print("closed")
+
     def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
         if self._http_proxy:
@@ -688,9 +691,19 @@ class WebSocketTransport(_AbstractTransport):
             if username or password:
                 http_proxy_auth = (username, password)
         try:
-            from websocket import create_connection
+            from websocket import create_connection, WebSocketApp
 
-            self.ws = create_connection(
+            # self.ws = create_connection(
+            #     url="wss://{}".format(self._custom_endpoint or self._host),
+            #     subprotocols=[AMQP_WS_SUBPROTOCOL],
+            #     timeout=self._connect_timeout,
+            #     skip_utf8_validation=True,
+            #     sslopt=self.sslopts,
+            #     http_proxy_host=http_proxy_host,
+            #     http_proxy_port=http_proxy_port,
+            #     http_proxy_auth=http_proxy_auth,
+            # )
+            self.ws = WebSocketApp(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self._connect_timeout,
@@ -699,7 +712,8 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth,
-            )
+                on_close=self.on_close
+                )
         except ImportError:
             raise ValueError(
                 "Please install websocket-client library to use websocket transport."
