@@ -368,7 +368,6 @@ class Parallel(BaseNode):
         if "distribution" in obj and obj["distribution"]:
             obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
         if "partition_keys" in obj and obj["partition_keys"]:
-            import json
             obj["partition_keys"] = json.dumps(obj["partition_keys"])
         return Parallel(**obj)
 

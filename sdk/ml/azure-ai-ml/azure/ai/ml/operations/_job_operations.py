@@ -504,6 +504,7 @@ class JobOperations(_ScopeDependentOperations):
             if not any(prop_name in job.properties for prop_name in git_props):
                 job.properties = {**job.properties, **git_props}
             rest_job_resource = to_rest_job_object(job)
+
             # Make a copy of self._kwargs instead of contaminate the original one
             kwargs = dict(**self._kwargs)
             if hasattr(rest_job_resource.properties, "identity") and (

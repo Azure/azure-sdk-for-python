@@ -2001,6 +2001,7 @@ class TestDSLPipeline:
         error_threshold = 1
         mini_batch_error_threshold = 1
         mini_batch_size = "5"
+        partition_keys = ["foo","bar"],
 
         # parallel job
         @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function_inside")
@@ -2011,6 +2012,7 @@ class TestDSLPipeline:
                 inputs=inputs,
                 outputs=outputs,
                 mini_batch_size=mini_batch_size,
+                partition_keys=partition_keys,
                 task=task,
                 logging_level=logging_level,
                 max_concurrency_per_instance=max_concurrency_per_instance,
@@ -2065,6 +2067,7 @@ class TestDSLPipeline:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": "[\"foo\", \"bar\"]",
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
@@ -2099,6 +2102,7 @@ class TestDSLPipeline:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": "[\"foo\", \"bar\"]",
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
