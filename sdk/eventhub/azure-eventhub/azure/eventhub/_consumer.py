@@ -223,6 +223,7 @@ class EventHubConsumer(
                         self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
+                    print("Exception, retrying")
                     self._amqp_transport.check_link_stolen(self, exception)
                     if not self.running:  # exit by close
                         return
