@@ -540,6 +540,7 @@ class TestAnalyze(TextAnalyticsTest):
         for document_results in response:
             for doc in document_results:
                 assert doc.is_error
+                assert doc.error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1687,7 +1688,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert res.error.code == "InvalidDocument"
                 else:
                     assert res.entities
-                    assert res.statistics
+                    # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1762,7 +1763,6 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         )
         poller.result()
-        assert poller.status() == "succeeded"
         with pytest.raises(HttpResponseError):
             poller.cancel()  # can't cancel when already in terminal state
 
