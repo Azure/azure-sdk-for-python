@@ -20,6 +20,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestInitFinalizeJob:
     component_func = partial(
         load_component(str(components_dir / "echo_string_component.yml")),
@@ -143,7 +144,7 @@ class TestInitFinalizeJob:
             subgraph_with_init_func()
         assert str(e.value) == "On_init/on_finalize is not supported for pipeline component."
 
-    def test_init_finalize_job_with_subgraph(self, caplog) -> None:
+    def test_init_finalize_job_with_subgraph(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
 
         # happy path

@@ -30,6 +30,7 @@ from azure.ai.ml.entities._job.automl.nlp.text_classification_multilabel_job imp
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLTextClassificationMultilabelJob:
     """Tests for AutoML NLP Text Classification Multilabel Job."""

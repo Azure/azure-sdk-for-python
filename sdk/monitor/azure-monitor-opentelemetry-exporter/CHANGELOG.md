@@ -6,11 +6,15 @@
 
 - Add validation logic to ApplicationInsightsSampler
     ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
+- Change default temporality of metrics to follow OTLP
+    ([#26924](https://github.com/Azure/azure-sdk-for-python/pull/26924))
 
 ### Breaking Changes
 
 - Rename local storage configuration, change default path
     ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
+- Change default storage retention period to 48 hours
+    ([#26960](https://github.com/Azure/azure-sdk-for-python/pull/26960))
 
 ### Bugs Fixed
 

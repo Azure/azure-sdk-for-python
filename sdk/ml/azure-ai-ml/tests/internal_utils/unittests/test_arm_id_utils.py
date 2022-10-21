@@ -5,6 +5,7 @@ from azure.ai.ml._utils._arm_id_utils import get_arm_id_with_version
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 def test_get_arm_id(mock_workspace_scope: OperationScope) -> None:
     arm_id = get_arm_id_with_version(mock_workspace_scope, "models", "modeltest", "2")
     expected_arm_id = (
