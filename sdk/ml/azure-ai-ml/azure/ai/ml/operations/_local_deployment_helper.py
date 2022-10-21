@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.core.polling import LROPoller
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import AzureMlImageContext, DockerfileResolver, LocalEndpointMode
 from azure.ai.ml._local_endpoints.docker_client import (
@@ -42,7 +43,7 @@ class _LocalDeploymentHelper(object):
 
     def __init__(
         self,
-        operation_container: OperationsContainer,
+        operation_container: OperationsContainer
     ):
         self._docker_client = DockerClient()
         self._model_operations = operation_container.all_operations.get(AzureMLResourceType.MODEL)
@@ -51,7 +52,7 @@ class _LocalDeploymentHelper(object):
 
     def create_or_update(
         self, deployment: OnlineDeployment, local_endpoint_mode: LocalEndpointMode
-    ) -> OnlineDeployment:
+    ) -> LROPoller[OnlineDeployment]:
         """Create or update an deployment locally using Docker.
 
         :param deployment: OnlineDeployment object with information from user yaml.
@@ -78,8 +79,13 @@ class _LocalDeploymentHelper(object):
                 if endpoint_metadata
                 else _get_stubbed_endpoint_metadata(endpoint_name=deployment.endpoint_name)
             )
-            local_endpoint_polling_wrapper(
-                func=self._create_deployment,
+
+            def local_deploy_wrapper(*args, **kwargs):
+                self._create_deployment(*args, **kwargs)
+                return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
+
+            return local_endpoint_polling_wrapper(
+                func=local_deploy_wrapper,
                 message=f"{operation_message} ({deployment.endpoint_name} / {deployment.name}) ",
                 endpoint_name=deployment.endpoint_name,
                 deployment=deployment,
@@ -87,7 +93,6 @@ class _LocalDeploymentHelper(object):
                 endpoint_metadata=endpoint_metadata,
                 deployment_metadata=deployment_metadata,
             )
-            return self.get(endpoint_name=deployment.endpoint_name, deployment_name=deployment.name)
         except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
