@@ -734,6 +734,8 @@ class WebSocketTransport(_AbstractTransport):
             raise ConnectionError('recv disconnected (%s)' % e)
         except SocketError as e:
             raise ConnectionError('recv disconnected (%s)' % e)
+        except Exception as e:
+            raise ConnectionError(e)
 
     def _shutdown_transport(self):
         # TODO Sync and Async close functions named differently
@@ -749,6 +751,8 @@ class WebSocketTransport(_AbstractTransport):
             raise ConnectionError('recv disconnected (%s)' % e)
         except SocketError as e:
             raise ConnectionError('recv disconnected (%s)' % e)
+        except Exception as e:
+            raise ConnectionError(e)
 
     def _write(self, s):
         """Completely write a string to the peer.
@@ -767,3 +771,5 @@ class WebSocketTransport(_AbstractTransport):
             raise ConnectionError('recv disconnected (%s)' % e)
         except SocketError as e:
             raise ConnectionError('recv disconnected (%s)' % e)
+        except Exception as e:
+            raise ConnectionError(e)
