@@ -49,6 +49,7 @@
                 "timeout": 3
             },
             "max_concurrency_per_instance": 12,
+            "mini_batch_error_threshold": 5,
             "error_threshold": 10,
             "logging_level": "INFO",
             "partition_keys": "[\"foo\", \"bar\"]",
