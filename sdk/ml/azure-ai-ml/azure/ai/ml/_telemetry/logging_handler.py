@@ -83,7 +83,7 @@ def is_telemetry_collection_disabled():
         return True
     if not in_jupyter_notebook:
         return True
-    return False 
+    return False
 
 
 def get_appinsights_log_handler(
