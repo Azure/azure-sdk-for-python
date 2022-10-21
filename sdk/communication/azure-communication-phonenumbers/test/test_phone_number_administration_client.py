@@ -238,6 +238,8 @@ class PhoneNumbersClientTest(CommunicationTestCase):
 
     def test_list_geographic_area_codes(self):
         area_codes = self.phone_number_client.list_available_area_codes("US", "person", "Seattle")
-        assert area_codes.next()    
+        assert area_codes.next()  
 
-
+    def test_list_countries(self):
+        countries = self.phone_number_client.list_available_countries()
+        assert countries.next()          

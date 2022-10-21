@@ -283,3 +283,11 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                 items.append(item)
         assert len(items) > 0
 
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_countries(self):
+        async with self.phone_number_client:
+            countries = self.phone_number_client.list_available_countries()
+            items = []
+            async for item in countries:
+                items.append(item)
+        assert len(items) > 0    
