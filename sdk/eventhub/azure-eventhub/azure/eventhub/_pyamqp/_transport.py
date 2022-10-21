@@ -95,7 +95,7 @@ TIMEOUT_INTERVAL = 1
 WS_TIMEOUT_INTERVAL = 1
 READ_TIMEOUT_INTERVAL = 0.2
 
-DATA = []
+DATA = bytearray()
 
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r"\[([\.0-9a-f:]+)\](?::(\d+))?")
