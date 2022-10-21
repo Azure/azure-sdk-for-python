@@ -46,6 +46,7 @@ def test_producer_client_constructor(connection_str, uamqp_transport):
 
     def on_error(events, error, pid):
         pass
+
     with pytest.raises(TypeError):
         EventHubProducerClient.from_connection_string(connection_str, buffered_mode=True, uamqp_transport=uamqp_transport)
     with pytest.raises(TypeError):
@@ -71,6 +72,30 @@ def test_producer_client_constructor(connection_str, uamqp_transport):
             uamqp_transport=uamqp_transport
         )
 
+    def on_success_missing_params(events):
+        on_success_missing_params.events = events
+    
+    def on_error_missing_params(events, pid):
+        on_error_missing_params.events = events
+
+    producer = EventHubProducerClient.from_connection_string(
+        connection_str,
+        buffered_mode=True,
+        buffer_concurrency=2,
+        on_success=on_success_missing_params,
+        on_error=on_error_missing_params,
+        uamqp_transport=uamqp_transport,
+    )
+    
+    on_success_missing_params.events = None
+    on_error_missing_params.events = None
+
+    # successfully send, but don't enter invalid callback
+    with producer:
+        producer.send_event(EventData('Single data'))
+    
+    assert not on_success_missing_params.events
+    assert not on_error_missing_params.events
 
 @pytest.mark.liveTest
 @pytest.mark.parametrize(
@@ -106,6 +131,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
 
     on_error.err = None  # ensure no error
     on_success.batching = False  # ensure batching happened
+
     producer = EventHubProducerClient.from_connection_string(
         connection_str,
         buffered_mode=True,

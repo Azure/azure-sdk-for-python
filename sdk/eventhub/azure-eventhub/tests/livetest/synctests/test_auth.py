@@ -9,6 +9,7 @@ import threading
 
 from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
+from azure.eventhub.exceptions import ConnectError, AuthenticationError, EventHubError
 from azure.eventhub._client_base import EventHubSASTokenCredential
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
@@ -139,3 +140,59 @@ def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
     
     credential.update(live_eventhub['key_name'], live_eventhub['access_key'])
     assert consumer_client.get_eventhub_properties() is not None
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+def test_client_invalid_credential(live_eventhub, uamqp_transport):
+
+    env_credential = EnvironmentCredential()
+    producer_client = EventHubProducerClient(fully_qualified_namespace="fakeeventhub.servicebus.windows.net",
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=env_credential,
+                                             user_agent='customized information',
+                                             uamqp_transport=uamqp_transport)
+    with producer_client:
+        with pytest.raises(ConnectError):
+            producer_client.create_batch(partition_id='0')
+
+    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name='fakehub',
+                                             credential=env_credential,
+                                             uamqp_transport=uamqp_transport)
+
+    with producer_client:
+        with pytest.raises(ConnectError):
+            producer_client.create_batch(partition_id='0')
+    
+    credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
+    auth_uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
+    token = credential.get_token(auth_uri).token
+    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=EventHubSASTokenCredential(token, time.time() + 5),
+                                             uamqp_transport=uamqp_transport)
+    time.sleep(6)
+    # expired credential
+    with producer_client:
+        with pytest.raises(AuthenticationError):
+            producer_client.create_batch(partition_id='0')
+
+    credential = EventHubSharedKeyCredential('fakekey', live_eventhub['access_key'])
+    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=credential,
+                                             uamqp_transport=uamqp_transport)
+
+    with producer_client:
+        with pytest.raises(AuthenticationError):
+            producer_client.create_batch(partition_id='0')
+
+    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=env_credential,
+                                             connection_verify="cacert.pem",
+                                             uamqp_transport=uamqp_transport)
+    
+    with producer_client:
+        with pytest.raises(ConnectError):   # TODO: should be EventHubError for both, but pyamqp raises ConnectError which inherits + passes
+            producer_client.create_batch(partition_id='0')
