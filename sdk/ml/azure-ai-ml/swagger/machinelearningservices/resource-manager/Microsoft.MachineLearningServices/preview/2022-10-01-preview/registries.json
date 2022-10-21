@@ -516,6 +516,11 @@
           },
           "x-ms-identifiers": [],
           "x-nullable": true
+        },
+        "managedResourceGroupTags": {
+          "description": "Tags to be applied to the managed resource group associated with this registry.",
+          "type": "object",
+          "x-nullable": true
         }
       },
       "x-ms-client-name": "RegistryProperties",
