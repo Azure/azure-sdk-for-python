@@ -6,6 +6,7 @@
 - Registry list operation now accepts scope value to allow subscription-only based requests.
 - Most configuration classes from the entity package now implement the standard mapping protocol.
 - Add registry delete operation.
+- The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
 
 ### Breaking Changes
 
