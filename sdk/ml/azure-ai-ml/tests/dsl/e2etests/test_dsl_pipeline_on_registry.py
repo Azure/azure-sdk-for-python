@@ -104,6 +104,8 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
         cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
         assert isinstance(cancel_poller, LROPoller)
 
+    @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
+                             "'Unable to find a record for the request' in playback mode")
     def test_pipeline_with_registry_component_and_model_as_input(self, registry_client: MLClient, client: MLClient):
         # get dataset
         test_data = Input(
