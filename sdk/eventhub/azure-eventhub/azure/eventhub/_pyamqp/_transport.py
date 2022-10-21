@@ -696,37 +696,37 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_auth = (username, password)
         try:
             from websocket import create_connection, WebSocketApp
-            import rel
+            # import rel
 
-            # self.ws = create_connection(
-            #     url="wss://{}".format(self._custom_endpoint or self._host),
-            #     subprotocols=[AMQP_WS_SUBPROTOCOL],
-            #     timeout=self._connect_timeout,
-            #     skip_utf8_validation=True,
-            #     sslopt=self.sslopts,
-            #     http_proxy_host=http_proxy_host,
-            #     http_proxy_port=http_proxy_port,
-            #     http_proxy_auth=http_proxy_auth,
-            # )
-            self.ws = WebSocketApp(
+            self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
-                # timeout=self._connect_timeout,
-                # skip_utf8_validation=True,
-                # sslopt=self.sslopts,
-                # http_proxy_host=http_proxy_host,
-                # http_proxy_port=http_proxy_port,
-                # http_proxy_auth=http_proxy_auth,
-                on_data=on_data,
-                on_close=on_close
-                )
-            self.ws.run_forever(   
-                ping_timeout=self._connect_timeout,
+                timeout=self._connect_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
-                http_proxy_auth=http_proxy_auth,)
+                http_proxy_auth=http_proxy_auth,
+            )
+            # self.ws = WebSocketApp(
+            #     url="wss://{}".format(self._custom_endpoint or self._host),
+            #     subprotocols=[AMQP_WS_SUBPROTOCOL],
+            #     # timeout=self._connect_timeout,
+            #     # skip_utf8_validation=True,
+            #     # sslopt=self.sslopts,
+            #     # http_proxy_host=http_proxy_host,
+            #     # http_proxy_port=http_proxy_port,
+            #     # http_proxy_auth=http_proxy_auth,
+            #     on_data=on_data,
+            #     on_close=on_close
+            #     )
+            # self.ws.run_forever(   
+            #     ping_timeout=self._connect_timeout,
+            #     skip_utf8_validation=True,
+            #     sslopt=self.sslopts,
+            #     http_proxy_host=http_proxy_host,
+            #     http_proxy_port=http_proxy_port,
+            #     http_proxy_auth=http_proxy_auth,)
         except ImportError:
             raise ValueError(
                 "Please install websocket-client library to use websocket transport."
@@ -743,7 +743,7 @@ class WebSocketTransport(_AbstractTransport):
         n -= nbytes
         try:
             while n:
-                data = DATA
+                data = self.ws.recv()
 
                 if len(data) <= n:
                     view[length : length + len(data)] = data
@@ -789,8 +789,8 @@ class WebSocketTransport(_AbstractTransport):
         """
         from websocket import WebSocketTimeoutException, WebSocketConnectionClosedException
         try:
-            self.ws.send(s)
-            # self.ws.send_binary(s)
+            # self.ws.send(s)
+            self.ws.send_binary(s)
         except WebSocketTimeoutException as e:
             raise TimeoutError('recv timed out (%s)' % e)
         except SSLError as e:
