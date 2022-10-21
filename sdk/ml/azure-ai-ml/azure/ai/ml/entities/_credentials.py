@@ -5,11 +5,12 @@
 # pylint: disable=protected-access,redefined-builtin
 
 from abc import ABC
-from typing import List
+from typing import List, Dict, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
+from azure.ai.ml.constants._common import CommonYamlFields
+from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin, YamlTranslatableMixin
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
@@ -46,7 +47,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 
-from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, JobException
+from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, JobException, ValidationErrorType, ValidationException
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
@@ -318,7 +319,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         return not self.__eq__(other)
 
 
-class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin):
+class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlTranslatableMixin):
     def __init__(self):
         self.type = None
 
@@ -341,6 +342,29 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin):
             target=ErrorTarget.IDENTITY,
             error_category=ErrorCategory.SYSTEM_ERROR,
         )
+
+    @classmethod
+    def _load(
+        cls,
+        data: Dict = None,
+    ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
+        type_str = data.get(CommonYamlFields.TYPE)
+        if type_str == camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY):
+            identity_cls = ManagedIdentityConfiguration
+        elif type_str == camel_to_snake(IdentityConfigurationType.USER_IDENTITY):
+            identity_cls = UserIdentityConfiguration
+        elif type_str == camel_to_snake(IdentityConfigurationType.AML_TOKEN):
+            identity_cls = AmlTokenConfiguration
+        else:
+            msg = f"Unsupported identity type: {type_str}."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.IDENTITY,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        return identity_cls._load_from_dict(data)
 
 
 class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
@@ -418,6 +442,17 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
             client_id=obj.client_id,
         )
 
+    def _to_dict(self) -> Dict:
+        from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
+
+        return ManagedIdentitySchema().dump(self)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, **kwargs) -> "ManagedIdentityConfiguration":
+        from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
+
+        return ManagedIdentitySchema().load(data)
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ManagedIdentityConfiguration):
             return NotImplemented
@@ -440,6 +475,17 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def _from_job_rest_object(cls, obj: RestUserIdentity) -> "UserIdentity":
         return cls()
 
+    def _to_dict(self) -> Dict:
+        from azure.ai.ml._schema.job.identity import UserIdentitySchema
+
+        return UserIdentitySchema().dump(self)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, **kwargs) -> "UserIdentityConfiguration":
+        from azure.ai.ml._schema.job.identity import UserIdentitySchema
+
+        return UserIdentitySchema().load(data)
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UserIdentityConfiguration):
             return NotImplemented
@@ -456,6 +502,17 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
     # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestAmlToken:
         return RestAmlToken()
+
+    def _to_dict(self) -> Dict:
+        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+
+        return AMLTokenIdentitySchema().dump(self)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, **kwargs) -> "AMLTokenIdentitySchema":
+        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+
+        return AMLTokenIdentitySchema().load(data)
 
     @classmethod
     # pylint: disable=unused-argument

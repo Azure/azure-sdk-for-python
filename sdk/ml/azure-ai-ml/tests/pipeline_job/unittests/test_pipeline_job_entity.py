@@ -1469,3 +1469,6 @@ class TestPipelineJobEntity:
         # data-binding-expression
         with pytest.raises(ValidationException, match="<class '.*'> does not support setting path."):
             pipeline.jobs["merge_component_outputs"].outputs["component_out_path_1"].path = "xxx"
+
+    def test_pipeline_node_with_identity(self):
+        pass
