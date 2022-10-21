@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtesteckeyacc52d1e/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtesteckeyacc52d1e/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -26,7 +26,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtesteckeyacc52d1e/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtesteckeyacc52d1e/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -66,7 +66,7 @@
             "verify",
             "sign"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtesteckeyacc52d1e/dbe4227745c30e79025c6e362377ab40",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtesteckeyacc52d1e/dbe4227745c30e79025c6e362377ab40",
           "kty": "EC-HSM",
           "x": "-x7QvCm9moElyUjcO4Vw0o61vD-N0eygDpMVfdTL-lw",
           "y": "kz_ERZAHYd0X0rTEc_8f2Ig1cdD8tGYYfGRl1PBOnGA"
@@ -74,7 +74,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtesteckeyacc52d1e/dbe4227745c30e79025c6e362377ab40?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtesteckeyacc52d1e/dbe4227745c30e79025c6e362377ab40?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -111,7 +111,7 @@
             "verify",
             "sign"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtesteckeyacc52d1e/dbe4227745c30e79025c6e362377ab40",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtesteckeyacc52d1e/dbe4227745c30e79025c6e362377ab40",
           "kty": "EC-HSM",
           "x": "-x7QvCm9moElyUjcO4Vw0o61vD-N0eygDpMVfdTL-lw",
           "y": "kz_ERZAHYd0X0rTEc_8f2Ig1cdD8tGYYfGRl1PBOnGA"

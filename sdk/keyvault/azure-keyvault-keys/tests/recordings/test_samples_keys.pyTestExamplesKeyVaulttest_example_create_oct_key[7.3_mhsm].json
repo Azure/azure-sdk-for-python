@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey8cc23137/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey8cc23137/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -201,7 +201,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey8cc23137/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey8cc23137/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -247,7 +247,7 @@
             "encrypt",
             "decrypt"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey8cc23137/8b9b960cf2634f68879af28d5ae489ef",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey8cc23137/8b9b960cf2634f68879af28d5ae489ef",
           "kty": "oct-HSM"
         }
       }

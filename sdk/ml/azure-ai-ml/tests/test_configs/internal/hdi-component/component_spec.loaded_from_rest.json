@@ -1,5 +1,4 @@
 {
-  "name": "test_183552357011",
   "description": "Train a Spark ML model using an HDInsight Spark cluster",
   "tags": {
     "HDInsight": "",
@@ -17,10 +16,10 @@
       "description": "Iris csv file"
     },
     "regularization_rate": {
-      "type": "float",
+      "type": "Float",
+      "description": "Regularization rate when training with logistic regression",
       "optional": true,
-      "default": "0.01",
-      "description": "Regularization rate when training with logistic regression"
+      "default": "0.01"
     }
   },
   "outputs": {

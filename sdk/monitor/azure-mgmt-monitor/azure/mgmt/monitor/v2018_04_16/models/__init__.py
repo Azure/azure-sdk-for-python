@@ -23,43 +23,41 @@ from ._models_py3 import Schedule
 from ._models_py3 import Source
 from ._models_py3 import TriggerCondition
 
-
-from ._monitor_management_client_enums import (
-    AlertSeverity,
-    ConditionalOperator,
-    Enabled,
-    MetricTriggerType,
-    Operator,
-    ProvisioningState,
-    QueryType,
-)
+from ._monitor_management_client_enums import AlertSeverity
+from ._monitor_management_client_enums import ConditionalOperator
+from ._monitor_management_client_enums import Enabled
+from ._monitor_management_client_enums import MetricTriggerType
+from ._monitor_management_client_enums import Operator
+from ._monitor_management_client_enums import ProvisioningState
+from ._monitor_management_client_enums import QueryType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Action',
-    'AlertingAction',
-    'AzNsActionGroup',
-    'Criteria',
-    'Dimension',
-    'ErrorContract',
-    'ErrorResponse',
-    'LogMetricTrigger',
-    'LogSearchRuleResource',
-    'LogSearchRuleResourceCollection',
-    'LogSearchRuleResourcePatch',
-    'LogToMetricAction',
-    'Resource',
-    'Schedule',
-    'Source',
-    'TriggerCondition',
-    'AlertSeverity',
-    'ConditionalOperator',
-    'Enabled',
-    'MetricTriggerType',
-    'Operator',
-    'ProvisioningState',
-    'QueryType',
+    "Action",
+    "AlertingAction",
+    "AzNsActionGroup",
+    "Criteria",
+    "Dimension",
+    "ErrorContract",
+    "ErrorResponse",
+    "LogMetricTrigger",
+    "LogSearchRuleResource",
+    "LogSearchRuleResourceCollection",
+    "LogSearchRuleResourcePatch",
+    "LogToMetricAction",
+    "Resource",
+    "Schedule",
+    "Source",
+    "TriggerCondition",
+    "AlertSeverity",
+    "ConditionalOperator",
+    "Enabled",
+    "MetricTriggerType",
+    "Operator",
+    "ProvisioningState",
+    "QueryType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

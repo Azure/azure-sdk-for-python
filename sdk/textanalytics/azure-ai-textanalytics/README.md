@@ -12,6 +12,7 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 - Text Analytics for Health
 - Custom Named Entity Recognition
 - Custom Text Classification
+- Extractive Text Summarization
 - Dynamic Classification
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][language_product_documentation] | [Samples][ta_samples]
@@ -255,6 +256,7 @@ The following section provides several code snippets covering some of the most c
 - [Custom Entity Recognition][recognize_custom_entities_sample]
 - [Custom Single Label Classification][single_label_classify_sample]
 - [Custom Multi Label Classification][multi_label_classify_sample]
+- [Extractive Summarization][extract_summary_sample]
 - [Dynamic Classification][dynamic_classification_sample]
 
 ### Analyze sentiment
@@ -536,6 +538,7 @@ Note: Healthcare Entities Analysis is only available with API version v3.1 and n
 - Custom Single Label Classification
 - Custom Multi Label Classification
 - Healthcare Entities Analysis
+- Extractive Summarization
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -666,6 +669,7 @@ Common scenarios
 - Custom Entity Recognition: [sample_recognize_custom_entities.py][recognize_custom_entities_sample] ([async_version][recognize_custom_entities_sample_async])
 - Custom Single Label Classification: [sample_single_label_classify.py][single_label_classify_sample] ([async_version][single_label_classify_sample_async])
 - Custom Multi Label Classification: [sample_multi_label_classify.py][multi_label_classify_sample] ([async_version][multi_label_classify_sample_async])
+- Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
 - Dynamic Classification: [sample_dynamic_classification.py][dynamic_classification_sample] ([async_version][dynamic_classification_sample_async])
 
 Advanced scenarios
@@ -769,6 +773,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_label_classify.py
 [multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
 [healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
+[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
+[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
 [dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
 [dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
 [cla]: https://cla.microsoft.com

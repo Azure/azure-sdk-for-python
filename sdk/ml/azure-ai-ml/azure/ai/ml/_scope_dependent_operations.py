@@ -8,10 +8,31 @@ import functools
 import logging
 from typing import Any, Callable, Dict, Optional, TypeVar, cast
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
+
+
+class OperationConfig(object):
+    """This class is used to store common configurations that are shared across operation objects of an MLClient object.
+
+    :param object: _description_
+    :type object: _type_
+    """
+
+    def __init__(self, show_progress: bool) -> None:
+
+        self._show_progress = show_progress
+
+    @property
+    def show_progress(self) -> bool:
+        """Decide wether to display progress bars for long running operations.
+
+        :return: show_progress
+        :rtype: bool
+        """
+        return self._show_progress
 
 
 class OperationScope(object):
@@ -69,8 +90,9 @@ def workspace_none_check(func: Callable[..., Any]) -> Callable[..., Any]:
 
 
 class _ScopeDependentOperations(object):
-    def __init__(self, operation_scope: OperationScope):
+    def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
         self._operation_scope = operation_scope
+        self._operation_config = operation_config
         self._scope_kwargs = {
             "resource_group_name": self._operation_scope.resource_group_name,
         }
@@ -91,6 +113,10 @@ class _ScopeDependentOperations(object):
     @property
     def _resource_group_name(self) -> str:
         return self._operation_scope.resource_group_name
+
+    @property
+    def _show_progress(self) -> bool:
+        return self._operation_config.show_progress
 
 
 class OperationsContainer(object):

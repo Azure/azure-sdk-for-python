@@ -1,3 +1,4 @@
+name: blue
 endpoint_name: mybatchedp
 model:
   path: ../mnist/model/

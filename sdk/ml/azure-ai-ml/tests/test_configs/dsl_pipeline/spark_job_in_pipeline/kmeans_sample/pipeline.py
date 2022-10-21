@@ -10,7 +10,7 @@ cluster_name = "cpu-cluster"
 
 
 def generate_dsl_pipeline_from_yaml() -> PipelineJob:
-    spark_component_func = load_component(path=parent_dir + "/component.yml")
+    spark_component_func = load_component(parent_dir + "/component.yml")
 
     @dsl.pipeline(description="submit a pipeline with spark job")
     def spark_pipeline_from_yaml(sample_data):
@@ -18,7 +18,7 @@ def generate_dsl_pipeline_from_yaml() -> PipelineJob:
         kmeans_cluster.compute = synapse_compute_name
 
         command_func = command(
-            inputs=dict(spark_output=Input(type=AssetTypes.URI_FOLDER), mode=InputOutputModes.DIRECT),
+            inputs=dict(spark_output=Input(type=AssetTypes.URI_FOLDER, mode=InputOutputModes.DIRECT)),
             command="ls ${{inputs.spark_output}}",
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
         )

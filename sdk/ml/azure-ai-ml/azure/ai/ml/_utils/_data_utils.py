@@ -16,7 +16,7 @@ from jsonschema.exceptions import best_match
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, get_storage_client
 from azure.ai.ml._artifacts._constants import INVALID_MLTABLE_METADATA_SCHEMA_ERROR, INVALID_MLTABLE_METADATA_SCHEMA_MSG
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 from ._http_utils import HttpPipeline

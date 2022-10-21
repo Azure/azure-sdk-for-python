@@ -4,7 +4,7 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import DumpableIntegerField, NestedField, UnionField
+from azure.ai.ml._schema.core.fields import DumpableFloatField, DumpableIntegerField, NestedField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import (
     DataInputSchema,
     InputLiteralValueSchema,
@@ -32,7 +32,8 @@ def InputsField(**kwargs):
                         # Use DumpableIntegerField to make sure there will be validation error when
                         # loading/dumping a float to int.
                         DumpableIntegerField(strict=True),
-                        fields.Float(),
+                        # Use DumpableFloatField to avoid '1'(str) serialized to 1.0(float)
+                        DumpableFloatField(),
                         # put string schema after Int and Float to make sure they won't dump to string
                         fields.Str(),
                         # fields.Bool comes last since it'll parse anything non-falsy to True

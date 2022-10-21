@@ -15,11 +15,26 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from .. import models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
-from .operations import AgentPoolsOperations, FleetMembersOperations, FleetsOperations, MaintenanceConfigurationsOperations, ManagedClusterSnapshotsOperations, ManagedClustersOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, ResolvePrivateLinkServiceIdOperations, SnapshotsOperations, TrustedAccessRoleBindingsOperations, TrustedAccessRolesOperations
+from .operations import (
+    AgentPoolsOperations,
+    FleetMembersOperations,
+    FleetsOperations,
+    MaintenanceConfigurationsOperations,
+    ManagedClusterSnapshotsOperations,
+    ManagedClustersOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    ResolvePrivateLinkServiceIdOperations,
+    SnapshotsOperations,
+    TrustedAccessRoleBindingsOperations,
+    TrustedAccessRolesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
+
 
 class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The Container Service Client.
@@ -82,25 +97,23 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ContainerServiceClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ContainerServiceClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_clusters = ManagedClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.maintenance_configurations = MaintenanceConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.agent_pools = AgentPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -110,9 +123,7 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         self.resolve_private_link_service_id = ResolvePrivateLinkServiceIdOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.snapshots = SnapshotsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_cluster_snapshots = ManagedClusterSnapshotsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -122,19 +133,10 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         self.trusted_access_role_bindings = TrustedAccessRoleBindingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.fleets = FleetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.fleet_members = FleetMembersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

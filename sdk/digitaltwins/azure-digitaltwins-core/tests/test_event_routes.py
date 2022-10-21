@@ -4,20 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-import uuid
 
-from devtools_testutils import AzureTestCase
-from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
-
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsEventRoute
-from azure.core.exceptions import (
-    ResourceNotFoundError,
-    HttpResponseError,
-    ResourceExistsError,
-)
+from devtools_testutils import AzureRecordedTestCase
 
 
-class DigitalTwinsEventRouteTests(AzureTestCase):
+class TestDigitalTwinsEventRoute(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient)
@@ -27,9 +20,7 @@ class DigitalTwinsEventRouteTests(AzureTestCase):
             endpoint=endpoint,
             **kwargs)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_event_route_no_endpoint(self, resource_group, location, digitaltwin):
+    def test_create_event_route_no_endpoint(self, recorded_test, digitaltwin):
         event_route_id = self.create_random_name('eventRoute-')
         event_filter = "$eventType = 'DigitalTwinTelemetryMessages' or $eventType = 'DigitalTwinLifecycleNotification'"
         endpoint = self.create_random_name('endpoint-')
@@ -37,29 +28,23 @@ class DigitalTwinsEventRouteTests(AzureTestCase):
             endpoint_name=endpoint,
             filter=event_filter
         )
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(HttpResponseError):
             client.upsert_event_route(event_route_id, route)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_get_event_route_not_existing(self, resource_group, location, digitaltwin):
+    def test_get_event_route_not_existing(self, recorded_test, digitaltwin):
         event_route_id = self.create_random_name('eventRoute-')
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.get_event_route(event_route_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_list_event_routes(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_list_event_routes(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         all_routes = list(client.list_event_routes())
         assert all_routes == []
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_event_route_not_existing(self, resource_group, location, digitaltwin):
+    def test_delete_event_route_not_existing(self, recorded_test, digitaltwin):
         event_route_id = self.create_random_name('eventRoute-')
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.delete_event_route(event_route_id)

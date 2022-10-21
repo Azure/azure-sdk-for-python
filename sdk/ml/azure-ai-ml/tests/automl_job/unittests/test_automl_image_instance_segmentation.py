@@ -4,9 +4,8 @@
 
 import pytest
 
-from azure.ai.ml import UserIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
-    ImageModelSettingsObjectDetection,
+from azure.ai.ml import UserIdentityConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     InstanceSegmentationPrimaryMetrics,
     LearningRateScheduler,
     MLTableJobInput,
@@ -14,13 +13,16 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models import (
     SamplingAlgorithmType,
     StochasticOptimizer,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ValidationMetricType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ValidationMetricType
 from azure.ai.ml.automl import image_instance_segmentation
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob
+from azure.ai.ml.entities._job.automl.image import (
+    ImageInstanceSegmentationJob,
+    ImageModelSettingsObjectDetection
+)
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
@@ -29,7 +31,7 @@ class TestAutoMLImageInstanceSegmentation:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_image_instance_segmentation_task(self, run_type):
         # Create AutoML Image Object Detection task
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         image_instance_segmentation_job = image_instance_segmentation(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="label",
@@ -43,11 +45,11 @@ class TestAutoMLImageInstanceSegmentation:
             identity=identity,
         )  # type: ImageInstanceSegmentationJob
 
-        if (run_type == "single") or (run_type == "sweep"):
-            # image_instance_segmentation_job.limits = {"timeout": 60, "max_trials": 1, "max_concurrent_trials": 1}
+        if run_type == "single":
             image_instance_segmentation_job.set_limits(timeout_minutes=60)
+        elif run_type == "sweep":
+            image_instance_segmentation_job.set_limits(timeout_minutes=60, max_concurrent_trials=4, max_trials=20)
         elif run_type == "automode":
-            # image_instance_segmentation_job.limits = {"timeout": 60, "max_trials": 2, "max_concurrent_trials": 1}
             image_instance_segmentation_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
         # image_instance_segmentation_job.training_parameters = {
@@ -95,8 +97,6 @@ class TestAutoMLImageInstanceSegmentation:
             # }
             image_instance_segmentation_job.set_sweep(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
-                max_concurrent_trials=4,
-                max_trials=20,
                 early_termination=early_termination_policy,
             )
 

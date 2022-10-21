@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/backup?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -26,7 +26,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/backup?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -42,7 +42,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
-        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/backup/8ad5f282a7e94e969a25c58a0f88445f/pending",
+        "azure-asyncoperation": "https://managedhsmvaultname.managedhsm.azure.net/backup/8ad5f282a7e94e969a25c58a0f88445f/pending",
         "Cache-Control": "no-cache",
         "Content-Length": "174",
         "Content-Security-Policy": "default-src \u0027self\u0027",
@@ -68,7 +68,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup/8ad5f282a7e94e969a25c58a0f88445f/pending",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/backup/8ad5f282a7e94e969a25c58a0f88445f/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -104,7 +104,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/restore?api-version=7.2",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -123,7 +123,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
-        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/restore/bc25e80d89f54a568c211fb5a5c6f967/pending",
+        "azure-asyncoperation": "https://managedhsmvaultname.managedhsm.azure.net/restore/bc25e80d89f54a568c211fb5a5c6f967/pending",
         "Cache-Control": "no-cache",
         "Content-Length": "138",
         "Content-Security-Policy": "default-src \u0027self\u0027",
@@ -148,7 +148,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/bc25e80d89f54a568c211fb5a5c6f967/pending",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/restore/bc25e80d89f54a568c211fb5a5c6f967/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",

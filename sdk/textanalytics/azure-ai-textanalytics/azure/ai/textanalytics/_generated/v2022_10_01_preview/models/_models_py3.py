@@ -724,7 +724,7 @@ class PreBuiltTaskParameters(TaskParameters):
 class AbstractiveSummarizationTaskParametersBase(_serialization.Model):
     """Supported parameters for an Abstractive Summarization task.
 
-    :ivar sentence_count:
+    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
     :vartype sentence_count: int
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -752,7 +752,8 @@ class AbstractiveSummarizationTaskParametersBase(_serialization.Model):
         **kwargs
     ):
         """
-        :keyword sentence_count:
+        :keyword sentence_count: It controls the approximate number of sentences in the output
+         summaries.
         :paramtype sentence_count: int
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -777,7 +778,7 @@ class AbstractiveSummarizationTaskParameters(AbstractiveSummarizationTaskParamet
     :vartype logging_opt_out: bool
     :ivar model_version:
     :vartype model_version: str
-    :ivar sentence_count:
+    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
     :vartype sentence_count: int
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -813,7 +814,8 @@ class AbstractiveSummarizationTaskParameters(AbstractiveSummarizationTaskParamet
         :paramtype logging_opt_out: bool
         :keyword model_version:
         :paramtype model_version: str
-        :keyword sentence_count:
+        :keyword sentence_count: It controls the approximate number of sentences in the output
+         summaries.
         :paramtype sentence_count: int
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
@@ -4973,7 +4975,7 @@ class HealthcareEntity(_serialization.Model):
      "Gender", "ExaminationName", "Date", "Direction", "Frequency", "MeasurementValue",
      "MeasurementUnit", "RelationalOperator", "Time", "GeneOrProtein", "Variant",
      "AdministrativeEvent", "CareEnvironment", "HealthcareProfession", "Diagnosis", "SymptomOrSign",
-     "ConditionalQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
+     "ConditionQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
      "MedicationRoute", "FamilyRelation", and "TreatmentName".
     :vartype category: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntityCategory
@@ -5037,7 +5039,7 @@ class HealthcareEntity(_serialization.Model):
          "Age", "Gender", "ExaminationName", "Date", "Direction", "Frequency", "MeasurementValue",
          "MeasurementUnit", "RelationalOperator", "Time", "GeneOrProtein", "Variant",
          "AdministrativeEvent", "CareEnvironment", "HealthcareProfession", "Diagnosis", "SymptomOrSign",
-         "ConditionalQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
+         "ConditionQualifier", "MedicationClass", "MedicationName", "Dosage", "MedicationForm",
          "MedicationRoute", "FamilyRelation", and "TreatmentName".
         :paramtype category: str or
          ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntityCategory
@@ -5484,7 +5486,8 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
      have fhirVersion provided when used. Behavior of using None enum is the same as not using the
      documentType parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
      "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
-    :vartype document_type: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentType
+    :vartype document_type: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareDocumentType
     :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
      Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
      https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
@@ -5507,7 +5510,7 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
         logging_opt_out: bool = False,
         model_version: str = "latest",
         fhir_version: Optional[Union[str, "_models.FhirVersion"]] = None,
-        document_type: Optional[Union[str, "_models.DocumentType"]] = None,
+        document_type: Optional[Union[str, "_models.HealthcareDocumentType"]] = None,
         string_index_type: Union[str, "_models.StringIndexType"] = "TextElements_v8",
         **kwargs
     ):
@@ -5524,7 +5527,7 @@ class HealthcareTaskParameters(PreBuiltTaskParameters):
          the documentType parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
          "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
         :paramtype document_type: str or
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentType
+         ~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareDocumentType
         :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
          Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
          https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",

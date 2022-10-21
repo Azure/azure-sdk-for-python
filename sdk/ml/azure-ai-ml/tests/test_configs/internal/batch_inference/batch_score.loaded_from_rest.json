@@ -1,5 +1,4 @@
 {
-  "name": "test_174704402741",
   "description": "Score images with MNIST image classification model.",
   "tags": {
     "Parallel": "",
@@ -14,21 +13,27 @@
   "inputs": {
     "model_path": {
       "type": "path",
-      "description": "Trained MNIST image classification model."
+      "description": "Trained MNIST image classification model.",
+      "datastore_mode": "Mount"
     },
     "images_to_score": {
       "type": "path",
-      "description": "Images to score."
+      "description": "Images to score.",
+      "datastore_mode": "Mount"
     }
   },
   "outputs": {
     "scored_dataset": {
       "type": "path",
-      "description": "Output folder to save scored result."
+      "description": "Output folder to save scored result.",
+      "datastore_mode": "Upload"
     }
   },
   "type": "ParallelComponent",
   "environment": {
+    "docker": {
+      "image": "mcr.microsoft.com/azureml/openmpi3.1.2-cuda10.1-cudnn7-ubuntu18.04"
+    },
     "conda": {
       "conda_dependencies": {
         "channels": [
@@ -49,9 +54,6 @@
         ],
         "name": "batch_environment"
       }
-    },
-    "docker": {
-      "image": "mcr.microsoft.com/azureml/openmpi3.1.2-cuda10.1-cudnn7-ubuntu18.04"
     },
     "os": "Linux"
   },

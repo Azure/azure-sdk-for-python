@@ -4,11 +4,10 @@
 import re
 from typing import Dict, List, Tuple, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Mpi, PyTorch, TensorFlow
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Mpi, PyTorch, TensorFlow
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -18,6 +17,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     OUTPUT_MOUNT_MAPPING_TO_REST,
 )
 from azure.ai.ml.entities._util import normalize_job_input_output_type
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 def process_sdk_component_job_io(
@@ -96,7 +96,8 @@ def from_dict_to_rest_io(
             # todo: backend help convert node level input/output type
             normalize_job_input_output_type(val)
 
-            io_value = val.get("value", "")
+            # Add casting as sometimes we got value like 1(int)
+            io_value = str(val.get("value", ""))
             io_mode = val.get("mode", None)
             if any([re.match(item, io_value) for item in io_binding_regex_list]):
                 if io_mode:

@@ -28,20 +28,20 @@ class InputSchema(metaclass=PatchedSchemaMeta):
 
         if isinstance(data, Input):
             return data
-        else:
-            raise ValidationError("InputSchema needs type Input to dump")
+        raise ValidationError("InputSchema needs type Input to dump")
 
-    def generate_path_property(azureml_type):
-        return UnionField(
-            [
-                ArmVersionedStr(azureml_type=azureml_type),
-                ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
-                fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
-                fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
-                ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
-            ],
-            is_strict=True,
-        )
+
+def generate_path_property(azureml_type):
+    return UnionField(
+        [
+            ArmVersionedStr(azureml_type=azureml_type),
+            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
+            fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
+            fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
+            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
+        ],
+        is_strict=True,
+    )
 
 
 class ModelInputSchema(InputSchema):
@@ -60,7 +60,7 @@ class ModelInputSchema(InputSchema):
             AssetTypes.TRITON_MODEL,
         ]
     )
-    path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.MODEL)
+    path = generate_path_property(azureml_type=AzureMLResourceType.MODEL)
     datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
@@ -79,7 +79,7 @@ class DataInputSchema(InputSchema):
             AssetTypes.URI_FOLDER,
         ]
     )
-    path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
     datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
 
 
@@ -95,7 +95,7 @@ class MLTableInputSchema(InputSchema):
         required=False,
     )
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
-    path = InputSchema.generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
     datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
 
 
@@ -110,8 +110,7 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
     def check_dict(self, data, **kwargs):
         if hasattr(data, "value"):
             return data
-        else:
-            raise ValidationError("InputLiteralValue must have a field value")
+        raise ValidationError("InputLiteralValue must have a field value")
 
 
 class OutputSchema(PathAwareSchema):
@@ -148,6 +147,5 @@ class OutputSchema(PathAwareSchema):
 
         if isinstance(data, Output):
             return data
-        else:
-            # Assists with union schema
-            raise ValidationError("OutputSchema needs type Output to dump")
+        # Assists with union schema
+        raise ValidationError("OutputSchema needs type Output to dump")

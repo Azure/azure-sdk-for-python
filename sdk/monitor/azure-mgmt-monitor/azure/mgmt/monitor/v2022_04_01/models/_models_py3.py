@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,15 +9,14 @@
 
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class ActionDetail(msrest.serialization.Model):
+class ActionDetail(_serialization.Model):
     """The action detail.
 
     :ivar mechanism_type: The mechanism type.
@@ -34,12 +34,12 @@ class ActionDetail(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mechanism_type': {'key': 'MechanismType', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'status': {'key': 'Status', 'type': 'str'},
-        'sub_state': {'key': 'SubState', 'type': 'str'},
-        'send_time': {'key': 'SendTime', 'type': 'str'},
-        'detail': {'key': 'Detail', 'type': 'str'},
+        "mechanism_type": {"key": "MechanismType", "type": "str"},
+        "name": {"key": "Name", "type": "str"},
+        "status": {"key": "Status", "type": "str"},
+        "sub_state": {"key": "SubState", "type": "str"},
+        "send_time": {"key": "SendTime", "type": "str"},
+        "detail": {"key": "Detail", "type": "str"},
     }
 
     def __init__(
@@ -67,7 +67,7 @@ class ActionDetail(msrest.serialization.Model):
         :keyword detail: The detail of the friendly error message.
         :paramtype detail: str
         """
-        super(ActionDetail, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.mechanism_type = mechanism_type
         self.name = name
         self.status = status
@@ -76,7 +76,7 @@ class ActionDetail(msrest.serialization.Model):
         self.detail = detail
 
 
-class ActionGroupList(msrest.serialization.Model):
+class ActionGroupList(_serialization.Model):
     """A list of action groups.
 
     :ivar value: The list of action groups.
@@ -86,16 +86,12 @@ class ActionGroupList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActionGroupResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActionGroupResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ActionGroupResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of action groups.
@@ -103,15 +99,15 @@ class ActionGroupList(msrest.serialization.Model):
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
-        super(ActionGroupList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ActionGroupPatchBody(msrest.serialization.Model):
+class ActionGroupPatchBody(_serialization.Model):
     """An action group object for the body of patch operations.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar enabled: Indicates whether this action group is enabled. If an action group is not
      enabled, then none of its actions will be activated.
@@ -119,30 +115,24 @@ class ActionGroupPatchBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        enabled: Optional[bool] = True,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword enabled: Indicates whether this action group is enabled. If an action group is not
          enabled, then none of its actions will be activated.
         :paramtype enabled: bool
         """
-        super(ActionGroupPatchBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.enabled = enabled
 
 
-class AzureResource(msrest.serialization.Model):
+class AzureResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -155,41 +145,35 @@ class AzureResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(AzureResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -197,7 +181,7 @@ class AzureResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ActionGroupResource(AzureResource):
+class ActionGroupResource(AzureResource):  # pylint: disable=too-many-instance-attributes
     """An action group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -210,9 +194,9 @@ class ActionGroupResource(AzureResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
     :vartype group_short_name: str
@@ -253,32 +237,35 @@ class ActionGroupResource(AzureResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'group_short_name': {'max_length': 12, 'min_length': 0},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "group_short_name": {"max_length": 12},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'group_short_name': {'key': 'properties.groupShortName', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'email_receivers': {'key': 'properties.emailReceivers', 'type': '[EmailReceiver]'},
-        'sms_receivers': {'key': 'properties.smsReceivers', 'type': '[SmsReceiver]'},
-        'webhook_receivers': {'key': 'properties.webhookReceivers', 'type': '[WebhookReceiver]'},
-        'itsm_receivers': {'key': 'properties.itsmReceivers', 'type': '[ItsmReceiver]'},
-        'azure_app_push_receivers': {'key': 'properties.azureAppPushReceivers', 'type': '[AzureAppPushReceiver]'},
-        'automation_runbook_receivers': {'key': 'properties.automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
-        'voice_receivers': {'key': 'properties.voiceReceivers', 'type': '[VoiceReceiver]'},
-        'logic_app_receivers': {'key': 'properties.logicAppReceivers', 'type': '[LogicAppReceiver]'},
-        'azure_function_receivers': {'key': 'properties.azureFunctionReceivers', 'type': '[AzureFunctionReceiver]'},
-        'arm_role_receivers': {'key': 'properties.armRoleReceivers', 'type': '[ArmRoleReceiver]'},
-        'event_hub_receivers': {'key': 'properties.eventHubReceivers', 'type': '[EventHubReceiver]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "group_short_name": {"key": "properties.groupShortName", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "email_receivers": {"key": "properties.emailReceivers", "type": "[EmailReceiver]"},
+        "sms_receivers": {"key": "properties.smsReceivers", "type": "[SmsReceiver]"},
+        "webhook_receivers": {"key": "properties.webhookReceivers", "type": "[WebhookReceiver]"},
+        "itsm_receivers": {"key": "properties.itsmReceivers", "type": "[ItsmReceiver]"},
+        "azure_app_push_receivers": {"key": "properties.azureAppPushReceivers", "type": "[AzureAppPushReceiver]"},
+        "automation_runbook_receivers": {
+            "key": "properties.automationRunbookReceivers",
+            "type": "[AutomationRunbookReceiver]",
+        },
+        "voice_receivers": {"key": "properties.voiceReceivers", "type": "[VoiceReceiver]"},
+        "logic_app_receivers": {"key": "properties.logicAppReceivers", "type": "[LogicAppReceiver]"},
+        "azure_function_receivers": {"key": "properties.azureFunctionReceivers", "type": "[AzureFunctionReceiver]"},
+        "arm_role_receivers": {"key": "properties.armRoleReceivers", "type": "[ArmRoleReceiver]"},
+        "event_hub_receivers": {"key": "properties.eventHubReceivers", "type": "[EventHubReceiver]"},
     }
 
     def __init__(
@@ -287,7 +274,7 @@ class ActionGroupResource(AzureResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
-        enabled: Optional[bool] = True,
+        enabled: bool = True,
         email_receivers: Optional[List["_models.EmailReceiver"]] = None,
         sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
         webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
@@ -302,9 +289,9 @@ class ActionGroupResource(AzureResource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword group_short_name: The short name of the action group. This will be used in SMS
          messages.
@@ -348,7 +335,7 @@ class ActionGroupResource(AzureResource):
         :paramtype event_hub_receivers:
          list[~$(python-base-namespace).v2022_04_01.models.EventHubReceiver]
         """
-        super(ActionGroupResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
         self.enabled = enabled
         self.email_receivers = email_receivers
@@ -364,67 +351,60 @@ class ActionGroupResource(AzureResource):
         self.event_hub_receivers = event_hub_receivers
 
 
-class ArmRoleReceiver(msrest.serialization.Model):
+class ArmRoleReceiver(_serialization.Model):
     """An arm role receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the arm role receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the arm role receiver. Names must be unique across all receivers within
+     an action group. Required.
     :vartype name: str
-    :ivar role_id: Required. The arm role id.
+    :ivar role_id: The arm role id. Required.
     :vartype role_id: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
     """
 
     _validation = {
-        'name': {'required': True},
-        'role_id': {'required': True},
+        "name": {"required": True},
+        "role_id": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'role_id': {'key': 'roleId', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "role_id": {"key": "roleId", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        role_id: str,
-        use_common_alert_schema: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, role_id: str, use_common_alert_schema: bool = False, **kwargs):
         """
-        :keyword name: Required. The name of the arm role receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the arm role receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword role_id: Required. The arm role id.
+        :keyword role_id: The arm role id. Required.
         :paramtype role_id: str
         :keyword use_common_alert_schema: Indicates whether to use common alert schema.
         :paramtype use_common_alert_schema: bool
         """
-        super(ArmRoleReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.role_id = role_id
         self.use_common_alert_schema = use_common_alert_schema
 
 
-class AutomationRunbookReceiver(msrest.serialization.Model):
+class AutomationRunbookReceiver(_serialization.Model):
     """The Azure Automation Runbook notification receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar automation_account_id: Required. The Azure automation account Id which holds this runbook
-     and authenticate to Azure resource.
+    :ivar automation_account_id: The Azure automation account Id which holds this runbook and
+     authenticate to Azure resource. Required.
     :vartype automation_account_id: str
-    :ivar runbook_name: Required. The name for this runbook.
+    :ivar runbook_name: The name for this runbook. Required.
     :vartype runbook_name: str
-    :ivar webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+    :ivar webhook_resource_id: The resource id for webhook linked to this runbook. Required.
     :vartype webhook_resource_id: str
-    :ivar is_global_runbook: Required. Indicates whether this instance is global runbook.
+    :ivar is_global_runbook: Indicates whether this instance is global runbook. Required.
     :vartype is_global_runbook: bool
     :ivar name: Indicates name of the webhook.
     :vartype name: str
@@ -435,20 +415,20 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
     """
 
     _validation = {
-        'automation_account_id': {'required': True},
-        'runbook_name': {'required': True},
-        'webhook_resource_id': {'required': True},
-        'is_global_runbook': {'required': True},
+        "automation_account_id": {"required": True},
+        "runbook_name": {"required": True},
+        "webhook_resource_id": {"required": True},
+        "is_global_runbook": {"required": True},
     }
 
     _attribute_map = {
-        'automation_account_id': {'key': 'automationAccountId', 'type': 'str'},
-        'runbook_name': {'key': 'runbookName', 'type': 'str'},
-        'webhook_resource_id': {'key': 'webhookResourceId', 'type': 'str'},
-        'is_global_runbook': {'key': 'isGlobalRunbook', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'service_uri': {'key': 'serviceUri', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
+        "automation_account_id": {"key": "automationAccountId", "type": "str"},
+        "runbook_name": {"key": "runbookName", "type": "str"},
+        "webhook_resource_id": {"key": "webhookResourceId", "type": "str"},
+        "is_global_runbook": {"key": "isGlobalRunbook", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "service_uri": {"key": "serviceUri", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
     }
 
     def __init__(
@@ -460,18 +440,18 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         is_global_runbook: bool,
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
-        use_common_alert_schema: Optional[bool] = False,
+        use_common_alert_schema: bool = False,
         **kwargs
     ):
         """
-        :keyword automation_account_id: Required. The Azure automation account Id which holds this
-         runbook and authenticate to Azure resource.
+        :keyword automation_account_id: The Azure automation account Id which holds this runbook and
+         authenticate to Azure resource. Required.
         :paramtype automation_account_id: str
-        :keyword runbook_name: Required. The name for this runbook.
+        :keyword runbook_name: The name for this runbook. Required.
         :paramtype runbook_name: str
-        :keyword webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+        :keyword webhook_resource_id: The resource id for webhook linked to this runbook. Required.
         :paramtype webhook_resource_id: str
-        :keyword is_global_runbook: Required. Indicates whether this instance is global runbook.
+        :keyword is_global_runbook: Indicates whether this instance is global runbook. Required.
         :paramtype is_global_runbook: bool
         :keyword name: Indicates name of the webhook.
         :paramtype name: str
@@ -480,7 +460,7 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         :keyword use_common_alert_schema: Indicates whether to use common alert schema.
         :paramtype use_common_alert_schema: bool
         """
-        super(AutomationRunbookReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.automation_account_id = automation_account_id
         self.runbook_name = runbook_name
         self.webhook_resource_id = webhook_resource_id
@@ -490,78 +470,72 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         self.use_common_alert_schema = use_common_alert_schema
 
 
-class AzureAppPushReceiver(msrest.serialization.Model):
+class AzureAppPushReceiver(_serialization.Model):
     """The Azure mobile App push notification receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Azure mobile app push receiver. Names must be unique
-     across all receivers within an action group.
+    :ivar name: The name of the Azure mobile app push receiver. Names must be unique across all
+     receivers within an action group. Required.
     :vartype name: str
-    :ivar email_address: Required. The email address registered for the Azure mobile app.
+    :ivar email_address: The email address registered for the Azure mobile app. Required.
     :vartype email_address: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'email_address': {'required': True},
+        "name": {"required": True},
+        "email_address": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        email_address: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, email_address: str, **kwargs):
         """
-        :keyword name: Required. The name of the Azure mobile app push receiver. Names must be unique
-         across all receivers within an action group.
+        :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
+         receivers within an action group. Required.
         :paramtype name: str
-        :keyword email_address: Required. The email address registered for the Azure mobile app.
+        :keyword email_address: The email address registered for the Azure mobile app. Required.
         :paramtype email_address: str
         """
-        super(AzureAppPushReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.email_address = email_address
 
 
-class AzureFunctionReceiver(msrest.serialization.Model):
+class AzureFunctionReceiver(_serialization.Model):
     """An azure function receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the azure function receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the azure function receiver. Names must be unique across all receivers
+     within an action group. Required.
     :vartype name: str
-    :ivar function_app_resource_id: Required. The azure resource id of the function app.
+    :ivar function_app_resource_id: The azure resource id of the function app. Required.
     :vartype function_app_resource_id: str
-    :ivar function_name: Required. The function name in the function app.
+    :ivar function_name: The function name in the function app. Required.
     :vartype function_name: str
-    :ivar http_trigger_url: Required. The http trigger url where http request sent to.
+    :ivar http_trigger_url: The http trigger url where http request sent to. Required.
     :vartype http_trigger_url: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
     """
 
     _validation = {
-        'name': {'required': True},
-        'function_app_resource_id': {'required': True},
-        'function_name': {'required': True},
-        'http_trigger_url': {'required': True},
+        "name": {"required": True},
+        "function_app_resource_id": {"required": True},
+        "function_name": {"required": True},
+        "http_trigger_url": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'function_app_resource_id': {'key': 'functionAppResourceId', 'type': 'str'},
-        'function_name': {'key': 'functionName', 'type': 'str'},
-        'http_trigger_url': {'key': 'httpTriggerUrl', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "function_app_resource_id": {"key": "functionAppResourceId", "type": "str"},
+        "function_name": {"key": "functionName", "type": "str"},
+        "http_trigger_url": {"key": "httpTriggerUrl", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
     }
 
     def __init__(
@@ -571,23 +545,23 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         function_app_resource_id: str,
         function_name: str,
         http_trigger_url: str,
-        use_common_alert_schema: Optional[bool] = False,
+        use_common_alert_schema: bool = False,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the azure function receiver. Names must be unique across
-         all receivers within an action group.
+        :keyword name: The name of the azure function receiver. Names must be unique across all
+         receivers within an action group. Required.
         :paramtype name: str
-        :keyword function_app_resource_id: Required. The azure resource id of the function app.
+        :keyword function_app_resource_id: The azure resource id of the function app. Required.
         :paramtype function_app_resource_id: str
-        :keyword function_name: Required. The function name in the function app.
+        :keyword function_name: The function name in the function app. Required.
         :paramtype function_name: str
-        :keyword http_trigger_url: Required. The http trigger url where http request sent to.
+        :keyword http_trigger_url: The http trigger url where http request sent to. Required.
         :paramtype http_trigger_url: str
         :keyword use_common_alert_schema: Indicates whether to use common alert schema.
         :paramtype use_common_alert_schema: bool
         """
-        super(AzureFunctionReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.function_app_resource_id = function_app_resource_id
         self.function_name = function_name
@@ -595,7 +569,7 @@ class AzureFunctionReceiver(msrest.serialization.Model):
         self.use_common_alert_schema = use_common_alert_schema
 
 
-class Context(msrest.serialization.Model):
+class Context(_serialization.Model):
     """The context info.
 
     :ivar notification_source: The source of the notification request.
@@ -605,116 +579,98 @@ class Context(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'notification_source': {'key': 'notificationSource', 'type': 'str'},
-        'context_type': {'key': 'contextType', 'type': 'str'},
+        "notification_source": {"key": "notificationSource", "type": "str"},
+        "context_type": {"key": "contextType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        notification_source: Optional[str] = None,
-        context_type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, notification_source: Optional[str] = None, context_type: Optional[str] = None, **kwargs):
         """
         :keyword notification_source: The source of the notification request.
         :paramtype notification_source: str
         :keyword context_type: The context id type.
         :paramtype context_type: str
         """
-        super(Context, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.notification_source = notification_source
         self.context_type = context_type
 
 
-class EmailReceiver(msrest.serialization.Model):
+class EmailReceiver(_serialization.Model):
     """An email receiver.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the email receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the email receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar email_address: Required. The email address of this receiver.
+    :ivar email_address: The email address of this receiver. Required.
     :vartype email_address: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
     :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
-     "Disabled".
+     and "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2022_04_01.models.ReceiverStatus
     """
 
     _validation = {
-        'name': {'required': True},
-        'email_address': {'required': True},
-        'status': {'readonly': True},
+        "name": {"required": True},
+        "email_address": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
-        'status': {'key': 'status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        email_address: str,
-        use_common_alert_schema: Optional[bool] = False,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, email_address: str, use_common_alert_schema: bool = False, **kwargs):
         """
-        :keyword name: Required. The name of the email receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the email receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword email_address: Required. The email address of this receiver.
+        :keyword email_address: The email address of this receiver. Required.
         :paramtype email_address: str
         :keyword use_common_alert_schema: Indicates whether to use common alert schema.
         :paramtype use_common_alert_schema: bool
         """
-        super(EmailReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.email_address = email_address
         self.use_common_alert_schema = use_common_alert_schema
         self.status = None
 
 
-class EnableRequest(msrest.serialization.Model):
+class EnableRequest(_serialization.Model):
     """Describes a receiver that should be resubscribed.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar receiver_name: Required. The name of the receiver to resubscribe.
+    :ivar receiver_name: The name of the receiver to resubscribe. Required.
     :vartype receiver_name: str
     """
 
     _validation = {
-        'receiver_name': {'required': True},
+        "receiver_name": {"required": True},
     }
 
     _attribute_map = {
-        'receiver_name': {'key': 'receiverName', 'type': 'str'},
+        "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        receiver_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, receiver_name: str, **kwargs):
         """
-        :keyword receiver_name: Required. The name of the receiver to resubscribe.
+        :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
         """
-        super(EnableRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.receiver_name = receiver_name
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -724,62 +680,56 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class EventHubReceiver(msrest.serialization.Model):
+class EventHubReceiver(_serialization.Model):
     """An Event hub receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Event hub receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the Event hub receiver. Names must be unique across all receivers
+     within an action group. Required.
     :vartype name: str
-    :ivar event_hub_name_space: Required. The Event Hub namespace.
+    :ivar event_hub_name_space: The Event Hub namespace. Required.
     :vartype event_hub_name_space: str
-    :ivar event_hub_name: Required. The name of the specific Event Hub queue.
+    :ivar event_hub_name: The name of the specific Event Hub queue. Required.
     :vartype event_hub_name: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
     :ivar tenant_id: The tenant Id for the subscription containing this event hub.
     :vartype tenant_id: str
-    :ivar subscription_id: Required. The Id for the subscription containing this event hub.
+    :ivar subscription_id: The Id for the subscription containing this event hub. Required.
     :vartype subscription_id: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'event_hub_name_space': {'required': True},
-        'event_hub_name': {'required': True},
-        'subscription_id': {'required': True},
+        "name": {"required": True},
+        "event_hub_name_space": {"required": True},
+        "event_hub_name": {"required": True},
+        "subscription_id": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'event_hub_name_space': {'key': 'eventHubNameSpace', 'type': 'str'},
-        'event_hub_name': {'key': 'eventHubName', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "event_hub_name_space": {"key": "eventHubNameSpace", "type": "str"},
+        "event_hub_name": {"key": "eventHubName", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
     def __init__(
@@ -789,26 +739,26 @@ class EventHubReceiver(msrest.serialization.Model):
         event_hub_name_space: str,
         event_hub_name: str,
         subscription_id: str,
-        use_common_alert_schema: Optional[bool] = False,
+        use_common_alert_schema: bool = False,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the Event hub receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the Event hub receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword event_hub_name_space: Required. The Event Hub namespace.
+        :keyword event_hub_name_space: The Event Hub namespace. Required.
         :paramtype event_hub_name_space: str
-        :keyword event_hub_name: Required. The name of the specific Event Hub queue.
+        :keyword event_hub_name: The name of the specific Event Hub queue. Required.
         :paramtype event_hub_name: str
         :keyword use_common_alert_schema: Indicates whether to use common alert schema.
         :paramtype use_common_alert_schema: bool
         :keyword tenant_id: The tenant Id for the subscription containing this event hub.
         :paramtype tenant_id: str
-        :keyword subscription_id: Required. The Id for the subscription containing this event hub.
+        :keyword subscription_id: The Id for the subscription containing this event hub. Required.
         :paramtype subscription_id: str
         """
-        super(EventHubReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.event_hub_name_space = event_hub_name_space
         self.event_hub_name = event_hub_name
@@ -817,70 +767,65 @@ class EventHubReceiver(msrest.serialization.Model):
         self.subscription_id = subscription_id
 
 
-class ItsmReceiver(msrest.serialization.Model):
+class ItsmReceiver(_serialization.Model):
     """An Itsm receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Itsm receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the Itsm receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar workspace_id: Required. OMS LA instance identifier.
+    :ivar workspace_id: OMS LA instance identifier. Required.
     :vartype workspace_id: str
-    :ivar connection_id: Required. Unique identification of ITSM connection among multiple defined
-     in above workspace.
+    :ivar connection_id: Unique identification of ITSM connection among multiple defined in above
+     workspace. Required.
     :vartype connection_id: str
-    :ivar ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
-     CreateMultipleWorkItems option will be part of this blob as well.
+    :ivar ticket_configuration: JSON blob for the configurations of the ITSM action.
+     CreateMultipleWorkItems option will be part of this blob as well. Required.
     :vartype ticket_configuration: str
-    :ivar region: Required. Region in which workspace resides. Supported
+    :ivar region: Region in which workspace resides. Supported
      values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
+     Required.
     :vartype region: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'workspace_id': {'required': True},
-        'connection_id': {'required': True},
-        'ticket_configuration': {'required': True},
-        'region': {'required': True},
+        "name": {"required": True},
+        "workspace_id": {"required": True},
+        "connection_id": {"required": True},
+        "ticket_configuration": {"required": True},
+        "region": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'connection_id': {'key': 'connectionId', 'type': 'str'},
-        'ticket_configuration': {'key': 'ticketConfiguration', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "connection_id": {"key": "connectionId", "type": "str"},
+        "ticket_configuration": {"key": "ticketConfiguration", "type": "str"},
+        "region": {"key": "region", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        workspace_id: str,
-        connection_id: str,
-        ticket_configuration: str,
-        region: str,
-        **kwargs
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
     ):
         """
-        :keyword name: Required. The name of the Itsm receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword workspace_id: Required. OMS LA instance identifier.
+        :keyword workspace_id: OMS LA instance identifier. Required.
         :paramtype workspace_id: str
-        :keyword connection_id: Required. Unique identification of ITSM connection among multiple
-         defined in above workspace.
+        :keyword connection_id: Unique identification of ITSM connection among multiple defined in
+         above workspace. Required.
         :paramtype connection_id: str
-        :keyword ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
-         CreateMultipleWorkItems option will be part of this blob as well.
+        :keyword ticket_configuration: JSON blob for the configurations of the ITSM action.
+         CreateMultipleWorkItems option will be part of this blob as well. Required.
         :paramtype ticket_configuration: str
-        :keyword region: Required. Region in which workspace resides. Supported
+        :keyword region: Region in which workspace resides. Supported
          values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
+         Required.
         :paramtype region: str
         """
-        super(ItsmReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.workspace_id = workspace_id
         self.connection_id = connection_id
@@ -888,68 +833,62 @@ class ItsmReceiver(msrest.serialization.Model):
         self.region = region
 
 
-class LogicAppReceiver(msrest.serialization.Model):
+class LogicAppReceiver(_serialization.Model):
     """A logic app receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the logic app receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the logic app receiver. Names must be unique across all receivers
+     within an action group. Required.
     :vartype name: str
-    :ivar resource_id: Required. The azure resource id of the logic app receiver.
+    :ivar resource_id: The azure resource id of the logic app receiver. Required.
     :vartype resource_id: str
-    :ivar callback_url: Required. The callback url where http request sent to.
+    :ivar callback_url: The callback url where http request sent to. Required.
     :vartype callback_url: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
     """
 
     _validation = {
-        'name': {'required': True},
-        'resource_id': {'required': True},
-        'callback_url': {'required': True},
+        "name": {"required": True},
+        "resource_id": {"required": True},
+        "callback_url": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'callback_url': {'key': 'callbackUrl', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "callback_url": {"key": "callbackUrl", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        resource_id: str,
-        callback_url: str,
-        use_common_alert_schema: Optional[bool] = False,
-        **kwargs
+        self, *, name: str, resource_id: str, callback_url: str, use_common_alert_schema: bool = False, **kwargs
     ):
         """
-        :keyword name: Required. The name of the logic app receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the logic app receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword resource_id: Required. The azure resource id of the logic app receiver.
+        :keyword resource_id: The azure resource id of the logic app receiver. Required.
         :paramtype resource_id: str
-        :keyword callback_url: Required. The callback url where http request sent to.
+        :keyword callback_url: The callback url where http request sent to. Required.
         :paramtype callback_url: str
         :keyword use_common_alert_schema: Indicates whether to use common alert schema.
         :paramtype use_common_alert_schema: bool
         """
-        super(LogicAppReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.resource_id = resource_id
         self.callback_url = callback_url
         self.use_common_alert_schema = use_common_alert_schema
 
 
-class NotificationRequestBody(msrest.serialization.Model):
+class NotificationRequestBody(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The request body which contain contact detail metadata.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar alert_type: Required. The name of the supported alert type.
+    :ivar alert_type: The name of the supported alert type. Required.
     :vartype alert_type: str
     :ivar email_receivers: The list of email receivers that are part of this action group.
     :vartype email_receivers: list[~$(python-base-namespace).v2022_04_01.models.EmailReceiver]
@@ -985,22 +924,22 @@ class NotificationRequestBody(msrest.serialization.Model):
     """
 
     _validation = {
-        'alert_type': {'required': True, 'max_length': 30, 'min_length': 0},
+        "alert_type": {"required": True, "max_length": 30},
     }
 
     _attribute_map = {
-        'alert_type': {'key': 'alertType', 'type': 'str'},
-        'email_receivers': {'key': 'emailReceivers', 'type': '[EmailReceiver]'},
-        'sms_receivers': {'key': 'smsReceivers', 'type': '[SmsReceiver]'},
-        'webhook_receivers': {'key': 'webhookReceivers', 'type': '[WebhookReceiver]'},
-        'itsm_receivers': {'key': 'itsmReceivers', 'type': '[ItsmReceiver]'},
-        'azure_app_push_receivers': {'key': 'azureAppPushReceivers', 'type': '[AzureAppPushReceiver]'},
-        'automation_runbook_receivers': {'key': 'automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
-        'voice_receivers': {'key': 'voiceReceivers', 'type': '[VoiceReceiver]'},
-        'logic_app_receivers': {'key': 'logicAppReceivers', 'type': '[LogicAppReceiver]'},
-        'azure_function_receivers': {'key': 'azureFunctionReceivers', 'type': '[AzureFunctionReceiver]'},
-        'arm_role_receivers': {'key': 'armRoleReceivers', 'type': '[ArmRoleReceiver]'},
-        'event_hub_receivers': {'key': 'eventHubReceivers', 'type': '[EventHubReceiver]'},
+        "alert_type": {"key": "alertType", "type": "str"},
+        "email_receivers": {"key": "emailReceivers", "type": "[EmailReceiver]"},
+        "sms_receivers": {"key": "smsReceivers", "type": "[SmsReceiver]"},
+        "webhook_receivers": {"key": "webhookReceivers", "type": "[WebhookReceiver]"},
+        "itsm_receivers": {"key": "itsmReceivers", "type": "[ItsmReceiver]"},
+        "azure_app_push_receivers": {"key": "azureAppPushReceivers", "type": "[AzureAppPushReceiver]"},
+        "automation_runbook_receivers": {"key": "automationRunbookReceivers", "type": "[AutomationRunbookReceiver]"},
+        "voice_receivers": {"key": "voiceReceivers", "type": "[VoiceReceiver]"},
+        "logic_app_receivers": {"key": "logicAppReceivers", "type": "[LogicAppReceiver]"},
+        "azure_function_receivers": {"key": "azureFunctionReceivers", "type": "[AzureFunctionReceiver]"},
+        "arm_role_receivers": {"key": "armRoleReceivers", "type": "[ArmRoleReceiver]"},
+        "event_hub_receivers": {"key": "eventHubReceivers", "type": "[EventHubReceiver]"},
     }
 
     def __init__(
@@ -1021,7 +960,7 @@ class NotificationRequestBody(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword alert_type: Required. The name of the supported alert type.
+        :keyword alert_type: The name of the supported alert type. Required.
         :paramtype alert_type: str
         :keyword email_receivers: The list of email receivers that are part of this action group.
         :paramtype email_receivers: list[~$(python-base-namespace).v2022_04_01.models.EmailReceiver]
@@ -1059,7 +998,7 @@ class NotificationRequestBody(msrest.serialization.Model):
         :paramtype event_hub_receivers:
          list[~$(python-base-namespace).v2022_04_01.models.EventHubReceiver]
         """
-        super(NotificationRequestBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.alert_type = alert_type
         self.email_receivers = email_receivers
         self.sms_receivers = sms_receivers
@@ -1074,71 +1013,64 @@ class NotificationRequestBody(msrest.serialization.Model):
         self.event_hub_receivers = event_hub_receivers
 
 
-class SmsReceiver(msrest.serialization.Model):
+class SmsReceiver(_serialization.Model):
     """An SMS receiver.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SMS receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the SMS receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar country_code: Required. The country code of the SMS receiver.
+    :ivar country_code: The country code of the SMS receiver. Required.
     :vartype country_code: str
-    :ivar phone_number: Required. The phone number of the SMS receiver.
+    :ivar phone_number: The phone number of the SMS receiver. Required.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2022_04_01.models.ReceiverStatus
     """
 
     _validation = {
-        'name': {'required': True},
-        'country_code': {'required': True},
-        'phone_number': {'required': True},
-        'status': {'readonly': True},
+        "name": {"required": True},
+        "country_code": {"required": True},
+        "phone_number": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        country_code: str,
-        phone_number: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
         """
-        :keyword name: Required. The name of the SMS receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword country_code: Required. The country code of the SMS receiver.
+        :keyword country_code: The country code of the SMS receiver. Required.
         :paramtype country_code: str
-        :keyword phone_number: Required. The phone number of the SMS receiver.
+        :keyword phone_number: The phone number of the SMS receiver. Required.
         :paramtype phone_number: str
         """
-        super(SmsReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.country_code = country_code
         self.phone_number = phone_number
         self.status = None
 
 
-class TestNotificationDetailsResponse(msrest.serialization.Model):
+class TestNotificationDetailsResponse(_serialization.Model):
     """The details of the test notification results.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar context: The context info.
     :vartype context: ~$(python-base-namespace).v2022_04_01.models.Context
-    :ivar state: Required. The overall state.
+    :ivar state: The overall state. Required.
     :vartype state: str
     :ivar completed_time: The completed time.
     :vartype completed_time: str
@@ -1149,15 +1081,15 @@ class TestNotificationDetailsResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'required': True},
+        "state": {"required": True},
     }
 
     _attribute_map = {
-        'context': {'key': 'context', 'type': 'Context'},
-        'state': {'key': 'state', 'type': 'str'},
-        'completed_time': {'key': 'completedTime', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-        'action_details': {'key': 'actionDetails', 'type': '[ActionDetail]'},
+        "context": {"key": "context", "type": "Context"},
+        "state": {"key": "state", "type": "str"},
+        "completed_time": {"key": "completedTime", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "str"},
+        "action_details": {"key": "actionDetails", "type": "[ActionDetail]"},
     }
 
     def __init__(
@@ -1173,7 +1105,7 @@ class TestNotificationDetailsResponse(msrest.serialization.Model):
         """
         :keyword context: The context info.
         :paramtype context: ~$(python-base-namespace).v2022_04_01.models.Context
-        :keyword state: Required. The overall state.
+        :keyword state: The overall state. Required.
         :paramtype state: str
         :keyword completed_time: The completed time.
         :paramtype completed_time: str
@@ -1182,7 +1114,7 @@ class TestNotificationDetailsResponse(msrest.serialization.Model):
         :keyword action_details: The list of action detail.
         :paramtype action_details: list[~$(python-base-namespace).v2022_04_01.models.ActionDetail]
         """
-        super(TestNotificationDetailsResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.context = context
         self.state = state
         self.completed_time = completed_time
@@ -1190,64 +1122,57 @@ class TestNotificationDetailsResponse(msrest.serialization.Model):
         self.action_details = action_details
 
 
-class VoiceReceiver(msrest.serialization.Model):
+class VoiceReceiver(_serialization.Model):
     """A voice receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the voice receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the voice receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar country_code: Required. The country code of the voice receiver.
+    :ivar country_code: The country code of the voice receiver. Required.
     :vartype country_code: str
-    :ivar phone_number: Required. The phone number of the voice receiver.
+    :ivar phone_number: The phone number of the voice receiver. Required.
     :vartype phone_number: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'country_code': {'required': True},
-        'phone_number': {'required': True},
+        "name": {"required": True},
+        "country_code": {"required": True},
+        "phone_number": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        country_code: str,
-        phone_number: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
         """
-        :keyword name: Required. The name of the voice receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the voice receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword country_code: Required. The country code of the voice receiver.
+        :keyword country_code: The country code of the voice receiver. Required.
         :paramtype country_code: str
-        :keyword phone_number: Required. The phone number of the voice receiver.
+        :keyword phone_number: The phone number of the voice receiver. Required.
         :paramtype phone_number: str
         """
-        super(VoiceReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.country_code = country_code
         self.phone_number = phone_number
 
 
-class WebhookReceiver(msrest.serialization.Model):
+class WebhookReceiver(_serialization.Model):
     """A webhook receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the webhook receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the webhook receiver. Names must be unique across all receivers within
+     an action group. Required.
     :vartype name: str
-    :ivar service_uri: Required. The URI where webhooks should be sent.
+    :ivar service_uri: The URI where webhooks should be sent. Required.
     :vartype service_uri: str
     :ivar use_common_alert_schema: Indicates whether to use common alert schema.
     :vartype use_common_alert_schema: bool
@@ -1262,18 +1187,18 @@ class WebhookReceiver(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'service_uri': {'required': True},
+        "name": {"required": True},
+        "service_uri": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'service_uri': {'key': 'serviceUri', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
-        'use_aad_auth': {'key': 'useAadAuth', 'type': 'bool'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'identifier_uri': {'key': 'identifierUri', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "service_uri": {"key": "serviceUri", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
+        "use_aad_auth": {"key": "useAadAuth", "type": "bool"},
+        "object_id": {"key": "objectId", "type": "str"},
+        "identifier_uri": {"key": "identifierUri", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
@@ -1281,18 +1206,18 @@ class WebhookReceiver(msrest.serialization.Model):
         *,
         name: str,
         service_uri: str,
-        use_common_alert_schema: Optional[bool] = False,
-        use_aad_auth: Optional[bool] = False,
+        use_common_alert_schema: bool = False,
+        use_aad_auth: bool = False,
         object_id: Optional[str] = None,
         identifier_uri: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the webhook receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the webhook receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword service_uri: Required. The URI where webhooks should be sent.
+        :keyword service_uri: The URI where webhooks should be sent. Required.
         :paramtype service_uri: str
         :keyword use_common_alert_schema: Indicates whether to use common alert schema.
         :paramtype use_common_alert_schema: bool
@@ -1305,7 +1230,7 @@ class WebhookReceiver(msrest.serialization.Model):
         :keyword tenant_id: Indicates the tenant id for aad auth.
         :paramtype tenant_id: str
         """
-        super(WebhookReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.service_uri = service_uri
         self.use_common_alert_schema = use_common_alert_schema

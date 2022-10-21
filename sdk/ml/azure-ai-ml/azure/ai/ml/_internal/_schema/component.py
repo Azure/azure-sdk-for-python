@@ -6,8 +6,10 @@ from marshmallow import fields, post_dump
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.core.fields import CodeField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
+from azure.ai.ml.constants._common import AzureMLResourceType
 
+from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
     InternalInputPortSchema,
@@ -68,6 +70,13 @@ class InternalBaseComponentSchema(ComponentSchema):
 
     # need to resolve as it can be a local field
     code = CodeField()
+
+    environment = UnionField(
+        [
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            NestedField(InternalEnvironmentSchema),
+        ]
+    )
 
     def get_skip_fields(self):  # pylint: disable=no-self-use
         return ["properties"]

@@ -10,13 +10,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_05_01.models import (
     DataContainerData,
     DataContainerDetails,
@@ -34,6 +28,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .artifact import ArtifactStorageInfo
 
@@ -100,7 +95,7 @@ class Data(Artifact):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         path: Optional[str] = None,  # if type is mltable, the path has to be a folder.
-        type: str = AssetTypes.URI_FOLDER,  # type: ignore
+        type: str = AssetTypes.URI_FOLDER,  # pylint: disable=redefined-builtin
         **kwargs,
     ):
         self._skip_validation = kwargs.pop("skip_validation", False)
@@ -152,6 +147,7 @@ class Data(Artifact):
         return Data(**load_from_dict(DataSchema, yaml_data, context, **kwargs))
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_container_rest_object(self) -> DataContainerData:

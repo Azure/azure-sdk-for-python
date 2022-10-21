@@ -1,11 +1,11 @@
 import pytest
 
-from azure.ai.ml._ml_exceptions import ValidationException
 from azure.ai.ml.automl import SearchSpace, image_classification, image_object_detection
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.image import ImageClassificationSearchSpace, ImageObjectDetectionSearchSpace
 from azure.ai.ml.entities._job.sweep.search_space import Choice, Uniform
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.parametrize(

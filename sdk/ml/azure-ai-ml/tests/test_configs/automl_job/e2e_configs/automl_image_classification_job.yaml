@@ -10,6 +10,8 @@ primary_metric: accuracy
 
 limits:
   timeout_minutes: 60
+  max_trials: 10
+  max_concurrent_trials: 2
 
 target_column_name: label
 
@@ -21,9 +23,6 @@ validation_data:
   type: mltable
 
 sweep:
-  limits:
-    max_trials: 10
-    max_concurrent_trials: 2
   sampling_algorithm: random
   early_termination:
     type: bandit

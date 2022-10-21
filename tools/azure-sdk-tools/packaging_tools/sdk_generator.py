@@ -24,19 +24,23 @@ def main(generate_input, generate_output):
         data = json.load(reader)
         _LOGGER.info(f"auto_package input: {data}")
 
-    spec_folder = re.sub("specification", "", data["specFolder"])
     sdk_folder = "."
     result = {}
     python_tag = data.get("python_tag")
     package_total = set()
 
+    # make sure spec_folder like: "../azure-rest-api-specs"
+    spec_folder = data["specFolder"]
     input_readme = data["relatedReadmeMdFile"]
-    relative_path_readme = str(Path(spec_folder, input_readme))
+    if "specification" in spec_folder:
+        spec_folder = str(Path(spec_folder.split("specification")[0]))
+    if "specification" not in input_readme:
+        input_readme = str(Path("specification") / input_readme)
     _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
 
     if "resource-manager" in input_readme:
         config = generate(
-            CONFIG_FILE, sdk_folder, [], relative_path_readme, spec_folder, force_generation=True, python_tag=python_tag
+            CONFIG_FILE, sdk_folder, [], input_readme, spec_folder, force_generation=True, python_tag=python_tag
         )
     else:
         config = gen_dpg(input_readme, data.get("autorestConfig", ""), spec_folder)

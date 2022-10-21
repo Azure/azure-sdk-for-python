@@ -20,10 +20,10 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
-from azure.ai.ml.entities._datastore.credentials import (
-    AccountKeyCredentials,
-    NoneCredentials,
-    ServicePrincipalCredentials,
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    NoneCredentialConfiguration,
+    ServicePrincipalConfiguration,
 )
 
 kerberos_pw_yml = "hdfs_kerberos_pw.yml"
@@ -132,7 +132,7 @@ class TestDatastore:
         internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureFileDatastore)
         assert cfg["account_name"] == internal_ds.account_name
-        assert isinstance(internal_ds.credentials, AccountKeyCredentials)
+        assert isinstance(internal_ds.credentials, AccountKeyConfiguration)
         assert cfg["credentials"]["account_key"] == internal_ds.credentials.account_key
         assert cfg["file_share_name"] == internal_ds.file_share_name
         # test REST translation
@@ -155,7 +155,7 @@ class TestDatastore:
         internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureBlobDatastore)
         assert cfg["account_name"] == internal_ds.account_name
-        assert isinstance(internal_ds.credentials, AccountKeyCredentials)
+        assert isinstance(internal_ds.credentials, AccountKeyConfiguration)
         assert cfg["credentials"]["account_key"] == internal_ds.credentials.account_key
         assert cfg["container_name"] == internal_ds.container_name
         # test REST translation
@@ -178,7 +178,7 @@ class TestDatastore:
         internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureBlobDatastore)
         assert cfg["account_name"] == internal_ds.account_name
-        assert isinstance(internal_ds.credentials, NoneCredentials)
+        assert isinstance(internal_ds.credentials, NoneCredentialConfiguration)
         assert cfg["container_name"] == internal_ds.container_name
         # test REST translation
         datastore_resource = internal_ds._to_rest_object()
@@ -191,7 +191,7 @@ class TestDatastore:
         assert isinstance(ds_properties.credentials, NoneDatastoreCredentials)
         # test the REST to internal translation
         internal_ds_from_rest = Datastore._from_rest_object(datastore_resource)
-        assert isinstance(internal_ds_from_rest.credentials, NoneCredentials)
+        assert isinstance(internal_ds_from_rest.credentials, NoneCredentialConfiguration)
         assert internal_ds_from_rest.credentials == internal_ds.credentials
         assert internal_ds_from_rest == internal_ds
 
@@ -203,7 +203,7 @@ class TestDatastore:
         assert cfg["store_name"] == internal_ds.store_name
         cfg_credential = cfg["credentials"]
         internal_credential = internal_ds.credentials
-        assert isinstance(internal_credential, ServicePrincipalCredentials)
+        assert isinstance(internal_credential, ServicePrincipalConfiguration)
         assert cfg_credential["tenant_id"] == internal_credential.tenant_id
         assert cfg_credential["client_id"] == internal_credential.client_id
         assert cfg_credential["client_secret"] == internal_credential.client_secret
@@ -227,7 +227,7 @@ class TestDatastore:
         assert cfg["account_name"] == internal_ds.account_name
         cfg_credential = cfg["credentials"]
         internal_credential = internal_ds.credentials
-        assert isinstance(internal_credential, ServicePrincipalCredentials)
+        assert isinstance(internal_credential, ServicePrincipalConfiguration)
         assert cfg_credential["tenant_id"] == internal_credential.tenant_id
         assert cfg_credential["client_id"] == internal_credential.client_id
         assert cfg_credential["client_secret"] == internal_credential.client_secret
@@ -248,7 +248,7 @@ class TestDatastore:
     def assert_rest_internal_service_principal_equal(
         self,
         rest_service_principal: ServicePrincipalDatastoreCredentials,
-        internal_credential: ServicePrincipalCredentials,
+        internal_credential: ServicePrincipalConfiguration,
     ) -> None:
         assert rest_service_principal
         assert rest_service_principal.tenant_id

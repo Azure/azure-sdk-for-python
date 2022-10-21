@@ -1,6 +1,6 @@
 # Release History
 
-## 4.2.0b1 (Unreleased)
+## 4.3.0b1 (Unreleased)
 
 ### Features Added
 
@@ -11,6 +11,13 @@
 ### Other Changes
 - Updated minimum `azure-core` version to 1.24.0
 - Updated minimum `msrest` version to 0.7.1
+
+## 4.2.0 (2022-09-19)
+
+### Breaking Changes
+- Clients verify the challenge resource matches the vault domain. This should affect few customers,
+  who can provide `verify_challenge_resource=False` to client constructors to disable.
+  See https://aka.ms/azsdk/blog/vault-uri for more information.
 
 ## 4.1.1 (2022-08-11)
 

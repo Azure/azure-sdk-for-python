@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 import pytest
 from datetime import datetime
-import sys
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 

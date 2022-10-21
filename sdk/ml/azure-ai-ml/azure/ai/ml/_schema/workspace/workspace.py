@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, post_load, pre_dump, pre_load
+from marshmallow import fields
 
 from azure.ai.ml._schema._utils.utils import validate_arm_str
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum

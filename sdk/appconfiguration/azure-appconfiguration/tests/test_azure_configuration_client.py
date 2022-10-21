@@ -31,7 +31,7 @@ from consts import (
     KEY_UUID,
 )
 from preparers import app_config_decorator
-
+from devtools_testutils import recorded_by_proxy
 import pytest
 import copy
 import datetime
@@ -41,13 +41,10 @@ import re
 from uuid import uuid4
 
 
-class AppConfigurationClientTest(AppConfigTestCase):
-    def __init__(self, method_name):
-        super(AppConfigurationClientTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-
+class TestAppConfigurationClient(AppConfigTestCase):
     # method: add_configuration_setting
     @app_config_decorator
+    @recorded_by_proxy
     def test_add_configuration_setting(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         kv = ConfigurationSetting(
@@ -72,6 +69,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_add_existing_configuration_setting(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         test_config_setting = self.create_config_setting()
@@ -87,6 +85,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
 
     # method: set_configuration_setting
     @app_config_decorator
+    @recorded_by_proxy
     def test_set_existing_configuration_setting_label_etag(self,  appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_set_kv = self.create_config_setting()
@@ -104,6 +103,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_set_kv = self.create_config_setting()
@@ -114,6 +114,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
             client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_set_configuration_setting_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         kv = ConfigurationSetting(
@@ -128,6 +129,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
             client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_set_configuration_setting_no_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_set_kv = ConfigurationSetting(
@@ -150,6 +152,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
 
     # method: get_configuration_setting
     @app_config_decorator
+    @recorded_by_proxy
     def test_get_configuration_setting_no_label(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         compare_kv = self.create_config_setting_no_label()
@@ -165,6 +168,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_get_configuration_setting_label(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         compare_kv = self.create_config_setting()
@@ -183,6 +187,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_get_non_existing_configuration_setting(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         compare_kv = self.create_config_setting()
@@ -193,6 +198,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
 
     # method: delete_configuration_setting
     @app_config_decorator
+    @recorded_by_proxy
     def test_delete_with_key_no_label(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -203,6 +209,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_delete_with_key_label(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_delete_kv = self.create_config_setting()
@@ -213,12 +220,14 @@ class AppConfigurationClientTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_delete_not_existing(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         deleted_kv = client.delete_configuration_setting("not_exist_" + KEY)
         assert deleted_kv is None
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_delete_correct_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -229,6 +238,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_delete_wrong_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -241,6 +251,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
 
     # method: list_configuration_settings
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_key_label(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
@@ -249,6 +260,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_only_label(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_configuration_settings(label_filter=LABEL))
@@ -257,6 +269,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_only_key(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_configuration_settings(key_filter=KEY))
@@ -265,6 +278,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_fields(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_configuration_settings(
@@ -275,6 +289,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_reserved_chars(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         resered_char_kv = ConfigurationSetting(key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE)
@@ -286,6 +301,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(resered_char_kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_contains(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_configuration_settings(label_filter=LABEL + "*"))
@@ -294,10 +310,11 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_correct_etag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_list_kv = self.create_config_setting()
-        self.add_for_test(client, to_list_kv)
+        to_list_kv = self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
@@ -307,6 +324,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(to_list_kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_multi_pages(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
@@ -338,6 +356,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
             pass
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_no_label(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = self.client.list_configuration_settings(label_filter="\0")
@@ -345,17 +364,23 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
-    def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string):
+    @recorded_by_proxy
+    def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
+        recorded_variables = kwargs.pop("variables", {})
         self.set_up(appconfiguration_connection_string)
         exclude_today = self.client.list_configuration_settings(
-            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=recorded_variables.setdefault(
+                "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
+            )
         )
         all_inclusive = self.client.list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
         self.tear_down()
+        return recorded_variables
 
     # method: list_revisions
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_revisions_key_label(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         to_list1 = self.create_config_setting()
@@ -365,6 +390,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_revisions_only_label(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_revisions(label_filter=LABEL))
@@ -373,6 +399,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_revisions_key_no_label(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_revisions(key_filter=KEY))
@@ -381,6 +408,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_revisions_fields(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         items = list(self.client.list_revisions(key_filter="*", label_filter=LABEL, fields=["key", "content_type"]))
@@ -388,18 +416,21 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_list_revisions_correct_etag(self, appconfiguration_connection_string):
-        self.set_up(appconfiguration_connection_string)
-        to_list1 = self.create_config_setting()
-        custom_headers = {"If-Match": to_list1.etag}
-        items = list(self.client.list_revisions(
-            key_filter=to_list1.key, label_filter=to_list1.label, headers=custom_headers
+        client = self.create_client(appconfiguration_connection_string)
+        to_list_kv = self.create_config_setting()
+        to_list_kv = self.add_for_test(client, to_list_kv)
+        custom_headers = {"If-Match": to_list_kv.etag}
+        items = list(client.list_revisions(
+            key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
         assert len(items) >= 1
-        assert all(x.key == to_list1.key and x.label == to_list1.label for x in items)
-        self.tear_down()
+        assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
+        client.delete_configuration_setting(to_list_kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_read_only(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         kv = self.create_config_setting_no_label()
@@ -411,6 +442,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_delete_read_only(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -424,6 +456,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_set_read_only(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         to_set_kv = self.create_config_setting()
@@ -451,6 +484,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(to_set_kv.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_sync_tokens_with_configuration_setting(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
@@ -488,6 +522,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(new.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
         new = FeatureFlagConfigurationSetting(
@@ -556,6 +591,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         self.client.delete_configuration_setting(new.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_config_setting_feature_flag(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
@@ -586,6 +622,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(changed_flag.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_config_setting_secret_reference(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         secret_reference = SecretReferenceConfigurationSetting(
@@ -612,6 +649,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(secret_reference.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_feature_filter_targeting(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         new = FeatureFlagConfigurationSetting(
@@ -672,6 +710,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(updated_sent_config.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_feature_filter_time_window(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         new = FeatureFlagConfigurationSetting(
@@ -698,6 +737,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(new_sent.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_feature_filter_custom(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         new = FeatureFlagConfigurationSetting(
@@ -724,6 +764,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(new_sent.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_feature_filter_multiple(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         new = FeatureFlagConfigurationSetting(
@@ -773,6 +814,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(new_sent.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_breaking_with_feature_flag_configuration_setting(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         new = FeatureFlagConfigurationSetting(
@@ -822,7 +864,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
             ]
         )
         client.set_configuration_setting(new)
-        new1 = client.get_configuration_setting(new.key)
+        client.get_configuration_setting(new.key)
 
         new = FeatureFlagConfigurationSetting(
             'breaking4',
@@ -895,6 +937,7 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(new.key)
 
     @app_config_decorator
+    @recorded_by_proxy
     def test_breaking_with_secret_reference_configuration_setting(self, appconfiguration_connection_string):
         client = self.create_client(appconfiguration_connection_string)
         new = SecretReferenceConfigurationSetting(
@@ -915,8 +958,8 @@ class AppConfigurationClientTest(AppConfigTestCase):
         client.delete_configuration_setting(new.key)
 
 
-class AppConfigurationClientUnitTest:
-    def test_type_error():
+class TestAppConfigurationClientUnitTest:
+    def test_type_error(self):
         with pytest.raises(TypeError):
             _ = FeatureFlagConfigurationSetting("blash", key="blash")
         with pytest.raises(TypeError):
@@ -924,10 +967,10 @@ class AppConfigurationClientUnitTest:
         with pytest.raises(TypeError):
             _ = SecretReferenceConfigurationSetting("blash", value="blash")
     
-    @app_config_decorator
     def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, HttpTransport
         from azure.core.pipeline import PipelineRequest, PipelineResponse
+        from consts import APPCONFIGURATION_CONNECTION_STRING
         class MockTransport(HttpTransport):
             def __init__(self):
                 self.auth_headers = []
@@ -946,7 +989,7 @@ class AppConfigurationClientUnitTest:
                 return response
 
         def new_method(self, request):
-            request.http_request.headers["Authorization"] = uuid4()
+            request.http_request.headers["Authorization"] = str(uuid4())
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
         # Store the method to restore later
@@ -954,7 +997,7 @@ class AppConfigurationClientUnitTest:
         AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
         client = AzureAppConfigurationClient.from_connection_string(
-            os.environ["APPCONFIGURATION_CONNECTION_STRING"], transport=MockTransport()
+            APPCONFIGURATION_CONNECTION_STRING, transport=MockTransport()
         )
         client.list_configuration_settings()
 

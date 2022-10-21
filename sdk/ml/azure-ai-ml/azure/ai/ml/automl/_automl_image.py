@@ -6,7 +6,7 @@
 
 from typing import Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
     InstanceSegmentationPrimaryMetrics,

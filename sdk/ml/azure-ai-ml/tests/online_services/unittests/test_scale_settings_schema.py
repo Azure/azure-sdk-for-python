@@ -1,5 +1,4 @@
 import pytest
-import yaml
 from marshmallow.exceptions import ValidationError
 from marshmallow.schema import Schema
 
@@ -65,4 +64,4 @@ class TestScaleSettingsSchema:
             }
         }
         data = schema.load(input_data)
-        assert data["scale_settings"].scale_type == "target_utilization"
+        assert data["scale_settings"].type == "target_utilization"

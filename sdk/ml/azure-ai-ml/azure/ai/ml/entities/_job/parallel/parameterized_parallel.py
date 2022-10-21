@@ -5,8 +5,6 @@
 import logging
 from typing import Dict, Union
 
-from azure.ai.ml._schema.job.loadable_mixin import LoadableMixin
-
 from ..job_resource_configuration import JobResourceConfiguration
 from .parallel_task import ParallelTask
 from .retry_settings import RetrySettings
@@ -14,7 +12,7 @@ from .retry_settings import RetrySettings
 module_logger = logging.getLogger(__name__)
 
 
-class ParameterizedParallel(LoadableMixin):
+class ParameterizedParallel:
     """Parallel component that contains the traning parallel and supporting
     parameters for the parallel.
 

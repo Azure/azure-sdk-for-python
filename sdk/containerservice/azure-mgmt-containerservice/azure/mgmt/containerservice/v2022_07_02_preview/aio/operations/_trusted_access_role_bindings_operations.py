@@ -10,7 +10,14 @@ from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Un
 from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -21,9 +28,16 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._trusted_access_role_bindings_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_request
-T = TypeVar('T')
+from ...operations._trusted_access_role_bindings_operations import (
+    build_create_or_update_request,
+    build_delete_request,
+    build_get_request,
+    build_list_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class TrustedAccessRoleBindingsOperations:
     """
@@ -44,13 +58,9 @@ class TrustedAccessRoleBindingsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list(
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.TrustedAccessRoleBinding"]:
         """List trusted access role bindings.
 
@@ -71,22 +81,26 @@ class TrustedAccessRoleBindingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TrustedAccessRoleBindingListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TrustedAccessRoleBindingListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -115,9 +129,7 @@ class TrustedAccessRoleBindingsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -127,19 +139,13 @@ class TrustedAccessRoleBindingsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings"}  # type: ignore
 
     @distributed_trace_async
     async def get(
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        trusted_access_role_binding_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, resource_name: str, trusted_access_role_binding_name: str, **kwargs: Any
     ) -> _models.TrustedAccessRoleBinding:
         """Get a trusted access role binding.
 
@@ -158,24 +164,26 @@ class TrustedAccessRoleBindingsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TrustedAccessRoleBinding]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TrustedAccessRoleBinding]
 
-        
         request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             trusted_access_role_binding_name=trusted_access_role_binding_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -183,9 +191,7 @@ class TrustedAccessRoleBindingsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -194,15 +200,14 @@ class TrustedAccessRoleBindingsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('TrustedAccessRoleBinding', pipeline_response)
+        deserialized = self._deserialize("TrustedAccessRoleBinding", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"}  # type: ignore
 
     @overload
     async def create_or_update(
@@ -271,7 +276,6 @@ class TrustedAccessRoleBindingsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def create_or_update(
         self,
@@ -305,16 +309,19 @@ class TrustedAccessRoleBindingsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.TrustedAccessRoleBinding]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TrustedAccessRoleBinding]
 
         content_type = content_type or "application/json"
         _json = None
@@ -322,7 +329,7 @@ class TrustedAccessRoleBindingsOperations:
         if isinstance(trusted_access_role_binding, (IO, bytes)):
             _content = trusted_access_role_binding
         else:
-            _json = self._serialize.body(trusted_access_role_binding, 'TrustedAccessRoleBinding')
+            _json = self._serialize.body(trusted_access_role_binding, "TrustedAccessRoleBinding")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -333,7 +340,7 @@ class TrustedAccessRoleBindingsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -341,9 +348,7 @@ class TrustedAccessRoleBindingsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -352,23 +357,18 @@ class TrustedAccessRoleBindingsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('TrustedAccessRoleBinding', pipeline_response)
+        deserialized = self._deserialize("TrustedAccessRoleBinding", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"}  # type: ignore
-
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        trusted_access_role_binding_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, resource_name: str, trusted_access_role_binding_name: str, **kwargs: Any
     ) -> None:
         """Delete a trusted access role binding.
 
@@ -387,24 +387,26 @@ class TrustedAccessRoleBindingsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             trusted_access_role_binding_name=trusted_access_role_binding_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -412,9 +414,7 @@ class TrustedAccessRoleBindingsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -426,5 +426,4 @@ class TrustedAccessRoleBindingsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"}  # type: ignore
-
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"}  # type: ignore

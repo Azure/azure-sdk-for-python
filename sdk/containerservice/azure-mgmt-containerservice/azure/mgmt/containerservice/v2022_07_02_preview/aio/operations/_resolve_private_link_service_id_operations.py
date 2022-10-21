@@ -8,7 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +26,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._resolve_private_link_service_id_operations import build_post_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ResolvePrivateLinkServiceIdOperations:
     """
@@ -40,7 +49,6 @@ class ResolvePrivateLinkServiceIdOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
 
     @overload
     async def post(
@@ -102,7 +110,6 @@ class ResolvePrivateLinkServiceIdOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def post(
         self,
@@ -133,16 +140,19 @@ class ResolvePrivateLinkServiceIdOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PrivateLinkResource]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PrivateLinkResource]
 
         content_type = content_type or "application/json"
         _json = None
@@ -150,7 +160,7 @@ class ResolvePrivateLinkServiceIdOperations:
         if isinstance(parameters, (IO, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, 'PrivateLinkResource')
+            _json = self._serialize.body(parameters, "PrivateLinkResource")
 
         request = build_post_request(
             resource_group_name=resource_group_name,
@@ -160,7 +170,7 @@ class ResolvePrivateLinkServiceIdOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.post.metadata['url'],
+            template_url=self.post.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -168,9 +178,7 @@ class ResolvePrivateLinkServiceIdOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -179,12 +187,11 @@ class ResolvePrivateLinkServiceIdOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PrivateLinkResource', pipeline_response)
+        deserialized = self._deserialize("PrivateLinkResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resolvePrivateLinkServiceId"}  # type: ignore
-
+    post.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resolvePrivateLinkServiceId"}  # type: ignore

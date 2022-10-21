@@ -10,7 +10,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointComputeType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
@@ -32,12 +31,16 @@ from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
-from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
-from azure.ai.ml.entities._deployment.scale_settings import DefaultScaleSettings, OnlineScaleSettings
+from azure.ai.ml.entities._deployment.scale_settings import (
+    DefaultScaleSettings,
+    OnlineScaleSettings,
+    TargetUtilizationScaleSettings,
+)
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
@@ -90,6 +93,7 @@ class OnlineDeployment(Deployment):
     def __init__(
         self,
         name: str,
+        *,
         endpoint_name: str = None,
         tags: Dict[str, Any] = None,
         properties: Dict[str, Any] = None,
@@ -310,7 +314,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
     :param app_insights_enabled: defaults to False
     :type app_insights_enabled: bool, optional
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings, optional
+    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
     :param request_settings: defaults to RequestSettings()
     :type request_settings: OnlineRequestSettings, optional
     :param liveness_probe: Liveness probe settings.
@@ -343,7 +347,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         code_configuration: CodeConfiguration = None,
         environment: Union[str, "Environment"] = None,
         app_insights_enabled: bool = False,
-        scale_settings: OnlineScaleSettings = None,
+        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
         request_settings: OnlineRequestSettings = None,
         liveness_probe: ProbeSettings = None,
         readiness_probe: ProbeSettings = None,
@@ -494,7 +498,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :param app_insights_enabled: defaults to False
     :type app_insights_enabled: bool, optional
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings, optional
+    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
     :param request_settings: defaults to RequestSettings()
     :type request_settings: OnlineRequestSettings, optional
     :param liveness_probe: Liveness probe settings.
@@ -507,12 +511,13 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type instance_type: str
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
-    :param data_collector: Allows model data collector for deployment.
-    :type data_collector: DataCollector, optional
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
     :type scoring_script: Union[str, PathLike], optional
+    :param egress_public_network_access: Whether to restrict communication between a deployment
+        and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
+    :param egress_public_network_access: str
     """
 
     def __init__(
@@ -527,23 +532,22 @@ class ManagedOnlineDeployment(OnlineDeployment):
         code_configuration: CodeConfiguration = None,
         environment: Union[str, "Environment"] = None,
         app_insights_enabled: bool = False,
-        scale_settings: OnlineScaleSettings = None,
+        scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings] = None,
         request_settings: OnlineRequestSettings = None,
         liveness_probe: ProbeSettings = None,
         readiness_probe: ProbeSettings = None,
         environment_variables: Dict[str, str] = None,
         instance_type: str = None,
         instance_count: int = None,
-        data_collector: DataCollector = None,
         code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
         scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
+        egress_public_network_access = None,
         **kwargs,
     ):
 
         kwargs["type"] = EndpointComputeType.MANAGED.value
-
         self.private_network_connection = kwargs.pop("private_network_connection", None)
-        self.egress_public_network_access = kwargs.pop("egress_public_network_access", None)
+        self.data_collector = kwargs.pop("data_collector", None)
 
         super(ManagedOnlineDeployment, self).__init__(
             name=name,
@@ -567,8 +571,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
             **kwargs,
         )
 
-        self.data_collector = data_collector
         self.readiness_probe = readiness_probe
+        self.egress_public_network_access = egress_public_network_access
 
     def _to_dict(self) -> Dict:
         return ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

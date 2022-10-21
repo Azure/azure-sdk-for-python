@@ -226,12 +226,15 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 else:
                     data.source = span.attributes[SpanAttributes.MESSAGING_DESTINATION]
         # Apply truncation
-        if data.url:
-            data.url = data.url[:2048]  # Breeze max length
-        if data.response_code:
-            data.response_code = data.response_code[:1024]  # Breeze max length
+        # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
         if envelope.tags.get("ai.operation.name"):
-            data.name = envelope.tags["ai.operation.name"][:1024]  # Breeze max length
+            data.name = envelope.tags["ai.operation.name"][:1024]
+        if data.response_code:
+            data.response_code = data.response_code[:1024]
+        if data.source:
+            data.source = data.source[:1024]
+        if data.url:
+            data.url = data.url[:2048]
     else:  # INTERNAL, CLIENT, PRODUCER
         envelope.name = "Microsoft.ApplicationInsights.RemoteDependency"
         # TODO: ai.operation.name for non-server spans
@@ -405,23 +408,22 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             if "az.namespace" in span.attributes:
                 data.type += " | {}".format(span.attributes["az.namespace"])
         # Apply truncation
-        if data.result_code:
-            data.result_code = data.result_code[:1024]
-        if data.data:
-            data.data = data.data[:8192]
-        if target:
-            data.target = target[:1024]
+        # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
         if data.name:
-            data.name = data.name[:1024]
-    for key, val in span.attributes.items():
-        # Remove Opentelemetry related span attributes from custom dimensions
-        if _is_opentelemetry_standard_attribute(key):
-            continue
-        # Apply truncation rules
-        # Max key length is 150, value is 8192
-        if not key or len(key) > 150 or val is None:
-            continue
-        data.properties[key] = val[:8192]
+            data.name = str(data.name)[:1024]
+        if data.result_code:
+            data.result_code = str(data.result_code)[:1024]
+        if data.data:
+            data.data = str(data.data)[:8192]
+        if data.type:
+            data.type = str(data.type)[:1024]
+        if target:
+            data.target = str(target)[:1024]
+
+    data.properties = _utils._filter_custom_properties(
+        span.attributes,
+        lambda key, val: not _is_opentelemetry_standard_attribute(key)
+    )
     if span.links:
         # Max length for value is 8192
         # Since links are a fixed length (80) in json, max number of links would be 102
@@ -446,16 +448,10 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             envelope.tags["ai.operation.parentId"] = "{:016x}".format(
                 span.context.span_id
             )
-        properties = {}
-        for key, val in event.attributes.items():
-            # Remove Opentelemetry related event attributes from custom dimensions
-            if _is_opentelemetry_standard_attribute(key):
-                continue
-            # Apply truncation rules
-            # Max key length is 150, value is 8192
-            if not key or len(key) > 150 or val is None:
-                continue
-            properties[key] = val[:8192]
+        properties = _utils._filter_custom_properties(
+            event.attributes,
+            lambda key, val: not _is_opentelemetry_standard_attribute(key)
+        )
         if event.name == "exception":
             envelope.name = 'Microsoft.ApplicationInsights.Exception'
             exc_type = event.attributes.get(SpanAttributes.EXCEPTION_TYPE)
@@ -465,10 +461,10 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             stack_trace = event.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
             has_full_stack = stack_trace is not None
             exc_details = TelemetryExceptionDetails(
-                type_name=exc_type,
-                message=exc_message,
+                type_name=str(exc_type)[:1024],
+                message=str(exc_message)[:32768],
                 has_full_stack=has_full_stack,
-                stack=stack_trace,
+                stack=str(stack_trace)[:32768],
             )
             data = TelemetryExceptionData(
                 properties=properties,
@@ -478,9 +474,8 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             envelope.data = MonitorBase(base_data=data, base_type='ExceptionData')
         else:
             envelope.name = 'Microsoft.ApplicationInsights.Message'
-            properties.update(event.attributes)
             data = MessageData(
-                message=event.name,
+                message=str(event.name)[:32768],
                 properties=properties,
             )
             envelope.data = MonitorBase(base_data=data, base_type='MessageData')
@@ -550,9 +545,9 @@ def _check_instrumentation_span(span: ReadableSpan) -> None:
         _utils.add_instrumentation(name)
 
 
-def _is_opentelemetry_standard_attribute(attribute: str) -> bool:
+def _is_opentelemetry_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
-        if attribute.startswith(prefix):
+        if key.startswith(prefix):
             return True
     return False
 

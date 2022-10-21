@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -201,7 +201,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -246,14 +246,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e1ef2678/1de7d3be75bb475c39244e64c0578415",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e1ef2678/1de7d3be75bb475c39244e64c0578415",
           "kty": "RSA-HSM",
           "n": "5YJwE2mJZu1IfInMbrL0dPlhsVG3tNTQPmOgd1iHCKQVMJKe0u7AMkJ6Z1LXKts3kejf1hEw0QYfTCezURe6hMBP_QyRc-G1mDG8B_0qUy_-V9TEukktIQ80KIOgxAlEFSO5POwIygITVA6HW_oS748qqBwrOLp2bxxXJ99-5cj8nPm-gfkvvJK27nSQtYmqq7vpyLn3sEfeQT4LUoC5GRUNRYhCjKUoojo3B8o3X-zAt4jfuhXQu3sFY8TSLKOi1F-1GytKJBXeLziiWzE1QcRcVddqdZOpWlxt23CQl7munJM25DwZAHB1ZuWGkSQzVPjZXdYc3NyCrl_uD4EfAw"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -298,14 +298,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e1ef2678/509185a00a5b07e73586ff0a5ccfe923",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e1ef2678/509185a00a5b07e73586ff0a5ccfe923",
           "kty": "RSA-HSM",
           "n": "4pf52vF_qllCl5J6nkhrrLjzKUZeIbaFgyOerDP49X2sdN7LgXa-qP5PE_Wk6CpFyLWk4oLnas4GeLGrpM89OuyFlLsOtIQfoRkzmBTYoiSNkMD1GZpxSRgk-OftcHLLUaqhSslyUvkH01Xasa7aD0JkoWGs4xkJY8EEMe4Nwl5JkH9cl1xHh8YvaB7i03krrSvz5o0-4XlbF29Iah6O4lG_NekvnfgNXQ2yiWnTEqMqyDT44ZEwD_Yghz3PYgoIDsgpgwVRwnPLqU5dVfRZKYlviLkZ-buIRn_rGi6A8exxQSruQsCB6eI-UmNk5mqNzbtdSUDWyvx7oZkVLthe7w"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -350,14 +350,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e1ef2678/0b978a651444077b95b3ff50e2ea9872",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e1ef2678/0b978a651444077b95b3ff50e2ea9872",
           "kty": "RSA-HSM",
           "n": "oUA26U2zmWGls8GrxOjQe50SGRQY3u0rb2Me4Hd_pMuiZDMg824or8YHSbaUSdgivzWtmSDS_1QUaZEg_1m5nxuMQ7W7TlrEdvYo6GbcWjYsUI7aYMGuWGERfE8QfcHNHP2pPrIZzPB2e1uUyON8It83Cvy9noDgeZg-F2jel3IWHVbOVjdJKXUqMlqNCzClBQjbvpwlXtzZcjtDxDH-Td731YctDzo069gGyNvwVYGuV8q4OW1dtUCf2rynxOllCGJsFgZIb_UaAt2ViAxIfanSAPTUN7RfsELOQSqXI1jwhE0RuRIK7B3mZ-e5srEwCbigxxbIR8dgyETNKMpz-w"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -402,14 +402,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e1ef2678/8d92fc17d19245efb40ea1f155e0dfe5",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e1ef2678/8d92fc17d19245efb40ea1f155e0dfe5",
           "kty": "RSA-HSM",
           "n": "q8IVRud-fNAX5Cwro4CiMyKwO93h6x-wvgByTaasthvxCvdrdmdL89wuhctnnLtyRKfYPSJrYph7yz8Sm0b7RRoO6M_3644e42TqullFdOTgxsFqG1TQR_cjSTfB8a5k5nsEXbJjyNxWpt32I6vZCzfKm9qOR24yEODR21T2TCci_UT4iSIedpSxaR1VZje8MCPyDLr7NITHvQwe9GJAkuYewsaYQKw5ZqyCcsje2LxO4CqYemlixkk1bwRrC3uViUrGPIo0gL8MdiXJcBrMI68QlrL9QUeInmyXWfFiKk31GXYbu6zYVLlM8LzRkMBK6s2j81pPyXNp2p_nRWMVYQ"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -454,14 +454,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e1ef2678/716e45a0fb484d1739754f3c94336c8d",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e1ef2678/716e45a0fb484d1739754f3c94336c8d",
           "kty": "RSA-HSM",
           "n": "wp93H9G3wXKDJvLcDOmR4dcLm-K76jBa_6IgGVqvLlLnbBVH0N0RB18e0Nu6TKnemmVz56JTBTv-ZtKvJr0SLShnmFEX97_FNsIitghbWAssHf9Xy1htGbGlKu0xMTt7-Sq0PeGD62gbu94NL1vBgfSPgyWrfQnr4ymFMO4wQJ1lSt83jiBtcFk-c5VFL2osJQKPGa-iNKh2mSB1KjxTthxLU0LmXCxik9LZrLCsavkf8DgVZANyVAWDhRu8joiw66XuYVEL5SC62X0ITIdXm_wp2BLNI1DM54Fo6SfQNxDGnY0N01WkUy3gAHcMKeL7VgdeYvaF-u1bgnBFLHObbw"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -506,14 +506,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e1ef2678/6ecdb5daf9114cd512405555ce12544f",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e1ef2678/6ecdb5daf9114cd512405555ce12544f",
           "kty": "RSA-HSM",
           "n": "web4faEUTLw9b_xej1uVggliMtmu1u9Aac6OBit7MJ3JwxCTuXVwB6N2pehxnZnieJMEKKw0fvkwE3JSybpiNvJqBFnN4q8huJU-hjJnmPHk85XQhKT6DYNy69x5JI53wNXLXts2QaeFntBu-rivF3phwBvgLKx1m9RUHdfmmsRrNCT6gFVNgUClTRxBBmVK3x98XOt11U3gaVazjsVrNFEWq1DevEkNq93WrJZuBzJdjBccumQwvx1a5-tiqFYgAT8b2gxS3-25oP7XMMs7ZL8xmMeJPzD-dTBCKbdHZg1AL5FINWaZCoHuoUn4FeyoGZqWFK3z7XkDTF0Xj6fKLQ"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e1ef2678/create?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e1ef2678/create?api-version=7.2",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -558,14 +558,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e1ef2678/f0c4c2ee4bee00831228b5d40e34d73d",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e1ef2678/f0c4c2ee4bee00831228b5d40e34d73d",
           "kty": "RSA-HSM",
           "n": "jaQhMlhyVu4th_1Pk6YUHj-0g_TxdjIYBqpcT7CxumRQywC49xZ3soj88hvRuSGtZ76w12Yk1YOeTVfNW077RIwBbgFNXiFtZ7gotFlFbjQuhYouH4VbjhyPaYVQhRAL_5iCGrpCfjliwAc31WrBSFBw0pwzBgY9US4aDEfFZJuFXIpXz0VFOkypRwpF1DTrD0oAT5lPciCf2Netu5eYPpuJlCS8n917vvpvMeqeessZ9oQsKbKMiy9SgLCgBjN1z4ehNjFa6VKIxv_ayn8vbaNP8s_Vo1RUYrdiJ2JUkEq21MdYXUap3AKNLMEP8npmWwbRWqX088mbFk6vucskyw"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -608,16 +608,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e1ef2678/1de7d3be75bb475c39244e64c0578415",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e1ef2678/1de7d3be75bb475c39244e64c0578415",
           "kty": "RSA-HSM",
           "n": "5YJwE2mJZu1IfInMbrL0dPlhsVG3tNTQPmOgd1iHCKQVMJKe0u7AMkJ6Z1LXKts3kejf1hEw0QYfTCezURe6hMBP_QyRc-G1mDG8B_0qUy_-V9TEukktIQ80KIOgxAlEFSO5POwIygITVA6HW_oS748qqBwrOLp2bxxXJ99-5cj8nPm-gfkvvJK27nSQtYmqq7vpyLn3sEfeQT4LUoC5GRUNRYhCjKUoojo3B8o3X-zAt4jfuhXQu3sFY8TSLKOi1F-1GytKJBXeLziiWzE1QcRcVddqdZOpWlxt23CQl7munJM25DwZAHB1ZuWGkSQzVPjZXdYc3NyCrl_uD4EfAw"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e1ef2678",
         "scheduledPurgeDate": 1651247673
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -660,16 +660,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e1ef2678/1de7d3be75bb475c39244e64c0578415",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e1ef2678/1de7d3be75bb475c39244e64c0578415",
           "kty": "RSA-HSM",
           "n": "5YJwE2mJZu1IfInMbrL0dPlhsVG3tNTQPmOgd1iHCKQVMJKe0u7AMkJ6Z1LXKts3kejf1hEw0QYfTCezURe6hMBP_QyRc-G1mDG8B_0qUy_-V9TEukktIQ80KIOgxAlEFSO5POwIygITVA6HW_oS748qqBwrOLp2bxxXJ99-5cj8nPm-gfkvvJK27nSQtYmqq7vpyLn3sEfeQT4LUoC5GRUNRYhCjKUoojo3B8o3X-zAt4jfuhXQu3sFY8TSLKOi1F-1GytKJBXeLziiWzE1QcRcVddqdZOpWlxt23CQl7munJM25DwZAHB1ZuWGkSQzVPjZXdYc3NyCrl_uD4EfAw"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e1ef2678",
         "scheduledPurgeDate": 1651247673
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -712,16 +712,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e1ef2678/509185a00a5b07e73586ff0a5ccfe923",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e1ef2678/509185a00a5b07e73586ff0a5ccfe923",
           "kty": "RSA-HSM",
           "n": "4pf52vF_qllCl5J6nkhrrLjzKUZeIbaFgyOerDP49X2sdN7LgXa-qP5PE_Wk6CpFyLWk4oLnas4GeLGrpM89OuyFlLsOtIQfoRkzmBTYoiSNkMD1GZpxSRgk-OftcHLLUaqhSslyUvkH01Xasa7aD0JkoWGs4xkJY8EEMe4Nwl5JkH9cl1xHh8YvaB7i03krrSvz5o0-4XlbF29Iah6O4lG_NekvnfgNXQ2yiWnTEqMqyDT44ZEwD_Yghz3PYgoIDsgpgwVRwnPLqU5dVfRZKYlviLkZ-buIRn_rGi6A8exxQSruQsCB6eI-UmNk5mqNzbtdSUDWyvx7oZkVLthe7w"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e1ef2678",
         "scheduledPurgeDate": 1651247674
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -764,16 +764,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e1ef2678/509185a00a5b07e73586ff0a5ccfe923",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e1ef2678/509185a00a5b07e73586ff0a5ccfe923",
           "kty": "RSA-HSM",
           "n": "4pf52vF_qllCl5J6nkhrrLjzKUZeIbaFgyOerDP49X2sdN7LgXa-qP5PE_Wk6CpFyLWk4oLnas4GeLGrpM89OuyFlLsOtIQfoRkzmBTYoiSNkMD1GZpxSRgk-OftcHLLUaqhSslyUvkH01Xasa7aD0JkoWGs4xkJY8EEMe4Nwl5JkH9cl1xHh8YvaB7i03krrSvz5o0-4XlbF29Iah6O4lG_NekvnfgNXQ2yiWnTEqMqyDT44ZEwD_Yghz3PYgoIDsgpgwVRwnPLqU5dVfRZKYlviLkZ-buIRn_rGi6A8exxQSruQsCB6eI-UmNk5mqNzbtdSUDWyvx7oZkVLthe7w"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e1ef2678",
         "scheduledPurgeDate": 1651247674
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -816,16 +816,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e1ef2678/0b978a651444077b95b3ff50e2ea9872",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e1ef2678/0b978a651444077b95b3ff50e2ea9872",
           "kty": "RSA-HSM",
           "n": "oUA26U2zmWGls8GrxOjQe50SGRQY3u0rb2Me4Hd_pMuiZDMg824or8YHSbaUSdgivzWtmSDS_1QUaZEg_1m5nxuMQ7W7TlrEdvYo6GbcWjYsUI7aYMGuWGERfE8QfcHNHP2pPrIZzPB2e1uUyON8It83Cvy9noDgeZg-F2jel3IWHVbOVjdJKXUqMlqNCzClBQjbvpwlXtzZcjtDxDH-Td731YctDzo069gGyNvwVYGuV8q4OW1dtUCf2rynxOllCGJsFgZIb_UaAt2ViAxIfanSAPTUN7RfsELOQSqXI1jwhE0RuRIK7B3mZ-e5srEwCbigxxbIR8dgyETNKMpz-w"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e1ef2678",
         "scheduledPurgeDate": 1651247674
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -868,16 +868,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e1ef2678/0b978a651444077b95b3ff50e2ea9872",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e1ef2678/0b978a651444077b95b3ff50e2ea9872",
           "kty": "RSA-HSM",
           "n": "oUA26U2zmWGls8GrxOjQe50SGRQY3u0rb2Me4Hd_pMuiZDMg824or8YHSbaUSdgivzWtmSDS_1QUaZEg_1m5nxuMQ7W7TlrEdvYo6GbcWjYsUI7aYMGuWGERfE8QfcHNHP2pPrIZzPB2e1uUyON8It83Cvy9noDgeZg-F2jel3IWHVbOVjdJKXUqMlqNCzClBQjbvpwlXtzZcjtDxDH-Td731YctDzo069gGyNvwVYGuV8q4OW1dtUCf2rynxOllCGJsFgZIb_UaAt2ViAxIfanSAPTUN7RfsELOQSqXI1jwhE0RuRIK7B3mZ-e5srEwCbigxxbIR8dgyETNKMpz-w"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e1ef2678",
         "scheduledPurgeDate": 1651247674
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -920,16 +920,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e1ef2678/8d92fc17d19245efb40ea1f155e0dfe5",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e1ef2678/8d92fc17d19245efb40ea1f155e0dfe5",
           "kty": "RSA-HSM",
           "n": "q8IVRud-fNAX5Cwro4CiMyKwO93h6x-wvgByTaasthvxCvdrdmdL89wuhctnnLtyRKfYPSJrYph7yz8Sm0b7RRoO6M_3644e42TqullFdOTgxsFqG1TQR_cjSTfB8a5k5nsEXbJjyNxWpt32I6vZCzfKm9qOR24yEODR21T2TCci_UT4iSIedpSxaR1VZje8MCPyDLr7NITHvQwe9GJAkuYewsaYQKw5ZqyCcsje2LxO4CqYemlixkk1bwRrC3uViUrGPIo0gL8MdiXJcBrMI68QlrL9QUeInmyXWfFiKk31GXYbu6zYVLlM8LzRkMBK6s2j81pPyXNp2p_nRWMVYQ"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e1ef2678",
         "scheduledPurgeDate": 1651247675
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -972,16 +972,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e1ef2678/8d92fc17d19245efb40ea1f155e0dfe5",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e1ef2678/8d92fc17d19245efb40ea1f155e0dfe5",
           "kty": "RSA-HSM",
           "n": "q8IVRud-fNAX5Cwro4CiMyKwO93h6x-wvgByTaasthvxCvdrdmdL89wuhctnnLtyRKfYPSJrYph7yz8Sm0b7RRoO6M_3644e42TqullFdOTgxsFqG1TQR_cjSTfB8a5k5nsEXbJjyNxWpt32I6vZCzfKm9qOR24yEODR21T2TCci_UT4iSIedpSxaR1VZje8MCPyDLr7NITHvQwe9GJAkuYewsaYQKw5ZqyCcsje2LxO4CqYemlixkk1bwRrC3uViUrGPIo0gL8MdiXJcBrMI68QlrL9QUeInmyXWfFiKk31GXYbu6zYVLlM8LzRkMBK6s2j81pPyXNp2p_nRWMVYQ"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e1ef2678",
         "scheduledPurgeDate": 1651247675
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1024,16 +1024,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e1ef2678/716e45a0fb484d1739754f3c94336c8d",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e1ef2678/716e45a0fb484d1739754f3c94336c8d",
           "kty": "RSA-HSM",
           "n": "wp93H9G3wXKDJvLcDOmR4dcLm-K76jBa_6IgGVqvLlLnbBVH0N0RB18e0Nu6TKnemmVz56JTBTv-ZtKvJr0SLShnmFEX97_FNsIitghbWAssHf9Xy1htGbGlKu0xMTt7-Sq0PeGD62gbu94NL1vBgfSPgyWrfQnr4ymFMO4wQJ1lSt83jiBtcFk-c5VFL2osJQKPGa-iNKh2mSB1KjxTthxLU0LmXCxik9LZrLCsavkf8DgVZANyVAWDhRu8joiw66XuYVEL5SC62X0ITIdXm_wp2BLNI1DM54Fo6SfQNxDGnY0N01WkUy3gAHcMKeL7VgdeYvaF-u1bgnBFLHObbw"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e1ef2678",
         "scheduledPurgeDate": 1651247675
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1076,16 +1076,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e1ef2678/716e45a0fb484d1739754f3c94336c8d",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e1ef2678/716e45a0fb484d1739754f3c94336c8d",
           "kty": "RSA-HSM",
           "n": "wp93H9G3wXKDJvLcDOmR4dcLm-K76jBa_6IgGVqvLlLnbBVH0N0RB18e0Nu6TKnemmVz56JTBTv-ZtKvJr0SLShnmFEX97_FNsIitghbWAssHf9Xy1htGbGlKu0xMTt7-Sq0PeGD62gbu94NL1vBgfSPgyWrfQnr4ymFMO4wQJ1lSt83jiBtcFk-c5VFL2osJQKPGa-iNKh2mSB1KjxTthxLU0LmXCxik9LZrLCsavkf8DgVZANyVAWDhRu8joiw66XuYVEL5SC62X0ITIdXm_wp2BLNI1DM54Fo6SfQNxDGnY0N01WkUy3gAHcMKeL7VgdeYvaF-u1bgnBFLHObbw"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e1ef2678",
         "scheduledPurgeDate": 1651247675
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1128,16 +1128,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e1ef2678/6ecdb5daf9114cd512405555ce12544f",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e1ef2678/6ecdb5daf9114cd512405555ce12544f",
           "kty": "RSA-HSM",
           "n": "web4faEUTLw9b_xej1uVggliMtmu1u9Aac6OBit7MJ3JwxCTuXVwB6N2pehxnZnieJMEKKw0fvkwE3JSybpiNvJqBFnN4q8huJU-hjJnmPHk85XQhKT6DYNy69x5JI53wNXLXts2QaeFntBu-rivF3phwBvgLKx1m9RUHdfmmsRrNCT6gFVNgUClTRxBBmVK3x98XOt11U3gaVazjsVrNFEWq1DevEkNq93WrJZuBzJdjBccumQwvx1a5-tiqFYgAT8b2gxS3-25oP7XMMs7ZL8xmMeJPzD-dTBCKbdHZg1AL5FINWaZCoHuoUn4FeyoGZqWFK3z7XkDTF0Xj6fKLQ"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e1ef2678",
         "scheduledPurgeDate": 1651247675
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1180,16 +1180,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e1ef2678/6ecdb5daf9114cd512405555ce12544f",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e1ef2678/6ecdb5daf9114cd512405555ce12544f",
           "kty": "RSA-HSM",
           "n": "web4faEUTLw9b_xej1uVggliMtmu1u9Aac6OBit7MJ3JwxCTuXVwB6N2pehxnZnieJMEKKw0fvkwE3JSybpiNvJqBFnN4q8huJU-hjJnmPHk85XQhKT6DYNy69x5JI53wNXLXts2QaeFntBu-rivF3phwBvgLKx1m9RUHdfmmsRrNCT6gFVNgUClTRxBBmVK3x98XOt11U3gaVazjsVrNFEWq1DevEkNq93WrJZuBzJdjBccumQwvx1a5-tiqFYgAT8b2gxS3-25oP7XMMs7ZL8xmMeJPzD-dTBCKbdHZg1AL5FINWaZCoHuoUn4FeyoGZqWFK3z7XkDTF0Xj6fKLQ"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e1ef2678",
         "scheduledPurgeDate": 1651247675
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1232,16 +1232,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e1ef2678/f0c4c2ee4bee00831228b5d40e34d73d",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e1ef2678/f0c4c2ee4bee00831228b5d40e34d73d",
           "kty": "RSA-HSM",
           "n": "jaQhMlhyVu4th_1Pk6YUHj-0g_TxdjIYBqpcT7CxumRQywC49xZ3soj88hvRuSGtZ76w12Yk1YOeTVfNW077RIwBbgFNXiFtZ7gotFlFbjQuhYouH4VbjhyPaYVQhRAL_5iCGrpCfjliwAc31WrBSFBw0pwzBgY9US4aDEfFZJuFXIpXz0VFOkypRwpF1DTrD0oAT5lPciCf2Netu5eYPpuJlCS8n917vvpvMeqeessZ9oQsKbKMiy9SgLCgBjN1z4ehNjFa6VKIxv_ayn8vbaNP8s_Vo1RUYrdiJ2JUkEq21MdYXUap3AKNLMEP8npmWwbRWqX088mbFk6vucskyw"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e1ef2678",
         "scheduledPurgeDate": 1651247676
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1284,16 +1284,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e1ef2678/f0c4c2ee4bee00831228b5d40e34d73d",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e1ef2678/f0c4c2ee4bee00831228b5d40e34d73d",
           "kty": "RSA-HSM",
           "n": "jaQhMlhyVu4th_1Pk6YUHj-0g_TxdjIYBqpcT7CxumRQywC49xZ3soj88hvRuSGtZ76w12Yk1YOeTVfNW077RIwBbgFNXiFtZ7gotFlFbjQuhYouH4VbjhyPaYVQhRAL_5iCGrpCfjliwAc31WrBSFBw0pwzBgY9US4aDEfFZJuFXIpXz0VFOkypRwpF1DTrD0oAT5lPciCf2Netu5eYPpuJlCS8n917vvpvMeqeessZ9oQsKbKMiy9SgLCgBjN1z4ehNjFa6VKIxv_ayn8vbaNP8s_Vo1RUYrdiJ2JUkEq21MdYXUap3AKNLMEP8npmWwbRWqX088mbFk6vucskyw"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e1ef2678",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e1ef2678",
         "scheduledPurgeDate": 1651247676
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1317,7 +1317,7 @@
         "x-ms-server-latency": "38"
       },
       "ResponseBody": {
-        "nextLink": "https://managedhsmvaultname.vault.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+        "nextLink": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
         "value": [
           {
             "attributes": {
@@ -1330,8 +1330,8 @@
               "updated": 1650642651
             },
             "deletedDate": 1650642651,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-rsa-key3e722c4f",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key3e722c4f",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestcrud-rsa-key3e722c4f",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestcrud-rsa-key3e722c4f",
             "scheduledPurgeDate": 1651247451,
             "tags": {
               "foo": "updated tag"
@@ -1348,8 +1348,8 @@
               "updated": 1650642663
             },
             "deletedDate": 1650642663,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-rsa-key3e642c4e",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key3e642c4e",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestcrud-rsa-key3e642c4e",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestcrud-rsa-key3e642c4e",
             "scheduledPurgeDate": 1651247463,
             "tags": {
               "foo": "updated tag"
@@ -1365,8 +1365,8 @@
               "updated": 1650642753
             },
             "deletedDate": 1650642768,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e11a2b63",
             "scheduledPurgeDate": 1651247568
           },
           {
@@ -1379,8 +1379,8 @@
               "updated": 1650642756
             },
             "deletedDate": 1650642768,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e11a2b63",
             "scheduledPurgeDate": 1651247568
           },
           {
@@ -1393,8 +1393,8 @@
               "updated": 1650642758
             },
             "deletedDate": 1650642769,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e11a2b63",
             "scheduledPurgeDate": 1651247569
           },
           {
@@ -1407,8 +1407,8 @@
               "updated": 1650642760
             },
             "deletedDate": 1650642769,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e11a2b63",
             "scheduledPurgeDate": 1651247569
           },
           {
@@ -1421,8 +1421,8 @@
               "updated": 1650642763
             },
             "deletedDate": 1650642769,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e11a2b63",
             "scheduledPurgeDate": 1651247569
           },
           {
@@ -1435,8 +1435,8 @@
               "updated": 1650642765
             },
             "deletedDate": 1650642770,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e11a2b63",
             "scheduledPurgeDate": 1651247570
           },
           {
@@ -1449,8 +1449,8 @@
               "updated": 1650642767
             },
             "deletedDate": 1650642770,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e11a2b63",
             "scheduledPurgeDate": 1651247570
           },
           {
@@ -1463,15 +1463,15 @@
               "updated": 1650642773
             },
             "deletedDate": 1650642788,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e10c2b62",
             "scheduledPurgeDate": 1651247588
           }
         ]
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.2\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?api-version=7.2\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1495,7 +1495,7 @@
         "x-ms-server-latency": "40"
       },
       "ResponseBody": {
-        "nextLink": "https://managedhsmvaultname.vault.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tSQVFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
+        "nextLink": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tSQVFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
         "value": [
           {
             "attributes": {
@@ -1507,8 +1507,8 @@
               "updated": 1650642776
             },
             "deletedDate": 1650642788,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e10c2b62",
             "scheduledPurgeDate": 1651247588
           },
           {
@@ -1521,8 +1521,8 @@
               "updated": 1650642778
             },
             "deletedDate": 1650642789,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e10c2b62",
             "scheduledPurgeDate": 1651247589
           },
           {
@@ -1535,8 +1535,8 @@
               "updated": 1650642780
             },
             "deletedDate": 1650642789,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e10c2b62",
             "scheduledPurgeDate": 1651247589
           },
           {
@@ -1549,8 +1549,8 @@
               "updated": 1650642783
             },
             "deletedDate": 1650642789,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e10c2b62",
             "scheduledPurgeDate": 1651247589
           },
           {
@@ -1563,8 +1563,8 @@
               "updated": 1650642785
             },
             "deletedDate": 1650642790,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e10c2b62",
             "scheduledPurgeDate": 1651247590
           },
           {
@@ -1577,8 +1577,8 @@
               "updated": 1650642787
             },
             "deletedDate": 1650642790,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e10c2b62",
             "scheduledPurgeDate": 1651247590
           },
           {
@@ -1591,8 +1591,8 @@
               "updated": 1650642859
             },
             "deletedDate": 1650642873,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e1ef2678",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e1ef2678",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e1ef2678",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e1ef2678",
             "scheduledPurgeDate": 1651247673
           },
           {
@@ -1605,8 +1605,8 @@
               "updated": 1650642861
             },
             "deletedDate": 1650642874,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e1ef2678",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e1ef2678",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e1ef2678",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e1ef2678",
             "scheduledPurgeDate": 1651247674
           },
           {
@@ -1619,8 +1619,8 @@
               "updated": 1650642864
             },
             "deletedDate": 1650642874,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e1ef2678",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e1ef2678",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e1ef2678",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e1ef2678",
             "scheduledPurgeDate": 1651247674
           },
           {
@@ -1633,15 +1633,15 @@
               "updated": 1650642866
             },
             "deletedDate": 1650642875,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e1ef2678",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e1ef2678",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e1ef2678",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e1ef2678",
             "scheduledPurgeDate": 1651247675
           }
         ]
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.2\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tSQVFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?api-version=7.2\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS2tSQVFBQUFBQUFBQT09I1JUOjIjVFJDOjIwI0lTVjoyI0lFTzo2NTU2Nw",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1676,8 +1676,8 @@
               "updated": 1650642868
             },
             "deletedDate": 1650642875,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e1ef2678",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e1ef2678",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e1ef2678",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e1ef2678",
             "scheduledPurgeDate": 1651247675
           },
           {
@@ -1690,8 +1690,8 @@
               "updated": 1650642871
             },
             "deletedDate": 1650642875,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e1ef2678",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e1ef2678",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e1ef2678",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e1ef2678",
             "scheduledPurgeDate": 1651247675
           },
           {
@@ -1704,15 +1704,15 @@
               "updated": 1650642873
             },
             "deletedDate": 1650642876,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e1ef2678",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e1ef2678",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e1ef2678",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e1ef2678",
             "scheduledPurgeDate": 1651247676
           }
         ]
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1738,7 +1738,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1764,7 +1764,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1790,7 +1790,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1816,7 +1816,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1842,7 +1842,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1868,7 +1868,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e1ef2678?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1894,7 +1894,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1918,12 +1918,12 @@
       "ResponseBody": {
         "error": {
           "code": "KeyNotFound",
-          "message": "Key not found: https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e1ef2678 (Activity ID: 837ccc24-c254-11ec-a17e-002248787f06)"
+          "message": "Key not found: https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e1ef2678 (Activity ID: 837ccc24-c254-11ec-a17e-002248787f06)"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1947,12 +1947,12 @@
       "ResponseBody": {
         "error": {
           "code": "KeyNotFound",
-          "message": "Key not found: https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e1ef2678 (Activity ID: 838c9f0a-c254-11ec-a17e-002248787f06)"
+          "message": "Key not found: https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e1ef2678 (Activity ID: 838c9f0a-c254-11ec-a17e-002248787f06)"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1976,12 +1976,12 @@
       "ResponseBody": {
         "error": {
           "code": "KeyNotFound",
-          "message": "Key not found: https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e1ef2678 (Activity ID: 839d56a6-c254-11ec-a17e-002248787f06)"
+          "message": "Key not found: https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e1ef2678 (Activity ID: 839d56a6-c254-11ec-a17e-002248787f06)"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2005,12 +2005,12 @@
       "ResponseBody": {
         "error": {
           "code": "KeyNotFound",
-          "message": "Key not found: https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e1ef2678 (Activity ID: 83add2ce-c254-11ec-a17e-002248787f06)"
+          "message": "Key not found: https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e1ef2678 (Activity ID: 83add2ce-c254-11ec-a17e-002248787f06)"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2034,12 +2034,12 @@
       "ResponseBody": {
         "error": {
           "code": "KeyNotFound",
-          "message": "Key not found: https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e1ef2678 (Activity ID: 83beeb7c-c254-11ec-a17e-002248787f06)"
+          "message": "Key not found: https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e1ef2678 (Activity ID: 83beeb7c-c254-11ec-a17e-002248787f06)"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2063,12 +2063,12 @@
       "ResponseBody": {
         "error": {
           "code": "KeyNotFound",
-          "message": "Key not found: https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e1ef2678 (Activity ID: 83cff214-c254-11ec-a17e-002248787f06)"
+          "message": "Key not found: https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e1ef2678 (Activity ID: 83cff214-c254-11ec-a17e-002248787f06)"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e1ef2678?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e1ef2678?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2092,12 +2092,12 @@
       "ResponseBody": {
         "error": {
           "code": "KeyNotFound",
-          "message": "Key not found: https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e1ef2678 (Activity ID: 83e11b70-c254-11ec-a17e-002248787f06)"
+          "message": "Key not found: https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e1ef2678 (Activity ID: 83e11b70-c254-11ec-a17e-002248787f06)"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2121,7 +2121,7 @@
         "x-ms-server-latency": "33"
       },
       "ResponseBody": {
-        "nextLink": "https://managedhsmvaultname.vault.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+        "nextLink": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
         "value": [
           {
             "attributes": {
@@ -2134,8 +2134,8 @@
               "updated": 1650642651
             },
             "deletedDate": 1650642651,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-rsa-key3e722c4f",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key3e722c4f",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestcrud-rsa-key3e722c4f",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestcrud-rsa-key3e722c4f",
             "scheduledPurgeDate": 1651247451,
             "tags": {
               "foo": "updated tag"
@@ -2152,8 +2152,8 @@
               "updated": 1650642663
             },
             "deletedDate": 1650642663,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestcrud-rsa-key3e642c4e",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestcrud-rsa-key3e642c4e",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestcrud-rsa-key3e642c4e",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestcrud-rsa-key3e642c4e",
             "scheduledPurgeDate": 1651247463,
             "tags": {
               "foo": "updated tag"
@@ -2169,8 +2169,8 @@
               "updated": 1650642753
             },
             "deletedDate": 1650642768,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e11a2b63",
             "scheduledPurgeDate": 1651247568
           },
           {
@@ -2183,8 +2183,8 @@
               "updated": 1650642756
             },
             "deletedDate": 1650642768,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e11a2b63",
             "scheduledPurgeDate": 1651247568
           },
           {
@@ -2197,8 +2197,8 @@
               "updated": 1650642758
             },
             "deletedDate": 1650642769,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e11a2b63",
             "scheduledPurgeDate": 1651247569
           },
           {
@@ -2211,8 +2211,8 @@
               "updated": 1650642760
             },
             "deletedDate": 1650642769,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e11a2b63",
             "scheduledPurgeDate": 1651247569
           },
           {
@@ -2225,8 +2225,8 @@
               "updated": 1650642763
             },
             "deletedDate": 1650642769,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e11a2b63",
             "scheduledPurgeDate": 1651247569
           },
           {
@@ -2239,8 +2239,8 @@
               "updated": 1650642765
             },
             "deletedDate": 1650642770,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e11a2b63",
             "scheduledPurgeDate": 1651247570
           },
           {
@@ -2253,8 +2253,8 @@
               "updated": 1650642767
             },
             "deletedDate": 1650642770,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e11a2b63",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e11a2b63",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e11a2b63",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e11a2b63",
             "scheduledPurgeDate": 1651247570
           },
           {
@@ -2267,15 +2267,15 @@
               "updated": 1650642773
             },
             "deletedDate": 1650642788,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey0e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey0e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey0e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey0e10c2b62",
             "scheduledPurgeDate": 1651247588
           }
         ]
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys?api-version=7.2\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys?api-version=7.2\u0026maxresults=25\u0026$skiptoken=K1JJRDp-U0pkekFLQnROS25UQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2Nw",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -2310,8 +2310,8 @@
               "updated": 1650642776
             },
             "deletedDate": 1650642788,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey1e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey1e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey1e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey1e10c2b62",
             "scheduledPurgeDate": 1651247588
           },
           {
@@ -2324,8 +2324,8 @@
               "updated": 1650642778
             },
             "deletedDate": 1650642789,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey2e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey2e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey2e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey2e10c2b62",
             "scheduledPurgeDate": 1651247589
           },
           {
@@ -2338,8 +2338,8 @@
               "updated": 1650642780
             },
             "deletedDate": 1650642789,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey3e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey3e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey3e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey3e10c2b62",
             "scheduledPurgeDate": 1651247589
           },
           {
@@ -2352,8 +2352,8 @@
               "updated": 1650642783
             },
             "deletedDate": 1650642789,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey4e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey4e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey4e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey4e10c2b62",
             "scheduledPurgeDate": 1651247589
           },
           {
@@ -2366,8 +2366,8 @@
               "updated": 1650642785
             },
             "deletedDate": 1650642790,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey5e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey5e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey5e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey5e10c2b62",
             "scheduledPurgeDate": 1651247590
           },
           {
@@ -2380,8 +2380,8 @@
               "updated": 1650642787
             },
             "deletedDate": 1650642790,
-            "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestkey6e10c2b62",
-            "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/livekvtestkey6e10c2b62",
+            "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestkey6e10c2b62",
+            "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/livekvtestkey6e10c2b62",
             "scheduledPurgeDate": 1651247590
           }
         ]

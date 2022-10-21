@@ -41,7 +41,4 @@ jobs:
     inputs:
       input1: ${{parent.jobs.sample_word.outputs.output1}}
 
-    resources:
-      instance_type: Standard_E8S_V3
-      runtime_version: 3.1.0
-#    compute: azureml:spark31
+    compute: azureml:spark31

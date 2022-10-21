@@ -11,6 +11,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import ConversationAuthoringClient as GeneratedConversationAuthoringClient
+from .._patch import POLLING_INTERVAL_DEFAULT
 
 
 def _authentication_policy(credential):
@@ -29,7 +30,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylint: disable=client-accepts-api-version-keyword
+class ConversationAuthoringClient(GeneratedConversationAuthoringClient):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
@@ -65,6 +66,7 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient): # pylin
             endpoint=endpoint,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            polling_interval=kwargs.pop("polling_interval", POLLING_INTERVAL_DEFAULT),
             **kwargs
         )
 

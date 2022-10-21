@@ -33,8 +33,7 @@ args: >-
   --input1 ${{inputs.input1}}
   --output2 ${{outputs.output1}}
   --my_sample_rate ${{inputs.sample_rate}}
-  [--input_optional ${{inputs.input_optional}}]
-#  $[[--input_optional ${{inputs.input_optional}}]]
+  $[[--input_optional ${{inputs.input_optional}}]]
 
 conf:
   spark.driver.cores: 1

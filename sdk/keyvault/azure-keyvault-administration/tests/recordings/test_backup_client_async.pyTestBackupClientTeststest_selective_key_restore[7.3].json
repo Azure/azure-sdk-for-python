@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625/create?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625/create?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -45,14 +45,14 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625/e1b65d1b9a1e0be7a8eda9a936fd1c20",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625/e1b65d1b9a1e0be7a8eda9a936fd1c20",
           "kty": "RSA-HSM",
           "n": "t3th8lGDOujD2vxPal5ot2tok6YITpXyU9KLIfu2g9c2nCqJXziyqfGULNkpjuTovwRO0uIg35gib6FwbTFSt0mDFV-BxlvhOeHTx1aqBWi4XNe23gMmGi--AmNv9HlyVLxX7LA8z1HuFSgn8zKlLOw9zdXTXvF1sbX9IrYVUux-6cBLeuxG93ATIWi20VOtmbte99X6Gv1FOiW6WPYL3Dq0t15x2IljQxdmYvJwU2fo0X2W9OkfAPXKlZ_uS2c8dTdGWFhkvZqqgtiCFiIRV1lHv9RSR9zUufnxSkw7LAKbrJ8X_3IV676PpV81BxpwpvnDP5ofCGk78c_2HqI6VQ"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/backup?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -77,7 +77,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/backup?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -93,7 +93,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
-        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/backup/4814a26b18e04b2da703f5538572959f/pending",
+        "azure-asyncoperation": "https://managedhsmvaultname.managedhsm.azure.net/backup/4814a26b18e04b2da703f5538572959f/pending",
         "Cache-Control": "no-cache",
         "Content-Length": "174",
         "Content-Security-Policy": "default-src \u0027self\u0027",
@@ -119,7 +119,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/backup/4814a26b18e04b2da703f5538572959f/pending",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/backup/4814a26b18e04b2da703f5538572959f/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -155,7 +155,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625/restore?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625/restore?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -174,7 +174,7 @@
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "20180927, 20211111",
-        "azure-asyncoperation": "https://managedhsmvaultname.vault.azure.net/restore/2efd2dae8a004527894bbcefdc9fde5d/pending",
+        "azure-asyncoperation": "https://managedhsmvaultname.managedhsm.azure.net/restore/2efd2dae8a004527894bbcefdc9fde5d/pending",
         "Cache-Control": "no-cache",
         "Content-Length": "138",
         "Content-Security-Policy": "default-src \u0027self\u0027",
@@ -199,7 +199,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/restore/2efd2dae8a004527894bbcefdc9fde5d/pending",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/restore/2efd2dae8a004527894bbcefdc9fde5d/pending",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -234,7 +234,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -262,7 +262,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -290,7 +290,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -332,16 +332,16 @@
             "sign",
             "verify"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625/e1b65d1b9a1e0be7a8eda9a936fd1c20",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625/e1b65d1b9a1e0be7a8eda9a936fd1c20",
           "kty": "RSA-HSM",
           "n": "t3th8lGDOujD2vxPal5ot2tok6YITpXyU9KLIfu2g9c2nCqJXziyqfGULNkpjuTovwRO0uIg35gib6FwbTFSt0mDFV-BxlvhOeHTx1aqBWi4XNe23gMmGi--AmNv9HlyVLxX7LA8z1HuFSgn8zKlLOw9zdXTXvF1sbX9IrYVUux-6cBLeuxG93ATIWi20VOtmbte99X6Gv1FOiW6WPYL3Dq0t15x2IljQxdmYvJwU2fo0X2W9OkfAPXKlZ_uS2c8dTdGWFhkvZqqgtiCFiIRV1lHv9RSR9zUufnxSkw7LAKbrJ8X_3IV676PpV81BxpwpvnDP5ofCGk78c_2HqI6VQ"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/selective-restore-test-key1bbb3625",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/selective-restore-test-key1bbb3625",
         "scheduledPurgeDate": 1652737422
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/selective-restore-test-key1bbb3625?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/selective-restore-test-key1bbb3625?api-version=7.3",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -383,16 +383,16 @@
             "decrypt",
             "wrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/selective-restore-test-key1bbb3625/e1b65d1b9a1e0be7a8eda9a936fd1c20",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/selective-restore-test-key1bbb3625/e1b65d1b9a1e0be7a8eda9a936fd1c20",
           "kty": "RSA-HSM",
           "n": "t3th8lGDOujD2vxPal5ot2tok6YITpXyU9KLIfu2g9c2nCqJXziyqfGULNkpjuTovwRO0uIg35gib6FwbTFSt0mDFV-BxlvhOeHTx1aqBWi4XNe23gMmGi--AmNv9HlyVLxX7LA8z1HuFSgn8zKlLOw9zdXTXvF1sbX9IrYVUux-6cBLeuxG93ATIWi20VOtmbte99X6Gv1FOiW6WPYL3Dq0t15x2IljQxdmYvJwU2fo0X2W9OkfAPXKlZ_uS2c8dTdGWFhkvZqqgtiCFiIRV1lHv9RSR9zUufnxSkw7LAKbrJ8X_3IV676PpV81BxpwpvnDP5ofCGk78c_2HqI6VQ"
         },
-        "recoveryId": "https://managedhsmvaultname.vault.azure.net/deletedkeys/selective-restore-test-key1bbb3625",
+        "recoveryId": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/selective-restore-test-key1bbb3625",
         "scheduledPurgeDate": 1652737422
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/deletedkeys/selective-restore-test-key1bbb3625?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/deletedkeys/selective-restore-test-key1bbb3625?api-version=7.3",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",

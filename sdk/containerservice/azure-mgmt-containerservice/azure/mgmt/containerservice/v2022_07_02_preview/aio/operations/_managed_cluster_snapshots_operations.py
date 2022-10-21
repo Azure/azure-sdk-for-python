@@ -10,7 +10,14 @@ from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Un
 from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -21,9 +28,18 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._managed_cluster_snapshots_operations import build_create_or_update_request, build_delete_request, build_get_request, build_list_by_resource_group_request, build_list_request, build_update_tags_request
-T = TypeVar('T')
+from ...operations._managed_cluster_snapshots_operations import (
+    build_create_or_update_request,
+    build_delete_request,
+    build_get_request,
+    build_list_by_resource_group_request,
+    build_list_request,
+    build_update_tags_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ManagedClusterSnapshotsOperations:
     """
@@ -44,12 +60,8 @@ class ManagedClusterSnapshotsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
-    def list(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.ManagedClusterSnapshot"]:
+    def list(self, **kwargs: Any) -> AsyncIterable["_models.ManagedClusterSnapshot"]:
         """Gets a list of managed cluster snapshots in the specified subscription.
 
         Gets a list of managed cluster snapshots in the specified subscription.
@@ -64,20 +76,24 @@ class ManagedClusterSnapshotsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ManagedClusterSnapshotListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedClusterSnapshotListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -106,9 +122,7 @@ class ManagedClusterSnapshotsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -118,17 +132,13 @@ class ManagedClusterSnapshotsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/managedclustersnapshots"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.ContainerService/managedclustersnapshots"}  # type: ignore
 
     @distributed_trace
     def list_by_resource_group(
-        self,
-        resource_group_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.ManagedClusterSnapshot"]:
         """Lists managed cluster snapshots in the specified subscription and resource group.
 
@@ -147,21 +157,25 @@ class ManagedClusterSnapshotsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ManagedClusterSnapshotListResult]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedClusterSnapshotListResult]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_resource_group.metadata['url'],
+                    template_url=self.list_by_resource_group.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -190,9 +204,7 @@ class ManagedClusterSnapshotsOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -202,19 +214,12 @@ class ManagedClusterSnapshotsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_by_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots"}  # type: ignore
+    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        **kwargs: Any
-    ) -> _models.ManagedClusterSnapshot:
+    async def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.ManagedClusterSnapshot:
         """Gets a managed cluster snapshot.
 
         Gets a managed cluster snapshot.
@@ -230,23 +235,25 @@ class ManagedClusterSnapshotsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ManagedClusterSnapshot]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedClusterSnapshot]
 
-        
         request = build_get_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -254,9 +261,7 @@ class ManagedClusterSnapshotsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -265,15 +270,14 @@ class ManagedClusterSnapshotsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ManagedClusterSnapshot', pipeline_response)
+        deserialized = self._deserialize("ManagedClusterSnapshot", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore
 
     @overload
     async def create_or_update(
@@ -336,7 +340,6 @@ class ManagedClusterSnapshotsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def create_or_update(
         self,
@@ -367,16 +370,19 @@ class ManagedClusterSnapshotsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ManagedClusterSnapshot]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedClusterSnapshot]
 
         content_type = content_type or "application/json"
         _json = None
@@ -384,7 +390,7 @@ class ManagedClusterSnapshotsOperations:
         if isinstance(parameters, (IO, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, 'ManagedClusterSnapshot')
+            _json = self._serialize.body(parameters, "ManagedClusterSnapshot")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -394,7 +400,7 @@ class ManagedClusterSnapshotsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -402,9 +408,7 @@ class ManagedClusterSnapshotsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -414,18 +418,17 @@ class ManagedClusterSnapshotsOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ManagedClusterSnapshot', pipeline_response)
+            deserialized = self._deserialize("ManagedClusterSnapshot", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('ManagedClusterSnapshot', pipeline_response)
+            deserialized = self._deserialize("ManagedClusterSnapshot", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore
-
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore
 
     @overload
     async def update_tags(
@@ -489,14 +492,9 @@ class ManagedClusterSnapshotsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def update_tags(
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        parameters: Union[_models.TagsObject, IO],
-        **kwargs: Any
+        self, resource_group_name: str, resource_name: str, parameters: Union[_models.TagsObject, IO], **kwargs: Any
     ) -> _models.ManagedClusterSnapshot:
         """Updates tags on a managed cluster snapshot.
 
@@ -519,16 +517,19 @@ class ManagedClusterSnapshotsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ManagedClusterSnapshot]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ManagedClusterSnapshot]
 
         content_type = content_type or "application/json"
         _json = None
@@ -536,7 +537,7 @@ class ManagedClusterSnapshotsOperations:
         if isinstance(parameters, (IO, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, 'TagsObject')
+            _json = self._serialize.body(parameters, "TagsObject")
 
         request = build_update_tags_request(
             resource_group_name=resource_group_name,
@@ -546,7 +547,7 @@ class ManagedClusterSnapshotsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update_tags.metadata['url'],
+            template_url=self.update_tags.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -554,9 +555,7 @@ class ManagedClusterSnapshotsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -565,22 +564,18 @@ class ManagedClusterSnapshotsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ManagedClusterSnapshot', pipeline_response)
+        deserialized = self._deserialize("ManagedClusterSnapshot", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    update_tags.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore
-
+    update_tags.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        resource_name: str,
-        **kwargs: Any
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
     ) -> None:
         """Deletes a managed cluster snapshot.
 
@@ -597,23 +592,25 @@ class ManagedClusterSnapshotsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-07-02-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-07-02-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
         request = build_delete_request(
             resource_group_name=resource_group_name,
             resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -621,9 +618,7 @@ class ManagedClusterSnapshotsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -635,5 +630,4 @@ class ManagedClusterSnapshotsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore
-
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"}  # type: ignore

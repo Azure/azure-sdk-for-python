@@ -6,32 +6,37 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, overload, Optional, Union, Dict, Tuple
-import six
+from typing import Any, List, overload, Optional, Union, Tuple, cast, MutableMapping
 import copy
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import QuestionAnsweringClientOperationsMixin as QuestionAnsweringClientOperationsMixinGenerated
-from ..models import AnswersOptions, AnswersResult, TextDocument, AnswersFromTextOptions, AnswersFromTextResult
+from ..models import (
+    AnswersOptions,
+    AnswersFromTextOptions,
+    AnswersResult,
+    AnswersFromTextResult,
+    KnowledgeBaseAnswerContext,
+    QueryFilters,
+    ShortAnswerOptions,
+    TextDocument,
+)
+JSON = MutableMapping[str, Any]
 
 
 def _validate_text_records(records):
     if not records:
         raise ValueError("Input documents can not be empty or None")
-
-    if isinstance(records, six.string_types):
+    if isinstance(records, str):
         raise TypeError("Input documents cannot be a string.")
-
     if isinstance(records, dict):
         raise TypeError("Input documents cannot be a dict")
-
-    if not all(isinstance(x, six.string_types) for x in records):
+    if not all(isinstance(x, str) for x in records):
         if not all(isinstance(x, (dict, TextDocument)) for x in records):
             raise TypeError("Mixing string and dictionary/object document input unsupported.")
-
     request_batch = []
     for idx, doc in enumerate(records):
-        if isinstance(doc, six.string_types):
+        if isinstance(doc, str):
             record = {"id": str(idx), "text": doc}
             request_batch.append(record)
         else:
@@ -81,7 +86,6 @@ def _handle_metadata_filter_conversion(options_input):
             raise ValueError("'metadata' must be a sequence of key-value tuples.")
     except TypeError:
         raise ValueError("'metadata' must be a sequence of key-value tuples.")
-
     metadata_modified = [{"key": m[0], "value": m[1]} for m in metadata_input]
     if in_class:
         filters.metadata_filter.metadata = metadata_modified
@@ -110,27 +114,48 @@ def _get_answers_prepare_options(*args: AnswersOptions, **kwargs: Any) -> Tuple[
 def _get_answers_from_text_prepare_options(
     *args: AnswersFromTextOptions, **kwargs: Any
 ) -> Tuple[AnswersFromTextOptions, Any]:
+    default_language = kwargs.pop("language", None)
     options = _get_positional_body(*args, **kwargs) or AnswersFromTextOptions(
         question=kwargs.pop("question"),
         text_documents=kwargs.pop("text_documents"),
-        language=kwargs.pop("language"),
+        language=default_language,
     )
     try:
+        options = cast(JSON, options)
         options["records"] = _validate_text_records(options["records"])
+        options["language"] = options.get("language", None) or default_language  # pylint: disable=no-member
     except TypeError:
         options.text_documents = _validate_text_records(options.text_documents)
-    kwargs.pop("language", None)
+        options.language = options.language or default_language
     return options, kwargs
 
 
 class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
-    @overload
-    def get_answers(self, options: AnswersOptions, **kwargs: Any) -> AnswersResult:
-        pass
+    @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
+    def get_answers(
+        self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
+    ) -> AnswersResult:
+        ...
 
     @overload
-    def get_answers(self, **kwargs: Any) -> AnswersResult:
-        pass
+    def get_answers(  # pylint: disable=arguments-differ
+        self,
+        *,
+        project_name: str,
+        deployment_name: str,
+        qna_id: Optional[int] = None,
+        question: Optional[str] = None,
+        top: Optional[int] = None,
+        user_id: Optional[str] = None,
+        confidence_threshold: Optional[float] = None,
+        answer_context: Optional[KnowledgeBaseAnswerContext] = None,
+        ranker_kind: Optional[str] = None,
+        filters: Optional[QueryFilters] = None,
+        short_answer_options: Optional[ShortAnswerOptions] = None,
+        include_unstructured_sources: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AnswersResult:
+        ...
 
     @distributed_trace
     def get_answers(self, *args: AnswersOptions, **kwargs: Any) -> AnswersResult:
@@ -138,7 +163,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
 
         :param options: Positional only. POST body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.AnswersOptions
+        :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
         :keyword project_name: The name of the knowledge base project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -155,31 +180,38 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
         :keyword answer_context: Context object with previous QnA's information.
-        :paramtype answer_context: ~azure.ai.language.questionanswering.KnowledgeBaseAnswerContext
+        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
         :keyword ranker_kind: Type of ranker to be used. Possible
          values include: "Default", "QuestionOnly".
         :paramtype ranker_kind: str
         :keyword filters: Filter QnAs based on given metadata list and knowledge base sources.
-        :paramtype filters: ~azure.ai.language.questionanswering.QueryFilters
+        :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
         :keyword short_answer_options: To configure Answer span prediction feature.
-        :paramtype short_answer_options: ~azure.ai.language.questionanswering.ShortAnswerOptions
+        :paramtype short_answer_options: ~azure.ai.language.questionanswering.models.ShortAnswerOptions
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured
          Sources.
         :paramtype include_unstructured_sources: bool
         :return: AnswersResult
-        :rtype: ~azure.ai.language.questionanswering.AnswersResult
+        :rtype: ~azure.ai.language.questionanswering.models.AnswersResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         options, kwargs = _get_answers_prepare_options(*args, **kwargs)
         return super().get_answers(options, **kwargs)
 
-    @overload
+    @overload  # type: ignore
     def get_answers_from_text(self, options: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:
         pass
 
     @overload
-    def get_answers_from_text(self, **kwargs: Any) -> AnswersFromTextResult:
-        pass
+    def get_answers_from_text(  # pylint: disable=arguments-differ
+        self,
+        *,
+        question: str,
+        text_documents: List[Union[str, TextDocument]],
+        language: Optional[str] = None,
+        **kwargs: Any
+    ) -> AnswersFromTextResult:
+        ...
 
     @distributed_trace
     def get_answers_from_text(self, *args: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:
@@ -201,7 +233,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         options, kwargs = _get_answers_from_text_prepare_options(
-            *args, language=kwargs.pop("language", self._default_language), **kwargs
+            *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
         )
         return super().get_answers_from_text(options, **kwargs)
 

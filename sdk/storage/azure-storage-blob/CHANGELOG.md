@@ -1,6 +1,6 @@
 # Release History
 
-## 12.14.0 (Unreleased)
+## 12.14.0 (2022-10-11)
 
 ### Features Added
 - Stable release of features from 12.14.0b1 and 12.14.0b2.

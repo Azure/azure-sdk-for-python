@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils._data_utils import read_local_mltable_metadata_contents, read_remote_mltable_metadata_contents
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.operations import DatastoreOperations
@@ -13,10 +13,11 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
         serviceclient_2022_05_01=mock_aml_services_2022_05_01,
     )
 

@@ -5,13 +5,13 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     InputDeliveryMode,
     JobInputType,
     JobOutputType,
     OutputDeliveryMode,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
@@ -123,7 +123,7 @@ class TestCommandJob:
         assert internal_representation.environment.name != envName
         assert internal_representation.environment.name == ANONYMOUS_ENV_NAME
         assert internal_representation.environment._is_anonymous
-        assert internal_representation.environment.version == "79a6980e14dbe0dac98ed0e902413f88"
+        assert internal_representation.environment.version == "a9a50ba7f515e91d558122f2c5bc70a5"
 
         assert internal_representation.inputs["test1"].path == input_path
         # Validate default dataset is mounted

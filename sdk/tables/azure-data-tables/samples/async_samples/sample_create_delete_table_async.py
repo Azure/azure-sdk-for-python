@@ -36,7 +36,7 @@ class CreateDeleteTable(object):
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
-        self.table_name = "myTable"
+        self.table_name = "myTableAsync"
 
     async def create_table(self):
         from azure.data.tables.aio import TableServiceClient
@@ -105,5 +105,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

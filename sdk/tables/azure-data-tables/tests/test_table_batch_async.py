@@ -10,7 +10,6 @@ import pytest
 
 from datetime import datetime, timedelta
 import os
-import sys
 
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async

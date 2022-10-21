@@ -1,5 +1,27 @@
 # Release History
 
+## 2.8.0 (2022-09-13)
+
+### Features Added
+
+  - Added model AzureSynapseArtifactsLinkedService
+  - Added model BigDataPoolParametrizationReference
+  - Added model BigDataPoolReferenceType
+  - Added model DatasetReferenceType
+  - Added model ExpressionType
+  - Added model GoogleSheetsLinkedService
+  - Added model IntegrationRuntimeReferenceType
+  - Added model NotebookParameter
+  - Added model NotebookParameterType
+  - Added model NotebookReferenceType
+  - Added model PipelineReferenceType
+  - Added model SparkJobReferenceType
+  - Added model SynapseNotebookActivity
+  - Added model SynapseNotebookReference
+  - Added model SynapseSparkJobDefinitionActivity
+  - Added model SynapseSparkJobReference
+  - Added model Type
+
 ## 2.7.0 (2022-06-15)
 
 **Features**

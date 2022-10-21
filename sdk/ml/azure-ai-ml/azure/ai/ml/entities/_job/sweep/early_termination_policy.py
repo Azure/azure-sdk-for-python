@@ -3,15 +3,15 @@
 # ---------------------------------------------------------
 from abc import ABC
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2022_06_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
-from azure.ai.ml._restclient.v2022_06_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._util import camel_to_snake
+from azure.ai.ml._utils.utils import camel_to_snake
 
 
 class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
@@ -32,13 +32,13 @@ class EarlyTerminationPolicy(ABC, RestTranslatableMixin):
 
         policy = None
         if obj.policy_type == EarlyTerminationPolicyType.BANDIT:
-            policy = BanditPolicy._from_rest_object(obj)
+            policy = BanditPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.policy_type == EarlyTerminationPolicyType.MEDIAN_STOPPING:
-            policy = MedianStoppingPolicy._from_rest_object(obj)
+            policy = MedianStoppingPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.policy_type == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
-            policy = TruncationSelectionPolicy._from_rest_object(obj)
+            policy = TruncationSelectionPolicy._from_rest_object(obj)  # pylint: disable=protected-access
 
         return policy
 

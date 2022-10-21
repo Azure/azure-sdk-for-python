@@ -9,19 +9,20 @@ from typing import Any, Callable, Dict, List, Mapping, Union
 from marshmallow import INCLUDE
 
 from azure.ai.ml import Output
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields
-from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._component import ControlFlowType, NodeType
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
 from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
+from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._util import extract_label
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class _PipelineNodeFactory:
@@ -74,6 +75,12 @@ class _PipelineNodeFactory:
             load_from_rest_object_func=Spark._from_rest_object,
             nested_schema=None,
         )
+        self.register_type(
+            _type=ControlFlowType.DO_WHILE,
+            create_instance_func=None,
+            load_from_rest_object_func=DoWhile._from_rest_object,
+            nested_schema=None,
+        )
 
     @classmethod
     def _get_func(cls, _type: str, funcs):
@@ -84,7 +91,10 @@ class _PipelineNodeFactory:
             error_category=ErrorCategory.USER_ERROR,
         )
         if _type == NodeType._CONTAINER:
-            msg = "Component returned by 'list' is abbreviated and can not be used directly, please use result from 'get'."
+            msg = (
+                "Component returned by 'list' is abbreviated and can not be used directly, "
+                "please use result from 'get'."
+            )
             raise exception(
                 message=msg,
                 no_personal_data_message=msg,

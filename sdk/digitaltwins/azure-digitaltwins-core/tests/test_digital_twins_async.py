@@ -3,14 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from os import pathsep
 import pytest
-import uuid
+import time
 
-from devtools_testutils import AzureTestCase
-from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
-
-from azure.digitaltwins.core.aio import DigitalTwinsClient
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceNotFoundError,
@@ -19,11 +14,14 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotModifiedError
 )
+from azure.digitaltwins.core.aio import DigitalTwinsClient
+from devtools_testutils import AzureRecordedTestCase
+
 
 BUILDING_MODEL_ID = "dtmi:samples:DTTestBuilding;1"
 
 
-class DigitalTwinsTestsAsync(AzureTestCase):
+class TestDigitalTwinsAsync(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient, is_async=True)
@@ -75,9 +73,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         except ResourceNotFoundError:
             pass
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_simple_digitaltwin_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_create_simple_digitaltwin_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -86,16 +83,15 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin["AverageTemperature"] == dtdl_digital_twins_building_twin["AverageTemperature"]
         assert created_twin.get('$etag')
         assert created_twin.get('$dtId') == digital_twin_id
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_digitaltwin_without_model_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_create_digitaltwin_without_model_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -104,13 +100,12 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(HttpResponseError):
             await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_invalid_digitaltwin_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_create_invalid_digitaltwin_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -118,14 +113,13 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             },
             "LowestTemperature": 68,
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         with pytest.raises(HttpResponseError):
             await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_digitaltwin_conditionally_if_missing_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_create_digitaltwin_conditionally_if_missing_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -134,7 +128,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(
             digital_twin_id,
@@ -148,10 +142,9 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 dtdl_digital_twins_building_twin,
                 match_condition=MatchConditions.IfMissing)
 
+    @pytest.mark.asyncio
     @pytest.mark.skip("Conditional etag does not appear to be supported")
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_create_digitaltwin_conditionally_if_modified_async(self, resource_group, location, digitaltwin):
+    async def test_create_digitaltwin_conditionally_if_modified_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -160,7 +153,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin.get('$dtId') == digital_twin_id
@@ -181,9 +174,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         assert created_twin.get('$dtId') == updated_twin.get('$dtId')
         assert created_twin["AverageTemperature"] != updated_twin["AverageTemperature"]
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_upsert_simple_digitaltwin_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_upsert_simple_digitaltwin_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -192,7 +184,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin.get('$dtId') == digital_twin_id
@@ -202,9 +194,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         assert created_twin.get('$dtId') == upserted_twin.get('$dtId')
         assert created_twin["AverageTemperature"] != upserted_twin["AverageTemperature"]
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_upsert_digitaltwin_invalid_conditions_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_upsert_digitaltwin_invalid_conditions_async(self, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -213,7 +204,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ValueError):
             await client.upsert_digital_twin(
                 digital_twin_id,
@@ -226,7 +217,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 digital_twin_id,
                 dtdl_digital_twins_building_twin,
                 match_condition=MatchConditions.IfModified)
-        
+
         with pytest.raises(ValueError):
             await client.upsert_digital_twin(
                 digital_twin_id,
@@ -240,9 +231,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 dtdl_digital_twins_building_twin,
                 match_condition=MatchConditions.IfPresent)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_get_digitaltwin_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_get_digitaltwin_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -251,23 +241,21 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         twin = await client.get_digital_twin(digital_twin_id)
         assert twin == created_twin
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_get_digitaltwin_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_get_digitaltwin_not_existing_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.get_digital_twin(self.create_random_name('digitalTwin-'))
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_digitaltwin_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_delete_digitaltwin_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -276,7 +264,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -285,16 +273,14 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             await client.get_digital_twin(digital_twin_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_digitaltwin_not_existing_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_delete_digitaltwin_not_existing_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.delete_digital_twin(self.create_random_name('digitalTwin-'))
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_digitaltwin_conditionally_if_not_modified_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_delete_digitaltwin_conditionally_if_not_modified_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -303,7 +289,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -321,9 +307,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             await client.get_digital_twin(digital_twin_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_digitaltwin_conditionally_if_present_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_delete_digitaltwin_conditionally_if_present_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -332,7 +317,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         deleted = await client.delete_digital_twin(
@@ -342,11 +327,10 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             await client.get_digital_twin(digital_twin_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_delete_digitaltwin_invalid_conditions_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_delete_digitaltwin_invalid_conditions_async(self, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ValueError):
             await client.delete_digital_twin(
                 digital_twin_id,
@@ -357,7 +341,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             await client.delete_digital_twin(
                 digital_twin_id,
                 match_condition=MatchConditions.IfNotModified)
-        
+
         with pytest.raises(ValueError):
             await client.delete_digital_twin(
                 digital_twin_id,
@@ -369,9 +353,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 digital_twin_id,
                 match_condition=MatchConditions.IfMissing)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_replace_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_replace_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -380,7 +363,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         assert created_twin['AverageTemperature'] == 68
@@ -397,9 +380,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         updated_twin = await client.get_digital_twin(digital_twin_id)
         assert updated_twin['AverageTemperature'] == 42
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_remove_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_remove_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -408,7 +390,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -424,9 +406,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         updated_twin = await client.get_digital_twin(digital_twin_id)
         assert 'AverageTemperature' not in updated_twin
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_add_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_add_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -434,7 +415,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             },
             "AverageTemperature": 68,
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -451,9 +432,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         updated_twin = await client.get_digital_twin(digital_twin_id)
         assert updated_twin['TemperatureUnit'] == "Celsius"
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_multiple_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_multiple_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -461,7 +441,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             },
             "AverageTemperature": 68,
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -484,9 +464,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         assert updated_twin['TemperatureUnit'] == "Celsius"
         assert updated_twin['AverageTemperature'] == 42
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_invalid_patch_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_invalid_patch_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -495,7 +474,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
@@ -508,7 +487,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         ]
         with pytest.raises(HttpResponseError):
             await client.update_digital_twin(digital_twin_id, patch)
-        
+
         patch = {
             "AverageTemperature": 42
         }
@@ -519,9 +498,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         with pytest.raises(HttpResponseError):
             await client.upsert_digital_twin(digital_twin_id, patch)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_conditionally_if_not_match_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_conditionally_if_not_match_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -530,7 +508,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         created_twin = await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         patch = [
@@ -554,9 +532,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         updated = await client.get_digital_twin(digital_twin_id)
         assert updated['AverageTemperature'] == 42
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_conditionally_if_present_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_conditionally_if_present_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -565,7 +542,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await self._set_up_models(client, digital_twin_id)
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
         patch = [
@@ -582,11 +559,10 @@ class DigitalTwinsTestsAsync(AzureTestCase):
         updated = await client.get_digital_twin(digital_twin_id)
         assert updated['AverageTemperature'] == 42
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_invalid_conditions_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_invalid_conditions_async(self, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         patch = [
             {
                 "op": "replace",
@@ -606,7 +582,7 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 digital_twin_id,
                 patch,
                 match_condition=MatchConditions.IfNotModified)
-        
+
         with pytest.raises(ValueError):
             await client.update_digital_twin(
                 digital_twin_id,
@@ -620,9 +596,8 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 patch,
                 match_condition=MatchConditions.IfMissing)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_update_digitaltwin_not_existing_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_update_digitaltwin_not_existing_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         patch = [
             {
@@ -631,13 +606,12 @@ class DigitalTwinsTestsAsync(AzureTestCase):
                 "value": 42
             }
         ]
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.update_digital_twin(digital_twin_id, patch)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_query_digitaltwins_async(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_query_digitaltwins_async(self, recorded_test, digitaltwin):
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
             "$metadata": {
@@ -646,25 +620,25 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             "AverageTemperature": 68,
             "TemperatureUnit": "Celsius"
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
-
+        if self.is_live:
+            # Wait for digital twin to reflect on service side.
+            time.sleep(10)
         dt_ids = []
         async for t in client.query_twins('SELECT * FROM digitaltwins'):
             dt_ids.append(t["$dtId"])
         assert digital_twin_id in dt_ids
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_query_digitaltwins_invalid_expression_async(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    @pytest.mark.asyncio
+    async def test_query_digitaltwins_invalid_expression_async(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(HttpResponseError):
             async for t in client.query_twins("foo"):
                 print(t)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_publish_telemetry(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_publish_telemetry(self, recorded_test, digitaltwin):
         # TODO: How to validate this test? It seems to pass regardless
         telemetry = {"ComponentTelemetry1": 5}
         digital_twin_id = self.create_random_name('digitalTwin-')
@@ -674,15 +648,14 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             },
             "AverageTemperature": 68
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         published = await client.publish_telemetry(digital_twin_id, telemetry)
         assert published is None
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_publish_telemetry_with_message_id(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_publish_telemetry_with_message_id(self, recorded_test, digitaltwin):
         telemetry = {"ComponentTelemetry1": 5}
         digital_twin_id = self.create_random_name('digitalTwin-')
         dtdl_digital_twins_building_twin = {
@@ -691,16 +664,15 @@ class DigitalTwinsTestsAsync(AzureTestCase):
             },
             "AverageTemperature": 68
         }
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         await client.upsert_digital_twin(digital_twin_id, dtdl_digital_twins_building_twin)
 
         published = await client.publish_telemetry(digital_twin_id, telemetry, message_id=self.create_random_name('message-'))
         assert published is None
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    async def test_publish_telemetry_not_existing(self, resource_group, location, digitaltwin):
+    @pytest.mark.asyncio
+    async def test_publish_telemetry_not_existing(self, recorded_test, digitaltwin):
         telemetry = {"ComponentTelemetry1": 5}
-        client = self._get_client(digitaltwin.host_name)
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             await client.publish_telemetry("foo", telemetry)

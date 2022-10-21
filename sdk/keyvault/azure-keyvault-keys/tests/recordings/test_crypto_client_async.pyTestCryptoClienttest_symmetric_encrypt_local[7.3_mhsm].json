@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt7057332e?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt7057332e?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -26,7 +26,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt7057332e?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt7057332e?api-version=7.3",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -76,13 +76,13 @@
             "wrapKey",
             "unwrapKey"
           ],
-          "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt7057332e/c537ac51004905bc82b9cc70a62f2a0c",
+          "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt7057332e/c537ac51004905bc82b9cc70a62f2a0c",
           "kty": "oct-HSM"
         }
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt7057332e/c537ac51004905bc82b9cc70a62f2a0c/decrypt?api-version=7.3",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt7057332e/c537ac51004905bc82b9cc70a62f2a0c/decrypt?api-version=7.3",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -111,7 +111,7 @@
       },
       "ResponseBody": {
         "alg": "A256CBCPAD",
-        "kid": "https://managedhsmvaultname.vault.azure.net/keys/livekvtestsymmetric-encrypt7057332e/c537ac51004905bc82b9cc70a62f2a0c",
+        "kid": "https://managedhsmvaultname.managedhsm.azure.net/keys/livekvtestsymmetric-encrypt7057332e/c537ac51004905bc82b9cc70a62f2a0c",
         "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"
       }
     }

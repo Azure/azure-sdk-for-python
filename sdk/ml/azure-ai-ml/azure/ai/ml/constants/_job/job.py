@@ -48,6 +48,8 @@ class JobComputePropertyFields(object):
     # Legacy name
     AISUPERCOMPUTER = "AISuperComputer"
     SINGULARITY = "Singularity"
+    ITP = "itp"
+    TARGET_SELECTOR = "target_selector"
 
 
 class SparkConfKey:

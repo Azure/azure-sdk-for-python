@@ -1,0 +1,5 @@
+description: This is a registry description
+name: registry_name
+location: WestCentralUS
+replication_locations:
+  - location: WestCentralUS

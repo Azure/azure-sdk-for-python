@@ -6,18 +6,16 @@ import os
 import re
 from typing import Any, Dict, Union
 
-from marshmallow import INCLUDE, Schema
+from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2021_10_01.models import ComponentVersionData
-from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema, RestParallelComponentSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE
+from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
+from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._schema import PathAwareSchema
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
@@ -69,6 +67,8 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
     :type instance_count: int
     :param is_deterministic: Whether the parallel component is deterministic.
     :type is_deterministic: bool
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if ParallelComponent cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(
@@ -228,27 +228,6 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
     def _to_dict(self) -> Dict:
         """Dump the parallel component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(ParallelComponent, self)._to_dict()})
-
-    @classmethod
-    def _load_from_rest(cls, obj: ComponentVersionData) -> "ParallelComponent":
-        rest_component_version = obj.properties
-        inputs = {
-            k: Input._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("inputs", {}).items()
-        }
-        outputs = {
-            k: Output._from_rest_object(v) for k, v in rest_component_version.component_spec.pop("outputs", {}).items()
-        }
-        parallel_component = ParallelComponent(
-            id=obj.id,
-            is_anonymous=rest_component_version.is_anonymous,
-            creation_context=obj.system_data,
-            inputs=inputs,
-            outputs=outputs,
-            **RestParallelComponentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).load(  # pylint: disable=no-member
-                rest_component_version.component_spec, unknown=INCLUDE
-            ),
-        )
-        return parallel_component
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:

@@ -17,6 +17,7 @@ from .distribution import MPIDistributionSchema, PyTorchDistributionSchema, Tens
 class ParameterizedCommandSchema(PathAwareSchema):
     command = fields.Str(
         metadata={
+            # pylint: disable=line-too-long
             "description": "The command run and the parameters passed. This string may contain place holders of inputs in {}. "
         },
         required=True,

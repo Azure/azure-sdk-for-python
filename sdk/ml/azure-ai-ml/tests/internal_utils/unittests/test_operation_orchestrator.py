@@ -5,7 +5,7 @@ import pytest
 from pytest_mock import MockFixture
 from test_utilities.constants import Test_Resource_Group, Test_Subscription, Test_Workspace_Name
 
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml.constants._common import (
     AZUREML_RESOURCE_PROVIDER,
     NAMED_RESOURCE_ID_FORMAT,
@@ -148,9 +148,15 @@ def operation_container(
 
 @pytest.fixture
 def operation_orchestrator(
-    mock_workspace_scope: OperationScope, operation_container: OperationsContainer
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    operation_container: OperationsContainer,
 ) -> OperationOrchestrator:
-    yield OperationOrchestrator(operation_container=operation_container, operation_scope=mock_workspace_scope)
+    yield OperationOrchestrator(
+        operation_container=operation_container,
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+    )
 
 
 @pytest.fixture

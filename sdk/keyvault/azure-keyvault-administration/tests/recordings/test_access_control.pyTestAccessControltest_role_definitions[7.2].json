@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -200,7 +200,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -490,7 +490,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -551,7 +551,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -611,7 +611,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -924,7 +924,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -972,7 +972,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions/definition-name?api-version=7.2",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1020,7 +1020,7 @@
       }
     },
     {
-      "RequestUri": "https://managedhsmvaultname.vault.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
+      "RequestUri": "https://managedhsmvaultname.managedhsm.azure.net/providers/Microsoft.Authorization/roleDefinitions?api-version=7.2",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

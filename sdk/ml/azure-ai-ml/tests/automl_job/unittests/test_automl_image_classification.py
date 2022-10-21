@@ -4,21 +4,23 @@
 
 import pytest
 
-from azure.ai.ml import UserIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml import UserIdentityConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ClassificationPrimaryMetrics,
-    ImageModelSettingsClassification,
     LearningRateScheduler,
     MLTableJobInput,
     SamplingAlgorithmType,
     StochasticOptimizer,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import image_classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import ImageClassificationJob
+from azure.ai.ml.entities._job.automl.image import (
+    ImageClassificationJob,
+    ImageModelSettingsClassification
+)
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
@@ -26,7 +28,7 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 class TestAutoMLImageClassification:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_image_classification_task(self, run_type):
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         # Create AutoML Image Classification task
         image_classification_job = image_classification(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
@@ -41,11 +43,11 @@ class TestAutoMLImageClassification:
             identity=identity,
         )  # type: ImageClassificationJob
 
-        if (run_type == "single") or (run_type == "sweep"):
-            # image_classification_job.limits = {"timeout": 60, "max_trials": 1, "max_concurrent_trials": 1}
+        if run_type == "single":
             image_classification_job.set_limits(timeout_minutes=60)
+        elif run_type == "sweep":
+            image_classification_job.set_limits(timeout_minutes=60, max_concurrent_trials=4, max_trials=20)
         elif run_type == "automode":
-            # image_classification_job.limits = {"timeout": 60, "max_trials": 2, "max_concurrent_trials": 1}
             image_classification_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
         # image_classification_job.training_parameters = {
@@ -99,8 +101,6 @@ class TestAutoMLImageClassification:
             # }
             image_classification_job.set_sweep(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
-                max_concurrent_trials=4,
-                max_trials=20,
                 early_termination=early_termination_policy,
             )
 
