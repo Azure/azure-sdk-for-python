@@ -7,7 +7,7 @@ import asyncio
 from uuid import uuid4
 
 from azure_devtools.perfstress_tests import BatchPerfTest, EventPerfTest, get_random_bytes
-from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, EventData
+from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, EventData, TransportType
 from azure.eventhub.aio import (
     EventHubProducerClient as AsyncEventHubProducerClient,
     EventHubConsumerClient as AsyncEventHubConsumerClient
@@ -39,17 +39,19 @@ class _EventHubProcessorTest(EventPerfTest):
             _EventHubProcessorTest.consumer_group,
             eventhub_name=eventhub_name,
             checkpoint_store=self.checkpoint_store,
-            load_balancing_strategy=arguments.load_balancing_strategy
+            load_balancing_strategy=arguments.load_balancing_strategy,
+            transport_type=TransportType.AMQPOverWebsocket
         )
         self.async_consumer = AsyncEventHubConsumerClient.from_connection_string(
             connection_string,
             _EventHubProcessorTest.consumer_group,
             eventhub_name=eventhub_name,
             checkpoint_store=self.async_checkpoint_store,
-            load_balancing_strategy=arguments.load_balancing_strategy
+            load_balancing_strategy=arguments.load_balancing_strategy,
+            transport_type=TransportType.AMQPOverWebsocket
         )
         if arguments.preload:
-            self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name)
+            self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=TransportType.AMQPOverWebsocket)
 
     async def _preload_eventhub(self):
         data = get_random_bytes(self.args.event_size)
@@ -131,11 +133,13 @@ class _SendTest(BatchPerfTest):
         eventhub_name = self.get_from_env("AZURE_EVENTHUB_NAME")
         self.producer = EventHubProducerClient.from_connection_string(
             connection_string,
-            eventhub_name=eventhub_name
+            eventhub_name=eventhub_name,
+            transport_type=TransportType.AMQPOverWebsocket
         )
         self.async_producer = AsyncEventHubProducerClient.from_connection_string(
             connection_string,
-            eventhub_name=eventhub_name
+            eventhub_name=eventhub_name,
+            transport_type=TransportType.AMQPOverWebsocket
         )
 
     async def setup(self):
