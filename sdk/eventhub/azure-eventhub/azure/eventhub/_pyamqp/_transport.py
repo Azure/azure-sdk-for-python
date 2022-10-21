@@ -95,6 +95,8 @@ TIMEOUT_INTERVAL = 1
 WS_TIMEOUT_INTERVAL = 1
 READ_TIMEOUT_INTERVAL = 0.2
 
+DATA = []
+
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r"\[([\.0-9a-f:]+)\](?::(\d+))?")
 
@@ -659,7 +661,10 @@ def Transport(host, transport_type, connect_timeout=None, ssl_opts=True, **kwarg
         transport = SSLTransport
     return transport(host, connect_timeout=connect_timeout, ssl_opts=ssl_opts, **kwargs)
 
-
+def on_close(ws, status_code,close_msg):
+    print("closed")
+def on_data(ws, data):
+    DATA.append(data)
 class WebSocketTransport(_AbstractTransport):
     def __init__(
         self,
@@ -678,10 +683,7 @@ class WebSocketTransport(_AbstractTransport):
         self.ws = None
         self._http_proxy = kwargs.get("http_proxy", None)
 
-    def on_close(self):
-        print("closed")
-    def on_data(self, ws, data):
-        return data
+
 
     def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
@@ -715,8 +717,8 @@ class WebSocketTransport(_AbstractTransport):
                 # http_proxy_host=http_proxy_host,
                 # http_proxy_port=http_proxy_port,
                 # http_proxy_auth=http_proxy_auth,
-                on_data=self.on_data,
-                on_close=self.on_close
+                on_data=on_data,
+                on_close=on_close
                 )
             self.ws.run_forever(dispatcher=rel,    
                 ping_timeout=self._connect_timeout,
@@ -741,7 +743,7 @@ class WebSocketTransport(_AbstractTransport):
         n -= nbytes
         try:
             while n:
-                data = self.ws.on_data()
+                data = DATA
 
                 if len(data) <= n:
                     view[length : length + len(data)] = data
