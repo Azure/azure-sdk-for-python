@@ -59,11 +59,6 @@ class CustomDimensionsFilter(logging.Filter):
         return True
 
 
-def is_telemetry_collection_disabled():
-    telemetry_disabled = getenv(AZUREML_SDKV2_TELEMETRY_OPTOUT_ENV_VAR)
-    return telemetry_disabled and (telemetry_disabled.lower() == "true" or telemetry_disabled == "1")
-
-
 def in_jupyter_notebook() -> bool:
     """
     Checks if user is using a Jupyter Notebook. This is necessary because logging is not allowed in
@@ -80,6 +75,15 @@ def in_jupyter_notebook() -> bool:
     except AttributeError:
         return False
     return True
+
+
+def is_telemetry_collection_disabled():
+    telemetry_disabled = getenv(AZUREML_SDKV2_TELEMETRY_OPTOUT_ENV_VAR)
+    if telemetry_disabled and (telemetry_disabled.lower() == "true" or telemetry_disabled == "1"):
+        return True
+    if not in_jupyter_notebook:
+        return True
+    return False 
 
 
 def get_appinsights_log_handler(
@@ -109,9 +113,6 @@ def get_appinsights_log_handler(
             instrumentation_key = INSTRUMENTATION_KEY
 
         if is_telemetry_collection_disabled():
-            return logging.NullHandler()
-
-        if not in_jupyter_notebook():  # logging is not allowed in non-Jupyter contexts
             return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
