@@ -380,7 +380,7 @@ class AsyncTransport(
 
     async def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        self.writer.write(s)
+        await self.loop.run_in_executor(None, self.writer.write, s)
         await self.writer.drain()
 
     async def close(self):
@@ -489,6 +489,7 @@ class WebSocketTransportAsync(
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts,
+                heartbeat=self._connect_timeout
             )
             self.connected = True
 
