@@ -680,6 +680,8 @@ class WebSocketTransport(_AbstractTransport):
 
     def on_close(self):
         print("closed")
+    def on_data(self, ws, data):
+        return data
 
     def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
@@ -713,6 +715,7 @@ class WebSocketTransport(_AbstractTransport):
                 # http_proxy_host=http_proxy_host,
                 # http_proxy_port=http_proxy_port,
                 # http_proxy_auth=http_proxy_auth,
+                on_data=self.on_data,
                 on_close=self.on_close
                 )
             self.ws.run_forever(dispatcher=rel,    
@@ -738,7 +741,7 @@ class WebSocketTransport(_AbstractTransport):
         n -= nbytes
         try:
             while n:
-                data = self.ws.recv()
+                data = self.ws.on_data()
 
                 if len(data) <= n:
                     view[length : length + len(data)] = data
