@@ -167,9 +167,9 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/ml/azure-ai-ml/azure/ai/ml/_internal                            @wangchao1230
 
 # PRLabel: %ML-RegistryManagement
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/registry
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/registry                            @hugoaponte @Man-MSFT @banibrata
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_registry_operations.py          @hugoaponte @Man-MSFT @banibrata
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_registry
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_registry                          @hugoaponte @Man-MSFT @banibrata
 
 # PRLabel: %ML-Assets
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component                           @hugoaponte @Man-MSFT @banibrata
