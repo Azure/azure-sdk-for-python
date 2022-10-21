@@ -329,9 +329,13 @@ def format_samples(sdk_code_path) -> None:
 
     _LOGGER.info(f"format generated_samples successfully")
 
+def get_npm_package_version(package: str) -> str:
+    return getoutput(f"npm list {package} --depth=0").split('\n')[-1].split(f'{package}@')[-1]
+
 def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     # update config file
     cadl_python = "@azure-tools/cadl-python"
+    autorest_python = "@autorest/python"
     project_yaml_path = Path(spec_folder) / cadl_relative_path / "cadl-project.yaml"
     with open(project_yaml_path, "r") as file_in:
         project_yaml = yaml.safe_load(file_in)
@@ -358,10 +362,11 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     if Path(output_path / "output.yaml").exists():
         os.remove(Path(output_path / "output.yaml"))
 
-    # get version of @azure-tools/cadl-python used in generation
-    cadl_python_version = getoutput(f"npm view {cadl_python} version").split('\n')[-1]
+    # get version of codegen used in generation
+    cadl_python_version = get_npm_package_version(cadl_python)
+    autorest_python_version = get_npm_package_version(autorest_python)
 
     # return to original folder
     os.chdir(origin_path)
 
-    return {cadl_python: cadl_python_version}
+    return {cadl_python: cadl_python_version, autorest_python: autorest_python_version}
