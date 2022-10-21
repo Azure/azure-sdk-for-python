@@ -43,13 +43,12 @@ class TestRegistry(AzureRecordedTestCase):
 
         registry = crud_registry_client.registries.get(name=reg_name)
         assert registry.name == reg_name
-
-        registry = crud_registry_client.registries.delete(name=reg_name)
-        assert registry is None
-        # give the delete operation time to fully take place in the backend
-        # before testing that the registry is gone with another get command
-        if is_live():
-            time.sleep(120)
+        import pdb; pdb.set_trace()
+        deL_result = crud_registry_client.registries.delete(name=reg_name).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
+        import pdb; pdb.set_trace()
+        assert deL_result is None
         try:
             crud_registry_client.registries.get(name=reg_name)
             # The above line should fail with a ResourceNotFoundError
