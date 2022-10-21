@@ -720,7 +720,7 @@ class WebSocketTransport(_AbstractTransport):
                 on_data=on_data,
                 on_close=on_close
                 )
-            self.ws.run_forever(dispatcher=rel,    
+            self.ws.run_forever(   
                 ping_timeout=self._connect_timeout,
                 skip_utf8_validation=True,
                 sslopt=self.sslopts,
