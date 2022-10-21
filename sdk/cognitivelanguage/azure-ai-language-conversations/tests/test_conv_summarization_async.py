@@ -20,7 +20,6 @@ class TestConversationalSummarizationAsync(AzureRecordedTestCase):
         client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
         assert client._config.polling_interval == 1
 
-    @pytest.mark.skip("Returning warnings instead of issue/resolutions in 2022-10-01-preview")
     @pytest.mark.asyncio
     async def test_conversational_summarization(self, recorded_test, conversation_creds):
         # analyze query
@@ -40,18 +39,21 @@ class TestConversationalSummarizationAsync(AzureRecordedTestCase):
                                         "text": "Hello, how can I help you?",
                                         "modality": "text",
                                         "id": "1",
+                                        "role": "Agent",
                                         "participantId": "Agent"
                                     },
                                     {
                                         "text": "How to upgrade Office? I am getting error messages the whole day.",
                                         "modality": "text",
                                         "id": "2",
+                                        "role": "Customer",
                                         "participantId": "Customer"
                                     },
                                     {
                                         "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                         "modality": "text",
                                         "id": "3",
+                                        "role": "Agent",
                                         "participantId": "Agent"
                                     }
                                 ],
