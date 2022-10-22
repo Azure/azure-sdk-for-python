@@ -94,6 +94,7 @@ except FileExistsError:
     condition=not is_live(),
     reason="test are flaky in playback"
 )
+@pytest.mark.core_sdk_test
 class TestUpload(AzureRecordedTestCase):
     def test_upload_file_blob(
         self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str

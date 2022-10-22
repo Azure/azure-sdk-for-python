@@ -32,6 +32,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import RegistryDiscovery
 from azure.ai.ml._utils.utils import _is_https_url, _validate_missing_sub_or_rg_and_raise
@@ -561,6 +562,7 @@ class MLClient(object):
         return self._workspaces
 
     @property
+    @experimental
     def registries(self) -> RegistryOperations:
         """A collection of registry-related operations.
 
