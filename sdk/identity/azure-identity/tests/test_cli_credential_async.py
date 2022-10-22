@@ -102,7 +102,7 @@ async def test_cli_not_installed_linux():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
     stderr = "/bin/sh: 1: az: not found"
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(stderr=stderr, return_code=127)):
+    with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=127)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             credential = AzureCliCredential()
             await credential.get_token("scope")
@@ -112,7 +112,7 @@ async def test_cli_not_installed_windows():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
     stderr = "'az' is not recognized as an internal or external command, operable program or batch file."
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(stderr=stderr, return_code=1)):
+    with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             credential = AzureCliCredential()
             await credential.get_token("scope")
@@ -131,7 +131,7 @@ async def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
     stderr = "ERROR: Please run 'az login' to setup account."
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(stderr=stderr, return_code=1)):
+    with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
         with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
             credential = AzureCliCredential()
             await credential.get_token("scope")
@@ -141,7 +141,7 @@ async def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 
     stderr = "something went wrong"
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(stderr=stderr, return_code=42)):
+    with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=42)):
         with pytest.raises(ClientAuthenticationError, match=stderr):
             credential = AzureCliCredential()
             await credential.get_token("scope")
