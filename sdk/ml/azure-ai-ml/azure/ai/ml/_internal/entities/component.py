@@ -18,11 +18,13 @@ from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
+from ...entities._assets import Code
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
+from .code import InternalCode
 
 
 class InternalComponent(Component):
@@ -112,6 +114,9 @@ class InternalComponent(Component):
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
 
+        # attributes with property getter and/or setter
+        self._code = None
+
         self.successful_return_code = successful_return_code
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
@@ -129,6 +134,16 @@ class InternalComponent(Component):
 
         # add some internal specific attributes to inputs/outputs after super().__init__()
         self._post_process_internal_inputs_outputs(inputs, outputs)
+
+    @property
+    def code(self):
+        return self._code
+
+    @code.setter
+    def code(self, value):
+        if isinstance(value, Code):
+            InternalCode.cast_base(value)
+        self._code = value
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
