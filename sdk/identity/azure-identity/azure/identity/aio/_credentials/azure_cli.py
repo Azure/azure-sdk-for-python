@@ -104,9 +104,9 @@ async def _run_command(command: str) -> str:
             cwd=working_directory,
             env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
         )
-        stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
-        output = stdout.decode()
-        stderr = stderr.decode()
+        stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), 10)
+        output = stdout_b.decode()
+        stderr = stderr_b.decode()
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
