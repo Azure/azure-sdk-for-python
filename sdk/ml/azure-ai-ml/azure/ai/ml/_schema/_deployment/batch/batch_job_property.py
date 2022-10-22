@@ -46,6 +46,7 @@ class BatchJobPropertySchema(PathAwareSchema):
     output_dataset = NestedField(OutputDataSchema)
     output_file_name = fields.Str()
     retry_settings = NestedField(BatchRetrySettingsSchema)
+    status = fields.Str()
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:

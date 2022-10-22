@@ -22,14 +22,14 @@ def sample_update_knowledge_sources():
     # [START update_knowledge_sources]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+    from azure.ai.language.questionanswering.authoring import AuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
+    client = AuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
 
         # create project

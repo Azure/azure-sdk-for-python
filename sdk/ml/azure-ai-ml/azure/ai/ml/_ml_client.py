@@ -383,7 +383,6 @@ class MLClient(object):
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
-            service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
@@ -404,7 +403,7 @@ class MLClient(object):
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
-            service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
+            # service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
@@ -513,7 +512,7 @@ class MLClient(object):
                     path=path,
                     file_name=curr_file,
                     directory_name=curr_dir,
-                    num_levels=5,
+                    num_levels=20,
                 )
                 if found_path:
                     break

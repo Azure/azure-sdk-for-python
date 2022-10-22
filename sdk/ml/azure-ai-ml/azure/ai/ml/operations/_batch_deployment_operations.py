@@ -4,11 +4,13 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List
+from typing import Dict
 import re
+import json
 
 from azure.ai.ml.entities._deployment.batch_job import BatchJob
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import AzureMachineLearningWorkspaces as ServiceClientDataPlanePreview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -20,9 +22,9 @@ from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, create_requests_pipeline_with_retry, download_text_from_url
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX, API_URL_KEY
+from azure.ai.ml.entities import BatchDeployment, BatchJob
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -54,13 +56,23 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
         self._batch_deployment = service_client_05_2022.batch_deployments
-        self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
+        self._batch_job_deployment = None
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+
+    @property
+    def _dataset_dataplane_client(self) -> ServiceClientDataPlanePreview:
+        workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
+        mfe_base_uri = _get_mfe_base_url_from_discovery_service(
+            workspace_operations, self._workspace_name, self._requests_pipeline
+        ) 
+        return ServiceClientDataPlanePreview(
+                credential=self._credentials, base_url=mfe_base_uri, subscription_id=self._subscription_id
+            )
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
@@ -205,7 +217,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str, *, name: str = None) -> List[BatchJob]:
+    def list_jobs(self, endpoint_name: str, *, name: str = None) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
@@ -215,26 +227,31 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
-        :rtype: List[BatchJob]
+        :rtype: ItemPaged[BatchJob]
         """
 
-        workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
-        mfe_base_uri = _get_mfe_base_url_from_discovery_service(
-            workspace_operations, self._workspace_name, self._requests_pipeline
+
+        self._batch_job_deployment = self._dataset_dataplane_client.batch_job_deployment
+
+
+        result = self._batch_job_deployment.list(
+            endpoint_name=endpoint_name,
+            deployment_name=name,
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            cls=lambda objs: [BatchJob._from_rest_object(obj) for obj in objs],
+            **self._init_kwargs,
         )
 
-        with modified_operation_client(self._batch_job_deployment, mfe_base_uri):
-    
-            result = self._batch_job_deployment.list(
-                endpoint_name=endpoint_name,
-                deployment_name=name,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [BatchJob._from_rest_object(obj) for obj in objs],
-                **self._init_kwargs,
-            )
 
-            return list(result)
+
+        # This is necessary as the paged result need to be resolved inside the context manager
+        return result
+
+    def _get_workspace_location(self) -> str:
+        """Get the workspace location TODO[TASK 1260265]: can we cache this
+        information and only refresh when the operation_scope is changed?"""
+        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_workspace_location(self) -> str:
         """Get the workspace location TODO[TASK 1260265]: can we cache this

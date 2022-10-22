@@ -44,8 +44,10 @@ class PatchedSchemaMeta(SchemaMeta):
         if meta is None:
             dct["Meta"] = PatchedMeta
         else:
-            dct["Meta"].unknown = RAISE
-            dct["Meta"].ordered = True
+            if not hasattr(meta, "unknown"):
+                dct["Meta"].unknown = RAISE
+            if not hasattr(meta, "ordered"):
+                dct["Meta"].ordered = True
 
         bases = bases + (PatchedBaseSchema,)
         klass = super().__new__(cls, name, bases, dct)

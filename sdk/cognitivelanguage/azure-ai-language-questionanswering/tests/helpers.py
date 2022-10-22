@@ -68,8 +68,7 @@ class QnaAuthoringHelper:
                 project_name=project_name,
                 **kwargs
             )
-            job_state = delete_poller.result()
-            assert job_state["jobId"]
+            delete_poller.result()
         return result["resultUrl"]
 
 
@@ -136,6 +135,5 @@ class QnaAuthoringAsyncHelper:
                 project_name=project_name,
                 **kwargs
             )
-            job_state = await delete_poller.result()
-            assert job_state["jobId"]
+            await delete_poller.result()
         return result["resultUrl"]

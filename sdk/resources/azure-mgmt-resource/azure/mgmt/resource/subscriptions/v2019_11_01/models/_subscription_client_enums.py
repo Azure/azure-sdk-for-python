@@ -7,42 +7,40 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class RegionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The category of the region.
-    """
+class RegionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The category of the region."""
 
     RECOMMENDED = "Recommended"
     OTHER = "Other"
 
-class RegionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the region.
-    """
+
+class RegionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the region."""
 
     PHYSICAL = "Physical"
     LOGICAL = "Logical"
 
-class ResourceNameStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Is the resource name Allowed or Reserved
-    """
+
+class ResourceNameStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Is the resource name Allowed or Reserved."""
 
     ALLOWED = "Allowed"
     RESERVED = "Reserved"
 
-class SpendingLimit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The subscription spending limit.
-    """
+
+class SpendingLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The subscription spending limit."""
 
     ON = "On"
     OFF = "Off"
     CURRENT_PERIOD_OFF = "CurrentPeriodOff"
 
-class SubscriptionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The subscription state. Possible values are Enabled, Warned, PastDue, Disabled, and Deleted.
-    """
+
+class SubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The subscription state. Possible values are Enabled, Warned, PastDue, Disabled, and Deleted."""
 
     ENABLED = "Enabled"
     WARNED = "Warned"
@@ -50,9 +48,9 @@ class SubscriptionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     DELETED = "Deleted"
 
-class TenantCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Category of the tenant.
-    """
+
+class TenantCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of the tenant."""
 
     HOME = "Home"
     PROJECTED_BY = "ProjectedBy"

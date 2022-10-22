@@ -6,7 +6,6 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     LogVerbosity,
-    NlpFixedParameters,
     NlpLearningRateScheduler,
     SamplingAlgorithmType
 )
@@ -15,6 +14,7 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.nlp.nlp_search_space import NlpSearchSpace
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
+from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
@@ -77,7 +77,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_training_parameters(**value)
 
     @property
-    def search_space(self) -> List[NlpFixedParameters]:
+    def search_space(self) -> List[NlpSearchSpace]:
         return self._search_space
 
     @search_space.setter
@@ -232,9 +232,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             number_of_epochs: Optional[int] = None,
             training_batch_size: Optional[int] = None,
             validation_batch_size: Optional[int] = None,
-            warmup_ratio: Optional[int] = None,
-            weight_decay: Optional[int] = None
-    ):
+            warmup_ratio: Optional[float] = None,
+            weight_decay: Optional[float] = None
+    ) -> None:
         """
         Fix certain training parameters throughout the training procedure for all candidates.
 

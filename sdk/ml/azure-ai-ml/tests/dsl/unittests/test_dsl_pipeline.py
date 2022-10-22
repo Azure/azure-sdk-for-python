@@ -1,4 +1,3 @@
-import logging
 import os
 from functools import partial
 from io import StringIO
@@ -585,7 +584,7 @@ class TestDSLPipeline:
             }
 
         job_yaml = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_data_options.yml"
-        pipeline_job = load_job(source=job_yaml)
+        pipeline_job: PipelineJob = load_job(source=job_yaml)
 
         pipeline = pipeline(**{key: val for key, val in pipeline_job._build_inputs().items()})
         pipeline.inputs.job_in_data_by_store_path_and_mount.mode = "ro_mount"
@@ -605,6 +604,8 @@ class TestDSLPipeline:
         actual_outputs = pipeline._build_outputs()
         for k, v in actual_outputs.items():
             v.mode = v.mode.lower()
+            # outputs defined in yaml are all uri_folder, while its default value in dsl is None
+            v.type = "uri_folder"
         assert pipeline_job._build_outputs() == actual_outputs
 
         component_job = next(iter(pipeline_job.jobs.values()))._to_rest_object()
@@ -3921,9 +3922,9 @@ class TestInitFinalizeJob:
         invalid_pipeline1.settings.on_finalize = "finalize_job"
         validation_result1 = invalid_pipeline1._validate_init_finalize_job()
         assert not validation_result1.passed
-        assert validation_result1.messages["settings.on_init"] == "On_init job name init_job not exists in jobs."
+        assert validation_result1.error_messages["settings.on_init"] == "On_init job name init_job not exists in jobs."
         assert (
-            validation_result1.messages["settings.on_finalize"]
+            validation_result1.error_messages["settings.on_finalize"]
             == "On_finalize job name finalize_job not exists in jobs."
         )
 
@@ -3941,13 +3942,13 @@ class TestInitFinalizeJob:
         invalid_pipeline2.settings.on_finalize = "node1"
         validation_result2 = invalid_pipeline2._validate_init_finalize_job()
         assert not validation_result2.passed
-        assert validation_result2.messages["jobs"] == "No other job except for on_init/on_finalize job."
+        assert validation_result2.error_messages["jobs"] == "No other job except for on_init/on_finalize job."
         assert (
-            validation_result2.messages["settings.on_init"]
+            validation_result2.error_messages["settings.on_init"]
             == "On_init job should not have connection to other execution node."
         )
         assert (
-            validation_result2.messages["settings.on_finalize"]
+            validation_result2.error_messages["settings.on_finalize"]
             == "On_finalize job should not have connection to other execution node."
         )
 
@@ -3991,7 +3992,7 @@ class TestInitFinalizeJob:
             set_pipeline_settings(on_init=init_job, on_finalize=finalize_job)
 
         valid_pipeline = subgraph_init_finalize_job_func()
-        assert valid_pipeline._customized_validate().passed
+        assert valid_pipeline._validate().passed
         assert valid_pipeline.settings.on_init == "init_job"
         assert valid_pipeline.settings.on_finalize == "finalize_job"
 

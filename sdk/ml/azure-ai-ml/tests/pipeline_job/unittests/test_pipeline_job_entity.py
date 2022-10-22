@@ -1454,3 +1454,17 @@ class TestPipelineJobEntity:
         rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
         assert pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
         assert rest_pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
+
+    def test_pipeline_node_default_output(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+
+        # pipeline level output
+        pipeline_output = pipeline.outputs["job_out_path_2"]
+        assert pipeline_output.mode == "upload"
+
+        # other node level output tests can be found in
+        # dsl/unittests/test_component_func.py::TestComponentFunc::test_component_outputs
+        # data-binding-expression
+        with pytest.raises(ValidationException, match="<class '.*'> does not support setting path."):
+            pipeline.jobs["merge_component_outputs"].outputs["component_out_path_1"].path = "xxx"

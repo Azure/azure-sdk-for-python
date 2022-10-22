@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._geolocation_client_async import GeolocationClient
-__all__ = ['GeolocationClient']
+from ._geolocation_client_async import MapsGeolocationClient
+__all__ = ['MapsGeolocationClient']

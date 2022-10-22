@@ -12,6 +12,8 @@ from .component import InternalBaseComponentSchema, NodeType
 
 
 class InternalBaseNodeSchema(BaseNodeSchema):
+    class Meta:
+        unknown = INCLUDE
     component = UnionField(
         [
             # for registry type assets
@@ -56,6 +58,7 @@ class ScopeSchema(InternalBaseNodeSchema):
 class HDInsightSchema(InternalBaseNodeSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.HDI], casing_transform=lambda x: x)
 
+    compute_name = fields.Str()
     queue = fields.Str()
     driver_memory = fields.Str()
     driver_cores = fields.Int()

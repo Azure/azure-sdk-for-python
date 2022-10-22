@@ -721,7 +721,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         component.command += " & echo ${{inputs.non_existent}} & echo ${{outputs.non_existent}}"
         validation_result = client.components.validate(component)
         assert validation_result.passed is False
-        assert validation_result.messages == {
+        assert validation_result.error_messages == {
             "name": "Missing data for required field.",
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
@@ -833,9 +833,6 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         }
         assert component_dict == expected_dict
 
-    @pytest.mark.skip(
-        "Skip for Bug https://msdata.visualstudio.com/Vienna/_workitems/edit/1969753 not release to canary yet."
-    )
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(

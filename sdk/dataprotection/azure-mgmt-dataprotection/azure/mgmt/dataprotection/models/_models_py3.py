@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,49 +8,47 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._data_protection_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class DeleteOption(msrest.serialization.Model):
+class DeleteOption(_serialization.Model):
     """Delete Option.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AbsoluteDeleteOption.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AbsoluteDeleteOption
 
     All required parameters must be populated in order to send to Azure.
 
-    :param duration: Required. Duration of deletion after given timespan.
-    :type duration: str
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar duration: Duration of deletion after given timespan. Required.
+    :vartype duration: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'duration': {'required': True},
-        'object_type': {'required': True},
+        "duration": {"required": True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "duration": {"key": "duration", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'AbsoluteDeleteOption': 'AbsoluteDeleteOption'}
-    }
+    _subtype_map = {"object_type": {"AbsoluteDeleteOption": "AbsoluteDeleteOption"}}
 
-    def __init__(
-        self,
-        *,
-        duration: str,
-        **kwargs
-    ):
-        super(DeleteOption, self).__init__(**kwargs)
+    def __init__(self, *, duration: str, **kwargs):
+        """
+        :keyword duration: Duration of deletion after given timespan. Required.
+        :paramtype duration: str
+        """
+        super().__init__(**kwargs)
         self.duration = duration
         self.object_type = None  # type: Optional[str]
 
@@ -59,138 +58,134 @@ class AbsoluteDeleteOption(DeleteOption):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param duration: Required. Duration of deletion after given timespan.
-    :type duration: str
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar duration: Duration of deletion after given timespan. Required.
+    :vartype duration: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'duration': {'required': True},
-        'object_type': {'required': True},
+        "duration": {"required": True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'duration': {'key': 'duration', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "duration": {"key": "duration", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        duration: str,
-        **kwargs
-    ):
-        super(AbsoluteDeleteOption, self).__init__(duration=duration, **kwargs)
-        self.object_type = 'AbsoluteDeleteOption'  # type: str
+    def __init__(self, *, duration: str, **kwargs):
+        """
+        :keyword duration: Duration of deletion after given timespan. Required.
+        :paramtype duration: str
+        """
+        super().__init__(duration=duration, **kwargs)
+        self.object_type = "AbsoluteDeleteOption"  # type: str
 
 
-class AdHocBackupRuleOptions(msrest.serialization.Model):
+class AdHocBackupRuleOptions(_serialization.Model):
     """Adhoc backup rules.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param rule_name: Required.
-    :type rule_name: str
-    :param trigger_option: Required. Adhoc backup trigger option.
-    :type trigger_option: ~azure.mgmt.dataprotection.models.AdhocBackupTriggerOption
+    :ivar rule_name: Required.
+    :vartype rule_name: str
+    :ivar trigger_option: Adhoc backup trigger option. Required.
+    :vartype trigger_option: ~azure.mgmt.dataprotection.models.AdhocBackupTriggerOption
     """
 
     _validation = {
-        'rule_name': {'required': True},
-        'trigger_option': {'required': True},
+        "rule_name": {"required": True},
+        "trigger_option": {"required": True},
     }
 
     _attribute_map = {
-        'rule_name': {'key': 'ruleName', 'type': 'str'},
-        'trigger_option': {'key': 'triggerOption', 'type': 'AdhocBackupTriggerOption'},
+        "rule_name": {"key": "ruleName", "type": "str"},
+        "trigger_option": {"key": "triggerOption", "type": "AdhocBackupTriggerOption"},
     }
 
-    def __init__(
-        self,
-        *,
-        rule_name: str,
-        trigger_option: "AdhocBackupTriggerOption",
-        **kwargs
-    ):
-        super(AdHocBackupRuleOptions, self).__init__(**kwargs)
+    def __init__(self, *, rule_name: str, trigger_option: "_models.AdhocBackupTriggerOption", **kwargs):
+        """
+        :keyword rule_name: Required.
+        :paramtype rule_name: str
+        :keyword trigger_option: Adhoc backup trigger option. Required.
+        :paramtype trigger_option: ~azure.mgmt.dataprotection.models.AdhocBackupTriggerOption
+        """
+        super().__init__(**kwargs)
         self.rule_name = rule_name
         self.trigger_option = trigger_option
 
 
-class AdhocBackupTriggerOption(msrest.serialization.Model):
+class AdhocBackupTriggerOption(_serialization.Model):
     """Adhoc backup trigger option.
 
-    :param retention_tag_override:
-    :type retention_tag_override: str
+    :ivar retention_tag_override:
+    :vartype retention_tag_override: str
     """
 
     _attribute_map = {
-        'retention_tag_override': {'key': 'retentionTagOverride', 'type': 'str'},
+        "retention_tag_override": {"key": "retentionTagOverride", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        retention_tag_override: Optional[str] = None,
-        **kwargs
-    ):
-        super(AdhocBackupTriggerOption, self).__init__(**kwargs)
+    def __init__(self, *, retention_tag_override: Optional[str] = None, **kwargs):
+        """
+        :keyword retention_tag_override:
+        :paramtype retention_tag_override: str
+        """
+        super().__init__(**kwargs)
         self.retention_tag_override = retention_tag_override
 
 
-class AdhocBasedTaggingCriteria(msrest.serialization.Model):
+class AdhocBasedTaggingCriteria(_serialization.Model):
     """Adhoc backup tagging criteria.
 
-    :param tag_info: Retention tag information.
-    :type tag_info: ~azure.mgmt.dataprotection.models.RetentionTag
+    :ivar tag_info: Retention tag information.
+    :vartype tag_info: ~azure.mgmt.dataprotection.models.RetentionTag
     """
 
     _attribute_map = {
-        'tag_info': {'key': 'tagInfo', 'type': 'RetentionTag'},
+        "tag_info": {"key": "tagInfo", "type": "RetentionTag"},
     }
 
-    def __init__(
-        self,
-        *,
-        tag_info: Optional["RetentionTag"] = None,
-        **kwargs
-    ):
-        super(AdhocBasedTaggingCriteria, self).__init__(**kwargs)
+    def __init__(self, *, tag_info: Optional["_models.RetentionTag"] = None, **kwargs):
+        """
+        :keyword tag_info: Retention tag information.
+        :paramtype tag_info: ~azure.mgmt.dataprotection.models.RetentionTag
+        """
+        super().__init__(**kwargs)
         self.tag_info = tag_info
 
 
-class TriggerContext(msrest.serialization.Model):
+class TriggerContext(_serialization.Model):
     """Trigger context.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AdhocBasedTriggerContext, ScheduleBasedTriggerContext.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AdhocBasedTriggerContext, ScheduleBasedTriggerContext
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'AdhocBasedTriggerContext': 'AdhocBasedTriggerContext', 'ScheduleBasedTriggerContext': 'ScheduleBasedTriggerContext'}
+        "object_type": {
+            "AdhocBasedTriggerContext": "AdhocBasedTriggerContext",
+            "ScheduleBasedTriggerContext": "ScheduleBasedTriggerContext",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TriggerContext, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -199,96 +194,86 @@ class AdhocBasedTriggerContext(TriggerContext):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param tagging_criteria: Required. Tagging Criteria containing retention tag for adhoc backup.
-    :type tagging_criteria: ~azure.mgmt.dataprotection.models.AdhocBasedTaggingCriteria
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar tagging_criteria: Tagging Criteria containing retention tag for adhoc backup. Required.
+    :vartype tagging_criteria: ~azure.mgmt.dataprotection.models.AdhocBasedTaggingCriteria
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'tagging_criteria': {'required': True},
+        "object_type": {"required": True},
+        "tagging_criteria": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'tagging_criteria': {'key': 'taggingCriteria', 'type': 'AdhocBasedTaggingCriteria'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "tagging_criteria": {"key": "taggingCriteria", "type": "AdhocBasedTaggingCriteria"},
     }
 
-    def __init__(
-        self,
-        *,
-        tagging_criteria: "AdhocBasedTaggingCriteria",
-        **kwargs
-    ):
-        super(AdhocBasedTriggerContext, self).__init__(**kwargs)
-        self.object_type = 'AdhocBasedTriggerContext'  # type: str
+    def __init__(self, *, tagging_criteria: "_models.AdhocBasedTaggingCriteria", **kwargs):
+        """
+        :keyword tagging_criteria: Tagging Criteria containing retention tag for adhoc backup.
+         Required.
+        :paramtype tagging_criteria: ~azure.mgmt.dataprotection.models.AdhocBasedTaggingCriteria
+        """
+        super().__init__(**kwargs)
+        self.object_type = "AdhocBasedTriggerContext"  # type: str
         self.tagging_criteria = tagging_criteria
 
 
-class AuthCredentials(msrest.serialization.Model):
+class AuthCredentials(_serialization.Model):
     """Base class for different types of authentication credentials.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SecretStoreBasedAuthCredentials.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SecretStoreBasedAuthCredentials
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'SecretStoreBasedAuthCredentials': 'SecretStoreBasedAuthCredentials'}
-    }
+    _subtype_map = {"object_type": {"SecretStoreBasedAuthCredentials": "SecretStoreBasedAuthCredentials"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AuthCredentials, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
-class AzureBackupRecoveryPoint(msrest.serialization.Model):
+class AzureBackupRecoveryPoint(_serialization.Model):
     """Azure backup recoveryPoint.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureBackupDiscreteRecoveryPoint.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureBackupDiscreteRecoveryPoint
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
+    :ivar object_type: Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'AzureBackupDiscreteRecoveryPoint': 'AzureBackupDiscreteRecoveryPoint'}
-    }
+    _subtype_map = {"object_type": {"AzureBackupDiscreteRecoveryPoint": "AzureBackupDiscreteRecoveryPoint"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AzureBackupRecoveryPoint, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -297,45 +282,48 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param friendly_name:
-    :type friendly_name: str
-    :param recovery_point_data_stores_details:
-    :type recovery_point_data_stores_details:
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar friendly_name:
+    :vartype friendly_name: str
+    :ivar recovery_point_data_stores_details:
+    :vartype recovery_point_data_stores_details:
      list[~azure.mgmt.dataprotection.models.RecoveryPointDataStoreDetails]
-    :param recovery_point_time: Required.
-    :type recovery_point_time: ~datetime.datetime
-    :param policy_name:
-    :type policy_name: str
-    :param policy_version:
-    :type policy_version: str
-    :param recovery_point_id:
-    :type recovery_point_id: str
-    :param recovery_point_type:
-    :type recovery_point_type: str
-    :param retention_tag_name:
-    :type retention_tag_name: str
-    :param retention_tag_version:
-    :type retention_tag_version: str
+    :ivar recovery_point_time: Required.
+    :vartype recovery_point_time: ~datetime.datetime
+    :ivar policy_name:
+    :vartype policy_name: str
+    :ivar policy_version:
+    :vartype policy_version: str
+    :ivar recovery_point_id:
+    :vartype recovery_point_id: str
+    :ivar recovery_point_type:
+    :vartype recovery_point_type: str
+    :ivar retention_tag_name:
+    :vartype retention_tag_name: str
+    :ivar retention_tag_version:
+    :vartype retention_tag_version: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_point_time': {'required': True},
+        "object_type": {"required": True},
+        "recovery_point_time": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'recovery_point_data_stores_details': {'key': 'recoveryPointDataStoresDetails', 'type': '[RecoveryPointDataStoreDetails]'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'iso-8601'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
-        'policy_version': {'key': 'policyVersion', 'type': 'str'},
-        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
-        'recovery_point_type': {'key': 'recoveryPointType', 'type': 'str'},
-        'retention_tag_name': {'key': 'retentionTagName', 'type': 'str'},
-        'retention_tag_version': {'key': 'retentionTagVersion', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "recovery_point_data_stores_details": {
+            "key": "recoveryPointDataStoresDetails",
+            "type": "[RecoveryPointDataStoreDetails]",
+        },
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "iso-8601"},
+        "policy_name": {"key": "policyName", "type": "str"},
+        "policy_version": {"key": "policyVersion", "type": "str"},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "recovery_point_type": {"key": "recoveryPointType", "type": "str"},
+        "retention_tag_name": {"key": "retentionTagName", "type": "str"},
+        "retention_tag_version": {"key": "retentionTagVersion", "type": "str"},
     }
 
     def __init__(
@@ -343,7 +331,7 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):
         *,
         recovery_point_time: datetime.datetime,
         friendly_name: Optional[str] = None,
-        recovery_point_data_stores_details: Optional[List["RecoveryPointDataStoreDetails"]] = None,
+        recovery_point_data_stores_details: Optional[List["_models.RecoveryPointDataStoreDetails"]] = None,
         policy_name: Optional[str] = None,
         policy_version: Optional[str] = None,
         recovery_point_id: Optional[str] = None,
@@ -352,8 +340,29 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):
         retention_tag_version: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupDiscreteRecoveryPoint, self).__init__(**kwargs)
-        self.object_type = 'AzureBackupDiscreteRecoveryPoint'  # type: str
+        """
+        :keyword friendly_name:
+        :paramtype friendly_name: str
+        :keyword recovery_point_data_stores_details:
+        :paramtype recovery_point_data_stores_details:
+         list[~azure.mgmt.dataprotection.models.RecoveryPointDataStoreDetails]
+        :keyword recovery_point_time: Required.
+        :paramtype recovery_point_time: ~datetime.datetime
+        :keyword policy_name:
+        :paramtype policy_name: str
+        :keyword policy_version:
+        :paramtype policy_version: str
+        :keyword recovery_point_id:
+        :paramtype recovery_point_id: str
+        :keyword recovery_point_type:
+        :paramtype recovery_point_type: str
+        :keyword retention_tag_name:
+        :paramtype retention_tag_name: str
+        :keyword retention_tag_version:
+        :paramtype retention_tag_version: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "AzureBackupDiscreteRecoveryPoint"  # type: str
         self.friendly_name = friendly_name
         self.recovery_point_data_stores_details = recovery_point_data_stores_details
         self.recovery_point_time = recovery_point_time
@@ -365,73 +374,83 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):
         self.retention_tag_version = retention_tag_version
 
 
-class AzureBackupFindRestorableTimeRangesRequest(msrest.serialization.Model):
+class AzureBackupFindRestorableTimeRangesRequest(_serialization.Model):
     """List Restore Ranges Request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_data_store_type: Required. Gets or sets the type of the source data store.
-     Possible values include: "OperationalStore", "VaultStore", "ArchiveStore".
-    :type source_data_store_type: str or
+    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+     values are: "OperationalStore", "VaultStore", and "ArchiveStore".
+    :vartype source_data_store_type: str or
      ~azure.mgmt.dataprotection.models.RestoreSourceDataStoreType
-    :param start_time: Start time for the List Restore Ranges request. ISO 8601 format.
-    :type start_time: str
-    :param end_time: End time for the List Restore Ranges request. ISO 8601 format.
-    :type end_time: str
+    :ivar start_time: Start time for the List Restore Ranges request. ISO 8601 format.
+    :vartype start_time: str
+    :ivar end_time: End time for the List Restore Ranges request. ISO 8601 format.
+    :vartype end_time: str
     """
 
     _validation = {
-        'source_data_store_type': {'required': True},
+        "source_data_store_type": {"required": True},
     }
 
     _attribute_map = {
-        'source_data_store_type': {'key': 'sourceDataStoreType', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
+        "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        source_data_store_type: Union[str, "RestoreSourceDataStoreType"],
+        source_data_store_type: Union[str, "_models.RestoreSourceDataStoreType"],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupFindRestorableTimeRangesRequest, self).__init__(**kwargs)
+        """
+        :keyword source_data_store_type: Gets or sets the type of the source data store. Required.
+         Known values are: "OperationalStore", "VaultStore", and "ArchiveStore".
+        :paramtype source_data_store_type: str or
+         ~azure.mgmt.dataprotection.models.RestoreSourceDataStoreType
+        :keyword start_time: Start time for the List Restore Ranges request. ISO 8601 format.
+        :paramtype start_time: str
+        :keyword end_time: End time for the List Restore Ranges request. ISO 8601 format.
+        :paramtype end_time: str
+        """
+        super().__init__(**kwargs)
         self.source_data_store_type = source_data_store_type
         self.start_time = start_time
         self.end_time = end_time
 
 
-class DppWorkerRequest(msrest.serialization.Model):
+class DppWorkerRequest(_serialization.Model):
     """DppWorkerRequest.
 
-    :param subscription_id:
-    :type subscription_id: str
-    :param uri:
-    :type uri: str
-    :param headers: Dictionary of
+    :ivar subscription_id:
+    :vartype subscription_id: str
+    :ivar uri:
+    :vartype uri: str
+    :ivar headers: Dictionary of
      <components·ikn5y4·schemas·dppworkerrequest·properties·headers·additionalproperties>.
-    :type headers: dict[str, list[str]]
-    :param supported_group_versions:
-    :type supported_group_versions: list[str]
-    :param culture_info:
-    :type culture_info: str
-    :param parameters: Dictionary of :code:`<string>`.
-    :type parameters: dict[str, str]
-    :param http_method:
-    :type http_method: str
+    :vartype headers: dict[str, list[str]]
+    :ivar supported_group_versions:
+    :vartype supported_group_versions: list[str]
+    :ivar culture_info:
+    :vartype culture_info: str
+    :ivar parameters: Dictionary of :code:`<string>`.
+    :vartype parameters: dict[str, str]
+    :ivar http_method:
+    :vartype http_method: str
     """
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{[str]}'},
-        'supported_group_versions': {'key': 'supportedGroupVersions', 'type': '[str]'},
-        'culture_info': {'key': 'cultureInfo', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'http_method': {'key': 'httpMethod', 'type': 'str'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "headers": {"key": "headers", "type": "{[str]}"},
+        "supported_group_versions": {"key": "supportedGroupVersions", "type": "[str]"},
+        "culture_info": {"key": "cultureInfo", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{str}"},
+        "http_method": {"key": "httpMethod", "type": "str"},
     }
 
     def __init__(
@@ -446,7 +465,24 @@ class DppWorkerRequest(msrest.serialization.Model):
         http_method: Optional[str] = None,
         **kwargs
     ):
-        super(DppWorkerRequest, self).__init__(**kwargs)
+        """
+        :keyword subscription_id:
+        :paramtype subscription_id: str
+        :keyword uri:
+        :paramtype uri: str
+        :keyword headers: Dictionary of
+         <components·ikn5y4·schemas·dppworkerrequest·properties·headers·additionalproperties>.
+        :paramtype headers: dict[str, list[str]]
+        :keyword supported_group_versions:
+        :paramtype supported_group_versions: list[str]
+        :keyword culture_info:
+        :paramtype culture_info: str
+        :keyword parameters: Dictionary of :code:`<string>`.
+        :paramtype parameters: dict[str, str]
+        :keyword http_method:
+        :paramtype http_method: str
+        """
+        super().__init__(**kwargs)
         self.subscription_id = subscription_id
         self.uri = uri
         self.headers = headers
@@ -459,34 +495,34 @@ class DppWorkerRequest(msrest.serialization.Model):
 class AzureBackupFindRestorableTimeRangesRequestResource(DppWorkerRequest):
     """List Restore Ranges Request.
 
-    :param subscription_id:
-    :type subscription_id: str
-    :param uri:
-    :type uri: str
-    :param headers: Dictionary of
+    :ivar subscription_id:
+    :vartype subscription_id: str
+    :ivar uri:
+    :vartype uri: str
+    :ivar headers: Dictionary of
      <components·ikn5y4·schemas·dppworkerrequest·properties·headers·additionalproperties>.
-    :type headers: dict[str, list[str]]
-    :param supported_group_versions:
-    :type supported_group_versions: list[str]
-    :param culture_info:
-    :type culture_info: str
-    :param parameters: Dictionary of :code:`<string>`.
-    :type parameters: dict[str, str]
-    :param http_method:
-    :type http_method: str
-    :param content: AzureBackupFindRestorableTimeRangesRequestResource content.
-    :type content: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
+    :vartype headers: dict[str, list[str]]
+    :ivar supported_group_versions:
+    :vartype supported_group_versions: list[str]
+    :ivar culture_info:
+    :vartype culture_info: str
+    :ivar parameters: Dictionary of :code:`<string>`.
+    :vartype parameters: dict[str, str]
+    :ivar http_method:
+    :vartype http_method: str
+    :ivar content: AzureBackupFindRestorableTimeRangesRequestResource content.
+    :vartype content: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
     """
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{[str]}'},
-        'supported_group_versions': {'key': 'supportedGroupVersions', 'type': '[str]'},
-        'culture_info': {'key': 'cultureInfo', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'http_method': {'key': 'httpMethod', 'type': 'str'},
-        'content': {'key': 'content', 'type': 'AzureBackupFindRestorableTimeRangesRequest'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
+        "headers": {"key": "headers", "type": "{[str]}"},
+        "supported_group_versions": {"key": "supportedGroupVersions", "type": "[str]"},
+        "culture_info": {"key": "cultureInfo", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{str}"},
+        "http_method": {"key": "httpMethod", "type": "str"},
+        "content": {"key": "content", "type": "AzureBackupFindRestorableTimeRangesRequest"},
     }
 
     def __init__(
@@ -499,40 +535,75 @@ class AzureBackupFindRestorableTimeRangesRequestResource(DppWorkerRequest):
         culture_info: Optional[str] = None,
         parameters: Optional[Dict[str, str]] = None,
         http_method: Optional[str] = None,
-        content: Optional["AzureBackupFindRestorableTimeRangesRequest"] = None,
+        content: Optional["_models.AzureBackupFindRestorableTimeRangesRequest"] = None,
         **kwargs
     ):
-        super(AzureBackupFindRestorableTimeRangesRequestResource, self).__init__(subscription_id=subscription_id, uri=uri, headers=headers, supported_group_versions=supported_group_versions, culture_info=culture_info, parameters=parameters, http_method=http_method, **kwargs)
+        """
+        :keyword subscription_id:
+        :paramtype subscription_id: str
+        :keyword uri:
+        :paramtype uri: str
+        :keyword headers: Dictionary of
+         <components·ikn5y4·schemas·dppworkerrequest·properties·headers·additionalproperties>.
+        :paramtype headers: dict[str, list[str]]
+        :keyword supported_group_versions:
+        :paramtype supported_group_versions: list[str]
+        :keyword culture_info:
+        :paramtype culture_info: str
+        :keyword parameters: Dictionary of :code:`<string>`.
+        :paramtype parameters: dict[str, str]
+        :keyword http_method:
+        :paramtype http_method: str
+        :keyword content: AzureBackupFindRestorableTimeRangesRequestResource content.
+        :paramtype content:
+         ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
+        """
+        super().__init__(
+            subscription_id=subscription_id,
+            uri=uri,
+            headers=headers,
+            supported_group_versions=supported_group_versions,
+            culture_info=culture_info,
+            parameters=parameters,
+            http_method=http_method,
+            **kwargs
+        )
         self.content = content
 
 
-class AzureBackupFindRestorableTimeRangesResponse(msrest.serialization.Model):
+class AzureBackupFindRestorableTimeRangesResponse(_serialization.Model):
     """List Restore Ranges Response.
 
-    :param restorable_time_ranges: Returns the Restore Ranges available on the Backup Instance.
-    :type restorable_time_ranges: list[~azure.mgmt.dataprotection.models.RestorableTimeRange]
-    :param object_type:
-    :type object_type: str
+    :ivar restorable_time_ranges: Returns the Restore Ranges available on the Backup Instance.
+    :vartype restorable_time_ranges: list[~azure.mgmt.dataprotection.models.RestorableTimeRange]
+    :ivar object_type:
+    :vartype object_type: str
     """
 
     _attribute_map = {
-        'restorable_time_ranges': {'key': 'restorableTimeRanges', 'type': '[RestorableTimeRange]'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "restorable_time_ranges": {"key": "restorableTimeRanges", "type": "[RestorableTimeRange]"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        restorable_time_ranges: Optional[List["RestorableTimeRange"]] = None,
+        restorable_time_ranges: Optional[List["_models.RestorableTimeRange"]] = None,
         object_type: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupFindRestorableTimeRangesResponse, self).__init__(**kwargs)
+        """
+        :keyword restorable_time_ranges: Returns the Restore Ranges available on the Backup Instance.
+        :paramtype restorable_time_ranges: list[~azure.mgmt.dataprotection.models.RestorableTimeRange]
+        :keyword object_type:
+        :paramtype object_type: str
+        """
+        super().__init__(**kwargs)
         self.restorable_time_ranges = restorable_time_ranges
         self.object_type = object_type
 
 
-class DppResource(msrest.serialization.Model):
+class DppResource(_serialization.Model):
     """Resource class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -549,24 +620,22 @@ class DppResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DppResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -587,171 +656,172 @@ class AzureBackupFindRestorableTimeRangesResponseResource(DppResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
-    :param properties: AzureBackupFindRestorableTimeRangesResponseResource properties.
-    :type properties: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponse
+    :ivar properties: AzureBackupFindRestorableTimeRangesResponseResource properties.
+    :vartype properties:
+     ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponse
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'AzureBackupFindRestorableTimeRangesResponse'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "AzureBackupFindRestorableTimeRangesResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["AzureBackupFindRestorableTimeRangesResponse"] = None,
-        **kwargs
-    ):
-        super(AzureBackupFindRestorableTimeRangesResponseResource, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.AzureBackupFindRestorableTimeRangesResponse"] = None, **kwargs):
+        """
+        :keyword properties: AzureBackupFindRestorableTimeRangesResponseResource properties.
+        :paramtype properties:
+         ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponse
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class AzureBackupJob(msrest.serialization.Model):
+class AzureBackupJob(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """AzureBackup Job Class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param activity_id: Required. Job Activity Id.
-    :type activity_id: str
-    :param backup_instance_friendly_name: Required. Name of the Backup Instance.
-    :type backup_instance_friendly_name: str
+    :ivar activity_id: Job Activity Id. Required.
+    :vartype activity_id: str
+    :ivar backup_instance_friendly_name: Name of the Backup Instance. Required.
+    :vartype backup_instance_friendly_name: str
     :ivar backup_instance_id: ARM ID of the Backup Instance.
     :vartype backup_instance_id: str
-    :param data_source_id: Required. ARM ID of the DataSource.
-    :type data_source_id: str
-    :param data_source_location: Required. Location of the DataSource.
-    :type data_source_location: str
-    :param data_source_name: Required. User Friendly Name of the DataSource.
-    :type data_source_name: str
-    :param data_source_set_name: Data Source Set Name of the DataSource.
-    :type data_source_set_name: str
-    :param data_source_type: Required. Type of DataSource.
-    :type data_source_type: str
-    :param duration: Total run time of the job. ISO 8601 format.
-    :type duration: str
+    :ivar data_source_id: ARM ID of the DataSource. Required.
+    :vartype data_source_id: str
+    :ivar data_source_location: Location of the DataSource. Required.
+    :vartype data_source_location: str
+    :ivar data_source_name: User Friendly Name of the DataSource. Required.
+    :vartype data_source_name: str
+    :ivar data_source_set_name: Data Source Set Name of the DataSource.
+    :vartype data_source_set_name: str
+    :ivar data_source_type: Type of DataSource. Required.
+    :vartype data_source_type: str
+    :ivar duration: Total run time of the job. ISO 8601 format.
+    :vartype duration: str
     :ivar end_time: EndTime of the job(in UTC).
     :vartype end_time: ~datetime.datetime
     :ivar error_details: A List, detailing the errors related to the job.
     :vartype error_details: list[~azure.mgmt.dataprotection.models.UserFacingError]
     :ivar extended_info: Extended Information about the job.
     :vartype extended_info: ~azure.mgmt.dataprotection.models.JobExtendedInfo
-    :param is_user_triggered: Required. Indicated that whether the job is adhoc(true) or
-     scheduled(false).
-    :type is_user_triggered: bool
-    :param operation: Required. It indicates the type of Job i.e. Backup:full/log/diff
-     ;Restore:ALR/OLR; Tiering:Backup/Archive ; Management:ConfigureProtection/UnConfigure.
-    :type operation: str
-    :param operation_category: Required. It indicates the type of Job i.e.
-     Backup/Restore/Tiering/Management.
-    :type operation_category: str
+    :ivar is_user_triggered: Indicated that whether the job is adhoc(true) or scheduled(false).
+     Required.
+    :vartype is_user_triggered: bool
+    :ivar operation: It indicates the type of Job i.e. Backup:full/log/diff ;Restore:ALR/OLR;
+     Tiering:Backup/Archive ; Management:ConfigureProtection/UnConfigure. Required.
+    :vartype operation: str
+    :ivar operation_category: It indicates the type of Job i.e. Backup/Restore/Tiering/Management.
+     Required.
+    :vartype operation_category: str
     :ivar policy_id: ARM ID of the policy.
     :vartype policy_id: str
     :ivar policy_name: Name of the policy.
     :vartype policy_name: str
-    :param progress_enabled: Required. Indicated whether progress is enabled for the job.
-    :type progress_enabled: bool
+    :ivar progress_enabled: Indicated whether progress is enabled for the job. Required.
+    :vartype progress_enabled: bool
     :ivar progress_url: Url which contains job's progress.
     :vartype progress_url: str
     :ivar restore_type: It indicates the sub type of operation i.e. in case of Restore it can be
      ALR/OLR.
     :vartype restore_type: str
-    :param source_resource_group: Required. Resource Group Name of the Datasource.
-    :type source_resource_group: str
-    :param source_subscription_id: Required. SubscriptionId corresponding to the DataSource.
-    :type source_subscription_id: str
-    :param start_time: Required. StartTime of the job(in UTC).
-    :type start_time: ~datetime.datetime
-    :param status: Required. Status of the job like
-     InProgress/Success/Failed/Cancelled/SuccessWithWarning.
-    :type status: str
-    :param subscription_id: Required. Subscription Id of the corresponding backup vault.
-    :type subscription_id: str
-    :param supported_actions: Required. List of supported actions.
-    :type supported_actions: list[str]
-    :param vault_name: Required. Name of the vault.
-    :type vault_name: str
-    :param etag:
-    :type etag: str
-    :param source_data_store_name:
-    :type source_data_store_name: str
-    :param destination_data_store_name:
-    :type destination_data_store_name: str
+    :ivar source_resource_group: Resource Group Name of the Datasource. Required.
+    :vartype source_resource_group: str
+    :ivar source_subscription_id: SubscriptionId corresponding to the DataSource. Required.
+    :vartype source_subscription_id: str
+    :ivar start_time: StartTime of the job(in UTC). Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar status: Status of the job like InProgress/Success/Failed/Cancelled/SuccessWithWarning.
+     Required.
+    :vartype status: str
+    :ivar subscription_id: Subscription Id of the corresponding backup vault. Required.
+    :vartype subscription_id: str
+    :ivar supported_actions: List of supported actions. Required.
+    :vartype supported_actions: list[str]
+    :ivar vault_name: Name of the vault. Required.
+    :vartype vault_name: str
+    :ivar etag:
+    :vartype etag: str
+    :ivar source_data_store_name:
+    :vartype source_data_store_name: str
+    :ivar destination_data_store_name:
+    :vartype destination_data_store_name: str
     """
 
     _validation = {
-        'activity_id': {'required': True},
-        'backup_instance_friendly_name': {'required': True},
-        'backup_instance_id': {'readonly': True},
-        'data_source_id': {'required': True},
-        'data_source_location': {'required': True},
-        'data_source_name': {'required': True},
-        'data_source_type': {'required': True},
-        'end_time': {'readonly': True},
-        'error_details': {'readonly': True},
-        'extended_info': {'readonly': True},
-        'is_user_triggered': {'required': True},
-        'operation': {'required': True},
-        'operation_category': {'required': True},
-        'policy_id': {'readonly': True},
-        'policy_name': {'readonly': True},
-        'progress_enabled': {'required': True},
-        'progress_url': {'readonly': True},
-        'restore_type': {'readonly': True},
-        'source_resource_group': {'required': True},
-        'source_subscription_id': {'required': True},
-        'start_time': {'required': True},
-        'status': {'required': True},
-        'subscription_id': {'required': True},
-        'supported_actions': {'required': True},
-        'vault_name': {'required': True},
+        "activity_id": {"required": True},
+        "backup_instance_friendly_name": {"required": True},
+        "backup_instance_id": {"readonly": True},
+        "data_source_id": {"required": True},
+        "data_source_location": {"required": True},
+        "data_source_name": {"required": True},
+        "data_source_type": {"required": True},
+        "end_time": {"readonly": True},
+        "error_details": {"readonly": True},
+        "extended_info": {"readonly": True},
+        "is_user_triggered": {"required": True},
+        "operation": {"required": True},
+        "operation_category": {"required": True},
+        "policy_id": {"readonly": True},
+        "policy_name": {"readonly": True},
+        "progress_enabled": {"required": True},
+        "progress_url": {"readonly": True},
+        "restore_type": {"readonly": True},
+        "source_resource_group": {"required": True},
+        "source_subscription_id": {"required": True},
+        "start_time": {"required": True},
+        "status": {"required": True},
+        "subscription_id": {"required": True},
+        "supported_actions": {"required": True},
+        "vault_name": {"required": True},
     }
 
     _attribute_map = {
-        'activity_id': {'key': 'activityID', 'type': 'str'},
-        'backup_instance_friendly_name': {'key': 'backupInstanceFriendlyName', 'type': 'str'},
-        'backup_instance_id': {'key': 'backupInstanceId', 'type': 'str'},
-        'data_source_id': {'key': 'dataSourceId', 'type': 'str'},
-        'data_source_location': {'key': 'dataSourceLocation', 'type': 'str'},
-        'data_source_name': {'key': 'dataSourceName', 'type': 'str'},
-        'data_source_set_name': {'key': 'dataSourceSetName', 'type': 'str'},
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'error_details': {'key': 'errorDetails', 'type': '[UserFacingError]'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'JobExtendedInfo'},
-        'is_user_triggered': {'key': 'isUserTriggered', 'type': 'bool'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'operation_category': {'key': 'operationCategory', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
-        'progress_enabled': {'key': 'progressEnabled', 'type': 'bool'},
-        'progress_url': {'key': 'progressUrl', 'type': 'str'},
-        'restore_type': {'key': 'restoreType', 'type': 'str'},
-        'source_resource_group': {'key': 'sourceResourceGroup', 'type': 'str'},
-        'source_subscription_id': {'key': 'sourceSubscriptionID', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'supported_actions': {'key': 'supportedActions', 'type': '[str]'},
-        'vault_name': {'key': 'vaultName', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'source_data_store_name': {'key': 'sourceDataStoreName', 'type': 'str'},
-        'destination_data_store_name': {'key': 'destinationDataStoreName', 'type': 'str'},
+        "activity_id": {"key": "activityID", "type": "str"},
+        "backup_instance_friendly_name": {"key": "backupInstanceFriendlyName", "type": "str"},
+        "backup_instance_id": {"key": "backupInstanceId", "type": "str"},
+        "data_source_id": {"key": "dataSourceId", "type": "str"},
+        "data_source_location": {"key": "dataSourceLocation", "type": "str"},
+        "data_source_name": {"key": "dataSourceName", "type": "str"},
+        "data_source_set_name": {"key": "dataSourceSetName", "type": "str"},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "error_details": {"key": "errorDetails", "type": "[UserFacingError]"},
+        "extended_info": {"key": "extendedInfo", "type": "JobExtendedInfo"},
+        "is_user_triggered": {"key": "isUserTriggered", "type": "bool"},
+        "operation": {"key": "operation", "type": "str"},
+        "operation_category": {"key": "operationCategory", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
+        "progress_enabled": {"key": "progressEnabled", "type": "bool"},
+        "progress_url": {"key": "progressUrl", "type": "str"},
+        "restore_type": {"key": "restoreType", "type": "str"},
+        "source_resource_group": {"key": "sourceResourceGroup", "type": "str"},
+        "source_subscription_id": {"key": "sourceSubscriptionID", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "supported_actions": {"key": "supportedActions", "type": "[str]"},
+        "vault_name": {"key": "vaultName", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "source_data_store_name": {"key": "sourceDataStoreName", "type": "str"},
+        "destination_data_store_name": {"key": "destinationDataStoreName", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         activity_id: str,
@@ -778,7 +848,57 @@ class AzureBackupJob(msrest.serialization.Model):
         destination_data_store_name: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupJob, self).__init__(**kwargs)
+        """
+        :keyword activity_id: Job Activity Id. Required.
+        :paramtype activity_id: str
+        :keyword backup_instance_friendly_name: Name of the Backup Instance. Required.
+        :paramtype backup_instance_friendly_name: str
+        :keyword data_source_id: ARM ID of the DataSource. Required.
+        :paramtype data_source_id: str
+        :keyword data_source_location: Location of the DataSource. Required.
+        :paramtype data_source_location: str
+        :keyword data_source_name: User Friendly Name of the DataSource. Required.
+        :paramtype data_source_name: str
+        :keyword data_source_set_name: Data Source Set Name of the DataSource.
+        :paramtype data_source_set_name: str
+        :keyword data_source_type: Type of DataSource. Required.
+        :paramtype data_source_type: str
+        :keyword duration: Total run time of the job. ISO 8601 format.
+        :paramtype duration: str
+        :keyword is_user_triggered: Indicated that whether the job is adhoc(true) or scheduled(false).
+         Required.
+        :paramtype is_user_triggered: bool
+        :keyword operation: It indicates the type of Job i.e. Backup:full/log/diff ;Restore:ALR/OLR;
+         Tiering:Backup/Archive ; Management:ConfigureProtection/UnConfigure. Required.
+        :paramtype operation: str
+        :keyword operation_category: It indicates the type of Job i.e.
+         Backup/Restore/Tiering/Management. Required.
+        :paramtype operation_category: str
+        :keyword progress_enabled: Indicated whether progress is enabled for the job. Required.
+        :paramtype progress_enabled: bool
+        :keyword source_resource_group: Resource Group Name of the Datasource. Required.
+        :paramtype source_resource_group: str
+        :keyword source_subscription_id: SubscriptionId corresponding to the DataSource. Required.
+        :paramtype source_subscription_id: str
+        :keyword start_time: StartTime of the job(in UTC). Required.
+        :paramtype start_time: ~datetime.datetime
+        :keyword status: Status of the job like InProgress/Success/Failed/Cancelled/SuccessWithWarning.
+         Required.
+        :paramtype status: str
+        :keyword subscription_id: Subscription Id of the corresponding backup vault. Required.
+        :paramtype subscription_id: str
+        :keyword supported_actions: List of supported actions. Required.
+        :paramtype supported_actions: list[str]
+        :keyword vault_name: Name of the vault. Required.
+        :paramtype vault_name: str
+        :keyword etag:
+        :paramtype etag: str
+        :keyword source_data_store_name:
+        :paramtype source_data_store_name: str
+        :keyword destination_data_store_name:
+        :paramtype destination_data_store_name: str
+        """
+        super().__init__(**kwargs)
         self.activity_id = activity_id
         self.backup_instance_friendly_name = backup_instance_friendly_name
         self.backup_instance_id = None
@@ -825,113 +945,114 @@ class AzureBackupJobResource(DppResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
-    :param properties: AzureBackupJobResource properties.
-    :type properties: ~azure.mgmt.dataprotection.models.AzureBackupJob
+    :ivar properties: AzureBackupJobResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.AzureBackupJob
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'AzureBackupJob'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "AzureBackupJob"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["AzureBackupJob"] = None,
-        **kwargs
-    ):
-        super(AzureBackupJobResource, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.AzureBackupJob"] = None, **kwargs):
+        """
+        :keyword properties: AzureBackupJobResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.AzureBackupJob
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class DppResourceList(msrest.serialization.Model):
+class DppResourceList(_serialization.Model):
     """ListResource.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(DppResourceList, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
 
 
 class AzureBackupJobResourceList(DppResourceList):
     """List of AzureBackup Job resources.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
-    :param value: List of resources.
-    :type value: list[~azure.mgmt.dataprotection.models.AzureBackupJobResource]
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.AzureBackupJobResource]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[AzureBackupJobResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AzureBackupJobResource]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["AzureBackupJobResource"]] = None,
+        value: Optional[List["_models.AzureBackupJobResource"]] = None,
         **kwargs
     ):
-        super(AzureBackupJobResourceList, self).__init__(next_link=next_link, **kwargs)
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.AzureBackupJobResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
-class BackupParameters(msrest.serialization.Model):
+class BackupParameters(_serialization.Model):
     """BackupParameters base.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureBackupParams.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureBackupParams
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'AzureBackupParams': 'AzureBackupParams'}
-    }
+    _subtype_map = {"object_type": {"AzureBackupParams": "AzureBackupParams"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BackupParameters, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -940,127 +1061,166 @@ class AzureBackupParams(BackupParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param backup_type: Required. BackupType ; Full/Incremental etc.
-    :type backup_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar backup_type: BackupType ; Full/Incremental etc. Required.
+    :vartype backup_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'backup_type': {'required': True},
+        "object_type": {"required": True},
+        "backup_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'backup_type': {'key': 'backupType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "backup_type": {"key": "backupType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        backup_type: str,
-        **kwargs
-    ):
-        super(AzureBackupParams, self).__init__(**kwargs)
-        self.object_type = 'AzureBackupParams'  # type: str
+    def __init__(self, *, backup_type: str, **kwargs):
+        """
+        :keyword backup_type: BackupType ; Full/Incremental etc. Required.
+        :paramtype backup_type: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "AzureBackupParams"  # type: str
         self.backup_type = backup_type
 
 
-class AzureBackupRestoreRequest(msrest.serialization.Model):
+class AzureBackupRestoreRequest(_serialization.Model):
     """Azure backup restore request.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureBackupRecoveryPointBasedRestoreRequest, AzureBackupRecoveryTimeBasedRestoreRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureBackupRecoveryPointBasedRestoreRequest, AzureBackupRecoveryTimeBasedRestoreRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param restore_target_info: Required. Gets or sets the restore target information.
-    :type restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
-    :param source_data_store_type: Required. Gets or sets the type of the source data store.
-     Possible values include: "ArchiveStore", "SnapshotStore", "VaultStore".
-    :type source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar restore_target_info: Gets or sets the restore target information. Required.
+    :vartype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+     values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+    :vartype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+    :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
+     being recovered.
+    :vartype source_resource_id: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'restore_target_info': {'required': True},
-        'source_data_store_type': {'required': True},
+        "object_type": {"required": True},
+        "restore_target_info": {"required": True},
+        "source_data_store_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'restore_target_info': {'key': 'restoreTargetInfo', 'type': 'RestoreTargetInfoBase'},
-        'source_data_store_type': {'key': 'sourceDataStoreType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
+        "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureBackupRecoveryPointBasedRestoreRequest': 'AzureBackupRecoveryPointBasedRestoreRequest', 'AzureBackupRecoveryTimeBasedRestoreRequest': 'AzureBackupRecoveryTimeBasedRestoreRequest'}
+        "object_type": {
+            "AzureBackupRecoveryPointBasedRestoreRequest": "AzureBackupRecoveryPointBasedRestoreRequest",
+            "AzureBackupRecoveryTimeBasedRestoreRequest": "AzureBackupRecoveryTimeBasedRestoreRequest",
+        }
     }
 
     def __init__(
         self,
         *,
-        restore_target_info: "RestoreTargetInfoBase",
-        source_data_store_type: Union[str, "SourceDataStoreType"],
+        restore_target_info: "_models.RestoreTargetInfoBase",
+        source_data_store_type: Union[str, "_models.SourceDataStoreType"],
+        source_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupRestoreRequest, self).__init__(**kwargs)
+        """
+        :keyword restore_target_info: Gets or sets the restore target information. Required.
+        :paramtype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+        :keyword source_data_store_type: Gets or sets the type of the source data store. Required.
+         Known values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+        :paramtype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+        :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
+         is being recovered.
+        :paramtype source_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
         self.restore_target_info = restore_target_info
         self.source_data_store_type = source_data_store_type
+        self.source_resource_id = source_resource_id
 
 
 class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
     """Azure backup recoveryPoint based restore request.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureBackupRestoreWithRehydrationRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureBackupRestoreWithRehydrationRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param restore_target_info: Required. Gets or sets the restore target information.
-    :type restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
-    :param source_data_store_type: Required. Gets or sets the type of the source data store.
-     Possible values include: "ArchiveStore", "SnapshotStore", "VaultStore".
-    :type source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
-    :param recovery_point_id: Required.
-    :type recovery_point_id: str
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar restore_target_info: Gets or sets the restore target information. Required.
+    :vartype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+     values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+    :vartype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+    :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
+     being recovered.
+    :vartype source_resource_id: str
+    :ivar recovery_point_id: Required.
+    :vartype recovery_point_id: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'restore_target_info': {'required': True},
-        'source_data_store_type': {'required': True},
-        'recovery_point_id': {'required': True},
+        "object_type": {"required": True},
+        "restore_target_info": {"required": True},
+        "source_data_store_type": {"required": True},
+        "recovery_point_id": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'restore_target_info': {'key': 'restoreTargetInfo', 'type': 'RestoreTargetInfoBase'},
-        'source_data_store_type': {'key': 'sourceDataStoreType', 'type': 'str'},
-        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
+        "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'AzureBackupRestoreWithRehydrationRequest': 'AzureBackupRestoreWithRehydrationRequest'}
+        "object_type": {"AzureBackupRestoreWithRehydrationRequest": "AzureBackupRestoreWithRehydrationRequest"}
     }
 
     def __init__(
         self,
         *,
-        restore_target_info: "RestoreTargetInfoBase",
-        source_data_store_type: Union[str, "SourceDataStoreType"],
+        restore_target_info: "_models.RestoreTargetInfoBase",
+        source_data_store_type: Union[str, "_models.SourceDataStoreType"],
         recovery_point_id: str,
+        source_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupRecoveryPointBasedRestoreRequest, self).__init__(restore_target_info=restore_target_info, source_data_store_type=source_data_store_type, **kwargs)
-        self.object_type = 'AzureBackupRecoveryPointBasedRestoreRequest'  # type: str
+        """
+        :keyword restore_target_info: Gets or sets the restore target information. Required.
+        :paramtype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+        :keyword source_data_store_type: Gets or sets the type of the source data store. Required.
+         Known values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+        :paramtype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+        :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
+         is being recovered.
+        :paramtype source_resource_id: str
+        :keyword recovery_point_id: Required.
+        :paramtype recovery_point_id: str
+        """
+        super().__init__(
+            restore_target_info=restore_target_info,
+            source_data_store_type=source_data_store_type,
+            source_resource_id=source_resource_id,
+            **kwargs
+        )
+        self.object_type = "AzureBackupRecoveryPointBasedRestoreRequest"  # type: str
         self.recovery_point_id = recovery_point_id
 
 
@@ -1078,58 +1238,64 @@ class AzureBackupRecoveryPointResource(DppResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
-    :param properties: AzureBackupRecoveryPointResource properties.
-    :type properties: ~azure.mgmt.dataprotection.models.AzureBackupRecoveryPoint
+    :ivar properties: AzureBackupRecoveryPointResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.AzureBackupRecoveryPoint
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'AzureBackupRecoveryPoint'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "AzureBackupRecoveryPoint"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["AzureBackupRecoveryPoint"] = None,
-        **kwargs
-    ):
-        super(AzureBackupRecoveryPointResource, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.AzureBackupRecoveryPoint"] = None, **kwargs):
+        """
+        :keyword properties: AzureBackupRecoveryPointResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.AzureBackupRecoveryPoint
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
 class AzureBackupRecoveryPointResourceList(DppResourceList):
     """Azure backup recoveryPoint resource list.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
-    :param value: List of resources.
-    :type value: list[~azure.mgmt.dataprotection.models.AzureBackupRecoveryPointResource]
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.AzureBackupRecoveryPointResource]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[AzureBackupRecoveryPointResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AzureBackupRecoveryPointResource]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["AzureBackupRecoveryPointResource"]] = None,
+        value: Optional[List["_models.AzureBackupRecoveryPointResource"]] = None,
         **kwargs
     ):
-        super(AzureBackupRecoveryPointResourceList, self).__init__(next_link=next_link, **kwargs)
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.AzureBackupRecoveryPointResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
@@ -1138,69 +1304,92 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param restore_target_info: Required. Gets or sets the restore target information.
-    :type restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
-    :param source_data_store_type: Required. Gets or sets the type of the source data store.
-     Possible values include: "ArchiveStore", "SnapshotStore", "VaultStore".
-    :type source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
-    :param recovery_point_time: Required. The recovery time in ISO 8601 format example -
-     2020-08-14T17:30:00.0000000Z.
-    :type recovery_point_time: str
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar restore_target_info: Gets or sets the restore target information. Required.
+    :vartype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+     values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+    :vartype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+    :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
+     being recovered.
+    :vartype source_resource_id: str
+    :ivar recovery_point_time: The recovery time in ISO 8601 format example -
+     2020-08-14T17:30:00.0000000Z. Required.
+    :vartype recovery_point_time: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'restore_target_info': {'required': True},
-        'source_data_store_type': {'required': True},
-        'recovery_point_time': {'required': True},
+        "object_type": {"required": True},
+        "restore_target_info": {"required": True},
+        "source_data_store_type": {"required": True},
+        "recovery_point_time": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'restore_target_info': {'key': 'restoreTargetInfo', 'type': 'RestoreTargetInfoBase'},
-        'source_data_store_type': {'key': 'sourceDataStoreType', 'type': 'str'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
+        "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        restore_target_info: "RestoreTargetInfoBase",
-        source_data_store_type: Union[str, "SourceDataStoreType"],
+        restore_target_info: "_models.RestoreTargetInfoBase",
+        source_data_store_type: Union[str, "_models.SourceDataStoreType"],
         recovery_point_time: str,
+        source_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupRecoveryTimeBasedRestoreRequest, self).__init__(restore_target_info=restore_target_info, source_data_store_type=source_data_store_type, **kwargs)
-        self.object_type = 'AzureBackupRecoveryTimeBasedRestoreRequest'  # type: str
+        """
+        :keyword restore_target_info: Gets or sets the restore target information. Required.
+        :paramtype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+        :keyword source_data_store_type: Gets or sets the type of the source data store. Required.
+         Known values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+        :paramtype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+        :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
+         is being recovered.
+        :paramtype source_resource_id: str
+        :keyword recovery_point_time: The recovery time in ISO 8601 format example -
+         2020-08-14T17:30:00.0000000Z. Required.
+        :paramtype recovery_point_time: str
+        """
+        super().__init__(
+            restore_target_info=restore_target_info,
+            source_data_store_type=source_data_store_type,
+            source_resource_id=source_resource_id,
+            **kwargs
+        )
+        self.object_type = "AzureBackupRecoveryTimeBasedRestoreRequest"  # type: str
         self.recovery_point_time = recovery_point_time
 
 
-class AzureBackupRehydrationRequest(msrest.serialization.Model):
+class AzureBackupRehydrationRequest(_serialization.Model):
     """Azure Backup Rehydrate Request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param recovery_point_id: Required. Id of the recovery point to be recovered.
-    :type recovery_point_id: str
-    :param rehydration_priority: Priority to be used for rehydration. Values High or Standard.
-     Possible values include: "Invalid", "High", "Standard".
-    :type rehydration_priority: str or ~azure.mgmt.dataprotection.models.RehydrationPriority
-    :param rehydration_retention_duration: Required. Retention duration in ISO 8601 format i.e P10D
-     .
-    :type rehydration_retention_duration: str
+    :ivar recovery_point_id: Id of the recovery point to be recovered. Required.
+    :vartype recovery_point_id: str
+    :ivar rehydration_priority: Priority to be used for rehydration. Values High or Standard. Known
+     values are: "Invalid", "High", and "Standard".
+    :vartype rehydration_priority: str or ~azure.mgmt.dataprotection.models.RehydrationPriority
+    :ivar rehydration_retention_duration: Retention duration in ISO 8601 format i.e P10D .
+     Required.
+    :vartype rehydration_retention_duration: str
     """
 
     _validation = {
-        'recovery_point_id': {'required': True},
-        'rehydration_retention_duration': {'required': True},
+        "recovery_point_id": {"required": True},
+        "rehydration_retention_duration": {"required": True},
     }
 
     _attribute_map = {
-        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
-        'rehydration_priority': {'key': 'rehydrationPriority', 'type': 'str'},
-        'rehydration_retention_duration': {'key': 'rehydrationRetentionDuration', 'type': 'str'},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "rehydration_priority": {"key": "rehydrationPriority", "type": "str"},
+        "rehydration_retention_duration": {"key": "rehydrationRetentionDuration", "type": "str"},
     }
 
     def __init__(
@@ -1208,10 +1397,20 @@ class AzureBackupRehydrationRequest(msrest.serialization.Model):
         *,
         recovery_point_id: str,
         rehydration_retention_duration: str,
-        rehydration_priority: Optional[Union[str, "RehydrationPriority"]] = None,
+        rehydration_priority: Optional[Union[str, "_models.RehydrationPriority"]] = None,
         **kwargs
     ):
-        super(AzureBackupRehydrationRequest, self).__init__(**kwargs)
+        """
+        :keyword recovery_point_id: Id of the recovery point to be recovered. Required.
+        :paramtype recovery_point_id: str
+        :keyword rehydration_priority: Priority to be used for rehydration. Values High or Standard.
+         Known values are: "Invalid", "High", and "Standard".
+        :paramtype rehydration_priority: str or ~azure.mgmt.dataprotection.models.RehydrationPriority
+        :keyword rehydration_retention_duration: Retention duration in ISO 8601 format i.e P10D .
+         Required.
+        :paramtype rehydration_retention_duration: str
+        """
+        super().__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.rehydration_priority = rehydration_priority
         self.rehydration_retention_duration = rehydration_retention_duration
@@ -1222,92 +1421,118 @@ class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRest
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param restore_target_info: Required. Gets or sets the restore target information.
-    :type restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
-    :param source_data_store_type: Required. Gets or sets the type of the source data store.
-     Possible values include: "ArchiveStore", "SnapshotStore", "VaultStore".
-    :type source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
-    :param recovery_point_id: Required.
-    :type recovery_point_id: str
-    :param rehydration_priority: Required. Priority to be used for rehydration. Values High or
-     Standard. Possible values include: "Invalid", "High", "Standard".
-    :type rehydration_priority: str or ~azure.mgmt.dataprotection.models.RehydrationPriority
-    :param rehydration_retention_duration: Required. Retention duration in ISO 8601 format i.e P10D
-     .
-    :type rehydration_retention_duration: str
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar restore_target_info: Gets or sets the restore target information. Required.
+    :vartype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+    :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
+     values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+    :vartype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+    :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
+     being recovered.
+    :vartype source_resource_id: str
+    :ivar recovery_point_id: Required.
+    :vartype recovery_point_id: str
+    :ivar rehydration_priority: Priority to be used for rehydration. Values High or Standard.
+     Required. Known values are: "Invalid", "High", and "Standard".
+    :vartype rehydration_priority: str or ~azure.mgmt.dataprotection.models.RehydrationPriority
+    :ivar rehydration_retention_duration: Retention duration in ISO 8601 format i.e P10D .
+     Required.
+    :vartype rehydration_retention_duration: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'restore_target_info': {'required': True},
-        'source_data_store_type': {'required': True},
-        'recovery_point_id': {'required': True},
-        'rehydration_priority': {'required': True},
-        'rehydration_retention_duration': {'required': True},
+        "object_type": {"required": True},
+        "restore_target_info": {"required": True},
+        "source_data_store_type": {"required": True},
+        "recovery_point_id": {"required": True},
+        "rehydration_priority": {"required": True},
+        "rehydration_retention_duration": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'restore_target_info': {'key': 'restoreTargetInfo', 'type': 'RestoreTargetInfoBase'},
-        'source_data_store_type': {'key': 'sourceDataStoreType', 'type': 'str'},
-        'recovery_point_id': {'key': 'recoveryPointId', 'type': 'str'},
-        'rehydration_priority': {'key': 'rehydrationPriority', 'type': 'str'},
-        'rehydration_retention_duration': {'key': 'rehydrationRetentionDuration', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
+        "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "rehydration_priority": {"key": "rehydrationPriority", "type": "str"},
+        "rehydration_retention_duration": {"key": "rehydrationRetentionDuration", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        restore_target_info: "RestoreTargetInfoBase",
-        source_data_store_type: Union[str, "SourceDataStoreType"],
+        restore_target_info: "_models.RestoreTargetInfoBase",
+        source_data_store_type: Union[str, "_models.SourceDataStoreType"],
         recovery_point_id: str,
-        rehydration_priority: Union[str, "RehydrationPriority"],
+        rehydration_priority: Union[str, "_models.RehydrationPriority"],
         rehydration_retention_duration: str,
+        source_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(AzureBackupRestoreWithRehydrationRequest, self).__init__(restore_target_info=restore_target_info, source_data_store_type=source_data_store_type, recovery_point_id=recovery_point_id, **kwargs)
-        self.object_type = 'AzureBackupRestoreWithRehydrationRequest'  # type: str
+        """
+        :keyword restore_target_info: Gets or sets the restore target information. Required.
+        :paramtype restore_target_info: ~azure.mgmt.dataprotection.models.RestoreTargetInfoBase
+        :keyword source_data_store_type: Gets or sets the type of the source data store. Required.
+         Known values are: "ArchiveStore", "SnapshotStore", and "VaultStore".
+        :paramtype source_data_store_type: str or ~azure.mgmt.dataprotection.models.SourceDataStoreType
+        :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
+         is being recovered.
+        :paramtype source_resource_id: str
+        :keyword recovery_point_id: Required.
+        :paramtype recovery_point_id: str
+        :keyword rehydration_priority: Priority to be used for rehydration. Values High or Standard.
+         Required. Known values are: "Invalid", "High", and "Standard".
+        :paramtype rehydration_priority: str or ~azure.mgmt.dataprotection.models.RehydrationPriority
+        :keyword rehydration_retention_duration: Retention duration in ISO 8601 format i.e P10D .
+         Required.
+        :paramtype rehydration_retention_duration: str
+        """
+        super().__init__(
+            restore_target_info=restore_target_info,
+            source_data_store_type=source_data_store_type,
+            source_resource_id=source_resource_id,
+            recovery_point_id=recovery_point_id,
+            **kwargs
+        )
+        self.object_type = "AzureBackupRestoreWithRehydrationRequest"  # type: str
         self.rehydration_priority = rehydration_priority
         self.rehydration_retention_duration = rehydration_retention_duration
 
 
-class BasePolicyRule(msrest.serialization.Model):
+class BasePolicyRule(_serialization.Model):
     """BasePolicy Rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureBackupRule, AzureRetentionRule.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureBackupRule, AzureRetentionRule
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar object_type: Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'object_type': {'required': True},
+        "name": {"required": True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'AzureBackupRule': 'AzureBackupRule', 'AzureRetentionRule': 'AzureRetentionRule'}
-    }
+    _subtype_map = {"object_type": {"AzureBackupRule": "AzureBackupRule", "AzureRetentionRule": "AzureRetentionRule"}}
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(BasePolicyRule, self).__init__(**kwargs)
+    def __init__(self, *, name: str, **kwargs):
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.object_type = None  # type: Optional[str]
 
@@ -1317,86 +1542,113 @@ class AzureBackupRule(BasePolicyRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param backup_parameters: BackupParameters base.
-    :type backup_parameters: ~azure.mgmt.dataprotection.models.BackupParameters
-    :param data_store: Required. DataStoreInfo base.
-    :type data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
-    :param trigger: Required. Trigger context.
-    :type trigger: ~azure.mgmt.dataprotection.models.TriggerContext
+    :ivar name: Required.
+    :vartype name: str
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar backup_parameters: BackupParameters base.
+    :vartype backup_parameters: ~azure.mgmt.dataprotection.models.BackupParameters
+    :ivar data_store: DataStoreInfo base. Required.
+    :vartype data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
+    :ivar trigger: Trigger context. Required.
+    :vartype trigger: ~azure.mgmt.dataprotection.models.TriggerContext
     """
 
     _validation = {
-        'name': {'required': True},
-        'object_type': {'required': True},
-        'data_store': {'required': True},
-        'trigger': {'required': True},
+        "name": {"required": True},
+        "object_type": {"required": True},
+        "data_store": {"required": True},
+        "trigger": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'backup_parameters': {'key': 'backupParameters', 'type': 'BackupParameters'},
-        'data_store': {'key': 'dataStore', 'type': 'DataStoreInfoBase'},
-        'trigger': {'key': 'trigger', 'type': 'TriggerContext'},
+        "name": {"key": "name", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "backup_parameters": {"key": "backupParameters", "type": "BackupParameters"},
+        "data_store": {"key": "dataStore", "type": "DataStoreInfoBase"},
+        "trigger": {"key": "trigger", "type": "TriggerContext"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        data_store: "DataStoreInfoBase",
-        trigger: "TriggerContext",
-        backup_parameters: Optional["BackupParameters"] = None,
+        data_store: "_models.DataStoreInfoBase",
+        trigger: "_models.TriggerContext",
+        backup_parameters: Optional["_models.BackupParameters"] = None,
         **kwargs
     ):
-        super(AzureBackupRule, self).__init__(name=name, **kwargs)
-        self.object_type = 'AzureBackupRule'  # type: str
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword backup_parameters: BackupParameters base.
+        :paramtype backup_parameters: ~azure.mgmt.dataprotection.models.BackupParameters
+        :keyword data_store: DataStoreInfo base. Required.
+        :paramtype data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
+        :keyword trigger: Trigger context. Required.
+        :paramtype trigger: ~azure.mgmt.dataprotection.models.TriggerContext
+        """
+        super().__init__(name=name, **kwargs)
+        self.object_type = "AzureBackupRule"  # type: str
         self.backup_parameters = backup_parameters
         self.data_store = data_store
         self.trigger = trigger
 
 
-class DataStoreParameters(msrest.serialization.Model):
+class AzureMonitorAlertSettings(_serialization.Model):
+    """Settings for Azure Monitor based alerts.
+
+    :ivar alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
+    :vartype alerts_for_all_job_failures: str or ~azure.mgmt.dataprotection.models.AlertsState
+    """
+
+    _attribute_map = {
+        "alerts_for_all_job_failures": {"key": "alertsForAllJobFailures", "type": "str"},
+    }
+
+    def __init__(self, *, alerts_for_all_job_failures: Optional[Union[str, "_models.AlertsState"]] = None, **kwargs):
+        """
+        :keyword alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
+        :paramtype alerts_for_all_job_failures: str or ~azure.mgmt.dataprotection.models.AlertsState
+        """
+        super().__init__(**kwargs)
+        self.alerts_for_all_job_failures = alerts_for_all_job_failures
+
+
+class DataStoreParameters(_serialization.Model):
     """Parameters for DataStore.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureOperationalStoreParameters.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureOperationalStoreParameters
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param data_store_type: Required. type of datastore; Operational/Vault/Archive. Possible values
-     include: "OperationalStore", "VaultStore", "ArchiveStore".
-    :type data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
+     are: "OperationalStore", "VaultStore", and "ArchiveStore".
+    :vartype data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'data_store_type': {'required': True},
+        "object_type": {"required": True},
+        "data_store_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'data_store_type': {'key': 'dataStoreType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "data_store_type": {"key": "dataStoreType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'AzureOperationalStoreParameters': 'AzureOperationalStoreParameters'}
-    }
+    _subtype_map = {"object_type": {"AzureOperationalStoreParameters": "AzureOperationalStoreParameters"}}
 
-    def __init__(
-        self,
-        *,
-        data_store_type: Union[str, "DataStoreTypes"],
-        **kwargs
-    ):
-        super(DataStoreParameters, self).__init__(**kwargs)
+    def __init__(self, *, data_store_type: Union[str, "_models.DataStoreTypes"], **kwargs):
+        """
+        :keyword data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
+         are: "OperationalStore", "VaultStore", and "ArchiveStore".
+        :paramtype data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
+        """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
         self.data_store_type = data_store_type
 
@@ -1406,36 +1658,42 @@ class AzureOperationalStoreParameters(DataStoreParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param data_store_type: Required. type of datastore; Operational/Vault/Archive. Possible values
-     include: "OperationalStore", "VaultStore", "ArchiveStore".
-    :type data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
-    :param resource_group_id: Gets or sets the Snapshot Resource Group Uri.
-    :type resource_group_id: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
+     are: "OperationalStore", "VaultStore", and "ArchiveStore".
+    :vartype data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
+    :ivar resource_group_id: Gets or sets the Snapshot Resource Group Uri.
+    :vartype resource_group_id: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'data_store_type': {'required': True},
+        "object_type": {"required": True},
+        "data_store_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'data_store_type': {'key': 'dataStoreType', 'type': 'str'},
-        'resource_group_id': {'key': 'resourceGroupId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "data_store_type": {"key": "dataStoreType", "type": "str"},
+        "resource_group_id": {"key": "resourceGroupId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        data_store_type: Union[str, "DataStoreTypes"],
+        data_store_type: Union[str, "_models.DataStoreTypes"],
         resource_group_id: Optional[str] = None,
         **kwargs
     ):
-        super(AzureOperationalStoreParameters, self).__init__(data_store_type=data_store_type, **kwargs)
-        self.object_type = 'AzureOperationalStoreParameters'  # type: str
+        """
+        :keyword data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
+         are: "OperationalStore", "VaultStore", and "ArchiveStore".
+        :paramtype data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
+        :keyword resource_group_id: Gets or sets the Snapshot Resource Group Uri.
+        :paramtype resource_group_id: str
+        """
+        super().__init__(data_store_type=data_store_type, **kwargs)
+        self.object_type = "AzureOperationalStoreParameters"  # type: str
         self.resource_group_id = resource_group_id
 
 
@@ -1444,98 +1702,96 @@ class AzureRetentionRule(BasePolicyRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required.
-    :type name: str
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param is_default:
-    :type is_default: bool
-    :param lifecycles: Required.
-    :type lifecycles: list[~azure.mgmt.dataprotection.models.SourceLifeCycle]
+    :ivar name: Required.
+    :vartype name: str
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar is_default:
+    :vartype is_default: bool
+    :ivar lifecycles: Required.
+    :vartype lifecycles: list[~azure.mgmt.dataprotection.models.SourceLifeCycle]
     """
 
     _validation = {
-        'name': {'required': True},
-        'object_type': {'required': True},
-        'lifecycles': {'required': True},
+        "name": {"required": True},
+        "object_type": {"required": True},
+        "lifecycles": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'lifecycles': {'key': 'lifecycles', 'type': '[SourceLifeCycle]'},
+        "name": {"key": "name", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "lifecycles": {"key": "lifecycles", "type": "[SourceLifeCycle]"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        lifecycles: List["SourceLifeCycle"],
-        is_default: Optional[bool] = None,
-        **kwargs
+        self, *, name: str, lifecycles: List["_models.SourceLifeCycle"], is_default: Optional[bool] = None, **kwargs
     ):
-        super(AzureRetentionRule, self).__init__(name=name, **kwargs)
-        self.object_type = 'AzureRetentionRule'  # type: str
+        """
+        :keyword name: Required.
+        :paramtype name: str
+        :keyword is_default:
+        :paramtype is_default: bool
+        :keyword lifecycles: Required.
+        :paramtype lifecycles: list[~azure.mgmt.dataprotection.models.SourceLifeCycle]
+        """
+        super().__init__(name=name, **kwargs)
+        self.object_type = "AzureRetentionRule"  # type: str
         self.is_default = is_default
         self.lifecycles = lifecycles
 
 
-class BackupCriteria(msrest.serialization.Model):
+class BackupCriteria(_serialization.Model):
     """BackupCriteria base class.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ScheduleBasedBackupCriteria.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ScheduleBasedBackupCriteria
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'ScheduleBasedBackupCriteria': 'ScheduleBasedBackupCriteria'}
-    }
+    _subtype_map = {"object_type": {"ScheduleBasedBackupCriteria": "ScheduleBasedBackupCriteria"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BackupCriteria, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
-class BackupInstance(msrest.serialization.Model):
+class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Backup Instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param friendly_name: Gets or sets the Backup Instance friendly name.
-    :type friendly_name: str
-    :param data_source_info: Required. Gets or sets the data source information.
-    :type data_source_info: ~azure.mgmt.dataprotection.models.Datasource
-    :param data_source_set_info: Gets or sets the data source set information.
-    :type data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
-    :param policy_info: Required. Gets or sets the policy information.
-    :type policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+    :ivar friendly_name: Gets or sets the Backup Instance friendly name.
+    :vartype friendly_name: str
+    :ivar data_source_info: Gets or sets the data source information. Required.
+    :vartype data_source_info: ~azure.mgmt.dataprotection.models.Datasource
+    :ivar data_source_set_info: Gets or sets the data source set information.
+    :vartype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+    :ivar policy_info: Gets or sets the policy information. Required.
+    :vartype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
     :ivar protection_status: Specifies the protection status of the resource.
     :vartype protection_status: ~azure.mgmt.dataprotection.models.ProtectionStatusDetails
-    :ivar current_protection_state: Specifies the current protection state of the resource.
-     Possible values include: "Invalid", "NotProtected", "ConfiguringProtection",
-     "ProtectionConfigured", "BackupSchedulesSuspended", "RetentionSchedulesSuspended",
-     "ProtectionStopped", "ProtectionError", "ConfiguringProtectionFailed", "SoftDeleting",
-     "SoftDeleted", "UpdatingProtection".
+    :ivar current_protection_state: Specifies the current protection state of the resource. Known
+     values are: "Invalid", "NotProtected", "ConfiguringProtection", "ProtectionConfigured",
+     "BackupSchedulesSuspended", "RetentionSchedulesSuspended", "ProtectionStopped",
+     "ProtectionError", "ConfiguringProtectionFailed", "SoftDeleting", "SoftDeleted", and
+     "UpdatingProtection".
     :vartype current_protection_state: str or
      ~azure.mgmt.dataprotection.models.CurrentProtectionState
     :ivar protection_error_details: Specifies the protection error of the resource.
@@ -1543,48 +1799,73 @@ class BackupInstance(msrest.serialization.Model):
     :ivar provisioning_state: Specifies the provisioning state of the resource i.e.
      provisioning/updating/Succeeded/Failed.
     :vartype provisioning_state: str
-    :param datasource_auth_credentials: Credentials to use to authenticate with data source
+    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
      provider.
-    :type datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
-    :param object_type: Required.
-    :type object_type: str
+    :vartype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+    :ivar validation_type: Specifies the type of validation. In case of DeepValidation, all
+     validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
+     and "DeepValidation".
+    :vartype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
+    :ivar object_type: Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'data_source_info': {'required': True},
-        'policy_info': {'required': True},
-        'protection_status': {'readonly': True},
-        'current_protection_state': {'readonly': True},
-        'protection_error_details': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'object_type': {'required': True},
+        "data_source_info": {"required": True},
+        "policy_info": {"required": True},
+        "protection_status": {"readonly": True},
+        "current_protection_state": {"readonly": True},
+        "protection_error_details": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'data_source_info': {'key': 'dataSourceInfo', 'type': 'Datasource'},
-        'data_source_set_info': {'key': 'dataSourceSetInfo', 'type': 'DatasourceSet'},
-        'policy_info': {'key': 'policyInfo', 'type': 'PolicyInfo'},
-        'protection_status': {'key': 'protectionStatus', 'type': 'ProtectionStatusDetails'},
-        'current_protection_state': {'key': 'currentProtectionState', 'type': 'str'},
-        'protection_error_details': {'key': 'protectionErrorDetails', 'type': 'UserFacingError'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'datasource_auth_credentials': {'key': 'datasourceAuthCredentials', 'type': 'AuthCredentials'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "data_source_info": {"key": "dataSourceInfo", "type": "Datasource"},
+        "data_source_set_info": {"key": "dataSourceSetInfo", "type": "DatasourceSet"},
+        "policy_info": {"key": "policyInfo", "type": "PolicyInfo"},
+        "protection_status": {"key": "protectionStatus", "type": "ProtectionStatusDetails"},
+        "current_protection_state": {"key": "currentProtectionState", "type": "str"},
+        "protection_error_details": {"key": "protectionErrorDetails", "type": "UserFacingError"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "datasource_auth_credentials": {"key": "datasourceAuthCredentials", "type": "AuthCredentials"},
+        "validation_type": {"key": "validationType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        data_source_info: "Datasource",
-        policy_info: "PolicyInfo",
+        data_source_info: "_models.Datasource",
+        policy_info: "_models.PolicyInfo",
         object_type: str,
         friendly_name: Optional[str] = None,
-        data_source_set_info: Optional["DatasourceSet"] = None,
-        datasource_auth_credentials: Optional["AuthCredentials"] = None,
+        data_source_set_info: Optional["_models.DatasourceSet"] = None,
+        datasource_auth_credentials: Optional["_models.AuthCredentials"] = None,
+        validation_type: Optional[Union[str, "_models.ValidationType"]] = None,
         **kwargs
     ):
-        super(BackupInstance, self).__init__(**kwargs)
+        """
+        :keyword friendly_name: Gets or sets the Backup Instance friendly name.
+        :paramtype friendly_name: str
+        :keyword data_source_info: Gets or sets the data source information. Required.
+        :paramtype data_source_info: ~azure.mgmt.dataprotection.models.Datasource
+        :keyword data_source_set_info: Gets or sets the data source set information.
+        :paramtype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+        :keyword policy_info: Gets or sets the policy information. Required.
+        :paramtype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+        :keyword datasource_auth_credentials: Credentials to use to authenticate with data source
+         provider.
+        :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+        :keyword validation_type: Specifies the type of validation. In case of DeepValidation, all
+         validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
+         and "DeepValidation".
+        :paramtype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
+        :keyword object_type: Required.
+        :paramtype object_type: str
+        """
+        super().__init__(**kwargs)
         self.friendly_name = friendly_name
         self.data_source_info = data_source_info
         self.data_source_set_info = data_source_set_info
@@ -1594,113 +1875,170 @@ class BackupInstance(msrest.serialization.Model):
         self.protection_error_details = None
         self.provisioning_state = None
         self.datasource_auth_credentials = datasource_auth_credentials
+        self.validation_type = validation_type
         self.object_type = object_type
 
 
-class BackupInstanceResource(DppResource):
+class DppProxyResource(_serialization.Model):
+    """DppProxyResource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Proxy Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Proxy Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Proxy Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :ivar tags: Proxy Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Proxy Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = tags
+        self.system_data = None
+
+
+class BackupInstanceResource(DppProxyResource):
     """BackupInstance Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id represents the complete path to the resource.
+    :ivar id: Proxy Resource Id represents the complete path to the resource.
     :vartype id: str
-    :ivar name: Resource name associated with the resource.
+    :ivar name: Proxy Resource name associated with the resource.
     :vartype name: str
-    :ivar type: Resource type represents the complete path of the form
+    :ivar type: Proxy Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
+    :ivar tags: Proxy Resource tags.
+    :vartype tags: dict[str, str]
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
-    :param properties: BackupInstanceResource properties.
-    :type properties: ~azure.mgmt.dataprotection.models.BackupInstance
+    :ivar properties: BackupInstanceResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.BackupInstance
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'BackupInstance'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "BackupInstance"},
     }
 
     def __init__(
-        self,
-        *,
-        properties: Optional["BackupInstance"] = None,
-        **kwargs
+        self, *, tags: Optional[Dict[str, str]] = None, properties: Optional["_models.BackupInstance"] = None, **kwargs
     ):
-        super(BackupInstanceResource, self).__init__(**kwargs)
+        """
+        :keyword tags: Proxy Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: BackupInstanceResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.BackupInstance
+        """
+        super().__init__(tags=tags, **kwargs)
         self.properties = properties
 
 
 class BackupInstanceResourceList(DppResourceList):
     """BackupInstance Resource list response.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
-    :param value: List of resources.
-    :type value: list[~azure.mgmt.dataprotection.models.BackupInstanceResource]
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.BackupInstanceResource]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BackupInstanceResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BackupInstanceResource]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["BackupInstanceResource"]] = None,
+        value: Optional[List["_models.BackupInstanceResource"]] = None,
         **kwargs
     ):
-        super(BackupInstanceResourceList, self).__init__(next_link=next_link, **kwargs)
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.BackupInstanceResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
-class BaseBackupPolicy(msrest.serialization.Model):
+class BaseBackupPolicy(_serialization.Model):
     """BackupPolicy base.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BackupPolicy.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BackupPolicy
 
     All required parameters must be populated in order to send to Azure.
 
-    :param datasource_types: Required. Type of datasource for the backup management.
-    :type datasource_types: list[str]
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
+    :ivar datasource_types: Type of datasource for the backup management. Required.
+    :vartype datasource_types: list[str]
+    :ivar object_type: Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'datasource_types': {'required': True},
-        'object_type': {'required': True},
+        "datasource_types": {"required": True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'datasource_types': {'key': 'datasourceTypes', 'type': '[str]'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "datasource_types": {"key": "datasourceTypes", "type": "[str]"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'BackupPolicy': 'BackupPolicy'}
-    }
+    _subtype_map = {"object_type": {"BackupPolicy": "BackupPolicy"}}
 
-    def __init__(
-        self,
-        *,
-        datasource_types: List[str],
-        **kwargs
-    ):
-        super(BaseBackupPolicy, self).__init__(**kwargs)
+    def __init__(self, *, datasource_types: List[str], **kwargs):
+        """
+        :keyword datasource_types: Type of datasource for the backup management. Required.
+        :paramtype datasource_types: list[str]
+        """
+        super().__init__(**kwargs)
         self.datasource_types = datasource_types
         self.object_type = None  # type: Optional[str]
 
@@ -1710,135 +2048,161 @@ class BackupPolicy(BaseBackupPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param datasource_types: Required. Type of datasource for the backup management.
-    :type datasource_types: list[str]
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param policy_rules: Required. Policy rule dictionary that contains rules for each backuptype
-     i.e Full/Incremental/Logs etc.
-    :type policy_rules: list[~azure.mgmt.dataprotection.models.BasePolicyRule]
+    :ivar datasource_types: Type of datasource for the backup management. Required.
+    :vartype datasource_types: list[str]
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar policy_rules: Policy rule dictionary that contains rules for each backuptype i.e
+     Full/Incremental/Logs etc. Required.
+    :vartype policy_rules: list[~azure.mgmt.dataprotection.models.BasePolicyRule]
     """
 
     _validation = {
-        'datasource_types': {'required': True},
-        'object_type': {'required': True},
-        'policy_rules': {'required': True},
+        "datasource_types": {"required": True},
+        "object_type": {"required": True},
+        "policy_rules": {"required": True},
     }
 
     _attribute_map = {
-        'datasource_types': {'key': 'datasourceTypes', 'type': '[str]'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'policy_rules': {'key': 'policyRules', 'type': '[BasePolicyRule]'},
+        "datasource_types": {"key": "datasourceTypes", "type": "[str]"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "policy_rules": {"key": "policyRules", "type": "[BasePolicyRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        datasource_types: List[str],
-        policy_rules: List["BasePolicyRule"],
-        **kwargs
-    ):
-        super(BackupPolicy, self).__init__(datasource_types=datasource_types, **kwargs)
-        self.object_type = 'BackupPolicy'  # type: str
+    def __init__(self, *, datasource_types: List[str], policy_rules: List["_models.BasePolicyRule"], **kwargs):
+        """
+        :keyword datasource_types: Type of datasource for the backup management. Required.
+        :paramtype datasource_types: list[str]
+        :keyword policy_rules: Policy rule dictionary that contains rules for each backuptype i.e
+         Full/Incremental/Logs etc. Required.
+        :paramtype policy_rules: list[~azure.mgmt.dataprotection.models.BasePolicyRule]
+        """
+        super().__init__(datasource_types=datasource_types, **kwargs)
+        self.object_type = "BackupPolicy"  # type: str
         self.policy_rules = policy_rules
 
 
-class BackupSchedule(msrest.serialization.Model):
+class BackupSchedule(_serialization.Model):
     """Schedule for backup.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param repeating_time_intervals: Required. ISO 8601 repeating time interval format.
-    :type repeating_time_intervals: list[str]
-    :param time_zone: Time zone for a schedule. Example: Pacific Standard Time.
-    :type time_zone: str
+    :ivar repeating_time_intervals: ISO 8601 repeating time interval format. Required.
+    :vartype repeating_time_intervals: list[str]
+    :ivar time_zone: Time zone for a schedule. Example: Pacific Standard Time.
+    :vartype time_zone: str
     """
 
     _validation = {
-        'repeating_time_intervals': {'required': True},
+        "repeating_time_intervals": {"required": True},
     }
 
     _attribute_map = {
-        'repeating_time_intervals': {'key': 'repeatingTimeIntervals', 'type': '[str]'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        "repeating_time_intervals": {"key": "repeatingTimeIntervals", "type": "[str]"},
+        "time_zone": {"key": "timeZone", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        repeating_time_intervals: List[str],
-        time_zone: Optional[str] = None,
-        **kwargs
-    ):
-        super(BackupSchedule, self).__init__(**kwargs)
+    def __init__(self, *, repeating_time_intervals: List[str], time_zone: Optional[str] = None, **kwargs):
+        """
+        :keyword repeating_time_intervals: ISO 8601 repeating time interval format. Required.
+        :paramtype repeating_time_intervals: list[str]
+        :keyword time_zone: Time zone for a schedule. Example: Pacific Standard Time.
+        :paramtype time_zone: str
+        """
+        super().__init__(**kwargs)
         self.repeating_time_intervals = repeating_time_intervals
         self.time_zone = time_zone
 
 
-class BackupVault(msrest.serialization.Model):
+class BackupVault(_serialization.Model):
     """Backup Vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provisioning_state: Provisioning state of the BackupVault resource. Possible values
-     include: "Failed", "Provisioning", "Succeeded", "Unknown", "Updating".
+    :ivar monitoring_settings: Monitoring Settings.
+    :vartype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
+    :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
+     "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.dataprotection.models.ProvisioningState
-    :ivar resource_move_state: Resource move state for backup vault. Possible values include:
-     "Unknown", "InProgress", "PrepareFailed", "CommitFailed", "Failed", "PrepareTimedout",
-     "CommitTimedout", "CriticalFailure", "PartialSuccess", "MoveSucceeded".
+    :ivar resource_move_state: Resource move state for backup vault. Known values are: "Unknown",
+     "InProgress", "PrepareFailed", "CommitFailed", "Failed", "PrepareTimedout", "CommitTimedout",
+     "CriticalFailure", "PartialSuccess", and "MoveSucceeded".
     :vartype resource_move_state: str or ~azure.mgmt.dataprotection.models.ResourceMoveState
     :ivar resource_move_details: Resource move details for backup vault.
     :vartype resource_move_details: ~azure.mgmt.dataprotection.models.ResourceMoveDetails
-    :param storage_settings: Required. Storage Settings.
-    :type storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
+    :ivar security_settings: Security Settings.
+    :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
+    :ivar storage_settings: Storage Settings. Required.
+    :vartype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
+    :ivar is_vault_protected_by_resource_guard: Is vault protected by resource guard.
+    :vartype is_vault_protected_by_resource_guard: bool
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'resource_move_state': {'readonly': True},
-        'resource_move_details': {'readonly': True},
-        'storage_settings': {'required': True},
+        "provisioning_state": {"readonly": True},
+        "resource_move_state": {"readonly": True},
+        "resource_move_details": {"readonly": True},
+        "storage_settings": {"required": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'resource_move_state': {'key': 'resourceMoveState', 'type': 'str'},
-        'resource_move_details': {'key': 'resourceMoveDetails', 'type': 'ResourceMoveDetails'},
-        'storage_settings': {'key': 'storageSettings', 'type': '[StorageSetting]'},
+        "monitoring_settings": {"key": "monitoringSettings", "type": "MonitoringSettings"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "resource_move_state": {"key": "resourceMoveState", "type": "str"},
+        "resource_move_details": {"key": "resourceMoveDetails", "type": "ResourceMoveDetails"},
+        "security_settings": {"key": "securitySettings", "type": "SecuritySettings"},
+        "storage_settings": {"key": "storageSettings", "type": "[StorageSetting]"},
+        "is_vault_protected_by_resource_guard": {"key": "isVaultProtectedByResourceGuard", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        storage_settings: List["StorageSetting"],
+        storage_settings: List["_models.StorageSetting"],
+        monitoring_settings: Optional["_models.MonitoringSettings"] = None,
+        security_settings: Optional["_models.SecuritySettings"] = None,
+        is_vault_protected_by_resource_guard: Optional[bool] = None,
         **kwargs
     ):
-        super(BackupVault, self).__init__(**kwargs)
+        """
+        :keyword monitoring_settings: Monitoring Settings.
+        :paramtype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
+        :keyword security_settings: Security Settings.
+        :paramtype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
+        :keyword storage_settings: Storage Settings. Required.
+        :paramtype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
+        :keyword is_vault_protected_by_resource_guard: Is vault protected by resource guard.
+        :paramtype is_vault_protected_by_resource_guard: bool
+        """
+        super().__init__(**kwargs)
+        self.monitoring_settings = monitoring_settings
         self.provisioning_state = None
         self.resource_move_state = None
         self.resource_move_details = None
+        self.security_settings = security_settings
         self.storage_settings = storage_settings
+        self.is_vault_protected_by_resource_guard = is_vault_protected_by_resource_guard
 
 
-class DppTrackedResource(msrest.serialization.Model):
+class DppTrackedResource(_serialization.Model):
     """DppTrackedResource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :ivar e_tag: Optional ETag.
+    :vartype e_tag: str
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
-    :param identity: Input Managed Identity Details.
-    :type identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
-    :param location: Resource location.
-    :type location: str
+    :ivar identity: Input Managed Identity Details.
+    :vartype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar name: Resource name associated with the resource.
     :vartype name: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
@@ -1847,33 +2211,43 @@ class DppTrackedResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'DppIdentityDetails'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "DppIdentityDetails"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
         self,
         *,
         e_tag: Optional[str] = None,
-        identity: Optional["DppIdentityDetails"] = None,
+        identity: Optional["_models.DppIdentityDetails"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(DppTrackedResource, self).__init__(**kwargs)
+        """
+        :keyword e_tag: Optional ETag.
+        :paramtype e_tag: str
+        :keyword identity: Input Managed Identity Details.
+        :paramtype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.e_tag = e_tag
         self.id = None
         self.identity = identity
@@ -1891,84 +2265,99 @@ class BackupVaultResource(DppTrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :ivar e_tag: Optional ETag.
+    :vartype e_tag: str
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
-    :param identity: Input Managed Identity Details.
-    :type identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
-    :param location: Resource location.
-    :type location: str
+    :ivar identity: Input Managed Identity Details.
+    :vartype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar name: Resource name associated with the resource.
     :vartype name: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
-    :param properties: Required. BackupVaultResource properties.
-    :type properties: ~azure.mgmt.dataprotection.models.BackupVault
+    :ivar properties: BackupVaultResource properties. Required.
+    :vartype properties: ~azure.mgmt.dataprotection.models.BackupVault
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'DppIdentityDetails'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'BackupVault'},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "DppIdentityDetails"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "BackupVault"},
     }
 
     def __init__(
         self,
         *,
-        properties: "BackupVault",
+        properties: "_models.BackupVault",
         e_tag: Optional[str] = None,
-        identity: Optional["DppIdentityDetails"] = None,
+        identity: Optional["_models.DppIdentityDetails"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(BackupVaultResource, self).__init__(e_tag=e_tag, identity=identity, location=location, tags=tags, **kwargs)
+        """
+        :keyword e_tag: Optional ETag.
+        :paramtype e_tag: str
+        :keyword identity: Input Managed Identity Details.
+        :paramtype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: BackupVaultResource properties. Required.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.BackupVault
+        """
+        super().__init__(e_tag=e_tag, identity=identity, location=location, tags=tags, **kwargs)
         self.properties = properties
 
 
 class BackupVaultResourceList(DppResourceList):
     """List of BackupVault resources.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
-    :param value: List of resources.
-    :type value: list[~azure.mgmt.dataprotection.models.BackupVaultResource]
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.BackupVaultResource]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BackupVaultResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BackupVaultResource]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["BackupVaultResource"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.BackupVaultResource"]] = None, **kwargs
     ):
-        super(BackupVaultResourceList, self).__init__(next_link=next_link, **kwargs)
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.BackupVaultResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
@@ -1986,102 +2375,108 @@ class BaseBackupPolicyResource(DppResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
-    :param properties: BaseBackupPolicyResource properties.
-    :type properties: ~azure.mgmt.dataprotection.models.BaseBackupPolicy
+    :ivar properties: BaseBackupPolicyResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.BaseBackupPolicy
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'BaseBackupPolicy'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "BaseBackupPolicy"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["BaseBackupPolicy"] = None,
-        **kwargs
-    ):
-        super(BaseBackupPolicyResource, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.BaseBackupPolicy"] = None, **kwargs):
+        """
+        :keyword properties: BaseBackupPolicyResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.BaseBackupPolicy
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
 class BaseBackupPolicyResourceList(DppResourceList):
     """List of BaseBackupPolicy resources.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
-    :param value: List of resources.
-    :type value: list[~azure.mgmt.dataprotection.models.BaseBackupPolicyResource]
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.BaseBackupPolicyResource]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BaseBackupPolicyResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BaseBackupPolicyResource]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["BaseBackupPolicyResource"]] = None,
+        value: Optional[List["_models.BaseBackupPolicyResource"]] = None,
         **kwargs
     ):
-        super(BaseBackupPolicyResourceList, self).__init__(next_link=next_link, **kwargs)
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.BaseBackupPolicyResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
-class CheckNameAvailabilityRequest(msrest.serialization.Model):
+class CheckNameAvailabilityRequest(_serialization.Model):
     """CheckNameAvailability Request.
 
-    :param name: Resource name for which availability needs to be checked.
-    :type name: str
-    :param type: Describes the Resource type: Microsoft.DataProtection/BackupVaults.
-    :type type: str
+    :ivar name: Resource name for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: Describes the Resource type: Microsoft.DataProtection/BackupVaults.
+    :vartype type: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Resource name for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: Describes the Resource type: Microsoft.DataProtection/BackupVaults.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CheckNameAvailabilityResult(msrest.serialization.Model):
+class CheckNameAvailabilityResult(_serialization.Model):
     """CheckNameAvailability Result.
 
-    :param message: Gets or sets the message.
-    :type message: str
-    :param name_available: Gets or sets a value indicating whether [name available].
-    :type name_available: bool
-    :param reason: Gets or sets the reason.
-    :type reason: str
+    :ivar message: Gets or sets the message.
+    :vartype message: str
+    :ivar name_available: Gets or sets a value indicating whether [name available].
+    :vartype name_available: bool
+    :ivar reason: Gets or sets the reason.
+    :vartype reason: str
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
     }
 
     def __init__(
@@ -2092,30 +2487,38 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         reason: Optional[str] = None,
         **kwargs
     ):
-        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+        """
+        :keyword message: Gets or sets the message.
+        :paramtype message: str
+        :keyword name_available: Gets or sets a value indicating whether [name available].
+        :paramtype name_available: bool
+        :keyword reason: Gets or sets the reason.
+        :paramtype reason: str
+        """
+        super().__init__(**kwargs)
         self.message = message
         self.name_available = name_available
         self.reason = reason
 
 
-class ClientDiscoveryDisplay(msrest.serialization.Model):
+class ClientDiscoveryDisplay(_serialization.Model):
     """Localized display information of an operation.
 
-    :param description: Description of the operation having details of what operation is about.
-    :type description: str
-    :param operation: Operations Name itself.
-    :type operation: str
-    :param provider: Name of the provider for display purposes.
-    :type provider: str
-    :param resource: ResourceType for which this Operation can be performed.
-    :type resource: str
+    :ivar description: Description of the operation having details of what operation is about.
+    :vartype description: str
+    :ivar operation: Operations Name itself.
+    :vartype operation: str
+    :ivar provider: Name of the provider for display purposes.
+    :vartype provider: str
+    :ivar resource: ResourceType for which this Operation can be performed.
+    :vartype resource: str
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
     }
 
     def __init__(
@@ -2127,28 +2530,38 @@ class ClientDiscoveryDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         **kwargs
     ):
-        super(ClientDiscoveryDisplay, self).__init__(**kwargs)
+        """
+        :keyword description: Description of the operation having details of what operation is about.
+        :paramtype description: str
+        :keyword operation: Operations Name itself.
+        :paramtype operation: str
+        :keyword provider: Name of the provider for display purposes.
+        :paramtype provider: str
+        :keyword resource: ResourceType for which this Operation can be performed.
+        :paramtype resource: str
+        """
+        super().__init__(**kwargs)
         self.description = description
         self.operation = operation
         self.provider = provider
         self.resource = resource
 
 
-class ClientDiscoveryForLogSpecification(msrest.serialization.Model):
+class ClientDiscoveryForLogSpecification(_serialization.Model):
     """Class to represent shoebox log specification in json client discovery.
 
-    :param blob_duration: blob duration of shoebox log specification.
-    :type blob_duration: str
-    :param display_name: Localized display name.
-    :type display_name: str
-    :param name: Name for shoebox log specification.
-    :type name: str
+    :ivar blob_duration: blob duration of shoebox log specification.
+    :vartype blob_duration: str
+    :ivar display_name: Localized display name.
+    :vartype display_name: str
+    :ivar name: Name for shoebox log specification.
+    :vartype name: str
     """
 
     _attribute_map = {
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
@@ -2159,117 +2572,148 @@ class ClientDiscoveryForLogSpecification(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
-        super(ClientDiscoveryForLogSpecification, self).__init__(**kwargs)
+        """
+        :keyword blob_duration: blob duration of shoebox log specification.
+        :paramtype blob_duration: str
+        :keyword display_name: Localized display name.
+        :paramtype display_name: str
+        :keyword name: Name for shoebox log specification.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.blob_duration = blob_duration
         self.display_name = display_name
         self.name = name
 
 
-class ClientDiscoveryForProperties(msrest.serialization.Model):
+class ClientDiscoveryForProperties(_serialization.Model):
     """Class to represent shoebox properties in json client discovery.
 
-    :param service_specification: Operation properties.
-    :type service_specification:
+    :ivar service_specification: Operation properties.
+    :vartype service_specification:
      ~azure.mgmt.dataprotection.models.ClientDiscoveryForServiceSpecification
     """
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ClientDiscoveryForServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ClientDiscoveryForServiceSpecification"},
     }
 
     def __init__(
-        self,
-        *,
-        service_specification: Optional["ClientDiscoveryForServiceSpecification"] = None,
-        **kwargs
+        self, *, service_specification: Optional["_models.ClientDiscoveryForServiceSpecification"] = None, **kwargs
     ):
-        super(ClientDiscoveryForProperties, self).__init__(**kwargs)
+        """
+        :keyword service_specification: Operation properties.
+        :paramtype service_specification:
+         ~azure.mgmt.dataprotection.models.ClientDiscoveryForServiceSpecification
+        """
+        super().__init__(**kwargs)
         self.service_specification = service_specification
 
 
-class ClientDiscoveryForServiceSpecification(msrest.serialization.Model):
+class ClientDiscoveryForServiceSpecification(_serialization.Model):
     """Class to represent shoebox service specification in json client discovery.
 
-    :param log_specifications: List of log specifications of this operation.
-    :type log_specifications:
+    :ivar log_specifications: List of log specifications of this operation.
+    :vartype log_specifications:
      list[~azure.mgmt.dataprotection.models.ClientDiscoveryForLogSpecification]
     """
 
     _attribute_map = {
-        'log_specifications': {'key': 'logSpecifications', 'type': '[ClientDiscoveryForLogSpecification]'},
+        "log_specifications": {"key": "logSpecifications", "type": "[ClientDiscoveryForLogSpecification]"},
     }
 
     def __init__(
-        self,
-        *,
-        log_specifications: Optional[List["ClientDiscoveryForLogSpecification"]] = None,
-        **kwargs
+        self, *, log_specifications: Optional[List["_models.ClientDiscoveryForLogSpecification"]] = None, **kwargs
     ):
-        super(ClientDiscoveryForServiceSpecification, self).__init__(**kwargs)
+        """
+        :keyword log_specifications: List of log specifications of this operation.
+        :paramtype log_specifications:
+         list[~azure.mgmt.dataprotection.models.ClientDiscoveryForLogSpecification]
+        """
+        super().__init__(**kwargs)
         self.log_specifications = log_specifications
 
 
-class ClientDiscoveryResponse(msrest.serialization.Model):
+class ClientDiscoveryResponse(_serialization.Model):
     """Operations List response which contains list of available APIs.
 
-    :param next_link: Link to the next chunk of Response.
-    :type next_link: str
-    :param value: List of available operations.
-    :type value: list[~azure.mgmt.dataprotection.models.ClientDiscoveryValueForSingleApi]
+    :ivar next_link: Link to the next chunk of Response.
+    :vartype next_link: str
+    :ivar value: List of available operations.
+    :vartype value: list[~azure.mgmt.dataprotection.models.ClientDiscoveryValueForSingleApi]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ClientDiscoveryValueForSingleApi]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ClientDiscoveryValueForSingleApi]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["ClientDiscoveryValueForSingleApi"]] = None,
+        value: Optional[List["_models.ClientDiscoveryValueForSingleApi"]] = None,
         **kwargs
     ):
-        super(ClientDiscoveryResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link to the next chunk of Response.
+        :paramtype next_link: str
+        :keyword value: List of available operations.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.ClientDiscoveryValueForSingleApi]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class ClientDiscoveryValueForSingleApi(msrest.serialization.Model):
+class ClientDiscoveryValueForSingleApi(_serialization.Model):
     """Available operation details.
 
-    :param display: Contains the localized display information for this particular operation.
-    :type display: ~azure.mgmt.dataprotection.models.ClientDiscoveryDisplay
-    :param name: Name of the Operation.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param origin: The intended executor of the operation;governs the display of the operation in
+    :ivar display: Contains the localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.dataprotection.models.ClientDiscoveryDisplay
+    :ivar name: Name of the Operation.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar origin: The intended executor of the operation;governs the display of the operation in
      the RBAC UX and the audit logs UX.
-    :type origin: str
-    :param properties: Properties for the given operation.
-    :type properties: ~azure.mgmt.dataprotection.models.ClientDiscoveryForProperties
+    :vartype origin: str
+    :ivar properties: Properties for the given operation.
+    :vartype properties: ~azure.mgmt.dataprotection.models.ClientDiscoveryForProperties
     """
 
     _attribute_map = {
-        'display': {'key': 'display', 'type': 'ClientDiscoveryDisplay'},
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ClientDiscoveryForProperties'},
+        "display": {"key": "display", "type": "ClientDiscoveryDisplay"},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "ClientDiscoveryForProperties"},
     }
 
     def __init__(
         self,
         *,
-        display: Optional["ClientDiscoveryDisplay"] = None,
+        display: Optional["_models.ClientDiscoveryDisplay"] = None,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
         origin: Optional[str] = None,
-        properties: Optional["ClientDiscoveryForProperties"] = None,
+        properties: Optional["_models.ClientDiscoveryForProperties"] = None,
         **kwargs
     ):
-        super(ClientDiscoveryValueForSingleApi, self).__init__(**kwargs)
+        """
+        :keyword display: Contains the localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.dataprotection.models.ClientDiscoveryDisplay
+        :keyword name: Name of the Operation.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword origin: The intended executor of the operation;governs the display of the operation in
+         the RBAC UX and the audit logs UX.
+        :paramtype origin: str
+        :keyword properties: Properties for the given operation.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.ClientDiscoveryForProperties
+        """
+        super().__init__(**kwargs)
         self.display = display
         self.name = name
         self.is_data_action = is_data_action
@@ -2277,36 +2721,37 @@ class ClientDiscoveryValueForSingleApi(msrest.serialization.Model):
         self.properties = properties
 
 
-class CopyOption(msrest.serialization.Model):
+class CopyOption(_serialization.Model):
     """Options to copy.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CopyOnExpiryOption, CustomCopyOption, ImmediateCopyOption.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CopyOnExpiryOption, CustomCopyOption, ImmediateCopyOption
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'CopyOnExpiryOption': 'CopyOnExpiryOption', 'CustomCopyOption': 'CustomCopyOption', 'ImmediateCopyOption': 'ImmediateCopyOption'}
+        "object_type": {
+            "CopyOnExpiryOption": "CopyOnExpiryOption",
+            "CustomCopyOption": "CustomCopyOption",
+            "ImmediateCopyOption": "ImmediateCopyOption",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CopyOption, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -2315,25 +2760,22 @@ class CopyOnExpiryOption(CopyOption):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CopyOnExpiryOption, self).__init__(**kwargs)
-        self.object_type = 'CopyOnExpiryOption'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.object_type = "CopyOnExpiryOption"  # type: str
 
 
 class CustomCopyOption(CopyOption):
@@ -2341,67 +2783,65 @@ class CustomCopyOption(CopyOption):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param duration: Data copied after given timespan.
-    :type duration: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar duration: Data copied after given timespan.
+    :vartype duration: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "duration": {"key": "duration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        duration: Optional[str] = None,
-        **kwargs
-    ):
-        super(CustomCopyOption, self).__init__(**kwargs)
-        self.object_type = 'CustomCopyOption'  # type: str
+    def __init__(self, *, duration: Optional[str] = None, **kwargs):
+        """
+        :keyword duration: Data copied after given timespan.
+        :paramtype duration: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "CustomCopyOption"  # type: str
         self.duration = duration
 
 
-class Datasource(msrest.serialization.Model):
+class Datasource(_serialization.Model):
     """Datasource to be backed up.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param datasource_type: DatasourceType of the resource.
-    :type datasource_type: str
-    :param object_type: Type of Datasource object, used to initialize the right inherited type.
-    :type object_type: str
-    :param resource_id: Required. Full ARM ID of the resource. For azure resources, this is ARM ID.
-     For non azure resources, this will be the ID created by backup service via Fabric/Vault.
-    :type resource_id: str
-    :param resource_location: Location of datasource.
-    :type resource_location: str
-    :param resource_name: Unique identifier of the resource in the context of parent.
-    :type resource_name: str
-    :param resource_type: Resource Type of Datasource.
-    :type resource_type: str
-    :param resource_uri: Uri of the resource.
-    :type resource_uri: str
+    :ivar datasource_type: DatasourceType of the resource.
+    :vartype datasource_type: str
+    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+    :vartype object_type: str
+    :ivar resource_id: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
+     azure resources, this will be the ID created by backup service via Fabric/Vault. Required.
+    :vartype resource_id: str
+    :ivar resource_location: Location of datasource.
+    :vartype resource_location: str
+    :ivar resource_name: Unique identifier of the resource in the context of parent.
+    :vartype resource_name: str
+    :ivar resource_type: Resource Type of Datasource.
+    :vartype resource_type: str
+    :ivar resource_uri: Uri of the resource.
+    :vartype resource_uri: str
     """
 
     _validation = {
-        'resource_id': {'required': True},
+        "resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'datasource_type': {'key': 'datasourceType', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'resource_id': {'key': 'resourceID', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        "datasource_type": {"key": "datasourceType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "resource_id": {"key": "resourceID", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_uri": {"key": "resourceUri", "type": "str"},
     }
 
     def __init__(
@@ -2416,7 +2856,24 @@ class Datasource(msrest.serialization.Model):
         resource_uri: Optional[str] = None,
         **kwargs
     ):
-        super(Datasource, self).__init__(**kwargs)
+        """
+        :keyword datasource_type: DatasourceType of the resource.
+        :paramtype datasource_type: str
+        :keyword object_type: Type of Datasource object, used to initialize the right inherited type.
+        :paramtype object_type: str
+        :keyword resource_id: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
+         azure resources, this will be the ID created by backup service via Fabric/Vault. Required.
+        :paramtype resource_id: str
+        :keyword resource_location: Location of datasource.
+        :paramtype resource_location: str
+        :keyword resource_name: Unique identifier of the resource in the context of parent.
+        :paramtype resource_name: str
+        :keyword resource_type: Resource Type of Datasource.
+        :paramtype resource_type: str
+        :keyword resource_uri: Uri of the resource.
+        :paramtype resource_uri: str
+        """
+        super().__init__(**kwargs)
         self.datasource_type = datasource_type
         self.object_type = object_type
         self.resource_id = resource_id
@@ -2426,40 +2883,40 @@ class Datasource(msrest.serialization.Model):
         self.resource_uri = resource_uri
 
 
-class DatasourceSet(msrest.serialization.Model):
+class DatasourceSet(_serialization.Model):
     """DatasourceSet details of datasource to be backed up.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param datasource_type: DatasourceType of the resource.
-    :type datasource_type: str
-    :param object_type: Type of Datasource object, used to initialize the right inherited type.
-    :type object_type: str
-    :param resource_id: Required. Full ARM ID of the resource. For azure resources, this is ARM ID.
-     For non azure resources, this will be the ID created by backup service via Fabric/Vault.
-    :type resource_id: str
-    :param resource_location: Location of datasource.
-    :type resource_location: str
-    :param resource_name: Unique identifier of the resource in the context of parent.
-    :type resource_name: str
-    :param resource_type: Resource Type of Datasource.
-    :type resource_type: str
-    :param resource_uri: Uri of the resource.
-    :type resource_uri: str
+    :ivar datasource_type: DatasourceType of the resource.
+    :vartype datasource_type: str
+    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+    :vartype object_type: str
+    :ivar resource_id: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
+     azure resources, this will be the ID created by backup service via Fabric/Vault. Required.
+    :vartype resource_id: str
+    :ivar resource_location: Location of datasource.
+    :vartype resource_location: str
+    :ivar resource_name: Unique identifier of the resource in the context of parent.
+    :vartype resource_name: str
+    :ivar resource_type: Resource Type of Datasource.
+    :vartype resource_type: str
+    :ivar resource_uri: Uri of the resource.
+    :vartype resource_uri: str
     """
 
     _validation = {
-        'resource_id': {'required': True},
+        "resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'datasource_type': {'key': 'datasourceType', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'resource_id': {'key': 'resourceID', 'type': 'str'},
-        'resource_location': {'key': 'resourceLocation', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'resource_uri': {'key': 'resourceUri', 'type': 'str'},
+        "datasource_type": {"key": "datasourceType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "resource_id": {"key": "resourceID", "type": "str"},
+        "resource_location": {"key": "resourceLocation", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_uri": {"key": "resourceUri", "type": "str"},
     }
 
     def __init__(
@@ -2474,7 +2931,24 @@ class DatasourceSet(msrest.serialization.Model):
         resource_uri: Optional[str] = None,
         **kwargs
     ):
-        super(DatasourceSet, self).__init__(**kwargs)
+        """
+        :keyword datasource_type: DatasourceType of the resource.
+        :paramtype datasource_type: str
+        :keyword object_type: Type of Datasource object, used to initialize the right inherited type.
+        :paramtype object_type: str
+        :keyword resource_id: Full ARM ID of the resource. For azure resources, this is ARM ID. For non
+         azure resources, this will be the ID created by backup service via Fabric/Vault. Required.
+        :paramtype resource_id: str
+        :keyword resource_location: Location of datasource.
+        :paramtype resource_location: str
+        :keyword resource_name: Unique identifier of the resource in the context of parent.
+        :paramtype resource_name: str
+        :keyword resource_type: Resource Type of Datasource.
+        :paramtype resource_type: str
+        :keyword resource_uri: Uri of the resource.
+        :paramtype resource_uri: str
+        """
+        super().__init__(**kwargs)
         self.datasource_type = datasource_type
         self.object_type = object_type
         self.resource_id = resource_id
@@ -2484,68 +2958,295 @@ class DatasourceSet(msrest.serialization.Model):
         self.resource_uri = resource_uri
 
 
-class DataStoreInfoBase(msrest.serialization.Model):
+class DataStoreInfoBase(_serialization.Model):
     """DataStoreInfo base.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_store_type: Required. type of datastore; Operational/Vault/Archive. Possible values
-     include: "OperationalStore", "VaultStore", "ArchiveStore".
-    :type data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
-    :param object_type: Required. Type of Datasource object, used to initialize the right inherited
-     type.
-    :type object_type: str
+    :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
+     are: "OperationalStore", "VaultStore", and "ArchiveStore".
+    :vartype data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
+    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+     Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'data_store_type': {'required': True},
-        'object_type': {'required': True},
+        "data_store_type": {"required": True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_store_type': {'key': 'dataStoreType', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "data_store_type": {"key": "dataStoreType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        data_store_type: Union[str, "DataStoreTypes"],
-        object_type: str,
-        **kwargs
-    ):
-        super(DataStoreInfoBase, self).__init__(**kwargs)
+    def __init__(self, *, data_store_type: Union[str, "_models.DataStoreTypes"], object_type: str, **kwargs):
+        """
+        :keyword data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
+         are: "OperationalStore", "VaultStore", and "ArchiveStore".
+        :paramtype data_store_type: str or ~azure.mgmt.dataprotection.models.DataStoreTypes
+        :keyword object_type: Type of Datasource object, used to initialize the right inherited type.
+         Required.
+        :paramtype object_type: str
+        """
+        super().__init__(**kwargs)
         self.data_store_type = data_store_type
         self.object_type = object_type
 
 
-class Day(msrest.serialization.Model):
+class Day(_serialization.Model):
     """Day of the week.
 
-    :param date: Date of the month.
-    :type date: int
-    :param is_last: Whether Date is last date of month.
-    :type is_last: bool
+    :ivar date: Date of the month.
+    :vartype date: int
+    :ivar is_last: Whether Date is last date of month.
+    :vartype is_last: bool
     """
 
     _attribute_map = {
-        'date': {'key': 'date', 'type': 'int'},
-        'is_last': {'key': 'isLast', 'type': 'bool'},
+        "date": {"key": "date", "type": "int"},
+        "is_last": {"key": "isLast", "type": "bool"},
+    }
+
+    def __init__(self, *, date: Optional[int] = None, is_last: Optional[bool] = None, **kwargs):
+        """
+        :keyword date: Date of the month.
+        :paramtype date: int
+        :keyword is_last: Whether Date is last date of month.
+        :paramtype is_last: bool
+        """
+        super().__init__(**kwargs)
+        self.date = date
+        self.is_last = is_last
+
+
+class DeletedBackupInstance(BackupInstance):  # pylint: disable=too-many-instance-attributes
+    """Deleted Backup Instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar friendly_name: Gets or sets the Backup Instance friendly name.
+    :vartype friendly_name: str
+    :ivar data_source_info: Gets or sets the data source information. Required.
+    :vartype data_source_info: ~azure.mgmt.dataprotection.models.Datasource
+    :ivar data_source_set_info: Gets or sets the data source set information.
+    :vartype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+    :ivar policy_info: Gets or sets the policy information. Required.
+    :vartype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+    :ivar protection_status: Specifies the protection status of the resource.
+    :vartype protection_status: ~azure.mgmt.dataprotection.models.ProtectionStatusDetails
+    :ivar current_protection_state: Specifies the current protection state of the resource. Known
+     values are: "Invalid", "NotProtected", "ConfiguringProtection", "ProtectionConfigured",
+     "BackupSchedulesSuspended", "RetentionSchedulesSuspended", "ProtectionStopped",
+     "ProtectionError", "ConfiguringProtectionFailed", "SoftDeleting", "SoftDeleted", and
+     "UpdatingProtection".
+    :vartype current_protection_state: str or
+     ~azure.mgmt.dataprotection.models.CurrentProtectionState
+    :ivar protection_error_details: Specifies the protection error of the resource.
+    :vartype protection_error_details: ~azure.mgmt.dataprotection.models.UserFacingError
+    :ivar provisioning_state: Specifies the provisioning state of the resource i.e.
+     provisioning/updating/Succeeded/Failed.
+    :vartype provisioning_state: str
+    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
+     provider.
+    :vartype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+    :ivar validation_type: Specifies the type of validation. In case of DeepValidation, all
+     validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
+     and "DeepValidation".
+    :vartype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar deletion_info: Deletion info of Backup Instance.
+    :vartype deletion_info: ~azure.mgmt.dataprotection.models.DeletionInfo
+    """
+
+    _validation = {
+        "data_source_info": {"required": True},
+        "policy_info": {"required": True},
+        "protection_status": {"readonly": True},
+        "current_protection_state": {"readonly": True},
+        "protection_error_details": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "object_type": {"required": True},
+        "deletion_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "data_source_info": {"key": "dataSourceInfo", "type": "Datasource"},
+        "data_source_set_info": {"key": "dataSourceSetInfo", "type": "DatasourceSet"},
+        "policy_info": {"key": "policyInfo", "type": "PolicyInfo"},
+        "protection_status": {"key": "protectionStatus", "type": "ProtectionStatusDetails"},
+        "current_protection_state": {"key": "currentProtectionState", "type": "str"},
+        "protection_error_details": {"key": "protectionErrorDetails", "type": "UserFacingError"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "datasource_auth_credentials": {"key": "datasourceAuthCredentials", "type": "AuthCredentials"},
+        "validation_type": {"key": "validationType", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
+        "deletion_info": {"key": "deletionInfo", "type": "DeletionInfo"},
     }
 
     def __init__(
         self,
         *,
-        date: Optional[int] = None,
-        is_last: Optional[bool] = None,
+        data_source_info: "_models.Datasource",
+        policy_info: "_models.PolicyInfo",
+        object_type: str,
+        friendly_name: Optional[str] = None,
+        data_source_set_info: Optional["_models.DatasourceSet"] = None,
+        datasource_auth_credentials: Optional["_models.AuthCredentials"] = None,
+        validation_type: Optional[Union[str, "_models.ValidationType"]] = None,
         **kwargs
     ):
-        super(Day, self).__init__(**kwargs)
-        self.date = date
-        self.is_last = is_last
+        """
+        :keyword friendly_name: Gets or sets the Backup Instance friendly name.
+        :paramtype friendly_name: str
+        :keyword data_source_info: Gets or sets the data source information. Required.
+        :paramtype data_source_info: ~azure.mgmt.dataprotection.models.Datasource
+        :keyword data_source_set_info: Gets or sets the data source set information.
+        :paramtype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+        :keyword policy_info: Gets or sets the policy information. Required.
+        :paramtype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+        :keyword datasource_auth_credentials: Credentials to use to authenticate with data source
+         provider.
+        :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+        :keyword validation_type: Specifies the type of validation. In case of DeepValidation, all
+         validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
+         and "DeepValidation".
+        :paramtype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
+        :keyword object_type: Required.
+        :paramtype object_type: str
+        """
+        super().__init__(
+            friendly_name=friendly_name,
+            data_source_info=data_source_info,
+            data_source_set_info=data_source_set_info,
+            policy_info=policy_info,
+            datasource_auth_credentials=datasource_auth_credentials,
+            validation_type=validation_type,
+            object_type=object_type,
+            **kwargs
+        )
+        self.deletion_info = None
 
 
-class DppBaseResource(msrest.serialization.Model):
+class DeletedBackupInstanceResource(DppResource):
+    """Deleted Backup Instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    :ivar properties: DeletedBackupInstanceResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.DeletedBackupInstance
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "DeletedBackupInstance"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.DeletedBackupInstance"] = None, **kwargs):
+        """
+        :keyword properties: DeletedBackupInstanceResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.DeletedBackupInstance
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class DeletedBackupInstanceResourceList(DppResourceList):
+    """List of DeletedBackupInstance resources.
+
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.DeletedBackupInstanceResource]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DeletedBackupInstanceResource]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.DeletedBackupInstanceResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.DeletedBackupInstanceResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
+        self.value = value
+
+
+class DeletionInfo(_serialization.Model):
+    """Deletion Info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar deletion_time: Specifies time of deletion.
+    :vartype deletion_time: str
+    :ivar billing_end_date: Specifies billing end date.
+    :vartype billing_end_date: str
+    :ivar scheduled_purge_time: Specifies purge time.
+    :vartype scheduled_purge_time: str
+    :ivar delete_activity_id: Delete activity ID for troubleshooting purpose.
+    :vartype delete_activity_id: str
+    """
+
+    _validation = {
+        "deletion_time": {"readonly": True},
+        "billing_end_date": {"readonly": True},
+        "scheduled_purge_time": {"readonly": True},
+        "delete_activity_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "deletion_time": {"key": "deletionTime", "type": "str"},
+        "billing_end_date": {"key": "billingEndDate", "type": "str"},
+        "scheduled_purge_time": {"key": "scheduledPurgeTime", "type": "str"},
+        "delete_activity_id": {"key": "deleteActivityID", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.deletion_time = None
+        self.billing_end_date = None
+        self.scheduled_purge_time = None
+        self.delete_activity_id = None
+
+
+class DppBaseResource(_serialization.Model):
     """Base resource under Microsoft.DataProtection provider namespace.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2560,55 +3261,56 @@ class DppBaseResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DppBaseResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class DppBaseResourceList(msrest.serialization.Model):
+class DppBaseResourceList(_serialization.Model):
     """Base for all lists of V2 resources.
 
-    :param value: List of Dpp resources.
-    :type value: list[~azure.mgmt.dataprotection.models.DppBaseResource]
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
+    :ivar value: List of Dpp resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.DppBaseResource]
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DppBaseResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DppBaseResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["DppBaseResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.DppBaseResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(DppBaseResourceList, self).__init__(**kwargs)
+        """
+        :keyword value: List of Dpp resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.DppBaseResource]
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class DppIdentityDetails(msrest.serialization.Model):
+class DppIdentityDetails(_serialization.Model):
     """Identity details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2619,56 +3321,55 @@ class DppIdentityDetails(msrest.serialization.Model):
     :ivar tenant_id: A Globally Unique Identifier (GUID) that represents the Azure AD tenant where
      the resource is now a member.
     :vartype tenant_id: str
-    :param type: The identityType which can be either SystemAssigned or None.
-    :type type: str
+    :ivar type: The identityType which can be either SystemAssigned or None.
+    :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(DppIdentityDetails, self).__init__(**kwargs)
+    def __init__(self, *, type: Optional[str] = None, **kwargs):
+        """
+        :keyword type: The identityType which can be either SystemAssigned or None.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class DppTrackedResourceList(msrest.serialization.Model):
+class DppTrackedResourceList(_serialization.Model):
     """DppTrackedResourceList.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(DppTrackedResourceList, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """The resource management error response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2686,26 +3387,24 @@ class Error(msrest.serialization.Model):
     """
 
     _validation = {
-        'additional_info': {'readonly': True},
-        'code': {'readonly': True},
-        'details': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
+        "additional_info": {"readonly": True},
+        "code": {"readonly": True},
+        "details": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
     }
 
     _attribute_map = {
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
-        'code': {'key': 'code', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[Error]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[Error]"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Error, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.additional_info = None
         self.code = None
         self.details = None
@@ -2713,37 +3412,35 @@ class Error(msrest.serialization.Model):
         self.target = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     :ivar type: The additional info type.
     :vartype type: str
     """
 
     _validation = {
-        'info': {'readonly': True},
-        'type': {'readonly': True},
+        "info": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'info': {'key': 'info', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
+        "info": {"key": "info", "type": "object"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.info = None
         self.type = None
 
 
-class ExportJobsResult(msrest.serialization.Model):
+class ExportJobsResult(_serialization.Model):
     """The result for export jobs containing blob details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2759,60 +3456,53 @@ class ExportJobsResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'blob_url': {'readonly': True},
-        'blob_sas_key': {'readonly': True},
-        'excel_file_blob_url': {'readonly': True},
-        'excel_file_blob_sas_key': {'readonly': True},
+        "blob_url": {"readonly": True},
+        "blob_sas_key": {"readonly": True},
+        "excel_file_blob_url": {"readonly": True},
+        "excel_file_blob_sas_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'blob_url': {'key': 'blobUrl', 'type': 'str'},
-        'blob_sas_key': {'key': 'blobSasKey', 'type': 'str'},
-        'excel_file_blob_url': {'key': 'excelFileBlobUrl', 'type': 'str'},
-        'excel_file_blob_sas_key': {'key': 'excelFileBlobSasKey', 'type': 'str'},
+        "blob_url": {"key": "blobUrl", "type": "str"},
+        "blob_sas_key": {"key": "blobSasKey", "type": "str"},
+        "excel_file_blob_url": {"key": "excelFileBlobUrl", "type": "str"},
+        "excel_file_blob_sas_key": {"key": "excelFileBlobSasKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ExportJobsResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.blob_url = None
         self.blob_sas_key = None
         self.excel_file_blob_url = None
         self.excel_file_blob_sas_key = None
 
 
-class FeatureValidationRequestBase(msrest.serialization.Model):
+class FeatureValidationRequestBase(_serialization.Model):
     """Base class for Backup Feature support.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: FeatureValidationRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FeatureValidationRequest
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'FeatureValidationRequest': 'FeatureValidationRequest'}
-    }
+    _subtype_map = {"object_type": {"FeatureValidationRequest": "FeatureValidationRequest"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FeatureValidationRequestBase, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -2821,69 +3511,70 @@ class FeatureValidationRequest(FeatureValidationRequestBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param feature_type: backup support feature type. Possible values include: "Invalid",
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar feature_type: backup support feature type. Known values are: "Invalid" and
      "DataSourceType".
-    :type feature_type: str or ~azure.mgmt.dataprotection.models.FeatureType
-    :param feature_name: backup support feature name.
-    :type feature_name: str
+    :vartype feature_type: str or ~azure.mgmt.dataprotection.models.FeatureType
+    :ivar feature_name: backup support feature name.
+    :vartype feature_name: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
-        'feature_name': {'key': 'featureName', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "feature_type": {"key": "featureType", "type": "str"},
+        "feature_name": {"key": "featureName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        feature_type: Optional[Union[str, "FeatureType"]] = None,
+        feature_type: Optional[Union[str, "_models.FeatureType"]] = None,
         feature_name: Optional[str] = None,
         **kwargs
     ):
-        super(FeatureValidationRequest, self).__init__(**kwargs)
-        self.object_type = 'FeatureValidationRequest'  # type: str
+        """
+        :keyword feature_type: backup support feature type. Known values are: "Invalid" and
+         "DataSourceType".
+        :paramtype feature_type: str or ~azure.mgmt.dataprotection.models.FeatureType
+        :keyword feature_name: backup support feature name.
+        :paramtype feature_name: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "FeatureValidationRequest"  # type: str
         self.feature_type = feature_type
         self.feature_name = feature_name
 
 
-class FeatureValidationResponseBase(msrest.serialization.Model):
+class FeatureValidationResponseBase(_serialization.Model):
     """Base class for Backup Feature support.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: FeatureValidationResponse.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FeatureValidationResponse
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'FeatureValidationResponse': 'FeatureValidationResponse'}
-    }
+    _subtype_map = {"object_type": {"FeatureValidationResponse": "FeatureValidationResponse"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(FeatureValidationResponseBase, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -2892,35 +3583,41 @@ class FeatureValidationResponse(FeatureValidationResponseBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param feature_type: backup support feature type. Possible values include: "Invalid",
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar feature_type: backup support feature type. Known values are: "Invalid" and
      "DataSourceType".
-    :type feature_type: str or ~azure.mgmt.dataprotection.models.FeatureType
-    :param features: Response features.
-    :type features: list[~azure.mgmt.dataprotection.models.SupportedFeature]
+    :vartype feature_type: str or ~azure.mgmt.dataprotection.models.FeatureType
+    :ivar features: Response features.
+    :vartype features: list[~azure.mgmt.dataprotection.models.SupportedFeature]
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'feature_type': {'key': 'featureType', 'type': 'str'},
-        'features': {'key': 'features', 'type': '[SupportedFeature]'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "feature_type": {"key": "featureType", "type": "str"},
+        "features": {"key": "features", "type": "[SupportedFeature]"},
     }
 
     def __init__(
         self,
         *,
-        feature_type: Optional[Union[str, "FeatureType"]] = None,
-        features: Optional[List["SupportedFeature"]] = None,
+        feature_type: Optional[Union[str, "_models.FeatureType"]] = None,
+        features: Optional[List["_models.SupportedFeature"]] = None,
         **kwargs
     ):
-        super(FeatureValidationResponse, self).__init__(**kwargs)
-        self.object_type = 'FeatureValidationResponse'  # type: str
+        """
+        :keyword feature_type: backup support feature type. Known values are: "Invalid" and
+         "DataSourceType".
+        :paramtype feature_type: str or ~azure.mgmt.dataprotection.models.FeatureType
+        :keyword features: Response features.
+        :paramtype features: list[~azure.mgmt.dataprotection.models.SupportedFeature]
+        """
+        super().__init__(**kwargs)
+        self.object_type = "FeatureValidationResponse"  # type: str
         self.feature_type = feature_type
         self.features = features
 
@@ -2930,43 +3627,60 @@ class ImmediateCopyOption(CopyOption):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ImmediateCopyOption, self).__init__(**kwargs)
-        self.object_type = 'ImmediateCopyOption'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.object_type = "ImmediateCopyOption"  # type: str
 
 
-class InnerError(msrest.serialization.Model):
-    """Inner Error.
+class ImmutabilitySettings(_serialization.Model):
+    """Immutability Settings at vault level.
 
-    :param additional_info: Any Key value pairs that can be provided to the client for additional
-     verbose information.
-    :type additional_info: dict[str, str]
-    :param code: Unique code for this error.
-    :type code: str
-    :param embedded_inner_error: Child Inner Error, to allow Nesting.
-    :type embedded_inner_error: ~azure.mgmt.dataprotection.models.InnerError
+    :ivar state: Immutability state. Known values are: "Disabled", "Unlocked", and "Locked".
+    :vartype state: str or ~azure.mgmt.dataprotection.models.ImmutabilityState
     """
 
     _attribute_map = {
-        'additional_info': {'key': 'additionalInfo', 'type': '{str}'},
-        'code': {'key': 'code', 'type': 'str'},
-        'embedded_inner_error': {'key': 'embeddedInnerError', 'type': 'InnerError'},
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(self, *, state: Optional[Union[str, "_models.ImmutabilityState"]] = None, **kwargs):
+        """
+        :keyword state: Immutability state. Known values are: "Disabled", "Unlocked", and "Locked".
+        :paramtype state: str or ~azure.mgmt.dataprotection.models.ImmutabilityState
+        """
+        super().__init__(**kwargs)
+        self.state = state
+
+
+class InnerError(_serialization.Model):
+    """Inner Error.
+
+    :ivar additional_info: Any Key value pairs that can be provided to the client for additional
+     verbose information.
+    :vartype additional_info: dict[str, str]
+    :ivar code: Unique code for this error.
+    :vartype code: str
+    :ivar embedded_inner_error: Child Inner Error, to allow Nesting.
+    :vartype embedded_inner_error: ~azure.mgmt.dataprotection.models.InnerError
+    """
+
+    _attribute_map = {
+        "additional_info": {"key": "additionalInfo", "type": "{str}"},
+        "code": {"key": "code", "type": "str"},
+        "embedded_inner_error": {"key": "embeddedInnerError", "type": "InnerError"},
     }
 
     def __init__(
@@ -2974,88 +3688,105 @@ class InnerError(msrest.serialization.Model):
         *,
         additional_info: Optional[Dict[str, str]] = None,
         code: Optional[str] = None,
-        embedded_inner_error: Optional["InnerError"] = None,
+        embedded_inner_error: Optional["_models.InnerError"] = None,
         **kwargs
     ):
-        super(InnerError, self).__init__(**kwargs)
+        """
+        :keyword additional_info: Any Key value pairs that can be provided to the client for additional
+         verbose information.
+        :paramtype additional_info: dict[str, str]
+        :keyword code: Unique code for this error.
+        :paramtype code: str
+        :keyword embedded_inner_error: Child Inner Error, to allow Nesting.
+        :paramtype embedded_inner_error: ~azure.mgmt.dataprotection.models.InnerError
+        """
+        super().__init__(**kwargs)
         self.additional_info = additional_info
         self.code = code
         self.embedded_inner_error = embedded_inner_error
 
 
-class ItemLevelRestoreCriteria(msrest.serialization.Model):
+class ItemLevelRestoreCriteria(_serialization.Model):
     """Class to contain criteria for item level restore.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RangeBasedItemLevelRestoreCriteria.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    KubernetesPVRestoreCriteria, KubernetesStorageClassRestoreCriteria,
+    RangeBasedItemLevelRestoreCriteria
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'RangeBasedItemLevelRestoreCriteria': 'RangeBasedItemLevelRestoreCriteria'}
+        "object_type": {
+            "KubernetesPVRestoreCriteria": "KubernetesPVRestoreCriteria",
+            "KubernetesStorageClassRestoreCriteria": "KubernetesStorageClassRestoreCriteria",
+            "RangeBasedItemLevelRestoreCriteria": "RangeBasedItemLevelRestoreCriteria",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ItemLevelRestoreCriteria, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
-class RestoreTargetInfoBase(msrest.serialization.Model):
+class RestoreTargetInfoBase(_serialization.Model):
     """Base class common to RestoreTargetInfo and RestoreFilesTargetInfo.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ItemLevelRestoreTargetInfo, RestoreFilesTargetInfo, RestoreTargetInfo.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ItemLevelRestoreTargetInfo, RestoreFilesTargetInfo, RestoreTargetInfo
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of Datasource object, used to initialize the right inherited
-     type.Constant filled by server.
-    :type object_type: str
-    :param recovery_option: Required. Recovery Option. Possible values include: "FailIfExists".
-    :type recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
-    :param restore_location: Target Restore region.
-    :type restore_location: str
+    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+     Required.
+    :vartype object_type: str
+    :ivar recovery_option: Recovery Option. Required. "FailIfExists"
+    :vartype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+    :ivar restore_location: Target Restore region.
+    :vartype restore_location: str
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_option': {'required': True},
+        "object_type": {"required": True},
+        "recovery_option": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_option': {'key': 'recoveryOption', 'type': 'str'},
-        'restore_location': {'key': 'restoreLocation', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_option": {"key": "recoveryOption", "type": "str"},
+        "restore_location": {"key": "restoreLocation", "type": "str"},
     }
 
     _subtype_map = {
-        'object_type': {'ItemLevelRestoreTargetInfo': 'ItemLevelRestoreTargetInfo', 'RestoreFilesTargetInfo': 'RestoreFilesTargetInfo', 'RestoreTargetInfo': 'RestoreTargetInfo'}
+        "object_type": {
+            "ItemLevelRestoreTargetInfo": "ItemLevelRestoreTargetInfo",
+            "RestoreFilesTargetInfo": "RestoreFilesTargetInfo",
+            "RestoreTargetInfo": "RestoreTargetInfo",
+        }
     }
 
     def __init__(
-        self,
-        *,
-        recovery_option: Union[str, "RecoveryOption"],
-        restore_location: Optional[str] = None,
-        **kwargs
+        self, *, recovery_option: Union[str, "_models.RecoveryOption"], restore_location: Optional[str] = None, **kwargs
     ):
-        super(RestoreTargetInfoBase, self).__init__(**kwargs)
+        """
+        :keyword recovery_option: Recovery Option. Required. "FailIfExists"
+        :paramtype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+        :keyword restore_location: Target Restore region.
+        :paramtype restore_location: str
+        """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
         self.recovery_option = recovery_option
         self.restore_location = restore_location
@@ -3066,67 +3797,82 @@ class ItemLevelRestoreTargetInfo(RestoreTargetInfoBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of Datasource object, used to initialize the right inherited
-     type.Constant filled by server.
-    :type object_type: str
-    :param recovery_option: Required. Recovery Option. Possible values include: "FailIfExists".
-    :type recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
-    :param restore_location: Target Restore region.
-    :type restore_location: str
-    :param restore_criteria: Required. Restore Criteria.
-    :type restore_criteria: list[~azure.mgmt.dataprotection.models.ItemLevelRestoreCriteria]
-    :param datasource_info: Required. Information of target DS.
-    :type datasource_info: ~azure.mgmt.dataprotection.models.Datasource
-    :param datasource_set_info: Information of target DS Set.
-    :type datasource_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
-    :param datasource_auth_credentials: Credentials to use to authenticate with data source
+    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+     Required.
+    :vartype object_type: str
+    :ivar recovery_option: Recovery Option. Required. "FailIfExists"
+    :vartype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+    :ivar restore_location: Target Restore region.
+    :vartype restore_location: str
+    :ivar restore_criteria: Restore Criteria. Required.
+    :vartype restore_criteria: list[~azure.mgmt.dataprotection.models.ItemLevelRestoreCriteria]
+    :ivar datasource_info: Information of target DS. Required.
+    :vartype datasource_info: ~azure.mgmt.dataprotection.models.Datasource
+    :ivar datasource_set_info: Information of target DS Set.
+    :vartype datasource_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
      provider.
-    :type datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+    :vartype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_option': {'required': True},
-        'restore_criteria': {'required': True},
-        'datasource_info': {'required': True},
+        "object_type": {"required": True},
+        "recovery_option": {"required": True},
+        "restore_criteria": {"required": True},
+        "datasource_info": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_option': {'key': 'recoveryOption', 'type': 'str'},
-        'restore_location': {'key': 'restoreLocation', 'type': 'str'},
-        'restore_criteria': {'key': 'restoreCriteria', 'type': '[ItemLevelRestoreCriteria]'},
-        'datasource_info': {'key': 'datasourceInfo', 'type': 'Datasource'},
-        'datasource_set_info': {'key': 'datasourceSetInfo', 'type': 'DatasourceSet'},
-        'datasource_auth_credentials': {'key': 'datasourceAuthCredentials', 'type': 'AuthCredentials'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_option": {"key": "recoveryOption", "type": "str"},
+        "restore_location": {"key": "restoreLocation", "type": "str"},
+        "restore_criteria": {"key": "restoreCriteria", "type": "[ItemLevelRestoreCriteria]"},
+        "datasource_info": {"key": "datasourceInfo", "type": "Datasource"},
+        "datasource_set_info": {"key": "datasourceSetInfo", "type": "DatasourceSet"},
+        "datasource_auth_credentials": {"key": "datasourceAuthCredentials", "type": "AuthCredentials"},
     }
 
     def __init__(
         self,
         *,
-        recovery_option: Union[str, "RecoveryOption"],
-        restore_criteria: List["ItemLevelRestoreCriteria"],
-        datasource_info: "Datasource",
+        recovery_option: Union[str, "_models.RecoveryOption"],
+        restore_criteria: List["_models.ItemLevelRestoreCriteria"],
+        datasource_info: "_models.Datasource",
         restore_location: Optional[str] = None,
-        datasource_set_info: Optional["DatasourceSet"] = None,
-        datasource_auth_credentials: Optional["AuthCredentials"] = None,
+        datasource_set_info: Optional["_models.DatasourceSet"] = None,
+        datasource_auth_credentials: Optional["_models.AuthCredentials"] = None,
         **kwargs
     ):
-        super(ItemLevelRestoreTargetInfo, self).__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
-        self.object_type = 'ItemLevelRestoreTargetInfo'  # type: str
+        """
+        :keyword recovery_option: Recovery Option. Required. "FailIfExists"
+        :paramtype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+        :keyword restore_location: Target Restore region.
+        :paramtype restore_location: str
+        :keyword restore_criteria: Restore Criteria. Required.
+        :paramtype restore_criteria: list[~azure.mgmt.dataprotection.models.ItemLevelRestoreCriteria]
+        :keyword datasource_info: Information of target DS. Required.
+        :paramtype datasource_info: ~azure.mgmt.dataprotection.models.Datasource
+        :keyword datasource_set_info: Information of target DS Set.
+        :paramtype datasource_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+        :keyword datasource_auth_credentials: Credentials to use to authenticate with data source
+         provider.
+        :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+        """
+        super().__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
+        self.object_type = "ItemLevelRestoreTargetInfo"  # type: str
         self.restore_criteria = restore_criteria
         self.datasource_info = datasource_info
         self.datasource_set_info = datasource_set_info
         self.datasource_auth_credentials = datasource_auth_credentials
 
 
-class JobExtendedInfo(msrest.serialization.Model):
+class JobExtendedInfo(_serialization.Model):
     """Extended Information about the job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param additional_details: Job's Additional Details.
-    :type additional_details: dict[str, str]
+    :ivar additional_details: Job's Additional Details.
+    :vartype additional_details: dict[str, str]
     :ivar backup_instance_state: State of the Backup Instance.
     :vartype backup_instance_state: str
     :ivar data_transferred_in_bytes: Number of bytes transferred.
@@ -3142,31 +3888,30 @@ class JobExtendedInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'backup_instance_state': {'readonly': True},
-        'data_transferred_in_bytes': {'readonly': True},
-        'recovery_destination': {'readonly': True},
-        'source_recover_point': {'readonly': True},
-        'sub_tasks': {'readonly': True},
-        'target_recover_point': {'readonly': True},
+        "backup_instance_state": {"readonly": True},
+        "data_transferred_in_bytes": {"readonly": True},
+        "recovery_destination": {"readonly": True},
+        "source_recover_point": {"readonly": True},
+        "sub_tasks": {"readonly": True},
+        "target_recover_point": {"readonly": True},
     }
 
     _attribute_map = {
-        'additional_details': {'key': 'additionalDetails', 'type': '{str}'},
-        'backup_instance_state': {'key': 'backupInstanceState', 'type': 'str'},
-        'data_transferred_in_bytes': {'key': 'dataTransferredInBytes', 'type': 'float'},
-        'recovery_destination': {'key': 'recoveryDestination', 'type': 'str'},
-        'source_recover_point': {'key': 'sourceRecoverPoint', 'type': 'RestoreJobRecoveryPointDetails'},
-        'sub_tasks': {'key': 'subTasks', 'type': '[JobSubTask]'},
-        'target_recover_point': {'key': 'targetRecoverPoint', 'type': 'RestoreJobRecoveryPointDetails'},
+        "additional_details": {"key": "additionalDetails", "type": "{str}"},
+        "backup_instance_state": {"key": "backupInstanceState", "type": "str"},
+        "data_transferred_in_bytes": {"key": "dataTransferredInBytes", "type": "float"},
+        "recovery_destination": {"key": "recoveryDestination", "type": "str"},
+        "source_recover_point": {"key": "sourceRecoverPoint", "type": "RestoreJobRecoveryPointDetails"},
+        "sub_tasks": {"key": "subTasks", "type": "[JobSubTask]"},
+        "target_recover_point": {"key": "targetRecoverPoint", "type": "RestoreJobRecoveryPointDetails"},
     }
 
-    def __init__(
-        self,
-        *,
-        additional_details: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(JobExtendedInfo, self).__init__(**kwargs)
+    def __init__(self, *, additional_details: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword additional_details: Job's Additional Details.
+        :paramtype additional_details: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.additional_details = additional_details
         self.backup_instance_state = None
         self.data_transferred_in_bytes = None
@@ -3176,38 +3921,38 @@ class JobExtendedInfo(msrest.serialization.Model):
         self.target_recover_point = None
 
 
-class JobSubTask(msrest.serialization.Model):
+class JobSubTask(_serialization.Model):
     """Details of Job's Sub Task.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_details: Additional details of Sub Tasks.
-    :type additional_details: dict[str, str]
-    :param task_id: Required. Task Id of the Sub Task.
-    :type task_id: int
-    :param task_name: Required. Name of the Sub Task.
-    :type task_name: str
+    :ivar additional_details: Additional details of Sub Tasks.
+    :vartype additional_details: dict[str, str]
+    :ivar task_id: Task Id of the Sub Task. Required.
+    :vartype task_id: int
+    :ivar task_name: Name of the Sub Task. Required.
+    :vartype task_name: str
     :ivar task_progress: Progress of the Sub Task.
     :vartype task_progress: str
-    :param task_status: Required. Status of the Sub Task.
-    :type task_status: str
+    :ivar task_status: Status of the Sub Task. Required.
+    :vartype task_status: str
     """
 
     _validation = {
-        'task_id': {'required': True},
-        'task_name': {'required': True},
-        'task_progress': {'readonly': True},
-        'task_status': {'required': True},
+        "task_id": {"required": True},
+        "task_name": {"required": True},
+        "task_progress": {"readonly": True},
+        "task_status": {"required": True},
     }
 
     _attribute_map = {
-        'additional_details': {'key': 'additionalDetails', 'type': '{str}'},
-        'task_id': {'key': 'taskId', 'type': 'int'},
-        'task_name': {'key': 'taskName', 'type': 'str'},
-        'task_progress': {'key': 'taskProgress', 'type': 'str'},
-        'task_status': {'key': 'taskStatus', 'type': 'str'},
+        "additional_details": {"key": "additionalDetails", "type": "{str}"},
+        "task_id": {"key": "taskId", "type": "int"},
+        "task_name": {"key": "taskName", "type": "str"},
+        "task_progress": {"key": "taskProgress", "type": "str"},
+        "task_status": {"key": "taskStatus", "type": "str"},
     }
 
     def __init__(
@@ -3219,7 +3964,17 @@ class JobSubTask(msrest.serialization.Model):
         additional_details: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(JobSubTask, self).__init__(**kwargs)
+        """
+        :keyword additional_details: Additional details of Sub Tasks.
+        :paramtype additional_details: dict[str, str]
+        :keyword task_id: Task Id of the Sub Task. Required.
+        :paramtype task_id: int
+        :keyword task_name: Name of the Sub Task. Required.
+        :paramtype task_name: str
+        :keyword task_status: Status of the Sub Task. Required.
+        :paramtype task_status: str
+        """
+        super().__init__(**kwargs)
         self.additional_details = additional_details
         self.task_id = task_id
         self.task_name = task_name
@@ -3227,36 +3982,128 @@ class JobSubTask(msrest.serialization.Model):
         self.task_status = task_status
 
 
-class OperationExtendedInfo(msrest.serialization.Model):
-    """Operation Extended Info.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: OperationJobExtendedInfo.
+class KubernetesPVRestoreCriteria(ItemLevelRestoreCriteria):
+    """Item Level kubernetes persistent volume target info for restore operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
-    :type object_type: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar name: Selected persistent volume claim name.
+    :vartype name: str
+    :ivar storage_class_name: Selected storage class name for restore operation.
+    :vartype storage_class_name: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "storage_class_name": {"key": "storageClassName", "type": "str"},
     }
 
-    _subtype_map = {
-        'object_type': {'OperationJobExtendedInfo': 'OperationJobExtendedInfo'}
+    def __init__(self, *, name: Optional[str] = None, storage_class_name: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Selected persistent volume claim name.
+        :paramtype name: str
+        :keyword storage_class_name: Selected storage class name for restore operation.
+        :paramtype storage_class_name: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "KubernetesPVRestoreCriteria"  # type: str
+        self.name = name
+        self.storage_class_name = storage_class_name
+
+
+class KubernetesStorageClassRestoreCriteria(ItemLevelRestoreCriteria):
+    """Item Level kubernetes storage class target info for restore operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar selected_storage_class_name: Selected storage class name.
+    :vartype selected_storage_class_name: str
+    :ivar provisioner: Provisioner of the storage class.
+    :vartype provisioner: str
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+        "selected_storage_class_name": {"key": "selectedStorageClassName", "type": "str"},
+        "provisioner": {"key": "provisioner", "type": "str"},
     }
 
     def __init__(
-        self,
-        **kwargs
+        self, *, selected_storage_class_name: Optional[str] = None, provisioner: Optional[str] = None, **kwargs
     ):
-        super(OperationExtendedInfo, self).__init__(**kwargs)
+        """
+        :keyword selected_storage_class_name: Selected storage class name.
+        :paramtype selected_storage_class_name: str
+        :keyword provisioner: Provisioner of the storage class.
+        :paramtype provisioner: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "KubernetesStorageClassRestoreCriteria"  # type: str
+        self.selected_storage_class_name = selected_storage_class_name
+        self.provisioner = provisioner
+
+
+class MonitoringSettings(_serialization.Model):
+    """Monitoring Settings.
+
+    :ivar azure_monitor_alert_settings: Settings for Azure Monitor based alerts.
+    :vartype azure_monitor_alert_settings:
+     ~azure.mgmt.dataprotection.models.AzureMonitorAlertSettings
+    """
+
+    _attribute_map = {
+        "azure_monitor_alert_settings": {"key": "azureMonitorAlertSettings", "type": "AzureMonitorAlertSettings"},
+    }
+
+    def __init__(self, *, azure_monitor_alert_settings: Optional["_models.AzureMonitorAlertSettings"] = None, **kwargs):
+        """
+        :keyword azure_monitor_alert_settings: Settings for Azure Monitor based alerts.
+        :paramtype azure_monitor_alert_settings:
+         ~azure.mgmt.dataprotection.models.AzureMonitorAlertSettings
+        """
+        super().__init__(**kwargs)
+        self.azure_monitor_alert_settings = azure_monitor_alert_settings
+
+
+class OperationExtendedInfo(_serialization.Model):
+    """Operation Extended Info.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OperationJobExtendedInfo
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    """
+
+    _validation = {
+        "object_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "object_type": {"key": "objectType", "type": "str"},
+    }
+
+    _subtype_map = {"object_type": {"OperationJobExtendedInfo": "OperationJobExtendedInfo"}}
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.object_type = None  # type: Optional[str]
 
 
@@ -3265,79 +4112,98 @@ class OperationJobExtendedInfo(OperationExtendedInfo):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. This property will be used as the discriminator for deciding the
-     specific types in the polymorphic chain of types.Constant filled by server.
-    :type object_type: str
-    :param job_id: Arm Id of the job created for this operation.
-    :type job_id: str
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required.
+    :vartype object_type: str
+    :ivar job_id: Arm Id of the job created for this operation.
+    :vartype job_id: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        job_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationJobExtendedInfo, self).__init__(**kwargs)
-        self.object_type = 'OperationJobExtendedInfo'  # type: str
+    def __init__(self, *, job_id: Optional[str] = None, **kwargs):
+        """
+        :keyword job_id: Arm Id of the job created for this operation.
+        :paramtype job_id: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "OperationJobExtendedInfo"  # type: str
         self.job_id = job_id
 
 
-class OperationResource(msrest.serialization.Model):
+class OperationResource(_serialization.Model):
     """Operation Resource.
 
-    :param end_time: End time of the operation.
-    :type end_time: ~datetime.datetime
-    :param error: Required if status == failed or status == canceled. This is the OData v4 error
+    :ivar end_time: End time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar error: Required if status == failed or status == canceled. This is the OData v4 error
      format, used by the RPC and will go into the v2.2 Azure REST API guidelines.
      The full set of optional properties (e.g. inner errors / details) can be found in the "Error
      Response" section.
-    :type error: ~azure.mgmt.dataprotection.models.Error
-    :param id: It should match what is used to GET the operation result.
-    :type id: str
-    :param name: It must match the last segment of the "id" field, and will typically be a GUID /
+    :vartype error: ~azure.mgmt.dataprotection.models.Error
+    :ivar id: It should match what is used to GET the operation result.
+    :vartype id: str
+    :ivar name: It must match the last segment of the "id" field, and will typically be a GUID /
      system generated value.
-    :type name: str
-    :param properties: End time of the operation.
-    :type properties: ~azure.mgmt.dataprotection.models.OperationExtendedInfo
-    :param start_time: Start time of the operation.
-    :type start_time: ~datetime.datetime
-    :param status:
-    :type status: str
+    :vartype name: str
+    :ivar properties: End time of the operation.
+    :vartype properties: ~azure.mgmt.dataprotection.models.OperationExtendedInfo
+    :ivar start_time: Start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar status:
+    :vartype status: str
     """
 
     _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'Error'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OperationExtendedInfo'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "Error"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "OperationExtendedInfo"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         end_time: Optional[datetime.datetime] = None,
-        error: Optional["Error"] = None,
-        id: Optional[str] = None,
+        error: Optional["_models.Error"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
-        properties: Optional["OperationExtendedInfo"] = None,
+        properties: Optional["_models.OperationExtendedInfo"] = None,
         start_time: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
         **kwargs
     ):
-        super(OperationResource, self).__init__(**kwargs)
+        """
+        :keyword end_time: End time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword error: Required if status == failed or status == canceled. This is the OData v4 error
+         format, used by the RPC and will go into the v2.2 Azure REST API guidelines.
+         The full set of optional properties (e.g. inner errors / details) can be found in the "Error
+         Response" section.
+        :paramtype error: ~azure.mgmt.dataprotection.models.Error
+        :keyword id: It should match what is used to GET the operation result.
+        :paramtype id: str
+        :keyword name: It must match the last segment of the "id" field, and will typically be a GUID /
+         system generated value.
+        :paramtype name: str
+        :keyword properties: End time of the operation.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.OperationExtendedInfo
+        :keyword start_time: Start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword status:
+        :paramtype status: str
+        """
+        super().__init__(**kwargs)
         self.end_time = end_time
         self.error = error
         self.id = id
@@ -3347,116 +4213,170 @@ class OperationResource(msrest.serialization.Model):
         self.status = status
 
 
-class PatchResourceRequestInput(msrest.serialization.Model):
-    """Patch Request content for Microsoft.DataProtection resources.
+class PatchBackupVaultInput(_serialization.Model):
+    """Backup Vault Contract for Patch Backup Vault API.
 
-    :param identity: Input Managed Identity Details.
-    :type identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar monitoring_settings: Monitoring Settings.
+    :vartype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
+    :ivar security_settings: Security Settings.
+    :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'DppIdentityDetails'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "monitoring_settings": {"key": "monitoringSettings", "type": "MonitoringSettings"},
+        "security_settings": {"key": "securitySettings", "type": "SecuritySettings"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["DppIdentityDetails"] = None,
+        monitoring_settings: Optional["_models.MonitoringSettings"] = None,
+        security_settings: Optional["_models.SecuritySettings"] = None,
+        **kwargs
+    ):
+        """
+        :keyword monitoring_settings: Monitoring Settings.
+        :paramtype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
+        :keyword security_settings: Security Settings.
+        :paramtype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
+        """
+        super().__init__(**kwargs)
+        self.monitoring_settings = monitoring_settings
+        self.security_settings = security_settings
+
+
+class PatchResourceRequestInput(_serialization.Model):
+    """Patch Request content for Microsoft.DataProtection resources.
+
+    :ivar identity: Input Managed Identity Details.
+    :vartype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.PatchBackupVaultInput
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "identity": {"key": "identity", "type": "DppIdentityDetails"},
+        "properties": {"key": "properties", "type": "PatchBackupVaultInput"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.DppIdentityDetails"] = None,
+        properties: Optional["_models.PatchBackupVaultInput"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(PatchResourceRequestInput, self).__init__(**kwargs)
+        """
+        :keyword identity: Input Managed Identity Details.
+        :paramtype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+        :keyword properties: Resource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.PatchBackupVaultInput
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.identity = identity
+        self.properties = properties
         self.tags = tags
 
 
-class PolicyInfo(msrest.serialization.Model):
+class PolicyInfo(_serialization.Model):
     """Policy Info in backupInstance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param policy_id: Required.
-    :type policy_id: str
+    :ivar policy_id: Required.
+    :vartype policy_id: str
     :ivar policy_version:
     :vartype policy_version: str
-    :param policy_parameters: Policy parameters for the backup instance.
-    :type policy_parameters: ~azure.mgmt.dataprotection.models.PolicyParameters
+    :ivar policy_parameters: Policy parameters for the backup instance.
+    :vartype policy_parameters: ~azure.mgmt.dataprotection.models.PolicyParameters
     """
 
     _validation = {
-        'policy_id': {'required': True},
-        'policy_version': {'readonly': True},
+        "policy_id": {"required": True},
+        "policy_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'policy_version': {'key': 'policyVersion', 'type': 'str'},
-        'policy_parameters': {'key': 'policyParameters', 'type': 'PolicyParameters'},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "policy_version": {"key": "policyVersion", "type": "str"},
+        "policy_parameters": {"key": "policyParameters", "type": "PolicyParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        policy_id: str,
-        policy_parameters: Optional["PolicyParameters"] = None,
-        **kwargs
-    ):
-        super(PolicyInfo, self).__init__(**kwargs)
+    def __init__(self, *, policy_id: str, policy_parameters: Optional["_models.PolicyParameters"] = None, **kwargs):
+        """
+        :keyword policy_id: Required.
+        :paramtype policy_id: str
+        :keyword policy_parameters: Policy parameters for the backup instance.
+        :paramtype policy_parameters: ~azure.mgmt.dataprotection.models.PolicyParameters
+        """
+        super().__init__(**kwargs)
         self.policy_id = policy_id
         self.policy_version = None
         self.policy_parameters = policy_parameters
 
 
-class PolicyParameters(msrest.serialization.Model):
+class PolicyParameters(_serialization.Model):
     """Parameters in Policy.
 
-    :param data_store_parameters_list: Gets or sets the DataStore Parameters.
-    :type data_store_parameters_list: list[~azure.mgmt.dataprotection.models.DataStoreParameters]
+    :ivar data_store_parameters_list: Gets or sets the DataStore Parameters.
+    :vartype data_store_parameters_list:
+     list[~azure.mgmt.dataprotection.models.DataStoreParameters]
     """
 
     _attribute_map = {
-        'data_store_parameters_list': {'key': 'dataStoreParametersList', 'type': '[DataStoreParameters]'},
+        "data_store_parameters_list": {"key": "dataStoreParametersList", "type": "[DataStoreParameters]"},
     }
 
-    def __init__(
-        self,
-        *,
-        data_store_parameters_list: Optional[List["DataStoreParameters"]] = None,
-        **kwargs
-    ):
-        super(PolicyParameters, self).__init__(**kwargs)
+    def __init__(self, *, data_store_parameters_list: Optional[List["_models.DataStoreParameters"]] = None, **kwargs):
+        """
+        :keyword data_store_parameters_list: Gets or sets the DataStore Parameters.
+        :paramtype data_store_parameters_list:
+         list[~azure.mgmt.dataprotection.models.DataStoreParameters]
+        """
+        super().__init__(**kwargs)
         self.data_store_parameters_list = data_store_parameters_list
 
 
-class ProtectionStatusDetails(msrest.serialization.Model):
+class ProtectionStatusDetails(_serialization.Model):
     """Protection status details.
 
-    :param error_details: Specifies the protection status error of the resource.
-    :type error_details: ~azure.mgmt.dataprotection.models.UserFacingError
-    :param status: Specifies the protection status of the resource. Possible values include:
+    :ivar error_details: Specifies the protection status error of the resource.
+    :vartype error_details: ~azure.mgmt.dataprotection.models.UserFacingError
+    :ivar status: Specifies the protection status of the resource. Known values are:
      "ConfiguringProtection", "ConfiguringProtectionFailed", "ProtectionConfigured",
-     "ProtectionStopped", "SoftDeleted", "SoftDeleting".
-    :type status: str or ~azure.mgmt.dataprotection.models.Status
+     "ProtectionStopped", "SoftDeleted", and "SoftDeleting".
+    :vartype status: str or ~azure.mgmt.dataprotection.models.Status
     """
 
     _attribute_map = {
-        'error_details': {'key': 'errorDetails', 'type': 'UserFacingError'},
-        'status': {'key': 'status', 'type': 'str'},
+        "error_details": {"key": "errorDetails", "type": "UserFacingError"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        error_details: Optional["UserFacingError"] = None,
-        status: Optional[Union[str, "Status"]] = None,
+        error_details: Optional["_models.UserFacingError"] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
         **kwargs
     ):
-        super(ProtectionStatusDetails, self).__init__(**kwargs)
+        """
+        :keyword error_details: Specifies the protection status error of the resource.
+        :paramtype error_details: ~azure.mgmt.dataprotection.models.UserFacingError
+        :keyword status: Specifies the protection status of the resource. Known values are:
+         "ConfiguringProtection", "ConfiguringProtectionFailed", "ProtectionConfigured",
+         "ProtectionStopped", "SoftDeleted", and "SoftDeleting".
+        :paramtype status: str or ~azure.mgmt.dataprotection.models.Status
+        """
+        super().__init__(**kwargs)
         self.error_details = error_details
         self.status = status
 
@@ -3466,79 +4386,78 @@ class RangeBasedItemLevelRestoreCriteria(ItemLevelRestoreCriteria):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param min_matching_value: minimum value for range prefix match.
-    :type min_matching_value: str
-    :param max_matching_value: maximum value for range prefix match.
-    :type max_matching_value: str
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar min_matching_value: minimum value for range prefix match.
+    :vartype min_matching_value: str
+    :ivar max_matching_value: maximum value for range prefix match.
+    :vartype max_matching_value: str
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'min_matching_value': {'key': 'minMatchingValue', 'type': 'str'},
-        'max_matching_value': {'key': 'maxMatchingValue', 'type': 'str'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "min_matching_value": {"key": "minMatchingValue", "type": "str"},
+        "max_matching_value": {"key": "maxMatchingValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        min_matching_value: Optional[str] = None,
-        max_matching_value: Optional[str] = None,
-        **kwargs
-    ):
-        super(RangeBasedItemLevelRestoreCriteria, self).__init__(**kwargs)
-        self.object_type = 'RangeBasedItemLevelRestoreCriteria'  # type: str
+    def __init__(self, *, min_matching_value: Optional[str] = None, max_matching_value: Optional[str] = None, **kwargs):
+        """
+        :keyword min_matching_value: minimum value for range prefix match.
+        :paramtype min_matching_value: str
+        :keyword max_matching_value: maximum value for range prefix match.
+        :paramtype max_matching_value: str
+        """
+        super().__init__(**kwargs)
+        self.object_type = "RangeBasedItemLevelRestoreCriteria"  # type: str
         self.min_matching_value = min_matching_value
         self.max_matching_value = max_matching_value
 
 
-class RecoveryPointDataStoreDetails(msrest.serialization.Model):
+class RecoveryPointDataStoreDetails(_serialization.Model):
     """RecoveryPoint datastore details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param creation_time:
-    :type creation_time: ~datetime.datetime
-    :param expiry_time:
-    :type expiry_time: ~datetime.datetime
-    :param id:
-    :type id: str
-    :param meta_data:
-    :type meta_data: str
-    :param state:
-    :type state: str
-    :param type:
-    :type type: str
-    :param visible:
-    :type visible: bool
+    :ivar creation_time:
+    :vartype creation_time: ~datetime.datetime
+    :ivar expiry_time:
+    :vartype expiry_time: ~datetime.datetime
+    :ivar id:
+    :vartype id: str
+    :ivar meta_data:
+    :vartype meta_data: str
+    :ivar state:
+    :vartype state: str
+    :ivar type:
+    :vartype type: str
+    :ivar visible:
+    :vartype visible: bool
     :ivar rehydration_expiry_time:
     :vartype rehydration_expiry_time: ~datetime.datetime
-    :ivar rehydration_status:  Possible values include: "CREATE_IN_PROGRESS", "COMPLETED",
-     "DELETE_IN_PROGRESS", "DELETED", "FAILED".
+    :ivar rehydration_status: Known values are: "CREATE_IN_PROGRESS", "COMPLETED",
+     "DELETE_IN_PROGRESS", "DELETED", and "FAILED".
     :vartype rehydration_status: str or ~azure.mgmt.dataprotection.models.RehydrationStatus
     """
 
     _validation = {
-        'rehydration_expiry_time': {'readonly': True},
-        'rehydration_status': {'readonly': True},
+        "rehydration_expiry_time": {"readonly": True},
+        "rehydration_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'id': {'key': 'id', 'type': 'str'},
-        'meta_data': {'key': 'metaData', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'visible': {'key': 'visible', 'type': 'bool'},
-        'rehydration_expiry_time': {'key': 'rehydrationExpiryTime', 'type': 'iso-8601'},
-        'rehydration_status': {'key': 'rehydrationStatus', 'type': 'str'},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "expiry_time": {"key": "expiryTime", "type": "iso-8601"},
+        "id": {"key": "id", "type": "str"},
+        "meta_data": {"key": "metaData", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "visible": {"key": "visible", "type": "bool"},
+        "rehydration_expiry_time": {"key": "rehydrationExpiryTime", "type": "iso-8601"},
+        "rehydration_status": {"key": "rehydrationStatus", "type": "str"},
     }
 
     def __init__(
@@ -3546,14 +4465,30 @@ class RecoveryPointDataStoreDetails(msrest.serialization.Model):
         *,
         creation_time: Optional[datetime.datetime] = None,
         expiry_time: Optional[datetime.datetime] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         meta_data: Optional[str] = None,
         state: Optional[str] = None,
         type: Optional[str] = None,
         visible: Optional[bool] = None,
         **kwargs
     ):
-        super(RecoveryPointDataStoreDetails, self).__init__(**kwargs)
+        """
+        :keyword creation_time:
+        :paramtype creation_time: ~datetime.datetime
+        :keyword expiry_time:
+        :paramtype expiry_time: ~datetime.datetime
+        :keyword id:
+        :paramtype id: str
+        :keyword meta_data:
+        :paramtype meta_data: str
+        :keyword state:
+        :paramtype state: str
+        :keyword type:
+        :paramtype type: str
+        :keyword visible:
+        :paramtype visible: bool
+        """
+        super().__init__(**kwargs)
         self.creation_time = creation_time
         self.expiry_time = expiry_time
         self.id = id
@@ -3565,30 +4500,30 @@ class RecoveryPointDataStoreDetails(msrest.serialization.Model):
         self.rehydration_status = None
 
 
-class RecoveryPointsFilters(msrest.serialization.Model):
+class RecoveryPointsFilters(_serialization.Model):
     """RecoveryPointsFilters.
 
-    :param restore_point_data_store_id:
-    :type restore_point_data_store_id: str
-    :param is_visible:
-    :type is_visible: bool
-    :param start_date:
-    :type start_date: str
-    :param end_date:
-    :type end_date: str
-    :param extended_info:
-    :type extended_info: bool
-    :param restore_point_state:
-    :type restore_point_state: str
+    :ivar restore_point_data_store_id:
+    :vartype restore_point_data_store_id: str
+    :ivar is_visible:
+    :vartype is_visible: bool
+    :ivar start_date:
+    :vartype start_date: str
+    :ivar end_date:
+    :vartype end_date: str
+    :ivar extended_info:
+    :vartype extended_info: bool
+    :ivar restore_point_state:
+    :vartype restore_point_state: str
     """
 
     _attribute_map = {
-        'restore_point_data_store_id': {'key': 'restorePointDataStoreId', 'type': 'str'},
-        'is_visible': {'key': 'isVisible', 'type': 'bool'},
-        'start_date': {'key': 'startDate', 'type': 'str'},
-        'end_date': {'key': 'endDate', 'type': 'str'},
-        'extended_info': {'key': 'extendedInfo', 'type': 'bool'},
-        'restore_point_state': {'key': 'restorePointState', 'type': 'str'},
+        "restore_point_data_store_id": {"key": "restorePointDataStoreId", "type": "str"},
+        "is_visible": {"key": "isVisible", "type": "bool"},
+        "start_date": {"key": "startDate", "type": "str"},
+        "end_date": {"key": "endDate", "type": "str"},
+        "extended_info": {"key": "extendedInfo", "type": "bool"},
+        "restore_point_state": {"key": "restorePointState", "type": "str"},
     }
 
     def __init__(
@@ -3602,7 +4537,21 @@ class RecoveryPointsFilters(msrest.serialization.Model):
         restore_point_state: Optional[str] = None,
         **kwargs
     ):
-        super(RecoveryPointsFilters, self).__init__(**kwargs)
+        """
+        :keyword restore_point_data_store_id:
+        :paramtype restore_point_data_store_id: str
+        :keyword is_visible:
+        :paramtype is_visible: bool
+        :keyword start_date:
+        :paramtype start_date: str
+        :keyword end_date:
+        :paramtype end_date: str
+        :keyword extended_info:
+        :paramtype extended_info: bool
+        :keyword restore_point_state:
+        :paramtype restore_point_state: str
+        """
+        super().__init__(**kwargs)
         self.restore_point_data_store_id = restore_point_data_store_id
         self.is_visible = is_visible
         self.start_date = start_date
@@ -3611,14 +4560,15 @@ class RecoveryPointsFilters(msrest.serialization.Model):
         self.restore_point_state = restore_point_state
 
 
-class ResourceGuard(msrest.serialization.Model):
+class ResourceGuard(_serialization.Model):
     """ResourceGuard.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Provisioning state of the BackupVault resource. Possible values
-     include: "Failed", "Provisioning", "Succeeded", "Unknown", "Updating".
-    :vartype provisioning_state: str or ~azure.mgmt.dataprotection.models.ProvisioningState
+    :ivar provisioning_state: Provisioning state of the BackupVault resource. Known values are:
+     "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.dataprotection.models.ResourceGuardProvisioningState
     :ivar allow_auto_approvals: This flag indicates whether auto approval is allowed or not.
     :vartype allow_auto_approvals: bool
     :ivar resource_guard_operations: {readonly} List of operation details those are protected by
@@ -3633,34 +4583,35 @@ class ResourceGuard(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'allow_auto_approvals': {'readonly': True},
-        'resource_guard_operations': {'readonly': True},
-        'vault_critical_operation_exclusion_list': {'readonly': True},
-        'description': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "allow_auto_approvals": {"readonly": True},
+        "resource_guard_operations": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'allow_auto_approvals': {'key': 'allowAutoApprovals', 'type': 'bool'},
-        'resource_guard_operations': {'key': 'resourceGuardOperations', 'type': '[ResourceGuardOperation]'},
-        'vault_critical_operation_exclusion_list': {'key': 'vaultCriticalOperationExclusionList', 'type': '[str]'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "allow_auto_approvals": {"key": "allowAutoApprovals", "type": "bool"},
+        "resource_guard_operations": {"key": "resourceGuardOperations", "type": "[ResourceGuardOperation]"},
+        "vault_critical_operation_exclusion_list": {"key": "vaultCriticalOperationExclusionList", "type": "[str]"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ResourceGuard, self).__init__(**kwargs)
+    def __init__(self, *, vault_critical_operation_exclusion_list: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword vault_critical_operation_exclusion_list: List of critical operations which are not
+         protected by this resourceGuard.
+        :paramtype vault_critical_operation_exclusion_list: list[str]
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.allow_auto_approvals = None
         self.resource_guard_operations = None
-        self.vault_critical_operation_exclusion_list = None
+        self.vault_critical_operation_exclusion_list = vault_critical_operation_exclusion_list
         self.description = None
 
 
-class ResourceGuardOperation(msrest.serialization.Model):
+class ResourceGuardOperation(_serialization.Model):
     """This class contains all the details about a critical operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3672,22 +4623,178 @@ class ResourceGuardOperation(msrest.serialization.Model):
     """
 
     _validation = {
-        'vault_critical_operation': {'readonly': True},
-        'request_resource_type': {'readonly': True},
+        "vault_critical_operation": {"readonly": True},
+        "request_resource_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'vault_critical_operation': {'key': 'vaultCriticalOperation', 'type': 'str'},
-        'request_resource_type': {'key': 'requestResourceType', 'type': 'str'},
+        "vault_critical_operation": {"key": "vaultCriticalOperation", "type": "str"},
+        "request_resource_type": {"key": "requestResourceType", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.vault_critical_operation = None
+        self.request_resource_type = None
+
+
+class ResourceGuardOperationDetail(_serialization.Model):
+    """ResourceGuardOperationDetail.
+
+    :ivar vault_critical_operation:
+    :vartype vault_critical_operation: str
+    :ivar default_resource_request:
+    :vartype default_resource_request: str
+    """
+
+    _attribute_map = {
+        "vault_critical_operation": {"key": "vaultCriticalOperation", "type": "str"},
+        "default_resource_request": {"key": "defaultResourceRequest", "type": "str"},
     }
 
     def __init__(
         self,
+        *,
+        vault_critical_operation: Optional[str] = None,
+        default_resource_request: Optional[str] = None,
         **kwargs
     ):
-        super(ResourceGuardOperation, self).__init__(**kwargs)
-        self.vault_critical_operation = None
-        self.request_resource_type = None
+        """
+        :keyword vault_critical_operation:
+        :paramtype vault_critical_operation: str
+        :keyword default_resource_request:
+        :paramtype default_resource_request: str
+        """
+        super().__init__(**kwargs)
+        self.vault_critical_operation = vault_critical_operation
+        self.default_resource_request = default_resource_request
+
+
+class ResourceGuardProxyBase(_serialization.Model):
+    """ResourceGuardProxyBase.
+
+    :ivar resource_guard_resource_id:
+    :vartype resource_guard_resource_id: str
+    :ivar resource_guard_operation_details:
+    :vartype resource_guard_operation_details:
+     list[~azure.mgmt.dataprotection.models.ResourceGuardOperationDetail]
+    :ivar last_updated_time:
+    :vartype last_updated_time: str
+    :ivar description:
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        "resource_guard_resource_id": {"key": "resourceGuardResourceId", "type": "str"},
+        "resource_guard_operation_details": {
+            "key": "resourceGuardOperationDetails",
+            "type": "[ResourceGuardOperationDetail]",
+        },
+        "last_updated_time": {"key": "lastUpdatedTime", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_guard_resource_id: Optional[str] = None,
+        resource_guard_operation_details: Optional[List["_models.ResourceGuardOperationDetail"]] = None,
+        last_updated_time: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword resource_guard_resource_id:
+        :paramtype resource_guard_resource_id: str
+        :keyword resource_guard_operation_details:
+        :paramtype resource_guard_operation_details:
+         list[~azure.mgmt.dataprotection.models.ResourceGuardOperationDetail]
+        :keyword last_updated_time:
+        :paramtype last_updated_time: str
+        :keyword description:
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.resource_guard_resource_id = resource_guard_resource_id
+        self.resource_guard_operation_details = resource_guard_operation_details
+        self.last_updated_time = last_updated_time
+        self.description = description
+
+
+class ResourceGuardProxyBaseResource(DppResource):
+    """ResourceGuardProxyBaseResource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id represents the complete path to the resource.
+    :vartype id: str
+    :ivar name: Resource name associated with the resource.
+    :vartype name: str
+    :ivar type: Resource type represents the complete path of the form
+     Namespace/ResourceType/ResourceType/...
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    :ivar properties: ResourceGuardProxyBaseResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBase
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ResourceGuardProxyBase"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ResourceGuardProxyBase"] = None, **kwargs):
+        """
+        :keyword properties: ResourceGuardProxyBaseResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBase
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ResourceGuardProxyBaseResourceList(DppResourceList):
+    """List of ResourceGuardProxyBase resources.
+
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource]
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourceGuardProxyBaseResource]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[List["_models.ResourceGuardProxyBaseResource"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
+        self.value = value
 
 
 class ResourceGuardResource(DppTrackedResource):
@@ -3695,110 +4802,129 @@ class ResourceGuardResource(DppTrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param e_tag: Optional ETag.
-    :type e_tag: str
+    :ivar e_tag: Optional ETag.
+    :vartype e_tag: str
     :ivar id: Resource Id represents the complete path to the resource.
     :vartype id: str
-    :param identity: Input Managed Identity Details.
-    :type identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
-    :param location: Resource location.
-    :type location: str
+    :ivar identity: Input Managed Identity Details.
+    :vartype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar name: Resource name associated with the resource.
     :vartype name: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar type: Resource type represents the complete path of the form
      Namespace/ResourceType/ResourceType/...
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
-    :param properties: ResourceGuardResource properties.
-    :type properties: ~azure.mgmt.dataprotection.models.ResourceGuard
+    :ivar properties: ResourceGuardResource properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.ResourceGuard
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'DppIdentityDetails'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'ResourceGuard'},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "DppIdentityDetails"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ResourceGuard"},
     }
 
     def __init__(
         self,
         *,
         e_tag: Optional[str] = None,
-        identity: Optional["DppIdentityDetails"] = None,
+        identity: Optional["_models.DppIdentityDetails"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["ResourceGuard"] = None,
+        properties: Optional["_models.ResourceGuard"] = None,
         **kwargs
     ):
-        super(ResourceGuardResource, self).__init__(e_tag=e_tag, identity=identity, location=location, tags=tags, **kwargs)
+        """
+        :keyword e_tag: Optional ETag.
+        :paramtype e_tag: str
+        :keyword identity: Input Managed Identity Details.
+        :paramtype identity: ~azure.mgmt.dataprotection.models.DppIdentityDetails
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: ResourceGuardResource properties.
+        :paramtype properties: ~azure.mgmt.dataprotection.models.ResourceGuard
+        """
+        super().__init__(e_tag=e_tag, identity=identity, location=location, tags=tags, **kwargs)
         self.properties = properties
 
 
 class ResourceGuardResourceList(DppTrackedResourceList):
     """List of ResourceGuard resources.
 
-    :param next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
-     page of resources.
-    :type next_link: str
-    :param value: List of resources.
-    :type value: list[~azure.mgmt.dataprotection.models.ResourceGuardResource]
+    :ivar next_link: The uri to fetch the next page of resources. Call ListNext() fetches next page
+     of resources.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.dataprotection.models.ResourceGuardResource]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ResourceGuardResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourceGuardResource]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["ResourceGuardResource"]] = None,
+        value: Optional[List["_models.ResourceGuardResource"]] = None,
         **kwargs
     ):
-        super(ResourceGuardResourceList, self).__init__(next_link=next_link, **kwargs)
+        """
+        :keyword next_link: The uri to fetch the next page of resources. Call ListNext() fetches next
+         page of resources.
+        :paramtype next_link: str
+        :keyword value: List of resources.
+        :paramtype value: list[~azure.mgmt.dataprotection.models.ResourceGuardResource]
+        """
+        super().__init__(next_link=next_link, **kwargs)
         self.value = value
 
 
-class ResourceMoveDetails(msrest.serialization.Model):
+class ResourceMoveDetails(_serialization.Model):
     """ResourceMoveDetails will be returned in response to GetResource call from ARM.
 
-    :param operation_id: CorrelationId of latest ResourceMove operation attempted.
-    :type operation_id: str
-    :param start_time_utc: Start time in UTC of latest ResourceMove operation attempted. ISO 8601
+    :ivar operation_id: CorrelationId of latest ResourceMove operation attempted.
+    :vartype operation_id: str
+    :ivar start_time_utc: Start time in UTC of latest ResourceMove operation attempted. ISO 8601
      format.
-    :type start_time_utc: str
-    :param completion_time_utc: Completion time in UTC of latest ResourceMove operation attempted.
+    :vartype start_time_utc: str
+    :ivar completion_time_utc: Completion time in UTC of latest ResourceMove operation attempted.
      ISO 8601 format.
-    :type completion_time_utc: str
-    :param source_resource_path: ARM resource path of source resource.
-    :type source_resource_path: str
-    :param target_resource_path: ARM resource path of target resource used in latest ResourceMove
+    :vartype completion_time_utc: str
+    :ivar source_resource_path: ARM resource path of source resource.
+    :vartype source_resource_path: str
+    :ivar target_resource_path: ARM resource path of target resource used in latest ResourceMove
      operation.
-    :type target_resource_path: str
+    :vartype target_resource_path: str
     """
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
-        'start_time_utc': {'key': 'startTimeUtc', 'type': 'str'},
-        'completion_time_utc': {'key': 'completionTimeUtc', 'type': 'str'},
-        'source_resource_path': {'key': 'sourceResourcePath', 'type': 'str'},
-        'target_resource_path': {'key': 'targetResourcePath', 'type': 'str'},
+        "operation_id": {"key": "operationId", "type": "str"},
+        "start_time_utc": {"key": "startTimeUtc", "type": "str"},
+        "completion_time_utc": {"key": "completionTimeUtc", "type": "str"},
+        "source_resource_path": {"key": "sourceResourcePath", "type": "str"},
+        "target_resource_path": {"key": "targetResourcePath", "type": "str"},
     }
 
     def __init__(
@@ -3811,7 +4937,22 @@ class ResourceMoveDetails(msrest.serialization.Model):
         target_resource_path: Optional[str] = None,
         **kwargs
     ):
-        super(ResourceMoveDetails, self).__init__(**kwargs)
+        """
+        :keyword operation_id: CorrelationId of latest ResourceMove operation attempted.
+        :paramtype operation_id: str
+        :keyword start_time_utc: Start time in UTC of latest ResourceMove operation attempted. ISO 8601
+         format.
+        :paramtype start_time_utc: str
+        :keyword completion_time_utc: Completion time in UTC of latest ResourceMove operation
+         attempted. ISO 8601 format.
+        :paramtype completion_time_utc: str
+        :keyword source_resource_path: ARM resource path of source resource.
+        :paramtype source_resource_path: str
+        :keyword target_resource_path: ARM resource path of target resource used in latest ResourceMove
+         operation.
+        :paramtype target_resource_path: str
+        """
+        super().__init__(**kwargs)
         self.operation_id = operation_id
         self.start_time_utc = start_time_utc
         self.completion_time_utc = completion_time_utc
@@ -3819,39 +4960,40 @@ class ResourceMoveDetails(msrest.serialization.Model):
         self.target_resource_path = target_resource_path
 
 
-class RestorableTimeRange(msrest.serialization.Model):
+class RestorableTimeRange(_serialization.Model):
     """RestorableTimeRange.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. Start time for the available restore range.
-    :type start_time: str
-    :param end_time: Required. End time for the available restore range.
-    :type end_time: str
-    :param object_type:
-    :type object_type: str
+    :ivar start_time: Start time for the available restore range. Required.
+    :vartype start_time: str
+    :ivar end_time: End time for the available restore range. Required.
+    :vartype end_time: str
+    :ivar object_type:
+    :vartype object_type: str
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "object_type": {"key": "objectType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_time: str,
-        end_time: str,
-        object_type: Optional[str] = None,
-        **kwargs
-    ):
-        super(RestorableTimeRange, self).__init__(**kwargs)
+    def __init__(self, *, start_time: str, end_time: str, object_type: Optional[str] = None, **kwargs):
+        """
+        :keyword start_time: Start time for the available restore range. Required.
+        :paramtype start_time: str
+        :keyword end_time: End time for the available restore range. Required.
+        :paramtype end_time: str
+        :keyword object_type:
+        :paramtype object_type: str
+        """
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.object_type = object_type
@@ -3862,56 +5004,65 @@ class RestoreFilesTargetInfo(RestoreTargetInfoBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of Datasource object, used to initialize the right inherited
-     type.Constant filled by server.
-    :type object_type: str
-    :param recovery_option: Required. Recovery Option. Possible values include: "FailIfExists".
-    :type recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
-    :param restore_location: Target Restore region.
-    :type restore_location: str
-    :param target_details: Required. Destination of RestoreAsFiles operation, when destination is
-     not a datasource.
-    :type target_details: ~azure.mgmt.dataprotection.models.TargetDetails
+    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+     Required.
+    :vartype object_type: str
+    :ivar recovery_option: Recovery Option. Required. "FailIfExists"
+    :vartype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+    :ivar restore_location: Target Restore region.
+    :vartype restore_location: str
+    :ivar target_details: Destination of RestoreAsFiles operation, when destination is not a
+     datasource. Required.
+    :vartype target_details: ~azure.mgmt.dataprotection.models.TargetDetails
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_option': {'required': True},
-        'target_details': {'required': True},
+        "object_type": {"required": True},
+        "recovery_option": {"required": True},
+        "target_details": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_option': {'key': 'recoveryOption', 'type': 'str'},
-        'restore_location': {'key': 'restoreLocation', 'type': 'str'},
-        'target_details': {'key': 'targetDetails', 'type': 'TargetDetails'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_option": {"key": "recoveryOption", "type": "str"},
+        "restore_location": {"key": "restoreLocation", "type": "str"},
+        "target_details": {"key": "targetDetails", "type": "TargetDetails"},
     }
 
     def __init__(
         self,
         *,
-        recovery_option: Union[str, "RecoveryOption"],
-        target_details: "TargetDetails",
+        recovery_option: Union[str, "_models.RecoveryOption"],
+        target_details: "_models.TargetDetails",
         restore_location: Optional[str] = None,
         **kwargs
     ):
-        super(RestoreFilesTargetInfo, self).__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
-        self.object_type = 'RestoreFilesTargetInfo'  # type: str
+        """
+        :keyword recovery_option: Recovery Option. Required. "FailIfExists"
+        :paramtype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+        :keyword restore_location: Target Restore region.
+        :paramtype restore_location: str
+        :keyword target_details: Destination of RestoreAsFiles operation, when destination is not a
+         datasource. Required.
+        :paramtype target_details: ~azure.mgmt.dataprotection.models.TargetDetails
+        """
+        super().__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
+        self.object_type = "RestoreFilesTargetInfo"  # type: str
         self.target_details = target_details
 
 
-class RestoreJobRecoveryPointDetails(msrest.serialization.Model):
+class RestoreJobRecoveryPointDetails(_serialization.Model):
     """RestoreJobRecoveryPointDetails.
 
-    :param recovery_point_id:
-    :type recovery_point_id: str
-    :param recovery_point_time:
-    :type recovery_point_time: ~datetime.datetime
+    :ivar recovery_point_id:
+    :vartype recovery_point_id: str
+    :ivar recovery_point_time:
+    :vartype recovery_point_time: ~datetime.datetime
     """
 
     _attribute_map = {
-        'recovery_point_id': {'key': 'recoveryPointID', 'type': 'str'},
-        'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'iso-8601'},
+        "recovery_point_id": {"key": "recoveryPointID", "type": "str"},
+        "recovery_point_time": {"key": "recoveryPointTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3921,7 +5072,13 @@ class RestoreJobRecoveryPointDetails(msrest.serialization.Model):
         recovery_point_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(RestoreJobRecoveryPointDetails, self).__init__(**kwargs)
+        """
+        :keyword recovery_point_id:
+        :paramtype recovery_point_id: str
+        :keyword recovery_point_time:
+        :paramtype recovery_point_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.recovery_point_time = recovery_point_time
 
@@ -3931,55 +5088,68 @@ class RestoreTargetInfo(RestoreTargetInfoBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of Datasource object, used to initialize the right inherited
-     type.Constant filled by server.
-    :type object_type: str
-    :param recovery_option: Required. Recovery Option. Possible values include: "FailIfExists".
-    :type recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
-    :param restore_location: Target Restore region.
-    :type restore_location: str
-    :param datasource_info: Required. Information of target DS.
-    :type datasource_info: ~azure.mgmt.dataprotection.models.Datasource
-    :param datasource_set_info: Information of target DS Set.
-    :type datasource_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
-    :param datasource_auth_credentials: Credentials to use to authenticate with data source
+    :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
+     Required.
+    :vartype object_type: str
+    :ivar recovery_option: Recovery Option. Required. "FailIfExists"
+    :vartype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+    :ivar restore_location: Target Restore region.
+    :vartype restore_location: str
+    :ivar datasource_info: Information of target DS. Required.
+    :vartype datasource_info: ~azure.mgmt.dataprotection.models.Datasource
+    :ivar datasource_set_info: Information of target DS Set.
+    :vartype datasource_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
      provider.
-    :type datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+    :vartype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'recovery_option': {'required': True},
-        'datasource_info': {'required': True},
+        "object_type": {"required": True},
+        "recovery_option": {"required": True},
+        "datasource_info": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'recovery_option': {'key': 'recoveryOption', 'type': 'str'},
-        'restore_location': {'key': 'restoreLocation', 'type': 'str'},
-        'datasource_info': {'key': 'datasourceInfo', 'type': 'Datasource'},
-        'datasource_set_info': {'key': 'datasourceSetInfo', 'type': 'DatasourceSet'},
-        'datasource_auth_credentials': {'key': 'datasourceAuthCredentials', 'type': 'AuthCredentials'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "recovery_option": {"key": "recoveryOption", "type": "str"},
+        "restore_location": {"key": "restoreLocation", "type": "str"},
+        "datasource_info": {"key": "datasourceInfo", "type": "Datasource"},
+        "datasource_set_info": {"key": "datasourceSetInfo", "type": "DatasourceSet"},
+        "datasource_auth_credentials": {"key": "datasourceAuthCredentials", "type": "AuthCredentials"},
     }
 
     def __init__(
         self,
         *,
-        recovery_option: Union[str, "RecoveryOption"],
-        datasource_info: "Datasource",
+        recovery_option: Union[str, "_models.RecoveryOption"],
+        datasource_info: "_models.Datasource",
         restore_location: Optional[str] = None,
-        datasource_set_info: Optional["DatasourceSet"] = None,
-        datasource_auth_credentials: Optional["AuthCredentials"] = None,
+        datasource_set_info: Optional["_models.DatasourceSet"] = None,
+        datasource_auth_credentials: Optional["_models.AuthCredentials"] = None,
         **kwargs
     ):
-        super(RestoreTargetInfo, self).__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
-        self.object_type = 'RestoreTargetInfo'  # type: str
+        """
+        :keyword recovery_option: Recovery Option. Required. "FailIfExists"
+        :paramtype recovery_option: str or ~azure.mgmt.dataprotection.models.RecoveryOption
+        :keyword restore_location: Target Restore region.
+        :paramtype restore_location: str
+        :keyword datasource_info: Information of target DS. Required.
+        :paramtype datasource_info: ~azure.mgmt.dataprotection.models.Datasource
+        :keyword datasource_set_info: Information of target DS Set.
+        :paramtype datasource_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+        :keyword datasource_auth_credentials: Credentials to use to authenticate with data source
+         provider.
+        :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
+        """
+        super().__init__(recovery_option=recovery_option, restore_location=restore_location, **kwargs)
+        self.object_type = "RestoreTargetInfo"  # type: str
         self.datasource_info = datasource_info
         self.datasource_set_info = datasource_set_info
         self.datasource_auth_credentials = datasource_auth_credentials
 
 
-class RetentionTag(msrest.serialization.Model):
+class RetentionTag(_serialization.Model):
     """Retention tag.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3990,29 +5160,28 @@ class RetentionTag(msrest.serialization.Model):
     :vartype e_tag: str
     :ivar id: Retention Tag version.
     :vartype id: str
-    :param tag_name: Required. Retention Tag Name to relate it to retention rule.
-    :type tag_name: str
+    :ivar tag_name: Retention Tag Name to relate it to retention rule. Required.
+    :vartype tag_name: str
     """
 
     _validation = {
-        'e_tag': {'readonly': True},
-        'id': {'readonly': True},
-        'tag_name': {'required': True},
+        "e_tag": {"readonly": True},
+        "id": {"readonly": True},
+        "tag_name": {"required": True},
     }
 
     _attribute_map = {
-        'e_tag': {'key': 'eTag', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'tag_name': {'key': 'tagName', 'type': 'str'},
+        "e_tag": {"key": "eTag", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "tag_name": {"key": "tagName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tag_name: str,
-        **kwargs
-    ):
-        super(RetentionTag, self).__init__(**kwargs)
+    def __init__(self, *, tag_name: str, **kwargs):
+        """
+        :keyword tag_name: Retention Tag Name to relate it to retention rule. Required.
+        :paramtype tag_name: str
+        """
+        super().__init__(**kwargs)
         self.e_tag = None
         self.id = None
         self.tag_name = tag_name
@@ -4023,52 +5192,67 @@ class ScheduleBasedBackupCriteria(BackupCriteria):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param absolute_criteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar absolute_criteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
      "FirstOfWeek" / "FirstOfMonth"
      and should be part of AbsoluteMarker enum.
-    :type absolute_criteria: list[str or ~azure.mgmt.dataprotection.models.AbsoluteMarker]
-    :param days_of_month: This is day of the month from 1 to 28 other wise last of month.
-    :type days_of_month: list[~azure.mgmt.dataprotection.models.Day]
-    :param days_of_the_week: It should be Sunday/Monday/T..../Saturday.
-    :type days_of_the_week: list[str or ~azure.mgmt.dataprotection.models.DayOfWeek]
-    :param months_of_year: It should be January/February/....../December.
-    :type months_of_year: list[str or ~azure.mgmt.dataprotection.models.Month]
-    :param schedule_times: List of schedule times for backup.
-    :type schedule_times: list[~datetime.datetime]
-    :param weeks_of_the_month: It should be First/Second/Third/Fourth/Last.
-    :type weeks_of_the_month: list[str or ~azure.mgmt.dataprotection.models.WeekNumber]
+    :vartype absolute_criteria: list[str or ~azure.mgmt.dataprotection.models.AbsoluteMarker]
+    :ivar days_of_month: This is day of the month from 1 to 28 other wise last of month.
+    :vartype days_of_month: list[~azure.mgmt.dataprotection.models.Day]
+    :ivar days_of_the_week: It should be Sunday/Monday/T..../Saturday.
+    :vartype days_of_the_week: list[str or ~azure.mgmt.dataprotection.models.DayOfWeek]
+    :ivar months_of_year: It should be January/February/....../December.
+    :vartype months_of_year: list[str or ~azure.mgmt.dataprotection.models.Month]
+    :ivar schedule_times: List of schedule times for backup.
+    :vartype schedule_times: list[~datetime.datetime]
+    :ivar weeks_of_the_month: It should be First/Second/Third/Fourth/Last.
+    :vartype weeks_of_the_month: list[str or ~azure.mgmt.dataprotection.models.WeekNumber]
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'absolute_criteria': {'key': 'absoluteCriteria', 'type': '[str]'},
-        'days_of_month': {'key': 'daysOfMonth', 'type': '[Day]'},
-        'days_of_the_week': {'key': 'daysOfTheWeek', 'type': '[str]'},
-        'months_of_year': {'key': 'monthsOfYear', 'type': '[str]'},
-        'schedule_times': {'key': 'scheduleTimes', 'type': '[iso-8601]'},
-        'weeks_of_the_month': {'key': 'weeksOfTheMonth', 'type': '[str]'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "absolute_criteria": {"key": "absoluteCriteria", "type": "[str]"},
+        "days_of_month": {"key": "daysOfMonth", "type": "[Day]"},
+        "days_of_the_week": {"key": "daysOfTheWeek", "type": "[str]"},
+        "months_of_year": {"key": "monthsOfYear", "type": "[str]"},
+        "schedule_times": {"key": "scheduleTimes", "type": "[iso-8601]"},
+        "weeks_of_the_month": {"key": "weeksOfTheMonth", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        absolute_criteria: Optional[List[Union[str, "AbsoluteMarker"]]] = None,
-        days_of_month: Optional[List["Day"]] = None,
-        days_of_the_week: Optional[List[Union[str, "DayOfWeek"]]] = None,
-        months_of_year: Optional[List[Union[str, "Month"]]] = None,
+        absolute_criteria: Optional[List[Union[str, "_models.AbsoluteMarker"]]] = None,
+        days_of_month: Optional[List["_models.Day"]] = None,
+        days_of_the_week: Optional[List[Union[str, "_models.DayOfWeek"]]] = None,
+        months_of_year: Optional[List[Union[str, "_models.Month"]]] = None,
         schedule_times: Optional[List[datetime.datetime]] = None,
-        weeks_of_the_month: Optional[List[Union[str, "WeekNumber"]]] = None,
+        weeks_of_the_month: Optional[List[Union[str, "_models.WeekNumber"]]] = None,
         **kwargs
     ):
-        super(ScheduleBasedBackupCriteria, self).__init__(**kwargs)
-        self.object_type = 'ScheduleBasedBackupCriteria'  # type: str
+        """
+        :keyword absolute_criteria: it contains absolute values like "AllBackup" / "FirstOfDay" /
+         "FirstOfWeek" / "FirstOfMonth"
+         and should be part of AbsoluteMarker enum.
+        :paramtype absolute_criteria: list[str or ~azure.mgmt.dataprotection.models.AbsoluteMarker]
+        :keyword days_of_month: This is day of the month from 1 to 28 other wise last of month.
+        :paramtype days_of_month: list[~azure.mgmt.dataprotection.models.Day]
+        :keyword days_of_the_week: It should be Sunday/Monday/T..../Saturday.
+        :paramtype days_of_the_week: list[str or ~azure.mgmt.dataprotection.models.DayOfWeek]
+        :keyword months_of_year: It should be January/February/....../December.
+        :paramtype months_of_year: list[str or ~azure.mgmt.dataprotection.models.Month]
+        :keyword schedule_times: List of schedule times for backup.
+        :paramtype schedule_times: list[~datetime.datetime]
+        :keyword weeks_of_the_month: It should be First/Second/Third/Fourth/Last.
+        :paramtype weeks_of_the_month: list[str or ~azure.mgmt.dataprotection.models.WeekNumber]
+        """
+        super().__init__(**kwargs)
+        self.object_type = "ScheduleBasedBackupCriteria"  # type: str
         self.absolute_criteria = absolute_criteria
         self.days_of_month = days_of_month
         self.days_of_the_week = days_of_the_week
@@ -4082,36 +5266,37 @@ class ScheduleBasedTriggerContext(TriggerContext):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param schedule: Required. Schedule for this backup.
-    :type schedule: ~azure.mgmt.dataprotection.models.BackupSchedule
-    :param tagging_criteria: Required. List of tags that can be applicable for given schedule.
-    :type tagging_criteria: list[~azure.mgmt.dataprotection.models.TaggingCriteria]
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar schedule: Schedule for this backup. Required.
+    :vartype schedule: ~azure.mgmt.dataprotection.models.BackupSchedule
+    :ivar tagging_criteria: List of tags that can be applicable for given schedule. Required.
+    :vartype tagging_criteria: list[~azure.mgmt.dataprotection.models.TaggingCriteria]
     """
 
     _validation = {
-        'object_type': {'required': True},
-        'schedule': {'required': True},
-        'tagging_criteria': {'required': True},
+        "object_type": {"required": True},
+        "schedule": {"required": True},
+        "tagging_criteria": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': 'BackupSchedule'},
-        'tagging_criteria': {'key': 'taggingCriteria', 'type': '[TaggingCriteria]'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "schedule": {"key": "schedule", "type": "BackupSchedule"},
+        "tagging_criteria": {"key": "taggingCriteria", "type": "[TaggingCriteria]"},
     }
 
     def __init__(
-        self,
-        *,
-        schedule: "BackupSchedule",
-        tagging_criteria: List["TaggingCriteria"],
-        **kwargs
+        self, *, schedule: "_models.BackupSchedule", tagging_criteria: List["_models.TaggingCriteria"], **kwargs
     ):
-        super(ScheduleBasedTriggerContext, self).__init__(**kwargs)
-        self.object_type = 'ScheduleBasedTriggerContext'  # type: str
+        """
+        :keyword schedule: Schedule for this backup. Required.
+        :paramtype schedule: ~azure.mgmt.dataprotection.models.BackupSchedule
+        :keyword tagging_criteria: List of tags that can be applicable for given schedule. Required.
+        :paramtype tagging_criteria: list[~azure.mgmt.dataprotection.models.TaggingCriteria]
+        """
+        super().__init__(**kwargs)
+        self.object_type = "ScheduleBasedTriggerContext"  # type: str
         self.schedule = schedule
         self.tagging_criteria = tagging_criteria
 
@@ -4121,205 +5306,345 @@ class SecretStoreBasedAuthCredentials(AuthCredentials):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_type: Required. Type of the specific object - used for deserializing.Constant
-     filled by server.
-    :type object_type: str
-    :param secret_store_resource: Secret store resource.
-    :type secret_store_resource: ~azure.mgmt.dataprotection.models.SecretStoreResource
+    :ivar object_type: Type of the specific object - used for deserializing. Required.
+    :vartype object_type: str
+    :ivar secret_store_resource: Secret store resource.
+    :vartype secret_store_resource: ~azure.mgmt.dataprotection.models.SecretStoreResource
     """
 
     _validation = {
-        'object_type': {'required': True},
+        "object_type": {"required": True},
     }
 
     _attribute_map = {
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'secret_store_resource': {'key': 'secretStoreResource', 'type': 'SecretStoreResource'},
+        "object_type": {"key": "objectType", "type": "str"},
+        "secret_store_resource": {"key": "secretStoreResource", "type": "SecretStoreResource"},
     }
 
-    def __init__(
-        self,
-        *,
-        secret_store_resource: Optional["SecretStoreResource"] = None,
-        **kwargs
-    ):
-        super(SecretStoreBasedAuthCredentials, self).__init__(**kwargs)
-        self.object_type = 'SecretStoreBasedAuthCredentials'  # type: str
+    def __init__(self, *, secret_store_resource: Optional["_models.SecretStoreResource"] = None, **kwargs):
+        """
+        :keyword secret_store_resource: Secret store resource.
+        :paramtype secret_store_resource: ~azure.mgmt.dataprotection.models.SecretStoreResource
+        """
+        super().__init__(**kwargs)
+        self.object_type = "SecretStoreBasedAuthCredentials"  # type: str
         self.secret_store_resource = secret_store_resource
 
 
-class SecretStoreResource(msrest.serialization.Model):
+class SecretStoreResource(_serialization.Model):
     """Class representing a secret store resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param uri: Uri to get to the resource.
-    :type uri: str
-    :param secret_store_type: Required. Gets or sets the type of secret store. Possible values
-     include: "Invalid", "AzureKeyVault".
-    :type secret_store_type: str or ~azure.mgmt.dataprotection.models.SecretStoreType
+    :ivar uri: Uri to get to the resource.
+    :vartype uri: str
+    :ivar secret_store_type: Gets or sets the type of secret store. Required. Known values are:
+     "Invalid" and "AzureKeyVault".
+    :vartype secret_store_type: str or ~azure.mgmt.dataprotection.models.SecretStoreType
+    :ivar value: Gets or sets value stored in secret store resource.
+    :vartype value: str
     """
 
     _validation = {
-        'secret_store_type': {'required': True},
+        "secret_store_type": {"required": True},
     }
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
-        'secret_store_type': {'key': 'secretStoreType', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
+        "secret_store_type": {"key": "secretStoreType", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        secret_store_type: Union[str, "SecretStoreType"],
+        secret_store_type: Union[str, "_models.SecretStoreType"],
         uri: Optional[str] = None,
+        value: Optional[str] = None,
         **kwargs
     ):
-        super(SecretStoreResource, self).__init__(**kwargs)
+        """
+        :keyword uri: Uri to get to the resource.
+        :paramtype uri: str
+        :keyword secret_store_type: Gets or sets the type of secret store. Required. Known values are:
+         "Invalid" and "AzureKeyVault".
+        :paramtype secret_store_type: str or ~azure.mgmt.dataprotection.models.SecretStoreType
+        :keyword value: Gets or sets value stored in secret store resource.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.uri = uri
         self.secret_store_type = secret_store_type
+        self.value = value
 
 
-class SourceLifeCycle(msrest.serialization.Model):
+class SecuritySettings(_serialization.Model):
+    """Class containing security settings of vault.
+
+    :ivar soft_delete_settings: Soft delete related settings.
+    :vartype soft_delete_settings: ~azure.mgmt.dataprotection.models.SoftDeleteSettings
+    :ivar immutability_settings: Immutability Settings at vault level.
+    :vartype immutability_settings: ~azure.mgmt.dataprotection.models.ImmutabilitySettings
+    """
+
+    _attribute_map = {
+        "soft_delete_settings": {"key": "softDeleteSettings", "type": "SoftDeleteSettings"},
+        "immutability_settings": {"key": "immutabilitySettings", "type": "ImmutabilitySettings"},
+    }
+
+    def __init__(
+        self,
+        *,
+        soft_delete_settings: Optional["_models.SoftDeleteSettings"] = None,
+        immutability_settings: Optional["_models.ImmutabilitySettings"] = None,
+        **kwargs
+    ):
+        """
+        :keyword soft_delete_settings: Soft delete related settings.
+        :paramtype soft_delete_settings: ~azure.mgmt.dataprotection.models.SoftDeleteSettings
+        :keyword immutability_settings: Immutability Settings at vault level.
+        :paramtype immutability_settings: ~azure.mgmt.dataprotection.models.ImmutabilitySettings
+        """
+        super().__init__(**kwargs)
+        self.soft_delete_settings = soft_delete_settings
+        self.immutability_settings = immutability_settings
+
+
+class SoftDeleteSettings(_serialization.Model):
+    """Soft delete related settings.
+
+    :ivar state: State of soft delete. Known values are: "Off", "On", and "AlwaysOn".
+    :vartype state: str or ~azure.mgmt.dataprotection.models.SoftDeleteState
+    :ivar retention_duration_in_days: Soft delete retention duration.
+    :vartype retention_duration_in_days: float
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "retention_duration_in_days": {"key": "retentionDurationInDays", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.SoftDeleteState"]] = None,
+        retention_duration_in_days: Optional[float] = None,
+        **kwargs
+    ):
+        """
+        :keyword state: State of soft delete. Known values are: "Off", "On", and "AlwaysOn".
+        :paramtype state: str or ~azure.mgmt.dataprotection.models.SoftDeleteState
+        :keyword retention_duration_in_days: Soft delete retention duration.
+        :paramtype retention_duration_in_days: float
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.retention_duration_in_days = retention_duration_in_days
+
+
+class SourceLifeCycle(_serialization.Model):
     """Source LifeCycle.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param delete_after: Required. Delete Option.
-    :type delete_after: ~azure.mgmt.dataprotection.models.DeleteOption
-    :param source_data_store: Required. DataStoreInfo base.
-    :type source_data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
-    :param target_data_store_copy_settings:
-    :type target_data_store_copy_settings:
+    :ivar delete_after: Delete Option. Required.
+    :vartype delete_after: ~azure.mgmt.dataprotection.models.DeleteOption
+    :ivar source_data_store: DataStoreInfo base. Required.
+    :vartype source_data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
+    :ivar target_data_store_copy_settings:
+    :vartype target_data_store_copy_settings:
      list[~azure.mgmt.dataprotection.models.TargetCopySetting]
     """
 
     _validation = {
-        'delete_after': {'required': True},
-        'source_data_store': {'required': True},
+        "delete_after": {"required": True},
+        "source_data_store": {"required": True},
     }
 
     _attribute_map = {
-        'delete_after': {'key': 'deleteAfter', 'type': 'DeleteOption'},
-        'source_data_store': {'key': 'sourceDataStore', 'type': 'DataStoreInfoBase'},
-        'target_data_store_copy_settings': {'key': 'targetDataStoreCopySettings', 'type': '[TargetCopySetting]'},
+        "delete_after": {"key": "deleteAfter", "type": "DeleteOption"},
+        "source_data_store": {"key": "sourceDataStore", "type": "DataStoreInfoBase"},
+        "target_data_store_copy_settings": {"key": "targetDataStoreCopySettings", "type": "[TargetCopySetting]"},
     }
 
     def __init__(
         self,
         *,
-        delete_after: "DeleteOption",
-        source_data_store: "DataStoreInfoBase",
-        target_data_store_copy_settings: Optional[List["TargetCopySetting"]] = None,
+        delete_after: "_models.DeleteOption",
+        source_data_store: "_models.DataStoreInfoBase",
+        target_data_store_copy_settings: Optional[List["_models.TargetCopySetting"]] = None,
         **kwargs
     ):
-        super(SourceLifeCycle, self).__init__(**kwargs)
+        """
+        :keyword delete_after: Delete Option. Required.
+        :paramtype delete_after: ~azure.mgmt.dataprotection.models.DeleteOption
+        :keyword source_data_store: DataStoreInfo base. Required.
+        :paramtype source_data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
+        :keyword target_data_store_copy_settings:
+        :paramtype target_data_store_copy_settings:
+         list[~azure.mgmt.dataprotection.models.TargetCopySetting]
+        """
+        super().__init__(**kwargs)
         self.delete_after = delete_after
         self.source_data_store = source_data_store
         self.target_data_store_copy_settings = target_data_store_copy_settings
 
 
-class StorageSetting(msrest.serialization.Model):
+class StorageSetting(_serialization.Model):
     """Storage setting.
 
-    :param datastore_type: Gets or sets the type of the datastore. Possible values include:
-     "ArchiveStore", "SnapshotStore", "VaultStore".
-    :type datastore_type: str or ~azure.mgmt.dataprotection.models.StorageSettingStoreTypes
-    :param type: Gets or sets the type. Possible values include: "GeoRedundant",
-     "LocallyRedundant".
-    :type type: str or ~azure.mgmt.dataprotection.models.StorageSettingTypes
+    :ivar datastore_type: Gets or sets the type of the datastore. Known values are: "ArchiveStore",
+     "SnapshotStore", and "VaultStore".
+    :vartype datastore_type: str or ~azure.mgmt.dataprotection.models.StorageSettingStoreTypes
+    :ivar type: Gets or sets the type. Known values are: "GeoRedundant", "LocallyRedundant", and
+     "ZoneRedundant".
+    :vartype type: str or ~azure.mgmt.dataprotection.models.StorageSettingTypes
     """
 
     _attribute_map = {
-        'datastore_type': {'key': 'datastoreType', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "datastore_type": {"key": "datastoreType", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        datastore_type: Optional[Union[str, "StorageSettingStoreTypes"]] = None,
-        type: Optional[Union[str, "StorageSettingTypes"]] = None,
+        datastore_type: Optional[Union[str, "_models.StorageSettingStoreTypes"]] = None,
+        type: Optional[Union[str, "_models.StorageSettingTypes"]] = None,
         **kwargs
     ):
-        super(StorageSetting, self).__init__(**kwargs)
+        """
+        :keyword datastore_type: Gets or sets the type of the datastore. Known values are:
+         "ArchiveStore", "SnapshotStore", and "VaultStore".
+        :paramtype datastore_type: str or ~azure.mgmt.dataprotection.models.StorageSettingStoreTypes
+        :keyword type: Gets or sets the type. Known values are: "GeoRedundant", "LocallyRedundant", and
+         "ZoneRedundant".
+        :paramtype type: str or ~azure.mgmt.dataprotection.models.StorageSettingTypes
+        """
+        super().__init__(**kwargs)
         self.datastore_type = datastore_type
         self.type = type
 
 
-class SupportedFeature(msrest.serialization.Model):
+class SupportedFeature(_serialization.Model):
     """Elements class for feature request.
 
-    :param feature_name: support feature type.
-    :type feature_name: str
-    :param support_status: feature support status. Possible values include: "Invalid",
-     "NotSupported", "AlphaPreview", "PrivatePreview", "PublicPreview", "GenerallyAvailable".
-    :type support_status: str or ~azure.mgmt.dataprotection.models.FeatureSupportStatus
-    :param exposure_controlled_features: support feature type.
-    :type exposure_controlled_features: list[str]
+    :ivar feature_name: support feature type.
+    :vartype feature_name: str
+    :ivar support_status: feature support status. Known values are: "Invalid", "NotSupported",
+     "AlphaPreview", "PrivatePreview", "PublicPreview", and "GenerallyAvailable".
+    :vartype support_status: str or ~azure.mgmt.dataprotection.models.FeatureSupportStatus
+    :ivar exposure_controlled_features: support feature type.
+    :vartype exposure_controlled_features: list[str]
     """
 
     _attribute_map = {
-        'feature_name': {'key': 'featureName', 'type': 'str'},
-        'support_status': {'key': 'supportStatus', 'type': 'str'},
-        'exposure_controlled_features': {'key': 'exposureControlledFeatures', 'type': '[str]'},
+        "feature_name": {"key": "featureName", "type": "str"},
+        "support_status": {"key": "supportStatus", "type": "str"},
+        "exposure_controlled_features": {"key": "exposureControlledFeatures", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
         feature_name: Optional[str] = None,
-        support_status: Optional[Union[str, "FeatureSupportStatus"]] = None,
+        support_status: Optional[Union[str, "_models.FeatureSupportStatus"]] = None,
         exposure_controlled_features: Optional[List[str]] = None,
         **kwargs
     ):
-        super(SupportedFeature, self).__init__(**kwargs)
+        """
+        :keyword feature_name: support feature type.
+        :paramtype feature_name: str
+        :keyword support_status: feature support status. Known values are: "Invalid", "NotSupported",
+         "AlphaPreview", "PrivatePreview", "PublicPreview", and "GenerallyAvailable".
+        :paramtype support_status: str or ~azure.mgmt.dataprotection.models.FeatureSupportStatus
+        :keyword exposure_controlled_features: support feature type.
+        :paramtype exposure_controlled_features: list[str]
+        """
+        super().__init__(**kwargs)
         self.feature_name = feature_name
         self.support_status = support_status
         self.exposure_controlled_features = exposure_controlled_features
 
 
-class SystemData(msrest.serialization.Model):
-    """Metadata pertaining to creation and last modification of the resource.
+class SyncBackupInstanceRequest(_serialization.Model):
+    """Sync BackupInstance Request.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.dataprotection.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.dataprotection.models.CreatedByType
-    :param last_modified_at: The type of identity that last modified the resource.
-    :type last_modified_at: ~datetime.datetime
+    :ivar sync_type: Field indicating sync type e.g. to sync only in case of failure or in all
+     cases. Known values are: "Default" and "ForceResync".
+    :vartype sync_type: str or ~azure.mgmt.dataprotection.models.SyncType
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "sync_type": {"key": "syncType", "type": "str"},
+    }
+
+    def __init__(self, *, sync_type: Optional[Union[str, "_models.SyncType"]] = None, **kwargs):
+        """
+        :keyword sync_type: Field indicating sync type e.g. to sync only in case of failure or in all
+         cases. Known values are: "Default" and "ForceResync".
+        :paramtype sync_type: str or ~azure.mgmt.dataprotection.models.SyncType
+        """
+        super().__init__(**kwargs)
+        self.sync_type = sync_type
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.dataprotection.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.dataprotection.models.CreatedByType
+    :ivar last_modified_at: The type of identity that last modified the resource.
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.dataprotection.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.dataprotection.models.CreatedByType
+        :keyword last_modified_at: The type of identity that last modified the resource.
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -4328,32 +5653,32 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TaggingCriteria(msrest.serialization.Model):
+class TaggingCriteria(_serialization.Model):
     """Tagging criteria.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param criteria: Criteria which decides whether the tag can be applied to a triggered backup.
-    :type criteria: list[~azure.mgmt.dataprotection.models.BackupCriteria]
-    :param is_default: Required. Specifies if tag is default.
-    :type is_default: bool
-    :param tagging_priority: Required. Retention Tag priority.
-    :type tagging_priority: long
-    :param tag_info: Required. Retention tag information.
-    :type tag_info: ~azure.mgmt.dataprotection.models.RetentionTag
+    :ivar criteria: Criteria which decides whether the tag can be applied to a triggered backup.
+    :vartype criteria: list[~azure.mgmt.dataprotection.models.BackupCriteria]
+    :ivar is_default: Specifies if tag is default. Required.
+    :vartype is_default: bool
+    :ivar tagging_priority: Retention Tag priority. Required.
+    :vartype tagging_priority: int
+    :ivar tag_info: Retention tag information. Required.
+    :vartype tag_info: ~azure.mgmt.dataprotection.models.RetentionTag
     """
 
     _validation = {
-        'is_default': {'required': True},
-        'tagging_priority': {'required': True},
-        'tag_info': {'required': True},
+        "is_default": {"required": True},
+        "tagging_priority": {"required": True},
+        "tag_info": {"required": True},
     }
 
     _attribute_map = {
-        'criteria': {'key': 'criteria', 'type': '[BackupCriteria]'},
-        'is_default': {'key': 'isDefault', 'type': 'bool'},
-        'tagging_priority': {'key': 'taggingPriority', 'type': 'long'},
-        'tag_info': {'key': 'tagInfo', 'type': 'RetentionTag'},
+        "criteria": {"key": "criteria", "type": "[BackupCriteria]"},
+        "is_default": {"key": "isDefault", "type": "bool"},
+        "tagging_priority": {"key": "taggingPriority", "type": "int"},
+        "tag_info": {"key": "tagInfo", "type": "RetentionTag"},
     }
 
     def __init__(
@@ -4361,166 +5686,245 @@ class TaggingCriteria(msrest.serialization.Model):
         *,
         is_default: bool,
         tagging_priority: int,
-        tag_info: "RetentionTag",
-        criteria: Optional[List["BackupCriteria"]] = None,
+        tag_info: "_models.RetentionTag",
+        criteria: Optional[List["_models.BackupCriteria"]] = None,
         **kwargs
     ):
-        super(TaggingCriteria, self).__init__(**kwargs)
+        """
+        :keyword criteria: Criteria which decides whether the tag can be applied to a triggered backup.
+        :paramtype criteria: list[~azure.mgmt.dataprotection.models.BackupCriteria]
+        :keyword is_default: Specifies if tag is default. Required.
+        :paramtype is_default: bool
+        :keyword tagging_priority: Retention Tag priority. Required.
+        :paramtype tagging_priority: int
+        :keyword tag_info: Retention tag information. Required.
+        :paramtype tag_info: ~azure.mgmt.dataprotection.models.RetentionTag
+        """
+        super().__init__(**kwargs)
         self.criteria = criteria
         self.is_default = is_default
         self.tagging_priority = tagging_priority
         self.tag_info = tag_info
 
 
-class TargetCopySetting(msrest.serialization.Model):
+class TargetCopySetting(_serialization.Model):
     """Target copy settings.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param copy_after: Required. It can be CustomCopyOption or ImmediateCopyOption.
-    :type copy_after: ~azure.mgmt.dataprotection.models.CopyOption
-    :param data_store: Required. Info of target datastore.
-    :type data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
+    :ivar copy_after: It can be CustomCopyOption or ImmediateCopyOption. Required.
+    :vartype copy_after: ~azure.mgmt.dataprotection.models.CopyOption
+    :ivar data_store: Info of target datastore. Required.
+    :vartype data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
     """
 
     _validation = {
-        'copy_after': {'required': True},
-        'data_store': {'required': True},
+        "copy_after": {"required": True},
+        "data_store": {"required": True},
     }
 
     _attribute_map = {
-        'copy_after': {'key': 'copyAfter', 'type': 'CopyOption'},
-        'data_store': {'key': 'dataStore', 'type': 'DataStoreInfoBase'},
+        "copy_after": {"key": "copyAfter", "type": "CopyOption"},
+        "data_store": {"key": "dataStore", "type": "DataStoreInfoBase"},
     }
 
-    def __init__(
-        self,
-        *,
-        copy_after: "CopyOption",
-        data_store: "DataStoreInfoBase",
-        **kwargs
-    ):
-        super(TargetCopySetting, self).__init__(**kwargs)
+    def __init__(self, *, copy_after: "_models.CopyOption", data_store: "_models.DataStoreInfoBase", **kwargs):
+        """
+        :keyword copy_after: It can be CustomCopyOption or ImmediateCopyOption. Required.
+        :paramtype copy_after: ~azure.mgmt.dataprotection.models.CopyOption
+        :keyword data_store: Info of target datastore. Required.
+        :paramtype data_store: ~azure.mgmt.dataprotection.models.DataStoreInfoBase
+        """
+        super().__init__(**kwargs)
         self.copy_after = copy_after
         self.data_store = data_store
 
 
-class TargetDetails(msrest.serialization.Model):
+class TargetDetails(_serialization.Model):
     """Class encapsulating target details, used where the destination is not a datasource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param file_prefix: Required. Restore operation may create multiple files inside location
-     pointed by Url
-     Below will be the common prefix for all of them.
-    :type file_prefix: str
-    :param restore_target_location_type: Required. Denotes the target location where the data will
-     be restored,
+    :ivar file_prefix: Restore operation may create multiple files inside location pointed by Url
+     Below will be the common prefix for all of them. Required.
+    :vartype file_prefix: str
+    :ivar restore_target_location_type: Denotes the target location where the data will be
+     restored,
      string value for the enum
      {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
-     Possible values include: "Invalid", "AzureBlobs", "AzureFiles".
-    :type restore_target_location_type: str or
+     Required. Known values are: "Invalid", "AzureBlobs", and "AzureFiles".
+    :vartype restore_target_location_type: str or
      ~azure.mgmt.dataprotection.models.RestoreTargetLocationType
-    :param url: Required. Url denoting the restore destination. It can point to container / file
-     share etc.
-    :type url: str
+    :ivar url: Url denoting the restore destination. It can point to container / file share etc.
+     Required.
+    :vartype url: str
     """
 
     _validation = {
-        'file_prefix': {'required': True},
-        'restore_target_location_type': {'required': True},
-        'url': {'required': True},
+        "file_prefix": {"required": True},
+        "restore_target_location_type": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'file_prefix': {'key': 'filePrefix', 'type': 'str'},
-        'restore_target_location_type': {'key': 'restoreTargetLocationType', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
+        "file_prefix": {"key": "filePrefix", "type": "str"},
+        "restore_target_location_type": {"key": "restoreTargetLocationType", "type": "str"},
+        "url": {"key": "url", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         file_prefix: str,
-        restore_target_location_type: Union[str, "RestoreTargetLocationType"],
+        restore_target_location_type: Union[str, "_models.RestoreTargetLocationType"],
         url: str,
         **kwargs
     ):
-        super(TargetDetails, self).__init__(**kwargs)
+        """
+        :keyword file_prefix: Restore operation may create multiple files inside location pointed by
+         Url
+         Below will be the common prefix for all of them. Required.
+        :paramtype file_prefix: str
+        :keyword restore_target_location_type: Denotes the target location where the data will be
+         restored,
+         string value for the enum
+         {Microsoft.Internal.AzureBackup.DataProtection.Common.Interface.RestoreTargetLocationType}.
+         Required. Known values are: "Invalid", "AzureBlobs", and "AzureFiles".
+        :paramtype restore_target_location_type: str or
+         ~azure.mgmt.dataprotection.models.RestoreTargetLocationType
+        :keyword url: Url denoting the restore destination. It can point to container / file share etc.
+         Required.
+        :paramtype url: str
+        """
+        super().__init__(**kwargs)
         self.file_prefix = file_prefix
         self.restore_target_location_type = restore_target_location_type
         self.url = url
 
 
-class TriggerBackupRequest(msrest.serialization.Model):
+class TriggerBackupRequest(_serialization.Model):
     """Trigger backup request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_rule_options: Required. Name for the Rule of the Policy which needs to be applied
-     for this backup.
-    :type backup_rule_options: ~azure.mgmt.dataprotection.models.AdHocBackupRuleOptions
+    :ivar backup_rule_options: Name for the Rule of the Policy which needs to be applied for this
+     backup. Required.
+    :vartype backup_rule_options: ~azure.mgmt.dataprotection.models.AdHocBackupRuleOptions
     """
 
     _validation = {
-        'backup_rule_options': {'required': True},
+        "backup_rule_options": {"required": True},
     }
 
     _attribute_map = {
-        'backup_rule_options': {'key': 'backupRuleOptions', 'type': 'AdHocBackupRuleOptions'},
+        "backup_rule_options": {"key": "backupRuleOptions", "type": "AdHocBackupRuleOptions"},
+    }
+
+    def __init__(self, *, backup_rule_options: "_models.AdHocBackupRuleOptions", **kwargs):
+        """
+        :keyword backup_rule_options: Name for the Rule of the Policy which needs to be applied for
+         this backup. Required.
+        :paramtype backup_rule_options: ~azure.mgmt.dataprotection.models.AdHocBackupRuleOptions
+        """
+        super().__init__(**kwargs)
+        self.backup_rule_options = backup_rule_options
+
+
+class UnlockDeleteRequest(_serialization.Model):
+    """Request body of unlock delete API.
+
+    :ivar resource_guard_operation_requests:
+    :vartype resource_guard_operation_requests: list[str]
+    :ivar resource_to_be_deleted:
+    :vartype resource_to_be_deleted: str
+    """
+
+    _attribute_map = {
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+        "resource_to_be_deleted": {"key": "resourceToBeDeleted", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        backup_rule_options: "AdHocBackupRuleOptions",
+        resource_guard_operation_requests: Optional[List[str]] = None,
+        resource_to_be_deleted: Optional[str] = None,
         **kwargs
     ):
-        super(TriggerBackupRequest, self).__init__(**kwargs)
-        self.backup_rule_options = backup_rule_options
+        """
+        :keyword resource_guard_operation_requests:
+        :paramtype resource_guard_operation_requests: list[str]
+        :keyword resource_to_be_deleted:
+        :paramtype resource_to_be_deleted: str
+        """
+        super().__init__(**kwargs)
+        self.resource_guard_operation_requests = resource_guard_operation_requests
+        self.resource_to_be_deleted = resource_to_be_deleted
 
 
-class UserFacingError(msrest.serialization.Model):
-    """Error object used by layers that have access to localized content, and propagate that to user.
+class UnlockDeleteResponse(_serialization.Model):
+    """Response of Unlock Delete API.
 
-    :param code: Unique code for this error.
-    :type code: str
-    :param details: Additional related Errors.
-    :type details: list[~azure.mgmt.dataprotection.models.UserFacingError]
-    :param inner_error: Inner Error.
-    :type inner_error: ~azure.mgmt.dataprotection.models.InnerError
-    :param is_retryable: Whether the operation will be retryable or not.
-    :type is_retryable: bool
-    :param is_user_error: Whether the operation is due to a user error or service error.
-    :type is_user_error: bool
-    :param properties: Any key value pairs that can be injected inside error object.
-    :type properties: dict[str, str]
-    :param message:
-    :type message: str
-    :param recommended_action: RecommendedAction � localized.
-    :type recommended_action: list[str]
-    :param target: Target of the error.
-    :type target: str
+    :ivar unlock_delete_expiry_time: This is the time when unlock delete privileges will get
+     expired.
+    :vartype unlock_delete_expiry_time: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[UserFacingError]'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
-        'is_retryable': {'key': 'isRetryable', 'type': 'bool'},
-        'is_user_error': {'key': 'isUserError', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'message': {'key': 'message', 'type': 'str'},
-        'recommended_action': {'key': 'recommendedAction', 'type': '[str]'},
-        'target': {'key': 'target', 'type': 'str'},
+        "unlock_delete_expiry_time": {"key": "unlockDeleteExpiryTime", "type": "str"},
+    }
+
+    def __init__(self, *, unlock_delete_expiry_time: Optional[str] = None, **kwargs):
+        """
+        :keyword unlock_delete_expiry_time: This is the time when unlock delete privileges will get
+         expired.
+        :paramtype unlock_delete_expiry_time: str
+        """
+        super().__init__(**kwargs)
+        self.unlock_delete_expiry_time = unlock_delete_expiry_time
+
+
+class UserFacingError(_serialization.Model):
+    """Error object used by layers that have access to localized content, and propagate that to user.
+
+    :ivar code: Unique code for this error.
+    :vartype code: str
+    :ivar details: Additional related Errors.
+    :vartype details: list[~azure.mgmt.dataprotection.models.UserFacingError]
+    :ivar inner_error: Inner Error.
+    :vartype inner_error: ~azure.mgmt.dataprotection.models.InnerError
+    :ivar is_retryable: Whether the operation will be retryable or not.
+    :vartype is_retryable: bool
+    :ivar is_user_error: Whether the operation is due to a user error or service error.
+    :vartype is_user_error: bool
+    :ivar properties: Any key value pairs that can be injected inside error object.
+    :vartype properties: dict[str, str]
+    :ivar message:
+    :vartype message: str
+    :ivar recommended_action: RecommendedAction � localized.
+    :vartype recommended_action: list[str]
+    :ivar target: Target of the error.
+    :vartype target: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[UserFacingError]"},
+        "inner_error": {"key": "innerError", "type": "InnerError"},
+        "is_retryable": {"key": "isRetryable", "type": "bool"},
+        "is_user_error": {"key": "isUserError", "type": "bool"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "message": {"key": "message", "type": "str"},
+        "recommended_action": {"key": "recommendedAction", "type": "[str]"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         code: Optional[str] = None,
-        details: Optional[List["UserFacingError"]] = None,
-        inner_error: Optional["InnerError"] = None,
+        details: Optional[List["_models.UserFacingError"]] = None,
+        inner_error: Optional["_models.InnerError"] = None,
         is_retryable: Optional[bool] = None,
         is_user_error: Optional[bool] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -4529,7 +5933,27 @@ class UserFacingError(msrest.serialization.Model):
         target: Optional[str] = None,
         **kwargs
     ):
-        super(UserFacingError, self).__init__(**kwargs)
+        """
+        :keyword code: Unique code for this error.
+        :paramtype code: str
+        :keyword details: Additional related Errors.
+        :paramtype details: list[~azure.mgmt.dataprotection.models.UserFacingError]
+        :keyword inner_error: Inner Error.
+        :paramtype inner_error: ~azure.mgmt.dataprotection.models.InnerError
+        :keyword is_retryable: Whether the operation will be retryable or not.
+        :paramtype is_retryable: bool
+        :keyword is_user_error: Whether the operation is due to a user error or service error.
+        :paramtype is_user_error: bool
+        :keyword properties: Any key value pairs that can be injected inside error object.
+        :paramtype properties: dict[str, str]
+        :keyword message:
+        :paramtype message: str
+        :keyword recommended_action: RecommendedAction � localized.
+        :paramtype recommended_action: list[str]
+        :keyword target: Target of the error.
+        :paramtype target: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.details = details
         self.inner_error = inner_error
@@ -4541,55 +5965,53 @@ class UserFacingError(msrest.serialization.Model):
         self.target = target
 
 
-class ValidateForBackupRequest(msrest.serialization.Model):
+class ValidateForBackupRequest(_serialization.Model):
     """Validate for backup request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param backup_instance: Required. Backup Instance.
-    :type backup_instance: ~azure.mgmt.dataprotection.models.BackupInstance
+    :ivar backup_instance: Backup Instance. Required.
+    :vartype backup_instance: ~azure.mgmt.dataprotection.models.BackupInstance
     """
 
     _validation = {
-        'backup_instance': {'required': True},
+        "backup_instance": {"required": True},
     }
 
     _attribute_map = {
-        'backup_instance': {'key': 'backupInstance', 'type': 'BackupInstance'},
+        "backup_instance": {"key": "backupInstance", "type": "BackupInstance"},
     }
 
-    def __init__(
-        self,
-        *,
-        backup_instance: "BackupInstance",
-        **kwargs
-    ):
-        super(ValidateForBackupRequest, self).__init__(**kwargs)
+    def __init__(self, *, backup_instance: "_models.BackupInstance", **kwargs):
+        """
+        :keyword backup_instance: Backup Instance. Required.
+        :paramtype backup_instance: ~azure.mgmt.dataprotection.models.BackupInstance
+        """
+        super().__init__(**kwargs)
         self.backup_instance = backup_instance
 
 
-class ValidateRestoreRequestObject(msrest.serialization.Model):
+class ValidateRestoreRequestObject(_serialization.Model):
     """Validate restore request object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param restore_request_object: Required. Gets or sets the restore request object.
-    :type restore_request_object: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest
+    :ivar restore_request_object: Gets or sets the restore request object. Required.
+    :vartype restore_request_object: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest
     """
 
     _validation = {
-        'restore_request_object': {'required': True},
+        "restore_request_object": {"required": True},
     }
 
     _attribute_map = {
-        'restore_request_object': {'key': 'restoreRequestObject', 'type': 'AzureBackupRestoreRequest'},
+        "restore_request_object": {"key": "restoreRequestObject", "type": "AzureBackupRestoreRequest"},
     }
 
-    def __init__(
-        self,
-        *,
-        restore_request_object: "AzureBackupRestoreRequest",
-        **kwargs
-    ):
-        super(ValidateRestoreRequestObject, self).__init__(**kwargs)
+    def __init__(self, *, restore_request_object: "_models.AzureBackupRestoreRequest", **kwargs):
+        """
+        :keyword restore_request_object: Gets or sets the restore request object. Required.
+        :paramtype restore_request_object: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest
+        """
+        super().__init__(**kwargs)
         self.restore_request_object = restore_request_object

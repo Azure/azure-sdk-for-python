@@ -29,8 +29,8 @@ class NlpSearchSpace(RestTranslatableMixin):
             number_of_epochs: Optional[Union[int, SweepDistribution]] = None,
             training_batch_size: Optional[Union[int, SweepDistribution]] = None,
             validation_batch_size: Optional[Union[int, SweepDistribution]] = None,
-            warmup_ratio: Optional[Union[int, SweepDistribution]] = None,
-            weight_decay: Optional[Union[str, SweepDistribution]] = None
+            warmup_ratio: Optional[Union[float, SweepDistribution]] = None,
+            weight_decay: Optional[Union[float, SweepDistribution]] = None
     ):
         # Since we want customers to be able to specify enums as well rather than just strings, we need to access
         # the enum values here before we serialize them ('NlpModels.BERT_BASE_CASED' vs. 'bert-base-cased').
