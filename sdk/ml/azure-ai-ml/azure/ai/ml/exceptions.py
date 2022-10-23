@@ -572,11 +572,11 @@ class MultipleValueError(KeywordError):
 
 
 class NonExistParamValueError(KeywordError):
-    """Exception raised when items in non_pipeline_parameters not in keyword parameters in
+    """Exception raised when items in non_pipeline_inputs not in keyword parameters in
     dynamic functions."""
 
     def __init__(self, func_name, keywords):
-        message = "%s() got unexpected params in non_pipeline_parameters %r." % (func_name, keywords)
+        message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
         super().__init__(message=message, no_personal_data_message=message)
 
 

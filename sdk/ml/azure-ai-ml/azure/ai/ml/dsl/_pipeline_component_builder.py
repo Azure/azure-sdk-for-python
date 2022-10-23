@@ -145,7 +145,7 @@ class PipelineComponentBuilder:
         default_datastore=None,
         tags=None,
         source_path=None,
-        non_pipeline_parameters=None
+        non_pipeline_inputs=None
     ):
         self.func = func
         name = name if name else func.__name__
@@ -156,7 +156,7 @@ class PipelineComponentBuilder:
             name = func.__name__
         # List of nodes, order by it's creation order in pipeline.
         self.nodes = []
-        self.non_pipeline_parameter_names = non_pipeline_parameters or []
+        self.non_pipeline_parameter_names = non_pipeline_inputs or []
         # A dict of inputs name to InputDefinition.
         # TODO: infer pipeline component input meta from assignment
         self.inputs = self._build_inputs(func)
