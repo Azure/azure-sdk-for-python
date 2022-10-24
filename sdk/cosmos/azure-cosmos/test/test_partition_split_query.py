@@ -65,17 +65,17 @@ class TestPartitionSplitQuery(unittest.TestCase):
         self.run_queries(self.container, 100)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
         offer = self.database.get_throughput()
-        while True:
-            if offer.properties['content'].get('isOfferReplacePending', False):
-                time.sleep(10)
-                offer = self.database.get_throughput()
-            else:
-                print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
-                self.run_queries(self.container, 100)  # check queries work post partition split
-                print("test over")
-                self.assertTrue(offer.offer_throughput > self.throughput)
-                self.client.delete_database(self.configs.TEST_THROUGHPUT_DATABASE_ID)
-                return
+        # while True:
+        #     if offer.properties['content'].get('isOfferReplacePending', False):
+        #         time.sleep(10)
+        #         offer = self.database.get_throughput()
+        #     else:
+        #         print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
+        #         self.run_queries(self.container, 100)  # check queries work post partition split
+        #         print("test over")
+        #         self.assertTrue(offer.offer_throughput > self.throughput)
+        #         self.client.delete_database(self.configs.TEST_THROUGHPUT_DATABASE_ID)
+        #         return
 
     def run_queries(self, container, iterations):
         ret_list = list()
