@@ -184,6 +184,7 @@ deployments:
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestOperationOrchestration:
     def test_code_arm_id(self, operation_orchestrator: OperationOrchestrator) -> None:
         code = VERSIONED_RESOURCE_ID_FORMAT.format(
