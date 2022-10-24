@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger()
 CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
-CONTAINER_STARTUP_TIMEOUT = 30
+CONTAINER_STARTUP_TIMEOUT = 60
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
 PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
