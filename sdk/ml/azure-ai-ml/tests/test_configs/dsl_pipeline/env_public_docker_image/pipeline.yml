@@ -1,0 +1,7 @@
+type: pipeline
+
+jobs:
+  hello_python_world_job:
+    type: command
+    component: file:./component.yml
+    compute: azureml:cpu-cluster

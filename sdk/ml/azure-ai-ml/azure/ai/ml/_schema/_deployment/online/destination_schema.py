@@ -7,7 +7,8 @@ from typing import Any
 
 from marshmallow import ValidationError, fields, post_load, validates
 
-from azure.ai.ml._schema import PatchedSchemaMeta
+from azure.ai.ml._schema import NestedField, PatchedSchemaMeta
+from azure.ai.ml._schema._deployment.online.event_hub_schema import EventHubSchema
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 
 module_logger = logging.getLogger(__name__)
@@ -15,6 +16,7 @@ module_logger = logging.getLogger(__name__)
 
 class DestinationSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str()
+    event_hub = NestedField(EventHubSchema)
 
     # pylint: disable=unused-argument,no-self-use
     @validates("path")

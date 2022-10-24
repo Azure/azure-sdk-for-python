@@ -18,7 +18,11 @@ from azure.ai.formrecognizer import (
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+<<<<<<< HEAD
 import os
+=======
+from conftest import skip_flaky_test
+>>>>>>> upstream/main
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
@@ -27,6 +31,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestManagement(FormRecognizerTest):
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
@@ -37,6 +42,7 @@ class TestManagement(FormRecognizerTest):
         info = client.get_resource_details()
         assert info
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -72,6 +78,7 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ValueError):
             result = client.delete_document_model("")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -81,6 +88,7 @@ class TestManagement(FormRecognizerTest):
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -98,6 +106,7 @@ class TestManagement(FormRecognizerTest):
                 assert field["type"]
             assert doc_type.field_confidence == {}
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -128,6 +137,7 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ResourceNotFoundError):
             client.get_document_model(model.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -194,6 +204,7 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ValueError):
             client.get_operation(None)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):

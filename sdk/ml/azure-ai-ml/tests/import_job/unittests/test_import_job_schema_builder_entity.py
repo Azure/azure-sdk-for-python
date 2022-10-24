@@ -84,7 +84,7 @@ class TestImportJob:
     )
     def test_import_job_missing_unknown_fields(self, yaml_file: str, expected_exception_messages: list):
         with pytest.raises(ValidationError) as exception_raised:
-            load_job(path="./tests/test_configs/import_job/" + yaml_file)
+            load_job("./tests/test_configs/import_job/" + yaml_file)
 
         assert exception_raised.value.messages is not None and len(exception_raised.value.messages) > 0
         assert "Validation for ImportJobSchema failed" in exception_raised.value.messages[0]

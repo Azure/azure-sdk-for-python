@@ -15,6 +15,7 @@ stages:
         AZURE_CLIENT_ID: $(SERVICEBUS_CLIENT_ID)
         AZURE_CLIENT_SECRET: $(SERVICEBUS_CLIENT_SECRET)
         AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_SKIP_LIVE_RECORDING: 'True'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       Clouds: 'Public,Canary'

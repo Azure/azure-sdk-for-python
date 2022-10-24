@@ -1,6 +1,6 @@
 # Release History
 
-## 1.25.2 (Unreleased)
+## 1.26.1 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,12 @@
 
 ### Other Changes
 
+## 1.26.0 (2022-10-06)
+
+### Other Changes
+
 - LRO polling will not wait anymore before doing the first status check  #26376
+- Added extra dependency for [aio]. pip install azure-core[aio] installs aiohttp too.
 
 ## 1.25.1 (2022-09-01)
 

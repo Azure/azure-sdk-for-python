@@ -5,9 +5,8 @@
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField, LocalPathField, NestedField, UnionField
+from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml.constants._common import LOCAL_PATH, AzureMLResourceType
 
 
 class ScriptReferenceSchema(metaclass=PatchedSchemaMeta):

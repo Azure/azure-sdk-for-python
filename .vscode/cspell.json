@@ -50,11 +50,11 @@
     "sdk/communication/azure-communication-sms/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
+    "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
-    "sdk/eventgrid/azure-eventgrid/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
@@ -81,6 +81,8 @@
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
+    "sdk/ml/azure-ai-ml/swagger/**",
+    "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
     "eng/**/*.json",
@@ -100,6 +102,7 @@
     "aad",
     "aadclient",
     "AADSTS",
+    "adamw",
     "addfinalizer",
     "addinivalue",
     "adfs",
@@ -145,9 +148,12 @@
     "deque",
     "deserialization",
     "disablecov",
+    "distilbert",
+    "distilroberta",
     "docfx",
     "dont",
     "dotenv",
+    "dowhile",
     "dpkg",
     "dtlk",
     "dtlksd",
@@ -231,8 +237,10 @@
     "myacr",
     "mydirectory",
     "myfile",
+    "myvault",
     "nazsdk",
     "nbytes",
+    "nbsp",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -262,8 +270,10 @@
     "prevsnapshot",
     "pschema",
     "PSECRET",
+    "pyfetch",
     "pyfuncitem",
     "pygobject",
+    "pyodide",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -345,6 +355,7 @@
     "westus",
     "wfile",
     "westus",
+    "xlnet",
     "BUILDID",
     "documentdb",
     "chdir",
@@ -393,7 +404,8 @@
         "myasynctable",
         "mytableasync",
         "mytable",
-        "edmtypes"
+        "edmtypes",
+        "specifed"
       ]
     },
     {
@@ -448,6 +460,10 @@
       ]
     },
     {
+      "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
+      "words": ["ctxt", "somethingstuid"]
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
       "words": ["conv"],
       "caseSensitive": false
@@ -462,7 +478,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": ["qnas", "qnamaker"],
+      "words": ["qnas", "qnamaker", "ADTO"],
       "caseSensitive": false
     },
     {
@@ -502,6 +518,14 @@
       ]
     },
     {
+      "filename": "sdk/eventgrid/**/*",
+      "words": [
+        "cncf",
+        "CNCF",
+        "Cncf"
+      ]
+    },
+    {
       "filename": "sdk/eventhub/test-resources.json",
       "words": [
         "mmspecial"
@@ -536,7 +560,8 @@
         "dmac",
         "ierr",
         "mymodel",
-        "heif"
+        "heif",
+        "racwd"
       ]
     },
     {
@@ -655,6 +680,12 @@
       ]
     },
     {
+      "filename": "sdk/ml/tests.yml",
+      "words": [
+        "euap"
+      ]
+    },
+    {
       "filename": "sdk/ml/azure-ai-ml/**",
       "words": [
         "azureml",
@@ -695,6 +726,7 @@
         "myworkspace",
         "mydatastore",
         "mlnlp",
+        "prec",
         "pacf",
         "armid",
         "dsvm",
@@ -769,7 +801,19 @@
         "gzrs",
         "ragzrs",
         "wsid",
-        "azml"
+        "azml",
+        "uncompiled",
+        "segs",
+        "fnmatch",
+        "posixpath",
+        "SEPS",
+        "wargs"
+      ]
+    },
+    {
+      "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
+      "words":[
+        "sharedwus"
       ]
     },
     {
@@ -1072,6 +1116,16 @@
         "seqno",
         "mrenclave",
         "infile"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+	  "deseralize",
+	  "wday"
       ]
     }
   ],

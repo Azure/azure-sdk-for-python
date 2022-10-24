@@ -29,13 +29,12 @@ jobs:
     primary_metric: iou
     limits:
       timeout_minutes: 60
+      max_concurrent_trials: 4
+      max_trials: 20
     target_column_name: label
     training_data: ${{parent.inputs.image_multilabel_classification_train_data}}
     validation_data: ${{parent.inputs.image_multilabel_classification_validate_data}}
     sweep:
-      limits:
-        max_trials: 20
-        max_concurrent_trials: 4
       sampling_algorithm: Random
       early_termination:
         type: bandit

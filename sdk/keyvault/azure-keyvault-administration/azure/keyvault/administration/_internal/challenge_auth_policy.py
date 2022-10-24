@@ -15,6 +15,7 @@ protocol again.
 """
 
 import time
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest
@@ -63,6 +64,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
+        self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -96,6 +98,19 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
             return False
+
+        if self._verify_challenge_resource:
+            resource_domain = urlparse(scope).netloc
+            if not resource_domain:
+                raise ValueError(f"The challenge contains invalid scope '{scope}'.")
+
+            request_domain = urlparse(request.http_request.url).netloc
+            if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
+                raise ValueError(
+                    f"The challenge resource '{resource_domain}' does not match the requested domain. Pass "
+                    "`verify_challenge_resource=False` to your client's constructor to disable this verification. "
+                    "See https://aka.ms/azsdk/blog/vault-uri for more information."
+                )
 
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None

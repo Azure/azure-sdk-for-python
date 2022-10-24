@@ -17,9 +17,11 @@ from azure.ai.ml._internal.entities import (
     InternalComponent,
     Parallel,
     Scope,
+    DataTransfer,
+    Hemera,
+    Starlite,
 )
 from azure.ai.ml._schema import NestedField
-from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
@@ -58,6 +60,9 @@ def enable_internal_components_in_pipeline():
         _register_node(_type, InternalBaseNode, InternalBaseNodeSchema)
 
     # redo the registration for those with specific runsettings
+    _register_node(NodeType.DATA_TRANSFER, DataTransfer, InternalBaseNodeSchema)
+    _register_node(NodeType.HEMERA, Hemera, InternalBaseNodeSchema)
+    _register_node(NodeType.STARLITE, Starlite, InternalBaseNodeSchema)
     _register_node(NodeType.COMMAND, Command, CommandSchema)
     _register_node(NodeType.DISTRIBUTED, Distributed, DistributedSchema)
     _register_node(NodeType.SCOPE, Scope, ScopeSchema)

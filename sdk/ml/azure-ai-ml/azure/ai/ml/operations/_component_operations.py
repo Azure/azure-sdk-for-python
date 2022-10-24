@@ -7,24 +7,18 @@
 import time
 import types
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Union
+from typing import Callable, Dict, Iterable, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerDetails, ListViewType
+from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
     OperationScope,
     _ScopeDependentOperations,
-)
-from azure.ai.ml._telemetry import (
-    AML_INTERNAL_LOGGER_NAMESPACE,
-    ActivityType,
-    monitor_with_activity,
-    monitor_with_telemetry_mixin,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
@@ -36,22 +30,24 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import Component
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, DEFAULT_LABEL_NAME, \
+    DEFAULT_COMPONENT_VERSION
+from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._validation import ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
+from ..entities._builders.condition_node import ConditionNode
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ..entities._job.pipeline._attr_dict import has_attr_safe
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):
@@ -71,8 +67,8 @@ class ComponentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
-        if "app_insights_handler" in kwargs:
-            logger.addHandler(kwargs.pop("app_insights_handler"))
+        # if "app_insights_handler" in kwargs:
+        #     logger.addHandler(kwargs.pop("app_insights_handler"))
         self._version_operation = service_client.component_versions
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
@@ -99,7 +95,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
-    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,
@@ -153,16 +149,20 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Component:
+    # @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
         :param name: Name of the code component.
         :type name: str
         :param version: Version of the component.
-        :type version: str
+        :type version: Optional[str]
         :param label: Label of the component. (mutually exclusive with version)
-        :type label: str
+        :type label: Optional[str]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully
+            identified and retrieved. Details will be provided in the error message.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -173,17 +173,16 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+        if not version and not label:
+            label = DEFAULT_LABEL_NAME
+
+        if label == DEFAULT_LABEL_NAME:
+            label = None
+            version = DEFAULT_COMPONENT_VERSION
+
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        if not version:
-            msg = "Must provide either version or label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
         result = (
             self._version_operation.get(
                 name=name,
@@ -205,7 +204,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
     # pylint: disable=no-self-use
     def validate(
         self,
@@ -224,7 +223,7 @@ class ComponentOperations(_ScopeDependentOperations):
         """
         return self._validate(component, raise_on_failure=raise_on_failure)
 
-    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
+    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
@@ -243,12 +242,12 @@ class ComponentOperations(_ScopeDependentOperations):
         result.resolve_location_for_diagnostics(component._source_path)
         return result
 
-    @monitor_with_telemetry_mixin(
-        logger,
-        "Component.CreateOrUpdate",
-        ActivityType.PUBLICAPI,
-        extra_keys=["is_anonymous"],
-    )
+    # @monitor_with_telemetry_mixin(
+    #     logger,
+    #     "Component.CreateOrUpdate",
+    #     ActivityType.PUBLICAPI,
+    #     extra_keys=["is_anonymous"],
+    # )
     def create_or_update(
         self, component: Union[Component, types.FunctionType], version=None, *, skip_validation: bool = False, **kwargs
     ) -> Component:
@@ -262,6 +261,18 @@ class ComponentOperations(_ScopeDependentOperations):
         :type version: str
         :param skip_validation: whether to skip validation before creating/updating the component
         :type skip_validation: bool
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if Component assets
+            (e.g. Data, Code, Model, Environment) cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ComponentException: Raised if Component type is unsupported.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if Component model cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: The specified component object.
+        :rtype: ~azure.ai.ml.entities.Component
         """
         # Update component when the input is a component function
         if isinstance(component, types.FunctionType):
@@ -342,7 +353,7 @@ class ComponentOperations(_ScopeDependentOperations):
             self._resolve_arm_id_for_pipeline_component_jobs(component.jobs, self._orchestrators.resolve_azureml_id)
         return component
 
-    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str, version: str = None, label: str = None) -> None:
         """Archive a component.
 
@@ -363,7 +374,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str, version: str = None, label: str = None) -> None:
         """Restore an archived component.
 
@@ -470,7 +481,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
     def _resolve_arm_id_for_pipeline_component_jobs(self, jobs, resolver: Callable):
 
-        from azure.ai.ml.entities._builders import BaseNode, Sweep
+        from azure.ai.ml.entities._builders import BaseNode
         from azure.ai.ml.entities._builders.control_flow_node import LoopNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
@@ -479,14 +490,14 @@ class ComponentOperations(_ScopeDependentOperations):
         def preprocess_job(node):
             """Resolve all PipelineInput(binding from sdk) on supported fields to string."""
             # compute binding to pipeline input is supported on node.
-            supported_fields = ["compute"]
+            supported_fields = ["compute", "compute_name"]
             for field_name in supported_fields:
                 val = try_get_non_arbitrary_attr_for_potential_attr_dict(node, field_name)
                 if isinstance(val, PipelineInput):
                     # Put binding string to field
                     setattr(node, field_name, val._data_binding())
 
-        def resolve_base_node(name, node):
+        def resolve_base_node(name, node: BaseNode):
             """Resolve node name, compute and component for base node."""
             # Set display name as node name
             if (
@@ -504,6 +515,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 if not is_data_binding_expression(node.compute):
                     # Get compute for each job
                     node.compute = resolver(node.compute, azureml_type=AzureMLResourceType.COMPUTE)
+                if has_attr_safe(node, "compute_name") and not is_data_binding_expression(node.compute_name):
+                    node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
             # Get the component id for each job's component
             # Note: do not use node.component as Sweep don't have that
             node._component = resolver(
@@ -519,6 +532,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):
                 resolve_base_node(key, job_instance)
+            elif isinstance(job_instance, ConditionNode):
+                pass
             else:
                 msg = f"Non supported job type in Pipeline: {type(job_instance)}"
                 raise ComponentException(

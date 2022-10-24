@@ -1,0 +1,5 @@
+-e ../../../tools/azure-sdk-tools
+../azure-core
+-e ../../../tools/azure-devtools
+js
+pyodide==0.19.0a1; python_version >= '3.8'

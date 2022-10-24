@@ -21,7 +21,7 @@ from azure.ai.metricsadvisor.models import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
-from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids
+from base_testcase import TestMetricsAdvisorClientBase, MetricsAdvisorClientPreparer, CREDENTIALS, ids, API_KEY
 MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
@@ -412,7 +412,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             self.clean_up(client.delete_data_feed, variables)
         return variables
 
-    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @pytest.mark.parametrize("credential", API_KEY, ids=ids)  # API key only. AAD error: (Forbidden) You do not have sufficient permissions on this Metric.
     @MetricsAdvisorPreparer()
     @recorded_by_proxy
     def test_list_detection_configs(self, client):

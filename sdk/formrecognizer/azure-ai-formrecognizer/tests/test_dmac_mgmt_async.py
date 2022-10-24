@@ -20,7 +20,11 @@ from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+<<<<<<< HEAD
 import os
+=======
+from conftest import skip_flaky_test
+>>>>>>> upstream/main
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
@@ -29,6 +33,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestManagementAsync(AsyncFormRecognizerTest):
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
@@ -80,6 +85,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             async with client:
                 result = await client.delete_document_model("")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -90,6 +96,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -106,6 +113,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     assert field["type"]
                 assert doc_type.field_confidence == {}
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -138,6 +146,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             with pytest.raises(ResourceNotFoundError):
                 await client.get_document_model(model.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -201,6 +210,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         with pytest.raises(ValueError):
             await client.get_operation(None)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):

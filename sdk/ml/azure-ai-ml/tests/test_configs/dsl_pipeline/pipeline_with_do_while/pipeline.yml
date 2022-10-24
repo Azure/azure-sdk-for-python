@@ -6,8 +6,8 @@ type: pipeline
 
 inputs:
   component_in_path:
-    type: uri_file
-    path: ./invalid_pipeline.yml
+    type: uri_folder
+    path: ./
   component_in_number: 3
 
 outputs:

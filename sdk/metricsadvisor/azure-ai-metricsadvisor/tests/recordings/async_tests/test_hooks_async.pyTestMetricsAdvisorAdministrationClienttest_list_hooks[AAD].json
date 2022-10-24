@@ -6,21 +6,19 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "4e40b040-5e0d-11ec-acb3-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "eb59d7b3-c626-4053-a5c5-4ac62471adbe",
-        "Content-Length": "4390",
+        "apim-request-id": "6b1256dc-2828-4e5e-a975-76aa18b618e6",
+        "Content-Length": "6051",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:12:58 GMT",
+        "Date": "Thu, 29 Sep 2022 23:26:30 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "63",
-        "X-Request-ID": "eb59d7b3-c626-4053-a5c5-4ac62471adbe"
+        "x-envoy-upstream-service-time": "56",
+        "X-Request-ID": "6b1256dc-2828-4e5e-a975-76aa18b618e6"
       },
       "ResponseBody": {
         "value": [
@@ -196,6 +194,21 @@
             }
           },
           {
+            "hookId": "979adc30-f691-473f-a40d-b7bc28ef0f83",
+            "hookName": "emailhook23c3b90c-1f0c-4adf-8de2-51afe4ba58b6",
+            "hookType": "Email",
+            "externalLink": "external link",
+            "description": "my email hook",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "toList": [
+                "yournamehere@microsoft.com"
+              ]
+            }
+          },
+          {
             "hookId": "b125a509-e690-47ec-8ea8-19a5aca8d557",
             "hookName": "f26d0888-fecc-4ff2-ae0a-3bd4b16db1db",
             "hookType": "Webhook",
@@ -232,6 +245,68 @@
           {
             "hookId": "3bca60f7-407c-403b-9619-7b070883a174",
             "hookName": "testwebhookcd6f134f",
+            "hookType": "Webhook",
+            "externalLink": "external link",
+            "description": "my web hook",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "endpoint": "https://httpbin.org/post",
+              "username": "krista",
+              "password": "123"
+            }
+          },
+          {
+            "hookId": "9f09671d-7017-49d1-9589-7697724f64e6",
+            "hookName": "update8af633b3-7b3e-41ce-916a-5f190859e10c",
+            "hookType": "Webhook",
+            "externalLink": "update",
+            "description": "update",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "endpoint": "https://httpbin.org/post",
+              "username": "myusername",
+              "password": "password",
+              "certificateKey": "",
+              "certificatePassword": ""
+            }
+          },
+          {
+            "hookId": "89ae8ae5-b26c-4c63-9cd3-ae081207e560",
+            "hookName": "web_hookd37097ee-4550-4d69-86a1-12573d30339d",
+            "hookType": "Webhook",
+            "externalLink": "external link",
+            "description": "my web hook",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "endpoint": "https://httpbin.org/post",
+              "username": "krista",
+              "password": "123"
+            }
+          },
+          {
+            "hookId": "5a48bb2a-83b4-4cc5-b8f3-59709fde6a04",
+            "hookName": "web_hook1b607a8d-6b83-4de0-a4e9-1bcd5494338f",
+            "hookType": "Webhook",
+            "externalLink": "external link",
+            "description": "my web hook",
+            "admins": [
+              "f850650c-1fcf-4489-b46f-71af2e30d360"
+            ],
+            "hookParameter": {
+              "endpoint": "https://httpbin.org/post",
+              "username": "krista",
+              "password": "123"
+            }
+          },
+          {
+            "hookId": "a1743436-f00d-49c2-a750-56eef5aa0896",
+            "hookName": "web_hooke1f6b811-a0f2-41ee-9270-b59b8cbe64a4",
             "hookType": "Webhook",
             "externalLink": "external link",
             "description": "my web hook",
