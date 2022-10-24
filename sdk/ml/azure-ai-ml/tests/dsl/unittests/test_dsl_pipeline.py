@@ -39,7 +39,7 @@ from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, UnsupportedParameterKindError
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from azure.ai.ml.sweep import (
     BanditPolicy,
@@ -3847,6 +3847,54 @@ class TestDSLPipeline:
             "component_in_number": 2,
             "component_in_path": {"type": "mltable", "path": "azureml:test:1"},
         }
+
+    def test_pipeline_with_variable_inputs(self):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func1 = load_component(path)
+        data = Data(name="test", version="1", type=AssetTypes.MLTABLE)
+
+        @dsl.pipeline
+        def pipeline_with_variable_args(*args, **kwargs):
+            node_args = component_func1(component_in_number=args[0], component_in_path=args[1])
+            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
+                                          component_in_path=kwargs["component_in_path1"])
+
+        @dsl.pipeline
+        def root_pipeline(component_in_number: int, component_in_path: Input, *args, **kwargs):
+            node = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            node_args = component_func1(component_in_number=args[0], component_in_path=args[1])
+            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
+                                          component_in_path=kwargs["component_in_path1"])
+            node_with_arg_kwarg = pipeline_with_variable_args(*args, **kwargs)
+
+        pipeline = root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
+
+        assert len(pipeline.inputs) == 6
+        arg_names = ['component_in_number', 'component_in_path', 'component_in_number1',
+                     'component_in_path1', 'args_0', 'args_1']
+        assert all([input_name in pipeline.inputs for input_name in arg_names])
+
+        node_args = pipeline.jobs['node_args']
+        assert len(node_args.inputs) == 2
+        assert all([input._data._name in ['args_0', 'args_1'] for input in node_args.inputs.values()])
+
+        node_kwargs = pipeline.jobs['node_kwargs']
+        assert len(node_kwargs.inputs) == 2
+        assert all([input._data._name in ['component_in_number1', 'component_in_path1'] for input in
+                    node_kwargs.inputs.values()])
+
+        node_with_arg_kwarg = pipeline.jobs['node_with_arg_kwarg']
+        assert len(node_with_arg_kwarg.inputs) == 4
+        arg_names = ['component_in_number1', 'component_in_path1', 'args_0', 'args_1']
+        assert all([input._data._name in arg_names for input in node_with_arg_kwarg.inputs.values()])
+
+        with mock.patch(
+            "azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled",
+            return_value=True
+        ):
+            with pytest.raises(UnsupportedParameterKindError,
+                               match="dsl pipeline does not accept *args or **kwargs as parameters."):
+                root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

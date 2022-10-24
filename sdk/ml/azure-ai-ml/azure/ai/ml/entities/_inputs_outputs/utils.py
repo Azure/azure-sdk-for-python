@@ -218,7 +218,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
         defaults_dict = {key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_")}
     else:
         # Infer parameter type from value if is function
-        defaults_dict = {key: val.default for key, val in signature(cls_or_func).parameters.items()}
+        defaults_dict = {key: val.default for key, val in signature(cls_or_func).parameters.items() if val.kind not in [val.VAR_KEYWORD, val.VAR_POSITIONAL]}
     fields = _update_fields_with_default(annotation_fields, defaults_dict)
     all_fields = _merge_and_reorder(inherited_fields, fields)
     return all_fields

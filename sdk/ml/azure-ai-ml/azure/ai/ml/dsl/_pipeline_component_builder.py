@@ -24,9 +24,10 @@ from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, _get_param_with_standard_annotation
+from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, _get_param_with_standard_annotation, Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
+from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
@@ -181,10 +182,11 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self) -> PipelineComponent:
+    def build(self, args, kwargs) -> PipelineComponent:
         # Clear nodes as we may call build multiple times.
         self.nodes = []
-        kwargs = _build_pipeline_parameter(self.func, self._get_group_parameter_defaults())
+        pipeline_kwargs = {**kwargs, **self._get_group_parameter_defaults()}
+        pipeline_args, pipeline_kwargs = _build_pipeline_parameter(self.func, args, pipeline_kwargs)
         # We use this stack to store the dsl pipeline definition hierarchy
         _definition_builder_stack.push(self)
 
@@ -193,7 +195,7 @@ class PipelineComponentBuilder:
         func_variable_profiler = get_func_variable_tracer(_locals, self.func.__code__)
         try:
             with replace_sys_profiler(func_variable_profiler):
-                outputs = self.func(**kwargs)
+                outputs = self.func(*pipeline_args, **pipeline_kwargs)
         finally:
             _definition_builder_stack.pop()
 
@@ -378,8 +380,21 @@ class PipelineComponentBuilder:
             result[final_name] = node
         return result
 
+    def _update_inputs(self, pipeline_inputs):
+        """Update the pipeline inputs by the dict."""
+        for input_name, value in pipeline_inputs.items():
+            if input_name not in self.inputs:
+                if isinstance(value, PipelineInput):
+                    value = value._data
+                if isinstance(value, Input):
+                    anno = copy.copy(value)
+                else:
+                    anno = _get_annotation_by_value(value)
+                anno.name = input_name
+                self.inputs[input_name] = anno
 
-def _build_pipeline_parameter(func, kwargs=None):
+
+def _build_pipeline_parameter(func, args=None, kwargs=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @parameter_group
@@ -391,7 +406,9 @@ def _build_pipeline_parameter(func, kwargs=None):
     #   component_func(input=param.key)  <--- param.key should be val.
 
     # transform kwargs
-    transformed_kwargs = {}
+    transformed_args, transformed_kwargs = [], {}
+    if args:
+        transformed_args = [_wrap_pipeline_parameter(key, val) for key, val in args.items()]
     if kwargs:
         transformed_kwargs.update({key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items()})
 
@@ -400,15 +417,20 @@ def _build_pipeline_parameter(func, kwargs=None):
             yield value
 
     if func is None:
-        return transformed_kwargs
+        return transformed_args, transformed_kwargs
 
     parameters = all_params(signature(func).parameters)
     # transform default values
-    for left_args in parameters:
-        if left_args.name not in transformed_kwargs.keys():
-            default = left_args.default if left_args.default is not Parameter.empty else None
-            transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(left_args.name, default)
-    return transformed_kwargs
+    position_args = []
+    for arg in parameters:
+        if arg.kind not in [arg.VAR_POSITIONAL, arg.VAR_KEYWORD]:
+            if arg.name in transformed_kwargs:
+                position_args.append(transformed_kwargs.pop(arg.name))
+            else:
+                default = arg.default if arg.default is not Parameter.empty else None
+                position_args.append(_wrap_pipeline_parameter(arg.name, default))
+    position_args.extend(transformed_args)
+    return position_args, transformed_kwargs
 
 
 def _wrap_pipeline_parameter(key, value, group_names=None):
@@ -418,4 +440,6 @@ def _wrap_pipeline_parameter(key, value, group_names=None):
         group_names.append(key)
         return _GroupAttrDict({k: _wrap_pipeline_parameter(k, v, group_names=group_names) for k, v in value.items()})
     # Note: here we build PipelineInput to mark this input as a data binding.
+    if isinstance(value, PipelineInput):
+        value = value._data
     return PipelineInput(name=key, meta=None, data=value, group_names=group_names)

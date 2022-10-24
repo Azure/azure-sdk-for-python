@@ -12,6 +12,7 @@ from inspect import Parameter, signature
 from pathlib import Path
 from typing import Any, Callable, Dict, TypeVar
 
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
@@ -159,12 +160,16 @@ def pipeline(
             # Because we only want to enable dsl settings on top level pipeline
             _dsl_settings_stack.push()  # use this stack to track on_init/on_finalize settings
             try:
-                provided_positional_args = _validate_args(func, args, kwargs)
                 # Convert args to kwargs
-                kwargs.update(provided_positional_args)
+                provided_positional_args, provided_positional_kwargs = _validate_args(func, args, kwargs)
+                kwargs = OrderedDict(list(provided_positional_kwargs.items()) + list(provided_positional_args.items()))
+
+                # When pipeline supports variable parameters, update pipeline component to support
+                # the inputs in *args and **kwargs.
+                pipeline_builder._update_inputs(kwargs)
 
                 # TODO: cache built pipeline component
-                pipeline_component = pipeline_builder.build()
+                pipeline_component = pipeline_builder.build(provided_positional_args, provided_positional_kwargs)
             finally:
                 # use `finally` to ensure pop operation from the stack
                 dsl_settings = _dsl_settings_stack.pop()
@@ -218,28 +223,34 @@ def pipeline(
 def _validate_args(func, args, kwargs):
     """Validate customer function args and convert them to kwargs."""
     # Positional arguments validate
+    is_support_variable_params = is_private_preview_enabled()
     all_parameters = [param for _, param in signature(func).parameters.items()]
-    # Implicit parameter are *args and **kwargs
-    if any(param.kind in {param.VAR_KEYWORD, param.VAR_POSITIONAL} for param in all_parameters):
-        raise UnsupportedParameterKindError(func.__name__)
-
     all_parameter_keys = [param.name for param in all_parameters]
-    empty_parameters = {param.name: param for param in all_parameters if param.default is Parameter.empty}
-    min_num = len(empty_parameters)
-    max_num = len(all_parameters)
-    if len(args) > max_num:
-        raise TooManyPositionalArgsError(func.__name__, min_num, max_num, len(args))
+    named_parameters = [param for param in all_parameters if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]]
+    empty_parameters = {param.name: param for param in named_parameters if param.default is Parameter.empty}
+    # Implicit parameter are *args and **kwargs
+    if not is_support_variable_params:
+        if len(all_parameters) != len(named_parameters):
+            raise UnsupportedParameterKindError(func.__name__)
 
-    provided_args = OrderedDict({param.name: args[idx] for idx, param in enumerate(all_parameters) if idx < len(args)})
+        min_num = len(empty_parameters)
+        max_num = len(named_parameters)
+        if len(args) > max_num:
+            raise TooManyPositionalArgsError(func.__name__, min_num, max_num, len(args))
+
+    func_args, provided_args = list(args), OrderedDict({})
+    provided_kwargs = OrderedDict({param.name: func_args.pop(0) for param in named_parameters if len(func_args) > 0})
+    for index, arg in enumerate(func_args):
+        provided_args[f"args_{index}"] = func_args[index]
     for _k in kwargs.keys():
-        if _k not in all_parameter_keys:
+        if not is_support_variable_params and _k not in all_parameter_keys:
             raise UnexpectedKeywordError(func.__name__, _k, all_parameter_keys)
-        if _k in provided_args.keys():
+        if _k in provided_kwargs.keys():
             raise MultipleValueError(func.__name__, _k)
-        provided_args[_k] = kwargs[_k]
+        provided_kwargs[_k] = kwargs[_k]
 
-    if len(provided_args) < len(empty_parameters):
-        missing_keys = empty_parameters.keys() - provided_args.keys()
+    missing_keys = empty_parameters.keys() - provided_kwargs.keys()
+    if len(missing_keys) > 0:
         raise MissingPositionalArgsError(func.__name__, missing_keys)
 
     def _is_supported_data_type(_data):
@@ -248,8 +259,8 @@ def _validate_args(func, args, kwargs):
             or is_parameter_group(_data)
         )
 
-    for pipeline_input_name in provided_args:
-        data = provided_args[pipeline_input_name]
+    for pipeline_input_name in provided_kwargs:
+        data = provided_kwargs[pipeline_input_name]
         if data is not None and not _is_supported_data_type(data):
             msg = (
                 "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), "
@@ -260,4 +271,4 @@ def _validate_args(func, args, kwargs):
                 no_personal_data_message=msg.format("[type(pipeline_input_name)]"),
             )
 
-    return provided_args
+    return provided_args, provided_kwargs
