@@ -571,3 +571,9 @@ class RollingRate:
 class Scope:
     SUBSCRIPTION="subscription"
     RESOURCE_GROUP="resource_group"
+
+
+class IdentityType:
+    AML_TOKEN = "aml_token"
+    USER_IDENTITY = "user_identity"
+    MANAGED_IDENTITY = "managed_identity"
