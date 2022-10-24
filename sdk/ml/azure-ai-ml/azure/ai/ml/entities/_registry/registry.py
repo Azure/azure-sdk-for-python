@@ -218,7 +218,7 @@ class Registry(Resource):
         # Notes about this construction.
         # RestRegistry.properties.tags: this property exists due to swagger inheritance
         # issues, don't actually use it, use top level RestRegistry.tags instead
-        # RestRegistry.properties.managed_resource_group_tags: Registries create a 
+        # RestRegistry.properties.managed_resource_group_tags: Registries create a
         # managed resource group to manage their internal sub-resources.
         # We always want the tags on this MRG to match those of the registry itself
         # to keep janitor policies aligned.
