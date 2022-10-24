@@ -72,6 +72,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             'nsp_access_rules_reconcile': '2021-02-01-preview',
             'nsp_association_reconcile': '2021-02-01-preview',
             'nsp_associations': '2021-02-01-preview',
+            'nsp_link_reconcile': '2021-02-01-preview',
+            'nsp_link_reference_reconcile': '2021-02-01-preview',
+            'nsp_link_references': '2021-02-01-preview',
+            'nsp_links': '2021-02-01-preview',
             'nsp_profiles': '2021-02-01-preview',
             'p2_svpn_server_configurations': '2019-07-01',
             'perimeter_associable_resource_types': '2021-02-01-preview',
@@ -5089,6 +5093,62 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
             from .v2021_02_01_preview.operations import NspAssociationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'nsp_associations'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_link_reconcile(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspLinkReconcileOperations<azure.mgmt.network.v2021_02_01_preview.operations.NspLinkReconcileOperations>`
+        """
+        api_version = self._get_api_version('nsp_link_reconcile')
+        if api_version == '2021-02-01-preview':
+            from .v2021_02_01_preview.operations import NspLinkReconcileOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_link_reconcile'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_link_reference_reconcile(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspLinkReferenceReconcileOperations<azure.mgmt.network.v2021_02_01_preview.operations.NspLinkReferenceReconcileOperations>`
+        """
+        api_version = self._get_api_version('nsp_link_reference_reconcile')
+        if api_version == '2021-02-01-preview':
+            from .v2021_02_01_preview.operations import NspLinkReferenceReconcileOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_link_reference_reconcile'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_link_references(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspLinkReferencesOperations<azure.mgmt.network.v2021_02_01_preview.operations.NspLinkReferencesOperations>`
+        """
+        api_version = self._get_api_version('nsp_link_references')
+        if api_version == '2021-02-01-preview':
+            from .v2021_02_01_preview.operations import NspLinkReferencesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_link_references'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def nsp_links(self):
+        """Instance depends on the API version:
+
+           * 2021-02-01-preview: :class:`NspLinksOperations<azure.mgmt.network.v2021_02_01_preview.operations.NspLinksOperations>`
+        """
+        api_version = self._get_api_version('nsp_links')
+        if api_version == '2021-02-01-preview':
+            from .v2021_02_01_preview.operations import NspLinksOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'nsp_links'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 

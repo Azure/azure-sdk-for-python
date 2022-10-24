@@ -1,5 +1,14 @@
 # Release History
 
+## 22.1.0 (2022-10-24)
+
+### Features Added
+
+  - Added operation group NspLinkReconcileOperations
+  - Added operation group NspLinkReferenceReconcileOperations
+  - Added operation group NspLinkReferencesOperations
+  - Added operation group NspLinksOperations
+
 ## 22.0.0 (2022-10-12)
 
 ### Features Added
