@@ -444,12 +444,14 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         )
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
 
         return ManagedIdentitySchema().dump(self)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, **kwargs) -> "ManagedIdentityConfiguration":
+    def _load_from_dict(cls, data: Dict) -> "ManagedIdentityConfiguration":
+        # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
 
         return ManagedIdentitySchema().load(data)
@@ -477,12 +479,14 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
         return cls()
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import UserIdentitySchema
 
         return UserIdentitySchema().dump(self)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, **kwargs) -> "UserIdentityConfiguration":
+    def _load_from_dict(cls, data: Dict) -> "UserIdentityConfiguration":
+        # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import UserIdentitySchema
 
         return UserIdentitySchema().load(data)
@@ -505,12 +509,14 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
         return RestAmlToken()
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
 
         return AMLTokenIdentitySchema().dump(self)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, **kwargs) -> "AMLTokenIdentitySchema":
+    def _load_from_dict(cls, data: Dict) -> "AMLTokenIdentitySchema":
+        # pylint: disable=no-member
         from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
 
         return AMLTokenIdentitySchema().load(data)
