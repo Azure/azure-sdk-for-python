@@ -23,10 +23,28 @@ class BatchJob:
     :param type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :type type: str
-    :param properties: Required. [Required] Additional attributes of the entity.
-    :type properties: ~azure.mgmt.machinelearningservices.models.BatchJob
     :param system_data: System data associated with resource provider.
     :type system_data: SystemData
+    :param copmute: Compute configuration used to set instance count.
+    :type id: ComputeBinding
+    :param dataset: Input dataset.
+    :type dataset: str
+    :param error_threshold: Error threshold, if the error count for the entire input goes above
+         this value, the batch inference will be aborted. Range is [-1, int.MaxValue] -1 value 
+         indicates, ignore all failures during batch inference.
+    :type error_threshold: int
+    :param input_data:Input data for the job.
+    :type input_date: Dict[str, JobInput]
+    :param mini_batch_size: Size of the mini-batch passed to each batch invocation.
+    :type mini_batch_size: int
+    :param batch_job_name: name of batch job property
+    :type batch_job_name: str
+    :param output_file_name: Output file name.
+    :type output_file_name: str
+    :param retry_settings: Retry Settings for the batch inference operation.
+    :type retry_settings: BatchRetrySettings
+    :param status: Status of the job. 
+    :type status: str
     """
 
     def __init__(
