@@ -744,4 +744,4 @@ class WebSocketTransport(_AbstractTransport):
             raise ConnectionError('send disconnected by SSL (%s)' % e)
         except WebSocketConnectionClosedException as e:
             raise ConnectionError('send disconnected (%s)' % e)
-
+            
