@@ -1080,7 +1080,7 @@
             ]
           },
           {
-            "label": "ML-RegistryManagements",
+            "label": "ML-Registry Management",
             "pathFilter": [
               "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/registry",
               "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_registry_operations.py",
