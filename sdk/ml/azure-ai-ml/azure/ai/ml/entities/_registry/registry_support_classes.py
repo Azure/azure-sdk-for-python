@@ -207,7 +207,7 @@ class RegistryRegionDetails:
             count = storage.replication_count
             return [deepcopy(account) for _ in range(0, count)]
         else:
-            return [make_rest_user_storage_from_id(id) for id in storage]    
+            return [make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]    
 
     @classmethod
     def _storage_config_from_rest_object(cls, rest_configs: List[RestStorageAccountDetails]) -> Union[List[str], SystemCreatedStorageAccount]:
