@@ -5,6 +5,8 @@
 
 from typing import List, Union
 
+from functools import reduce
+from copy import deepcopy
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AcrDetails as RestAcrDetails,
     ArmResourceId as RestArmResourceId,
@@ -12,15 +14,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     StorageAccountDetails as RestStorageAccountDetails,
     SystemCreatedAcrAccount as RestSystemCreatedAcrAccount,
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
-    UserCreatedAcrAccount as RestUserCreatedAcrAccount,
-    UserCreatedStorageAccount as RestUserCreatedStorageAccount)
+    UserCreatedAcrAccount as RestUserCreatedAcrAccount)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
-from .util import make_rest_user_storage_from_id
-from functools import reduce
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._exception_helper import log_and_raise_error
-from copy import deepcopy
+from .util import make_rest_user_storage_from_id
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
@@ -113,7 +112,7 @@ class SystemCreatedStorageAccount:
         :param replication_count: The number of replicas of this storage account
             that should be created. Defaults to 1. Values less than 1 are invalid.
         :type replication_count: int
-        :param replicated_ids: If this storage was replicated, then this is a 
+        :param replicated_ids: If this storage was replicated, then this is a
             list of all storage IDs with these settings for this registry.
             Defaults to none for un-replicated storage accounts.
         :type replicated_ids: List[str]
@@ -165,10 +164,10 @@ class RegistryRegionDetails:
         storages = []
         if rest_obj.storage_account_details:
             storages = cls._storage_config_from_rest_object(rest_obj.storage_account_details)
-        
+
         return RegistryRegionDetails(
-            acr_config=converted_acr_details, 
-            location=rest_obj.location, 
+            acr_config=converted_acr_details,
+            location=rest_obj.location,
             storage_config=storages
         )
 
@@ -207,16 +206,19 @@ class RegistryRegionDetails:
             count = storage.replication_count
             return [deepcopy(account) for _ in range(0, count)]
         else:
-            return [make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]    
+            return [make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]
 
     @classmethod
-    def _storage_config_from_rest_object(cls, rest_configs: List[RestStorageAccountDetails]) -> Union[List[str], SystemCreatedStorageAccount]:
+    def _storage_config_from_rest_object(
+        cls, 
+        rest_configs: List[RestStorageAccountDetails]
+    ) -> Union[List[str], SystemCreatedStorageAccount]:
         if not rest_configs:
             return None
         num_configs = len(rest_configs)
         if num_configs == 0:
             return None
-        system_created_count = reduce(lambda x, y: int(x) + int(y), 
+        system_created_count = reduce(lambda x, y: int(x) + int(y),
             [hasattr(config, "system_created_storage_account") and config.system_created_storage_account is not None
             for config in rest_configs])
         # configs should be mono-typed. Either they're all system created
@@ -224,8 +226,8 @@ class RegistryRegionDetails:
         if system_created_count == num_configs:
             # System created case - assume all elements are duplicates
             # of a single storage configuration.
-            # Convert back into a single local representation by 
-            # combining id's into a list, and using the first element's 
+            # Convert back into a single local representation by
+            # combining id's into a list, and using the first element's
             # account type and hns.
             first_config = rest_configs[0].system_created_storage_account
             resource_id = None
@@ -247,7 +249,8 @@ class RegistryRegionDetails:
         elif  system_created_count == 0:
             return [config.user_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
         else:
-            msg = f"tried reading in a registry whose storage accounts were not mono-managed or user-created. {system_created_count} out of {num_configs} were managed."
+            msg = f'''tried reading in a registry whose storage accounts were not 
+                mono-managed or user-created. {system_created_count} out of {num_configs} were managed.'''
             err = ValidationException(
                 message=msg,
                 target=ErrorTarget.REGISTRY,
