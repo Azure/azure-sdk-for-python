@@ -15,13 +15,19 @@ from ._policy_metadata_operations import PolicyMetadataOperations
 from ._policy_restrictions_operations import PolicyRestrictionsOperations
 from ._attestations_operations import AttestationsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'PolicyTrackedResourcesOperations',
-    'RemediationsOperations',
-    'PolicyEventsOperations',
-    'PolicyStatesOperations',
-    'Operations',
-    'PolicyMetadataOperations',
-    'PolicyRestrictionsOperations',
-    'AttestationsOperations',
+    "PolicyTrackedResourcesOperations",
+    "RemediationsOperations",
+    "PolicyEventsOperations",
+    "PolicyStatesOperations",
+    "Operations",
+    "PolicyMetadataOperations",
+    "PolicyRestrictionsOperations",
+    "AttestationsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

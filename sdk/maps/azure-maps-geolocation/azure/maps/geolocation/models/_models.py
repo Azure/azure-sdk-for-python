@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-class Geolocation(object):
+class CountryRegionResult(object):
     """Represents coordinate latitude and longitude
 
     :keyword ip_address:

@@ -178,13 +178,22 @@ class InternalComponent(Component):
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
+        if self._additional_includes.with_includes:
+            validation_result.merge_with(self._additional_includes._validate())
+            # resolving additional includes & update self._base_path can be dangerous,
+            # so we just skip path validation if additional_includes is used
+            # note that there will still be runtime error in submission or execution
+            skip_path_validation = True
+        else:
+            skip_path_validation = False
         if isinstance(self.environment, InternalEnvironment):
             validation_result.merge_with(
-                self.environment._validate(self._source_path),
+                self.environment._validate(
+                    self._base_path,
+                    skip_path_validation=skip_path_validation
+                ),
                 field_name="environment",
             )
-        if self._additional_includes is not None:
-            validation_result.merge_with(self._additional_includes._validate())
         return validation_result
 
     @classmethod
@@ -199,8 +208,6 @@ class InternalComponent(Component):
         )
 
     def _to_rest_object(self) -> ComponentVersionData:
-        if isinstance(self.environment, InternalEnvironment):
-            self.environment.resolve(self._source_path)
         component = convert_ordered_dict_to_dict(self._to_dict())
 
         properties = ComponentVersionDetails(
@@ -216,26 +223,17 @@ class InternalComponent(Component):
 
     @contextmanager
     def _resolve_local_code(self):
-        # if `self._source_path` is None, component is not loaded from local yaml and
-        # no need to resolve
-        if self._source_path is None:
-            yield self.code
-        else:
-            self._additional_includes.resolve()
-            # use absolute path in case temp folder & work dir are in different drive
-            yield self._additional_includes.code.absolute()
-            self._additional_includes.cleanup()
+        self._additional_includes.resolve()
+
+        # file dependency in code will be read during internal environment resolution
+        # for example, docker file of the environment may be in additional includes
+        # and it will be read then insert to the environment object during resolution
+        # so we need to resolve environment based on the temporary code path
+        if isinstance(self.environment, InternalEnvironment):
+            self.environment.resolve(self._additional_includes.code)
+        # use absolute path in case temp folder & work dir are in different drive
+        yield self._additional_includes.code.absolute()
+        self._additional_includes.cleanup()
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
-
-    def _schema_validate(self) -> MutableValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalComponent, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result
