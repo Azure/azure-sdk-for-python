@@ -145,7 +145,7 @@ class _LocalEndpointHelper(object):
             endpoints.append(_convert_container_to_endpoint(container=container))
         return endpoints
 
-    def delete(self, name: str):
+    def delete(self, name: str) -> LROPoller[None]:
         """Delete a local endpoint.
 
         :param name: Name of endpoint to delete.
@@ -158,7 +158,11 @@ class _LocalEndpointHelper(object):
             self._endpoint_stub.delete(endpoint_name=name)
             endpoint_container = self._docker_client.get_endpoint_container(endpoint_name=name)
             if endpoint_container:
-                self._docker_client.delete(endpoint_name=name)
+                return local_endpoint_polling_wrapper(
+                    self._docker_client.delete,
+                    message=f"Deleting endpoint: {name}",
+                    endpoint_name=name
+                )
         else:
             raise LocalEndpointNotFoundError(endpoint_name=name)
 
