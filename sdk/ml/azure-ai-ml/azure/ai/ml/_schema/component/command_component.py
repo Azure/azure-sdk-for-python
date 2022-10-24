@@ -48,6 +48,7 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
             ]
         ),
     )
+    properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
 
 
 class RestCommandComponentSchema(CommandComponentSchema):
