@@ -82,6 +82,7 @@ class AsyncTransportMixin:
             asyncio.IncompleteReadError,
             asyncio.TimeoutError,
         ):
+            print("receive frame caught tht timeout error")
             return None, None
 
     async def read(self, verify_frame_type=0):
@@ -123,6 +124,7 @@ class AsyncTransportMixin:
                         await self._read(payload_size, buffer=payload)
                     )
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
+                print("async transport read caught the timeout error")
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -488,6 +490,7 @@ class WebSocketTransportAsync(
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts,
+                heartbeat=10,
             )
             self.connected = True
 
