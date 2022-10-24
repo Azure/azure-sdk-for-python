@@ -540,12 +540,11 @@ class PipelineExpression(PipelineExpressionMixin):
                 _data = load_yaml(_f)
             _data["display_name"] = f"Expression: {self.expression}"
             _data["inputs"] = dict()
-            _data["outputs"] = {"output": {"type": AssetTypes.URI_FILE}}
             _command_inputs_items = []
             for _name in sorted(self._inputs):
                 _type = self._inputs[_name].type
                 _data["inputs"][_name] = {"type": _type}
-                _command_inputs_items.append(f"{_name}=$AZUREML_PARAMETER_{_name}")
+                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_name}\"")
             _command_inputs_string = " ".join(_command_inputs_items)
             _data["command"] = _data["command"].format(inputs_placeholder=_command_inputs_string)
             dump_yaml_to_file(_path, _data)
