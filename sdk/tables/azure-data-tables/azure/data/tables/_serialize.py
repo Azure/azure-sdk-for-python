@@ -210,8 +210,11 @@ def _add_entity_properties(source):
     properties = {}
 
     to_send = dict(source)  # shallow copy
-    properties["PartitionKey"] = to_send.pop("PartitionKey", None)
-    properties["RowKey"] = to_send.pop("RowKey", None)
+    try:
+        properties["PartitionKey"] = to_send.pop("PartitionKey")
+        properties["RowKey"] = to_send.pop("RowKey")
+    except KeyError:
+        pass
 
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
