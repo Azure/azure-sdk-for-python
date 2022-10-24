@@ -68,7 +68,7 @@ class _AdditionalIncludes:
         if src.is_file():
             _general_copy(src, dst)
         else:
-            shutil.copytree(src, dst)
+            shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__"))
 
     def _validate(self) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()

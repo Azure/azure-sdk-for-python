@@ -1,11 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import os
 import tempfile
 import typing
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
+from shutil import copytree, ignore_patterns
 from typing import IO, AnyStr, Dict, Union
 
 from marshmallow import Schema
@@ -449,23 +451,28 @@ class Component(
     @contextmanager
     def _resolve_local_code(self):
         """Resolve working directory path for the component."""
-        if hasattr(self, "code"):
-            code = getattr(self, "code")
-            # Hack: when code not specified, we generated a file which contains
-            # COMPONENT_PLACEHOLDER as code
-            # This hack was introduced because job does not allow running component without a
-            # code, and we need to make sure when component updated some field(eg: description),
-            # the code remains the same. Benefit of using a constant code for all components
-            # without code is this will generate same code for anonymous components which
-            # enables component reuse
-            if code is None:
-                with tempfile.TemporaryDirectory() as tmp_dir:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            if hasattr(self, "code"):
+                code = getattr(self, "code")
+                # Hack: when code not specified, we generated a file which contains
+                # COMPONENT_PLACEHOLDER as code
+                # This hack was introduced because job does not allow running component without a
+                # code, and we need to make sure when component updated some field(eg: description),
+                # the code remains the same. Benefit of using a constant code for all components
+                # without code is this will generate same code for anonymous components which
+                # enables component reuse
+                if code is None:
                     code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
                     with open(code, "w") as f:
                         f.write(COMPONENT_CODE_PLACEHOLDER)
                     yield code
+                # if component's code is a single file, we can directly use it without change;
+                # otherwise we need to copy to temporary folder filtering __pycache__.
+                else:
+                    if os.path.isfile(code):
+                        yield code
+                    else:
+                        copytree(code, tmp_dir, ignore=ignore_patterns("__pycache__"), dirs_exist_ok=True)
+                        yield tmp_dir
             else:
-                yield code
-        else:
-            with tempfile.TemporaryDirectory() as tmp_dir:
                 yield tmp_dir
