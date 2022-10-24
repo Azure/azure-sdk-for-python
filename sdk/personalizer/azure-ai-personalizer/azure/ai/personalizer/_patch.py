@@ -17,7 +17,7 @@ __all__: List[str] = [
     "PersonalizerAdministrationClient",
 ]  # Add all objects you want publicly available to users at this package level
 
-from .operations._operations import JSON
+from .operations._operations import JSON, PersonalizerClientOperationsMixin
 
 
 def _authentication_policy(credential, **kwargs):
@@ -87,10 +87,12 @@ class PersonalizerClient:
     rewardActionId. As rewards are sent in response to the use of rewardActionId, the reinforcement
     learning algorithm will improve the model and improve performance of future rank calls.
 
+    :ivar single_slot: PersonalizerClientOperationsMixin operations
+    :vartype single_slot: azure.ai.personalizer.operations.PersonalizerClientOperationsMixin
+    :ivar single_slot_events: EventsOperations operations
+    :vartype single_slot_events: azure.ai.personalizer.operations.EventsOperations
     :ivar multi_slot: MultiSlotOperations operations
     :vartype multi_slot: azure.ai.personalizer.operations.MultiSlotOperations
-    :ivar events: EventsOperations operations
-    :vartype events: azure.ai.personalizer.operations.EventsOperations
     :ivar multi_slot_events: MultiSlotEventsOperations operations
     :vartype multi_slot_events: azure.ai.personalizer.operations.MultiSlotEventsOperations
     :param endpoint: Supported Cognitive Services endpoint. Required.
@@ -109,19 +111,10 @@ class PersonalizerClient:
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential, **kwargs)),
             **kwargs
         )
+        self.single_slot: PersonalizerClientOperationsMixin = self._client
+        self.single_slot_events = self._client.events
         self.multi_slot = self._client.multi_slot
-        self.events = self._client.events
         self.multi_slot_events = self._client.multi_slot_events
-
-    def rank(self, request: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Submit a Personalizer rank request. Receives a context and a list of actions.
-        Returns which of the provided actions should be used by your application, in rewardActionId.
-
-        :param request: Request containing context and list of actions
-        :type request: JSON
-        """
-        return self._client.rank(request, **kwargs)
-
 
 def patch_sdk():
     """Do not remove from this file.

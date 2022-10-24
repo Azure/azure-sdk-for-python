@@ -72,14 +72,14 @@ async def main():
     }
 
     print("Sending rank request")
-    rank_response = await client.rank(request)
+    rank_response = await client.single_slot.rank(request)
     print("Rank returned response with event id {} and recommended {} as the best action"
           .format(rank_response.get("eventId"), rank_response.get("rewardActionId")))
 
     # The event response will be determined by how the user interacted with the action that was presented to them.
     # Let us say that they like the action. So we associate a reward of 1.
     print("Sending reward event")
-    await client.events.reward(rank_response.get("eventId"), {"value": 1.0})
+    await client.single_slot_events.reward(rank_response.get("eventId"), {"value": 1.0})
     print("Completed sending reward response")
 
 

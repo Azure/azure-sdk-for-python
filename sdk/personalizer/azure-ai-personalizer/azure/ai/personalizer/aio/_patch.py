@@ -17,7 +17,7 @@ __all__: List[str] = [
     "PersonalizerAdministrationClient",
 ]  # Add all objects you want publicly available to users at this package level
 
-from .operations._operations import JSON
+from .operations._operations import JSON, PersonalizerClientOperationsMixin
 
 
 def _authentication_policy(credential, **kwargs):
@@ -64,7 +64,7 @@ class PersonalizerAdministrationClient:
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
         self._client = PersonalizerClientGenerated(
             endpoint=endpoint.rstrip("/"),
             credential=credential,  # type: ignore
@@ -87,25 +87,14 @@ class PersonalizerClient:
     rewardActionId. As rewards are sent in response to the use of rewardActionId, the reinforcement
     learning algorithm will improve the model and improve performance of future rank calls.
 
-    :ivar service_configuration: ServiceConfigurationOperations operations
-    :vartype service_configuration:
-     azure.ai.personalizer.aio.operations.ServiceConfigurationOperations
-    :ivar policy: PolicyOperations operations
-    :vartype policy: azure.ai.personalizer.aio.operations.PolicyOperations
-    :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.personalizer.aio.operations.EvaluationsOperations
-    :ivar events: EventsOperations operations
-    :vartype events: azure.ai.personalizer.aio.operations.EventsOperations
-    :ivar feature_importances: FeatureImportancesOperations operations
-    :vartype feature_importances: azure.ai.personalizer.aio.operations.FeatureImportancesOperations
-    :ivar log: LogOperations operations
-    :vartype log: azure.ai.personalizer.aio.operations.LogOperations
-    :ivar model: ModelOperations operations
-    :vartype model: azure.ai.personalizer.aio.operations.ModelOperations
-    :ivar multi_slot_events: MultiSlotEventsOperations operations
-    :vartype multi_slot_events: azure.ai.personalizer.aio.operations.MultiSlotEventsOperations
+    :ivar single_slot: PersonalizerClientOperationsMixin operations
+    :vartype single_slot: azure.ai.personalizer.aio.operations.PersonalizerClientOperationsMixin
+    :ivar single_slot_events: EventsOperations operations
+    :vartype single_slot_events: azure.ai.personalizer.aio.operations.EventsOperations
     :ivar multi_slot: MultiSlotOperations operations
     :vartype multi_slot: azure.ai.personalizer.aio.operations.MultiSlotOperations
+    :ivar multi_slot_events: MultiSlotEventsOperations operations
+    :vartype multi_slot_events: azure.ai.personalizer.aio.operations.MultiSlotEventsOperations
     :param endpoint: Supported Cognitive Services endpoint. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -124,19 +113,10 @@ class PersonalizerClient:
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             **kwargs
         )
+        self.single_slot: PersonalizerClientOperationsMixin = self._client
+        self.single_slot_events = self._client.events
         self.multi_slot = self._client.multi_slot
-        self.events = self._client.events
         self.multi_slot_events = self._client.multi_slot_events
-
-    async def rank(self, request: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Submit a Personalizer rank request. Receives a context and a list of actions.
-        Returns which of the provided actions should be used by your application, in rewardActionId.
-
-        :param request: Request containing context and list of actions
-        :type request: JSON
-        """
-        return await self._client.rank(request, **kwargs)
-
 
 def patch_sdk():
     """Do not remove from this file.
