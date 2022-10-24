@@ -1711,6 +1711,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "name": "node1",
                     "mini_batch_size": 5,
+                    "partition_keys": None,
                     "retry_settings": None,
                     "logging_level": "DEBUG",
                     "max_concurrency_per_instance": 1,
