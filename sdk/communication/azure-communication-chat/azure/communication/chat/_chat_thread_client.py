@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from urllib.parse import urlparse
 
+from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
-from ._shared.user_credential import CommunicationTokenCredential
 from ._shared.models import CommunicationIdentifier
 from ._generated import AzureCommunicationChatService
 from ._generated.models import (
@@ -33,15 +33,16 @@ from ._models import (
 from ._communication_identifier_serializer import serialize_identifier
 from ._utils import CommunicationErrorResponseConverter
 from ._version import SDK_MONIKER
+from ._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
+    from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Tuple
     from datetime import datetime
     from azure.core.paging import ItemPaged
 
 
-class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ChatThreadClient(object):
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 
@@ -54,11 +55,14 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param CommunicationTokenCredential credential:
-        The credentials with which to authenticate. The value contains a User
-        Access Token
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :param str thread_id:
         The unique thread id.
+
+    :keyword api_version: Azure Communication Chat API version.
+        Default value is "2021-09-07". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
 
     .. admonition:: Example:
 
@@ -73,7 +77,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
     def __init__(
             self,
             endpoint,  # type: str
-            credential,  # type: CommunicationTokenCredential
+            credential: Union[TokenCredential, AzureKeyCredential],
             thread_id,  # type: str
             **kwargs  # type: Any
     ):
@@ -96,10 +100,13 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
 
         self._thread_id = thread_id
         self._endpoint = endpoint
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            endpoint,
+            self._credential,
+            self._endpoint,
+            api_version=self._api_version,
             authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
