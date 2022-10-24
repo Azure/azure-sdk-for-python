@@ -210,7 +210,7 @@ class RegistryRegionDetails:
 
     @classmethod
     def _storage_config_from_rest_object(
-        cls, 
+        cls,
         rest_configs: List[RestStorageAccountDetails]
     ) -> Union[List[str], SystemCreatedStorageAccount]:
         if not rest_configs:
@@ -236,7 +236,8 @@ class RegistryRegionDetails:
             # account for ids of duplicated if they exist
             replicated_ids = None
             if num_configs > 1:
-                replicated_ids = [config.system_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
+                replicated_ids = [config.system_created_storage_account.arm_resource_id.resource_id
+                    for config in rest_configs]
             return SystemCreatedStorageAccount(
                 storage_account_hns=first_config.storage_account_hns_enabled,
                 storage_account_type=StorageAccountType(
@@ -249,7 +250,7 @@ class RegistryRegionDetails:
         elif  system_created_count == 0:
             return [config.user_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
         else:
-            msg = f'''tried reading in a registry whose storage accounts were not 
+            msg = f'''tried reading in a registry whose storage accounts were not
                 mono-managed or user-created. {system_created_count} out of {num_configs} were managed.'''
             err = ValidationException(
                 message=msg,

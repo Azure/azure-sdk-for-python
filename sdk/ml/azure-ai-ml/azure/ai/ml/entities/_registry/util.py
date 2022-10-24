@@ -14,4 +14,3 @@ def make_rest_user_storage_from_id(*, user_id: str) -> RestStorageAccountDetails
             arm_resource_id=RestArmResourceId(resource_id=user_id)
         )
     )
-
