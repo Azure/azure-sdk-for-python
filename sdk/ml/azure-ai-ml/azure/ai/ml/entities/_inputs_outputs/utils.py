@@ -59,7 +59,7 @@ def _get_annotation_cls_by_type(t: type, raise_error=False, optional=None):
 
 
 # pylint: disable=too-many-statements
-def _get_param_with_standard_annotation(cls_or_func, is_func=False):
+def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=None):
     """Standardize function parameters or class fields with dsl.types
     annotation."""
     # TODO: we'd better remove this potential recursive import
@@ -207,6 +207,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
             }
         )
 
+    skip_params = skip_params or []
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
     annotations = getattr(cls_or_func, "__annotations__", {})
@@ -215,10 +216,16 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
     # Update fields use class field with defaults from class dict or signature(func).paramters
     if not is_func:
         # Only consider public fields in class dict
-        defaults_dict = {key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_")}
+        defaults_dict = {
+            key: val for key, val in cls_or_func.__dict__.items()
+            if not key.startswith("_") and key not in skip_params
+        }
     else:
         # Infer parameter type from value if is function
-        defaults_dict = {key: val.default for key, val in signature(cls_or_func).parameters.items()}
+        defaults_dict = {
+            key: val.default for key, val in signature(cls_or_func).parameters.items()
+            if key not in skip_params
+        }
     fields = _update_fields_with_default(annotation_fields, defaults_dict)
     all_fields = _merge_and_reorder(inherited_fields, fields)
     return all_fields
