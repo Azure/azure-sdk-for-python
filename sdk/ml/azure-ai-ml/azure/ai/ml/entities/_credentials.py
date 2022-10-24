@@ -8,8 +8,8 @@ from abc import ABC
 from typing import List, Dict, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, snake_to_camel
-from azure.ai.ml.constants._common import CommonYamlFields
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
+from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin, YamlTranslatableMixin
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
@@ -349,12 +349,11 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
         data: Dict = None,
     ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
         type_str = data.get(CommonYamlFields.TYPE)
-        type_str = snake_to_camel(type_str)
-        if type_str == ConnectionAuthType.MANAGED_IDENTITY:
+        if type_str == IdentityType.MANAGED_IDENTITY:
             identity_cls = ManagedIdentityConfiguration
-        elif type_str == IdentityConfigurationType.USER_IDENTITY:
+        elif type_str == IdentityType.USER_IDENTITY:
             identity_cls = UserIdentityConfiguration
-        elif type_str == IdentityConfigurationType.AML_TOKEN:
+        elif type_str == IdentityType.AML_TOKEN:
             identity_cls = AmlTokenConfiguration
         else:
             msg = f"Unsupported identity type: {type_str}."
@@ -381,7 +380,7 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
         self, *, client_id: str = None, resource_id: str = None, object_id: str = None, principal_id: str = None
     ):
         super().__init__()
-        self.type = camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
+        self.type = IdentityType.MANAGED_IDENTITY
         self.client_id = client_id
         # TODO: Check if both client_id and resource_id are required
         self.resource_id = resource_id
@@ -467,7 +466,7 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
 
     def __init__(self):
         super().__init__()
-        self.type = camel_to_snake(IdentityConfigurationType.USER_IDENTITY)
+        self.type = IdentityType.USER_IDENTITY
 
     # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestUserIdentity:
@@ -502,7 +501,7 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 
     def __init__(self):
         super().__init__()
-        self.type = camel_to_snake(IdentityConfigurationType.AML_TOKEN)
+        self.type = IdentityType.AML_TOKEN
 
     # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestAmlToken:
