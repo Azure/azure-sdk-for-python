@@ -6,18 +6,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Union, Any, IO
+from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
-
+from .operations._operations import PersonalizerClientOperationsMixin
 from ._client import PersonalizerClient as PersonalizerClientGenerated
 
 __all__: List[str] = [
     "PersonalizerClient",
     "PersonalizerAdministrationClient",
 ]  # Add all objects you want publicly available to users at this package level
-
-from .operations._operations import JSON, PersonalizerClientOperationsMixin
 
 
 def _authentication_policy(credential, **kwargs):
@@ -77,7 +75,6 @@ class PersonalizerAdministrationClient:
         self.evaluations = self._client.evaluations
         self.feature_importances = self._client.feature_importances
         self.log = self._client.log
-        self.model = self._client.model
 
 
 class PersonalizerClient:

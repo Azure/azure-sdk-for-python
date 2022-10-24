@@ -6,18 +6,17 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Union, Any, IO
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from typing import List, Union, Any
+from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
 from ._client import PersonalizerClient as PersonalizerClientGenerated
+from .operations._operations import PersonalizerClientOperationsMixin
 
 __all__: List[str] = [
     "PersonalizerClient",
     "PersonalizerAdministrationClient",
 ]  # Add all objects you want publicly available to users at this package level
-
-from .operations._operations import JSON, PersonalizerClientOperationsMixin
 
 
 def _authentication_policy(credential, **kwargs):
@@ -64,7 +63,11 @@ class PersonalizerAdministrationClient:
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs: Any) -> None:
         self._client = PersonalizerClientGenerated(
             endpoint=endpoint.rstrip("/"),
             credential=credential,  # type: ignore
@@ -77,7 +80,6 @@ class PersonalizerAdministrationClient:
         self.evaluations = self._client.evaluations
         self.feature_importances = self._client.feature_importances
         self.log = self._client.log
-        self.model = self._client.model
 
 
 class PersonalizerClient:
