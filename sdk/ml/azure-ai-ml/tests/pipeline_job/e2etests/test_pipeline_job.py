@@ -413,7 +413,8 @@ class TestPipelineJob(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "test_case_i,test_case_name",
         [
-            (0, "helloworld_pipeline_job_with_component_output"),
+            # TODO: enable this after identity support released to canary
+            # (0, "helloworld_pipeline_job_with_component_output"),
             (1, "helloworld_pipeline_job_with_paths"),
         ]
     )
