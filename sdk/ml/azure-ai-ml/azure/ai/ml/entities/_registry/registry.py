@@ -215,16 +215,20 @@ class Registry(Resource):
         replication_locations = []
         if self.replication_locations:
             replication_locations = [details._to_rest_object() for details in self.replication_locations]
+        # Notes about this construction.
+        # RestRegistry.properties.tags: this property exists due to swagger inheritance
+        # issues, don't actually use it, use top level RestRegistry.tags instead
+        # RestRegistry.properties.managed_resource_group_tags: Registries create a 
+        # managed resource group to manage their internal sub-resources.
+        # We always want the tags on this MRG to match those of the registry itself
+        # to keep janitor policies aligned.
         return RestRegistry(
             name=self.name,
             location=self.location,
             identity=identity,
             tags=self.tags,
             description=self.description,
-
             properties=RegistryProperties(
-                #tags=self.tags, interior tags exist due to swagger inheritance
-                # issues, don't actually use them.
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,
                 intellectual_property_publisher=self.intellectual_property_publisher,
