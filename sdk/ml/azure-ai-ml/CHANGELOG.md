@@ -11,6 +11,7 @@
 
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
+- Adjust registry experimental tags and imports to avoid warning printouts for unrelated operations.
 
 ### Other Changes
 

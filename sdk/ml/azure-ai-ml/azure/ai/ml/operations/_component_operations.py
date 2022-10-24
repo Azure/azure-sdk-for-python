@@ -30,7 +30,8 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, DEFAULT_LABEL_NAME, \
+    DEFAULT_COMPONENT_VERSION
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
@@ -172,17 +173,16 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+        if not version and not label:
+            label = DEFAULT_LABEL_NAME
+
+        if label == DEFAULT_LABEL_NAME:
+            label = None
+            version = DEFAULT_COMPONENT_VERSION
+
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        if not version:
-            msg = "Must provide either version or label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
         result = (
             self._version_operation.get(
                 name=name,
@@ -586,9 +586,21 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+    def check_non_pipeline_inputs(f):
+        """Check whether non_pipeline_inputs exist in pipeline builder."""
+        if f._pipeline_builder.non_pipeline_parameter_names:
+            msg = "Cannot register pipeline component {!r} with non_pipeline_inputs."
+            raise ValidationException(
+                message=msg.format(f.__name__),
+                no_personal_data_message=msg.format(""),
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
     if hasattr(component_func, "_is_mldesigner_component") and component_func._is_mldesigner_component:
         return component_func.component
     if hasattr(component_func, "_is_dsl_func") and component_func._is_dsl_func:
+        check_non_pipeline_inputs(component_func)
         check_parameter_type(component_func)
         if component_func._job_settings:
             module_logger.warning(

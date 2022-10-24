@@ -18,7 +18,7 @@ exterior_tags = {"test": "registry"}
 name = "registry name"
 # id = "registry id"
 description = "registry description"
-# There are two places in a registry where tags can live. We only care about 
+# There are two places in a registry where tags can live. We only care about
 # tags set at the top level, AKA the 'exterior_tags' defined above/
 # These interior tags only exists to show that the value technically
 # exists due to swagger-side inheritance in the autotest.
@@ -42,6 +42,7 @@ hns = False
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestRegistryEntity:
     """Hi. Is this test unexpectedly failing for you due to the following error?
 

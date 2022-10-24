@@ -12,6 +12,7 @@ from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._assets._artifacts.data import Data
+from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
@@ -241,7 +242,7 @@ class NodeInput(InputOutputBase):
         # for data binding case, set is_singular=False for case like "${{parent.inputs.job_in_folder}}/sample1.csv"
         if isinstance(data, Input) or is_data_binding_expression(data, is_singular=False):
             return data
-        if isinstance(data, Data):
+        if isinstance(data, (Data, Model)):
             return _data_to_input(data)
         # self._meta.type could be None when sub pipeline has no annotation
         if isinstance(self._meta, Input) and self._meta.type and not self._meta._is_primitive_type:
@@ -452,7 +453,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
                     error_category=ErrorCategory.USER_ERROR,
                 )
             return data
-        if isinstance(data, Data):
+        if isinstance(data, (Data, Model)):
             # If value is Data, we convert it to an corresponding Input
             return _data_to_input(data)
         return data

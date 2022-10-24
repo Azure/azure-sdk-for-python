@@ -77,6 +77,7 @@ def assert_job_cancel(pipeline, client: MLClient):
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestDSLPipeline(AzureRecordedTestCase):
     def test_command_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_yaml = components_dir / "helloworld_component.yml"
@@ -1060,6 +1061,21 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "Unknown type of parameter ['required_input', 'required_param', 'required_param_with_default', 'optional_param', 'optional_param_with_default'] in pipeline func 'pipeline_missing_type'"
             in e.value.message
         )
+
+        @dsl.pipeline(non_pipeline_inputs=['param'])
+        def pipeline_with_non_pipeline_inputs(
+            required_input: Input,
+            required_param: str,
+            param: str,
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_non_pipeline_inputs)
+        assert "Cannot register pipeline component 'pipeline_with_non_pipeline_inputs' with non_pipeline_inputs." in e.value.message
 
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
@@ -2410,3 +2426,25 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert actual_job["inputs"] == expected_job_inputs
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
+
+    def test_dsl_pipeline_with_default_component(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        yaml_path: str = "./tests/test_configs/components/helloworld_component.yml"
+        component_name = randstr("component_name")
+        component: Component = load_component(source=yaml_path, params_override=[{"name": component_name}])
+        client.components.create_or_update(component)
+
+        default_component_func = client.components.get(component_name)
+
+        @dsl.pipeline()
+        def pipeline_with_default_component():
+            node1 = default_component_func(component_in_path=job_input)
+            node1.compute = "cpu-cluster"
+
+        # component from client.components.get
+        pipeline_job = client.jobs.create_or_update(pipeline_with_default_component())
+        created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
+        assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"

@@ -146,6 +146,7 @@ class PipelineComponentBuilder:
         default_datastore=None,
         tags=None,
         source_path=None,
+        non_pipeline_inputs=None
     ):
         self.func = func
         name = name if name else func.__name__
@@ -156,6 +157,7 @@ class PipelineComponentBuilder:
             name = func.__name__
         # List of nodes, order by it's creation order in pipeline.
         self.nodes = []
+        self.non_pipeline_parameter_names = non_pipeline_inputs or []
         # A dict of inputs name to InputDefinition.
         # TODO: infer pipeline component input meta from assignment
         self.inputs = self._build_inputs(func)
@@ -182,11 +184,12 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, args, kwargs) -> PipelineComponent:
+    def build(self, args, kwargs, non_pipeline_params_dict=None) -> PipelineComponent:
         # Clear nodes as we may call build multiple times.
         self.nodes = []
         pipeline_kwargs = {**kwargs, **self._get_group_parameter_defaults()}
-        pipeline_args, pipeline_kwargs = _build_pipeline_parameter(self.func, args, pipeline_kwargs)
+        pipeline_args, pipeline_kwargs = _build_pipeline_parameter(self.func, args, pipeline_kwargs,
+                                                                   non_pipeline_params_dict)
         # We use this stack to store the dsl pipeline definition hierarchy
         _definition_builder_stack.push(self)
 
@@ -220,7 +223,7 @@ class PipelineComponentBuilder:
         return pipeline_component
 
     def _build_inputs(self, func):
-        inputs = _get_param_with_standard_annotation(func, is_func=True)
+        inputs = _get_param_with_standard_annotation(func, is_func=True, skip_params=self.non_pipeline_parameter_names)
         for k, v in inputs.items():
             # add arg description
             if k in self._args_description:
@@ -394,7 +397,7 @@ class PipelineComponentBuilder:
                 self.inputs[input_name] = anno
 
 
-def _build_pipeline_parameter(func, args=None, kwargs=None):
+def _build_pipeline_parameter(func, args=None, kwargs=None, non_pipeline_parameter_dict=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @parameter_group
@@ -406,11 +409,16 @@ def _build_pipeline_parameter(func, args=None, kwargs=None):
     #   component_func(input=param.key)  <--- param.key should be val.
 
     # transform kwargs
-    transformed_args, transformed_kwargs = [], {}
+    transformed_args, transformed_kwargs = [], non_pipeline_parameter_dict or {}
     if args:
         transformed_args = [_wrap_pipeline_parameter(key, val) for key, val in args.items()]
     if kwargs:
-        transformed_kwargs.update({key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items()})
+        transformed_kwargs.update(
+            {
+                key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items()
+                if key not in non_pipeline_parameter_dict
+            }
+        )
 
     def all_params(parameters):
         for value in parameters.values():
