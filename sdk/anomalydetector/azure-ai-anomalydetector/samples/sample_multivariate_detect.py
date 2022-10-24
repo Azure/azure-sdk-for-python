@@ -49,7 +49,7 @@ class MultivariateSample:
         model_list = []
 
         while next_link != '':
-            r = self.ad_client.list_multivariate_model(skip=skip, top=10)
+            r = self.ad_client.list_multivariate_models(skip=skip, top=10)
             next_link = r['nextLink'] 
             model_list.extend(r['models'])
             skip = skip + len(r['models'])
@@ -64,7 +64,7 @@ class MultivariateSample:
 
             # Use sample data to train the model
             print("Training new model...(it may take a few minutes)")
-            response = self.ad_client.create_multivariate_model(body)
+            response = self.ad_client.create_and_train_multivariate_model(body)
             trained_model_id = response['modelId']
             print("Training model id is {}".format(trained_model_id))
 
@@ -76,7 +76,7 @@ class MultivariateSample:
                 model_info = self.ad_client.get_multivariate_model(trained_model_id)
                 model_status = model_info['modelInfo']['status']
                 print("Model is {}".format(model_status))
-                time.sleep(1)
+                time.sleep(30)
 
             print(model_info)
             if model_status == 'FAILED':
@@ -109,17 +109,17 @@ class MultivariateSample:
 
         # Detect anomaly in the same data source (but a different interval)
         try:
-            response = self.ad_client.batch_detect_anomaly(model_id, body)
+            response = self.ad_client.begin_detect_multivariate_batch_anomaly(model_id, body)
             result_id = response['resultId']
 
             # Get results (may need a few seconds)
-            r = self.ad_client.get_batch_detection_result(result_id)
+            r = self.ad_client.get_multivariate_batch_detection_result(result_id)
             print("Get detection result...(it may take a few seconds)")
 
             while r['summary']['status'] != 'READY' and r['summary']['status'] != 'FAILED':
-                r = self.ad_client.get_batch_detection_result(result_id)
+                r = self.ad_client.get_multivariate_batch_detection_result(result_id)
                 print("Detection is {}".format(r['summary']['status']))
-                time.sleep(1)
+                time.sleep(15)
 
             if r['summary']['status'] == 'FAILED':
                 print("Detection failed.")
@@ -150,7 +150,7 @@ class MultivariateSample:
     def last_detect(self, model_id, variables):
 
         # Detect anomaly by sync api
-        r = self.ad_client.last_detect_anomaly(model_id, variables)
+        r = self.ad_client.detect_multivariate_last_anomaly(model_id, variables)
         print("Get last detection result")
         return r
 
@@ -160,6 +160,7 @@ if __name__ == '__main__':
 
     ## Create a new sample and client
     sample = MultivariateSample(SUBSCRIPTION_KEY, ANOMALY_DETECTOR_ENDPOINT)
+
 
     # Train a new model
     train_body = {
@@ -217,7 +218,7 @@ if __name__ == '__main__':
     #]
 
     # Last detection
-    with open('./samples/sample_data/multivariate_sample_data.json') as f:
+    with open('./sample_data/multivariate_sample_data.json') as f:
         variables = json.load(f)
     last_detect_result = sample.last_detect(model_id, variables)
 

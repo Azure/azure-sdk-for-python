@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -16,10 +16,6 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AnomalyDetectorClientConfiguration
 from ._operations import AnomalyDetectorClientOperationsMixin
 from ._serialization import Deserializer, Serializer
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
 
 
 class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
@@ -38,27 +34,22 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
     service, business customers can discover incidents and establish a logic flow for root cause
     analysis.
 
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+	:param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://westus2.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param api_version: Anomaly Detector API version (for example, v1.1). "v1.1" Default value is
-     "v1.1".
-    :type api_version: str
+    :keyword api_version: Api Version. Default value is "v1.1". Note that overriding this default
+     value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: AzureKeyCredential,
-        api_version: str = "v1.1",
-        **kwargs: Any
-    ) -> None:
-        self._config = AnomalyDetectorClientConfiguration(
-            endpoint=endpoint, credential=credential, api_version=api_version, **kwargs
-        )
-        self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+        _endpoint = "{Endpoint}/anomalydetector"
+        self._config = AnomalyDetectorClientConfiguration(endpoint=endpoint, credential=credential, api_version='v1.1', **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -85,9 +76,6 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
         request_copy = deepcopy(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url(
-                "self._config.api_version", self._config.api_version, "str", skip_quote=True
-            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

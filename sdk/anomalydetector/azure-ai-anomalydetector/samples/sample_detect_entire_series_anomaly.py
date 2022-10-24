@@ -32,7 +32,7 @@ class DetectEntireAnomalySample(object):
     def detect_entire_series(self):
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
-        TIME_SERIES_DATA_PATH = os.path.join("./samples", "sample_data", "request-data.csv")
+        TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
 
         # Create an Anomaly Detector client
 
@@ -64,7 +64,7 @@ class DetectEntireAnomalySample(object):
         print('Detecting anomalies in the entire time series.')
 
         try:
-            response = client.detect_entire_series(request)
+            response = client.detect_univariate_entire_series(request)
         except Exception as e:
             print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
 

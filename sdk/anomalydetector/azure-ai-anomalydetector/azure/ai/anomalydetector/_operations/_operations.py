@@ -20,6 +20,8 @@ from azure.core.exceptions import (
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -39,101 +41,127 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_detect_entire_series_request(**kwargs: Any) -> HttpRequest:
+def build_detect_univariate_entire_series_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1-preview/timeseries/entire/detect"
+    _url = f"/{api_version}/timeseries/entire/detect"
+
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_detect_last_point_request(**kwargs: Any) -> HttpRequest:
+def build_detect_univariate_last_point_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1-preview/timeseries/last/detect"
+    _url = f"/{api_version}/timeseries/last/detect"
+
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_detect_change_point_request(**kwargs: Any) -> HttpRequest:
+def build_detect_univariate_change_point_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1-preview/timeseries/changepoint/detect"
+    _url = f"/{api_version}/timeseries/changepoint/detect"
+
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_batch_detection_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_multivariate_batch_detection_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1/multivariate/detect-batch/{resultId}"
+    _url = f"/{api_version}/multivariate/detect-batch/{result_id}"
     path_format_arguments = {
         "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_multivariate_model_request(**kwargs: Any) -> HttpRequest:
+def build_create_and_train_multivariate_model_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1/multivariate/models"
+    _url = f"/{api_version}/multivariate/models"
+
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_multivariate_model_request(*, skip: int = 0, top: Optional[int] = None, **kwargs: Any) -> HttpRequest:
+def build_list_multivariate_models_request(*, skip: int = 0, top: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1/multivariate/models"
+    _url = f"/{api_version}/multivariate/models"
 
     # Construct parameters
     if skip is not None:
@@ -149,89 +177,111 @@ def build_list_multivariate_model_request(*, skip: int = 0, top: Optional[int] =
 
 def build_delete_multivariate_model_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1/multivariate/models/{modelId}"
+    _url = f"/{api_version}/multivariate/models/{model_id}"
     path_format_arguments = {
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_multivariate_model_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1/multivariate/models/{modelId}"
+    _url = f"/{api_version}/multivariate/models/{model_id}"
     path_format_arguments = {
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_detect_anomaly_request(model_id: str, **kwargs: Any) -> HttpRequest:
+def build_detect_multivariate_batch_anomaly_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1/multivariate/models/{modelId}:detect-batch"
+    _url = f"/{api_version}/multivariate/models/{model_id}:detect-batch"
     path_format_arguments = {
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_last_detect_anomaly_request(model_id: str, **kwargs: Any) -> HttpRequest:
+def build_detect_multivariate_last_anomaly_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("ApiVersion", "v1.1"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/anomalydetector/v1.1/multivariate/models/{modelId}:detect-last"
+    _url = f"/{api_version}/multivariate/models/{model_id}:detect-last"
     path_format_arguments = {
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
+    # Construct parameters
+    _params["ApiVersion"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class AnomalyDetectorClientOperationsMixin(MixinABC):
     @overload
-    def detect_entire_series(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def detect_univariate_entire_series(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Detect anomalies for the entire series in batch.
 
         This operation generates a model with an entire series, each point is detected with the same
@@ -336,7 +386,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @overload
-    def detect_entire_series(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def detect_univariate_entire_series(
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Detect anomalies for the entire series in batch.
 
         This operation generates a model with an entire series, each point is detected with the same
@@ -407,7 +459,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @distributed_trace
-    def detect_entire_series(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def detect_univariate_entire_series(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Detect anomalies for the entire series in batch.
 
         This operation generates a model with an entire series, each point is detected with the same
@@ -498,8 +550,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_entire_series_request(
+        request = build_detect_univariate_entire_series_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -507,9 +560,6 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url(
-                "self._config.api_version", self._config.api_version, "str", skip_quote=True
-            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -534,7 +584,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     @overload
-    def detect_last_point(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def detect_univariate_last_point(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Detect anomaly status of the latest point in time series.
 
         This operation generates a model using the points that you sent into the API, and based on all
@@ -618,7 +670,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @overload
-    def detect_last_point(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def detect_univariate_last_point(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Detect anomaly status of the latest point in time series.
 
         This operation generates a model using the points that you sent into the API, and based on all
@@ -668,7 +720,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @distributed_trace
-    def detect_last_point(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def detect_univariate_last_point(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Detect anomaly status of the latest point in time series.
 
         This operation generates a model using the points that you sent into the API, and based on all
@@ -738,8 +790,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_last_point_request(
+        request = build_detect_univariate_last_point_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -747,9 +800,6 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url(
-                "self._config.api_version", self._config.api_version, "str", skip_quote=True
-            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -774,7 +824,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     @overload
-    def detect_change_point(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def detect_univariate_change_point(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Detect change point for the entire series.
 
         Evaluate change point score of every series point.
@@ -835,7 +887,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @overload
-    def detect_change_point(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def detect_univariate_change_point(
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Detect change point for the entire series.
 
         Evaluate change point score of every series point.
@@ -869,7 +923,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @distributed_trace
-    def detect_change_point(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def detect_univariate_change_point(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Detect change point for the entire series.
 
         Evaluate change point score of every series point.
@@ -923,8 +977,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_change_point_request(
+        request = build_detect_univariate_change_point_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -932,9 +987,6 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url(
-                "self._config.api_version", self._config.api_version, "str", skip_quote=True
-            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -959,7 +1011,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_batch_detection_result(self, result_id: str, **kwargs: Any) -> JSON:
+    def get_multivariate_batch_detection_result(self, result_id: str, **kwargs: Any) -> JSON:
         """Get Multivariate Anomaly Detection Result.
 
         For asynchronous inference, get multivariate anomaly detection result based on resultId
@@ -1073,12 +1125,16 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_batch_detection_result_request(
+        request = build_get_multivariate_batch_detection_result_request(
             result_id=result_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
@@ -1101,7 +1157,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     @overload
-    def create_multivariate_model(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def create_and_train_multivariate_model(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Train a Multivariate Anomaly Detection Model.
 
         Create and train a multivariate anomaly detection model. The request must include a source
@@ -1282,7 +1340,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @overload
-    def create_multivariate_model(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def create_and_train_multivariate_model(
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Train a Multivariate Anomaly Detection Model.
 
         Create and train a multivariate anomaly detection model. The request must include a source
@@ -1390,7 +1450,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @distributed_trace
-    def create_multivariate_model(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def create_and_train_multivariate_model(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Train a Multivariate Anomaly Detection Model.
 
         Create and train a multivariate anomaly detection model. The request must include a source
@@ -1518,14 +1578,18 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_create_multivariate_model_request(
+        request = build_create_and_train_multivariate_model_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
@@ -1551,7 +1615,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_multivariate_model(self, skip: int = 0, top: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
+    def list_multivariate_models(self, *, skip: int = 0, top: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """List Multivariate Models.
 
         List models of a resource.
@@ -1667,17 +1731,28 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_multivariate_model_request(
+                request = build_list_multivariate_models_request(
                     skip=skip,
                     top=top,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)  # type: ignore
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 request = HttpRequest("GET", next_link)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             return request
 
@@ -1731,10 +1806,14 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
 
         request = build_delete_multivariate_model_request(
             model_id=model_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
@@ -1864,10 +1943,14 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
 
         request = build_get_multivariate_model_request(
             model_id=model_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
@@ -1889,10 +1972,71 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
 
         return cast(JSON, deserialized)
 
+    def _detect_multivariate_batch_anomaly_initial(self, model_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_detect_multivariate_batch_anomaly_request(
+            model_id=model_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+
+        return cast(JSON, deserialized)
+
     @overload
-    def batch_detect_anomaly(
+    def begin_detect_multivariate_batch_anomaly(
         self, model_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    ) -> LROPoller[JSON]:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model and inference
@@ -1908,8 +2052,15 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2021,9 +2172,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @overload
-    def batch_detect_anomaly(
+    def begin_detect_multivariate_batch_anomaly(
         self, model_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    ) -> LROPoller[JSON]:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model and inference
@@ -2039,8 +2190,15 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2134,7 +2292,9 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @distributed_trace
-    def batch_detect_anomaly(self, model_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def begin_detect_multivariate_batch_anomaly(
+        self, model_id: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> LROPoller[JSON]:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model and inference
@@ -2150,8 +2310,15 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2243,64 +2410,66 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
                     }
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._detect_multivariate_batch_anomaly_initial(  # type: ignore
+                model_id=model_id,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
 
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)
+            return deserialized
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
         else:
-            _json = body
-
-        request = build_batch_detect_anomaly_request(
-            model_id=model_id,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
-
-        return cast(JSON, deserialized)
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return raw_result.http_response.json()
+        #return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     @overload
-    def last_detect_anomaly(
+    def detect_multivariate_last_anomaly(
         self, model_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Detect anomalies in the last point of the request body.
@@ -2401,7 +2570,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @overload
-    def last_detect_anomaly(
+    def detect_multivariate_last_anomaly(
         self, model_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Detect anomalies in the last point of the request body.
@@ -2482,7 +2651,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         """
 
     @distributed_trace
-    def last_detect_anomaly(self, model_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def detect_multivariate_last_anomaly(self, model_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Detect anomalies in the last point of the request body.
 
         Submit multivariate anomaly detection task with the modelId of trained model and inference
@@ -2581,15 +2750,19 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_last_detect_anomaly_request(
+        request = build_detect_multivariate_last_anomaly_request(
             model_id=model_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
