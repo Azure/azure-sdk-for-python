@@ -49,7 +49,6 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
-    #add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", target=client_secret)    
     add_general_string_sanitizer(value="00000000-0000-0000-0000-000000000000", target=client_secret)
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
