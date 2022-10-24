@@ -24,7 +24,6 @@ from ..constants._common import LROConfigurations, Scope
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
-@experimental
 class RegistryOperations:
     """RegistryOperations.
 
@@ -51,6 +50,7 @@ class RegistryOperations:
         self.containerRegistry = "none"
         self._init_kwargs = kwargs
 
+    @experimental
     #@ monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current
@@ -68,6 +68,7 @@ class RegistryOperations:
         return self._operation.list(cls=lambda objs: [Registry._from_rest_object(obj) for obj in objs], \
             resource_group_name=self._resource_group_name)
 
+    @experimental
     # @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
     def get(self, name: str = None) -> Registry:
         """Get a registry by name.
@@ -108,6 +109,7 @@ class RegistryOperations:
             path_format_arguments=path_format_arguments,
         )
 
+    @experimental
     # @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
         self,
@@ -136,6 +138,7 @@ class RegistryOperations:
         return poller
 
 
+    @experimental
     # @monitor_with_activity(logger, "Registry.Delete", ActivityType.PUBLICAPI)
     def delete(self, *, name: str, **kwargs: Dict) -> LROPoller[Registry]:
         """Delete a registry. Returns nothing on a successful operation.

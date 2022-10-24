@@ -13,6 +13,7 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.e2etest
 @pytest.mark.mlc
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.core_sdk_test
 class TestCompute(AzureRecordedTestCase):
     def test_aml_compute_create_and_delete(self, client: MLClient, rand_compute_name: Callable[[str], str]) -> None:
         compute_name = rand_compute_name("compute_name")

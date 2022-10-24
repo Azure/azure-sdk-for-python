@@ -12,6 +12,8 @@
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 - Make registry delete operation return an LROPoller.
+- Adjust registry experimental tags and imports to avoid warning printouts for unrelated operations.
+
 ### Other Changes
 
 ## 1.0.0 (2022-10-10)

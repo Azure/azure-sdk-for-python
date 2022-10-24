@@ -20,6 +20,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponentFunc:
     def test_generate_component_function(self) -> None:
         component_func = load_component(source="./tests/test_configs/components/helloworld_component.yml")

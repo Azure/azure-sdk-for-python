@@ -47,6 +47,7 @@ from .._utils import (
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJob:
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",

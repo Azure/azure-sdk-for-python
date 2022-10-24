@@ -46,6 +46,7 @@ class CSODataV4Format(ODataV4Format):
                 super().__init__(
                     odata_error["error"]["innererror"]
                 )
+            self.details = odata_error["error"].get("details", [])
         except KeyError:
             super().__init__(odata_error)
 
