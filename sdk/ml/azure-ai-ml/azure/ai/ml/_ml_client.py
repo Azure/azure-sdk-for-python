@@ -404,7 +404,6 @@ class MLClient(object):
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
-            # service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)

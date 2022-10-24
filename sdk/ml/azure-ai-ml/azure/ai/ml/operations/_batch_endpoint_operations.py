@@ -318,16 +318,13 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         self._batch_job_endpoint = self._dataset_dataplane_client.batch_job_endpoint
 
-        result = self._batch_job_endpoint.list(
+        return self._batch_job_endpoint.list(
             endpoint_name=endpoint_name,
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             cls=lambda objs: [BatchJob._from_rest_object(obj) for obj in objs],
             **self._init_kwargs,
         )
-
-        # This is necessary as the paged result need to be resolved inside the context manager
-        return result
 
     def _get_workspace_location(self) -> str:
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location

@@ -205,15 +205,13 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :return: An iterator of deployment entities
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchDeployment]
         """
-        result = self._batch_deployment.list(
+        return self._batch_deployment.list(
             endpoint_name=endpoint_name,
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             cls=lambda objs: [BatchDeployment._from_rest_object(obj) for obj in objs],
             **self._init_kwargs,
         )
-
-        return result
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
@@ -234,7 +232,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._batch_job_deployment = self._dataset_dataplane_client.batch_job_deployment
 
 
-        result = self._batch_job_deployment.list(
+        return self._batch_job_deployment.list(
             endpoint_name=endpoint_name,
             deployment_name=name,
             resource_group_name=self._resource_group_name,
@@ -243,10 +241,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-
-
-        # This is necessary as the paged result need to be resolved inside the context manager
-        return result
 
     def _get_workspace_location(self) -> str:
         """Get the workspace location TODO[TASK 1260265]: can we cache this

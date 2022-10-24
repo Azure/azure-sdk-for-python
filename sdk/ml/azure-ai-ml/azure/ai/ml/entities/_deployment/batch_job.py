@@ -74,9 +74,8 @@ class BatchJob:
         self.input_data = input_data
         self.mini_batch_size = mini_batch_size
         self.batch_job_name = batch_job_name
-        self.rety_setting = retry_setting
-        self.output_file_name = output_file_name
         self.retry_setting = retry_setting
+        self.output_file_name = output_file_name
         self.status = status
 
 

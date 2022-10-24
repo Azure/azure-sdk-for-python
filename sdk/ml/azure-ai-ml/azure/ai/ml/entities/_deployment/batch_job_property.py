@@ -47,7 +47,7 @@ class BatchJobProperty:
         mini_batch_size: int = None,
         name: str = None,
         output_file_name: str = None,
-        retry_setting: BatchRetrySettings = None,
+        retry_settings: BatchRetrySettings = None,
         status: str = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
@@ -58,7 +58,7 @@ class BatchJobProperty:
         self.mini_batch_size = mini_batch_size
         self.name = name
         self.output_file_name = output_file_name
-        self.retry_setting = retry_setting
+        self.retry_settings = retry_settings
         self.status = status
 
     @classmethod
@@ -68,10 +68,10 @@ class BatchJobProperty:
             dataset=obj.dataset,
             error_threshold=obj.error_threshold,
             input_data=obj.input_data,
-            minin_batch_szie=obj.mini_batch_size,
+            mini_batch_size=obj.mini_batch_size,
             name=obj.name,
             output_file_name = obj.output_file_name,
-            retry_setting = obj.retry_settings,
+            retry_settings = obj.retry_settings,
             status = obj.status
         )
 
