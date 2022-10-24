@@ -6,13 +6,13 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     DistributionConfiguration as RestDistributionConfiguration,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import DistributionType as RestDistributionType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Mpi as RestMpi
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PyTorch as RestPyTorch
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TensorFlow as RestTensorFlow
+from azure.ai.ml._restclient.v2022_10_01_preview.models import DistributionType as RestDistributionType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Mpi as RestMpi
+from azure.ai.ml._restclient.v2022_10_01_preview.models import PyTorch as RestPyTorch
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TensorFlow as RestTensorFlow
 from azure.ai.ml.constants import DistributionType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -50,8 +50,8 @@ class DistributionConfiguration(RestTranslatableMixin):
             data = obj.as_dict()
 
         type_str = data.pop("distribution_type", None) or data.pop("type", None)
-        cls = DISTRIBUTION_TYPE_MAP[type_str.lower()]
-        return cls(**data)
+        klass = DISTRIBUTION_TYPE_MAP[type_str.lower()]
+        return klass(**data)
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, DistributionConfiguration):

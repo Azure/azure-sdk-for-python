@@ -17,19 +17,9 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.policies import ContentDecodePolicy
 
-if sys.version_info < (3,):
-
-    def _str(value):
-        if isinstance(value, unicode):  # pylint: disable=undefined-variable
-            return value.encode("utf-8")
-
-        return str(value)
-else:
-    _str = str
-
 
 def _to_str(value):
-    return _str(value) if value is not None else None
+    return str(value) if value is not None else None
 
 
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
@@ -89,6 +79,11 @@ def _validate_cosmos_tablename(table_name):
 def _validate_tablename_error(decoded_error, table_name):
     if (decoded_error.error_code == 'InvalidResourceName' and
         'The specified resource name contains invalid characters' in decoded_error.message):
+        # This error is raised by Storage for any table/entity operations where the table name contains
+        # forbidden characters.
+        _validate_storage_tablename(table_name)
+    elif (decoded_error.error_code == 'InvalidResourceName' and
+        'The specifed resource name contains invalid characters' in decoded_error.message):
         # This error is raised by Storage for any table/entity operations where the table name contains
         # forbidden characters.
         _validate_storage_tablename(table_name)
@@ -213,6 +208,34 @@ def _process_table_error(storage_error, table_name=None):
     if table_name:
         _validate_tablename_error(decoded_error, table_name)
     _reraise_error(decoded_error)
+
+
+def _reprocess_error(decoded_error, identifiers=None):
+    error_code = decoded_error.error_code
+    message = decoded_error.message
+    authentication_failed = "Server failed to authenticate the request"
+    invalid_input = "The number of keys specified in the URI does not match number of key properties for the resource"
+    invalid_query_parameter_value = "Value for one of the query parameters specified in the request URI is invalid"
+    invalid_url = "Request url is invalid"
+    properties_need_value = "The values are not specified for all properties in the entity"
+    table_does_not_exist = "The table specified does not exist"
+    if (error_code == "AuthenticationFailed" and authentication_failed in message or # pylint: disable=too-many-boolean-expressions
+        error_code == "InvalidInput" and invalid_input in message or
+        error_code == "InvalidInput" and invalid_url in message or
+        error_code == "InvalidQueryParameterValue" and invalid_query_parameter_value in message or
+        error_code == "PropertiesNeedValue" and properties_need_value in message or
+        error_code =="TableNotFound" and table_does_not_exist in message
+        ):
+        args_list = list(decoded_error.args)
+        args_list[0] += "\nA possible cause of this error could be that the account URL used to"\
+            "create the Client includes an invalid path, for example the table name. Please check your account URL."
+        decoded_error.args = tuple(args_list)
+
+    if (identifiers is not None and error_code == "InvalidXmlDocument" and len(identifiers) > 5):
+        raise ValueError(
+            "Too many access policies provided. The server does not support setting more than 5 access policies"\
+                "on a single resource."
+            )
 
 
 class TableTransactionError(HttpResponseError):

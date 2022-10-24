@@ -13,12 +13,13 @@ from azure.ai.ml.entities import (
     ComputeInstance,
     KubernetesCompute,
     SynapseSparkCompute,
-    UserAssignedIdentity,
     VirtualMachineCompute,
+    ManagedIdentityConfiguration,
 )
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestComputeEntity:
     def test_compute_from_rest(self):
         with open("tests/test_configs/compute/compute-kubernetes.yaml", "r") as f:
@@ -103,7 +104,7 @@ class TestComputeEntity:
         compute._to_dict()
         assert compute.type == "kubernetes"
 
-    def _uai_list_to_dict(self, value: List[UserAssignedIdentity]) -> Union[str, UserAssignedIdentity]:
+    def _uai_list_to_dict(self, value: List[ManagedIdentityConfiguration]) -> Union[str, ManagedIdentityConfiguration]:
         uai_dict = {}
 
         for item in value:

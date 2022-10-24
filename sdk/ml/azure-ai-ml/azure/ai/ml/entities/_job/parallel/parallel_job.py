@@ -145,6 +145,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             error_threshold=self.error_threshold,
             mini_batch_error_threshold=self.mini_batch_error_threshold,
             environment_variables=self.environment_variables,
+            properties=self.properties,
         )
 
     def _validate(self) -> None:

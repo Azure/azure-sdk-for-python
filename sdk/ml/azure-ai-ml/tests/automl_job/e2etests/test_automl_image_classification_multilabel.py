@@ -22,7 +22,7 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 
-@pytest.mark.automle2etest
+@pytest.mark.automl_test
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_asset_name",
@@ -126,9 +126,8 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
                 ),
             ]
         )
+        image_classification_multilabel_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
         image_classification_multilabel_job_sweep.set_sweep(
-            max_trials=1,
-            max_concurrent_trials=1,
             sampling_algorithm="Random",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )

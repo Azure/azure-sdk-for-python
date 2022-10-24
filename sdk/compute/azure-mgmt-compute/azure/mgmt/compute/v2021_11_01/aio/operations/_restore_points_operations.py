@@ -397,7 +397,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         restore_point_name: str,
-        expand: Optional[Union[str, "_models.RestorePointExpandOptions"]] = None,
+        expand: Optional[Union[str, _models.RestorePointExpandOptions]] = None,
         **kwargs: Any
     ) -> _models.RestorePoint:
         """The operation to get the restore point.

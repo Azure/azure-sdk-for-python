@@ -7,19 +7,22 @@
 from abc import ABC
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoNCrossValidations,
+    BlockedTransformers,
     CustomNCrossValidations,
     LogVerbosity,
-    StackEnsembleSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
+)
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
+    StackEnsembleSettings
 )
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
@@ -306,7 +309,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_featurization(
         self,
         *,
-        blocked_transformers: List[str] = None,
+        blocked_transformers: List[Union[BlockedTransformers, str]] = None,
         column_name_and_types: Dict[str, str] = None,
         dataset_language: str = None,
         transformer_params: Dict[str, List[ColumnTransformer]] = None,
@@ -316,7 +319,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         """Define feature engineering configuration.
 
         :param blocked_transformers: A list of transformer names to be blocked during featurization
-        :type blocked_transformers: List[str], optional
+        :type blocked_transformers: List[Union[BlockedTransformers, str]], optional
         :param column_name_and_types: A dictionary of column names and feature types used to update column purpose
         :type column_name_and_types: Dict[str, str], optional
         :param dataset_language: three character ISO 639-3 code for the language(s) contained in the dataset.

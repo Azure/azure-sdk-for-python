@@ -4,9 +4,21 @@
 
 from marshmallow import fields, post_dump, post_load
 
-from azure.ai.ml._schema import StringTransformedEnum, UnionField
-from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
+from azure.ai.ml._schema import StringTransformedEnum, UnionField, PatchedSchemaMeta
+from azure.ai.ml._schema.component.input_output import InputPortSchema, ParameterSchema
+from azure.ai.ml._schema.core.fields import DumpableEnumField
+from azure.ai.ml._schema.job.input_output_fields_provider import PrimitiveValueField
 
+SUPPORTED_INTERNAL_PARAM_TYPES = [
+    "integer",
+    "Integer",
+    "boolean",
+    "Boolean",
+    "string",
+    "String",
+    "float",
+    "Float",
+]
 
 class InternalInputPortSchema(InputPortSchema):
     # skip client-side validate for type enum & support list
@@ -28,29 +40,29 @@ class InternalInputPortSchema(InputPortSchema):
         return data
 
 
-class InternalOutputPortSchema(OutputPortSchema):
+class InternalOutputPortSchema(metaclass=PatchedSchemaMeta):
     # skip client-side validate for type enum
     type = fields.Str(
         required=True,
         data_key="type",
     )
+    description = fields.Str()
     is_link_mode = fields.Bool()
     datastore_mode = fields.Str()
 
 
+class InternalPrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_INTERNAL_PARAM_TYPES,
+        required=True,
+    )
+    description = fields.Str()
+    is_control = fields.Bool()
+
+
 class InternalParameterSchema(ParameterSchema):
-    type = StringTransformedEnum(
-        allowed_values=[
-            "integer",
-            "Integer",
-            "boolean",
-            "Boolean",
-            "string",
-            "String",
-            "float",
-            "Float",
-        ],
-        casing_transform=lambda x: x,
+    type = DumpableEnumField(
+        allowed_values=SUPPORTED_INTERNAL_PARAM_TYPES,
         required=True,
         data_key="type",
     )
@@ -62,13 +74,17 @@ class InternalEnumParameterSchema(ParameterSchema):
         required=True,
         data_key="type",
     )
-    enum = fields.List(UnionField([fields.Str(), fields.Number(), fields.Bool()]))
+    default = PrimitiveValueField()
+    enum = fields.List(
+        PrimitiveValueField(),
+        required=True,
+    )
 
     @post_dump
     @post_load
     def enum_value_to_string(self, data, **kwargs):  # pylint: disable=unused-argument, disable=no-self-use
         if "enum" in data:
             data["enum"] = list(map(str, data["enum"]))
-        if "default" in data:
+        if "default" in data and data["default"] is not None:
             data["default"] = str(data["default"])
         return data

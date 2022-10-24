@@ -15,13 +15,9 @@ from azure.data.tables import __version__ as  VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
-from _shared.testcase import (
-    TableTestCase,
-    SLEEP_DELAY
-)
+from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
-# ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'cosmos',
     TableClient: 'cosmos',
@@ -30,6 +26,7 @@ SERVICES = {
 _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
+
 
 class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Malformed string")

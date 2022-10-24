@@ -11,12 +11,12 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class BaselineSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the sensitivity of the baseline.
-    """
+    """the sensitivity of the baseline."""
 
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
+
 
 class ReceiverStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any
@@ -27,7 +27,9 @@ class ReceiverStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ResultType."""
 
     DATA = "Data"
     METADATA = "Metadata"

@@ -11,13 +11,12 @@ from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables import TableTransactionError
 from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
-from devtools_testutils import AzureTestCase
 # ------------------------------------------------------------------------------
 SERVICES = {
     TableServiceClient: 'table',
@@ -137,6 +136,40 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                     await client.submit_transaction(batch)
                 assert 'Storage table names must be alphanumeric' in str(error.value)
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_client_with_url_ends_with_table_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
+        # test table client has the same table name as in url
+        tc = TableClient(invalid_url, table_name, credential=tables_primary_storage_account_key)
+        with pytest.raises(ResourceNotFoundError) as exc:
+            await tc.create_table()
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test table client has a different table name as in url
+        table_name2 = self.get_resource_name("mytable2")
+        tc2 = TableClient(invalid_url, table_name2, credential=tables_primary_storage_account_key)
+        with pytest.raises(ResourceNotFoundError) as exc:
+            await tc2.create_table()
+        assert ("table specified does not exist") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        valid_tc = TableClient(url, table_name, credential=tables_primary_storage_account_key)
+        await valid_tc.create_table()
+        # test creating a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            await tc.create_table()
+        assert ("values are not specified") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test deleting a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            await tc.delete_table()
+        assert ("URI does not match number of key properties for the resource") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        await valid_tc.delete_table()
 
 
 class TestTableClientUnit(AsyncTableTestCase):
@@ -643,3 +676,14 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.name == azurite_credential.named_key.name
         assert not table._cosmos_endpoint
         assert table.scheme == 'https'
+    
+    def test_use_development_storage(self):
+        tsc = TableServiceClient.from_connection_string("UseDevelopmentStorage=true")
+        assert tsc.account_name == "devstoreaccount1"
+        assert tsc.scheme == "http"
+        assert tsc.credential.named_key.name == "devstoreaccount1"
+        assert tsc.credential.named_key.key == "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        assert tsc.url == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._primary_endpoint == "http://127.0.0.1:10002/devstoreaccount1"
+        assert tsc._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
+        assert not tsc._cosmos_endpoint

@@ -10,6 +10,7 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.timeout(_UTILS_TIMEOUT_SECOND)
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.core_sdk_test
 class TestTelemetryValue(AzureRecordedTestCase):
     def test_component_node_telemetry_value(self, hello_world_component):
         # From remote

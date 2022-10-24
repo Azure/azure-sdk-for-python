@@ -213,7 +213,7 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_number(self):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd":"test_resource"})
-        scope = InstrumentationScope("test_scope"),
+        scope = InstrumentationScope("test_scope")
         point=NumberDataPoint(
             attributes={
                 "test": "attribute",
@@ -230,13 +230,14 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
+        self.assertEqual(envelope.data.base_data.metrics[0].namespace, "test_scope")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
     def test_point_to_envelope_histogram(self):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd":"test_resource"})
-        scope = InstrumentationScope("test_scope"),
+        scope = InstrumentationScope("test_scope")
         point=HistogramDataPoint(
             attributes={
                 "test": "attribute",
@@ -258,6 +259,7 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
+        self.assertEqual(envelope.data.base_data.metrics[0].namespace, "test_scope")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 

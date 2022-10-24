@@ -199,13 +199,13 @@ class CodegenTestPR:
 
         # generate code(be careful about the order)
         print_exec('python scripts/dev_setup.py -p azure-core')
-        print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.sdk_generator {self.autorest_result} {self.autorest_result}')
 
         generate_result = self.get_autorest_result()
         self.tag_is_stable = list(generate_result.values())[0]['tagIsStable']
         log(f"tag_is_stable is {self.tag_is_stable}")
         
-        print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.sdk_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
@@ -423,6 +423,17 @@ class CodegenTestPR:
         self.check_ci_file_proc(target_msrest)
         self.check_ci_file_proc(target_mgmt_core)
 
+    def check_dev_requirement(self):
+        file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
+        content = [
+            "-e ../../../tools/azure-sdk-tools\n",
+            "-e ../../../tools/azure-devtools\n",
+            "../../identity/azure-identity\n"
+        ]
+        if not file.exists():
+            with open(file, "w") as file_out:
+                file_out.writelines(content)
+
     def check_file(self):
         self.check_file_with_packaging_tool()
         self.check_pprint_name()
@@ -430,6 +441,7 @@ class CodegenTestPR:
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
+        self.check_dev_requirement()
 
     def sdk_code_path(self) -> str:
         return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))

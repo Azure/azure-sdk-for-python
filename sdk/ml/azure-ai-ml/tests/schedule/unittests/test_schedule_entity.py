@@ -13,6 +13,7 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestScheduleEntity:
     def test_load_cron_schedule_with_file_reference(self):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
@@ -130,7 +131,7 @@ class TestScheduleEntity:
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(
-            path="./tests/test_configs/command_job/local_job.yaml",
+            "./tests/test_configs/command_job/local_job.yaml",
         )
         trigger = RecurrenceTrigger(
             frequency="week",

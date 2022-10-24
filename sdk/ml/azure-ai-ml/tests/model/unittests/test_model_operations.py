@@ -45,6 +45,7 @@ def mock_model_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experience_test
 class TestModelOperations:
     def test_create_with_spec_file(
         self,
@@ -238,7 +239,7 @@ path: ./model.pkl"""
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
             return_value=Model(),
         ):
-            model = load_model(path=p)
+            model = load_model(p)
             path = Path(model._base_path, model.path).resolve()
             mock_model_operation.create_or_update(model)
             mock_upload.assert_called_once_with(

@@ -5,12 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import pytest
-
 from datetime import datetime, timedelta
 import os
-import sys
+import pytest
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 
@@ -39,9 +36,6 @@ from azure.data.tables import (
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
 
-#------------------------------------------------------------------------------
-TEST_TABLE_PREFIX = 'table'
-#------------------------------------------------------------------------------
 
 class TestTableBatch(AzureRecordedTestCase, TableTestCase):
     @tables_decorator

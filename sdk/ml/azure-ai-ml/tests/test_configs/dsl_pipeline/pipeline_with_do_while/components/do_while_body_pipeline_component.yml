@@ -6,7 +6,7 @@ description: Do while body pipeline component
 
 inputs:
   job_in_path:
-    type: uri_file
+    type: uri_folder
   job_in_number:
     type: integer
   job_in_number_1:
@@ -17,7 +17,7 @@ outputs:
     type: integer
     is_control: true
   output_in_path:
-    type: uri_file
+    type: uri_folder
   is_number_larger_than_zero:
     type: boolean
     is_control: true
@@ -25,7 +25,7 @@ outputs:
 jobs:
   write_input_num:
     type: command
-    component: ./write_input_num.yml
+    component: ./basic_component.yml
     inputs:
       component_in_number: ${{parent.inputs.job_in_number}}
       component_in_number_1: ${{parent.inputs.job_in_number}}

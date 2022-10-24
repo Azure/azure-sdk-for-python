@@ -731,10 +731,9 @@ def _deserialize_throughput(throughput: list) -> Any:
 
 
 def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throughput_properties: list):
-    max_throughput = throughput.auto_scale_max_throughput
-    increment_percent = throughput.auto_scale_increment_percent
-
     try:
+        max_throughput = throughput.auto_scale_max_throughput
+        increment_percent = throughput.auto_scale_increment_percent
         if max_throughput is not None:
             new_throughput_properties['content']['offerAutopilotSettings'][
                 'maxThroughput'] = max_throughput

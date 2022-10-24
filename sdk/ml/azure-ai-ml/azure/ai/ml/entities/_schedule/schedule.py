@@ -7,11 +7,11 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2022_06_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2022_10_01.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2022_10_01.models import JobScheduleAction
+from azure.ai.ml._restclient.v2022_10_01.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_10_01.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2022_10_01.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants import JobType
@@ -22,7 +22,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, 
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
@@ -169,9 +169,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         schedule.create_job = create_job
         return schedule
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the schedule content into a file in yaml format.
 
         :param dest: The destination to receive this schedule's content.
@@ -181,16 +179,10 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[str, PathLike, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
-
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @classmethod
     def _create_schema_for_validation(cls, context):
@@ -200,13 +192,14 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     def _get_validation_error_target(cls) -> ErrorTarget:
         return ErrorTarget.SCHEDULE
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic."""
         if isinstance(self.create_job, PipelineJob):
             return self.create_job._validate()
         return self._create_empty_validation_result()
 
-    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
         """Get the fields that should be skipped in schema validation.
 
         Override this method to add customized validation logic.
@@ -216,31 +209,29 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "JobSchedule":
         properties = obj.properties
-        action = properties.action
-        create_job = None
-        if isinstance(action, JobScheduleAction):
-            if action.job_definition is None:
-                msg = "Job definition for schedule '{}' can not be None."
-                raise ScheduleException(
-                    message=msg.format(obj.name),
-                    no_personal_data_message=msg.format("[name]"),
-                    target=ErrorTarget.JOB,
-                    error_category=ErrorCategory.SYSTEM_ERROR,
-                )
-            if camel_to_snake(action.job_definition.job_type) != JobType.PIPELINE:
-                msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
-                raise ScheduleException(
-                    message=msg.format(obj.name),
-                    no_personal_data_message=msg.format("[name]"),
-                    target=ErrorTarget.JOB,
-                    # Classified as user_error as we may support other type afterwards.
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            # Wrap job definition with JobBase for Job._from_rest_object call.
-            create_job = RestJobBase(properties=action.job_definition)
-            # id is a readonly field so set it after init.
-            create_job.id = action.job_definition.source_job_id
-            create_job = PipelineJob._load_from_rest(create_job)
+        action: JobScheduleAction = properties.action
+        if action.job_definition is None:
+            msg = "Job definition for schedule '{}' can not be None."
+            raise ScheduleException(
+                message=msg.format(obj.name),
+                no_personal_data_message=msg.format("[name]"),
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.SYSTEM_ERROR,
+            )
+        if camel_to_snake(action.job_definition.job_type) != JobType.PIPELINE:
+            msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
+            raise ScheduleException(
+                message=msg.format(obj.name),
+                no_personal_data_message=msg.format("[name]"),
+                target=ErrorTarget.JOB,
+                # Classified as user_error as we may support other type afterwards.
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        # Wrap job definition with JobBase for Job._from_rest_object call.
+        create_job = RestJobBase(properties=action.job_definition)
+        # id is a readonly field so set it after init.
+        create_job.id = action.job_definition.source_job_id
+        create_job = PipelineJob._load_from_rest(create_job)
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
             create_job=create_job,

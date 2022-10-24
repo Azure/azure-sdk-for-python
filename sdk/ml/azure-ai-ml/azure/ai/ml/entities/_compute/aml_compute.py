@@ -21,7 +21,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._util import load_from_dict
 
-from ._identity import IdentityConfiguration
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from .compute import Compute, NetworkSettings
 
 
@@ -166,7 +166,7 @@ class AmlCompute(Compute):
             idle_time_before_scale_down=prop.properties.scale_settings.node_idle_time_before_scale_down.total_seconds()
             if prop.properties.scale_settings and prop.properties.scale_settings.node_idle_time_before_scale_down
             else None,
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.additional_properties.get("createdOn", None),
         )
         return response
@@ -221,5 +221,5 @@ class AmlCompute(Compute):
         return ComputeResource(
             location=self.location,
             properties=aml_comp,
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
         )
