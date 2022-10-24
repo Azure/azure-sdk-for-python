@@ -456,7 +456,7 @@ class PipelineExpression(PipelineExpressionMixin):
     def _get_operand_type(self, operand: str) -> str:
         if operand in self._inputs:
             return self._inputs[operand].type
-        return type(eval(operand)).__name__  # pylint: disable=eval-used # nosec
+        return IOConstants.PRIMITIVE_TYPE_2_STR[type(eval(operand))]  # pylint: disable=eval-used # nosec
 
     @property
     def _component_code(self) -> str:
