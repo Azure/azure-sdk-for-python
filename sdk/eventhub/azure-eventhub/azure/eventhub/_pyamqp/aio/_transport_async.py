@@ -82,6 +82,7 @@ class AsyncTransportMixin:
             asyncio.IncompleteReadError,
             asyncio.TimeoutError,
         ):
+            # print("receive frame caught tht timeout error")
             return None, None
 
     async def read(self, verify_frame_type=0):
@@ -101,9 +102,10 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
-                    raise ValueError(
-                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                    )
+                    # raise ValueError(
+                    #     f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    # )
+                    pass
 
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
@@ -123,6 +125,7 @@ class AsyncTransportMixin:
                         await self._read(payload_size, buffer=payload)
                     )
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
+                # print("async transport read caught the timeout error")
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -379,7 +382,7 @@ class AsyncTransport(
 
     async def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        self.writer.write(s)
+        await self.loop.run_in_executor(None, self.writer.write, s)
         await self.writer.drain()
 
     async def close(self):
@@ -488,6 +491,7 @@ class WebSocketTransportAsync(
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts,
+                heartbeat=10,
             )
             self.connected = True
 
@@ -516,8 +520,8 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
-        except asyncio.TimeoutError:
-            raise TimeoutError()
+        except asyncio.TimeoutError as te:
+            raise ConnectionError('recv timed out (%s)' % te)
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -531,4 +535,7 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        try:
+            await self.ws.send_bytes(s)
+        except asyncio.TimeoutError as te:
+            raise ConnectionError('send timed out (%s)' % te)
