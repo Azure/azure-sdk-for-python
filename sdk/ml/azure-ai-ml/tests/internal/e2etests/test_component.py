@@ -102,7 +102,7 @@ class TestComponent(AzureRecordedTestCase):
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
 
-    def test_component_reuse(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_component_code_hash(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         yaml_path = "./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml"
         expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
 

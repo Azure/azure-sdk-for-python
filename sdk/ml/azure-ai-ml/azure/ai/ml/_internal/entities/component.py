@@ -4,7 +4,9 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
+from os import PathLike
 from typing import Dict, Union
+from uuid import UUID
 
 from marshmallow import INCLUDE, Schema
 
@@ -16,8 +18,10 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import MutableValidationResult
+from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
+from ..._utils._asset_utils import IgnoreFile, get_ignore_file
 from ...entities._assets import Code
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
@@ -132,9 +136,6 @@ class InternalComponent(Component):
         self.ae365exepool = ae365exepool
         self.launcher = launcher
 
-        # add some internal specific attributes to inputs/outputs after super().__init__()
-        self._post_process_internal_inputs_outputs(inputs, outputs)
-
     @property
     def code(self):
         return self._code
@@ -142,7 +143,7 @@ class InternalComponent(Component):
     @code.setter
     def code(self, value):
         if isinstance(value, Code):
-            InternalCode.cast_base(value)
+            InternalCode._from_base(value)
         self._code = value
 
     @classmethod
@@ -150,31 +151,10 @@ class InternalComponent(Component):
         component_io = {}
         for name, port in io_dict.items():
             if is_input:
-                component_io[name] = InternalInput._cast_from_input_or_dict(port)
+                component_io[name] = InternalInput._from_base(port)
             else:
-                component_io[name] = InternalOutput._cast_from_output_or_dict(port)
+                component_io[name] = InternalOutput._from_base(port)
         return component_io
-
-    def _post_process_internal_inputs_outputs(
-        self,
-        inputs_dict: Union[Dict, Input, Output],
-        outputs_dict: Union[Dict, Input, Output],
-    ):
-        for io_name, io_object in self.inputs.items():
-            original = inputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["is_resource"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
-
-        for io_name, io_object in self.outputs.items():
-            original = outputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["datastore_mode"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
 
     @property
     def _additional_includes(self):
@@ -236,8 +216,27 @@ class InternalComponent(Component):
         result.name = self.name
         return result
 
+    @classmethod
+    def _get_snapshot_id(cls, code_path: Union[str, PathLike]) -> str:
+        """Get the snapshot id of a component with specific working directory in ml-components.
+        Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
+
+        :param code_path: The path of the working directory.
+        :type code_path: str
+        :return: The snapshot id of a component in ml-components with code_path as its working directory.
+        """
+        _ignore_file: IgnoreFile = get_ignore_file(code_path)
+        curr_root = create_merkletree(code_path, lambda x: _ignore_file.is_file_excluded(code_path))
+        snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
+        return snapshot_id
+
     @contextmanager
     def _resolve_local_code(self):
+        """Create a Code object pointing to local code and yield it."""
+        # Note that if self.code is already a Code object, this function won't be called
+        # in create_or_update => _try_resolve_code_for_component, which is also
+        # forbidden by schema CodeFields for now.
+
         self._additional_includes.resolve()
 
         # file dependency in code will be read during internal environment resolution
@@ -247,7 +246,17 @@ class InternalComponent(Component):
         if isinstance(self.environment, InternalEnvironment):
             self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
-        yield self._additional_includes.code.absolute()
+        tmp_code_dir = self._additional_includes.code.absolute()
+        # Use the snapshot id in ml-components as code name to enable anonymous
+        # component reuse from ml-component runs.
+        yield InternalCode(
+            name=self._get_snapshot_id(tmp_code_dir),
+            version="1",
+            base_path=self._base_path,
+            path=tmp_code_dir,
+            is_anonymous=True,
+        )
+
         self._additional_includes.cleanup()
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation

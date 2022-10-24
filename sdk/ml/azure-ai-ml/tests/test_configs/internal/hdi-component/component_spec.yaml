@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 $schema: https://componentsdk.azureedge.net/jsonschema/HDInsightComponent.json
 name: train_in_spark
 version: 0.0.1
@@ -31,3 +28,4 @@ hdinsight:
   file: "train-spark.py"
   args: >-
     --input_path {inputs.input_path} [--regularization_rate {inputs.regularization_rate}] --output_path {outputs.output_path}
+

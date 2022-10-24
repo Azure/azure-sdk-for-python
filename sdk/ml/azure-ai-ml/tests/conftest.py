@@ -76,6 +76,14 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1"
     )
+    # for internal code whose upload_hash is of length 36
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s]{36})\\/?", group_for_replace="1"
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
+        group_for_replace="1"
+    )
 
 
 def pytest_addoption(parser):
