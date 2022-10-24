@@ -12,10 +12,12 @@ import yaml
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
+from azure.ai.ml._internal.entities.asset_utils import get_snapshot_id
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
 
@@ -522,3 +524,15 @@ class TestComponent:
         with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
+
+    def test_anonymous_component_reuse(self):
+        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml")
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+        assert get_snapshot_id(yaml_path.parent) == expected_snapshot_id
+
+        component: InternalComponent = load_component(source=yaml_path)
+        with component._resolve_local_code() as code_path:
+            # call component.code.setter first in case there is a custom setter
+            component.code = Code(base_path=component._base_path, path=code_path)
+            assert not hasattr(component.code, "_upload_hash")
+            assert component.code.name == expected_snapshot_id

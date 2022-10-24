@@ -18,11 +18,13 @@ from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
+from ...entities._assets import Code
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
+from .code import InternalCode
 
 
 class InternalComponent(Component):
@@ -112,6 +114,9 @@ class InternalComponent(Component):
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
 
+        # attributes with property getter and/or setter
+        self._code = None
+
         self.successful_return_code = successful_return_code
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
@@ -127,39 +132,25 @@ class InternalComponent(Component):
         self.ae365exepool = ae365exepool
         self.launcher = launcher
 
-        # add some internal specific attributes to inputs/outputs after super().__init__()
-        self._post_process_internal_inputs_outputs(inputs, outputs)
+    @property
+    def code(self):
+        return self._code
+
+    @code.setter
+    def code(self, value):
+        if isinstance(value, Code):
+            InternalCode._from_base(value)
+        self._code = value
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
         component_io = {}
         for name, port in io_dict.items():
             if is_input:
-                component_io[name] = InternalInput._cast_from_input_or_dict(port)
+                component_io[name] = InternalInput._from_base(port)
             else:
-                component_io[name] = InternalOutput._cast_from_output_or_dict(port)
+                component_io[name] = InternalOutput._from_base(port)
         return component_io
-
-    def _post_process_internal_inputs_outputs(
-        self,
-        inputs_dict: Union[Dict, Input, Output],
-        outputs_dict: Union[Dict, Input, Output],
-    ):
-        for io_name, io_object in self.inputs.items():
-            original = inputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["is_resource"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
-
-        for io_name, io_object in self.outputs.items():
-            original = outputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["datastore_mode"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
 
     @property
     def _additional_includes(self):

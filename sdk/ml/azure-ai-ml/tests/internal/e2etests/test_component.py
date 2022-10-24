@@ -10,6 +10,7 @@ import pydash
 import pytest
 
 from azure.ai.ml import MLClient, load_component
+from azure.ai.ml._internal.entities import InternalComponent
 
 from .._utils import PARAMETERS_TO_TEST
 
@@ -100,3 +101,12 @@ class TestComponent(AzureRecordedTestCase):
 
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
+
+    def test_anonymous_component_reuse(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        yaml_path = "./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml"
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+
+        for i in range(2):
+            component_name = randstr("component_name")
+            component_resource: InternalComponent = create_component(client, component_name, path=yaml_path)
+            assert component_resource.code.endswith(f"codes/{expected_snapshot_id}/versions/1")

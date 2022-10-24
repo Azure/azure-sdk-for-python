@@ -607,6 +607,6 @@ def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_ba
             component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
         else:
             with component._resolve_local_code() as code_path:
-                component.code = get_arm_id_and_fill_back(
-                    Code(base_path=component._base_path, path=code_path), azureml_type=AzureMLResourceType.CODE
-                )
+                # call component.code.setter first in case there is a custom setter
+                component.code = Code(base_path=component._base_path, path=code_path)
+                component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
