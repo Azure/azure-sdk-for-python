@@ -12,7 +12,7 @@ from inspect import Parameter, signature
 from pathlib import Path
 from typing import Any, Callable, Dict, TypeVar
 
-from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings, Model
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _GroupAttrDict
@@ -36,6 +36,7 @@ SUPPORTED_INPUT_TYPES = (
     PipelineInput,
     NodeOutput,
     Input,
+    Model,
     Data,  # For the case use a Data object as an input, we will convert it to Input object
     Pipeline,  # For the case use a pipeline node as the input, we use its only one output as the real input.
     str,
