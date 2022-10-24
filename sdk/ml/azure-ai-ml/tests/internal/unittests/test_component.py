@@ -5,6 +5,7 @@ import copy
 import os
 from pathlib import Path
 from typing import Dict
+from zipfile import ZipFile
 
 import pydash
 import pytest
@@ -331,8 +332,9 @@ class TestComponent:
         with component._resolve_local_code() as code_path:
             assert code_path.is_dir()
             assert (code_path / "LICENSE").exists(), component.code
-            assert (code_path / "library" / "hello.py").exists(), component.code
-            assert (code_path / "library" / "world.py").exists(), component.code
+            assert (code_path / "docker" / "Dockerfile").exists(), component.code
+            assert (code_path / "library.zip").exists(), component.code
+            assert ZipFile(code_path / "library.zip").namelist() == ["hello.py", "world.py"]
 
         assert not code_path.is_dir()
 
@@ -412,6 +414,10 @@ class TestComponent:
             (
                 "helloworld_invalid_additional_includes_existing_file.yml",
                 "A file already exists for additional include",
+            ),
+            (
+                "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
             ),
         ],
     )

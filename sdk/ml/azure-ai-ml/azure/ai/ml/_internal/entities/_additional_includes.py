@@ -143,9 +143,10 @@ class _AdditionalIncludes:
         # additional includes
         base_path = self._additional_includes_file_path.parent
         for additional_include in self._includes:
-            if self._zip_need_to_compress(additional_include):
+            src_path = (base_path / additional_include).resolve()
+            if self._zip_need_to_compress(src_path):
                 zip_additional_include = (base_path / additional_include).resolve()
-                folder_to_zip = zip_additional_include.stem
+                folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
                 with tempfile.TemporaryDirectory() as tmp_dir:
                     shutil.copytree(
                         folder_to_zip,
@@ -154,9 +155,7 @@ class _AdditionalIncludes:
                         dirs_exist_ok=True
                     )
                     src_path = (Path(tempfile.mkdtemp()) / zip_additional_include.name).resolve()
-                    shutil.make_archive(str(src_path), "zip", tmp_dir)
-            else:
-                src_path = (base_path / additional_include).resolve()
+                    shutil.make_archive(str(src_path.parent / src_path.stem), "zip", tmp_dir)
             dst_path = (tmp_folder_path / src_path.name).resolve()
             self._copy(src_path, dst_path)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
