@@ -40,7 +40,7 @@ class _EventHubProcessorTest(EventPerfTest):
             eventhub_name=eventhub_name,
             checkpoint_store=self.checkpoint_store,
             load_balancing_strategy=arguments.load_balancing_strategy,
-            transport_type=TransportType.AMQPOverWebsocket
+            transport_type=TransportType.AmqpOverWebsocket
         )
         self.async_consumer = AsyncEventHubConsumerClient.from_connection_string(
             connection_string,
@@ -48,7 +48,7 @@ class _EventHubProcessorTest(EventPerfTest):
             eventhub_name=eventhub_name,
             checkpoint_store=self.async_checkpoint_store,
             load_balancing_strategy=arguments.load_balancing_strategy,
-            transport_type=TransportType.AMQPOverWebsocket
+            transport_type=TransportType.AmqpOverWebsocket
         )
         if arguments.preload:
             self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=TransportType.AMQPOverWebsocket)
@@ -134,12 +134,12 @@ class _SendTest(BatchPerfTest):
         self.producer = EventHubProducerClient.from_connection_string(
             connection_string,
             eventhub_name=eventhub_name,
-            transport_type=TransportType.AMQPOverWebsocket
+            transport_type=TransportType.AmqpOverWebsocket
         )
         self.async_producer = AsyncEventHubProducerClient.from_connection_string(
             connection_string,
             eventhub_name=eventhub_name,
-            transport_type=TransportType.AMQPOverWebsocket
+            transport_type=TransportType.AmqpOverWebsocket
         )
 
     async def setup(self):
