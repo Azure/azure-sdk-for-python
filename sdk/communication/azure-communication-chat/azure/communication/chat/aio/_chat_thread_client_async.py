@@ -10,7 +10,6 @@ from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union,
 from datetime import datetime
 
 import six
-from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -39,10 +38,9 @@ from .._shared.models import CommunicationIdentifier
 from .._communication_identifier_serializer import serialize_identifier
 from .._utils import CommunicationErrorResponseConverter
 from .._version import SDK_MONIKER
-from .._api_versions import DEFAULT_VERSION
 
 
-class ChatThreadClient(object):
+class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
     Instances of this class is normally retrieved by ChatClient.get_chat_thread_client()
 
@@ -55,14 +53,11 @@ class ChatThreadClient(object):
 
     :param str endpoint:
         The endpoint of the Azure Communication resource.
-    :param Union[TokenCredential, AzureKeyCredential] credential:
-        The credential we use to authenticate against the service.
+    :param CommunicationTokenCredential credential:
+        The credentials with which to authenticate. The value contains a User
+        Access Token
     :param str thread_id:
         The unique thread id.
-
-    :keyword api_version: Azure Communication Chat API version.
-        Default value is "2021-09-07". Note that overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
 
     .. admonition:: Example:
 
@@ -77,7 +72,7 @@ class ChatThreadClient(object):
     def __init__(
             self,
             endpoint: str,
-            credential: Union[TokenCredential, AzureKeyCredential],
+            credential: CommunicationTokenCredential,
             thread_id: str,
             **kwargs: Any
     ): # type: (...) -> None
@@ -99,13 +94,10 @@ class ChatThreadClient(object):
 
         self._thread_id = thread_id
         self._endpoint = endpoint
-        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            self._credential,
-            self._endpoint,
-            api_version=self._api_version,
+            endpoint,
             authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)

@@ -6,13 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import datetime
-from typing import Dict, List, Optional, Union
-
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
-
-from ._azure_communication_chat_service_enums import *
 
 
 class AddChatParticipantsRequest(msrest.serialization.Model):
@@ -34,12 +29,10 @@ class AddChatParticipantsRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        participants: List["ChatParticipant"],
         **kwargs
     ):
         super(AddChatParticipantsRequest, self).__init__(**kwargs)
-        self.participants = participants
+        self.participants = kwargs['participants']
 
 
 class AddChatParticipantsResult(msrest.serialization.Model):
@@ -104,14 +97,11 @@ class ChatError(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        code: str,
-        message: str,
         **kwargs
     ):
         super(ChatError, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
+        self.code = kwargs['code']
+        self.message = kwargs['message']
         self.target = None
         self.details = None
         self.inner_error = None
@@ -179,32 +169,20 @@ class ChatMessage(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
-        type: Union[str, "ChatMessageType"],
-        sequence_id: str,
-        version: str,
-        created_on: datetime.datetime,
-        content: Optional["ChatMessageContent"] = None,
-        sender_display_name: Optional[str] = None,
-        sender_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
-        deleted_on: Optional[datetime.datetime] = None,
-        edited_on: Optional[datetime.datetime] = None,
-        metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(ChatMessage, self).__init__(**kwargs)
-        self.id = id
-        self.type = type
-        self.sequence_id = sequence_id
-        self.version = version
-        self.content = content
-        self.sender_display_name = sender_display_name
-        self.created_on = created_on
-        self.sender_communication_identifier = sender_communication_identifier
-        self.deleted_on = deleted_on
-        self.edited_on = edited_on
-        self.metadata = metadata
+        self.id = kwargs['id']
+        self.type = kwargs['type']
+        self.sequence_id = kwargs['sequence_id']
+        self.version = kwargs['version']
+        self.content = kwargs.get('content', None)
+        self.sender_display_name = kwargs.get('sender_display_name', None)
+        self.created_on = kwargs['created_on']
+        self.sender_communication_identifier = kwargs.get('sender_communication_identifier', None)
+        self.deleted_on = kwargs.get('deleted_on', None)
+        self.edited_on = kwargs.get('edited_on', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class ChatMessageContent(msrest.serialization.Model):
@@ -234,18 +212,13 @@ class ChatMessageContent(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        message: Optional[str] = None,
-        topic: Optional[str] = None,
-        participants: Optional[List["ChatParticipant"]] = None,
-        initiator_communication_identifier: Optional["CommunicationIdentifierModel"] = None,
         **kwargs
     ):
         super(ChatMessageContent, self).__init__(**kwargs)
-        self.message = message
-        self.topic = topic
-        self.participants = participants
-        self.initiator_communication_identifier = initiator_communication_identifier
+        self.message = kwargs.get('message', None)
+        self.topic = kwargs.get('topic', None)
+        self.participants = kwargs.get('participants', None)
+        self.initiator_communication_identifier = kwargs.get('initiator_communication_identifier', None)
 
 
 class ChatMessageReadReceipt(msrest.serialization.Model):
@@ -281,16 +254,12 @@ class ChatMessageReadReceipt(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        sender_communication_identifier: "CommunicationIdentifierModel",
-        chat_message_id: str,
-        read_on: datetime.datetime,
         **kwargs
     ):
         super(ChatMessageReadReceipt, self).__init__(**kwargs)
-        self.sender_communication_identifier = sender_communication_identifier
-        self.chat_message_id = chat_message_id
-        self.read_on = read_on
+        self.sender_communication_identifier = kwargs['sender_communication_identifier']
+        self.chat_message_id = kwargs['chat_message_id']
+        self.read_on = kwargs['read_on']
 
 
 class ChatMessageReadReceiptsCollection(msrest.serialization.Model):
@@ -319,12 +288,10 @@ class ChatMessageReadReceiptsCollection(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["ChatMessageReadReceipt"],
         **kwargs
     ):
         super(ChatMessageReadReceiptsCollection, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
         self.next_link = None
 
 
@@ -354,12 +321,10 @@ class ChatMessagesCollection(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["ChatMessage"],
         **kwargs
     ):
         super(ChatMessagesCollection, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
         self.next_link = None
 
 
@@ -392,16 +357,12 @@ class ChatParticipant(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        communication_identifier: "CommunicationIdentifierModel",
-        display_name: Optional[str] = None,
-        share_history_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(ChatParticipant, self).__init__(**kwargs)
-        self.communication_identifier = communication_identifier
-        self.display_name = display_name
-        self.share_history_time = share_history_time
+        self.communication_identifier = kwargs['communication_identifier']
+        self.display_name = kwargs.get('display_name', None)
+        self.share_history_time = kwargs.get('share_history_time', None)
 
 
 class ChatParticipantsCollection(msrest.serialization.Model):
@@ -430,12 +391,10 @@ class ChatParticipantsCollection(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["ChatParticipant"],
         **kwargs
     ):
         super(ChatParticipantsCollection, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
         self.next_link = None
 
 
@@ -473,16 +432,12 @@ class ChatThreadItem(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
-        topic: str,
-        deleted_on: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(ChatThreadItem, self).__init__(**kwargs)
-        self.id = id
-        self.topic = topic
-        self.deleted_on = deleted_on
+        self.id = kwargs['id']
+        self.topic = kwargs['topic']
+        self.deleted_on = kwargs.get('deleted_on', None)
         self.last_message_received_on = None
 
 
@@ -526,20 +481,14 @@ class ChatThreadProperties(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
-        topic: str,
-        created_on: datetime.datetime,
-        created_by_communication_identifier: "CommunicationIdentifierModel",
-        deleted_on: Optional[datetime.datetime] = None,
         **kwargs
     ):
         super(ChatThreadProperties, self).__init__(**kwargs)
-        self.id = id
-        self.topic = topic
-        self.created_on = created_on
-        self.created_by_communication_identifier = created_by_communication_identifier
-        self.deleted_on = deleted_on
+        self.id = kwargs['id']
+        self.topic = kwargs['topic']
+        self.created_on = kwargs['created_on']
+        self.created_by_communication_identifier = kwargs['created_by_communication_identifier']
+        self.deleted_on = kwargs.get('deleted_on', None)
 
 
 class ChatThreadsItemCollection(msrest.serialization.Model):
@@ -568,12 +517,10 @@ class ChatThreadsItemCollection(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: List["ChatThreadItem"],
         **kwargs
     ):
         super(ChatThreadsItemCollection, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
         self.next_link = None
 
 
@@ -596,12 +543,10 @@ class CommunicationErrorResponse(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        error: "ChatError",
         **kwargs
     ):
         super(CommunicationErrorResponse, self).__init__(**kwargs)
-        self.error = error
+        self.error = kwargs['error']
 
 
 class CommunicationIdentifierModel(msrest.serialization.Model):
@@ -626,18 +571,13 @@ class CommunicationIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        raw_id: Optional[str] = None,
-        communication_user: Optional["CommunicationUserIdentifierModel"] = None,
-        phone_number: Optional["PhoneNumberIdentifierModel"] = None,
-        microsoft_teams_user: Optional["MicrosoftTeamsUserIdentifierModel"] = None,
         **kwargs
     ):
         super(CommunicationIdentifierModel, self).__init__(**kwargs)
-        self.raw_id = raw_id
-        self.communication_user = communication_user
-        self.phone_number = phone_number
-        self.microsoft_teams_user = microsoft_teams_user
+        self.raw_id = kwargs.get('raw_id', None)
+        self.communication_user = kwargs.get('communication_user', None)
+        self.phone_number = kwargs.get('phone_number', None)
+        self.microsoft_teams_user = kwargs.get('microsoft_teams_user', None)
 
 
 class CommunicationUserIdentifierModel(msrest.serialization.Model):
@@ -659,12 +599,10 @@ class CommunicationUserIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
         **kwargs
     ):
         super(CommunicationUserIdentifierModel, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs['id']
 
 
 class CreateChatThreadRequest(msrest.serialization.Model):
@@ -689,14 +627,11 @@ class CreateChatThreadRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        topic: str,
-        participants: Optional[List["ChatParticipant"]] = None,
         **kwargs
     ):
         super(CreateChatThreadRequest, self).__init__(**kwargs)
-        self.topic = topic
-        self.participants = participants
+        self.topic = kwargs['topic']
+        self.participants = kwargs.get('participants', None)
 
 
 class CreateChatThreadResult(msrest.serialization.Model):
@@ -721,12 +656,10 @@ class CreateChatThreadResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        chat_thread: Optional["ChatThreadProperties"] = None,
         **kwargs
     ):
         super(CreateChatThreadResult, self).__init__(**kwargs)
-        self.chat_thread = chat_thread
+        self.chat_thread = kwargs.get('chat_thread', None)
         self.invalid_participants = None
 
 
@@ -758,16 +691,12 @@ class MicrosoftTeamsUserIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        user_id: str,
-        is_anonymous: Optional[bool] = None,
-        cloud: Optional[Union[str, "CommunicationCloudEnvironmentModel"]] = None,
         **kwargs
     ):
         super(MicrosoftTeamsUserIdentifierModel, self).__init__(**kwargs)
-        self.user_id = user_id
-        self.is_anonymous = is_anonymous
-        self.cloud = cloud
+        self.user_id = kwargs['user_id']
+        self.is_anonymous = kwargs.get('is_anonymous', None)
+        self.cloud = kwargs.get('cloud', None)
 
 
 class PhoneNumberIdentifierModel(msrest.serialization.Model):
@@ -789,12 +718,10 @@ class PhoneNumberIdentifierModel(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        value: str,
         **kwargs
     ):
         super(PhoneNumberIdentifierModel, self).__init__(**kwargs)
-        self.value = value
+        self.value = kwargs['value']
 
 
 class SendChatMessageRequest(msrest.serialization.Model):
@@ -827,18 +754,13 @@ class SendChatMessageRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        content: str,
-        sender_display_name: Optional[str] = None,
-        type: Optional[Union[str, "ChatMessageType"]] = None,
-        metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(SendChatMessageRequest, self).__init__(**kwargs)
-        self.content = content
-        self.sender_display_name = sender_display_name
-        self.type = type
-        self.metadata = metadata
+        self.content = kwargs['content']
+        self.sender_display_name = kwargs.get('sender_display_name', None)
+        self.type = kwargs.get('type', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class SendChatMessageResult(msrest.serialization.Model):
@@ -860,12 +782,10 @@ class SendChatMessageResult(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        id: str,
         **kwargs
     ):
         super(SendChatMessageResult, self).__init__(**kwargs)
-        self.id = id
+        self.id = kwargs['id']
 
 
 class SendReadReceiptRequest(msrest.serialization.Model):
@@ -887,12 +807,10 @@ class SendReadReceiptRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        chat_message_id: str,
         **kwargs
     ):
         super(SendReadReceiptRequest, self).__init__(**kwargs)
-        self.chat_message_id = chat_message_id
+        self.chat_message_id = kwargs['chat_message_id']
 
 
 class SendTypingNotificationRequest(msrest.serialization.Model):
@@ -909,12 +827,10 @@ class SendTypingNotificationRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        sender_display_name: Optional[str] = None,
         **kwargs
     ):
         super(SendTypingNotificationRequest, self).__init__(**kwargs)
-        self.sender_display_name = sender_display_name
+        self.sender_display_name = kwargs.get('sender_display_name', None)
 
 
 class UpdateChatMessageRequest(msrest.serialization.Model):
@@ -933,14 +849,11 @@ class UpdateChatMessageRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        content: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         super(UpdateChatMessageRequest, self).__init__(**kwargs)
-        self.content = content
-        self.metadata = metadata
+        self.content = kwargs.get('content', None)
+        self.metadata = kwargs.get('metadata', None)
 
 
 class UpdateChatThreadRequest(msrest.serialization.Model):
@@ -956,9 +869,7 @@ class UpdateChatThreadRequest(msrest.serialization.Model):
 
     def __init__(
         self,
-        *,
-        topic: Optional[str] = None,
         **kwargs
     ):
         super(UpdateChatThreadRequest, self).__init__(**kwargs)
-        self.topic = topic
+        self.topic = kwargs.get('topic', None)
