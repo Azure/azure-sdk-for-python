@@ -139,8 +139,8 @@ class RegistryOperations:
 
 
     @experimental
-    # @monitor_with_activity(logger, "Registry.Delete", ActivityType.PUBLICAPI)
-    def delete(self, *, name: str, **kwargs: Dict) -> LROPoller[Registry]:
+    # @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
+    def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[Registry]:
         """Delete a registry. Returns nothing on a successful operation.
 
         :param name: Name of the registry

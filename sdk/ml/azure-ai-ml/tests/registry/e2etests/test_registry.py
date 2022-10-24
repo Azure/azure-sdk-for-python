@@ -8,8 +8,7 @@ from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
-import time
+from devtools_testutils import AzureRecordedTestCase
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
@@ -44,10 +43,10 @@ class TestRegistry(AzureRecordedTestCase):
 
         registry = crud_registry_client.registries.get(name=reg_name)
         assert registry.name == reg_name
-        deL_result = crud_registry_client.registries.delete(name=reg_name).result(
+        del_result = crud_registry_client.registries.begin_delete(name=reg_name).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
-        assert deL_result is None
+        assert del_result is None
         try:
             crud_registry_client.registries.get(name=reg_name)
             # The above line should fail with a ResourceNotFoundError
