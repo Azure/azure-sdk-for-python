@@ -51,7 +51,7 @@ class _EventHubProcessorTest(EventPerfTest):
             transport_type=TransportType.AmqpOverWebsocket
         )
         if arguments.preload:
-            self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=TransportType.AMQPOverWebsocket)
+            self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=TransportType.AmqpOverWebsocket)
 
     async def _preload_eventhub(self):
         data = get_random_bytes(self.args.event_size)
