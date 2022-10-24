@@ -495,6 +495,8 @@ class WebSocketTransportAsync(
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
+        except OSError:
+            await self.session.close()
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
@@ -518,6 +520,8 @@ class WebSocketTransportAsync(
             return view
         except asyncio.TimeoutError:
             raise TimeoutError()
+        except OSError:
+            await self.session.close()
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -531,4 +535,7 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        try:
+            await self.ws.send_bytes(s)
+        except OSError:
+            await self.session.close()
