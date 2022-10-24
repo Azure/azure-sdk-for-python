@@ -184,9 +184,10 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, args, kwargs, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, args=None, kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
         # Clear nodes as we may call build multiple times.
         self.nodes = []
+        kwargs = kwargs or {}
         pipeline_kwargs = {**kwargs, **self._get_group_parameter_defaults()}
         pipeline_args, pipeline_kwargs = _build_pipeline_parameter(self.func, args, pipeline_kwargs,
                                                                    non_pipeline_params_dict)
