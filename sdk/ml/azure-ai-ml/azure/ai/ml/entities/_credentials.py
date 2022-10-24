@@ -8,7 +8,7 @@ from abc import ABC
 from typing import List, Dict, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
+from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, snake_to_camel
 from azure.ai.ml.constants._common import CommonYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin, YamlTranslatableMixin
 from azure.ai.ml._restclient.v2022_05_01.models import (
@@ -349,11 +349,12 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
         data: Dict = None,
     ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
         type_str = data.get(CommonYamlFields.TYPE)
-        if type_str == camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY):
+        type_str = snake_to_camel(type_str)
+        if type_str == ConnectionAuthType.MANAGED_IDENTITY:
             identity_cls = ManagedIdentityConfiguration
-        elif type_str == camel_to_snake(IdentityConfigurationType.USER_IDENTITY):
+        elif type_str == IdentityConfigurationType.USER_IDENTITY:
             identity_cls = UserIdentityConfiguration
-        elif type_str == camel_to_snake(IdentityConfigurationType.AML_TOKEN):
+        elif type_str == IdentityConfigurationType.AML_TOKEN:
             identity_cls = AmlTokenConfiguration
         else:
             msg = f"Unsupported identity type: {type_str}."
