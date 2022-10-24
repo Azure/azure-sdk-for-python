@@ -122,6 +122,10 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
         # If we extracted from a Json or XML response
         if error_dict:
             error_code = error_dict.get('code')
+            # Special case for public access error code to be surfaced properly
+            if error_code == StorageErrorCode.PUBLIC_ACCESS_NOT_PERMITTED:
+                serialized = False
+
             error_message = error_dict.get('message')
             additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
     except DecodeError:
@@ -135,7 +139,8 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
                               StorageErrorCode.blob_overwritten]:
                 raise_error = ResourceModifiedError
             if error_code in [StorageErrorCode.invalid_authentication_info,
-                              StorageErrorCode.authentication_failed]:
+                              StorageErrorCode.authentication_failed,
+                              StorageErrorCode.public_access_not_permitted]:
                 raise_error = ClientAuthenticationError
             if error_code in [StorageErrorCode.resource_not_found,
                               StorageErrorCode.cannot_verify_copy_source,

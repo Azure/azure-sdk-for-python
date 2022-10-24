@@ -3249,4 +3249,22 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert blob_client.exists()
         assert blob_client.get_blob_properties().size == 0
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_public_access_error_code(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_data = b'12345678'
+        blob_name = self.get_resource_name("utcontainer")
+
+
+        # Act
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"))
+        blob = bsc.get_blob_client(container=blob_name, blob='test')
+        with pytest.raises(ClientAuthenticationError):
+            blob.upload_blob(blob_data)
+
 # ------------------------------------------------------------------------------
