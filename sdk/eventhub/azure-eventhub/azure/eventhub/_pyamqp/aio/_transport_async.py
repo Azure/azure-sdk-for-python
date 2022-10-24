@@ -495,7 +495,7 @@ class WebSocketTransportAsync(
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
-        except OSError:
+        except ConnectionResetError:
             await self.session.close()
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
@@ -520,7 +520,7 @@ class WebSocketTransportAsync(
             return view
         except asyncio.TimeoutError:
             raise TimeoutError()
-        except OSError:
+        except ConnectionResetError:
             await self.session.close()
 
     async def close(self):
@@ -537,5 +537,5 @@ class WebSocketTransportAsync(
         """
         try:
             await self.ws.send_bytes(s)
-        except OSError:
+        except ConnectionResetError:
             await self.session.close()
