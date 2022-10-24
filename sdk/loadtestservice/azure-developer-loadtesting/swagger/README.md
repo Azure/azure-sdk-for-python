@@ -7,11 +7,11 @@ namespace: azure.developer.loadtesting
 package-name: azure-developer-loadtesting
 license-header: MICROSOFT_MIT_NO_VERSION
 title: LoadTestingClient
-package-version: 1.0.0b1
+package-version: 1.0.0b2
 package-mode: dataplane
 package-pprint-name: Azure Developer LoadTesting
 security: AADToken
-security-scopes: https://loadtest.azure-dev.com/.default
+security-scopes: https://cnt-prod.loadtesting.azure.com/.default
 directive:
     - from: swagger-document 
       where: $["paths"]["/serverMetricsConfig/supportedResourceTypes"].get

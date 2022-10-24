@@ -29,6 +29,7 @@ def bodiless_matching(test_proxy):
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.production_experience_test
 class TestEnvironment(AzureRecordedTestCase):
     def test_environment_create_conda(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         params_override = [{"name": env_name("name")}]

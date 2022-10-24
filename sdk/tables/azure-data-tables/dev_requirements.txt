@@ -1,7 +1,9 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 -e ../../cosmos/azure-mgmt-cosmosdb
+-e ../../resources/azure-mgmt-resource
 ../../core/azure-core
 ../../nspkg/azure-data-nspkg
 aiohttp>=3.0
 azure-identity
+python-dateutil>=2.8.0

@@ -124,6 +124,7 @@ def mock_job_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestJobOperations:
     def test_list(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
