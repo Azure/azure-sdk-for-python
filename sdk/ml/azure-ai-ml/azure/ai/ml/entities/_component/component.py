@@ -472,7 +472,12 @@ class Component(
                     if os.path.isfile(code):
                         yield code
                     else:
-                        copytree(code, tmp_dir, ignore=ignore_patterns("__pycache__"), dirs_exist_ok=True)
+                        copytree(
+                            Path(self.base_path) / code,
+                            tmp_dir,
+                            ignore=ignore_patterns("__pycache__"),
+                            dirs_exist_ok=True
+                        )
                         yield tmp_dir
             else:
                 yield tmp_dir

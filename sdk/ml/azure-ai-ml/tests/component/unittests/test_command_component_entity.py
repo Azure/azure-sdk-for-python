@@ -1,4 +1,6 @@
+import tempfile
 from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 
 import pydash
@@ -423,3 +425,18 @@ class TestCommandComponentEntity:
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
         assert actual_component_dict2 == expected_rest_component
+
+    def test_component_code_asset_ignoring_pycache(self) -> None:
+        component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
+        component = load_component(component_yaml)
+        code_folder = "./tests/test_configs/components/helloworld_components_with_env/"
+        with tempfile.TemporaryDirectory(dir=code_folder) as tmp_dir:
+            # create temp folder and write some files under pycache
+            tmp_pycache_folder = Path(tmp_dir) / "__pycache__"
+            tmp_pycache_folder.mkdir()
+            (tmp_pycache_folder / "a.pyc").touch()
+            (tmp_pycache_folder / "b.pyc").touch()
+            # resolve and check if pycache exists in code asset
+            with component._resolve_local_code() as code_path:
+                pycache_path = Path(component_yaml).parent / code_path / Path(tmp_dir).name / "__pycache__"
+                assert not pycache_path.exists()
