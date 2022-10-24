@@ -9,7 +9,7 @@ from typing import Dict, Iterable, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
@@ -58,7 +58,7 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
