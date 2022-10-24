@@ -60,7 +60,7 @@ def _data_to_input(data):
 
 
 class InputOutputBase(ABC):
-    def __init__(self, meta: Union[Input, Output], data, **kwargs):
+    def __init__(self, meta: Union[Input, Output], data, default_data=None, **kwargs):
         """Base class of input & output.
 
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
@@ -69,9 +69,15 @@ class InputOutputBase(ABC):
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
+        :param original_data: default value of input/output, None means un-configured data.
+        :type original_data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output]
         """
         self._meta = meta
+        self._original_data = data
         self._data = self._build_data(data)
+        self._default_data = default_data
         self._type = meta.type if meta else kwargs.pop("type", None)
         self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
         self._description = (
@@ -430,6 +436,16 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         """
         super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
         self._group_names = group_names if group_names else []
+
+    def result(self):
+        """Return original value of pipeline input."""
+        # example:
+        #
+        # @pipeline
+        # def pipeline_func(param1):
+        #   node1 = component_func(param1=param1.result())
+        #   # node1's param1 will get actual value of param1 instead of a input binding.
+        return self._original_data
 
     def __str__(self) -> str:
         return self._data_binding()
