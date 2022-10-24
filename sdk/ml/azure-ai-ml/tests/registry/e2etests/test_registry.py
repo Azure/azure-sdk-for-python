@@ -43,11 +43,9 @@ class TestRegistry(AzureRecordedTestCase):
 
         registry = crud_registry_client.registries.get(name=reg_name)
         assert registry.name == reg_name
-        import pdb; pdb.set_trace()
         deL_result = crud_registry_client.registries.delete(name=reg_name).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
-        import pdb; pdb.set_trace()
         assert deL_result is None
         try:
             crud_registry_client.registries.get(name=reg_name)
