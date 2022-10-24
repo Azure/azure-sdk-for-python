@@ -64,6 +64,10 @@ class ErrorTarget:
     ONLINE_ENDPOINT = "OnlineEndpoint"
     ASSET = "Asset"
     DATASTORE = "Datastore"
+    BLOB_DATASTORE = "BlobDatastore"
+    FILE_DATASTORE = "FileDatastore"
+    GEN1_DATASTORE = "Gen1Datastore"
+    GEN2_DATASTORE = "Gen2Datastore"
     WORKSPACE = "Workspace"
     COMPUTE = "Compute"
     DEPLOYMENT = "Deployment"
@@ -564,6 +568,23 @@ class MultipleValueError(KeywordError):
 
     def __init__(self, func_name, keyword):
         message = "%s() got multiple values for argument %r." % (func_name, keyword)
+        super().__init__(message=message, no_personal_data_message=message)
+
+
+class NonExistParamValueError(KeywordError):
+    """Exception raised when items in non_pipeline_inputs not in keyword parameters in
+    dynamic functions."""
+
+    def __init__(self, func_name, keywords):
+        message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
+        super().__init__(message=message, no_personal_data_message=message)
+
+
+class UnExpectedNonPipelineParameterTypeError(UserErrorException):
+    """Exception raised when non_pipeline_parameter type is not List[str]."""
+
+    def __init__(self):
+        message = "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string"
         super().__init__(message=message, no_personal_data_message=message)
 
 

@@ -7,7 +7,6 @@ import pytest
 from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
-    ImageModelSettingsClassification,
     LearningRateScheduler,
     MLTableJobInput,
     SamplingAlgorithmType,
@@ -18,10 +17,14 @@ from azure.ai.ml.automl import image_classification_multilabel
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import ImageClassificationMultilabelJob, ImageClassificationSearchSpace
+from azure.ai.ml.entities._job.automl.image import (
+    ImageClassificationMultilabelJob,
+    ImageModelSettingsClassification
+)
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLImageClassificationMultilabel:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])

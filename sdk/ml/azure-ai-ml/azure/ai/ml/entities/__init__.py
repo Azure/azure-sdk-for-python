@@ -38,6 +38,7 @@ from ._deployment.deployment_settings import BatchRetrySettings, OnlineRequestSe
 from ._deployment.online_deployment import KubernetesOnlineDeployment, ManagedOnlineDeployment, OnlineDeployment
 from ._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from ._deployment.scale_settings import DefaultScaleSettings, TargetUtilizationScaleSettings
+from ._deployment.batch_job import BatchJob
 from ._endpoint.batch_endpoint import BatchEndpoint
 from ._endpoint.endpoint import Endpoint
 from ._endpoint.online_endpoint import KubernetesOnlineEndpoint, ManagedOnlineEndpoint, OnlineEndpoint,\
@@ -129,6 +130,7 @@ __all__ = [
     "BatchEndpoint",
     "OnlineEndpoint",
     "BatchDeployment",
+    "BatchJob",
     "CodeConfiguration",
     "Endpoint",
     "OnlineDeployment",

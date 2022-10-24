@@ -64,7 +64,11 @@ def link_file_path(
     link_file_name = "link_file_rand_name.txt"
     link_file = Path(os.path.join(os.path.abspath(storage_test_directory), link_file_name))
 
-    os.symlink(target_file_path, link_file)
+    try:
+        os.symlink(target_file_path, link_file)
+    except FileExistsError:
+        pass
+
     assert os.path.islink(link_file)
     link_file = convert_windows_path_to_unix(link_file)
     yield link_file
@@ -74,6 +78,7 @@ def link_file_path(
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestAssetUtils:
     def test_amlignore_precedence(
         self, storage_test_directory: str, gitignore_file_directory: str, no_ignore_file_directory: str

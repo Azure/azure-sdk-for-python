@@ -14,7 +14,6 @@ from .storage_testcase import (
     BlobAccountPreparer,
     CachedStorageAccountPreparer,
 )
-from .keyvault_preparer import KeyVaultPreparer
 
 # cSpell:disable
 from .envvariable_loader import EnvironmentVariableLoader
@@ -85,7 +84,6 @@ __all__ = [
     "AzureTestCase",
     "is_live",
     "get_region_override",
-    "KeyVaultPreparer",
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
     "PemCertificate",

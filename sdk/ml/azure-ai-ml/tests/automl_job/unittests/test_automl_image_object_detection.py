@@ -6,7 +6,6 @@ import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ImageModelSettingsObjectDetection,
     LearningRateScheduler,
     MLTableJobInput,
     ModelSize,
@@ -20,10 +19,14 @@ from azure.ai.ml.automl import image_object_detection
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
-from azure.ai.ml.entities._job.automl.image import ImageObjectDetectionJob
+from azure.ai.ml.entities._job.automl.image import (
+    ImageModelSettingsObjectDetection,
+    ImageObjectDetectionJob
+)
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLImageObjectDetection:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])

@@ -12,6 +12,7 @@ from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestSparkJobEntity:
     def test_job_name_generator(self):
         job_name_1 = generate_job_name()

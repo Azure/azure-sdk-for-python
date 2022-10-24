@@ -19,7 +19,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.e2etest
-@pytest.mark.mlc
+@pytest.mark.core_sdk_test
 @pytest.mark.usefixtures(
     "recorded_test", "mock_workspace_arm_template_deployment_name", "mock_workspace_dependent_resource_name_generator"
 )
