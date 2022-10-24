@@ -267,31 +267,39 @@ This loader is meant to be paired with the PowerShell test resource management c
 [/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for live test
 resource management.
 
-For an example of using the EnvironmentVariableLoader with the test proxy, you can refer to the Tables SDK. The
-CosmosPreparer and TablesPreparer defined in this [preparers.py][tables_preparers] file each define an instance of the
-EnvironmentVariableLoader, which are used to fetch environment variables for Cosmos and Tables, respectively. These
-preparers can be used to decorate test methods directly; for example:
+The EnvironmentVariableLoader accepts a positional `directory` argument and arbitrary keyword-only arguments:
+- `directory` is the name of your package's service as it appears in the Python repository; i.e. `service` in `azure-sdk-for-python/sdk/service/azure-service-package`.
+  - For example, for `azure-keyvault-keys`, the value of `directory` is `keyvault`.
+- For each environment variable you want to provide to tests, pass in a keyword argument with the pattern `environment_variable_name="sanitized-value"`.
+  - For example, to fetch the value of `STORAGE_ENDPOINT` and sanitize this value in recordings as `fake-endpoint`, provide `storage_endpoint="fake-endpoint"` to the EnvironmentVariableLoader constructor.
+
+Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
+values will automatically have sanitizers registered with the test proxy. More specifically, the true values of
+requested variables will be provided to tests in live mode, and the sanitized values of these variables will be provided
+in playback mode.
+
+The most common way to use the EnvironmentVariableLoader is to declare a callable specifying arguments by using
+`functools.partial` and then decorate test methods with that callable. For example:
 
 ```python
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from .preparers import TablesPreparer
+import functools
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+
+ServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "service",
+    service_endpoint="fake-endpoint",
+    service_account_name="fake-account-name",
+)
 
 class TestExample(AzureRecordedTestCase):
 
-    @TablesPreparer()
+    @ServicePreparer()
     @recorded_by_proxy
     def test_example_with_preparer(self, **kwargs):
-        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
-        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
+        service_endpoint = kwargs.pop("service_endpoint")
         ...
 ```
-
-Or, they can be used in a custom decorator, as they are in the `cosmos_decorator` and `tables_decorator` defined in
-[preparers.py][tables_preparers]. `@tables_decorator`, for instance, is then used in place of `@TablesPreparer()` for
-the example above (note that the method-style `tables_decorator` is used without parentheses).
-
-Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
-values will automatically have sanitizers registered with the test proxy.
 
 ### Record test variables
 
