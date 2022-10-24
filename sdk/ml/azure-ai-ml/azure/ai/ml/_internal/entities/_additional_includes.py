@@ -70,6 +70,17 @@ class _AdditionalIncludes:
         else:
             shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__"))
 
+    @staticmethod
+    def _zip_need_to_compress(path: Path) -> bool:
+        if path.suffix != ".zip":
+            return False
+        # if zip file exists, simply copy as other additional includes
+        if path.exists():
+            return False
+        # remove .zip suffix and check whether the folder exists
+        stem_path = path.parent / path.stem
+        return stem_path.is_dir()
+
     def _validate(self) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
         if not self.with_includes:
@@ -84,7 +95,7 @@ class _AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
                 continue
 
-            if not src_path.exists():
+            if not src_path.exists() and not self._zip_need_to_compress(src_path):
                 error_msg = f"Unable to find additional include {additional_include} for {self._yaml_name}."
                 validation_result.append_error(message=error_msg)
                 continue
@@ -132,7 +143,20 @@ class _AdditionalIncludes:
         # additional includes
         base_path = self._additional_includes_file_path.parent
         for additional_include in self._includes:
-            src_path = (base_path / additional_include).resolve()
+            if self._zip_need_to_compress(additional_include):
+                zip_additional_include = (base_path / additional_include).resolve()
+                folder_to_zip = zip_additional_include.stem
+                with tempfile.TemporaryDirectory() as tmp_dir:
+                    shutil.copytree(
+                        folder_to_zip,
+                        tmp_dir,
+                        ignore=shutil.ignore_patterns("__pycache__"),
+                        dirs_exist_ok=True
+                    )
+                    src_path = (Path(tempfile.mkdtemp()) / zip_additional_include.name).resolve()
+                    shutil.make_archive(str(src_path), "zip", tmp_dir)
+            else:
+                src_path = (base_path / additional_include).resolve()
             dst_path = (tmp_folder_path / src_path.name).resolve()
             self._copy(src_path, dst_path)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
