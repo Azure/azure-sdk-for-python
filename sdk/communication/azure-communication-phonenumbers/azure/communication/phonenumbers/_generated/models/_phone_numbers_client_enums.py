@@ -7,17 +7,16 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class BillingFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The frequency with which the cost gets billed.
-    """
+class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The frequency with which the cost gets billed."""
 
     MONTHLY = "monthly"
 
-class PhoneNumberAssignmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class PhoneNumberAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The assignment type of the phone numbers to search for. A phone number can be assigned to a
     person, or to an application.
     """
@@ -25,36 +24,36 @@ class PhoneNumberAssignmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     PERSON = "person"
     APPLICATION = "application"
 
-class PhoneNumberCapabilityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Capability value for calling.
-    """
+
+class PhoneNumberCapabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Capability value for calling."""
 
     NONE = "none"
     INBOUND = "inbound"
     OUTBOUND = "outbound"
     INBOUND_OUTBOUND = "inbound+outbound"
 
-class PhoneNumberOperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of operation.
-    """
+
+class PhoneNumberOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of operation."""
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
     SUCCEEDED = "succeeded"
     FAILED = "failed"
 
-class PhoneNumberOperationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of operation, e.g. Search
-    """
+
+class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of operation, e.g. Search."""
 
     PURCHASE = "purchase"
     RELEASE_PHONE_NUMBER = "releasePhoneNumber"
     SEARCH = "search"
     UPDATE_PHONE_NUMBER_CAPABILITIES = "updatePhoneNumberCapabilities"
 
-class PhoneNumberType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of phone numbers to search for, e.g. geographic, or tollFree.
-    """
+
+class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of phone numbers to search for, e.g. geographic, or tollFree."""
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"

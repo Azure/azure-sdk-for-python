@@ -30,6 +30,7 @@ class funny:
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestComputeOperation:
     def test_list(self, mock_compute_operation: ComputeOperations) -> None:
         mock_compute_operation.list()

@@ -30,6 +30,7 @@ tests_root_dir = Path(__file__).parent.parent.parent
 
 @pytest.mark.automle2etest
 @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
+@pytest.mark.pipeline_test
 class TestAutomlDSLPipeline(AzureRecordedTestCase):
     def test_automl_classification_in_pipeline(self, client: MLClient):
         @dsl.pipeline(name="train_automl_classification_in_pipeline", default_compute_target="automl-cpu-cluster")

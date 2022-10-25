@@ -40,6 +40,7 @@ def bodiless_matching(test_proxy):
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
 )
+@pytest.mark.training_experiences_test
 class TestCommandJob(AzureRecordedTestCase):
     @pytest.mark.skip(
         "Investigate The network connectivity issue encountered for 'Microsoft.MachineLearningServices'; cannot fulfill the request."

@@ -95,6 +95,7 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "automl",
     "pyyaml",
     "CONLL",
     "pyjwt",
@@ -1116,6 +1117,16 @@
         "seqno",
         "mrenclave",
         "infile"
+      ]
+    },
+    {
+      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+	      "deseralize",
+	      "wday"
       ]
     },
     {

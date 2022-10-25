@@ -17,6 +17,7 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
 @pytest.mark.skip(reason="tests failing while recording. Re-enable once fixed.")
+@pytest.mark.pipeline_test
 class TestSchedule(AzureRecordedTestCase):
     def test_schedule_lifetime(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]

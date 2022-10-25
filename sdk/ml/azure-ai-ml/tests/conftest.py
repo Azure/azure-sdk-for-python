@@ -529,7 +529,7 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 
 @pytest.fixture()
 def enable_environment_id_arm_expansion(mocker: MockFixture):
-    mocker.patch("azure.ai.ml.operations._operation_orchestrator.is_private_preview_enabled", return_value=False)
+    mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=False)
 
 
 @pytest.fixture(autouse=True)

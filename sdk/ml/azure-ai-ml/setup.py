@@ -84,7 +84,7 @@ setup(
         "isodate",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
-        # "applicationinsights<=0.11.10", # To be replaced by azure-monitor-query
+        "opencensus-ext-azure<=1.1.7",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
