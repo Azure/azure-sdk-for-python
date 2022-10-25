@@ -102,7 +102,7 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
-                    raise ValueError(
+                    _LOGGER.debug(
                         f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
                     )
 
