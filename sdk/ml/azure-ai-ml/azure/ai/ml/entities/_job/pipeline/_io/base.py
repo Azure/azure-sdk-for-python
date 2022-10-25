@@ -79,7 +79,11 @@ class InputOutputBase(ABC):
         self._data = self._build_data(data)
         self._default_data = default_data
         self._type = meta.type if meta else kwargs.pop("type", None)
-        self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
+        # pipeline level inputs won't pass mode to bound node level inputs
+        if isinstance(self._original_data, PipelineInput):
+            self._mode = None
+        else:
+            self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
         self._description = (
             self._data.description
             if self._data and hasattr(self._data, "description") and self._data.description
