@@ -497,13 +497,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
         from_rest_outputs = from_rest_data_outputs(properties.outputs) or {}
         # Unpack the component jobs
-        sub_nodes = {}
-        if properties.jobs:
-            for node_name, node in properties.jobs.items():
-                if LoopNode._is_loop_node_dict(node):
-                    sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
-                else:
-                    sub_nodes[node_name] = BaseNode._from_rest_object(node)
+        sub_nodes = PipelineComponent._resolve_sub_nodes(properties.jobs) if properties.jobs else {}
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
         settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
         settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()
