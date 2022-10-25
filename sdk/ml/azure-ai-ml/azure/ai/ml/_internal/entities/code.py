@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from os import PathLike
-from typing import Optional, Dict, Union
+from typing import Optional
 
 from ...entities._assets import Code
 
