@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pydash
 import pytest
 
@@ -213,6 +213,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(cancel_poller, LROPoller)
         assert cancel_poller.result() is None
 
+    @pytest.mark.skipif(condition=not is_live(), reason="unknown recording error to further investigate")
     def test_pipeline_with_setting_node_output(self, client: MLClient) -> None:
         component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
         tsv_func = load_component(component_dir / "command-linux/one-line-tsv/component.yaml")
