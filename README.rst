@@ -7,11 +7,8 @@ Microsoft Azure SDK for Python
 .. image:: https://img.shields.io/pypi/pyversions/azure.svg?maxAge=2592000
     :target: https://pypi.python.org/pypi/azure/
 
-.. image:: https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=master
-    :target: https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=master
-
-.. image:: https://travis-ci.org/Azure/azure-sdk-for-python.svg?branch=master
-    :target: https://travis-ci.org/Azure/azure-sdk-for-python
+.. image:: https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=main
+    :target: https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=main
 
 .. image:: https://img.shields.io/badge/dependencies-analyzed-blue.svg
     :target: https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html
