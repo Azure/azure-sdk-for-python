@@ -16,7 +16,7 @@ from azure.ai.ml import (
     TensorFlowDistribution,
     command,
     dsl,
-    load_component,
+    load_component, AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
@@ -1061,6 +1061,21 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "Unknown type of parameter ['required_input', 'required_param', 'required_param_with_default', 'optional_param', 'optional_param_with_default'] in pipeline func 'pipeline_missing_type'"
             in e.value.message
         )
+
+        @dsl.pipeline(non_pipeline_inputs=['param'])
+        def pipeline_with_non_pipeline_inputs(
+            required_input: Input,
+            required_param: str,
+            param: str,
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_non_pipeline_inputs)
+        assert "Cannot register pipeline component 'pipeline_with_non_pipeline_inputs' with non_pipeline_inputs." in e.value.message
 
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
@@ -2433,3 +2448,82 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = client.jobs.create_or_update(pipeline_with_default_component())
         created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
         assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"
+
+    def test_pipeline_node_identity_with_component(self, client: MLClient):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(path)
+
+        @dsl.pipeline
+        def pipeline_func(component_in_path):
+            node1 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node1.identity = AmlTokenConfiguration()
+
+            node2 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node2.identity = UserIdentityConfiguration()
+
+            node3 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node3.identity = ManagedIdentityConfiguration()
+
+        pipeline = pipeline_func(component_in_path=job_input)
+        pipeline_job = client.jobs.create_or_update(pipeline, compute="cpu-cluster")
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
+        assert actual_dict["jobs"] == {
+            'node1': {'computeId': None,
+                      'display_name': None,
+                      'distribution': None,
+                      'environment_variables': {},
+                      'identity': {'type': 'aml_token'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'limits': None,
+                      'name': 'node1',
+                      'outputs': {},
+                      'properties': {},
+                      'resources': None,
+                      'tags': {},
+                      'type': 'command'},
+            'node2': {'computeId': None,
+                      'display_name': None,
+                      'distribution': None,
+                      'environment_variables': {},
+                      'identity': {'type': 'user_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'limits': None,
+                      'name': 'node2',
+                      'outputs': {},
+                      'properties': {},
+                      'resources': None,
+                      'tags': {},
+                      'type': 'command'},
+            'node3': {'computeId': None,
+                      'display_name': None,
+                      'distribution': None,
+                      'environment_variables': {},
+                      'identity': {'type': 'managed_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'limits': None,
+                      'name': 'node3',
+                      'outputs': {},
+                      'properties': {},
+                      'resources': None,
+                      'tags': {},
+                      'type': 'command'}
+        }

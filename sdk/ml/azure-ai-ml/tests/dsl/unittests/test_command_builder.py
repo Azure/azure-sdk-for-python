@@ -13,13 +13,15 @@ from azure.ai.ml import (
     command,
     load_component,
     load_job,
-    spark,
+    spark, UserIdentityConfiguration,
 )
+from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService as JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
+from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -954,3 +956,48 @@ class TestCommandFunction:
 
         node5 = command(**test_command_params, is_deterministic=False)
         assert hash(node1) != hash(node5)
+
+    def test_pipeline_node_identity_with_builder(self, test_command_params):
+        test_command_params["identity"] = UserIdentityConfiguration()
+        command_node = command(**test_command_params)
+        rest_dict = command_node._to_rest_object()
+        assert rest_dict["identity"] == {'type': 'user_identity'}
+
+        @pipeline
+        def my_pipeline():
+            command_node()
+
+        pipeline_job = my_pipeline()
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
+
+        assert actual_dict["jobs"] == {
+            'my_job': {'computeId': 'cpu-cluster',
+                       'display_name': 'my-fancy-job',
+                       'distribution': {'distribution_type': 'Mpi',
+                                        'process_count_per_instance': 4},
+                       'environment_variables': {'foo': 'bar'},
+                       'identity': {'type': 'user_identity'},
+                       'inputs': {'boolean': {'job_input_type': 'literal',
+                                              'value': 'False'},
+                                  'float': {'job_input_type': 'literal', 'value': '0.01'},
+                                  'integer': {'job_input_type': 'literal', 'value': '1'},
+                                  'string': {'job_input_type': 'literal', 'value': 'str'},
+                                  'uri_file': {'job_input_type': 'uri_file',
+                                               'mode': 'Download',
+                                               'uri': 'https://my-blob/path/to/data'},
+                                  'uri_folder': {'job_input_type': 'uri_folder',
+                                                 'mode': 'ReadOnlyMount',
+                                                 'uri': 'https://my-blob/path/to/data'}},
+                       'limits': None,
+                       'name': 'my_job',
+                       'outputs': {'my_model': {'job_output_type': 'mlflow_model',
+                                                'mode': 'ReadWriteMount'}},
+                       'properties': {},
+                       'resources': None,
+                       'tags': {},
+                       'type': 'command'}
+        }

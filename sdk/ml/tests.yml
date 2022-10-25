@@ -1,4 +1,7 @@
-trigger: none
+parameters:
+  - name: TestMarkArgument
+    type: string
+    default: ''
 
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
@@ -8,6 +11,7 @@ stages:
       MatrixReplace:
         - TestSamples=.*/true
       TestTimeoutInMinutes: 270
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(python-ml-subscription-scope-configuration)
