@@ -40,7 +40,7 @@ import struct
 from ssl import SSLError
 from io import BytesIO
 import logging
-import aiohttp
+
 
 
 import certifi
