@@ -95,8 +95,8 @@ Resource preparers need a management client to function, so test classes that us
 
 ### Perform one-time setup
 
-1. Docker is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install].
-2. After installing, make sure Docker is running and is using Linux containers before running tests.
+1. Docker (or Podman) is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install], or install Podman at [podman.io][podman]. To use Podman, set an alias for `podman` to replace the `docker` command.
+2. After installing, make sure Docker/Podman is running and is using Linux containers before running tests.
 3. Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
 order to communicate with the test proxy over a secure connection.
 
@@ -110,6 +110,7 @@ In a `conftest.py` file for your package's tests, add a session-level fixture th
 `devtools_testutils.test_proxy` as a parameter (and has `autouse` set to `True`):
 
 ```python
+import pytest
 from devtools_testutils import test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -119,9 +120,7 @@ def start_proxy(test_proxy):
 ```
 
 The `test_proxy` fixture will fetch the test proxy Docker image and create a new container called
-`ambitious_azsdk_test_proxy` if one doesn't exist already. If the container already exists, the fixture will start the
-container if it's currently stopped. The container will be stopped after tests finish running, but will stay running if
-test execution is interrupted.
+`ambitious_azsdk_test_proxy`, which will be deleted after test execution unless interrupted.
 
 If your tests already use an `autouse`d, session-level fixture for tests, you can accept the `test_proxy` parameter in
 that existing fixture instead of adding a new one. For an example, see the [Register sanitizers](#register-sanitizers)
@@ -144,17 +143,13 @@ need old `.yml` recordings.
 > **Note:** support for configuring live or playback tests with a `testsettings_local.cfg` file has been
 > deprecated in favor of using just `AZURE_TEST_RUN_LIVE`.
 
-> **Note:** the recording storage location is determined when the proxy Docker container is created. If there are
-> multiple local copies of the `azure-sdk-for-python` repo on your machine, you will need to delete any existing
-> `ambitious_azsdk_test_proxy` container before recordings can be stored in a different repo copy.
-
 ### Register sanitizers
 
 Since the test proxy doesn't use [`vcrpy`][vcrpy], tests don't use a scrubber to sanitize values in recordings.
 Instead, sanitizers (as well as matchers and transforms) can be registered on the proxy as detailed in
 [this][sanitizers] section of the proxy documentation. Sanitizers can be registered via `add_*_sanitizer` methods in
 `devtools_testutils`. For example, the general-use method for sanitizing recording bodies, headers, and URIs is
-`add_general_regex_sanitizer`. Other sanitizers are available for more specific scenarios and can be found at
+`add_general_string_sanitizer`. Other sanitizers are available for more specific scenarios and can be found at
 [devtools_testutils/sanitizers.py][py_sanitizers].
 
 Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so for any sanitizers that
@@ -162,8 +157,8 @@ are shared by different tests, using a session fixture declared in a `conftest.p
 [pytest's scoped fixture documentation][pytest_fixtures] for more details.
 
 As a simple example, to emulate the effect registering a name pair with a `vcrpy` scrubber, you can provide the exact
-value you want to sanitize from recordings as the `regex` in the general regex sanitizer. With `vcrpy`, you would likely
-do something like the following:
+value you want to sanitize from recordings as the `target` in the general string sanitizer. With `vcrpy`, you would
+likely do something like the following:
 
 ```python
 import os
@@ -180,19 +175,21 @@ To do the same sanitization with the test proxy, you could add something like th
 
 ```python
 import os
-from devtools_testutils import add_general_regex_sanitizer, test_proxy
+from devtools_testutils import add_general_string_sanitizer, test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    add_general_regex_sanitizer(regex=os.getenv("AZURE_KEYVAULT_NAME"), value="fake-vault")
+    # The default value for the environment variable should be the value you use in playback
+    vault_name = os.getenv("AZURE_KEYVAULT_NAME", "fake-vault")
+    add_general_string_sanitizer(target=vault_name, value="fake-vault")
 ```
 
 Note that the sanitizer fixture accepts the `test_proxy` fixture as a parameter to ensure the proxy is started
 beforehand.
 
 For a more advanced scenario, where we want to sanitize the account names of all Tables endpoints in recordings, we
-could instead call
+could instead use the `add_general_regex_sanitizer` method:
 
 ```python
 add_general_regex_sanitizer(
@@ -441,6 +438,7 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
+[podman]: https://podman.io/
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
