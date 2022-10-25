@@ -95,6 +95,7 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "automl",
     "pyyaml",
     "CONLL",
     "pyjwt",
