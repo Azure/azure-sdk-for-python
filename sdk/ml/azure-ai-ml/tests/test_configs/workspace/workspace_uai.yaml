@@ -14,4 +14,4 @@ identity:
 #application_insights: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.insights/components/appi-mhe1-anam
 #image_build_compute: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.Compute/virtualMachines/vm-mhe1-anam0001
 #container_registry: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.ContainerRegistry/registries/crmhe1anam
-primary_user_assigned_identity: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mhe-uai3
+primary_user_assigned_identity: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mhe-uai2
