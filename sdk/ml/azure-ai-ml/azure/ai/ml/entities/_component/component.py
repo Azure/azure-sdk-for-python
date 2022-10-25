@@ -434,9 +434,6 @@ class Component(
         component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)
 
-        # remove empty properties to keep the component spec unchanged
-        if not component_schema_dict.get("properties"):
-            component_schema_dict.pop("properties", None)
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict
 
