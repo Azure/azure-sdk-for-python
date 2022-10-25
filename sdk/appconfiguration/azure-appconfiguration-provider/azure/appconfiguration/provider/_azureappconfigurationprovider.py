@@ -5,9 +5,14 @@
 # -------------------------------------------------------------------------
 
 import json
+from requests.exceptions import ConnectionError
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ClientAuthenticationError,
+    ServiceRequestError
+)
 from ._settingselector import SettingSelector
 from ._azure_appconfiguration_provider_error import KeyVaultReferenceError
 from ._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
@@ -29,7 +34,7 @@ class AzureAppConfigurationProvider:
         self._client = None
 
     @classmethod
-    def load(cls, connection_string=None, endpoint=None, credential=None, **kwargs):
+    def load(cls, connection_string=None, endpoint=None, connection_strings=None, endpoints=None, credential=None, **kwargs):
         """
         Loads configuration settings from Azure App Configuration into a Python application.
 
@@ -48,46 +53,69 @@ class AzureAppConfigurationProvider:
         """
         provider = AzureAppConfigurationProvider()
 
+        provider._clients = []
+
         key_vault_options = kwargs.pop("key_vault_options", None)
 
-        provider.__buildprovider(connection_string, endpoint, credential, key_vault_options)
+        if connection_strings and endpoints:
+            raise AttributeError("Both connection_strings and endpoints are set. Only one of these should be set.")
+        
+        if connection_strings:
+            for connection_string in connection_strings:
+                endpoint = provider.__parse_connection_string(connection_string)
+                provider._clients.append([endpoint, provider.__build_provider(connection_string, None, None, key_vault_options)])
+        elif endpoints:
+            for endpoint in endpoints:
+                provider._clients.append([endpoint, provider.__build_provider(None, endpoint, credential, key_vault_options)])
+        else:
+            store_endpoint = endpoint if endpoint != None else provider.__parse_connection_string(connection_string)
+            provider._clients.append([store_endpoint, provider.__build_provider(connection_string, endpoint, credential, key_vault_options)])
 
         selects = kwargs.pop("selects", {SettingSelector("*", "\0")})
 
         provider._trim_prefixes = sorted(kwargs.pop("trimmed_key_prefixes", []), key=len, reverse=True)
-
-        provider._dict = {}
-
+        
         secret_clients = key_vault_options.secret_clients if key_vault_options else {}
 
-        for select in selects:
-            configurations = provider._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter
-            )
-            for config in configurations:
+        for client in provider._clients:
+            try:
+                provider._dict = {}
+                for select in selects:
+                    configurations = client[1].list_configuration_settings(
+                        key_filter=select.key_filter, label_filter=select.label_filter
+                    )
+                    for config in configurations:
+                        trimmed_key = config.key
+                        # Trim the key if it starts with one of the prefixes provided
+                        for trim in provider._trim_prefixes:
+                            if config.key.startswith(trim):
+                                trimmed_key = config.key[len(trim) :]
+                                break
 
-                trimmed_key = config.key
-                # Trim the key if it starts with one of the prefixes provided
-                for trim in provider._trim_prefixes:
-                    if config.key.startswith(trim):
-                        trimmed_key = config.key[len(trim) :]
-                        break
-
-                if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
-                    secret = provider.__resolve_keyvault_reference(config, key_vault_options, secret_clients)
-                    provider._dict[trimmed_key] = secret
-                elif provider.__is_json_content_type(config.content_type):
-                    try:
-                        j_object = json.loads(config.value)
-                        provider._dict[trimmed_key] = j_object
-                    except json.JSONDecodeError:
-                        # If the value is not a valid JSON, treat it like regular string value
-                        provider._dict[trimmed_key] = config.value
-                else:
-                    provider._dict[trimmed_key] = config.value
+                        if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
+                            secret = provider.__resolve_keyvault_reference(config, key_vault_options, secret_clients)
+                            provider._dict[trimmed_key] = secret
+                        elif provider.__is_json_content_type(config.content_type):
+                            try:
+                                j_object = json.loads(config.value)
+                                provider._dict[trimmed_key] = j_object
+                            except json.JSONDecodeError:
+                                # If the value is not a valid JSON, treat it like regular string value
+                                provider._dict[trimmed_key] = config.value
+                        else:
+                            provider._dict[trimmed_key] = config.value
+                break
+            except ClientAuthenticationError as e:
+                print("Auth Error loading configuration from Azure App Configuration: {}".format(e))
+            except ServiceRequestError as e:
+                print("Service Request Error loading configuration from Azure App Configuration\n{}".format(e))
+            except Exception as e:
+                print("Error loading configuration from Azure App Configuration: {}".format(e))
+                print("Failed Attempt to load keys from Azure App Configuration from client: {}".format(client[0]))
+        
         return provider
 
-    def __buildprovider(self, connection_string, endpoint, credential, key_vault_options):
+    def __build_provider(self, connection_string, endpoint, credential, key_vault_options):
         headers = {}
         correlation_context = "RequestType=Startup"
 
@@ -103,11 +131,12 @@ class AzureAppConfigurationProvider:
             raise AttributeError("Both connection_string and endpoint are set. Only one of these should be set.")
 
         if connection_string:
-            self._client = AzureAppConfigurationClient.from_connection_string(
-                connection_string, user_agent=useragent, headers=headers
-            )
-            return
-        self._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
+            return AzureAppConfigurationClient.from_connection_string(connection_string, user_agent=useragent, headers=headers)
+        return AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
+
+    @staticmethod
+    def __parse_connection_string(connection_string):
+        return connection_string[connection_string.find("Endpoint=")+9:connection_string.find(";Id=")]
 
     @staticmethod
     def __resolve_keyvault_reference(config, key_vault_options, secret_clients):
