@@ -57,6 +57,9 @@
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico
 
+# PRLabel: %Communication
+/sdk/communication/                                                  @acsdevx-msft
+
 # PRLabel: %Communication - Chat
 /sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
 
@@ -83,9 +86,6 @@
 
 # PRLabel: %Communication - Common
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft
-
-# PRLabel: %Communication
-/sdk/communication/                                                  @acsdevx-msft
 
 # PRLabel: %Confidential Ledger
 sdk/confidentialledger/azure-confidentialledger                      @lynshi
