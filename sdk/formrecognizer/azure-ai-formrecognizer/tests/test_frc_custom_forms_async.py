@@ -14,13 +14,14 @@ from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
-
+from conftest import skip_flaky_test
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
@@ -40,6 +41,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         assert form[0].form_type ==  "form-0"
         self.assertUnlabeledRecognizedFormHasValues(form[0], model)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
@@ -66,6 +68,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             assert form.form_type == "form-0"
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
@@ -93,6 +96,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             assert form.form_type ==  "custom:"+model.model_id
             self.assertLabeledRecognizedFormHasValues(form, model)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
@@ -138,6 +142,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
 
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     async def test_custom_form_continuation_token(self, **kwargs):
@@ -168,6 +173,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
                 await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async
@@ -211,6 +217,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy_async

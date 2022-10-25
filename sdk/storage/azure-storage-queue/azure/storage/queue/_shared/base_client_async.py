@@ -75,7 +75,7 @@ class AsyncStorageAccountHostsMixin(object):
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError(f"Unsupported credential: {credential}")
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
@@ -118,7 +118,7 @@ class AsyncStorageAccountHostsMixin(object):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            url=f'https://{self.primary_hostname}/?comp=batch',
             headers={
                 'x-ms-version': self.api_version
             }

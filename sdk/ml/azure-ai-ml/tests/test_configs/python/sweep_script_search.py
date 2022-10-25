@@ -1,14 +1,14 @@
 # imports
-import mlflow
 import argparse
 
-import pandas as pd
 import lightgbm as lgbm
 import matplotlib.pyplot as plt
-
-from sklearn.metrics import log_loss, accuracy_score
-from sklearn.preprocessing import LabelEncoder
+import mlflow
+import pandas as pd
+from sklearn.metrics import accuracy_score, log_loss
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
 
 # define functions
 def main(args):
@@ -37,7 +37,7 @@ def main(args):
     X_train, X_test, y_train, y_test, enc = process_data(df)
 
     # train model
-    model = train_model(params, num_boost_round, X_train, X_test, y_train, y_test)
+    _ = train_model(params, num_boost_round, X_train, X_test, y_train, y_test)
 
 
 def process_data(df):

@@ -88,7 +88,7 @@ def get_headers(hide_env=True):
     return CaseInsensitiveDict(headers.items())
 
 def semiflatten(multi):
-    """Convert a MutiDict into a regular dict. If there are more than one value
+    """Convert a MultiDict into a regular dict. If there are more than one value
     for a key, the result will have a list of values for the key. Otherwise it
     will have the plain value."""
     if multi:

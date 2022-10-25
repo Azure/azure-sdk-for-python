@@ -46,6 +46,8 @@ extends:
       safeName: azurecorecoretracingtelemetry
     - name: azure-common
       safeName: azurecommon
+    - name: azure-core-experimental
+      safeName: azurecoreexperimental
     CondaArtifacts:
     - name: azure-core
       meta_source: conda-recipe/meta.yaml

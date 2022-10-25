@@ -52,8 +52,8 @@ class QueueHelloWorldSamplesAsync(object):
             try:
                 # Send messages
                 await asyncio.gather(
-                    queue.send_message(u"I'm using queues!"),
-                    queue.send_message(u"This is my second message")
+                    queue.send_message("I'm using queues!"),
+                    queue.send_message("This is my second message")
                 )
 
                 # Receive the messages
@@ -75,5 +75,4 @@ async def main():
     await sample.queue_and_messages_example_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

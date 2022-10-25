@@ -8,6 +8,10 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from azure.monitor.opentelemetry.exporter.statsbeat._exporter import _StatsBeatExporter
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _STATSBEAT_STATE,
+    _STATSBEAT_STATE_LOCK,
+)
 
 # pylint: disable=line-too-long
 _DEFAULT_NON_EU_STATS_CONNECTION_STRING = "InstrumentationKey=c4a29126-a7cb-47e5-b348-11414998b11e;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/"
@@ -45,39 +49,36 @@ def collect_statsbeat_metrics(exporter) -> None:
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
             _STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[reader])
-            _StatsbeatMetrics(
+            # long_interval_threshold represents how many collects for short interval
+            # should have passed before a long interval collect
+            long_interval_threshold = _get_stats_long_export_interval() / _get_stats_short_export_interval()
+            metrics = _StatsbeatMetrics(
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,
                 exporter._endpoint,
+                exporter._enable_local_storage,
+                long_interval_threshold,
             )
-            # Export some initial stats on program start
-            # TODO: initial stats
-            # TODO: set context
-            # execution_context.set_is_exporter(True)
-            # exporter.export_metrics(_STATSBEAT_METRICS.get_initial_metrics())
-            # execution_context.set_is_exporter(False)
-        # TODO: state
-        # with _STATSBEAT_STATE_LOCK:
-        #     _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 0
-        #     _STATSBEAT_STATE["INITIAL_SUCCESS"] = 0
-        #     _STATSBEAT_STATE["SHUTDOWN"] = False
+        # Export some initial stats on program start
+        _STATSBEAT_METER_PROVIDER.force_flush()
+        # initialize non-initial stats
+        metrics.init_non_initial_metrics()
 
-# TODO
-# def shutdown_statsbeat_metrics() -> None:
-#     global _STATSBEAT_METER_PROVIDER
-#     shutdown_success = False
-#     if _STATSBEAT_METER_PROVIDER is not None:
-#         with _STATSBEAT_LOCK:
-#             try:
-#                 _STATSBEAT_METER_PROVIDER.shutdown()
-#                 _STATSBEAT_METER_PROVIDER = None
-#                 shutdown_success = True
-#             except:
-#                 pass
-#         if shutdown_success:
-#             # with _STATSBEAT_STATE_LOCK:
-#             #     _STATSBEAT_STATE["SHUTDOWN"] = True
-#             pass
+
+def shutdown_statsbeat_metrics() -> None:
+    global _STATSBEAT_METER_PROVIDER
+    shutdown_success = False
+    if _STATSBEAT_METER_PROVIDER is not None:
+        with _STATSBEAT_LOCK:
+            try:
+                _STATSBEAT_METER_PROVIDER.shutdown()
+                _STATSBEAT_METER_PROVIDER = None
+                shutdown_success = True
+            except:  # pylint: disable=bare-except
+                pass
+        if shutdown_success:
+            with _STATSBEAT_STATE_LOCK:
+                _STATSBEAT_STATE["SHUTDOWN"] = True
 
 
 def _get_stats_connection_string(endpoint: str) -> str:

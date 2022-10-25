@@ -274,7 +274,7 @@ def test_key_vault_regression(http_request):
     assert policy._credential is credential
 
     headers = {}
-    token = "alphanums"
+    token = "alphanums" # cspell:disable-line
     policy._update_headers(headers, token)
     assert headers["Authorization"] == "Bearer " + token
 

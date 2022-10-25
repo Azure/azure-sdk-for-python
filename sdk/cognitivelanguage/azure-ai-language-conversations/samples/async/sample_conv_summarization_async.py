@@ -34,7 +34,7 @@ async def sample_conv_summarization_async():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    # analyze quey
+    # analyze query
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     async with client:
         poller = await client.begin_conversation_analysis(
@@ -48,18 +48,21 @@ async def sample_conv_summarization_async():
                                     "text": "Hello, how can I help you?",
                                     "modality": "text",
                                     "id": "1",
+                                    "role": "Agent",
                                     "participantId": "Agent"
                                 },
                                 {
                                     "text": "How to upgrade Office? I am getting error messages the whole day.",
                                     "modality": "text",
                                     "id": "2",
+                                    "role": "Customer",
                                     "participantId": "Customer"
                                 },
                                 {
                                     "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                     "modality": "text",
                                     "id": "3",
+                                    "role": "Agent",
                                     "participantId": "Agent"
                                 }
                             ],
@@ -74,7 +77,7 @@ async def sample_conv_summarization_async():
                         "taskName": "analyze 1",
                         "kind": "ConversationalSummarizationTask",
                         "parameters": {
-                            "summaryAspects": ["Issue, Resolution"]
+                            "summaryAspects": ["issue", "resolution"]
                         }
                     }
                 ]
@@ -88,7 +91,7 @@ async def sample_conv_summarization_async():
         print(f"status: {task_result['status']}")
         resolution_result = task_result["results"]
         if resolution_result["errors"]:
-            print("... errors occured ...")
+            print("... errors occurred ...")
             for error in resolution_result["errors"]:
                 print(error)
         else:
@@ -110,5 +113,4 @@ async def main():
     await sample_conv_summarization_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

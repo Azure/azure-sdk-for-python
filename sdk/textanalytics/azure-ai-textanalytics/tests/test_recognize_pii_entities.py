@@ -741,4 +741,5 @@ class TestRecognizePIIEntities(TextAnalyticsTest):
             client.recognize_pii_entities(
                 documents=["Test"]
             )
-        assert str(e.value) == "'recognize_pii_entities' is only available for API version v3.1 and up."
+        assert str(e.value) == "'TextAnalyticsClient.recognize_pii_entities' is not available in API version v3.0. " \
+                               "Use service API version v3.1 or newer."

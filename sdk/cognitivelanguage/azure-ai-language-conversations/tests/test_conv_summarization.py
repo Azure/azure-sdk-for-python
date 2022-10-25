@@ -3,24 +3,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-from testcase import (
-    ConversationTest,
-    GlobalConversationAccountPreparer
-)
 from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase
 
 
-class TestConversationalSummarizationTests(ConversationTest):
+class TestConversationalSummarization(AzureRecordedTestCase):
 
-    @GlobalConversationAccountPreparer()
-    def test_conversational_summarization(self, endpoint, key):
+    def test_polling_interval(self, conversation_creds):
+        # test default
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]))
+        assert client._config.polling_interval == 5
+        # test override
+        client = ConversationAnalysisClient(conversation_creds["endpoint"], AzureKeyCredential(conversation_creds["key"]), polling_interval=1)
+        assert client._config.polling_interval == 1
+
+    def test_conversational_summarization(self, recorded_test, conversation_creds):
         # analyze query
-        client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"],
+            AzureKeyCredential(conversation_creds["key"])
+        )
         with client:
             poller = client.begin_conversation_analysis(
                 task={
@@ -33,18 +37,21 @@ class TestConversationalSummarizationTests(ConversationTest):
                                         "text": "Hello, how can I help you?",
                                         "modality": "text",
                                         "id": "1",
+                                        "role": "Agent",
                                         "participantId": "Agent"
                                     },
                                     {
                                         "text": "How to upgrade Office? I am getting error messages the whole day.",
                                         "modality": "text",
                                         "id": "2",
+                                        "role": "Customer",
                                         "participantId": "Customer"
                                     },
                                     {
                                         "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                         "modality": "text",
                                         "id": "3",
+                                        "role": "Agent",
                                         "participantId": "Agent"
                                     }
                                 ],
@@ -59,7 +66,7 @@ class TestConversationalSummarizationTests(ConversationTest):
                             "taskName": "analyze 1",
                             "kind": "ConversationalSummarizationTask",
                             "parameters": {
-                                "summaryAspects": ["Issue, Resolution"]
+                                "summaryAspects": ["Issue", "Resolution"]
                             }
                         }
                     ]
@@ -79,4 +86,8 @@ class TestConversationalSummarizationTests(ConversationTest):
             # assert - conv result
             conversation_result = task_result["results"]["conversations"][0]
             summaries = conversation_result["summaries"]
-            assert summaries is not None
+            assert summaries
+            for summary in summaries:
+                assert summary["aspect"] in ["issue", "resolution"]
+                assert summary["text"]
+

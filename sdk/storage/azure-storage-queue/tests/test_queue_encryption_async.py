@@ -92,10 +92,12 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_messages_encrypted_kek(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = await self._create_queue(qsc)
-        await queue.send_message(u'encrypted_message_2')
+        await queue.send_message('encrypted_message_2')
 
         # Act
         li = None
@@ -103,16 +105,18 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
             li = m
 
         # Assert
-        self.assertEqual(li.content, u'encrypted_message_2')
+        self.assertEqual(li.content, 'encrypted_message_2')
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_messages_encrypted_resolver(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = await self._create_queue(qsc)
-        await queue.send_message(u'encrypted_message_2')
+        await queue.send_message('encrypted_message_2')
         key_resolver = KeyResolver()
         key_resolver.put_key(qsc.key_encryption_key)
         queue.key_resolver_function = key_resolver.resolve_key
@@ -124,31 +128,35 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
             li = m
 
         # Assert
-        self.assertEqual(li.content, u'encrypted_message_2')
+        self.assertEqual(li.content, 'encrypted_message_2')
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_encrypted_kek(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = await self._create_queue(qsc)
-        await queue.send_message(u'encrypted_message_3')
+        await queue.send_message('encrypted_message_3')
 
         # Act
         li = await queue.peek_messages()
 
         # Assert
-        self.assertEqual(li[0].content, u'encrypted_message_3')
+        self.assertEqual(li[0].content, 'encrypted_message_3')
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_encrypted_resolver(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         qsc.key_encryption_key = KeyWrapper('key1')
         queue = await self._create_queue(qsc)
-        await queue.send_message(u'encrypted_message_4')
+        await queue.send_message('encrypted_message_4')
         key_resolver = KeyResolver()
         key_resolver.put_key(qsc.key_encryption_key)
         queue.key_resolver_function = key_resolver.resolve_key
@@ -158,43 +166,47 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         li = await queue.peek_messages()
 
         # Assert
-        self.assertEqual(li[0].content, u'encrypted_message_4')
+        self.assertEqual(li[0].content, 'encrypted_message_4')
 
     @pytest.mark.live_test_only
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_peek_messages_encrypted_kek_RSA(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
 
         # Arrange
         qsc.key_encryption_key = RSAKeyWrapper('key2')
         queue = await self._create_queue(qsc)
-        await queue.send_message(u'encrypted_message_3')
+        await queue.send_message('encrypted_message_3')
 
         # Act
         li = await queue.peek_messages()
 
         # Assert
-        self.assertEqual(li[0].content, u'encrypted_message_3')
+        self.assertEqual(li[0].content, 'encrypted_message_3')
 
     @pytest.mark.live_test_only
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_message(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # TODO: Recording doesn't work
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        await queue.send_message(u'Update Me')
+        await queue.send_message('Update Me')
 
         messages = []
         async for m in queue.receive_messages():
             messages.append(m)
         list_result1 = messages[0]
-        list_result1.content = u'Updated'
+        list_result1.content = 'Updated'
 
         # Act
         message = await queue.update_message(list_result1)
@@ -203,14 +215,18 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         list_result2 = messages[0]
 
         # Assert
-        self.assertEqual(u'Updated', list_result2.content)
+        self.assertEqual('Updated', list_result2.content)
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_binary_message(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
-        queue = await self._create_queue(qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy())
+        queue = await self._create_queue(
+            qsc, message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy())
         queue.key_encryption_key = KeyWrapper('key1')
 
         binary_message = self.get_random_bytes(100)
@@ -236,13 +252,15 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_raw_text_message(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # TODO: Recording doesn't work
         # Arrange
         queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
         queue.key_encryption_key = KeyWrapper('key1')
 
-        raw_text = u'Update Me'
+        raw_text = 'Update Me'
         await queue.send_message(raw_text)
         messages = []
         async for m in queue.receive_messages():
@@ -250,7 +268,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         list_result1 = messages[0]
 
         # Act
-        raw_text = u'Updated'
+        raw_text = 'Updated'
         list_result1.content = raw_text
         async for m in queue.receive_messages():
             messages.append(m)
@@ -263,7 +281,9 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_update_encrypted_json_message(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # TODO: Recording doesn't work
         # Arrange
         queue = await self._create_queue(qsc, message_encode_policy=None, message_decode_policy=None)
@@ -294,31 +314,35 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_value_kek_wrap(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
         queue.key_encryption_key.get_kid = None
 
         with self.assertRaises(AttributeError) as e:
-            await  queue.send_message(u'message')
+            await  queue.send_message('message')
 
         self.assertEqual(str(e.exception), _ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
 
         queue.key_encryption_key = KeyWrapper('key1')
         queue.key_encryption_key.get_kid = None
         with self.assertRaises(AttributeError):
-            await  queue.send_message(u'message')
+            await  queue.send_message('message')
 
         queue.key_encryption_key = KeyWrapper('key1')
         queue.key_encryption_key.wrap_key = None
         with self.assertRaises(AttributeError):
-            await queue.send_message(u'message')
+            await queue.send_message('message')
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_missing_attribute_kek_wrap(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
 
@@ -331,7 +355,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # No attribute wrap_key
         queue.key_encryption_key = invalid_key_1
         with self.assertRaises(AttributeError):
-            await queue.send_message(u'message')
+            await queue.send_message('message')
 
         invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
@@ -339,7 +363,7 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # No attribute get_key_wrap_algorithm
         queue.key_encryption_key = invalid_key_2
         with self.assertRaises(AttributeError):
-            await queue.send_message(u'message')
+            await queue.send_message('message')
 
         invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
@@ -347,16 +371,18 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         # No attribute get_kid
         queue.key_encryption_key = invalid_key_3
         with self.assertRaises(AttributeError):
-            await queue.send_message(u'message')
+            await queue.send_message('message')
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_invalid_value_kek_unwrap(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        await queue.send_message(u'message')
+        await queue.send_message('message')
 
         # Act
         queue.key_encryption_key.unwrap_key = None
@@ -370,11 +396,13 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_missing_attribute_kek_unrwap(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        await queue.send_message(u'message')
+        await queue.send_message('message')
 
         # Act
         valid_key = KeyWrapper('key1')
@@ -397,12 +425,14 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_validate_encryption(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
         kek = KeyWrapper('key1')
         queue.key_encryption_key = kek
-        await queue.send_message(u'message')
+        await queue.send_message('message')
 
         # Act
         queue.key_encryption_key = None  # Message will not be decrypted
@@ -453,34 +483,38 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
         decrypted_data = decrypted_data.decode(encoding='utf-8')
 
         # Assert
-        self.assertEqual(decrypted_data, u'message')
+        self.assertEqual(decrypted_data, 'message')
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_put_with_strict_mode(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
         kek = KeyWrapper('key1')
         queue.key_encryption_key = kek
         queue.require_encryption = True
 
-        await queue.send_message(u'message')
+        await queue.send_message('message')
         queue.key_encryption_key = None
 
         # Assert
         with self.assertRaises(ValueError) as e:
-            await queue.send_message(u'message')
+            await queue.send_message('message')
 
         self.assertEqual(str(e.exception), "Encryption required but no key was provided.")
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_get_with_strict_mode(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
-        await queue.send_message(u'message')
+        await queue.send_message('message')
 
         queue.require_encryption = True
         queue.key_encryption_key = KeyWrapper('key1')
@@ -494,10 +528,12 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_encryption_add_encrypted_64k_message(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
-        message = u'a' * 1024 * 64
+        message = 'a' * 1024 * 64
 
         # Act
         await queue.send_message(message)
@@ -510,11 +546,13 @@ class StorageQueueEncryptionTestAsync(AsyncStorageTestCase):
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_encryption_nonmatching_kid(self, storage_account_name, storage_account_key):
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         queue = await self._create_queue(qsc)
         queue.key_encryption_key = KeyWrapper('key1')
-        await queue.send_message(u'message')
+        await queue.send_message('message')
 
         # Act
         queue.key_encryption_key.kid = 'Invalid'

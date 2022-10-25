@@ -1,12 +1,13 @@
 from pathlib import Path
-from azure.ai.ml import dsl, Input, load_component, Output, command
+
+from azure.ai.ml import Input, Output, command, dsl, load_component
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.entities import PipelineJob
 
 parent_dir = str(Path(__file__).parent)
 
 # Load component funcs
-train_func = load_component(path=parent_dir + "/train.yml")
+train_func = load_component(source=parent_dir + "/train.yml")
 
 
 def pipeline_without_setting_binding_node() -> PipelineJob:

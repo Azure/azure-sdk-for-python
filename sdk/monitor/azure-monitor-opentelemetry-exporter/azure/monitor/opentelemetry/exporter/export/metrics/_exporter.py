@@ -4,7 +4,16 @@ import logging
 
 from typing import Optional, Any
 
+from opentelemetry.sdk.metrics import (
+    Counter,
+    Histogram,
+    ObservableCounter,
+    ObservableGauge,
+    ObservableUpDownCounter,
+    UpDownCounter,
+)
 from opentelemetry.sdk.metrics.export import (
+    AggregationTemporality,
     DataPointT,
     HistogramDataPoint,
     MetricExporter,
@@ -32,6 +41,16 @@ _logger = logging.getLogger(__name__)
 __all__ = ["AzureMonitorMetricExporter"]
 
 
+APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
+    Counter: AggregationTemporality.DELTA,
+    Histogram: AggregationTemporality.DELTA,
+    ObservableCounter: AggregationTemporality.DELTA,
+    ObservableGauge: AggregationTemporality.CUMULATIVE,
+    ObservableUpDownCounter: AggregationTemporality.CUMULATIVE,
+    UpDownCounter: AggregationTemporality.CUMULATIVE,
+}
+
+
 class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
@@ -39,7 +58,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         BaseExporter.__init__(self, **kwargs)
         MetricExporter.__init__(
             self,
-            preferred_temporality=kwargs.get("preferred_temporality"),
+            preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,
             preferred_aggregation=kwargs.get("preferred_aggregation"),
         )
 
@@ -133,11 +152,14 @@ def _convert_point_to_envelope(
     point: DataPointT,
     name: str,
     resource: Optional[Resource] = None,
-    scope: Optional[InstrumentationScope] = None  # pylint: disable=unused-argument
+    scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = "Microsoft.ApplicationInsights.Metric"
     envelope.tags.update(_utils._populate_part_a_fields(resource))
+    namespace = None
+    if scope is not None:
+        namespace = scope.name
     value = 0
     count = 1
     min_ = None
@@ -148,20 +170,21 @@ def _convert_point_to_envelope(
         value = point.value
     elif isinstance(point, HistogramDataPoint):
         value = point.sum
-        count = point.count
+        count = int(point.count)
         min_ = point.min
         max_ = point.max
 
     data_point = MetricDataPoint(
-        name=name,
+        name=str(name)[:1024],
+        namespace=str(namespace)[:256],
         value=value,
-        data_point_type="Aggregation",
         count=count,
         min=min_,
         max=max_,
     )
+    properties = _utils._filter_custom_properties(point.attributes)
     data = MetricsData(
-        properties=dict(point.attributes),
+        properties=properties,
         metrics=[data_point],
     )
 

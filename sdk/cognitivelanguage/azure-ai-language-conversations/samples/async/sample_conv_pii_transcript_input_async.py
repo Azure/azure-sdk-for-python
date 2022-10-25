@@ -100,7 +100,7 @@ async def sample_conv_pii_transcript_input_async():
         print(f"status: {task_result['status']}")
         conv_pii_result = task_result['results']
         if conv_pii_result['errors']:
-            print("... errors occured ...")
+            print("... errors occurred ...")
             for error in conv_pii_result['errors']:
                 print(error)
         else:
@@ -129,5 +129,4 @@ async def main():
     await sample_conv_pii_transcript_input_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

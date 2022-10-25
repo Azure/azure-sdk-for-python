@@ -5,9 +5,8 @@ from typing import Union
 
 from marshmallow import Schema, fields
 
-from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DataBindingStr, UnionField
 
 DATA_BINDING_SUPPORTED_KEY = "_data_binding_supported"
 
@@ -59,8 +58,8 @@ def support_data_binding_expression_for_fields(
     """
     if hasattr(schema, DATA_BINDING_SUPPORTED_KEY) and getattr(schema, DATA_BINDING_SUPPORTED_KEY):
         return
-    else:
-        setattr(schema, DATA_BINDING_SUPPORTED_KEY, True)
+
+    setattr(schema, DATA_BINDING_SUPPORTED_KEY, True)
 
     if attrs_to_skip is None:
         attrs_to_skip = []

@@ -72,7 +72,7 @@ class ModelVersionsOperations:
         :type name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
         :param skiptoken: Continuation token for pagination.
         :type skiptoken: str
@@ -92,9 +92,6 @@ class ModelVersionsOperations:
         :type properties: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ModelVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -102,8 +99,6 @@ class ModelVersionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.ModelVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersionResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -117,7 +112,6 @@ class ModelVersionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    api_version=api_version,
                     skiptoken=skiptoken,
                     order_by=order_by,
                     top=top,
@@ -138,7 +132,6 @@ class ModelVersionsOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    api_version=api_version,
                     skiptoken=skiptoken,
                     order_by=order_by,
                     top=top,
@@ -199,11 +192,8 @@ class ModelVersionsOperations:
         :type version: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -215,8 +205,6 @@ class ModelVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
         
         request = build_delete_request(
             name=name,
@@ -224,7 +212,6 @@ class ModelVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -263,11 +250,8 @@ class ModelVersionsOperations:
         :type version: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelVersionData, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersionData
@@ -279,8 +263,6 @@ class ModelVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
         
         request = build_get_request(
             name=name,
@@ -288,7 +270,6 @@ class ModelVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -327,7 +308,6 @@ class ModelVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'ModelVersionData')
@@ -338,7 +318,6 @@ class ModelVersionsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -385,13 +364,10 @@ class ModelVersionsOperations:
         :type version: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
         :param body: Version entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.ModelVersionData
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -404,7 +380,6 @@ class ModelVersionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -420,7 +395,6 @@ class ModelVersionsOperations:
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
                 body=body,
-                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

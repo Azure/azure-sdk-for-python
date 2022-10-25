@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 from typing import Dict
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
-from azure.ai.ml.constants import TYPE
+from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.entities._compute.compute import Compute
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class UnsupportedCompute(Compute):
@@ -38,6 +38,7 @@ class UnsupportedCompute(Compute):
         return response
 
     @classmethod
+    # pylint: disable=unused-argument
     def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "UnsupportedCompute":
         msg = "Cannot create unsupported compute type."
         raise ValidationException(

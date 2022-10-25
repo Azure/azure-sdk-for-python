@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs
+
 import logging
 import os
 import sys
@@ -13,7 +15,6 @@ from typing import Dict, List
 from colorama import Fore
 
 from azure.ai.ml._artifacts._constants import UPLOAD_CONFIRMATION
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.ai.ml._utils._asset_utils import (
     AssetNotChangedError,
     IgnoreFile,
@@ -22,7 +23,8 @@ from azure.ai.ml._utils._asset_utils import (
     upload_directory,
     upload_file,
 )
-from azure.ai.ml.constants import STORAGE_AUTH_MISMATCH_ERROR
+from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import DataLakeServiceClient
 
@@ -41,6 +43,7 @@ class Gen2StorageClient:
 
         self.directory_client = None
         self.sub_directory_client = None
+        self.temp_sub_directory_client = None
         self.file_client = None
         self.total_file_count = 1
         self.uploaded_file_count = 0
@@ -132,17 +135,21 @@ class Gen2StorageClient:
                     self.name = metadata.get("name")
                     self.version = metadata.get("version")
                     raise AssetNotChangedError
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
+            # pylint: disable=no-member
             if hasattr(e, "error_code") and e.error_code == STORAGE_AUTH_MISMATCH_ERROR:
-                msg = "You don't have permission to alter this storage account. Ensure that you have been assigned both Storage Blob Data Reader and Storage Blob Data Contributor roles."
+                msg = (
+                    "You don't have permission to alter this storage account. "
+                    "Ensure that you have been assigned both "
+                    "Storage Blob Data Reader and Storage Blob Data Contributor roles."
+                )
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
                     target=ErrorTarget.ARTIFACT,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            else:
-                raise e
+            raise e
 
     def _set_confirmation_metadata(self, name: str, version: str) -> None:
         self.directory_client.set_metadata(_build_metadata_dict(name, version))

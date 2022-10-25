@@ -44,5 +44,4 @@ async def simple_text_query():
     # [END simple_query_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(simple_text_query())
+    asyncio.run(simple_text_query())

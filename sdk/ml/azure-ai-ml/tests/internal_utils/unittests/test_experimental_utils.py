@@ -1,16 +1,18 @@
 import logging
-import pytest
 import unittest
-from azure.ai.ml._utils._experimental import experimental, _warning_cache
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+
+import pytest
 from marshmallow.schema import Schema
-from azure.ai.ml._schema.core.fields import NestedField, ExperimentalField
-from azure.ai.ml.constants import (
-    EXPERIMENTAL_FIELD_MESSAGE,
+
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
+from azure.ai.ml._utils._experimental import _warning_cache, experimental
+from azure.ai.ml.constants._common import (
     EXPERIMENTAL_CLASS_MESSAGE,
-    EXPERIMENTAL_METHOD_MESSAGE,
+    EXPERIMENTAL_FIELD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
+    EXPERIMENTAL_METHOD_MESSAGE,
 )
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 @experimental
@@ -55,6 +57,7 @@ class BarSchema(Schema):
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestExperimentalUtils(unittest.TestCase):
     def setUp(self):
         _warning_cache.clear()

@@ -267,7 +267,7 @@ class LocationCacheTest(unittest.TestCase):
                 self.validate_global_endpoint_location_cache_refresh()
                 self.validate_request_endpoint_resolution(use_multiple_write_locations, endpoint_discovery_enabled, available_write_endpoints, available_read_endpoints)
 
-                # wait for TTL on unavailablity info
+                # wait for TTL on unavailability info
                 sleep(1.5)
 
                 self.assertEqual(current_write_endpoints, self.location_cache.get_write_endpoints())
@@ -361,9 +361,9 @@ class LocationCacheTest(unittest.TestCase):
         else:
             first_available_read_endpoint = self.endpoint_by_location[self.preferred_locations[0]]
 
-        first_write_enpoint = self.DEFAULT_ENDPOINT if not endpoint_discovery_enabled else self.database_account.WritableLocations[0]['databaseAccountEndpoint']
+        first_write_endpoint = self.DEFAULT_ENDPOINT if not endpoint_discovery_enabled else self.database_account.WritableLocations[0]['databaseAccountEndpoint']
 
-        second_write_enpoint = self.DEFAULT_ENDPOINT if not endpoint_discovery_enabled else self.database_account.WritableLocations[1]['databaseAccountEndpoint']
+        second_write_endpoint = self.DEFAULT_ENDPOINT if not endpoint_discovery_enabled else self.database_account.WritableLocations[1]['databaseAccountEndpoint']
 
         # If current write endpoint is unavailable, write endpoints order doesn't change
         # All write requests flip-flop between current write and alternate write endpoint
@@ -373,8 +373,8 @@ class LocationCacheTest(unittest.TestCase):
         self.assertTrue(first_available_write_endpoint == self.resolve_endpoint_for_write_request(ResourceType.Document, False))
         
         # Writes to other resource types should be directed to first/second write endpoint
-        self.assertTrue(first_write_enpoint == self.resolve_endpoint_for_write_request(ResourceType.Database, False))
-        self.assertTrue(second_write_enpoint == self.resolve_endpoint_for_write_request(ResourceType.Database, True))
+        self.assertTrue(first_write_endpoint == self.resolve_endpoint_for_write_request(ResourceType.Database, False))
+        self.assertTrue(second_write_endpoint == self.resolve_endpoint_for_write_request(ResourceType.Database, True))
 
         # Reads should be directed to available read endpoints regardless of resource type
         self.assertTrue(first_available_read_endpoint == self.resolve_endpoint_for_read_request(True))

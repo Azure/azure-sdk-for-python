@@ -9,7 +9,7 @@ import azure.cosmos.exceptions as exceptions
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
@@ -55,6 +55,17 @@ def create_database(client, id):
 
     try:
         client.create_database(id=id)
+        print('Database with id \'{0}\' created'.format(id))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A database with id \'{0}\' already exists'.format(id))
+
+    print("\n2.8 Create Database - With auto scale settings")
+
+    try:
+        client.create_database(
+            id=id,
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
         print('Database with id \'{0}\' created'.format(id))
 
     except exceptions.CosmosResourceExistsError:

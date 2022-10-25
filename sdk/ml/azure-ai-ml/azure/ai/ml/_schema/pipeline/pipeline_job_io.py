@@ -9,7 +9,7 @@ import re
 
 from marshmallow import ValidationError, fields
 
-from azure.ai.ml.constants import ComponentJobConstants
+from azure.ai.ml.constants._component import ComponentJobConstants
 
 module_logger = logging.getLogger(__name__)
 
@@ -29,20 +29,19 @@ class OutputBindingStr(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if isinstance(value, str) and re.match(ComponentJobConstants.OUTPUT_PATTERN, value):
             return value
-        # _to_job_output in io.py will return Output, add this branch to judge whether original value is a simple binding or Output
-        elif (
+        # _to_job_output in io.py will return Output
+        # add this branch to judge whether original value is a simple binding or Output
+        if (
             isinstance(value.path, str)
             and re.match(ComponentJobConstants.OUTPUT_PATTERN, value.path)
             and value.mode is None
         ):
             return value.path
-        else:
-            raise ValidationError(f"Invalid output binding string '{value}' passed")
+        raise ValidationError(f"Invalid output binding string '{value}' passed")
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, dict) and "path" in value and "mode" not in value:
             value = value["path"]
         if isinstance(value, str) and re.match(ComponentJobConstants.OUTPUT_PATTERN, value):
             return value
-        else:
-            raise ValidationError(f"Invalid output binding string '{value}' passed")
+        raise ValidationError(f"Invalid output binding string '{value}' passed")

@@ -188,12 +188,6 @@ from ._models import (
 
 SearchFieldDataType = _edm
 
-class BM25SimilarityAlgorithm(BM25Similarity):
-    pass
-
-class ClassicSimilarityAlgorithm(ClassicSimilarity):
-    pass
-
 class KeywordTokenizer(KeywordTokenizerV2):
     pass
 
@@ -216,10 +210,10 @@ __all__ = (
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
-    "BM25SimilarityAlgorithm",
+    "BM25Similarity",
     "CharFilter",
     "CjkBigramTokenFilter",
-    "ClassicSimilarityAlgorithm",
+    "ClassicSimilarity",
     "ClassicTokenizer",
     "CognitiveServicesAccount",
     "CognitiveServicesAccountKey",

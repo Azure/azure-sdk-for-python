@@ -32,7 +32,7 @@ def sample_conv_summarization():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    # analyze quey
+    # analyze query
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     with client:
         poller = client.begin_conversation_analysis(
@@ -46,18 +46,21 @@ def sample_conv_summarization():
                                     "text": "Hello, how can I help you?",
                                     "modality": "text",
                                     "id": "1",
+                                    "role": "Agent",
                                     "participantId": "Agent"
                                 },
                                 {
                                     "text": "How to upgrade Office? I am getting error messages the whole day.",
                                     "modality": "text",
                                     "id": "2",
+                                    "role": "Customer",
                                     "participantId": "Customer"
                                 },
                                 {
                                     "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                     "modality": "text",
                                     "id": "3",
+                                    "role": "Agent",
                                     "participantId": "Agent"
                                 }
                             ],
@@ -72,7 +75,7 @@ def sample_conv_summarization():
                         "taskName": "analyze 1",
                         "kind": "ConversationalSummarizationTask",
                         "parameters": {
-                            "summaryAspects": ["Issue, Resolution"]
+                            "summaryAspects": ["issue", "resolution"]
                         }
                     }
                 ]
@@ -86,7 +89,7 @@ def sample_conv_summarization():
         print(f"status: {task_result['status']}")
         resolution_result = task_result["results"]
         if resolution_result["errors"]:
-            print("... errors occured ...")
+            print("... errors occurred ...")
             for error in resolution_result["errors"]:
                 print(error)
         else:

@@ -27,7 +27,8 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
+from ._base import build_options, _set_throughput_options
+from .offer import ThroughputProperties
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
@@ -230,7 +231,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         self,
         id,  # type: str
         populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         **kwargs  # type: Any
     ):
         # type: (...) -> DatabaseProxy
@@ -238,7 +239,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
-        :param int offer_throughput: The provisioned throughput for this offer.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -268,8 +270,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if offer_throughput is not None:
-            request_options["offerThroughput"] = offer_throughput
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
@@ -281,7 +282,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         self,
         id,  # type: str
         populate_query_metrics=None,  # type: Optional[bool]
-        offer_throughput=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         **kwargs  # type: Any
     ):
         # type: (...) -> DatabaseProxy
@@ -296,7 +297,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param id: ID (name) of the database to read or create.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param int offer_throughput: The provisioned throughput for this offer.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource

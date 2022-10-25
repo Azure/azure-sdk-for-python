@@ -56,7 +56,7 @@ async def analyze_invoice_async():
         invoices = await poller.result()
 
     for idx, invoice in enumerate(invoices.documents):
-        print("--------Recognizing invoice #{}--------".format(idx + 1))
+        print("--------Analyzing invoice #{}--------".format(idx + 1))
         vendor_name = invoice.fields.get("VendorName")
         if vendor_name:
             print(

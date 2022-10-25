@@ -102,8 +102,7 @@ def analyze_custom_documents(custom_model_id):
 
 if __name__ == "__main__":
     model_id = None
-    if os.getenv("CONTAINER_SAS_URL"):
-
+    if os.getenv("CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 
@@ -116,7 +115,7 @@ if __name__ == "__main__":
         document_model_admin_client = DocumentModelAdministrationClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        model = document_model_admin_client.begin_build_model(
+        model = document_model_admin_client.begin_build_document_model(
             ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")
         ).result()
         model_id = model.model_id

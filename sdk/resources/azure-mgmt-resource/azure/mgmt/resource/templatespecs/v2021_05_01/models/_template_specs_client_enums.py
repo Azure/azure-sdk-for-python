@@ -7,20 +7,20 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class TemplateSpecExpandKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class TemplateSpecExpandKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TemplateSpecExpandKind."""
 
     #: Includes version information with the Template Spec.
     VERSIONS = "versions"

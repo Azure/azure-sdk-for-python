@@ -43,69 +43,67 @@ from ._models_py3 import SystemData
 from ._models_py3 import TimeWindow
 from ._models_py3 import WebhookNotification
 
-
-from ._monitor_management_client_enums import (
-    CategoryType,
-    ComparisonOperationType,
-    CreatedByType,
-    MetricStatisticType,
-    PredictiveAutoscalePolicyScaleMode,
-    RecurrenceFrequency,
-    ScaleDirection,
-    ScaleRuleMetricDimensionOperationType,
-    ScaleType,
-    TimeAggregationType,
-)
+from ._monitor_management_client_enums import CategoryType
+from ._monitor_management_client_enums import ComparisonOperationType
+from ._monitor_management_client_enums import CreatedByType
+from ._monitor_management_client_enums import MetricStatisticType
+from ._monitor_management_client_enums import PredictiveAutoscalePolicyScaleMode
+from ._monitor_management_client_enums import RecurrenceFrequency
+from ._monitor_management_client_enums import ScaleDirection
+from ._monitor_management_client_enums import ScaleRuleMetricDimensionOperationType
+from ._monitor_management_client_enums import ScaleType
+from ._monitor_management_client_enums import TimeAggregationType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AutoscaleErrorResponse',
-    'AutoscaleErrorResponseError',
-    'AutoscaleNotification',
-    'AutoscaleProfile',
-    'AutoscaleSettingResource',
-    'AutoscaleSettingResourceCollection',
-    'AutoscaleSettingResourcePatch',
-    'DiagnosticSettingsCategoryResource',
-    'DiagnosticSettingsCategoryResourceCollection',
-    'DiagnosticSettingsResource',
-    'DiagnosticSettingsResourceCollection',
-    'EmailNotification',
-    'ErrorResponse',
-    'LogSettings',
-    'ManagementGroupDiagnosticSettingsResource',
-    'ManagementGroupDiagnosticSettingsResourceCollection',
-    'ManagementGroupLogSettings',
-    'MetricSettings',
-    'MetricTrigger',
-    'PredictiveAutoscalePolicy',
-    'PredictiveResponse',
-    'PredictiveValue',
-    'Recurrence',
-    'RecurrentSchedule',
-    'Resource',
-    'RetentionPolicy',
-    'ScaleAction',
-    'ScaleCapacity',
-    'ScaleRule',
-    'ScaleRuleMetricDimension',
-    'SubscriptionDiagnosticSettingsResource',
-    'SubscriptionDiagnosticSettingsResourceCollection',
-    'SubscriptionLogSettings',
-    'SystemData',
-    'TimeWindow',
-    'WebhookNotification',
-    'CategoryType',
-    'ComparisonOperationType',
-    'CreatedByType',
-    'MetricStatisticType',
-    'PredictiveAutoscalePolicyScaleMode',
-    'RecurrenceFrequency',
-    'ScaleDirection',
-    'ScaleRuleMetricDimensionOperationType',
-    'ScaleType',
-    'TimeAggregationType',
+    "AutoscaleErrorResponse",
+    "AutoscaleErrorResponseError",
+    "AutoscaleNotification",
+    "AutoscaleProfile",
+    "AutoscaleSettingResource",
+    "AutoscaleSettingResourceCollection",
+    "AutoscaleSettingResourcePatch",
+    "DiagnosticSettingsCategoryResource",
+    "DiagnosticSettingsCategoryResourceCollection",
+    "DiagnosticSettingsResource",
+    "DiagnosticSettingsResourceCollection",
+    "EmailNotification",
+    "ErrorResponse",
+    "LogSettings",
+    "ManagementGroupDiagnosticSettingsResource",
+    "ManagementGroupDiagnosticSettingsResourceCollection",
+    "ManagementGroupLogSettings",
+    "MetricSettings",
+    "MetricTrigger",
+    "PredictiveAutoscalePolicy",
+    "PredictiveResponse",
+    "PredictiveValue",
+    "Recurrence",
+    "RecurrentSchedule",
+    "Resource",
+    "RetentionPolicy",
+    "ScaleAction",
+    "ScaleCapacity",
+    "ScaleRule",
+    "ScaleRuleMetricDimension",
+    "SubscriptionDiagnosticSettingsResource",
+    "SubscriptionDiagnosticSettingsResourceCollection",
+    "SubscriptionLogSettings",
+    "SystemData",
+    "TimeWindow",
+    "WebhookNotification",
+    "CategoryType",
+    "ComparisonOperationType",
+    "CreatedByType",
+    "MetricStatisticType",
+    "PredictiveAutoscalePolicyScaleMode",
+    "RecurrenceFrequency",
+    "ScaleDirection",
+    "ScaleRuleMetricDimensionOperationType",
+    "ScaleType",
+    "TimeAggregationType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

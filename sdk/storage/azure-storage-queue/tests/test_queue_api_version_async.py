@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
 import platform
 from datetime import datetime, timedelta
+import pytest
+
 
 from azure.core.exceptions import AzureError, ResourceExistsError
 from azure.storage.queue.aio import (

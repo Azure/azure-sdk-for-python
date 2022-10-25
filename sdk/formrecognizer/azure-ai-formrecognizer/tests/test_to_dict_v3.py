@@ -79,41 +79,6 @@ class TestToDict(FormRecognizerTest):
         }
         assert d == final
 
-    def test_document_content_element_to_dict(self):
-        model = _models.DocumentContentElement(
-            content="sample",
-            polygon=[
-                _models.Point(1427.0, 1669.0),
-                _models.Point(1527.0, 1669.0),
-                _models.Point(1527.0, 1698.0),
-                _models.Point(1427.0, 1698.0),
-            ],
-            span=_models.DocumentSpan(
-                offset=5,
-                length=2,
-            ),
-            kind="word",
-            confidence=0.99,
-        )
-
-        d = model.to_dict()
-        final = {
-            "content": "sample",
-            "polygon": [
-                {"x": 1427.0, "y": 1669.0},
-                {"x": 1527.0, "y": 1669.0},
-                {"x": 1527.0, "y": 1698.0},
-                {"x": 1427.0, "y": 1698.0},
-            ],
-            "span": {
-                "offset": 5,
-                "length": 2,
-            },
-            "confidence": 0.99,
-            "kind": "word",
-        }
-        assert d == final
-
     def test_analyzed_document_to_dict(self):
         model = _models.AnalyzedDocument(
             doc_type="test:doc",
@@ -602,12 +567,10 @@ class TestToDict(FormRecognizerTest):
                         "length": 2,
                     },
                     "confidence": 0.62,
-                    "kind": "word",
                 },
             ],
             "selection_marks": [
                 {
-                    "content": None,
                     "state": "unselected",
                     "polygon": [
                         {"x": 1427.0, "y": 1669.0},
@@ -619,7 +582,6 @@ class TestToDict(FormRecognizerTest):
                         "offset": 5,
                         "length": 2,
                     },
-                    "kind": "selectionMark",
                     "confidence": 1.0,
                 },
             ],
@@ -663,7 +625,6 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
-            "content": None,
             "state": "unselected",
             "polygon": [
                 {"x": 1427.0, "y": 1669.0},
@@ -675,7 +636,6 @@ class TestToDict(FormRecognizerTest):
                 "offset": 5,
                 "length": 2,
             },
-            "kind": "selectionMark",
             "confidence": 1.0,
         }
 
@@ -967,14 +927,13 @@ class TestToDict(FormRecognizerTest):
                 "length": 2,
             },
             "confidence": 0.62,
-            "kind": "word",
         }
 
         assert d == final
 
     def test_analyze_result_to_dict(self):
         model = _models.AnalyzeResult(
-            api_version="2021-07-30-preview",
+            api_version="2022-08-31",
             model_id="modelId1",
             content="Sample\nFile content.",
             languages=[
@@ -1199,7 +1158,7 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
-            "api_version": "2021-07-30-preview",
+            "api_version": "2022-08-31",
             "model_id": "modelId1",
             "content": "Sample\nFile content.",
             "languages": [
@@ -1241,12 +1200,10 @@ class TestToDict(FormRecognizerTest):
                                 "length": 2,
                             },
                             "confidence": 0.62,
-                            "kind": "word",
                         },
                     ],
                     "selection_marks": [
                         {
-                            "content": None,
                             "state": "unselected",
                             "polygon": [
                                 {"x": 1427.0, "y": 1669.0},
@@ -1258,7 +1215,6 @@ class TestToDict(FormRecognizerTest):
                                 "offset": 5,
                                 "length": 2,
                             },
-                            "kind": "selectionMark",
                             "confidence": 1.0,
                         },
                     ],

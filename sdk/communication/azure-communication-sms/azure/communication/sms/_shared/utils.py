@@ -9,6 +9,7 @@ import json
 import calendar
 from typing import (cast,
                     Tuple,
+                    Union,
                     )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
@@ -67,7 +68,7 @@ def get_current_utc_as_int():
 
 
 def create_access_token(token):
-    # type: (str) -> azure.core.credentials.AccessToken
+    # type: (str) -> AccessToken
     """Creates an instance of azure.core.credentials.AccessToken from a
     string token. The input string is jwt token in the following form:
     <token_header>.<token_payload>.<token_signature>
@@ -98,21 +99,21 @@ def create_access_token(token):
 
 def get_authentication_policy(
         endpoint,  # type: str
-        credential,  # type: TokenCredential or str
+        credential,  # type: Union[TokenCredential, str]
         decode_url=False,  # type: bool
         is_async=False,  # type: bool
 ):
-    # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
+    # type: (...) -> Union[BearerTokenCredentialPolicy, HMACCredentialsPolicy]
     """Returns the correct authentication policy based
     on which credential is being passed.
     :param endpoint: The endpoint to which we are authenticating to.
     :type endpoint: str
     :param credential: The credential we use to authenticate to the service
-    :type credential: TokenCredential or str
+    :type credential: Union[TokenCredential, str]
     :param isAsync: For async clients there is a need to decode the url
     :type bool: isAsync or str
-    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
-    ~HMACCredentialsPolicy
+    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
+    ~azure.communication.chat.shared.policy.HMACCredentialsPolicy
     """
 
     if credential is None:

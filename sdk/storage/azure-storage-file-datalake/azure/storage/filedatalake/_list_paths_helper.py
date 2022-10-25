@@ -121,7 +121,7 @@ class PathPropertiesPaged(PageIterator):
 
     :param callable command: Function to retrieve the next page of items.
     :param str path: Filters the results to return only paths under the specified path.
-    :param int max_results: The maximum number of psths to retrieve per
+    :param int max_results: The maximum number of paths to retrieve per
         call.
     :param str continuation_token: An opaque continuation token.
     """

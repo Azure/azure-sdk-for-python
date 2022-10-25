@@ -5,9 +5,7 @@
 # pylint: disable=unused-argument,no-self-use,protected-access
 
 from marshmallow import fields, post_dump, post_load, pre_dump
-from pydash import get
 
-from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
 from azure.ai.ml._schema.automl import AutoMLClassificationSchema, AutoMLForecastingSchema, AutoMLRegressionSchema
 from azure.ai.ml._schema.automl.image_vertical.image_classification import (
@@ -22,6 +20,7 @@ from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClas
 from azure.ai.ml._schema.automl.nlp_vertical.text_classification_multilabel import TextClassificationMultilabelSchema
 from azure.ai.ml._schema.automl.nlp_vertical.text_ner import TextNerSchema
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, UnionField
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job.input_output_entry import MLTableInputSchema, OutputSchema
 from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
 
@@ -62,30 +61,6 @@ class AutoMLNodeMixin(PathAwareSchema):
             return job_dict
         # change output to rest output dicts
         job_dict["outputs"] = job._to_rest_outputs()
-        # change input to flatten format
-        # TODO(1780201): remove this when referring to June API
-        job._resolve_data_inputs()
-        job_dict.update(job._data.as_dict())
-        # flatten data to one liner
-        # TODO(1780196): change to support inline data
-        if get(job, "_data.training_data.data", None):
-            job_dict["training_data"] = str(job._data.training_data.data)
-        else:
-            job_dict.pop("training_data", None)
-        if get(job, "_data.validation_data.data", None):
-            job_dict["validation_data"] = str(job._data.validation_data.data)
-        else:
-            job_dict.pop("validation_data", None)
-        if get(job, "_data.test_data.data", None):
-            job_dict["test_data"] = str(job._data.test_data.data)
-        else:
-            job_dict.pop("test_data", None)
-
-        if get(job, "_data.validation_data.validation_data_size", None):
-            job_dict["validation_data_size"] = job._data.validation_data.validation_data_size
-        if get(job, "_data.validation_data.n_cross_validations", None):
-            job_dict["n_cross_validations"] = job._data.validation_data.n_cross_validations
-        # TODO: parse other potential fields
         return job_dict
 
     @post_load

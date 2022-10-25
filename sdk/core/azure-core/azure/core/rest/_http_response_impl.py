@@ -121,7 +121,7 @@ class _HttpResponseBackcompatMixinBase(object):
         Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
-        as enveloppe.
+        as envelope.
         """
         return _get_raw_parts_helper(
             self, http_response_type or RestHttpClientTransportResponse
