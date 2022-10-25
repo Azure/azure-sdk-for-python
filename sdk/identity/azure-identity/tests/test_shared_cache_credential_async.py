@@ -68,14 +68,14 @@ async def test_context_manager():
         _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
     )
 
-    # async with before initialization: credential should call aexit but not aenter
+    # async with before initialization: credential should call __aexit__ but not __aenter__
     async with credential:
         await credential.get_token("scope")
 
     assert transport.__aenter__.call_count == 0
     assert transport.__aexit__.call_count == 1
 
-    # async with after initialization: credential should call aenter and aexit
+    # async with after initialization: credential should call __aenter__ and __aexit__
     async with credential:
         await credential.get_token("scope")
         assert transport.__aenter__.call_count == 1
