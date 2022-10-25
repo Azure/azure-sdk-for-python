@@ -47,7 +47,7 @@ class TestImageSweepSettings:
         self, 
         early_termination_name: Optional[EarlyTerminationPolicyType], 
         sampling_algorithm_name: SamplingAlgorithmType
-    ):
+    ) -> None:
         image_sweep_settings_rest = self._get_rest_obj(
             early_termination_name, sampling_algorithm_name
         )
@@ -56,7 +56,7 @@ class TestImageSweepSettings:
         )
         image_sweep_settings_obj = ImageSweepSettings._from_rest_object(image_sweep_settings_rest)
         assert image_sweep_settings_obj == expected_image_sweep_settings_obj, \
-            f"actual: {image_sweep_settings_obj.sampling_algorithm}, expected: {expected_image_sweep_settings_obj.sampling_algorithm}, "
+            f"actual: {image_sweep_settings_obj}, expected: {expected_image_sweep_settings_obj}"
 
     @pytest.mark.parametrize(
         "early_termination_name,sampling_algorithm_name", _EARLY_TERM_POLICY_AND_SAMPLING_ALG_OPTIONS
@@ -65,7 +65,7 @@ class TestImageSweepSettings:
         self, 
         early_termination_name: Optional[EarlyTerminationPolicyType], 
         sampling_algorithm_name: SamplingAlgorithmType
-    ):
+    ) -> None:
         image_sweep_settings_obj = self._get_entity_obj(
             early_termination_name, sampling_algorithm_name
         )
@@ -83,7 +83,7 @@ class TestImageSweepSettings:
         self, 
         early_termination_name: Optional[EarlyTerminationPolicyType], 
         sampling_algorithm_name: SamplingAlgorithmType
-    ):
+    ) -> None:
         image_sweep_settings_obj = self._get_entity_obj(early_termination_name, sampling_algorithm_name)
         # serialize and deserialize to ensure equality
         image_sweep_settings_rest = ImageSweepSettings._to_rest_object(image_sweep_settings_obj)
@@ -95,7 +95,7 @@ class TestImageSweepSettings:
         self, 
         early_termination_name: Optional[EarlyTerminationPolicyType] = None,
         sampling_algorithm_name: SamplingAlgorithmType = SamplingAlgorithmType.GRID
-    ):
+    ) -> RestImageSweepSettings:
         if early_termination_name == EarlyTerminationPolicyType.BANDIT:
             rest_early_termination_name = RestBanditPolicy(evaluation_interval=10, slack_factor=0.2)
         elif early_termination_name == EarlyTerminationPolicyType.MEDIAN_STOPPING:
@@ -118,7 +118,7 @@ class TestImageSweepSettings:
         self, 
         early_termination_name: Optional[EarlyTerminationPolicyType] = None,
         sampling_algorithm_name: SamplingAlgorithmType = SamplingAlgorithmType.GRID
-    ):
+    ) -> ImageSweepSettings:
         if early_termination_name == EarlyTerminationPolicyType.BANDIT:
             early_termination_name = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
         elif early_termination_name == EarlyTerminationPolicyType.MEDIAN_STOPPING:
