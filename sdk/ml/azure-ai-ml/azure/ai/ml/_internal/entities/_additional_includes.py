@@ -148,14 +148,10 @@ class _AdditionalIncludes:
                 zip_additional_include = (base_path / additional_include).resolve()
                 folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
                 with tempfile.TemporaryDirectory() as tmp_dir:
-                    shutil.copytree(
-                        folder_to_zip,
-                        tmp_dir,
-                        ignore=shutil.ignore_patterns("__pycache__"),
-                        dirs_exist_ok=True
-                    )
+                    tmp_folder_to_zip = (Path(tmp_dir) / "zip").resolve()
+                    shutil.copytree(folder_to_zip, tmp_folder_to_zip, ignore=shutil.ignore_patterns("__pycache__"))
                     src_path = (Path(tempfile.mkdtemp()) / zip_additional_include.name).resolve()
-                    shutil.make_archive(str(src_path.parent / src_path.stem), "zip", tmp_dir)
+                    shutil.make_archive(str(src_path.parent / src_path.stem), "zip", tmp_folder_to_zip)
             dst_path = (tmp_folder_path / src_path.name).resolve()
             self._copy(src_path, dst_path)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
