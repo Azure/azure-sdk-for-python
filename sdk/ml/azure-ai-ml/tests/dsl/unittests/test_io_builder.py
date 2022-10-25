@@ -1,12 +1,14 @@
 import pytest
 
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _resolve_builders_2_data_bindings
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
 
 from .._util import _DSL_TIMEOUT_SECOND
 
 
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestInputOutputBuilder:
     def test_nested_input_output_builder(self):
         input1 = PipelineInput(name="input1", owner="pipeline", meta=None)

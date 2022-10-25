@@ -37,7 +37,7 @@ from azure.core.polling import *
 from azure.core.polling.base_polling import (
     LROBasePolling, LocationPolling
 )
-from msrest.serialization import Model
+# from msrest.serialization import Model
 
 
 @pytest.fixture
@@ -181,9 +181,9 @@ def test_poller(client):
     assert poller.polling_method() is method
     done_cb.assert_called_once_with(method)
 
-    # Test with a basic Model
-    poller = LROPoller(client, initial_response, Model, method)
-    assert poller._polling_method._deserialization_callback == Model.deserialize
+    # # Test with a basic Model
+    # poller = LROPoller(client, initial_response, Model, method)
+    # assert poller._polling_method._deserialization_callback == Model.deserialize
 
     # Test poller that method do a run
     method = PollingTwoSteps(sleep=1)

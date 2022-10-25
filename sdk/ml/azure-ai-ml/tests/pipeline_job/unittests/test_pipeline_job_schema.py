@@ -20,7 +20,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_
     LearningRateScheduler,
     StochasticOptimizer,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import ComponentJobConstants
@@ -44,6 +43,7 @@ from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CA
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJobSchema:
     def test_validate_pipeline_job_keys(self):
         def validator(key, assert_valid=True):
@@ -1686,8 +1686,8 @@ class TestPipelineJobSchema:
         rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
         # rest object of node in pipeline should be pure dict
         assert rest_services == {
-            "my_jupyter": {
-                "job_service_type": "Jupyter",
+            "my_ssh": {
+                "job_service_type": "SSH",
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
@@ -1710,8 +1710,8 @@ class TestPipelineJobSchema:
 
         # rest object of node in pipeline should be pure dict
         assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
-            "my_jupyter": {
-                "job_service_type": "Jupyter",
+            "my_ssh": {
+                "job_service_type": "SSH",
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
@@ -1729,6 +1729,7 @@ class TestPipelineJobSchema:
             "integer_input": 15,
             "bool_input": False,
             "string_input": "hello",
+            "string_integer_input": "43",
         }
 
         job = load_job(test_path, params_override=[{"inputs": expected_inputs}])

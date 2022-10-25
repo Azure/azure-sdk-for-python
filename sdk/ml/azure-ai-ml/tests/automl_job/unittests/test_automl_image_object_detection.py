@@ -26,6 +26,7 @@ from azure.ai.ml.entities._job.automl.image import (
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLImageObjectDetection:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])

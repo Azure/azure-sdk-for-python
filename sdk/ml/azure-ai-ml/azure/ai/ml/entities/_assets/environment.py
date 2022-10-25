@@ -232,6 +232,7 @@ class Environment(Asset):
         if rest_env_version.conda_file:
             translated_conda_file = yaml.safe_load(rest_env_version.conda_file)
             environment.conda_file = translated_conda_file
+            environment._translated_conda_file = rest_env_version.conda_file
 
         return environment
 

@@ -1,14 +1,24 @@
 # Release History
 
-## 12.10.1 (Unreleased)
+## 12.10.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed an issue where keyword `name_starts_with` was not being passed to the service properly for the `list_shares` async API
 
 ### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-file-share[aio]` to install.
+
+## 12.10.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty files through Azurite.
 
 ## 12.10.0 (2022-10-11)
 
