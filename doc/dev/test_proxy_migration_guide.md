@@ -425,6 +425,64 @@ container if it's not already running.
 
 For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
 
+### Use `pytest.mark.parametrize` with migrated tests
+
+Migrating tests to use basic `pytest` tools allows us to take advantage of helpful features such as
+[parametrization][parametrize]. Parametrization allows you to share test code by re-running the same test with varying
+inputs. For example, [`azure-keyvault-keys` tests][parametrize_example] are parametrized to run with multiple API
+versions and multiple Key Vault configurations.
+
+Because of how the `pytest.mark.parametrize` mechanism works, the `recorded_by_proxy(_async)` decorators aren't
+compatible without an additional decorator that handles the arguments we want to parametrize. The callable that
+`pytest.mark.parametrize` decorates needs to have positional parameters that match the arguments we're parametrizing;
+for example:
+
+```python
+import pytest
+from devtools_testutils import recorded_by_proxy
+
+test_values = [
+    ("first_value_a", "first_value_b"),
+    ("second_value_a", "second_value_b"),
+]
+
+# Works because `parametrize` decorates a method with positional `a` and `b` parameters
+@pytest.mark.parameterize("a, b", test_values)
+def test_function(a, b, **kwargs):
+    ...
+
+# Doesn't work; raises collection error
+# `recorded_by_proxy`'s wrapping function doesn't accept positional `a` and `b` parameters
+@pytest.mark.parameterize("a, b", test_values)
+@recorded_by_proxy
+def test_recorded_function(a, b, **kwargs):
+    ...
+```
+
+To parametrize recorded tests, we need a decorator between `pytest.mark.parametrize` and `recorded_by_proxy` that
+accepts the expected arguments. We can do this by declaring a class with a custom `__call__` method:
+
+```python
+class ArgumentPasser:
+    def __call__(self, fn):
+        # _wrapper accepts the `a` and `b` arguments we want to parametrize with
+        def _wrapper(test_class, a, b, **kwargs):
+            fn(test_class, a, b, **kwargs)
+        return _wrapper
+
+# Works because `ArgumentPasser.__call__`'s return value has the expected parameters
+@pytest.mark.parameterize("a, b", test_values)
+@ArgumentPasser()
+@recorded_by_proxy
+def test_recorded_function(a, b, **kwargs):
+    ...
+```
+
+You can also introduce additional logic into the `__call__` method of your intermediate decorator. In the aforementioned
+[`azure-keyvault-keys` test example][parametrize_example], the decorator between `parametrize` and `recorded_by_proxy`
+is actually a [client preparer][parametrize_class] that creates a client based on the parametrized input and passes this
+client to the test.
+
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [docker_install]: https://docs.docker.com/get-docker/
@@ -436,6 +494,9 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 
+[parametrize]: https://docs.pytest.org/latest/example/parametrize.html
+[parametrize_example]: https://github.com/Azure/azure-sdk-for-python/blob/d92b63b9976b0025b274016c49a250fb7c4d7333/sdk/keyvault/azure-keyvault-keys/tests/test_key_client.py#L182
+[parametrize_class]: https://github.com/Azure/azure-sdk-for-python/blob/d92b63b9976b0025b274016c49a250fb7c4d7333/sdk/keyvault/azure-keyvault-keys/tests/_test_case.py#L59
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
 [podman]: https://podman.io/
