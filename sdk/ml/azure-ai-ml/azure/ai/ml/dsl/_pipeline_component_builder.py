@@ -404,7 +404,7 @@ def _build_pipeline_parameter(func, original_kwargs, group_default_kwargs=None, 
     if group_default_kwargs:
         transformed_kwargs.update(
             {
-                key: _wrap_pipeline_parameter(key, default_value=value, actual_value=None) for key, value in group_default_kwargs.items()
+                key: _wrap_pipeline_parameter(key, default_value=value, actual_value=value) for key, value in group_default_kwargs.items()
                 if key not in non_pipeline_parameter_dict
             }
         )
@@ -435,7 +435,7 @@ def _wrap_pipeline_parameter(key, default_value, actual_value, group_names=None)
         group_names.append(key)
         return _GroupAttrDict({
             k: _wrap_pipeline_parameter(
-                k, default_value=v, actual_value=None, group_names=group_names
+                k, default_value=v, actual_value=v, group_names=group_names
             ) for k, v in default_value.items()
         })
     # Note: this PipelineInput object is built to mark input as a data binding.
