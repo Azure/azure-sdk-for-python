@@ -2092,6 +2092,56 @@ class TestDSLPipeline:
         component_func1 = load_component(path)
         data = Data(name="test", version="1", type=AssetTypes.MLTABLE)
 
+
+        from azure.ai.ml.entities._job.pipeline._io import NodeInput
+        from typing import Tuple, Dict, List
+        from azure.ai.ml.entities._builders import BaseNode
+        from azure.ai.ml.entities import PipelineComponent, Pipeline
+
+        def _get_node(_pipeline: PipelineJob, yaml_path: str) -> BaseNode:
+            cur_node = _pipeline
+            is_first_layer = True
+            for key in yaml_path.split("."):
+                if not is_first_layer:
+                    cur_node = cur_node._component
+                else:
+                    is_first_layer = False
+                cur_node = cur_node.jobs[key]
+            return cur_node
+
+        def promote_edges(sub_edges, pipeline_node_name):
+            edges = []
+
+            def promote_node(node):
+                # suppose pipeline_node_name is sub_pipeline
+                # parent.inputs.sub_in_num => parent.jobs.sub_pipeline.inputs.sub_in_num
+                # parent.jobs.sub_node1 => parent.jobs.sub_pipeline.jobs.sub_node1
+                return node
+            for s, e in sub_edges:
+                edges.append((promote_node(s), promote_node(e)))
+            return edges
+
+        def get_owner(_input: NodeInput):
+            # if owner is a Pipeline node, return parent.jobs.sub_node1.outputs.output1
+            # else return parent.jobs.node1
+            return "parent.jobs.node1"
+
+        def export_edges(_pipeline: PipelineComponent) -> List[Tuple[str, str]]:
+            edges = []
+            for key, node in _pipeline.jobs.items():
+                if isinstance(node, Pipeline):
+                    sub_edges = export_edges(node.component)
+                    edges.extend(promote_edges(sub_edges, key))
+                    for input_name, _input in node.inputs.items():
+                        edges.append((get_owner(_input), f"parent.jobs.{key}.inputs.{input_name}"))
+                else:
+                    for _input in node.inputs.values():
+                        edges.append((get_owner(_input), f"parent.jobs.{key}"))
+            return edges
+
+        def get_subsequent_nodes_with_condition(_edges, _pipeline, filter_func):
+            return []
+
         @dsl.pipeline
         def sub_pipeline(sub_in_num, sub_in_path):
             sub_node1 = component_func1(component_in_number=sub_in_num, component_in_path=sub_in_path)
@@ -2107,45 +2157,31 @@ class TestDSLPipeline:
             return {"pipeline_out": graph_node1.outputs.pipeline_out}
 
         pipeline: PipelineJob = root_pipeline(1, data)
-
-        from azure.ai.ml.entities._job.pipeline._io import NodeInput
-        # plan 2
-        from typing import Tuple, Dict, List
-        from azure.ai.ml.entities._builders import BaseNode
-
-        def _get_node(_pipeline: PipelineJob, yaml_path: str) -> BaseNode:
-            cur_node = _pipeline
-            is_first_layer = True
-            for key in yaml_path.split("."):
-                if not is_first_layer:
-                    cur_node = cur_node._component
-                else:
-                    is_first_layer = False
-                cur_node = cur_node.jobs[key]
-            return cur_node
-
-        # plan 1: provide util to find the owner of a node
-        def get_owner(_input: NodeInput):
-            raise NotImplementedError
-
-        # for now, for node in a sub-graph, its will be like this:
-        # _owner: itself
-        # _data: PipelineInput(name="sub_in_path", owner=None, data=None)
-        # we need to maintain its _data instead of _name
-        assert id(get_owner(_get_node(
-            pipeline, "graph_node1.sub_node1"
-        ).inputs["component_in_path"])) == id(pipeline.jobs["root_node1"])
-
-        # plan 2: provide a util to export graph from a pipeline
-        def export_graph(_pipeline: PipelineJob) -> Tuple[Dict[int, BaseNode], Dict[int, List[int]]]:
-            raise NotImplementedError
-
-        node_mapping, graph = export_graph(pipeline)
-
-        # we may process the graph layer by layer
-        assert id(node_mapping[id(pipeline.jobs["root_node1"])]) == id(pipeline.jobs["root_node1"])
-        assert graph[id(pipeline.jobs["root_node1"])] == [
-            id(pipeline.jobs["root_node2"]),
-            id(_get_node(pipeline, "graph_node1.sub_node1"))
+        edges = export_edges(pipeline.component)
+        assert edges == [
+            ("parent.inputs.root_in_num", "parent.jobs.root_node1"),
+            # ...
+            ("parent.jobs.root_node1", "parent.jobs.root_node2"),
+            ("parent.jobs.root_node1", "parent.jobs.graph_node1.inputs.sub_in_path"),
+            ("parent.jobs.root_node2", "parent.jobs.graph_node2.inputs.sub_in_path"),
+            ("parent.jobs.graph_node1.inputs.sub_in_path", "parent.jobs.graph_node1.jobs.sub_node1"),
+            ("parent.jobs.graph_node1.inputs.sub_in_num", "parent.jobs.graph_node1.jobs.sub_node1"),
+            ("parent.jobs.graph_node1.inputs.sub_in_num", "parent.jobs.graph_node1.jobs.sub_node2"),
+            ("parent.jobs.graph_node1.jobs.sub_node1", "parent.jobs.graph_node1.jobs.sub_node2"),
+            ("parent.jobs.graph_node1.jobs.sub_node2", "parent.jobs.graph_node1.outputs.pipeline_out"),
         ]
+        nodes_to_overwrite = get_subsequent_nodes_with_condition(edges, pipeline, lambda x: x.compute == "hdi-iso")
+        runsetting_overwrite = {}
+        for node in nodes_to_overwrite:
+            runsetting_overwrite[f"{node}.compute"] = "hdi-iso"
+            runsetting_overwrite[f"{node}.output_datastore"] = "hdi-xxx"
+        pipeline.runsettings_overwrite = runsetting_overwrite
+
+        # public API gap:
+        # 1. get_binding_target: input -> ${{parent.xxx...outputs.xxx}}, to implement get_owner
+        # 2. support for pipeline.runsettings_overwrite
+
+        def get_binding_target(_input):
+            return str(_input._data)
+
 
