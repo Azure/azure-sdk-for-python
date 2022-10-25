@@ -23,26 +23,13 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageInstanceSegmentationJob,
     ImageModelSettingsObjectDetection
 )
-from azure.ai.ml.sweep import (
-    BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy,
-    Choice, Uniform
-)
+from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
 @pytest.mark.unittest
 class TestAutoMLImageInstanceSegmentation:
-    @pytest.mark.parametrize(
-        "run_type,sweep_run_termination_policy", 
-        [
-            ("single", None),
-            ("sweep", None), 
-            ("sweep", "bandit"),
-            ("sweep", "median_stopping"), 
-            ("sweep", "truncation_selection"), 
-            ("automode", None)
-        ]
-    )
-    def test_image_instance_segmentation_task(self, run_type, sweep_run_termination_policy):
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
+    def test_image_instance_segmentation_task(self, run_type):
         # Create AutoML Image Object Detection task
         identity = UserIdentityConfiguration()
         image_instance_segmentation_job = image_instance_segmentation(
@@ -65,6 +52,13 @@ class TestAutoMLImageInstanceSegmentation:
         elif run_type == "automode":
             image_instance_segmentation_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
+        # image_instance_segmentation_job.training_parameters = {
+        #     "checkpoint_frequency": 1,
+        #     "early_stopping": True,
+        #     "early_stopping_delay": 2,
+        #     "early_stopping_patience": 2,
+        #     "evaluation_frequency": 1,
+        # }
         image_instance_segmentation_job.set_training_parameters(
             checkpoint_frequency=1,
             early_stopping=True,
@@ -74,6 +68,17 @@ class TestAutoMLImageInstanceSegmentation:
         )
 
         if run_type == "sweep":
+            """
+            image_instance_segmentation_job.search_space = [
+                {
+                    "model_name": 'maskrcnn_resnet50_fpn',
+                    "learning_rate": Uniform(0.0001, 0.001),
+                    "warmup_cosine_lr_warmup_epochs": Choice([0, 3]),
+                    "optimizer": Choice(['sgd', 'adam', 'adamw']),
+                    "min_size": Choice([600, 800]),
+                },
+            ]
+            """
             search_sub_space = SearchSpace(
                 model_name="maskrcnn_resnet50_fpn",
                 learning_rate=Uniform(0.0001, 0.001),
@@ -83,19 +88,13 @@ class TestAutoMLImageInstanceSegmentation:
             )
             image_instance_segmentation_job.extend_search_space(search_sub_space)
 
-            if sweep_run_termination_policy == "bandit":
-                early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
-            elif sweep_run_termination_policy == "median_stopping":
-                early_termination_policy = MedianStoppingPolicy(delay_evaluation = 5, evaluation_interval = 1)
-            elif sweep_run_termination_policy == "truncation_selection":
-                early_termination_policy = TruncationSelectionPolicy(
-                    evaluation_interval=1, 
-                    truncation_percentage=20,
-                    delay_evaluation=5
-                )
-            else:
-                early_termination_policy = None
-            
+            early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
+            # image_instance_segmentation_job.sweep = {
+            #     "max_concurrent_trials": 4,
+            #     "max_trials": 20,
+            #     "sampling_algorithm": SamplingAlgorithmType.GRID,
+            #     "early_termination": early_termination_policy,
+            # }
             image_instance_segmentation_job.set_sweep(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
                 early_termination=early_termination_policy,

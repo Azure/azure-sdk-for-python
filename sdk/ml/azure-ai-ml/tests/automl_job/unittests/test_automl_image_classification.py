@@ -21,26 +21,13 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageModelSettingsClassification
 )
-from azure.ai.ml.sweep import (
-    BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy,
-    Choice, Uniform
-)
+from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
 @pytest.mark.unittest
 class TestAutoMLImageClassification:
-    @pytest.mark.parametrize(
-        "run_type,sweep_run_termination_policy", 
-        [
-            ("single", None),
-            ("sweep", None), 
-            ("sweep", "bandit"),
-            ("sweep", "median_stopping"), 
-            ("sweep", "truncation_selection"), 
-            ("automode", None)
-        ]
-    )
-    def test_image_classification_task(self, run_type, sweep_run_termination_policy):
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
+    def test_image_classification_task(self, run_type):
         identity = UserIdentityConfiguration()
         # Create AutoML Image Classification task
         image_classification_job = image_classification(
@@ -63,6 +50,13 @@ class TestAutoMLImageClassification:
         elif run_type == "automode":
             image_classification_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
+        # image_classification_job.training_parameters = {
+        #     "checkpoint_frequency": 1,
+        #     "early_stopping": True,
+        #     "early_stopping_delay": 2,
+        #     "early_stopping_patience": 2,
+        #     "evaluation_frequency": 1,
+        # }
         image_classification_job.set_training_parameters(
             checkpoint_frequency=1,
             early_stopping=True,
@@ -72,6 +66,20 @@ class TestAutoMLImageClassification:
         )
 
         if run_type == "sweep":
+            """
+            image_classification_job.search_space = [
+                {
+                    "model_name": Choice(['vitb16r224', 'vits16r224']),
+                    "learning_rate": Uniform(0.001, 0.01),
+                    "number_of_epochs": Choice([15, 30]),
+                },
+                {
+                    "model_name": Choice(['seresnext', 'resnest50']),
+                    "learning_rate": Uniform(0.001, 0.01),
+                    "layers_to_freeze": Choice([0, 2]),
+                },
+            ]
+            """
             search_sub_space_1 = SearchSpace(
                 model_name=Choice(["vitb16r224", "vits16r224"]),
                 learning_rate=Uniform(0.001, 0.01),
@@ -84,19 +92,13 @@ class TestAutoMLImageClassification:
             )
             image_classification_job.extend_search_space([search_sub_space_1, search_sub_space_2])
 
-            if sweep_run_termination_policy == "bandit":
-                early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
-            elif sweep_run_termination_policy == "median_stopping":
-                early_termination_policy = MedianStoppingPolicy(delay_evaluation = 5, evaluation_interval = 1)
-            elif sweep_run_termination_policy == "truncation_selection":
-                early_termination_policy = TruncationSelectionPolicy(
-                    evaluation_interval=1, 
-                    truncation_percentage=20,
-                    delay_evaluation=5
-                )
-            else:
-                early_termination_policy = None
-            
+            early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
+            # image_classification_job.sweep = {
+            #     "max_concurrent_trials": 4,
+            #     "max_trials": 20,
+            #     "sampling_algorithm": SamplingAlgorithmType.GRID,
+            #     "early_termination": early_termination_policy,
+            # }
             image_classification_job.set_sweep(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
                 early_termination=early_termination_policy,

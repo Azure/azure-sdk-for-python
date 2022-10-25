@@ -23,26 +23,13 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageModelSettingsObjectDetection,
     ImageObjectDetectionJob
 )
-from azure.ai.ml.sweep import (
-    BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy,
-    Choice, Uniform
-)
+from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
 @pytest.mark.unittest
 class TestAutoMLImageObjectDetection:
-    @pytest.mark.parametrize(
-        "run_type,sweep_run_termination_policy", 
-        [
-            ("single", None),
-            ("sweep", None), 
-            ("sweep", "bandit"),
-            ("sweep", "median_stopping"), 
-            ("sweep", "truncation_selection"), 
-            ("automode", None)
-        ]
-    )
-    def test_image_object_detection_task(self, run_type, sweep_run_termination_policy):
+    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
+    def test_image_object_detection_task(self, run_type):
         # Create AutoML Image Object Detection task
         identity = UserIdentityConfiguration()
         image_object_detection_job = image_object_detection(
@@ -65,6 +52,13 @@ class TestAutoMLImageObjectDetection:
         elif run_type == "automode":
             image_object_detection_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
+        # image_object_detection_job.training_parameters = {
+        #     "checkpoint_frequency": 1,
+        #     "early_stopping": True,
+        #     "early_stopping_delay": 2,
+        #     "early_stopping_patience": 2,
+        #     "evaluation_frequency": 1,
+        # }
         image_object_detection_job.set_training_parameters(
             checkpoint_frequency=1,
             early_stopping=True,
@@ -74,6 +68,21 @@ class TestAutoMLImageObjectDetection:
         )
 
         if run_type == "sweep":
+            """
+            image_object_detection_job.search_space = [
+                {
+                    "model_name": 'yolov5',
+                    "learning_rate": Uniform(0.0001, 0.01),
+                    "model_size": Choice(['small', 'medium']),
+                },
+                {
+                    "model_name": 'fasterrcnn_resnet50_fpn',
+                    "learning_rate": Uniform(0.0001, 0.01),
+                    "optimizer": Choice(['sgd', 'adam', 'adamw']),
+                    "min_size": Choice([600, 800]),
+                },
+            ]
+            """
             search_sub_space_1 = SearchSpace(
                 model_name="yolov5",
                 learning_rate=Uniform(0.0001, 0.01),
@@ -87,19 +96,13 @@ class TestAutoMLImageObjectDetection:
             )
             image_object_detection_job.extend_search_space([search_sub_space_1, search_sub_space_2])
 
-            if sweep_run_termination_policy == "bandit":
-                early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
-            elif sweep_run_termination_policy == "median_stopping":
-                early_termination_policy = MedianStoppingPolicy(delay_evaluation = 5, evaluation_interval = 1)
-            elif sweep_run_termination_policy == "truncation_selection":
-                early_termination_policy = TruncationSelectionPolicy(
-                    evaluation_interval=1, 
-                    truncation_percentage=20,
-                    delay_evaluation=5
-                )
-            else:
-                early_termination_policy = None
-
+            early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
+            # image_object_detection_job.sweep = {
+            #     "max_concurrent_trials": 4,
+            #     "max_trials": 20,
+            #     "sampling_algorithm": SamplingAlgorithmType.GRID,
+            #     "early_termination": early_termination_policy,
+            # }
             image_object_detection_job.set_sweep(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
                 early_termination=early_termination_policy,
