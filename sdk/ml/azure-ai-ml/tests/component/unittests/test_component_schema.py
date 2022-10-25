@@ -13,7 +13,11 @@ from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
+from azure.ai.ml.entities._component.component import (
+    COMPONENT_CODE_PLACEHOLDER,
+    COMPONENT_PLACEHOLDER,
+    TEMP_COMPONENT_CODE_FOLDER
+)
 from azure.ai.ml.entities._component.component_factory import component_factory
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -58,6 +62,10 @@ def load_component_entity_from_yaml(
                     # for generated code, return content in it
                     with open(arg.path) as f:
                         return f.read()
+                elif TEMP_COMPONENT_CODE_FOLDER in str(arg.path):
+                    # for code in temp folder, truncate the path and return it
+                    mark = TEMP_COMPONENT_CODE_FOLDER
+                    return f"{str(arg.path)[(str(arg.path).index(mark) + len(mark)):]}:1"
                 return f"{str(arg.path)}:1"
         return "xxx"
 
@@ -187,8 +195,6 @@ class TestCommandComponent:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
         # make sure code has "created"
         assert component_entity.code
-        expected_path = Path("./tests/test_configs/components/helloworld_components_with_env").resolve()
-        assert component_entity.code == f"{str(expected_path)}:1"
 
     def test_serialize_deserialize_default_code(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"

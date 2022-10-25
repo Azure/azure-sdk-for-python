@@ -111,4 +111,3 @@ class TestParallelComponent:
         assert component_dict["logging_level"] == "INFO"
 
         assert component_entity.code
-        assert component_entity.code == f"{str(Path('./tests/test_configs/python').resolve())}:1"
