@@ -42,6 +42,7 @@ from io import BytesIO
 import logging
 
 
+
 import certifi
 
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
@@ -82,7 +83,6 @@ class AsyncTransportMixin:
             asyncio.IncompleteReadError,
             asyncio.TimeoutError,
         ):
-            # print("receive frame caught tht timeout error")
             return None, None
 
     async def read(self, verify_frame_type=0):
@@ -102,10 +102,9 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
-                    # raise ValueError(
-                    #     f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
-                    # )
-                    pass
+                    _LOGGER.debug(
+                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    )
 
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
@@ -125,7 +124,6 @@ class AsyncTransportMixin:
                         await self._read(payload_size, buffer=payload)
                     )
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
-                # print("async transport read caught the timeout error")
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -491,7 +489,6 @@ class WebSocketTransportAsync(
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts,
-                heartbeat=10,
             )
             self.connected = True
 
@@ -499,6 +496,9 @@ class WebSocketTransportAsync(
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
+        except OSError:
+            await self.session.close()
+            raise ConnectionError('Client Session Closed')
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
