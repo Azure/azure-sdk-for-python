@@ -13,6 +13,8 @@ import pytest
 def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(value="https://fake-endpoint.azconfig.io", 
         regex= os.environ.get('APPCONFIGURATION_ENDPOINT_STRING', "https://fake-endpoint.azconfig.io"))
+    add_general_regex_sanitizer(value="https://fake-endpoint-geo.azconfig.io", 
+        regex= os.environ.get('APPCONFIGURATION_ENDPOINT_GEO_STRING', "https://fake-endpoint-geo.azconfig.io"))
     add_general_regex_sanitizer(value="fake-connection-string",
                                 regex=os.environ.get('APPCONFIGURATION_CONNECTION_STRING', "fake-connection-string"))
     add_general_regex_sanitizer(
