@@ -34,14 +34,16 @@ class _EventHubProcessorTest(EventPerfTest):
             self.checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, self.container_name)
             self.async_checkpoint_store = AsyncBlobCheckpointStore.from_connection_string(storage_connection_str, self.container_name)
 
+        transport_type = TransportType.AmqpOverWebsocket if arguments.transport_type==1 else TransportType.Amqp
+
         self.consumer = EventHubConsumerClient.from_connection_string(
             connection_string,
             _EventHubProcessorTest.consumer_group,
             eventhub_name=eventhub_name,
             checkpoint_store=self.checkpoint_store,
             load_balancing_strategy=arguments.load_balancing_strategy,
-            transport_type=arguments.transport_type,
-            uamqp_mode=arguments.uamqp_mode
+            transport_type=transport_type,
+            uamqp_transport=arguments.uamqp_transport
         )
         self.async_consumer = AsyncEventHubConsumerClient.from_connection_string(
             connection_string,
@@ -49,11 +51,11 @@ class _EventHubProcessorTest(EventPerfTest):
             eventhub_name=eventhub_name,
             checkpoint_store=self.async_checkpoint_store,
             load_balancing_strategy=arguments.load_balancing_strategy,
-            transport_type=arguments.transport_type,
-            uamqp_mode=arguments.uamqp_mode
+            transport_type=transport_type,
+            uamqp_transport=arguments.uamqp_transport
         )
         if arguments.preload:
-            self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=TransportType.AmqpOverWebsocket,  uamqp_mode=arguments.uamqp_mode)
+            self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=transport_type, uamqp_transport=arguments.uamqp_transport)
 
     async def _preload_eventhub(self):
         data = get_random_bytes(self.args.event_size)
@@ -124,7 +126,7 @@ class _EventHubProcessorTest(EventPerfTest):
         parser.add_argument('--processing-delay-strategy', nargs='?', type=str, help="Whether to 'sleep' or 'spin' during processing delay. Default is 'sleep'.", default='sleep')
         parser.add_argument('--preload', nargs='?', type=int, help='Ensure the specified number of events are available across all partitions. Default is 0.', default=0)
         parser.add_argument('--use-storage-checkpoint', action="store_true", help="Use Blob storage for checkpointing. Default is False (in-memory checkpointing).", default=False)
-        parser.add_argument('--uamqp-mode', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
+        parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)        
 
 
@@ -136,17 +138,20 @@ class _SendTest(BatchPerfTest):
         super().__init__(arguments)
         connection_string = self.get_from_env("AZURE_EVENTHUB_CONNECTION_STRING")
         eventhub_name = self.get_from_env("AZURE_EVENTHUB_NAME")
+
+        transport_type = TransportType.AmqpOverWebsocket if arguments.transport_type==1 else TransportType.Amqp
+
         self.producer = EventHubProducerClient.from_connection_string(
             connection_string,
             eventhub_name=eventhub_name,
-            transport_type=arguments.transport_type,
-            uamqp_mode=arguments.uamqp_mode
+            transport_type=transport_type,
+            uamqp_transport=arguments.uamqp_transport
         )
         self.async_producer = AsyncEventHubProducerClient.from_connection_string(
             connection_string,
             eventhub_name=eventhub_name,
-            transport_type=arguments.transport_type,
-            uamqp_mode=arguments.uamqp_mode
+            transport_type=transport_type,
+            uamqp_transport=arguments.uamqp_transport
         )
 
     async def setup(self):
@@ -167,5 +172,5 @@ class _SendTest(BatchPerfTest):
         super(_SendTest, _SendTest).add_arguments(parser)
         parser.add_argument('--event-size', nargs='?', type=int, help='Size of event body (in bytes). Defaults to 100 bytes', default=100)
         parser.add_argument('--batch-size', nargs='?', type=int, help='The number of events that should be included in each batch. Defaults to 100', default=100)
-        parser.add_argument('--uamqp-mode', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
+        parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)    
