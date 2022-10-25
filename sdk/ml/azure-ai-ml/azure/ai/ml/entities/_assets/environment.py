@@ -145,7 +145,7 @@ class Environment(Asset):
                 self._upload_hash = get_object_hash(path, self._ignore_file)
                 self._generate_anonymous_name_version(source="build")
             elif self.image:
-                self._generate_anonymous_name_version(source="image", conda_file=self._translated_conda_file)
+                self._generate_anonymous_name_version(source="image", conda_file=self._translated_conda_file, inference_config=self.inference_config)
 
     @property
     def conda_file(self) -> Dict:
@@ -317,13 +317,14 @@ class Environment(Asset):
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
-    def _generate_anonymous_name_version(self, source: str, conda_file: str = None):
+    def _generate_anonymous_name_version(self, source: str, conda_file: str = None, inference_config: Dict = None):
         hash_str = ""
         if source == "image":
-            if not conda_file:
-                hash_str = hash_str.join(get_md5_string(self.image))
-            else:
-                hash_str = hash_str.join(get_md5_string(self.image)).join(get_md5_string(conda_file))
+            hash_str = hash_str.join(get_md5_string(self.image))
+            if inference_config:
+                hash_str = hash_str.join(get_md5_string(yaml.dump(inference_config, sort_keys=True)))
+            if conda_file:
+                hash_str = hash_str.join(get_md5_string(conda_file))
         if source == "build":
             if not self.build.dockerfile_path:
                 hash_str = hash_str.join(get_md5_string(self._upload_hash))
