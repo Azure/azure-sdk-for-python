@@ -522,9 +522,6 @@ class WebSocketTransportAsync(
             return view
         except asyncio.TimeoutError as te:
             raise ConnectionError('recv timed out (%s)' % te)
-        except OSError:
-            await self.session.close()
-            raise ConnectionError('Client Session Closed')
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -542,6 +539,3 @@ class WebSocketTransportAsync(
             await self.ws.send_bytes(s)
         except asyncio.TimeoutError as te:
             raise ConnectionError('send timed out (%s)' % te)
-        except OSError:
-            await self.session.close()
-            raise ConnectionError('Client Session Closed')
