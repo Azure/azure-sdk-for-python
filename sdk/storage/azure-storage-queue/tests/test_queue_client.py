@@ -3,21 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import platform
 import unittest
 from datetime import datetime, timedelta
-import platform
+
 import pytest
 from azure.storage.queue import (
-    VERSION,
-    QueueServiceClient,
-    QueueClient,
+    AccountSasPermissions,
     generate_account_sas,
+    QueueClient,
+    QueueServiceClient,
     ResourceTypes,
-    AccountSasPermissions
+    VERSION
 )
+
 from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
 
 # ------------------------------------------------------------------------------
 SERVICES = {
@@ -142,7 +144,6 @@ class TestStorageQueueClient(StorageRecordedTestCase):
     def test_create_service_china(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        self.setUp()
 
         # Arrange
 

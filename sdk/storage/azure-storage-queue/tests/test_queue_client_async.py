@@ -3,19 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
-import pytest
 import platform
-import asyncio
+import unittest
+from datetime import datetime, timedelta
 
-from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.queue import VERSION
-from azure.storage.queue.aio import (
-    QueueServiceClient,
-    QueueClient
-)
-from devtools_testutils.storage.aio import AsyncStorageTestCase
+import pytest
+from azure.storage.queue import AccountSasPermissions, generate_account_sas, ResourceTypes, VERSION
+from azure.storage.queue.aio import QueueClient, QueueServiceClient
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
@@ -28,21 +25,9 @@ _CONNECTION_ENDPOINTS = {'queue': 'QueueEndpoint'}
 _CONNECTION_ENDPOINTS_SECONDARY = {'queue': 'QueueSecondaryEndpoint'}
 
 
-class AiohttpTestTransport(AioHttpTransport):
-    """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
-    """
-    async def send(self, request, **config):
-        response = await super(AiohttpTestTransport, self).send(request, **config)
-        if not isinstance(response.headers, CIMultiDictProxy):
-            response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
-            response.content_type = response.headers.get("content-type")
-        return response
-
-
-class StorageQueueClientTestAsync(AsyncStorageTestCase):
+class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
     def setUp(self):
-        super(StorageQueueClientTestAsync, self).setUp()
-        self.sas_token = self.generate_sas_token()
+        self.sas_token = self.generate_fake_sas_token()
         self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
@@ -53,6 +38,18 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         assert service.credential.account_key == storage_account_key
         assert f'{storage_account_name}.{url_type}.core.windows.net' in service.url
         assert f'{storage_account_name}-secondary.{url_type}.core.windows.net' in service.secondary_endpoint
+
+    def generate_fake_sas_token(self):
+        fake_key = "a" * 30 + "b" * 30
+
+        return "?" + generate_account_sas(
+            account_name="test",  # name of the storage account
+            account_key=fake_key,  # key for the storage account
+            resource_types=ResourceTypes(object=True),
+            permission=AccountSasPermissions(read=True, list=True),
+            start=datetime.now() - timedelta(hours=24),
+            expiry=datetime.now() + timedelta(days=8),
+        )
 
     # --Direct Parameters Test Cases --------------------------------------------
     @QueuePreparer()
@@ -65,7 +62,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name='foo', transport=AiohttpTestTransport())
+                self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name='foo')
 
             # Assert
             self.validate_standard_account_endpoints(service, url, storage_account_name, storage_account_key)
@@ -109,6 +106,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        self.setUp()
 
         for service_type in SERVICES:
             # Act
@@ -127,6 +125,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
     def test_create_service_with_token_and_http(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
+        self.setUp()
 
         for service_type in SERVICES:
             # Act
@@ -152,10 +151,8 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key
-            self.assertTrue(service.primary_endpoint.startswith(
-                f'https://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn'))
-            self.assertTrue(service.secondary_endpoint.startswith(
-                f'https://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn'))
+            assert service.primary_endpoint.startswith(f'https://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn') is True
+            assert service.secondary_endpoint.startswith(f'https://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn') is True
 
     @QueuePreparer()
     def test_create_service_protocol(self, **kwargs):
@@ -187,8 +184,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             with pytest.raises(ValueError) as e:
                 test_service = service_type('testaccount', credential='', queue_name='foo')
 
-            self.assertEqual(
-                str(e.exception), "You need to provide either a SAS token or an account shared key to authenticate.")
+            assert str(e.value) == "You need to provide either a SAS token or an account shared key to authenticate."
 
     @QueuePreparer()
     def test_create_service_with_socket_timeout(self, **kwargs):
@@ -272,12 +268,8 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key
-            self.assertTrue(
-                service.primary_endpoint.startswith(
-                    f'http://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn/'))
-            self.assertTrue(
-                service.secondary_endpoint.startswith(
-                    f'http://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn'))
+            assert service.primary_endpoint.startswith(f'http://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn/') is True
+            assert service.secondary_endpoint.startswith(f'http://{storage_account_name}-secondary.{service_type[1]}.core.chinacloudapi.cn') is True
             assert service.scheme == 'http'
 
     @QueuePreparer()
@@ -445,6 +437,7 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         assert service.url.startswith('http://local-machine:11002/custom/account/path/foo?')
 
     @QueuePreparer()
+    @recorded_by_proxy_async
     async def test_request_callback_signed_header(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -466,12 +459,13 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
             await service.delete_queue(name)
 
     @QueuePreparer()
+    @recorded_by_proxy_async
     async def test_response_callback(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key)
         name = self.get_resource_name('cont')
         queue = service.get_queue_client(name)
 
@@ -485,11 +479,12 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         assert exists
 
     @QueuePreparer()
+    @recorded_by_proxy_async
     async def test_user_agent_default(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -498,13 +493,14 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback)
 
     @QueuePreparer()
+    @recorded_by_proxy_async
     async def test_user_agent_custom(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         custom_app = "TestApp/v1.0"
         service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key, user_agent=custom_app, transport=AiohttpTestTransport())
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key, user_agent=custom_app)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -525,11 +521,12 @@ class StorageQueueClientTestAsync(AsyncStorageTestCase):
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
     @QueuePreparer()
+    @recorded_by_proxy_async
     async def test_user_agent_append(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key, transport=AiohttpTestTransport())
+        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
