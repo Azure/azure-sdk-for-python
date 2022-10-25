@@ -164,26 +164,19 @@ class WorkspaceOperations:
 
         # idempotent behavior
         if existing_workspace:
-            if workspace.tags.get("createdByToolkit") is not None:
-                workspace.tags.pop("createdByToolkit")
-            existing_workspace.tags.update(workspace.tags)
-            workspace.tags = existing_workspace.tags
-            workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
-            workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
-            workspace.identity = workspace.identity or existing_workspace.identity
-            workspace.primary_user_assigned_identity = (
+            existing_workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
+            existing_workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            existing_workspace.identity = workspace.identity or existing_workspace.identity
+            existing_workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
-            return self.begin_update(
-                workspace,
-                update_dependent_resources=update_dependent_resources,
-                kwargs=kwargs,
-            )
-        # add tag in the workspace to indicate which sdk version the workspace is created from
-        if workspace.tags is None:
-            workspace.tags = {}
-        if workspace.tags.get("createdByToolkit") is None:
-            workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
+            workspace = existing_workspace
+        else:
+            # add tag in the workspace to indicate which sdk version the workspace is created from
+            if workspace.tags is None:
+                workspace.tags = {}
+            if workspace.tags.get("createdByToolkit") is None:
+                workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
@@ -291,8 +284,8 @@ class WorkspaceOperations:
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        update_param.container_registry = container_registry
-        update_param.application_insights = application_insights
+        update_param.container_registry = container_registry or None
+        update_param.application_insights = application_insights or None
 
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
 

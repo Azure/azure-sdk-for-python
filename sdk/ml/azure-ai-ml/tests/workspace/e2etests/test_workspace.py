@@ -4,6 +4,7 @@
 from typing import Callable
 
 import pytest
+from azure.ai.ml._utils.utils import camel_to_snake
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
@@ -66,7 +67,6 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace = client.workspaces.get(wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
-        assert workspace.container_registry is None
 
         workspace_poller = client.workspaces.begin_update(
             workspace,
@@ -142,18 +142,18 @@ class TestWorkspace(AzureRecordedTestCase):
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
         # resource name key word
-        wps_name = f"e2etest_{randstr()}"
+        wps_name = f"e2etest_{randstr('wps_name')}"
 
         # uai creation
         msi_client = ManagedServiceIdentityClient(
             credential=client._credential, subscription_id=client._operation_scope.subscription_id
         )
         user_assigned_identity = msi_client.user_assigned_identities.get(
-            resource_group_name="rg-mhe-e2e-test-dont-remove",
+            resource_group_name=client._operation_scope.resource_group_name,
             resource_name="uai-mhe",
         )
         user_assigned_identity2 = msi_client.user_assigned_identities.get(
-            resource_group_name="rg-mhe-e2e-test-dont-remove",
+            resource_group_name=client._operation_scope.resource_group_name,
             resource_name="uai-mhe2",
         )
 
@@ -167,21 +167,25 @@ class TestWorkspace(AzureRecordedTestCase):
             {
                 "identity": {
                     "type": "user_assigned",
-                    "user_assigned_identities": {
-                        user_assigned_identity.id: {
-                            "principal_id": user_assigned_identity.principal_id,
+                    "user_assigned_identities":[
+                        {
                             "client_id": user_assigned_identity.client_id,
+                            "resource_id": user_assigned_identity.id,
+                            "principal_id": user_assigned_identity.principal_id
                         },
-                        user_assigned_identity2.id: {
-                            "principal_id": user_assigned_identity2.principal_id,
+                        {
                             "client_id": user_assigned_identity2.client_id,
-                        },
-                    },
+                            "resource_id": user_assigned_identity2.id,
+                            "principal_id": user_assigned_identity2.principal_id
+                        }
+                    ],
                 }
             },
             {"primary_user_assigned_identity": user_assigned_identity.id},
         ]
         wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+
+        # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
@@ -191,20 +195,23 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
         assert workspace.public_network_access == PublicNetworkAccess.ENABLED
-        assert workspace.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED)
         assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity.id
 
+        # test list
         workspace_list = client.workspaces.list()
         assert isinstance(workspace_list, ItemPaged)
 
+        # test get
         workspace = client.workspaces.get(name=wps_name)
+        assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
-        assert workspace.container_registry is None
-        assert workspace.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED)
         assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity.id
 
+        # test update
         workspace_poller = client.workspaces.begin_update(
             workspace,
             primary_user_assigned_identity=user_assigned_identity2.id,
@@ -212,7 +219,23 @@ class TestWorkspace(AzureRecordedTestCase):
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
+        assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity2.id
+
+        # test uai removal
+        new_UAIs = [x for x in wps.identity.user_assigned_identities if x.resource_id == user_assigned_identity2.id]
+        wps.identity.user_assigned_identities = new_UAIs
+        workspace.identity = wps.identity
+        workspace_poller = client.workspaces.begin_create(workspace=workspace)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+
+        ## PUT request is expected to update the whole workspace entity, this should be resolved on the service side.
+        # assert len(workspace.identity.user_assigned_identities) == 1 # currently 2 == 1, which is not expected.
+        # assert workspace.identity.user_assigned_identities[0].resource_id == user_assigned_identity2.id
+
+        # test uai workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
