@@ -118,9 +118,8 @@ class RegistryOperations:
         registry: Registry,
         **kwargs: Dict,
     ) -> LROPoller[Registry]:
-        """Create a new Azure Machine Learning Registry.
-
-        Returns the registry if already exists.
+        """Create a new Azure Machine Learning Registry,
+        or try to update if it already exists.
 
         :param registry: Registry definition.
         :type registry: Registry
@@ -143,7 +142,7 @@ class RegistryOperations:
     @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
     @experimental
     def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[Registry]:
-        """Delete a registry. Returns nothing on a successful operation.
+        """Delete a registry if it exists. Returns nothing on a successful operation.
 
         :param name: Name of the registry
         :type name: str

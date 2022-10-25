@@ -66,7 +66,7 @@ class TestRegistry(AzureRecordedTestCase):
             # the deletion is properly propagated across replicas,
             # resulting in eventual consistency bugs if we test
             # too soon.
-            sleep(300)
+            sleep(30)
         try:
             crud_registry_client.registries.get(name=reg_name)
             # The above line should fail with a ResourceNotFoundError
