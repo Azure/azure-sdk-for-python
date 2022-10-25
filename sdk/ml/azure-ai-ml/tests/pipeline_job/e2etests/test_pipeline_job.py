@@ -1,11 +1,12 @@
 import json
+import os.path
 import re
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 import pydash
 import pytest
 from marshmallow import ValidationError
@@ -27,7 +28,8 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import LROPoller
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES, \
+    DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE
 
 
 def assert_job_input_output_types(job: PipelineJob):
@@ -188,20 +190,13 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(retrieved_child_run, Job)
         assert retrieved_child_run.name == child_job.name
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_error_type",
+        "pipeline_job_path",
         [
             # flaky parameterization
-            # ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", Exception),
-            (
-                "tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
-                Exception,
-            ),
-            (
-                "tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
-                Exception,
-            ),
+            # "non_existent_remote_component.yml",
+            "non_existent_remote_version.yml",
+            "non_existent_compute.yml",
         ],
     )
     def test_pipeline_job_validation_remote(
@@ -209,14 +204,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         client: MLClient,
         randstr: Callable[[str], str],
         pipeline_job_path: str,
-        expected_error_type,
     ) -> None:
+        base_dir = "./tests/test_configs/pipeline_jobs/invalid/"
         pipeline_job: PipelineJob = load_job(
-            source=pipeline_job_path,
+            source=os.path.join(base_dir, pipeline_job_path),
             params_override=[{"name": randstr("name")}],
         )
         with pytest.raises(
-            expected_error_type,
+            Exception,
             # hide this as server side error message is not consistent
             # match=str(expected_error),
         ):
@@ -415,10 +410,22 @@ class TestPipelineJob(AzureRecordedTestCase):
             else:
                 assert job.compute in pipeline_job.jobs[job_name].compute
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, converted_jobs, expected_dict, fields_to_omit",
+        "test_case_i,test_case_name",
         [
+            # TODO: enable this after identity support released to canary
+            # (0, "helloworld_pipeline_job_with_component_output"),
+            (1, "helloworld_pipeline_job_with_paths"),
+        ]
+    )
+    def test_pipeline_job_with_command_job(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+        test_case_i,
+        test_case_name,
+    ) -> None:
+        params = [
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e.yml",
                 2,
@@ -587,17 +594,9 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "source_job_id",
                 ],
             ),
-        ],
-    )
-    def test_pipeline_job_with_command_job(
-        self,
-        client: MLClient,
-        randstr: Callable[[str], str],
-        pipeline_job_path: str,
-        converted_jobs,
-        expected_dict,
-        fields_to_omit,
-    ) -> None:
+        ]
+        pipeline_job_path, converted_jobs, expected_dict, fields_to_omit = params[test_case_i]
+
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source=pipeline_job_path,
@@ -616,21 +615,21 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_component_input_e2e.yml",
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_input_e2e.yml",
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
+            "file_component_input_e2e.yml",
+            "file_input_e2e.yml",
+            "tabular_input_e2e.yml",
         ],
     )
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
+        base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            source=pipeline_job_path,
+            source=base_file_name + pipeline_job_path,
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -942,18 +941,19 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_pipeline_dict = created_pipeline._to_dict()
         assert pydash.get(created_pipeline_dict, "jobs.hello_sweep_inline_trial.early_termination") == policy_yaml_dict
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_error",
-        DATABINDING_EXPRESSION_TEST_CASES,
+        "test_case_i, test_case_name",
+        DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
     )
     def test_pipeline_job_with_data_binding_expression(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
-        pipeline_job_path: str,
-        expected_error: Optional[Exception],
+        test_case_i: int,
+        test_case_name: str,
     ):
+        pipeline_job_path, expected_error = DATABINDING_EXPRESSION_TEST_CASES[test_case_i]
+
         pipeline: PipelineJob = load_job(source=pipeline_job_path, params_override=[{"name": randstr("name")}])
         if expected_error is None:
             assert_job_cancel(pipeline, client)
