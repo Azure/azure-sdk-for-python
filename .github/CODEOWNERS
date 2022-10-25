@@ -198,7 +198,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_online_endpoint_operations.py     @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_deployment                           @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_endpoint                             @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
-/sdk/ml/production-experiences.tests.yml
+/sdk/ml/production-experiences.tests.yml                                      @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
 
 # PRLabel: %Maps
 /sdk/maps/                                                           @alextts627
