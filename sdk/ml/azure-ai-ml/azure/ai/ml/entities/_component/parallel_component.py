@@ -236,6 +236,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
     def _to_dict(self) -> Dict:
         """Dump the parallel component content into a dictionary."""
         tmp_dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(ParallelComponent, self)._to_dict()})
+        # The backend treats the partition keys as a serialized json string.
         if "partition_keys" in tmp_dict:
             import json
             tmp_dict["partition_keys"] = json.dumps(tmp_dict["partition_keys"])
