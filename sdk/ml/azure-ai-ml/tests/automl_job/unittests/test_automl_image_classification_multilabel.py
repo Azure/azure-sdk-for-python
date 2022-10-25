@@ -21,13 +21,26 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationMultilabelJob,
     ImageModelSettingsClassification
 )
-from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
+from azure.ai.ml.sweep import (
+    BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy,
+    Choice, Uniform
+)
 
 
 @pytest.mark.unittest
 class TestAutoMLImageClassificationMultilabel:
-    @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
-    def test_image_classification_multilabel_task(self, run_type):
+    @pytest.mark.parametrize(
+        "run_type,sweep_run_termination_policy", 
+        [
+            ("single", None),
+            ("sweep", None), 
+            ("sweep", "bandit"),
+            ("sweep", "median_stopping"), 
+            ("sweep", "truncation_selection"), 
+            ("automode", None)
+        ]
+    )
+    def test_image_classification_multilabel_task(self, run_type, sweep_run_termination_policy):
         # Create AutoML Image Classification Multilabel task
         identity = UserIdentityConfiguration()
         image_classification_multilabel_job = image_classification_multilabel(
@@ -50,13 +63,6 @@ class TestAutoMLImageClassificationMultilabel:
         elif run_type == "automode":
             image_classification_multilabel_job.set_limits(timeout_minutes=60, max_trials=2, max_concurrent_trials=1)
 
-        # image_classification_multilabel_job.training_parameters = {
-        #     "checkpoint_frequency": 1,
-        #     "early_stopping": True,
-        #     "early_stopping_delay": 2,
-        #     "early_stopping_patience": 2,
-        #     "evaluation_frequency": 1,
-        # }
         image_classification_multilabel_job.set_training_parameters(
             checkpoint_frequency=1,
             early_stopping=True,
@@ -66,23 +72,6 @@ class TestAutoMLImageClassificationMultilabel:
         )
 
         if run_type == "sweep":
-            """
-            image_classification_multilabel_job.search_space = [
-                {
-                    "model_name": 'vitb16r224',
-                    "learning_rate": Uniform(0.005, 0.05),
-                    "number_of_epochs": Choice([15, 30]),
-                    "gradient_accumulation_step": Choice([1, 2]),
-                },
-                {
-                    "model_name": 'seresnext',
-                    "learning_rate": Uniform(0.005, 0.05),
-                    "validation_resize_size": Choice([288, 320, 352]),
-                    "validation_crop_size": Choice([224, 256]),
-                    "training_crop_size": Choice([224, 256]),
-                },
-            ]
-            """
             search_sub_space_1 = SearchSpace(
                 model_name="vitb16r224",
                 learning_rate=Uniform(0.005, 0.05),
@@ -98,13 +87,19 @@ class TestAutoMLImageClassificationMultilabel:
             )
             image_classification_multilabel_job.extend_search_space([search_sub_space_1, search_sub_space_2])
 
-            early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
-            # image_classification_multilabel_job.sweep = {
-            #     "max_concurrent_trials": 4,
-            #     "max_trials": 20,
-            #     "sampling_algorithm": SamplingAlgorithmType.GRID,
-            #     "early_termination": early_termination_policy,
-            # }
+            if sweep_run_termination_policy == "bandit":
+                early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
+            elif sweep_run_termination_policy == "median_stopping":
+                early_termination_policy = MedianStoppingPolicy(delay_evaluation = 5, evaluation_interval = 1)
+            elif sweep_run_termination_policy == "truncation_selection":
+                early_termination_policy = TruncationSelectionPolicy(
+                    evaluation_interval=1, 
+                    truncation_percentage=20,
+                    delay_evaluation=5
+                )
+            else:
+                early_termination_policy = None
+            
             image_classification_multilabel_job.set_sweep(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
                 early_termination=early_termination_policy,
