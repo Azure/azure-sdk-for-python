@@ -242,4 +242,16 @@ class PhoneNumbersClientTest(CommunicationTestCase):
 
     def test_list_countries(self):
         countries = self.phone_number_client.list_available_countries()
-        assert countries.next()          
+        assert countries.next()    
+
+    def test_list_localities(self):
+        localities = self.phone_number_client.list_available_localities("US")
+        assert localities.next()  
+
+    def test_list_localities_with_administrative_division(self):
+        localities = self.phone_number_client.list_available_localities("US", administrative_division="WA")
+        assert localities.next()       
+
+    def test_list_offerings(self):
+        offerings = self.phone_number_client.list_available_offerings("US")
+        assert offerings.next()               

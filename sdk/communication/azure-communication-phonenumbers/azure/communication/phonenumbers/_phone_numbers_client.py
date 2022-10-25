@@ -382,7 +382,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             """
             return self._phone_number_client.phone_numbers.list_area_codes(
                 country_code,
-                phone_number_type=PhoneNumberType.GEOGRAPHIC,
+                phone_number_type=PhoneNumberType.TOLL_FREE,
                 assignment_type=PhoneNumberAssignmentType.APPLICATION,
                 **kwargs
             )

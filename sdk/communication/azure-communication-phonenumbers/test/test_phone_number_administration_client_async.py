@@ -291,3 +291,30 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             async for item in countries:
                 items.append(item)
         assert len(items) > 0    
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_localities(self):
+        async with self.phone_number_client:
+            localities = self.phone_number_client.list_available_localities("US")
+            items = []
+            async for item in localities:
+                items.append(item)
+        assert len(items) > 0  
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_localities_with_administrative_division(self):
+        async with self.phone_number_client:
+            localities = self.phone_number_client.list_available_localities("US", administrative_division="WA")
+            items = []
+            async for item in localities:
+                items.append(item)
+        assert len(items) > 0  
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_offerings(self):
+        async with self.phone_number_client:
+            offerings = self.phone_number_client.list_available_offerings("US")
+            items = []
+            async for item in offerings:
+                items.append(item)
+        assert len(items) > 0                
