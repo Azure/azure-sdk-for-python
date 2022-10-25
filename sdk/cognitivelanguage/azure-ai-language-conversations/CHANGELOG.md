@@ -3,6 +3,8 @@
 ## 1.1.0b3 (Unreleased)
 
 ### Features Added
+- Added support for the "ConversationalSentimentTask" kind with `begin_conversation_analysis`.
+- Added support for "chapterTitle" and "narrative" `summaryAspects` options for ConversationalSummarizationTasks.
 - Added methods to the `ConversationAuthoringClient` to manage deployment resources:
   - `begin_assign_deployment_resources`
   - `get_assign_deployment_resources_status`
