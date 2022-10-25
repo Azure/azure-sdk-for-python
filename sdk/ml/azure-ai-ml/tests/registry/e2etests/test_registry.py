@@ -4,11 +4,12 @@
 from typing import Callable
 
 import pytest
+from time import sleep
 from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
@@ -47,6 +48,12 @@ class TestRegistry(AzureRecordedTestCase):
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
         assert del_result is None
+        if is_live():
+            # Unfortunately the LRO poller for delete concludes BEFORE
+            # the deletion is properly propagated across replicas,
+            # resulting in eventual consistency bugs if we test
+            # too soon.
+            sleep(300)
         try:
             crud_registry_client.registries.get(name=reg_name)
             # The above line should fail with a ResourceNotFoundError
