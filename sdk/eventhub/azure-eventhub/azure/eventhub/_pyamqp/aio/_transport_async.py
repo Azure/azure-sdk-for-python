@@ -489,7 +489,6 @@ class WebSocketTransportAsync(
                 proxy=http_proxy_host,
                 proxy_auth=http_proxy_auth,
                 ssl=self.sslopts,
-                heartbeat=10,
             )
             self.connected = True
 
