@@ -227,13 +227,13 @@ class IdentifierRawIdTest(unittest.TestCase):
                 value='207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768'
             )
         )
-        # cspell:enable
         _assert_communication_identifier(
             '4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768',
             PhoneNumberIdentifier(
                 value='+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768'
             )
         )
+        # cspell:enable
         _assert_communication_identifier(
             '28:45ab2481-1c1c-4005-be24-0ffb879b1130',
             UnknownIdentifier(
@@ -264,8 +264,10 @@ class IdentifierRawIdTest(unittest.TestCase):
         _assert_roundtrip('4:112345556789')
         _assert_roundtrip('4:otherFormat')
         _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768");
+        # cspell:disable
         _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768");
         _assert_roundtrip("4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768");
+        # cspell:enable
         _assert_roundtrip('28:45ab2481-1c1c-4005-be24-0ffb879b1130')
         _assert_roundtrip('')
 
