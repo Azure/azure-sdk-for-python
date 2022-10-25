@@ -181,6 +181,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         except HttpResponseError as ex:
             assert "CancelPipelineRunInTerminalStatus" in str(ex)
 
+    # TODO: Enable this when type fixed on master.
     @pytest.mark.skip(reason="marshmallow.exceptions.ValidationError: miss required jobs.node.component")
     @pytest.mark.parametrize(
         "test_case_i,test_case_name",
