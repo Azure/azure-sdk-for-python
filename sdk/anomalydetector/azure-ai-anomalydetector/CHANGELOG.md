@@ -1,23 +1,10 @@
 # Release History
 
-## 3.0.0b6 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
-
 ## 3.0.0b6 (2022-11-01)
   **Features**
-  - Added operation AnomalyDetectorClientOperationsMixin.xxx
-
-  **Bug Fixes**
-  - Fixed an issue with xxx
+  - Added `OneTable` and `MultiTable` two data schema support for customer data.
+  - Added ManagedIdentity reader permission support for customer data.
+  - Added `topContributorCount` in `detect_multivariate_last_anomaly` and `begin_detect_multivariate_batch_anomaly`
 
   **Breaking Changes**
   - Renamed `detect_entire_series` to `detect_univariate_entire_series`
@@ -28,6 +15,8 @@
   - Renamed `detect_anomaly` to `begin_detect_multivariate_batch_anomaly`
   - Renamed `get_detection_result` to `get_multivariate_batch_detection_result`
   - Renamed `last_detect_anomaly` to `detect_multivariate_last_anomaly`
+  - Removed `detecting_points` in `detect_multivariate_last_anomaly`
+  - Removed `changed_values` in detection result
   - Removed `export_model`
 
 ## 3.0.0b5 (2022-01-23)
