@@ -532,9 +532,6 @@ class PipelineExpression(PipelineExpressionMixin):
 
         def _generate_yaml_file(_path: Path) -> None:
             _data_folder = Path(__file__).parent / "data"
-            # TODO: replace with curated environment when it's ready
-            # conda file
-            shutil.copyfile(_data_folder / "expression_conda_file.yml", _path.parent / "conda.yml")
             # update YAML content from template and dump
             with open(_data_folder / "expression_component_template.yml", "r") as _f:
                 _data = load_yaml(_f)
