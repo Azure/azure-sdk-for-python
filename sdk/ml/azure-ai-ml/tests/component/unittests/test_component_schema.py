@@ -294,6 +294,14 @@ class TestCommandComponent:
         component_hash2 = component_entity2._get_anonymous_hash()
         assert component_hash1 != component_hash2
 
+    def test_command_component_with_properties(self):
+        test_path = "./tests/test_configs/components/helloworld_component_with_properties.yml"
+        component_entity = load_component(source=test_path)
+        assert component_entity.properties == {"azureml.pipelines.dynamic": "true"}
+
+        validation_result = component_entity._validate()
+        assert validation_result.passed is True
+
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
