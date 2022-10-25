@@ -536,6 +536,6 @@ class TestComponent:
             code.name = expected_snapshot_id
             with pytest.raises(
                 AttributeError,
-                match="InternalCode name are calculated based on its content and cannot be changed."
+                match="InternalCode name are calculated based on its content and cannot be changed.*"
             ):
                 code.name = expected_snapshot_id + "1"
