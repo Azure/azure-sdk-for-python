@@ -198,7 +198,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
     if raw_id.startswith('4:'):
         return PhoneNumberIdentifier(
-            value='{}'.format(raw_id[len('4:'):])
+            value = raw_id[len('4:'):]
         )
 
     segments = raw_id.split(':', maxsplit=2)
