@@ -153,7 +153,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/ml/automl.tests.yml                                             @skasturi
 
 # PRLabel: %ML-Data
-/sdk/ml/data-experiences.tests.yml                                   @sogansky @MayankKumar91
+/sdk/ml/data-experiences.tests.yml                                   @sogansky @MayankKumar91 @code-vicar
 
 # PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
