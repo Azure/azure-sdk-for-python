@@ -3,6 +3,18 @@
 ## 1.1.0b3 (Unreleased)
 
 ### Features Added
+- Added methods to the `ConversationAuthoringClient` to manage deployment resources:
+  - `begin_assign_deployment_resources`
+  - `get_assign_deployment_resources_status`
+  - `begin_unassign_deployment_resources`
+  - `get_unassign_deployment_resources_status`
+  - `begin_delete_deployment_from_resources`
+  - `get_deployment_delete_from_resources_status`
+  - `begin_load_snapshot`
+  - `get_load_snapshot_status`
+  - `list_assigned_resource_deployments`
+  - `list_deployment_resources`
+- Added optional `trained_model_label` keyword argument to `begin_export_project`.
 
 ### Breaking Changes
 

@@ -284,6 +284,30 @@ directive:
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
         }
       };
+  - where-operation: ConversationalAnalysisAuthoring_AssignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_LoadSnapshot
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringLoadSnapshotJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_UnassignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
+        }
+      };
 ```
 
 ```yaml $(tag) == 'release_authoring_1_1_preview'

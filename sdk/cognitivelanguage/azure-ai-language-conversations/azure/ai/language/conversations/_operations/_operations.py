@@ -26,7 +26,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import MixinABC
+from .._vendor import ConversationAnalysisClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -40,7 +40,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -62,7 +62,7 @@ def build_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -84,7 +84,7 @@ def build_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
+class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):
     @overload
     def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
@@ -380,7 +380,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_analyze_conversation_request(
+        request = build_conversation_analysis_analyze_conversation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -436,7 +436,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_conversation_analysis_request(
+        request = build_conversation_analysis_conversation_analysis_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,

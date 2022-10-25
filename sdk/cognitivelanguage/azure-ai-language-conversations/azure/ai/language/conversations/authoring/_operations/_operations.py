@@ -28,7 +28,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import MixinABC, _format_url_section
+from .._vendor import ConversationAuthoringClientMixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -42,7 +42,9 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_list_projects_request(
+    *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -65,7 +67,7 @@ def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -92,7 +94,7 @@ def build_create_project_request(project_name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -116,7 +118,7 @@ def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -140,7 +142,7 @@ def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_export_project_request(
+def build_conversation_authoring_export_project_request(
     project_name: str,
     *,
     string_index_type: str,
@@ -179,7 +181,7 @@ def build_export_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_project_request(
+def build_conversation_authoring_import_project_request(
     project_name: str, *, exported_project_format: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -210,7 +212,7 @@ def build_import_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -237,7 +239,7 @@ def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_deployments_request(
+def build_conversation_authoring_list_deployments_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -267,7 +269,7 @@ def build_list_deployments_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -294,7 +296,9 @@ def build_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_deployment_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_deployment_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -319,7 +323,9 @@ def build_get_deployment_request(project_name: str, deployment_name: str, **kwar
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deploy_project_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_deploy_project_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -347,7 +353,9 @@ def build_deploy_project_request(project_name: str, deployment_name: str, **kwar
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_deployment_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_delete_deployment_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -372,7 +380,7 @@ def build_delete_deployment_request(project_name: str, deployment_name: str, **k
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_deployment_from_resources_request(
+def build_conversation_authoring_delete_deployment_from_resources_request(
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -402,7 +410,7 @@ def build_delete_deployment_from_resources_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_deployment_delete_from_resources_status_request(
+def build_conversation_authoring_get_deployment_delete_from_resources_status_request(
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -430,7 +438,7 @@ def build_get_deployment_delete_from_resources_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_deployment_job_status_request(
+def build_conversation_authoring_get_deployment_job_status_request(
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -458,7 +466,9 @@ def build_get_deployment_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_swap_deployments_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_swap_deployments_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -483,7 +493,9 @@ def build_get_swap_deployments_job_status_request(project_name: str, job_id: str
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_export_project_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_export_project_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -508,7 +520,9 @@ def build_get_export_project_job_status_request(project_name: str, job_id: str, 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_import_project_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_import_project_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -533,7 +547,7 @@ def build_get_import_project_job_status_request(project_name: str, job_id: str, 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_trained_models_request(
+def build_conversation_authoring_list_trained_models_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -563,7 +577,9 @@ def build_list_trained_models_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_trained_model_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_trained_model_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -588,7 +604,9 @@ def build_get_trained_model_request(project_name: str, trained_model_label: str,
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_trained_model_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_delete_trained_model_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -613,7 +631,9 @@ def build_delete_trained_model_request(project_name: str, trained_model_label: s
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_snapshot_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_load_snapshot_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -638,7 +658,7 @@ def build_load_snapshot_request(project_name: str, trained_model_label: str, **k
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_model_evaluation_results_request(
+def build_conversation_authoring_list_model_evaluation_results_request(
     project_name: str,
     trained_model_label: str,
     *,
@@ -676,7 +696,7 @@ def build_list_model_evaluation_results_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_model_evaluation_summary_request(
+def build_conversation_authoring_get_model_evaluation_summary_request(
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -705,7 +725,7 @@ def build_get_model_evaluation_summary_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_load_snapshot_status_request(
+def build_conversation_authoring_get_load_snapshot_status_request(
     project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -735,7 +755,7 @@ def build_get_load_snapshot_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_deployment_resources_request(
+def build_conversation_authoring_list_deployment_resources_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -765,7 +785,7 @@ def build_list_deployment_resources_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_assign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_assign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -792,7 +812,7 @@ def build_assign_deployment_resources_request(project_name: str, **kwargs: Any) 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_unassign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_unassign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -819,7 +839,9 @@ def build_unassign_deployment_resources_request(project_name: str, **kwargs: Any
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_assign_deployment_resources_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_assign_deployment_resources_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -844,7 +866,7 @@ def build_get_assign_deployment_resources_status_request(project_name: str, job_
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_unassign_deployment_resources_status_request(
+def build_conversation_authoring_get_unassign_deployment_resources_status_request(
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -871,7 +893,7 @@ def build_get_unassign_deployment_resources_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_training_jobs_request(
+def build_conversation_authoring_list_training_jobs_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -901,7 +923,9 @@ def build_list_training_jobs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_training_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_training_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -926,7 +950,9 @@ def build_get_training_job_status_request(project_name: str, job_id: str, **kwar
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_cancel_training_job_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_cancel_training_job_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -951,7 +977,7 @@ def build_cancel_training_job_request(project_name: str, job_id: str, **kwargs: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -975,7 +1001,7 @@ def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_assigned_resource_deployments_request(
+def build_conversation_authoring_list_assigned_resource_deployments_request(
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1000,7 +1026,7 @@ def build_list_assigned_resource_deployments_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_supported_languages_request(
+def build_conversation_authoring_list_supported_languages_request(
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1026,7 +1052,7 @@ def build_list_supported_languages_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_supported_prebuilt_entities_request(
+def build_conversation_authoring_list_supported_prebuilt_entities_request(
     *,
     language: Optional[str] = None,
     multilingual: Optional[bool] = None,
@@ -1060,7 +1086,7 @@ def build_list_supported_prebuilt_entities_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_training_config_versions_request(
+def build_conversation_authoring_list_training_config_versions_request(
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1086,7 +1112,9 @@ def build_list_training_config_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
+class ConversationAuthoringClientOperationsMixin(
+    ConversationAuthoringClientMixinABC
+):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
@@ -1153,7 +1181,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_projects_request(
+                request = build_conversation_authoring_list_projects_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -1414,7 +1442,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = project
 
-        request = build_create_project_request(
+        request = build_conversation_authoring_create_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1513,7 +1541,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_project_request(
+        request = build_conversation_authoring_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1558,7 +1586,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        request = build_delete_project_request(
+        request = build_conversation_authoring_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1743,7 +1771,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        request = build_export_project_request(
+        request = build_conversation_authoring_export_project_request(
             project_name=project_name,
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
@@ -1968,7 +1996,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = project
 
-        request = build_import_project_request(
+        request = build_conversation_authoring_import_project_request(
             project_name=project_name,
             exported_project_format=exported_project_format,
             content_type=content_type,
@@ -2511,7 +2539,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = configuration
 
-        request = build_train_request(
+        request = build_conversation_authoring_train_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3042,7 +3070,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_deployments_request(
+                request = build_conversation_authoring_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -3127,7 +3155,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = deployments
 
-        request = build_swap_deployments_request(
+        request = build_conversation_authoring_swap_deployments_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3540,7 +3568,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_deployment_request(
+        request = build_conversation_authoring_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -3597,7 +3625,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = deployment
 
-        request = build_deploy_project_request(
+        request = build_conversation_authoring_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -3893,7 +3921,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        request = build_delete_deployment_request(
+        request = build_conversation_authoring_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -4088,7 +4116,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = body
 
-        request = build_delete_deployment_from_resources_request(
+        request = build_conversation_authoring_delete_deployment_from_resources_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -4375,7 +4403,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_deployment_delete_from_resources_status_request(
+        request = build_conversation_authoring_get_deployment_delete_from_resources_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -4497,7 +4525,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_deployment_job_status_request(
+        request = build_conversation_authoring_get_deployment_job_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -4617,7 +4645,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_swap_deployments_job_status_request(
+        request = build_conversation_authoring_get_swap_deployments_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4738,7 +4766,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_export_project_job_status_request(
+        request = build_conversation_authoring_get_export_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4857,7 +4885,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_import_project_job_status_request(
+        request = build_conversation_authoring_get_import_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4945,7 +4973,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_trained_models_request(
+                request = build_conversation_authoring_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -5052,7 +5080,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_trained_model_request(
+        request = build_conversation_authoring_get_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5115,7 +5143,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_delete_trained_model_request(
+        request = build_conversation_authoring_delete_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5140,9 +5168,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         if cls:
             return cls(pipeline_response, None, {})
 
-    def _load_snapshot_initial(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> None:
+    def _load_snapshot_initial(self, project_name: str, trained_model_label: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5154,9 +5180,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        request = build_load_snapshot_request(
+        request = build_conversation_authoring_load_snapshot_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5174,18 +5200,30 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @distributed_trace
-    def begin_load_snapshot(self, project_name: str, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_load_snapshot(self, project_name: str, trained_model_label: str, **kwargs: Any) -> LROPoller[JSON]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         See
@@ -5203,14 +5241,72 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -5225,9 +5321,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -5340,7 +5442,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_model_evaluation_results_request(
+                request = build_conversation_authoring_list_model_evaluation_results_request(
                     project_name=project_name,
                     trained_model_label=trained_model_label,
                     string_index_type=string_index_type,
@@ -5522,7 +5624,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_model_evaluation_summary_request(
+        request = build_conversation_authoring_get_model_evaluation_summary_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5643,7 +5745,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_load_snapshot_status_request(
+        request = build_conversation_authoring_get_load_snapshot_status_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,
@@ -5723,7 +5825,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_deployment_resources_request(
+                request = build_conversation_authoring_list_deployment_resources_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -5783,9 +5885,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return ItemPaged(get_next, extract_data)
 
-    def _assign_deployment_resources_initial(  # pylint: disable=inconsistent-return-statements
+    def _assign_deployment_resources_initial(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5798,7 +5900,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -5808,7 +5910,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = body
 
-        request = build_assign_deployment_resources_request(
+        request = build_conversation_authoring_assign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5828,20 +5930,32 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     def begin_assign_deployment_resources(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
         For more details about AAD authentication, check here:
@@ -5865,8 +5979,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5885,12 +5999,67 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         }
                     ]
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
     def begin_assign_deployment_resources(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
         For more details about AAD authentication, check here:
@@ -5914,15 +6083,73 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace
     def begin_assign_deployment_resources(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
         For more details about AAD authentication, check here:
@@ -5946,15 +6173,73 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -5970,9 +6255,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -5995,9 +6286,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    def _unassign_deployment_resources_initial(  # pylint: disable=inconsistent-return-statements
+    def _unassign_deployment_resources_initial(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6010,7 +6301,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
         content_type = content_type or "application/json"
         _json = None
@@ -6020,7 +6311,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = body
 
-        request = build_unassign_deployment_resources_request(
+        request = build_conversation_authoring_unassign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6040,20 +6331,32 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     def begin_unassign_deployment_resources(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
 
@@ -6075,8 +6378,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6089,12 +6392,67 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                           Required.
                     ]
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
     def begin_unassign_deployment_resources(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
 
@@ -6116,15 +6474,73 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace
     def begin_unassign_deployment_resources(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
 
@@ -6147,15 +6563,73 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
@@ -6171,9 +6645,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -6283,7 +6763,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_assign_deployment_resources_status_request(
+        request = build_conversation_authoring_get_assign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6402,7 +6882,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_unassign_deployment_resources_status_request(
+        request = build_conversation_authoring_get_unassign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6563,7 +7043,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_training_jobs_request(
+                request = build_conversation_authoring_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -6743,7 +7223,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_training_job_status_request(
+        request = build_conversation_authoring_get_training_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6789,7 +7269,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
 
-        request = build_cancel_training_job_request(
+        request = build_conversation_authoring_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -7077,7 +7557,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_project_deletion_job_status_request(
+        request = build_conversation_authoring_get_project_deletion_job_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7164,7 +7644,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_assigned_resource_deployments_request(
+                request = build_conversation_authoring_list_assigned_resource_deployments_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -7273,7 +7753,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_supported_languages_request(
+                request = build_conversation_authoring_list_supported_languages_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
@@ -7392,7 +7872,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_supported_prebuilt_entities_request(
+                request = build_conversation_authoring_list_supported_prebuilt_entities_request(
                     language=language,
                     multilingual=multilingual,
                     top=top,
@@ -7503,7 +7983,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_training_config_versions_request(
+                request = build_conversation_authoring_list_training_config_versions_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
