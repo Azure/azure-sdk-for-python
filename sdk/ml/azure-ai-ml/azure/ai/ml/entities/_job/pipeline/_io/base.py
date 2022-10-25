@@ -72,7 +72,7 @@ class InputOutputBase(ABC):
         """
         self._meta = meta
         self._data = self._build_data(data)
-        self._type = meta.type if meta else kwargs.pop("type", None)
+        self._type = meta.type if meta is not None else kwargs.pop("type", None)
         self._mode = (
             self._data.mode
             if self._data is not None and hasattr(self._data, "mode")
@@ -346,7 +346,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
-        self._is_control = meta.is_control if meta else None
+        self._is_control = meta.is_control if meta is not None else None
 
     @property
     def is_control(self) -> str:
