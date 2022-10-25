@@ -13197,6 +13197,10 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
     :ivar authentication: Required to specify MSI, if using system assigned managed identity as
      authentication method. Type: string (or Expression with resultType string).
     :vartype authentication: JSON
+    :ivar workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
+     /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
+     Type: string (or Expression with resultType string).
+    :vartype workspace_resource_id: JSON
     """
 
     _validation = {
@@ -13213,6 +13217,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         "annotations": {"key": "annotations", "type": "[object]"},
         "endpoint": {"key": "typeProperties.endpoint", "type": "object"},
         "authentication": {"key": "typeProperties.authentication", "type": "object"},
+        "workspace_resource_id": {"key": "typeProperties.workspaceResourceId", "type": "object"},
     }
 
     def __init__(
@@ -13225,6 +13230,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         authentication: Optional[JSON] = None,
+        workspace_resource_id: Optional[JSON] = None,
         **kwargs
     ):
         """
@@ -13245,6 +13251,10 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         :keyword authentication: Required to specify MSI, if using system assigned managed identity as
          authentication method. Type: string (or Expression with resultType string).
         :paramtype authentication: JSON
+        :keyword workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
+         /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
+         Type: string (or Expression with resultType string).
+        :paramtype workspace_resource_id: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -13257,6 +13267,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         self.type = "AzureSynapseArtifacts"  # type: str
         self.endpoint = endpoint
         self.authentication = authentication
+        self.workspace_resource_id = workspace_resource_id
 
 
 class AzureTableDataset(Dataset):
@@ -25446,6 +25457,9 @@ class FactoryRepoConfiguration(_serialization.Model):
     :vartype root_folder: str
     :ivar last_commit_id: Last commit id.
     :vartype last_commit_id: str
+    :ivar disable_publish: Disable manual publish operation in ADF studio to favor automated
+     publish.
+    :vartype disable_publish: bool
     """
 
     _validation = {
@@ -25463,6 +25477,7 @@ class FactoryRepoConfiguration(_serialization.Model):
         "collaboration_branch": {"key": "collaborationBranch", "type": "str"},
         "root_folder": {"key": "rootFolder", "type": "str"},
         "last_commit_id": {"key": "lastCommitId", "type": "str"},
+        "disable_publish": {"key": "disablePublish", "type": "bool"},
     }
 
     _subtype_map = {
@@ -25480,6 +25495,7 @@ class FactoryRepoConfiguration(_serialization.Model):
         collaboration_branch: str,
         root_folder: str,
         last_commit_id: Optional[str] = None,
+        disable_publish: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -25493,6 +25509,9 @@ class FactoryRepoConfiguration(_serialization.Model):
         :paramtype root_folder: str
         :keyword last_commit_id: Last commit id.
         :paramtype last_commit_id: str
+        :keyword disable_publish: Disable manual publish operation in ADF studio to favor automated
+         publish.
+        :paramtype disable_publish: bool
         """
         super().__init__(**kwargs)
         self.type = None  # type: Optional[str]
@@ -25501,6 +25520,7 @@ class FactoryRepoConfiguration(_serialization.Model):
         self.collaboration_branch = collaboration_branch
         self.root_folder = root_folder
         self.last_commit_id = last_commit_id
+        self.disable_publish = disable_publish
 
 
 class FactoryGitHubConfiguration(FactoryRepoConfiguration):
@@ -25520,6 +25540,9 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     :vartype root_folder: str
     :ivar last_commit_id: Last commit id.
     :vartype last_commit_id: str
+    :ivar disable_publish: Disable manual publish operation in ADF studio to favor automated
+     publish.
+    :vartype disable_publish: bool
     :ivar host_name: GitHub Enterprise host name. For example: ``https://github.mydomain.com``.
     :vartype host_name: str
     :ivar client_id: GitHub bring your own app client id.
@@ -25543,6 +25566,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         "collaboration_branch": {"key": "collaborationBranch", "type": "str"},
         "root_folder": {"key": "rootFolder", "type": "str"},
         "last_commit_id": {"key": "lastCommitId", "type": "str"},
+        "disable_publish": {"key": "disablePublish", "type": "bool"},
         "host_name": {"key": "hostName", "type": "str"},
         "client_id": {"key": "clientId", "type": "str"},
         "client_secret": {"key": "clientSecret", "type": "GitHubClientSecret"},
@@ -25556,6 +25580,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         collaboration_branch: str,
         root_folder: str,
         last_commit_id: Optional[str] = None,
+        disable_publish: Optional[bool] = None,
         host_name: Optional[str] = None,
         client_id: Optional[str] = None,
         client_secret: Optional["_models.GitHubClientSecret"] = None,
@@ -25572,6 +25597,9 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         :paramtype root_folder: str
         :keyword last_commit_id: Last commit id.
         :paramtype last_commit_id: str
+        :keyword disable_publish: Disable manual publish operation in ADF studio to favor automated
+         publish.
+        :paramtype disable_publish: bool
         :keyword host_name: GitHub Enterprise host name. For example: ``https://github.mydomain.com``.
         :paramtype host_name: str
         :keyword client_id: GitHub bring your own app client id.
@@ -25585,6 +25613,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
             collaboration_branch=collaboration_branch,
             root_folder=root_folder,
             last_commit_id=last_commit_id,
+            disable_publish=disable_publish,
             **kwargs
         )
         self.type = "FactoryGitHubConfiguration"  # type: str
@@ -25767,6 +25796,9 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
     :vartype root_folder: str
     :ivar last_commit_id: Last commit id.
     :vartype last_commit_id: str
+    :ivar disable_publish: Disable manual publish operation in ADF studio to favor automated
+     publish.
+    :vartype disable_publish: bool
     :ivar project_name: VSTS project name. Required.
     :vartype project_name: str
     :ivar tenant_id: VSTS tenant id.
@@ -25789,6 +25821,7 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
         "collaboration_branch": {"key": "collaborationBranch", "type": "str"},
         "root_folder": {"key": "rootFolder", "type": "str"},
         "last_commit_id": {"key": "lastCommitId", "type": "str"},
+        "disable_publish": {"key": "disablePublish", "type": "bool"},
         "project_name": {"key": "projectName", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
@@ -25802,6 +25835,7 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
         root_folder: str,
         project_name: str,
         last_commit_id: Optional[str] = None,
+        disable_publish: Optional[bool] = None,
         tenant_id: Optional[str] = None,
         **kwargs
     ):
@@ -25816,6 +25850,9 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
         :paramtype root_folder: str
         :keyword last_commit_id: Last commit id.
         :paramtype last_commit_id: str
+        :keyword disable_publish: Disable manual publish operation in ADF studio to favor automated
+         publish.
+        :paramtype disable_publish: bool
         :keyword project_name: VSTS project name. Required.
         :paramtype project_name: str
         :keyword tenant_id: VSTS tenant id.
@@ -25827,6 +25864,7 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
             collaboration_branch=collaboration_branch,
             root_folder=root_folder,
             last_commit_id=last_commit_id,
+            disable_publish=disable_publish,
             **kwargs
         )
         self.type = "FactoryVSTSConfiguration"  # type: str
@@ -60092,9 +60130,16 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
      definition file, which will override the 'className' of the spark job definition you provide.
      Type: string (or Expression with resultType string).
     :vartype class_name: JSON
-    :ivar files: Additional files used for reference in the main definition file, which will
-     override the 'files' of the spark job definition you provide.
-    :vartype files: list[any]
+    :ivar files: (Deprecated. Please use pythonCodeReference and filesV2) Additional files used for
+     reference in the main definition file, which will override the 'files' of the spark job
+     definition you provide.
+    :vartype files: list[JSON]
+    :ivar python_code_reference: Additional python code files used for reference in the main
+     definition file, which will override the 'pyFiles' of the spark job definition you provide.
+    :vartype python_code_reference: list[JSON]
+    :ivar files_v2: Additional files used for reference in the main definition file, which will
+     override the 'jars' and 'files' of the spark job definition you provide.
+    :vartype files_v2: list[JSON]
     :ivar target_big_data_pool: The name of the big data pool which will be used to execute the
      spark batch job, which will override the 'targetBigDataPool' of the spark job definition you
      provide.
@@ -60137,6 +60182,8 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         "file": {"key": "typeProperties.file", "type": "object"},
         "class_name": {"key": "typeProperties.className", "type": "object"},
         "files": {"key": "typeProperties.files", "type": "[object]"},
+        "python_code_reference": {"key": "typeProperties.pythonCodeReference", "type": "[object]"},
+        "files_v2": {"key": "typeProperties.filesV2", "type": "[object]"},
         "target_big_data_pool": {
             "key": "typeProperties.targetBigDataPool",
             "type": "BigDataPoolParametrizationReference",
@@ -60161,7 +60208,9 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         arguments: Optional[List[Any]] = None,
         file: Optional[JSON] = None,
         class_name: Optional[JSON] = None,
-        files: Optional[List[Any]] = None,
+        files: Optional[List[JSON]] = None,
+        python_code_reference: Optional[List[JSON]] = None,
+        files_v2: Optional[List[JSON]] = None,
         target_big_data_pool: Optional["_models.BigDataPoolParametrizationReference"] = None,
         executor_size: Optional[JSON] = None,
         conf: Optional[JSON] = None,
@@ -60196,9 +60245,16 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
          definition file, which will override the 'className' of the spark job definition you provide.
          Type: string (or Expression with resultType string).
         :paramtype class_name: JSON
-        :keyword files: Additional files used for reference in the main definition file, which will
-         override the 'files' of the spark job definition you provide.
-        :paramtype files: list[any]
+        :keyword files: (Deprecated. Please use pythonCodeReference and filesV2) Additional files used
+         for reference in the main definition file, which will override the 'files' of the spark job
+         definition you provide.
+        :paramtype files: list[JSON]
+        :keyword python_code_reference: Additional python code files used for reference in the main
+         definition file, which will override the 'pyFiles' of the spark job definition you provide.
+        :paramtype python_code_reference: list[JSON]
+        :keyword files_v2: Additional files used for reference in the main definition file, which will
+         override the 'jars' and 'files' of the spark job definition you provide.
+        :paramtype files_v2: list[JSON]
         :keyword target_big_data_pool: The name of the big data pool which will be used to execute the
          spark batch job, which will override the 'targetBigDataPool' of the spark job definition you
          provide.
@@ -60237,6 +60293,8 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         self.file = file
         self.class_name = class_name
         self.files = files
+        self.python_code_reference = python_code_reference
+        self.files_v2 = files_v2
         self.target_big_data_pool = target_big_data_pool
         self.executor_size = executor_size
         self.conf = conf
@@ -60251,8 +60309,8 @@ class SynapseSparkJobReference(_serialization.Model):
 
     :ivar type: Synapse spark job reference type. Required. "SparkJobDefinitionReference"
     :vartype type: str or ~azure.mgmt.datafactory.models.SparkJobReferenceType
-    :ivar reference_name: Reference spark job name. Required.
-    :vartype reference_name: str
+    :ivar reference_name: Reference spark job name. Expression with resultType string. Required.
+    :vartype reference_name: JSON
     """
 
     _validation = {
@@ -60262,15 +60320,15 @@ class SynapseSparkJobReference(_serialization.Model):
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
-        "reference_name": {"key": "referenceName", "type": "str"},
+        "reference_name": {"key": "referenceName", "type": "object"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.SparkJobReferenceType"], reference_name: str, **kwargs):
+    def __init__(self, *, type: Union[str, "_models.SparkJobReferenceType"], reference_name: JSON, **kwargs):
         """
         :keyword type: Synapse spark job reference type. Required. "SparkJobDefinitionReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.SparkJobReferenceType
-        :keyword reference_name: Reference spark job name. Required.
-        :paramtype reference_name: str
+        :keyword reference_name: Reference spark job name. Expression with resultType string. Required.
+        :paramtype reference_name: JSON
         """
         super().__init__(**kwargs)
         self.type = type
