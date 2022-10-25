@@ -73,10 +73,14 @@ class InputOutputBase(ABC):
         self._meta = meta
         self._data = self._build_data(data)
         self._type = meta.type if meta else kwargs.pop("type", None)
-        self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
+        self._mode = (
+            self._data.mode
+            if self._data is not None and hasattr(self._data, "mode")
+            else kwargs.pop("mode", None)
+        )
         self._description = (
             self._data.description
-            if self._data and hasattr(self._data, "description") and self._data.description
+            if self._data is not None and hasattr(self._data, "description") and self._data.description
             else kwargs.pop("description", None)
         )
         # TODO: remove this

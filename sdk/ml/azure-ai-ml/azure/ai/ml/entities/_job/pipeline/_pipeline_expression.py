@@ -191,16 +191,16 @@ class PipelineExpressionMixin:
         self._validate_binary_operation(other, PipelineExpressionOperator.XOR)
         return PipelineExpression._from_operation(self, None, PipelineExpressionOperator.XOR)
     
-    # def __bool__(self):
-    #     """Python method that is used to implement truth value testing and the built-in operation bool().
-    #
-    #     This method is not supported as PipelineExpressionMixin is designed to record operation history,
-    #     while this method can only return False or True, leading to history breaks here.
-    #     As overloadable boolean operators PEP (refer to: https://www.python.org/dev/peps/pep-0335/)
-    #     was rejected, logical operations are also not supported.
-    #     """
-    #     error_message = f"Type {type(self)} is not supported for operation bool()."
-    #     raise UserErrorException(message=error_message, no_personal_data_message=error_message)
+    def __bool__(self):
+        """Python method that is used to implement truth value testing and the built-in operation bool().
+
+        This method is not supported as PipelineExpressionMixin is designed to record operation history,
+        while this method can only return False or True, leading to history breaks here.
+        As overloadable boolean operators PEP (refer to: https://www.python.org/dev/peps/pep-0335/)
+        was rejected, logical operations are also not supported.
+        """
+        error_message = f"Type {type(self)} is not supported for operation bool()."
+        raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 
 
 class PipelineExpression(PipelineExpressionMixin):
