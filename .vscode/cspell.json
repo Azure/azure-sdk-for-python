@@ -1117,6 +1117,12 @@
         "mrenclave",
         "infile"
       ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
+      ]
     }
   ],
   "allowCompoundWords": true
