@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.identity import CredentialUnavailableError
+from azure.identity import CredentialUnavailableError, TokenCachePersistenceOptions
 from azure.identity.aio import SharedTokenCacheCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
@@ -619,6 +619,19 @@ async def test_initialization():
             with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
                 await credential.get_token("scope")
             assert mock_cache_loader.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_initialization_with_cache_options():
+    """the credential should use user-supplied persistence options"""
+
+    with patch("azure.identity._internal.shared_token_cache._load_persistent_cache") as mock_cache_loader:
+        options = TokenCachePersistenceOptions(name="foo.cache")
+        credential = SharedTokenCacheCredential(cache_persistence_options=options)
+
+        with pytest.raises(CredentialUnavailableError):
+            await credential.get_token("scope")
+        mock_cache_loader.assert_called_once_with(options)
 
 
 @pytest.mark.asyncio
