@@ -18115,7 +18115,7 @@ class RegistryProperties(ResourceBase):
      list[~azure.mgmt.machinelearningservices.models.RegistryRegionArmDetails]
     :ivar managed_resource_group_tags: Tags to be applied to the managed resource group associated
      with this registry.
-    :vartype managed_resource_group_tags: any
+    :vartype managed_resource_group_tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -18129,7 +18129,7 @@ class RegistryProperties(ResourceBase):
         'ml_flow_registry_uri': {'key': 'mlFlowRegistryUri', 'type': 'str'},
         'private_link_count': {'key': 'privateLinkCount', 'type': 'int'},
         'region_details': {'key': 'regionDetails', 'type': '[RegistryRegionArmDetails]'},
-        'managed_resource_group_tags': {'key': 'managedResourceGroupTags', 'type': 'object'},
+        'managed_resource_group_tags': {'key': 'managedResourceGroupTags', 'type': '{str}'},
     }
 
     def __init__(
@@ -18160,7 +18160,7 @@ class RegistryProperties(ResourceBase):
          list[~azure.mgmt.machinelearningservices.models.RegistryRegionArmDetails]
         :keyword managed_resource_group_tags: Tags to be applied to the managed resource group
          associated with this registry.
-        :paramtype managed_resource_group_tags: any
+        :paramtype managed_resource_group_tags: dict[str, str]
         """
         super(RegistryProperties, self).__init__(**kwargs)
         self.public_network_access = kwargs.get('public_network_access', None)
