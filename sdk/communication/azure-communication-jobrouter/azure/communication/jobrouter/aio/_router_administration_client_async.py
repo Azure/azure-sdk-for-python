@@ -59,7 +59,7 @@ from .._api_versions import DEFAULT_VERSION
 _SERIALIZER = Serializer()
 
 
-class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-version-keyword,too-many-public-methods,too-many-lines
+class RouterAdministrationClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create, update, list and delete the following entities: classification policy,
@@ -69,6 +69,10 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         The endpoint of the Azure Communication resource.
     :param ~azure.core.credentials.AzureKeyCredential credential:
         The credentials with which to authenticate
+
+    :keyword api_version: Azure Communication Job Router API version.
+        Default value is "2022-07-18-preview".
+        Note that overriding this default value may result in unsupported behavior.
     """
 
     def __init__(
@@ -100,7 +104,7 @@ class RouterAdministrationClient(object):  # pylint: disable=client-accepts-api-
         self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key, decode_url=True)
         self._client = AzureCommunicationJobRouterService(
             self._endpoint,
-            api_version = self._api_version,
+            api_version=self._api_version,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)
