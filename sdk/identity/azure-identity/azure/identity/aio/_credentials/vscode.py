@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, GetTokenMixin):
     """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
 
-    It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential
-    doesn't work with `Azure Account extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account>`_
+    It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential doesn't
+    work with `Azure Account extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account>`_
     versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
     authenticating with :class:`AzureCliCredential`.
 
