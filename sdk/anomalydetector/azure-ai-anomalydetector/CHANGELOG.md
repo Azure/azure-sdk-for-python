@@ -12,6 +12,24 @@
 
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
+## 3.0.0b6 (2022-11-01)
+  **Features**
+  - Added operation AnomalyDetectorClientOperationsMixin.xxx
+
+  **Bug Fixes**
+  - Fixed an issue with xxx
+
+  **Breaking Changes**
+  - Renamed `detect_entire_series` to `detect_univariate_entire_series`
+  - Renamed `detect_last_point` to `detect_univariate_last_point`
+  - Renamed `detect_change_point` to `detect_univariate_change_point`
+  - Renamed `train_multivariate_model` to `create_and_train_multivariate_model`
+  - Renamed `list_multivariate_model` to `list_multivariate_models`
+  - Renamed `detect_anomaly` to `begin_detect_multivariate_batch_anomaly`
+  - Renamed `get_detection_result` to `get_multivariate_batch_detection_result`
+  - Renamed `last_detect_anomaly` to `detect_multivariate_last_anomaly`
+  - Removed `export_model`
+
 ## 3.0.0b5 (2022-01-23)
 
   - Fix release issues
