@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase
 import pydash
 import pytest
 
@@ -17,7 +17,7 @@ from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 
-from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings
+from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE
 
 _dependent_datasets = {}
 
@@ -60,7 +60,6 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
 )
-@pytest.mark.skipif(condition=not is_live(), reason="Works in live mode, does not work in playback")
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
@@ -111,12 +110,16 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
     @pytest.mark.parametrize(
-        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
-        PARAMETERS_TO_TEST,
+        "test_case_i,test_case_name",
+        TEST_CASE_NAME_ENUMERATE,
     )
-    def test_pipeline_anonymous(
-        self, client: MLClient, yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict
+    def test_pipeline_job_with_anonymous_internal_component(
+        self,
+        client: MLClient,
+        test_case_i: int,
+        test_case_name: str,
     ):
+        yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
         # curated env with name & version
         node_func: InternalComponent = load_component(yaml_path)
 
@@ -124,20 +127,20 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.skip(reason="TODO: can't find newly registered component?")
     @pytest.mark.parametrize(
-        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
-        PARAMETERS_TO_TEST,
+        "test_case_i,test_case_name",
+        TEST_CASE_NAME_ENUMERATE,
     )
-    def test_created_internal_component_in_pipeline(
+    def test_pipeline_job_with_registered_internal_component(
         self,
         client: MLClient,
-        randstr: Callable[[], str],
-        yaml_path,
-        inputs,
-        runsettings_dict,
-        pipeline_runsettings_dict,
+        randstr: Callable[[str], str],
+        test_case_i: int,
+        test_case_name: str,
     ):
-        component_to_register = load_component(yaml_path, params_override=[{"name": randstr("name")}])
+        yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
         component_name = randstr("component_name")
+
+        component_to_register = load_component(yaml_path, params_override=[{"name": component_name}])
         component_resource = client.components.create_or_update(component_to_register)
 
         created_component = client.components.get(component_name, component_resource.version)
@@ -178,23 +181,19 @@ class TestPipelineJob(AzureRecordedTestCase):
         except HttpResponseError as ex:
             assert "CancelPipelineRunInTerminalStatus" in str(ex)
 
-    @pytest.mark.skip(
-        reason="Skip for pipeline component compute bug: https://msdata.visualstudio.com/Vienna/_workitems/edit/1920464"
-    )
+    @pytest.mark.skip(reason="marshmallow.exceptions.ValidationError: miss required jobs.node.component")
     @pytest.mark.parametrize(
-        "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
-        PARAMETERS_TO_TEST,
+        "test_case_i,test_case_name",
+        TEST_CASE_NAME_ENUMERATE,
     )
-    def test_internal_in_pipeline_component(
+    def test_pipeline_component_with_anonymous_internal_component(
         self,
         client: MLClient,
-        randstr: Callable[[], str],
-        yaml_path,
-        inputs,
-        runsettings_dict,
-        pipeline_runsettings_dict,
+        test_case_i: int,
+        test_case_name: str,
     ):
-        component_func = load_component(yaml_path, params_override=[{"name": randstr("name")}])
+        yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
+        component_func = load_component(yaml_path)
 
         @pipeline()
         def sub_pipeline_func():
