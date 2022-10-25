@@ -2086,3 +2086,66 @@ class TestDSLPipeline:
             component_func=component_func2)
         assert len(pipeline.jobs) == 2
         assert component_func2.name in pipeline.jobs
+
+    def test_dsl_pipeline_find_input_owner(self) -> None:
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func1 = load_component(path)
+        data = Data(name="test", version="1", type=AssetTypes.MLTABLE)
+
+        @dsl.pipeline
+        def sub_pipeline(sub_in_num, sub_in_path):
+            sub_node1 = component_func1(component_in_number=sub_in_num, component_in_path=sub_in_path)
+            sub_node2 = component_func1(component_in_number=sub_in_num, component_in_path=sub_node1.outputs.component_out_path)
+            return {"pipeline_out": sub_node2.outputs.component_out_path}
+
+        @dsl.pipeline
+        def root_pipeline(root_in_num, root_in_path):
+            root_node1 = component_func1(component_in_number=root_in_num, component_in_path=root_in_path)
+            root_node2 = component_func1(component_in_number=root_in_num, component_in_path=root_node1.outputs.component_out_path)
+            graph_node1 = sub_pipeline(sub_in_num=root_in_num, sub_in_path=root_node1.outputs.component_out_path)
+            graph_node2 = sub_pipeline(sub_in_num=2, sub_in_path=root_node2.outputs.component_out_path)
+            return {"pipeline_out": graph_node1.outputs.pipeline_out}
+
+        pipeline: PipelineJob = root_pipeline(1, data)
+
+        from azure.ai.ml.entities._job.pipeline._io import NodeInput
+        # plan 2
+        from typing import Tuple, Dict, List
+        from azure.ai.ml.entities._builders import BaseNode
+
+        def _get_node(_pipeline: PipelineJob, yaml_path: str) -> BaseNode:
+            cur_node = _pipeline
+            is_first_layer = True
+            for key in yaml_path.split("."):
+                if not is_first_layer:
+                    cur_node = cur_node._component
+                else:
+                    is_first_layer = False
+                cur_node = cur_node.jobs[key]
+            return cur_node
+
+        # plan 1: provide util to find the owner of a node
+        def get_owner(_input: NodeInput):
+            raise NotImplementedError
+
+        # for now, for node in a sub-graph, its will be like this:
+        # _owner: itself
+        # _data: PipelineInput(name="sub_in_path", owner=None, data=None)
+        # we need to maintain its _data instead of _name
+        assert id(get_owner(_get_node(
+            pipeline, "graph_node1.sub_node1"
+        ).inputs["component_in_path"])) == id(pipeline.jobs["root_node1"])
+
+        # plan 2: provide a util to export graph from a pipeline
+        def export_graph(_pipeline: PipelineJob) -> Tuple[Dict[int, BaseNode], Dict[int, List[int]]]:
+            raise NotImplementedError
+
+        node_mapping, graph = export_graph(pipeline)
+
+        # we may process the graph layer by layer
+        assert id(node_mapping[id(pipeline.jobs["root_node1"])]) == id(pipeline.jobs["root_node1"])
+        assert graph[id(pipeline.jobs["root_node1"])] == [
+            id(pipeline.jobs["root_node2"]),
+            id(_get_node(pipeline, "graph_node1.sub_node1"))
+        ]
+
