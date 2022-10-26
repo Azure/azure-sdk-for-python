@@ -49,7 +49,7 @@ from azure.ai.ml.entities import (
     OnlineDeployment,
     OnlineEndpoint,
     Registry,
-    Workspace,
+    Workspace
 )
 from azure.ai.ml.entities._assets import WorkspaceModelReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -68,6 +68,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    VNetOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -418,6 +419,15 @@ class MLClient(object):
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
+        self._vnet = VNetOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._credential,
+            self._operation_container,
+            requests_pipeline=self._requests_pipeline,
+            **ops_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.VNET, self._vnet)
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
@@ -567,6 +577,15 @@ class MLClient(object):
         :rtype: JObOperations
         """
         return self._jobs
+    
+    @property
+    def vnet(self) -> VNetOperations:
+        """A collection of job related operations.
+
+        :return: Vnet operations
+        :rtype: VNetOperations
+        """
+        return self._vnet
 
     @property
     def compute(self) -> ComputeOperations:

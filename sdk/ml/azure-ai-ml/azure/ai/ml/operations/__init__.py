@@ -13,6 +13,7 @@ from ._data_operations import DataOperations
 from ._datastore_operations import DatastoreOperations
 from ._environment_operations import EnvironmentOperations
 from ._job_operations import JobOperations
+from ._vnet_operations import VNetOperations
 from ._model_operations import ModelOperations
 from ._online_deployment_operations import OnlineDeploymentOperations
 from ._online_endpoint_operations import OnlineEndpointOperations
@@ -24,6 +25,7 @@ __all__ = [
     "ComputeOperations",
     "DatastoreOperations",
     "JobOperations",
+    "VNetOperations",
     "ModelOperations",
     "WorkspaceOperations",
     "RegistryOperations",

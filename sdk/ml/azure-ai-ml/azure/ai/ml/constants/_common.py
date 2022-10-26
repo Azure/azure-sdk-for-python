@@ -173,6 +173,7 @@ class AzureMLResourceType(object):
     BATCH_DEPLOYMENT = "batch_deployments"
     ENVIRONMENT = "environments"
     JOB = "jobs"
+    VNET = "vnets"
     MODEL = "models"
     VIRTUALCLUSTER = "virtualclusters"
     WORKSPACE = "workspaces"
@@ -183,6 +184,7 @@ class AzureMLResourceType(object):
 
     NAMED_TYPES = {
         JOB,
+        VNET,
         COMPUTE,
         WORKSPACE,
         ONLINE_ENDPOINT,
