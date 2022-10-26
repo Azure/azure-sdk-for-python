@@ -417,7 +417,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             frame_type = frame_header[5]
             if verify_frame_type is not None and frame_type != verify_frame_type:
                 _LOGGER.debug(
-                    f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
                 )
 
             # >I is an unsigned int, but the argument to sock.recv is signed,
