@@ -437,6 +437,6 @@ class TestCommandComponentEntity:
             (tmp_pycache_folder / "a.pyc").touch()
             (tmp_pycache_folder / "b.pyc").touch()
             # resolve and check if pycache exists in code asset
-            with component._resolve_local_code() as code_path:
-                pycache_path = Path(component_yaml).parent / code_path / Path(tmp_dir).name / "__pycache__"
+            with component._resolve_local_code() as code:
+                pycache_path = Path(component_yaml).parent / code.path / Path(tmp_dir).name / "__pycache__"
                 assert not pycache_path.exists()
