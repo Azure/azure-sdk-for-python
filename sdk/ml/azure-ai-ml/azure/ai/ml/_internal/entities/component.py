@@ -22,7 +22,6 @@ from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
 from ..._utils._asset_utils import IgnoreFile, get_ignore_file
-from ...entities._assets import Code
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
@@ -118,9 +117,6 @@ class InternalComponent(Component):
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
 
-        # attributes with property getter and/or setter
-        self._code = None
-
         self.successful_return_code = successful_return_code
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
@@ -135,16 +131,6 @@ class InternalComponent(Component):
         self.starlite = starlite
         self.ae365exepool = ae365exepool
         self.launcher = launcher
-
-    @property
-    def code(self):
-        return self._code
-
-    @code.setter
-    def code(self, value):
-        if isinstance(value, Code):
-            InternalCode._from_base(value)
-        self._code = value
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -249,6 +235,8 @@ class InternalComponent(Component):
         tmp_code_dir = self._additional_includes.code.absolute()
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.
+        # calculate snapshot id here instead of inside InternalCode to ensure that
+        # snapshot id is calculated based on the resolved code path
         yield InternalCode(
             name=self._get_snapshot_id(tmp_code_dir),
             version="1",

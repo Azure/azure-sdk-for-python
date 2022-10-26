@@ -8,15 +8,6 @@ from ...entities._assets import Code
 
 
 class InternalCode(Code):
-    @classmethod
-    def _from_base(cls, code: Code) -> "InternalCode":
-        if isinstance(code, InternalCode):
-            return code
-        if isinstance(code, Code):
-            code.__class__ = cls
-            return code
-        raise TypeError(f"Cannot cast {type(code)} to {cls}")
-
     @property
     def _upload_hash(self) -> Optional[str]:
         # This property will be used to identify the uploaded content when trying to

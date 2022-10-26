@@ -60,6 +60,10 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
 )
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Only run in live mode to save time & unblock CI, need to remove after CI is divided."
+)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
