@@ -26,6 +26,7 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_FORMAT,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
@@ -448,21 +449,24 @@ class Component(
 
     @contextmanager
     def _resolve_local_code(self):
-        """Resolve working directory path for the component."""
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            if hasattr(self, "code"):
-                code = getattr(self, "code")
-                # Hack: when code not specified, we generated a file which contains
-                # COMPONENT_PLACEHOLDER as code
-                # This hack was introduced because job does not allow running component without a
-                # code, and we need to make sure when component updated some field(eg: description),
-                # the code remains the same. Benefit of using a constant code for all components
-                # without code is this will generate same code for anonymous components which
-                # enables component reuse
-                if code is None:
+        """Create a Code object pointing to local code and yield it."""
+        if hasattr(self, "code"):
+            code = getattr(self, "code")
+            # Hack: when code not specified, we generated a file which contains
+            # COMPONENT_PLACEHOLDER as code
+            # This hack was introduced because job does not allow running component without a
+            # code, and we need to make sure when component updated some field(eg: description),
+            # the code remains the same. Benefit of using a constant code for all components
+            # without code is this will generate same code for anonymous components which
+            # enables component reuse
+            if code is None:
+                with tempfile.TemporaryDirectory() as tmp_dir:
                     code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
                     with open(code, "w") as f:
                         f.write(COMPONENT_CODE_PLACEHOLDER)
-                yield code
+                    yield Code(base_path=self._base_path, path=code)
             else:
-                yield tmp_dir
+                # call component.code.setter first in case there is a custom setter
+                yield Code(base_path=self._base_path, path=code)
+        else:
+            raise ValueError(f"{self.__class__} does not have attribute code.")

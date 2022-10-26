@@ -151,8 +151,8 @@ To migrate an existing test suite to use the test proxy, or to learn more about 
 
 ### Perform one-time test proxy setup
 
-1. Docker is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install].
-2. After installing, make sure Docker is running and is using Linux containers before running tests.
+1. Docker (or Podman) is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install], or install Podman at [podman.io][podman]. To use Podman, set an alias for `podman` to replace the `docker` command.
+2. After installing, make sure Docker/Podman is running and is using Linux containers before running tests.
 3. Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
 order to communicate with the test proxy over a secure connection.
 
@@ -213,6 +213,7 @@ Create a `conftest.py` file within your package's test directory (`sdk/{service}
 session-level fixture that accepts `devtools_testutils.test_proxy` as a parameter (and has `autouse` set to `True`):
 
 ```python
+import pytest
 from devtools_testutils import test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -358,27 +359,27 @@ There are two primary ways to keep secrets from being written into recordings:
 1. The `EnvironmentVariableLoader` will automatically sanitize the values of captured environment variables with the
   provided fake values.
 2. Sanitizers can be registered via `add_*_sanitizer` methods in `devtools_testutils`. For example, the general-use
-  method for sanitizing recording bodies, headers, and URIs is `add_general_regex_sanitizer`. Other sanitizers are
+  method for sanitizing recording bodies, headers, and URIs is `add_general_string_sanitizer`. Other sanitizers are
   available for more specific scenarios and can be found at [devtools_testutils/sanitizers.py][py_sanitizers].
 
 As a simple example of registering a sanitizer, you can provide the exact value you want to sanitize from recordings as
-the `regex` in the general regex sanitizer. To replace all instances of the string "my-key-vault" with "fake-vault" in
+the `target` in the general string sanitizer. To replace all instances of the string "my-key-vault" with "fake-vault" in
 recordings, you could add something like the following in the package's `conftest.py` file:
 
 ```python
-from devtools_testutils import add_general_regex_sanitizer, test_proxy
+from devtools_testutils import add_general_string_sanitizer, test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
+    add_general_string_sanitizer(target="my-key-vault", value="fake-vault")
 ```
 
 Note that the sanitizer fixture accepts the `test_proxy` fixture as a parameter to ensure the proxy is started
 beforehand (see [Start the test proxy server](#start-the-test-proxy-server)).
 
 For a more advanced scenario, where we want to sanitize the account names of all storage endpoints in recordings, we
-could instead call
+could instead use `add_general_regex_sanitizer`:
 
 ```python
 add_general_regex_sanitizer(
@@ -640,7 +641,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
-[generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/6e1f7c02af0c28d5725a532ebe4fc7125256858c/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L200
+[generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196
 [generate_sas_example]: https://github.com/Azure/azure-sdk-for-python/blob/3e3fbe818eb3c80ffdf6f9f1a86affd7e879b6ce/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1691
 
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.json
@@ -650,7 +651,8 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
-[proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
+[podman]: https://podman.io/
+[proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md
 [proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py

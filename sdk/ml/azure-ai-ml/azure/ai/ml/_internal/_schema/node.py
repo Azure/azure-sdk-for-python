@@ -40,7 +40,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
         # dict to node object
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
-        return pipeline_node_factory.load_from_dict(data)  # pylint: disable=E1125, too-many-function-args
+        return pipeline_node_factory.load_from_dict(data=data)
 
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):  # pylint: disable=unused-argument, no-self-use

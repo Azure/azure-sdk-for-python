@@ -38,6 +38,7 @@ def bodiless_matching(test_proxy):
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.production_experience_test
 class TestModel(AzureRecordedTestCase):
     def test_crud_file(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
         path = Path("./tests/test_configs/model/model_full.yml")

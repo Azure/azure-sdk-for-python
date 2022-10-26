@@ -12,6 +12,7 @@ from azure.ai.ml.entities._assets.environment import BuildContext
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experience_test
 class TestEnvironmentEntity:
     def test_eq_neq(self) -> None:
         environment = Environment(name="name", version="16", image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04")
