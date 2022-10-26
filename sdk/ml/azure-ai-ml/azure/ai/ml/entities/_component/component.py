@@ -451,23 +451,27 @@ class Component(
     @contextmanager
     def _resolve_local_code(self):
         """Create a Code object pointing to local code and yield it."""
-        if hasattr(self, "code"):
-            code = getattr(self, "code")
-            # Hack: when code not specified, we generated a file which contains
-            # COMPONENT_PLACEHOLDER as code
-            # This hack was introduced because job does not allow running component without a
-            # code, and we need to make sure when component updated some field(eg: description),
-            # the code remains the same. Benefit of using a constant code for all components
-            # without code is this will generate same code for anonymous components which
-            # enables component reuse
-            if code is None:
-                with tempfile.TemporaryDirectory() as tmp_dir:
+        if not hasattr(self, "code"):
+            raise ValueError(f"{self.__class__} does not have attribute code.")
+        code = getattr(self, "code")
+        if code is not None and os.path.isfile(code):
+            yield Code(base_path=self._base_path, path=code)
+        else:
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                if code is None:
+                    # Hack: when code not specified, we generated a file which contains
+                    # COMPONENT_PLACEHOLDER as code
+                    # This hack was introduced because job does not allow running component without a
+                    # code, and we need to make sure when component updated some field(eg: description),
+                    # the code remains the same. Benefit of using a constant code for all components
+                    # without code is this will generate same code for anonymous components which
+                    # enables component reuse
                     code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
                     with open(code, "w") as f:
                         f.write(COMPONENT_CODE_PLACEHOLDER)
                     yield Code(base_path=self._base_path, path=code)
-            else:
-                # call component.code.setter first in case there is a custom setter
-                yield Code(base_path=self._base_path, path=code)
-        else:
-            raise ValueError(f"{self.__class__} does not have attribute code.")
+                else:
+                    src_path = Path(self._base_path) / code
+                    dst_path = Path(tmp_dir) / src_path.name
+                    _copy_folder_ignore_pycache(src_path, dst_path)
+                    yield Code(base_path=self._base_path, path=dst_path)
