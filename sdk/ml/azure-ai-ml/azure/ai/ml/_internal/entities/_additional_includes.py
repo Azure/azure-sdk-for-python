@@ -156,6 +156,11 @@ class _AdditionalIncludes:
         for additional_include in self._includes:
             src_path = (base_path / additional_include).resolve()
             if self._is_folder_to_compress(src_path):
+                # note: additional include is a zip file, we need to compress corresponding folder,
+                # create a temp folder and copy files to this, filter __pycache__ in the folder
+                # during the copy.
+                # this operation can be replaced by using zipfile.ZipFile, which
+                # allows us pick files to compress rather than copy -- may improve performance.
                 zip_additional_include = (base_path / additional_include).resolve()
                 folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
                 with tempfile.TemporaryDirectory() as tmp_dir:
