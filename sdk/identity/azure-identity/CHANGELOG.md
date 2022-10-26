@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-* `AzureCliCredential` now works even when `az` prints warnings to stderr.
+* `AzureCliCredential` now works even when `az` prints warnings to stderr. ([#26857](https://github.com/Azure/azure-sdk-for-python/issues/26857))
 
 ### Other Changes
 
