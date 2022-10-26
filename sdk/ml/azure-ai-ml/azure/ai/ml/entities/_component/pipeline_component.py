@@ -21,7 +21,7 @@ from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
-from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, LoopNode
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -322,6 +322,16 @@ class PipelineComponent(Component):
             jobs=data.get("jobs"),
             _source=ComponentSource.REMOTE_WORKSPACE_JOB,
         )
+
+    @classmethod
+    def _resolve_sub_nodes(cls, rest_jobs):
+        sub_nodes = {}
+        for node_name, node in rest_jobs.items():
+            if LoopNode._is_loop_node_dict(node):
+                sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
+            else:
+                sub_nodes[node_name] = BaseNode._from_rest_object(node)
+        return sub_nodes
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
