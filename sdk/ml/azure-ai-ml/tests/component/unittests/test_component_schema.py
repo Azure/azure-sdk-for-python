@@ -1,5 +1,6 @@
 import copy
 import json
+import os
 from pathlib import Path
 from unittest import mock
 
@@ -13,11 +14,7 @@ from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._component.component import (
-    COMPONENT_CODE_PLACEHOLDER,
-    COMPONENT_PLACEHOLDER,
-    TEMP_COMPONENT_CODE_FOLDER
-)
+from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
 from azure.ai.ml.entities._component.component_factory import component_factory
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -62,11 +59,10 @@ def load_component_entity_from_yaml(
                     # for generated code, return content in it
                     with open(arg.path) as f:
                         return f.read()
-                elif TEMP_COMPONENT_CODE_FOLDER in str(arg.path):
-                    # for code in temp folder, truncate the path and return it
-                    mark = TEMP_COMPONENT_CODE_FOLDER
-                    return f"{str(arg.path)[(str(arg.path).index(mark) + len(mark)):]}:1"
-                return f"{str(arg.path)}:1"
+                elif os.path.isfile(arg.path):
+                    return f"{str(arg.path)}:1"
+                else:
+                    return f"{Path(arg.path).name}:1"
         return "xxx"
 
     # change internal assets into arm id

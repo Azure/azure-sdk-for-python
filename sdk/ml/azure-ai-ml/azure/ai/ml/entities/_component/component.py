@@ -42,7 +42,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 COMPONENT_PLACEHOLDER = "COMPONENT_PLACEHOLDER"
 COMPONENT_CODE_PLACEHOLDER = "command_component: code_placeholder"
-TEMP_COMPONENT_CODE_FOLDER = "TEMP_COMPONENT_CODE_FOLDER"
 
 
 class Component(
@@ -476,6 +475,6 @@ class Component(
                     else:
                         # copy to temp folder to filter potential __pycache__
                         src_path = Path(self.base_path) / code
-                        dst_path = Path(tmp_dir) / TEMP_COMPONENT_CODE_FOLDER / src_path.name
+                        dst_path = Path(tmp_dir) / src_path.name
                         _copy_folder_ignore_pycache(src_path, dst_path)
                         yield dst_path
