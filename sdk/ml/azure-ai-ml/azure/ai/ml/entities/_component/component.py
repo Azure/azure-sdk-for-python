@@ -471,6 +471,7 @@ class Component(
                         f.write(COMPONENT_CODE_PLACEHOLDER)
                     yield Code(base_path=self._base_path, path=code)
                 else:
+                    # copy to temp folder to filter potential __pycache__
                     src_path = Path(self._base_path) / code
                     dst_path = Path(tmp_dir) / src_path.name
                     _copy_folder_ignore_pycache(src_path, dst_path)
