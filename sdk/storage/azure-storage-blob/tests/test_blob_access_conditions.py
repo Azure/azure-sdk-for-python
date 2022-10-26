@@ -3071,6 +3071,36 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_header_metadata_sort_in_upload_blob_fails(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup()
+        data = b'hello world'
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        try:
+            container_client = bsc.create_container(self.container_name)
+        except:
+            container_client = bsc.get_container_client(self.container_name)
+        blob_client = container_client.get_blob_client('blob1')
+
+        # Relevant ASCII characters (excluding 'Bad Request' values)
+        ascii_subset = "!#$%&*+.-^_~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
+
+        # Build out metadata
+        metadata = dict()
+        for c in ascii_subset:
+            metadata[c] = 'a'
+
+        # Act
+        with pytest.raises(HttpResponseError) as e:
+            blob_client.upload_blob(data, length=len(data), metadata=metadata)
+
+        # Assert
+        assert StorageErrorCode.invalid_metadata == e.value.error_code
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_header_metadata_sort_in_upload_blob(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -3091,6 +3121,6 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
                     }
 
         # Act
-        resp = blob_client.upload_blob(data, length=len(data), metadata=metadata)
+        blob_client.upload_blob(data, length=len(data), metadata=metadata)
 
 # ------------------------------------------------------------------------------

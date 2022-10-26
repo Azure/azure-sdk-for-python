@@ -48,10 +48,11 @@ def _wrap_exception(ex, desired_type):
     # TODO: In the future we will log the trace
     return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
 
+# This method attempts to emulate the sorting done by the service
 @staticmethod
-def _metadata_sort(input_header):
-    # Define the custom alphabet (TODO: Look at what service accepts, make this dictionary only have service-allowed)
-    custom_weights = "!\"#$%&\'()*+,./-^_`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{|}~"
+def _service_sort(input_header):
+    # Define the custom alphabet for weights
+    custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build a dictionary of tuples
     header_dict = dict(input_header)
@@ -116,16 +117,9 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         string_to_sign = ''
         x_ms_headers = []
         for name, value in request.http_request.headers.items():
-            # Here is where we will encounter 'x-ms-meta-<blah>', think of more sophisticated way to achieve same functionality
             if name.startswith('x-ms-'):
                 x_ms_headers.append((name.lower(), value))
-
-        # Design question comes in here: We don't touch critical code path, only additive (means we will pysort no matter what, then custom sort if applicable) Or do an if check (so only pysort or custom sort)
-        x_ms_headers.sort()
-
-        if any("x-ms-meta" in k for (k, v) in x_ms_headers):
-            x_ms_headers = _metadata_sort(x_ms_headers)
-
+        x_ms_headers = _service_sort(x_ms_headers)
         for name, value in x_ms_headers:
             if value is not None:
                 string_to_sign += ''.join([name, ':', value, '\n'])
