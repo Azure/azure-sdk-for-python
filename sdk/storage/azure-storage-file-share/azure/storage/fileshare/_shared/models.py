@@ -54,6 +54,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OPERATION_TIMED_OUT = "OperationTimedOut"
     OUT_OF_RANGE_INPUT = "OutOfRangeInput"
     OUT_OF_RANGE_QUERY_PARAMETER_VALUE = "OutOfRangeQueryParameterValue"
+    PUBLIC_ACCESS_NOT_PERMITTED = "PublicAccessNotPermitted"
     REQUEST_BODY_TOO_LARGE = "RequestBodyTooLarge"
     RESOURCE_TYPE_MISMATCH = "ResourceTypeMismatch"
     REQUEST_URL_FAILED_TO_PARSE = "RequestUrlFailedToParse"
