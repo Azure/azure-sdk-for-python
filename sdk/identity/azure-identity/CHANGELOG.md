@@ -1,17 +1,20 @@
 # Release History
 
-## 1.12.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.12.0 (2022-11-08)
 
 ### Bugs Fixed
 
-- `AzureCliCredential` now works even when `az` prints warnings to stderr. ([#26857](https://github.com/Azure/azure-sdk-for-python/issues/26857))
+- `AzureCliCredential` now works even when `az` prints warnings to stderr. ([#26857](https://github.com/Azure/azure-sdk-for-python/issues/26857)) (thanks to @micromaomao for the contribution)
 - Fixed issue where user-supplied `TokenCachePersistenceOptions` weren't propagated when using `SharedTokenCacheCredential` ([#26982](https://github.com/Azure/azure-sdk-for-python/issues/26982))
 
-### Other Changes
+### Breaking Changes
+
+- Excluded `VisualStudioCodeCredential` from `DefaultAzureCredential` token chain by default as SDK 
+  authentication via Visual Studio Code is broken due to 
+  issue [#23249](https://github.com/Azure/azure-sdk-for-python/issues/23249). The `VisualStudioCodeCredential` will be 
+  re-enabled in the `DefaultAzureCredential` flow once a fix is in place. 
+  Issue [#25713](https://github.com/Azure/azure-sdk-for-python/issues/25713) tracks this. In the meantime 
+  Visual Studio Code users can authenticate their development environment using the [Azure CLI](https://learn.microsoft.com/cli/azure/).
 
 ## 1.12.0b2 (2022-10-11)
 
