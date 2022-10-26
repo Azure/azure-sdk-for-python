@@ -71,7 +71,18 @@ class _AdditionalIncludes:
             shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__"))
 
     @staticmethod
-    def _zip_need_to_compress(path: Path) -> bool:
+    def _is_folder_to_compress(path: Path) -> bool:
+        """Check if the additional include needs to compress corresponding folder as a zip.
+
+        For example, given additional include /mnt/c/hello.zip
+          1) if a file named /mnt/c/hello.zip already exists, return False (simply copy)
+          2) if a folder named /mnt/c/hello exists, return True (compress as a zip and copy)
+
+        :param path: Given path in additional include.
+        :type path: Path
+        :return: If the path need to be compressed as a zip file.
+        :rtype: bool
+        """
         if path.suffix != ".zip":
             return False
         # if zip file exists, simply copy as other additional includes
@@ -95,7 +106,7 @@ class _AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
                 continue
 
-            if not src_path.exists() and not self._zip_need_to_compress(src_path):
+            if not src_path.exists() and not self._is_folder_to_compress(src_path):
                 error_msg = f"Unable to find additional include {additional_include} for {self._yaml_name}."
                 validation_result.append_error(message=error_msg)
                 continue
@@ -144,7 +155,7 @@ class _AdditionalIncludes:
         base_path = self._additional_includes_file_path.parent
         for additional_include in self._includes:
             src_path = (base_path / additional_include).resolve()
-            if self._zip_need_to_compress(src_path):
+            if self._is_folder_to_compress(src_path):
                 zip_additional_include = (base_path / additional_include).resolve()
                 folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
                 with tempfile.TemporaryDirectory() as tmp_dir:
