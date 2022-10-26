@@ -30,6 +30,10 @@ from ._operations import NspAssociationsOperations
 from ._operations import NspAssociationReconcileOperations
 from ._operations import PerimeterAssociableResourceTypesOperations
 from ._operations import NspAccessRulesReconcileOperations
+from ._operations import NspLinksOperations
+from ._operations import NspLinkReconcileOperations
+from ._operations import NspLinkReferencesOperations
+from ._operations import NspLinkReferenceReconcileOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
@@ -60,6 +64,10 @@ __all__ = [
     "NspAssociationReconcileOperations",
     "PerimeterAssociableResourceTypesOperations",
     "NspAccessRulesReconcileOperations",
+    "NspLinksOperations",
+    "NspLinkReconcileOperations",
+    "NspLinkReferencesOperations",
+    "NspLinkReferenceReconcileOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

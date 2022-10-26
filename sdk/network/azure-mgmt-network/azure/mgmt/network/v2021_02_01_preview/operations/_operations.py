@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -32,12 +32,16 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 _SERIALIZER = Serializer()
@@ -50,7 +54,9 @@ def build_network_managers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -81,7 +87,9 @@ def build_network_managers_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -115,7 +123,9 @@ def build_network_managers_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -146,7 +156,9 @@ def build_network_managers_patch_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -180,7 +192,9 @@ def build_network_managers_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +229,9 @@ def build_network_managers_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -249,7 +265,9 @@ def build_network_manager_commits_post_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -283,7 +301,9 @@ def build_network_manager_deployment_status_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -323,7 +343,9 @@ def build_effective_virtual_networks_list_by_network_manager_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -361,7 +383,9 @@ def build_effective_virtual_networks_list_by_network_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -396,7 +420,9 @@ def build_active_connectivity_configurations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -430,7 +456,9 @@ def build_active_security_admin_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -464,7 +492,9 @@ def build_active_security_user_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -498,7 +528,9 @@ def build_connectivity_configurations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -530,7 +562,9 @@ def build_connectivity_configurations_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -565,7 +599,9 @@ def build_connectivity_configurations_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -603,7 +639,9 @@ def build_connectivity_configurations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -638,7 +676,9 @@ def build_effective_connectivity_configurations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -672,7 +712,9 @@ def build_network_manager_effective_security_admin_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -706,7 +748,9 @@ def build_network_groups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -744,7 +788,9 @@ def build_network_groups_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -781,7 +827,9 @@ def build_network_groups_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -819,7 +867,9 @@ def build_network_groups_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -860,7 +910,9 @@ def build_security_user_configurations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -895,7 +947,9 @@ def build_security_user_configurations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -927,7 +981,9 @@ def build_security_user_configurations_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -962,7 +1018,9 @@ def build_security_user_configurations_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1001,7 +1059,9 @@ def build_user_rule_collections_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1042,7 +1102,9 @@ def build_user_rule_collections_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1080,7 +1142,9 @@ def build_user_rule_collections_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -1121,7 +1185,9 @@ def build_user_rule_collections_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1162,7 +1228,9 @@ def build_user_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1205,7 +1273,9 @@ def build_user_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1245,7 +1315,9 @@ def build_user_rules_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -1288,7 +1360,9 @@ def build_user_rules_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1328,7 +1402,9 @@ def build_security_admin_configurations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1363,7 +1439,9 @@ def build_security_admin_configurations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1395,7 +1473,9 @@ def build_security_admin_configurations_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -1430,7 +1510,9 @@ def build_security_admin_configurations_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1469,7 +1551,9 @@ def build_admin_rule_collections_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1510,7 +1594,9 @@ def build_admin_rule_collections_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1548,7 +1634,9 @@ def build_admin_rule_collections_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -1589,7 +1677,9 @@ def build_admin_rule_collections_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1630,7 +1720,9 @@ def build_admin_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1673,7 +1765,9 @@ def build_admin_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1713,7 +1807,9 @@ def build_admin_rules_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -1756,7 +1852,9 @@ def build_admin_rules_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1790,7 +1888,9 @@ def build_network_security_perimeters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1823,7 +1923,9 @@ def build_network_security_perimeters_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -1859,7 +1961,9 @@ def build_network_security_perimeters_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1892,7 +1996,9 @@ def build_network_security_perimeters_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1929,7 +2035,9 @@ def build_network_security_perimeters_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1967,7 +2075,9 @@ def build_nsp_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2005,7 +2115,9 @@ def build_nsp_profiles_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -2046,7 +2158,9 @@ def build_nsp_profiles_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2086,7 +2200,9 @@ def build_nsp_profiles_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2128,7 +2244,9 @@ def build_nsp_access_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2168,7 +2286,9 @@ def build_nsp_access_rules_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -2211,7 +2331,9 @@ def build_nsp_access_rules_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2253,7 +2375,9 @@ def build_nsp_access_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2295,7 +2419,9 @@ def build_nsp_associations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2333,7 +2459,9 @@ def build_nsp_associations_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -2374,7 +2502,9 @@ def build_nsp_associations_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2414,7 +2544,9 @@ def build_nsp_associations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2457,7 +2589,9 @@ def build_nsp_association_reconcile_post_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -2494,7 +2628,9 @@ def build_perimeter_associable_resource_types_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2531,7 +2667,9 @@ def build_nsp_access_rules_reconcile_post_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -2561,6 +2699,363 @@ def build_nsp_access_rules_reconcile_post_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
+
+
+def build_nsp_links_get_request(
+    resource_group_name: str, network_security_perimeter_name: str, link_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+        "linkName": _SERIALIZER.url("link_name", link_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_links_create_or_update_request(
+    resource_group_name: str, network_security_perimeter_name: str, link_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+        "linkName": _SERIALIZER.url("link_name", link_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_links_delete_request(
+    resource_group_name: str, network_security_perimeter_name: str, link_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+        "linkName": _SERIALIZER.url("link_name", link_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_links_list_request(
+    resource_group_name: str,
+    network_security_perimeter_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int", maximum=20, minimum=1)
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_link_reconcile_post_request(
+    resource_group_name: str, network_security_perimeter_name: str, link_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}/reconcile",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+        "linkName": _SERIALIZER.url("link_name", link_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_link_references_get_request(
+    resource_group_name: str,
+    network_security_perimeter_name: str,
+    link_reference_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+        "linkReferenceName": _SERIALIZER.url("link_reference_name", link_reference_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_link_references_delete_request(
+    resource_group_name: str,
+    network_security_perimeter_name: str,
+    link_reference_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+        "linkReferenceName": _SERIALIZER.url("link_reference_name", link_reference_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_link_references_list_request(
+    resource_group_name: str,
+    network_security_perimeter_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int", maximum=20, minimum=1)
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_nsp_link_reference_reconcile_post_request(
+    resource_group_name: str,
+    network_security_perimeter_name: str,
+    link_reference_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2021-02-01-preview")
+    )  # type: Literal["2021-02-01-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}/reconcile",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "networkSecurityPerimeterName": _SERIALIZER.url(
+            "network_security_perimeter_name", network_security_perimeter_name, "str"
+        ),
+        "linkReferenceName": _SERIALIZER.url("link_reference_name", link_reference_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class NetworkManagersOperations:
@@ -2606,7 +3101,9 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManager]
 
         request = build_network_managers_get_request(
@@ -2730,7 +3227,9 @@ class NetworkManagersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManager]
 
@@ -2806,7 +3305,9 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_network_managers_delete_request(
@@ -2926,7 +3427,9 @@ class NetworkManagersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManager]
 
@@ -2995,7 +3498,9 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManagerListResult]
 
         error_map = {
@@ -3023,10 +3528,17 @@ class NetworkManagersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -3082,7 +3594,9 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManagerListResult]
 
         error_map = {
@@ -3111,10 +3625,17 @@ class NetworkManagersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -3255,7 +3776,9 @@ class NetworkManagerCommitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManagerCommit]
 
@@ -3415,7 +3938,9 @@ class NetworkManagerDeploymentStatusOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManagerDeploymentStatusListResult]
 
@@ -3603,7 +4128,9 @@ class EffectiveVirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EffectiveVirtualNetworksListResult]
 
@@ -3750,7 +4277,9 @@ class EffectiveVirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EffectiveVirtualNetworksListResult]
 
@@ -3911,7 +4440,9 @@ class ActiveConnectivityConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActiveConnectivityConfigurationsListResult]
 
@@ -4068,7 +4599,9 @@ class ActiveSecurityAdminRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActiveSecurityAdminRulesListResult]
 
@@ -4225,7 +4758,9 @@ class ActiveSecurityUserRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ActiveSecurityUserRulesListResult]
 
@@ -4321,7 +4856,9 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ConnectivityConfiguration]
 
         request = build_connectivity_configurations_get_request(
@@ -4462,7 +4999,9 @@ class ConnectivityConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ConnectivityConfiguration]
 
@@ -4543,7 +5082,9 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_connectivity_configurations_delete_request(
@@ -4607,7 +5148,9 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ConnectivityConfigurationListResult]
 
         error_map = {
@@ -4637,10 +5180,17 @@ class ConnectivityConfigurationsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -4787,7 +5337,9 @@ class EffectiveConnectivityConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop(
             "cls", None
@@ -4950,7 +5502,9 @@ class NetworkManagerEffectiveSecurityAdminRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkManagerEffectiveSecurityAdminRulesListResult]
 
@@ -5044,7 +5598,9 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkGroup]
 
         request = build_network_groups_get_request(
@@ -5195,7 +5751,9 @@ class NetworkGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkGroup]
 
@@ -5280,7 +5838,9 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_network_groups_delete_request(
@@ -5343,7 +5903,9 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkGroupListResult]
 
         error_map = {
@@ -5373,10 +5935,17 @@ class NetworkGroupsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -5461,7 +6030,9 @@ class SecurityUserConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityConfigurationListResult]
 
         error_map = {
@@ -5491,10 +6062,17 @@ class SecurityUserConfigurationsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -5553,7 +6131,9 @@ class SecurityUserConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityConfiguration]
 
         request = build_security_user_configurations_get_request(
@@ -5691,7 +6271,9 @@ class SecurityUserConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityConfiguration]
 
@@ -5770,7 +6352,9 @@ class SecurityUserConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_security_user_configurations_delete_request(
@@ -5856,7 +6440,9 @@ class UserRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RuleCollectionListResult]
 
         error_map = {
@@ -5887,10 +6473,17 @@ class UserRuleCollectionsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -5957,7 +6550,9 @@ class UserRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RuleCollection]
 
         request = build_user_rule_collections_get_request(
@@ -6104,7 +6699,9 @@ class UserRuleCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RuleCollection]
 
@@ -6192,7 +6789,9 @@ class UserRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_user_rule_collections_delete_request(
@@ -6283,7 +6882,9 @@ class UserRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.UserRuleListResult]
 
         error_map = {
@@ -6315,10 +6916,17 @@ class UserRulesOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -6388,7 +6996,9 @@ class UserRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.BaseUserRule]
 
         request = build_user_rules_get_request(
@@ -6545,7 +7155,9 @@ class UserRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.BaseUserRule]
 
@@ -6637,7 +7249,9 @@ class UserRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_user_rules_delete_request(
@@ -6724,7 +7338,9 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityConfigurationListResult]
 
         error_map = {
@@ -6754,10 +7370,17 @@ class SecurityAdminConfigurationsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -6816,7 +7439,9 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityConfiguration]
 
         request = build_security_admin_configurations_get_request(
@@ -6954,7 +7579,9 @@ class SecurityAdminConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityConfiguration]
 
@@ -7033,7 +7660,9 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_security_admin_configurations_delete_request(
@@ -7119,7 +7748,9 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RuleCollectionListResult]
 
         error_map = {
@@ -7150,10 +7781,17 @@ class AdminRuleCollectionsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -7220,7 +7858,9 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RuleCollection]
 
         request = build_admin_rule_collections_get_request(
@@ -7367,7 +8007,9 @@ class AdminRuleCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.RuleCollection]
 
@@ -7455,7 +8097,9 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_admin_rule_collections_delete_request(
@@ -7546,7 +8190,9 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.AdminRuleListResult]
 
         error_map = {
@@ -7578,10 +8224,17 @@ class AdminRulesOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -7651,7 +8304,9 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.BaseAdminRule]
 
         request = build_admin_rules_get_request(
@@ -7808,7 +8463,9 @@ class AdminRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.BaseAdminRule]
 
@@ -7900,7 +8557,9 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_admin_rules_delete_request(
@@ -7979,7 +8638,9 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkSecurityPerimeter]
 
         request = build_network_security_perimeters_get_request(
@@ -8105,7 +8766,9 @@ class NetworkSecurityPerimetersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkSecurityPerimeter]
 
@@ -8181,7 +8844,9 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_network_security_perimeters_delete_request(
@@ -8235,7 +8900,9 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkSecurityPerimeterListResult]
 
         error_map = {
@@ -8263,10 +8930,17 @@ class NetworkSecurityPerimetersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -8323,7 +8997,9 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkSecurityPerimeterListResult]
 
         error_map = {
@@ -8352,10 +9028,17 @@ class NetworkSecurityPerimetersOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -8434,7 +9117,9 @@ class NspProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspProfile]
 
         request = build_nsp_profiles_get_request(
@@ -8570,7 +9255,9 @@ class NspProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspProfile]
 
@@ -8649,7 +9336,9 @@ class NspProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_nsp_profiles_delete_request(
@@ -8711,7 +9400,9 @@ class NspProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspProfileListResult]
 
         error_map = {
@@ -8741,10 +9432,17 @@ class NspProfilesOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -8830,7 +9528,9 @@ class NspAccessRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspAccessRule]
 
         request = build_nsp_access_rules_get_request(
@@ -8976,7 +9676,9 @@ class NspAccessRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspAccessRule]
 
@@ -9063,7 +9765,9 @@ class NspAccessRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_nsp_access_rules_delete_request(
@@ -9130,7 +9834,9 @@ class NspAccessRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspAccessRuleListResult]
 
         error_map = {
@@ -9161,10 +9867,17 @@ class NspAccessRulesOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -9243,7 +9956,9 @@ class NspAssociationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspAssociation]
 
         request = build_nsp_associations_get_request(
@@ -9379,7 +10094,9 @@ class NspAssociationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspAssociation]
 
@@ -9444,7 +10161,9 @@ class NspAssociationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_nsp_associations_delete_request(
@@ -9506,7 +10225,9 @@ class NspAssociationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9577,7 +10298,9 @@ class NspAssociationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspAssociationsListResult]
 
         error_map = {
@@ -9607,10 +10330,17 @@ class NspAssociationsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -9696,7 +10426,9 @@ class NspAssociationReconcileOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
@@ -9773,7 +10505,9 @@ class PerimeterAssociableResourceTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.PerimeterAssociableResourcesListResult]
 
         error_map = {
@@ -9800,10 +10534,17 @@ class PerimeterAssociableResourceTypesOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -9892,7 +10633,9 @@ class NspAccessRulesReconcileOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-02-01-preview"))  # type: str
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
@@ -9932,3 +10675,938 @@ class NspAccessRulesReconcileOperations:
         return deserialized
 
     post.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/profiles/{profileName}/accessRules/{accessRuleName}/reconcile"}  # type: ignore
+
+
+class NspLinksOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.v2021_02_01_preview.NetworkManagementClient`'s
+        :attr:`nsp_links` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(
+        self, resource_group_name: str, network_security_perimeter_name: str, link_name: str, **kwargs: Any
+    ) -> _models.NspLink:
+        """Gets the specified NSP link resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_name: The name of the NSP link. Required.
+        :type link_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NspLink or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspLink]
+
+        request = build_nsp_links_get_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            link_name=link_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("NspLink", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}"}  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        resource_group_name: str,
+        network_security_perimeter_name: str,
+        link_name: str,
+        parameters: _models.NspLink,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.NspLink:
+        """Creates or updates NSP link resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_name: The name of the NSP link. Required.
+        :type link_name: str
+        :param parameters: Parameters that hold the NspLink resource to be created/updated. Required.
+        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NspLink or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        resource_group_name: str,
+        network_security_perimeter_name: str,
+        link_name: str,
+        parameters: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.NspLink:
+        """Creates or updates NSP link resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_name: The name of the NSP link. Required.
+        :type link_name: str
+        :param parameters: Parameters that hold the NspLink resource to be created/updated. Required.
+        :type parameters: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NspLink or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(
+        self,
+        resource_group_name: str,
+        network_security_perimeter_name: str,
+        link_name: str,
+        parameters: Union[_models.NspLink, IO],
+        **kwargs: Any
+    ) -> _models.NspLink:
+        """Creates or updates NSP link resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_name: The name of the NSP link. Required.
+        :type link_name: str
+        :param parameters: Parameters that hold the NspLink resource to be created/updated. Is either a
+         model type or a IO type. Required.
+        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NspLink or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspLink]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IO, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "NspLink")
+
+        request = build_nsp_links_create_or_update_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            link_name=link_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.create_or_update.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize("NspLink", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("NspLink", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}"}  # type: ignore
+
+    def _delete_initial(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, network_security_perimeter_name: str, link_name: str, **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_nsp_links_delete_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            link_name=link_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self._delete_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}"}  # type: ignore
+
+    @distributed_trace
+    def begin_delete(
+        self, resource_group_name: str, network_security_perimeter_name: str, link_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes an NSP Link resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_name: The name of the NSP link. Required.
+        :type link_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                network_security_perimeter_name=network_security_perimeter_name,
+                link_name=link_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}"}  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        resource_group_name: str,
+        network_security_perimeter_name: str,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.NspLink"]:
+        """Lists the NSP Link resources in the specified network security perimeter.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param top: An optional query parameter which specifies the maximum number of records to be
+         returned by the server. Default value is None.
+        :type top: int
+        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
+         a previous response contains a nextLink element, the value of the nextLink element will include
+         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
+         value is None.
+        :type skip_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either NspLink or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspLinkListResult]
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_nsp_links_list_request(
+                    resource_group_name=resource_group_name,
+                    network_security_perimeter_name=network_security_perimeter_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("NspLinkListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links"}  # type: ignore
+
+
+class NspLinkReconcileOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.v2021_02_01_preview.NetworkManagementClient`'s
+        :attr:`nsp_link_reconcile` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def post(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, network_security_perimeter_name: str, link_name: str, **kwargs: Any
+    ) -> None:
+        """Reconcile NSP link resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_name: The name of the NSP link. Required.
+        :type link_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_nsp_link_reconcile_post_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            link_name=link_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.post.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    post.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/links/{linkName}/reconcile"}  # type: ignore
+
+
+class NspLinkReferencesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.v2021_02_01_preview.NetworkManagementClient`'s
+        :attr:`nsp_link_references` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(
+        self, resource_group_name: str, network_security_perimeter_name: str, link_reference_name: str, **kwargs: Any
+    ) -> _models.NspLinkReference:
+        """Gets the specified NSP linkReference resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_reference_name: The name of the NSP linkReference. Required.
+        :type link_reference_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NspLinkReference or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspLinkReference]
+
+        request = build_nsp_link_references_get_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            link_reference_name=link_reference_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("NspLinkReference", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}"}  # type: ignore
+
+    def _delete_initial(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, network_security_perimeter_name: str, link_reference_name: str, **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_nsp_link_references_delete_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            link_reference_name=link_reference_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self._delete_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    _delete_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}"}  # type: ignore
+
+    @distributed_trace
+    def begin_delete(
+        self, resource_group_name: str, network_security_perimeter_name: str, link_reference_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes an NSP LinkReference resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_reference_name: The name of the NSP linkReference. Required.
+        :type link_reference_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                network_security_perimeter_name=network_security_perimeter_name,
+                link_reference_name=link_reference_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}"}  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        resource_group_name: str,
+        network_security_perimeter_name: str,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.NspLinkReference"]:
+        """Lists the NSP LinkReference resources in the specified network security perimeter.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param top: An optional query parameter which specifies the maximum number of records to be
+         returned by the server. Default value is None.
+        :type top: int
+        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
+         a previous response contains a nextLink element, the value of the nextLink element will include
+         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
+         value is None.
+        :type skip_token: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either NspLinkReference or the result of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.NspLinkReferenceListResult]
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_nsp_link_references_list_request(
+                    resource_group_name=resource_group_name,
+                    network_security_perimeter_name=network_security_perimeter_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("NspLinkReferenceListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences"}  # type: ignore
+
+
+class NspLinkReferenceReconcileOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.v2021_02_01_preview.NetworkManagementClient`'s
+        :attr:`nsp_link_reference_reconcile` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def post(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, network_security_perimeter_name: str, link_reference_name: str, **kwargs: Any
+    ) -> None:
+        """Reconcile NSP linkReference resource.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param link_reference_name: The name of the NSP linkReference. Required.
+        :type link_reference_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "2021-02-01-preview")
+        )  # type: Literal["2021-02-01-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_nsp_link_reference_reconcile_post_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            link_reference_name=link_reference_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.post.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    post.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}/linkReferences/{linkReferenceName}/reconcile"}  # type: ignore
