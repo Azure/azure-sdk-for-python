@@ -4,6 +4,7 @@
 
 import os
 import re
+import json
 from typing import Any, Dict, Union, List
 
 from marshmallow import Schema
@@ -237,7 +238,6 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
     def _to_rest_object(self) -> ComponentVersionData:
         rest_object = super()._to_rest_object()
         if self.partition_keys:
-            import json
             rest_object.properties.component_spec["partition_keys"]= \
                 json.dumps(self.partition_keys)
         return rest_object
