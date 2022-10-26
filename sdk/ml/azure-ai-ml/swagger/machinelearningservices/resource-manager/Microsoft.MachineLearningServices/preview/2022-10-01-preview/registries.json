@@ -165,9 +165,6 @@
               }
             }
           },
-          "202": {
-            "description": "Success"
-          },
           "204": {
             "description": "No Content"
           }
