@@ -12,7 +12,7 @@ from azure.ai.ml.constants._registry import AcrAccountSku
 from azure.ai.ml.entities._registry.registry_support_classes import SystemCreatedAcrAccount
 from azure.ai.ml._utils._experimental import experimental
 
-from azure.ai.ml._schema.workspace.identity import IdentitySchema
+from azure.ai.ml._schema.compute.compute import IdentitySchema
 from .registry_region_arm_details import RegistryRegionDetailsSchema
 from .system_created_acr_account import SystemCreatedAcrAccountSchema
 from .util import acr_format_validator
