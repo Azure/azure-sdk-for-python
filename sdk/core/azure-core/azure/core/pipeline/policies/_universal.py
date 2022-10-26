@@ -562,8 +562,6 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
         elif "xml" in (mime_type or []):
             try:
-                if isinstance(data, unicode):  # type: ignore
-                    data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
                 return ET.fromstring(data_as_str)   # nosec
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with
