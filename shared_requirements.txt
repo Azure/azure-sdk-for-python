@@ -191,6 +191,8 @@ opentelemetry-api<2.0.0,>=1.5.0,!=1.10a0
 opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoreblob msrest>=0.6.18
 #override azure-eventhub-checkpointstoreblob-aio msrest>=0.6.18
+
+#override azure-mgmt-datadog msrest>=0.7.1
 #override azure-eventhub-checkpointstoreblob azure-core<2.0.0,>=1.20.1
 #override azure-eventhub-checkpointstoreblob-aio azure-core<2.0.0,>=1.20.1
 #override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0
@@ -431,10 +433,14 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-imagebuilder azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-sqlvirtualmachine azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-batch azure-mgmt-core>=1.3.2,<2.0.0
+
+#override azure-mgmt-datadog typing_extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-workloads msrest>=0.6.21
 #override azure-mgmt-workloads azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-eventhub msrest>=0.6.21
 #override azure-mgmt-eventhub azure-mgmt-core>=1.3.0,<2.0.0
+
+#override azure-mgmt-datadog msrestazure>=0.4.32,<2.0.0
 #override azure-mgmt-logic msrest>=0.6.21
 #override azure-mgmt-logic azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-communication msrest>=0.6.21
@@ -450,6 +456,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-dataprotection azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-search msrest>=0.6.21
 #override azure-mgmt-search azure-mgmt-core>=1.3.1,<2.0.0
+
+#override azure-mgmt-datadog {%- if need_msrestazure %}
 #override azure-mgmt-notificationhubs azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-commerce msrest>=0.6.21
 #override azure-mgmt-commerce azure-mgmt-core>=1.3.1,<2.0.0
@@ -478,6 +486,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-devtestlabs msrest>=0.7.1
 #override azure-mgmt-devtestlabs azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-kusto azure-mgmt-core>=1.3.2,<2.0.0
+
+#override azure-mgmt-datadog azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-search msrest>=0.7.1
 #override azure-mgmt-dnsresolver azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-search azure-mgmt-core>=1.3.2,<2.0.0
