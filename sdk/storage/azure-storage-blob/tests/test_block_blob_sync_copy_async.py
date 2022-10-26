@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import StorageErrorCode, BlobSasPermissions, generate_blob_sas
+from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErrorCode, generate_blob_sas
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.policies import StorageContentValidation
 
@@ -217,7 +217,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         assert self.source_blob_data == content
 
     @BlobPreparer()
-    async def test_copy_blob_with_cold_tier_sync(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_copy_blob_with_cold_tier_sync(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)

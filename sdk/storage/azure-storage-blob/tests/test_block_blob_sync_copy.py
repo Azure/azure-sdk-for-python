@@ -265,7 +265,11 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         assert self.source_blob_with_special_chars_data == content
 
     @BlobPreparer()
-    def test_copy_blob_with_cold_tier_sync(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_copy_blob_with_cold_tier_sync(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
