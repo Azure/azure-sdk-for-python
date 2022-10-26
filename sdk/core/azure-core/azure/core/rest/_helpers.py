@@ -41,7 +41,7 @@ from typing import (
     AsyncIterable
 )
 import xml.etree.ElementTree as ET
-from urlparse import urlparse
+from urllib.parse import urlparse
 from azure.core.serialization import AzureJSONEncoder
 from ..utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,

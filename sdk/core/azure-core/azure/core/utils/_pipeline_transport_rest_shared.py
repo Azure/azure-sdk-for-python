@@ -26,7 +26,7 @@ from typing import (
 )
 
 from http.client import HTTPConnection
-from urlparse import urlparse
+from urllib.parse import urlparse
     
 
 from ..pipeline import (
