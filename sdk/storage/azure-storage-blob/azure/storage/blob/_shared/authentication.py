@@ -54,19 +54,23 @@ def _service_sort(input_header):
     # Define the custom alphabet for weights
     custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
-    # Build a dictionary of tuples
-    header_dict = dict(input_header)
+    # Build dict of tuples and list of keys
+    header_dict = dict()
+    header_keys = []
 
-    # Get list of keys to sort
-    header_keys = header_dict.keys()
+    for k, v in input_header:
+        header_dict[k] = v
+        header_keys.append(k)
 
-    # Sort keys (TODO: Wrap this in a try, can throw exception if letter not in alphabet)
-    header_keys = sorted(header_keys, key=lambda word: [custom_weights.index(c) for c in word])
+    # Sort according to custom defined weights
+    try:
+        header_keys = sorted(header_keys, key=lambda word: [custom_weights.index(c) for c in word])
+    except ValueError:
+        raise ValueError("Illegal character encountered when sorting headers.")
 
     # Build list of sorted tuples
     sorted_headers = []
     for key in header_keys:
-        # sorted_headers.append((key.encode(), (header_dict.get(key)).encode()))
         sorted_headers.append((key, header_dict.get(key)))
 
     return sorted_headers
