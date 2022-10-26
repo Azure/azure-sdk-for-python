@@ -367,7 +367,7 @@ class Component(
         )
 
         instance = create_instance_func()
-        instance.__init__(**instance._from_rest_object_to_init_params(obj))
+        instance.__init__(**instance._from_rest_object_to_init_params(obj))  # pylint: disable=no-member
         return instance
 
     @classmethod

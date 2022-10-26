@@ -136,22 +136,6 @@ class InternalBaseNode(BaseNode):
         )
         return base_dict
 
-    @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
-        obj = BaseNode._rest_object_to_init_params(obj)
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-        return obj
-
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "InternalBaseNode":
-        obj = cls._rest_object_to_init_params(obj)
-
-        instance = cls.__new__(cls)
-        instance.__init__(**obj)
-        return instance
-
 
 class DataTransfer(InternalBaseNode):
     def __init__(self, **kwargs):

@@ -60,7 +60,7 @@ class _PipelineNodeFactory:
         )
         self.register_type(
             _type=NodeType.SWEEP,
-            create_instance_func=None,
+            create_instance_func=lambda: Sweep.__new__(Sweep),
             load_from_rest_object_func=Sweep._from_rest_object,
             nested_schema=NestedField(SweepSchema, unknown=INCLUDE),
         )

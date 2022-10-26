@@ -332,7 +332,9 @@ class PipelineComponent(Component):
             if LoopNode._is_loop_node_dict(node):
                 sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
             else:
-                sub_nodes[node_name] = BaseNode._from_rest_object(node)
+                # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
+                from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node)
         return sub_nodes
 
     @classmethod
@@ -374,7 +376,6 @@ class PipelineComponent(Component):
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
         init_kwargs = super()._from_rest_object_to_init_params(obj)
-        # Note: we need to refine the logic here if more specific type logic here.
         jobs = obj.properties.component_spec.pop("jobs", None)
         if jobs:
             jobs = PipelineComponent._resolve_sub_nodes(jobs)
