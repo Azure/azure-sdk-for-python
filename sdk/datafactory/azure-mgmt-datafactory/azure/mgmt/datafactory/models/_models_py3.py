@@ -52917,7 +52917,7 @@ class ScriptAction(_serialization.Model):
         self.parameters = parameters
 
 
-class ScriptActivity(ExecutionActivity):
+class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Script activity type.
 
     All required parameters must be populated in order to send to Azure.
@@ -52939,6 +52939,10 @@ class ScriptActivity(ExecutionActivity):
     :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :ivar policy: Activity policy.
     :vartype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :ivar script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype script_block_execution_timeout: JSON
     :ivar scripts: Array of script blocks. Type: array.
     :vartype scripts: list[~azure.mgmt.datafactory.models.ScriptActivityScriptBlock]
     :ivar log_settings: Log settings of script activity.
@@ -52959,6 +52963,7 @@ class ScriptActivity(ExecutionActivity):
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
         "policy": {"key": "policy", "type": "ActivityPolicy"},
+        "script_block_execution_timeout": {"key": "typeProperties.scriptBlockExecutionTimeout", "type": "object"},
         "scripts": {"key": "typeProperties.scripts", "type": "[ScriptActivityScriptBlock]"},
         "log_settings": {"key": "typeProperties.logSettings", "type": "ScriptActivityTypePropertiesLogSettings"},
     }
@@ -52973,6 +52978,7 @@ class ScriptActivity(ExecutionActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
+        script_block_execution_timeout: Optional[JSON] = None,
         scripts: Optional[List["_models.ScriptActivityScriptBlock"]] = None,
         log_settings: Optional["_models.ScriptActivityTypePropertiesLogSettings"] = None,
         **kwargs
@@ -52993,6 +52999,10 @@ class ScriptActivity(ExecutionActivity):
         :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
         :keyword policy: Activity policy.
         :paramtype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+        :keyword script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
+         Expression with resultType string), pattern:
+         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype script_block_execution_timeout: JSON
         :keyword scripts: Array of script blocks. Type: array.
         :paramtype scripts: list[~azure.mgmt.datafactory.models.ScriptActivityScriptBlock]
         :keyword log_settings: Log settings of script activity.
@@ -53009,6 +53019,7 @@ class ScriptActivity(ExecutionActivity):
             **kwargs
         )
         self.type = "Script"  # type: str
+        self.script_block_execution_timeout = script_block_execution_timeout
         self.scripts = scripts
         self.log_settings = log_settings
 
