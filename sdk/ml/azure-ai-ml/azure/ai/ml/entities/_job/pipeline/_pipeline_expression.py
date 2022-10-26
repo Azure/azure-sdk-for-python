@@ -5,14 +5,12 @@
 # pylint: disable=protected-access
 
 import re
-import shutil
 import tempfile
 from collections import namedtuple
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
-from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
@@ -190,8 +188,8 @@ class PipelineExpressionMixin:
     def __xor__(self, other) -> "PipelineExpression":
         self._validate_binary_operation(other, PipelineExpressionOperator.XOR)
         return PipelineExpression._from_operation(self, None, PipelineExpressionOperator.XOR)
-    
-    def __bool__(self):
+
+    def __bool__(self):  # pylint: disable=invalid-bool-returned
         """Python method that is used to implement truth value testing and the built-in operation bool().
 
         This method is not supported as PipelineExpressionMixin is designed to record operation history,
