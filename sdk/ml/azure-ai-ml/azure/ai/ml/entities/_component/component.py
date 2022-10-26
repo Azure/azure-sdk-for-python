@@ -7,7 +7,6 @@ import typing
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from shutil import copytree, ignore_patterns
 from typing import IO, AnyStr, Dict, Union
 
 from marshmallow import Schema
