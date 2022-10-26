@@ -183,6 +183,11 @@ class _ComponentFactory:
         if distribution:
             distribution = DistributionConfiguration._from_rest_object(distribution)
 
+        if _type == "parallel":
+            import json
+            if "partition_keys" in rest_component_version.component_spec:
+                rest_component_version.component_spec["partition_keys"] \
+                    = json.loads(rest_component_version.component_spec["partition_keys"])
         # Note: we need to refine the logic here if more specific type logic here.
         jobs = rest_component_version.component_spec.pop("jobs", None)
         if _type == NodeType.PIPELINE and jobs:
