@@ -379,17 +379,21 @@ class CodegenTestPR:
             self.edit_changelog()
 
     @staticmethod
-    def get_need_dependency():
+    def get_need_dependency() -> List[str]:
         template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
+        items = ["msrest", "azure-mgmt-core", "typing_extensions"]
         with open(template_path, 'r') as fr:
             content = fr.readlines()
-            for line in content:
-                if 'msrest>' in line:
-                    target_msrest = line.strip().strip(',').strip('\'')
-                    yield target_msrest
-                if 'azure-mgmt-core' in line:
-                    target_mgmt_core = line.strip().strip(',').strip('\'')
-                    yield target_mgmt_core
+        dependencies = []
+        for i in range(len(content)):
+            if "install_requires" not in content[i]:
+                continue
+            for j in range(i, len(content)):
+                for item in items:
+                    if item in content[i]:
+                        dependencies.append(content[i].strip().strip(',').strip('\"'))
+            break
+        return dependencies
 
     @staticmethod
     def insert_line_num(content: List[str]) -> int:
@@ -418,10 +422,9 @@ class CodegenTestPR:
         print_exec('git add shared_requirements.txt')
 
     def check_ci_file(self):
-        # eg: target_msrest = 'msrest>=0.6.21', target_mgmt_core = 'azure-mgmt-core>=1.3.0,<2.0.0'
-        target_msrest, target_mgmt_core = list(self.get_need_dependency())
-        self.check_ci_file_proc(target_msrest)
-        self.check_ci_file_proc(target_mgmt_core)
+        # eg: 'msrest>=0.6.21', 'azure-mgmt-core>=1.3.0,<2.0.0'
+        for item in self.get_need_dependency():
+            self.check_ci_file_proc(item)
 
     def check_dev_requirement(self):
         file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
