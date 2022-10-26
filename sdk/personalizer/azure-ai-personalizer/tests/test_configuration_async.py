@@ -28,20 +28,21 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_admin_client(
             personalizer_endpoint, personalizer_api_key)
+        old_configuration = await client.get_service_configuration()
         configuration = {
             "rewardAggregation": "average",
             "modelExportFrequency": "PT3M",
             "defaultReward": 1.0,
-            "modelRetrainDays": 0,
+            "modelRetrainDays": 2,
             "rewardWaitTime": "PT4H",
             "explorationPercentage": 0.3,
             "logRetentionDays": -1,
             "learningMode": "Online",
         }
-        updated_configuration = await client.service_configuration.update(configuration)
+        updated_configuration = await client.update_service_configuration(configuration)
         configuration_equals(configuration, updated_configuration)
         await self.sleep(30)
-        new_configuration = await client.service_configuration.get()
+        new_configuration = await client.get_service_configuration()
         configuration_equals(new_configuration, configuration)
 
     @personalizer_helpers.PersonalizerPreparer()
@@ -57,10 +58,10 @@ class TestConfigurationAsync(AzureRecordedTestCase):
                          "--quadratic OE --quadratic OR --quadratic MS --quadratic GX --ignore A --cb_type ips "
                          "--epsilon 0.2",
         }
-        updated_policy = await client.policy.update(policy)
+        updated_policy = await client.update_policy(policy)
         await self.sleep(30)
         policy_equals(updated_policy, policy)
-        new_policy = await client.policy.get()
+        new_policy = await client.get_policy()
         policy_equals(new_policy, policy)
 
     @personalizer_helpers.PersonalizerPreparer()
@@ -74,7 +75,7 @@ class TestConfigurationAsync(AzureRecordedTestCase):
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_admin_client(
             personalizer_endpoint, personalizer_api_key)
-        new_policy = await client.policy.reset()
+        new_policy = await client.reset_policy()
         await self.sleep(30)
         policy_equals(new_policy, default_policy)
 

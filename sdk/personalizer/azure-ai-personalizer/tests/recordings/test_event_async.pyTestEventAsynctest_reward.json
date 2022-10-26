@@ -15,15 +15,16 @@
       },
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "ba42e631-2d7b-4e10-92bd-93a4fb25364d",
+        "apim-request-id": "c130acf0-62c5-4d50-852d-eeb0a23222c4",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 14 Oct 2022 21:42:41 GMT",
+        "Date": "Wed, 26 Oct 2022 04:03:34 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2"
+        "x-envoy-upstream-service-time": "2",
+        "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": null
     }

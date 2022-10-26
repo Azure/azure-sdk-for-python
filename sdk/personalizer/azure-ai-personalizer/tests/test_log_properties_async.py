@@ -15,8 +15,8 @@ class TestLogPropertiesAsync(AzureRecordedTestCase):
         personalizer_api_key = kwargs.pop('personalizer_api_key_multi_slot')
         client = personalizer_helpers_async.create_async_personalizer_admin_client(
             personalizer_endpoint, personalizer_api_key)
-        await client.log.delete()
-        log_properties = await client.log.get_properties()
+        await client.delete_logs()
+        log_properties = await client.get_log_properties()
         date_range = log_properties.get("dateRange")
         if date_range is not None:
             assert "from" in date_range

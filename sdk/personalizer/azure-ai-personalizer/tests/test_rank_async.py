@@ -24,7 +24,7 @@ class TestRank(AzureRecordedTestCase):
                 ],
             }];
         request = {"actions": actions}
-        await client.single_slot.rank(request)
+        await client.rank(request)
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy_async
@@ -65,4 +65,4 @@ class TestRank(AzureRecordedTestCase):
             "contextFeatures": context_features,
             "excludedActions": ["Video1"],
         }
-        await client.single_slot.rank(request)
+        await client.rank(request)

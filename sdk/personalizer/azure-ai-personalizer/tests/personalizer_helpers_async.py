@@ -17,14 +17,14 @@ def create_async_personalizer_admin_client(personalizer_endpoint, personalizer_a
 
 async def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live):
     client = create_async_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
-    policy = await client.policy.get()
+    policy = await client.get_policy()
     if policy["arguments"].__contains__("--ccb_explore_adf"):
         return
 
-    configuration = await client.service_configuration.get()
+    configuration = await client.get_service_configuration()
     if configuration.get("isAutoOptimizationEnabled"):
         configuration["isAutoOptimizationEnabled"] = False
-        await client.service_configuration.put(configuration)
+        await client.update_service_configuration(configuration)
         if is_live:
             asyncio.sleep(30)
 

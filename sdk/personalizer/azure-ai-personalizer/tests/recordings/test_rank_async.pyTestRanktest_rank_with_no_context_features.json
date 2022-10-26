@@ -29,18 +29,19 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "6d9977b1-bdd4-4d8c-97ad-2a99f9eb2a97",
+        "apim-request-id": "193e8ca6-0a86-4446-83e1-5153a1100b49",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "166",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Fri, 14 Oct 2022 21:42:47 GMT",
+        "Date": "Wed, 26 Oct 2022 04:03:40 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "3"
+        "x-envoy-upstream-service-time": "4",
+        "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
         "ranking": [
@@ -49,7 +50,7 @@
             "probability": 1.0
           }
         ],
-        "eventId": "a959ee9f72d84ded88ac5662d1905ae5-aQrVt",
+        "eventId": "289a539af17d432e8165d996a26dba84-aUx77",
         "rewardActionId": "Person"
       }
     }

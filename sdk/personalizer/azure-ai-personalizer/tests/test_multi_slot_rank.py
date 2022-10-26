@@ -13,7 +13,7 @@ class TestMultiSlotRank(AzureRecordedTestCase):
         personalizer_helpers.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
         request = {"actions": get_actions(), "slots": get_slots(), "eventId": event_id}
-        response = client.multi_slot.rank(request)
+        response = client.rank_multi_slot(request)
         assert event_id == response.get("eventId")
         slots = response.get("slots")
         assert len(slots) == len(get_slots())
@@ -34,7 +34,7 @@ class TestMultiSlotRank(AzureRecordedTestCase):
             "slots": get_slots(),
             "contextFeatures": get_context_features()
         }
-        response = client.multi_slot.rank(request)
+        response = client.rank_multi_slot(request)
         slots = response.get("slots")
         assert len(slots) == len(get_slots())
         assert slots[0]['rewardActionId'] == "NewsArticle"

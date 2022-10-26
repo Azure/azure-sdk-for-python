@@ -28,14 +28,14 @@ def create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key
 
 def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live):
     client = create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
-    policy = client.policy.get()
+    policy = client.get_policy()
     if policy["arguments"].__contains__("--ccb_explore_adf"):
         return
 
-    configuration = client.service_configuration.get()
+    configuration = client.get_service_configuration()
     if configuration.get("isAutoOptimizationEnabled"):
         configuration["isAutoOptimizationEnabled"] = False
-        client.service_configuration.put(configuration)
+        client.update_service_configuration(configuration)
         if is_live:
             time.sleep(30)
 
@@ -44,7 +44,7 @@ def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live):
         "arguments": policy["arguments"].replace("--cb_explore_adf", "--ccb_explore_adf")
     }
 
-    client.policy.update(multi_slot_policy)
+    client.update_policy(multi_slot_policy)
     if is_live:
         time.sleep(30)
 

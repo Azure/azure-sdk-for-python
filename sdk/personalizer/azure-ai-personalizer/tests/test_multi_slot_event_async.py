@@ -17,7 +17,7 @@ class TestMultiSlotEventAsync(AzureRecordedTestCase):
             personalizer_endpoint, personalizer_api_key)
         await personalizer_helpers_async.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
-        await client.multi_slot_events.reward(event_id,
+        await client.reward_multi_slot(event_id,
                                               {"reward": [{"slotId": "slot_id_to_be_rewarded", "value": 1.0}]})
 
     @personalizer_helpers.PersonalizerPreparer()
@@ -29,4 +29,4 @@ class TestMultiSlotEventAsync(AzureRecordedTestCase):
             personalizer_endpoint, personalizer_api_key)
         await personalizer_helpers_async.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
-        await client.multi_slot_events.activate(event_id)
+        await client.activate_multi_slot(event_id)

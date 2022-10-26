@@ -12,7 +12,7 @@ class TestMultiSlotEvent(AzureRecordedTestCase):
         client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         personalizer_helpers.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
-        client.multi_slot_events.reward(event_id, {"reward": [{"slotId": "slot_id_to_be_rewarded", "value": 1.0}]})
+        client.reward_multi_slot(event_id, {"reward": [{"slotId": "slot_id_to_be_rewarded", "value": 1.0}]})
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy
@@ -22,4 +22,4 @@ class TestMultiSlotEvent(AzureRecordedTestCase):
         client = personalizer_helpers.create_personalizer_client(personalizer_endpoint, personalizer_api_key)
         personalizer_helpers.enable_multi_slot(personalizer_endpoint, personalizer_api_key, self.is_live)
         event_id = "123456789"
-        client.multi_slot_events.activate(event_id)
+        client.activate_multi_slot(event_id)

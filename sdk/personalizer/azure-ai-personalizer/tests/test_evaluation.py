@@ -28,13 +28,13 @@ class TestEvaluations(AzureRecordedTestCase):
             "enableOfflineExperimentation": True,
             "policies": [],
         }
-        client.evaluations.create(evaluation_id, evaluation_contract)
+        client.create_evaluation(evaluation_id, evaluation_contract)
         self.wait_for_evaluation_to_finish(client, evaluation_id, iso_start_time, iso_end_time)
-        evaluation = client.evaluations.get(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
+        evaluation = client.get_evaluation(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
         assert evaluation["id"] == evaluation_id
         assert evaluation["name"] == evaluation_name
         assert evaluation["status"] == "Completed"
-        client.evaluations.delete(evaluation_id)
+        client.delete_evaluation(evaluation_id)
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy
@@ -42,10 +42,10 @@ class TestEvaluations(AzureRecordedTestCase):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
-        client.evaluations.list()
+        client.list_evaluations()
 
     def is_evaluation_final(self, client, evaluation_id, iso_start_time, iso_end_time):
-        evaluation = client.evaluations.get(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
+        evaluation = client.get_evaluation(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
         return evaluation["status"] == "Completed" \
                or evaluation["status"] == "Failed" \
                or evaluation["status"] == "Timeout"

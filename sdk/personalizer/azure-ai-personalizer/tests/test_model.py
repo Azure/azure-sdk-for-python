@@ -9,9 +9,9 @@ class TestModel(AzureRecordedTestCase):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
-        unsigned_model_bytes = client.model.get(signed=False)
-        signed_model_bytes = client.model.get(signed=True)
-        client.model.import_model(signed_model_bytes)
-        new_unsigned_model_bytes = client.model.get(signed=False)
+        unsigned_model_bytes = client.get_model(signed=False)
+        signed_model_bytes = client.get_model(signed=True)
+        client.import_model(signed_model_bytes)
+        new_unsigned_model_bytes = client.get_model(signed=False)
         assert [b for b in unsigned_model_bytes] == [b for b in new_unsigned_model_bytes]
         
