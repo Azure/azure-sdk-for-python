@@ -39,9 +39,12 @@ from .pipeline.policies import (
 from typing import (
     Any,
     TypeVar,
+    TYPE_CHECKING,
 )
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
+
+if TYPE_CHECKING:
+    HTTPResponseType = TypeVar("HTTPResponseType")
+    HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
