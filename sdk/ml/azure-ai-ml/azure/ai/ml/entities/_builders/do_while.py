@@ -248,18 +248,14 @@ class DoWhile(LoopNode):
         elif self.limits.max_iteration_count > DO_WHILE_MAX_ITERATION or self.limits.max_iteration_count < 0:
             validation_result.append_error(
                 yaml_path="limit.max_iteration_count",
-                message=f"The max iteration count cannot be less than 0 and larger than {DO_WHILE_MAX_ITERATION}.",
+                message=f"The max iteration count cannot be less than 0 or larger than {DO_WHILE_MAX_ITERATION}.",
             )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
     def _validate_body_output_mapping(self, raise_error=True):
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
-        if not self.mapping:
-            validation_result.append_error(
-                yaml_path="mapping", message="The mapping of body output to input cannot be empty."
-            )
-        elif not isinstance(self.mapping, dict):
+        if not isinstance(self.mapping, dict):
             validation_result.append_error(
                 yaml_path="mapping", message=f"Mapping expects a dict type but passes in a {type(self.mapping)} type."
             )
