@@ -226,7 +226,7 @@ class DoWhile(LoopNode):
             if validation_result.passed:
                 # Check condition is a control output.
                 condition_name = self.condition if isinstance(self.condition, str) else self.condition._name
-                if not self.body.component.outputs[condition_name].is_control:
+                if not self.body._outputs[condition_name].is_control:
                     validation_result.append_error(
                         yaml_path="condition",
                         message=(
@@ -270,7 +270,7 @@ class DoWhile(LoopNode):
                     output, self.body.outputs, port_type="output", yaml_path="mapping"
                 )
                 if validate_results.passed:
-                    is_control_output = self.body.component.outputs[output_name].is_control
+                    is_control_output = self.body._outputs[output_name].is_control
                     inputs = inputs if isinstance(inputs, list) else [inputs]
                     for item in inputs:
                         input_validate_results = self._validate_port(
@@ -280,11 +280,12 @@ class DoWhile(LoopNode):
                         # pylint: disable=protected-access
                         input_name = item if isinstance(item, str) else item._name
                         input_output_mapping[input_name] = input_output_mapping.get(input_name, []) + [output_name]
+                        is_primitive_type = self.body._inputs[input_name]._meta._is_primitive_type
 
                         if (
                             input_validate_results.passed
                             and not is_control_output
-                            and self.body.component.inputs[input_name]._is_primitive_type # pylint: disable=protected-access
+                            and is_primitive_type  # pylint: disable=protected-access
                         ):
                             validate_results.append_error(
                                 yaml_path="mapping",

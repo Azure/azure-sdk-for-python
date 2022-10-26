@@ -1444,7 +1444,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "_source": "YAML.JOB",
         }
 
-    @pytest.mark.skip(reason="Currently do_while only enable in master region.")
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr()}]
         pipeline_job = load_job(
@@ -1459,7 +1458,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
-    @pytest.mark.skip(reason="Currently not enable submit a pipeline with primitive inputs")
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr()}]
         pipeline_job = load_job(
@@ -1474,8 +1472,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
-    @pytest.mark.skip(reason="Currently do_while only enable in master region.")
-    def test_pipeline_with_invalid_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_pipeline_with_invalid_do_while_node(self, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr()}]
         with pytest.raises(ValidationError) as exception:
             load_job(
