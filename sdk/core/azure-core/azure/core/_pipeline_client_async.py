@@ -26,7 +26,7 @@
 
 import logging
 import collections.abc
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TypeVar
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -37,7 +37,6 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
-from typing import TypeVar
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")

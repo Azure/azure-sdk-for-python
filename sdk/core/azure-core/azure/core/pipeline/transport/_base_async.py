@@ -27,14 +27,14 @@
 import asyncio
 import abc
 from collections.abc import AsyncIterator
+from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic
+from contextlib import AbstractAsyncContextManager  # type: ignore
 
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
 )
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
-from contextlib import AbstractAsyncContextManager  # type: ignore
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")

@@ -196,7 +196,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
         await self.open()
         auto_decompress = self.session.auto_decompress  # type: ignore
-        
+
         proxies = config.pop('proxies', None)
         if proxies and 'proxy' not in config:
             # aiohttp needs a single proxy, so iterating until we found the right protocol

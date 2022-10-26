@@ -27,19 +27,20 @@
 import logging
 import sys
 import urllib
+from typing import TYPE_CHECKING, Optional, Union, Tuple  # pylint: disable=ungrouped-imports
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
-from typing import TYPE_CHECKING, Any, Optional, Dict, List, Union, Tuple # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse, \
+        AsyncHttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.tracing._abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
     from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
-    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
 
+    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
 
 _LOGGER = logging.getLogger(__name__)
 

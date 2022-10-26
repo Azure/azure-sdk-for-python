@@ -4,10 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint:disable=unused-import
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
-from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint:disable=unused-import
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import

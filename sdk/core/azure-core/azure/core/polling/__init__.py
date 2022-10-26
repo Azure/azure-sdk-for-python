@@ -23,8 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import sys
-
 from ._poller import LROPoller, NoPolling, PollingMethod
 from ._async_poller import AsyncNoPolling, AsyncPollingMethod, async_poller, AsyncLROPoller
 
@@ -36,4 +34,3 @@ __all__ = [
     'AsyncPollingMethod',
     'async_poller',
     'AsyncLROPoller']
-

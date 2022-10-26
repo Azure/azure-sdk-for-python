@@ -26,6 +26,11 @@
 
 import logging
 from collections.abc import Iterable
+from typing import (
+    Any,
+    TypeVar,
+    TYPE_CHECKING,
+)
 from .configuration import Configuration
 from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -35,11 +40,6 @@ from .pipeline.policies import (
     HttpLoggingPolicy,
     RequestIdPolicy,
     RetryPolicy,
-)
-from typing import (
-    Any,
-    TypeVar,
-    TYPE_CHECKING,
 )
 
 if TYPE_CHECKING:

@@ -31,8 +31,8 @@ from enum import Enum
 import logging
 import os
 import sys
-from azure.core.tracing import AbstractSpan
 from typing import Type, Optional, Dict, Callable, cast, Any, Union, TYPE_CHECKING
+from azure.core.tracing import AbstractSpan
 
 if TYPE_CHECKING:
     try:

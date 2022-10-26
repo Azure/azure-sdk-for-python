@@ -24,10 +24,8 @@ from typing import (
     Type,
     Iterator,
 )
-
 from http.client import HTTPConnection
 from urllib.parse import urlparse
-    
 
 from ..pipeline import (
     PipelineRequest,

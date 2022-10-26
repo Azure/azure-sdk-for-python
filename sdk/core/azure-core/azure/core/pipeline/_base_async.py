@@ -23,9 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import abc
-
 from typing import Any, Union, List, Generic, TypeVar, Dict
+from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
@@ -39,8 +38,6 @@ ImplPoliciesType = List[
     ]
 ]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
-
-from contextlib import AbstractAsyncContextManager
 
 class _SansIOAsyncHTTPPolicyRunner(
     AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
