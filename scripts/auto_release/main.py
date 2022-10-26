@@ -381,7 +381,7 @@ class CodegenTestPR:
     @staticmethod
     def get_need_dependency() -> List[str]:
         template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
-        items = ["msrest", "azure-mgmt-core", "typing_extensions"]
+        items = ["msrest>", "azure-mgmt-core", "typing_extensions"]
         with open(template_path, 'r') as fr:
             content = fr.readlines()
         dependencies = []
@@ -408,15 +408,14 @@ class CodegenTestPR:
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
-            dependency_name = dependency.split('>')[0]
+            dependency_name = re.compile("[a-zA-Z-_]*").findall(dependency)[0]
             for i in range(len(content)):
                 if new_line in content[i]:
                     return
                 if f'azure-mgmt-{self.package_name} {dependency_name}' in content[i]:
                     content[i] = new_line + '\n'
                     return
-            prefix = '' if '\n' in content[-1] else '\n'
-            content.insert(self.insert_line_num(content), prefix + new_line + '\n')
+            content.insert(self.insert_line_num(content), new_line + '\n')
 
         modify_file(str(Path('shared_requirements.txt')), edit_ci_file)
         print_exec('git add shared_requirements.txt')
