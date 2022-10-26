@@ -80,6 +80,7 @@ setup(
         {%- endif %}
         {%- if need_azuremgmtcore %}
         'azure-mgmt-core>=1.3.2,<2.0.0',
+        "typing_extensions>=4.3.0; python_version<'3.8.0'",
         {%- endif %}
     ],
     python_requires=">=3.7"
