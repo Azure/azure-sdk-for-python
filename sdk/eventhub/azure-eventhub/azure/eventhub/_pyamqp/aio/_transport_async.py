@@ -42,7 +42,6 @@ from io import BytesIO
 import logging
 
 
-
 import certifi
 
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
@@ -102,7 +101,7 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
-                    _LOGGER.debug(
+                    raise ValueError(
                         f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
                     )
 
@@ -380,7 +379,7 @@ class AsyncTransport(
 
     async def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        await self.loop.run_in_executor(None, self.writer.write, s)
+        self.writer.write(s)
         await self.writer.drain()
 
     async def close(self):
@@ -496,9 +495,6 @@ class WebSocketTransportAsync(
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
-        except OSError:
-            await self.session.close()
-            raise ConnectionError('Client Session Closed')
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
@@ -520,8 +516,8 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
-        except asyncio.TimeoutError as te:
-            raise ConnectionError('recv timed out (%s)' % te)
+        except asyncio.TimeoutError:
+            raise TimeoutError()
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -535,7 +531,4 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        try:
-            await self.ws.send_bytes(s)
-        except asyncio.TimeoutError as te:
-            raise ConnectionError('send timed out (%s)' % te)
+        await self.ws.send_bytes(s)

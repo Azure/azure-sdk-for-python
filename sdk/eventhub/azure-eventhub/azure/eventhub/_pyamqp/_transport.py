@@ -416,7 +416,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             offset = frame_header[4]
             frame_type = frame_header[5]
             if verify_frame_type is not None and frame_type != verify_frame_type:
-                _LOGGER.debug(
+                raise ValueError(
                     f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
                 )
 
@@ -713,6 +713,7 @@ class WebSocketTransport(_AbstractTransport):
         try:
             while n:
                 data = self.ws.recv()
+
                 if len(data) <= n:
                     view[length : length + len(data)] = data
                     n -= len(data)
@@ -721,8 +722,8 @@ class WebSocketTransport(_AbstractTransport):
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
-        except WebSocketTimeoutException as wte:
-            raise ConnectionError('recv timed out (%s)' % wte)
+        except WebSocketTimeoutException:
+            raise TimeoutError()
 
     def _shutdown_transport(self):
         # TODO Sync and Async close functions named differently
@@ -735,13 +736,4 @@ class WebSocketTransport(_AbstractTransport):
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        from websocket import WebSocketConnectionClosedException, WebSocketTimeoutException
-        try:
-            self.ws.send_binary(s)
-        except WebSocketTimeoutException as e:
-            raise ConnectionError('send timed out (%s)' % e)
-        except SSLError as e:
-            raise ConnectionError('send disconnected by SSL (%s)' % e)
-        except WebSocketConnectionClosedException as e:
-            raise ConnectionError('send disconnected (%s)' % e)
-            
+        self.ws.send_binary(s)
