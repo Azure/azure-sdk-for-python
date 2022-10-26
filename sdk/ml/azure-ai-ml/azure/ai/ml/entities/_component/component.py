@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import tempfile
-import typing
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from marshmallow import Schema, INCLUDE
+from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerData,
