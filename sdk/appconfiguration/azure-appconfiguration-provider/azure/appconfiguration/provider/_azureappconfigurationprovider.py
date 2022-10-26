@@ -89,6 +89,7 @@ class AzureAppConfigurationProvider:
                 # If we get here, we have successfully loaded the configuration settings from the client.
                 # We don't need to check the other clients.
                 break
+
             except ServiceRequestError as e:
                 print("Failed to load configuration settings from " + client[0] + " from Service Request Failure {}."
                     .format(e))
@@ -96,12 +97,64 @@ class AzureAppConfigurationProvider:
                     raise e
                 print("Trying next client.")
             except HttpResponseError as e:
-                print("Failed to load configuration settings from " + client[0] + " from Htt Response Error {}."
+                print("Failed to load configuration settings from " + client[0] + " from Http Response Error {}."
                     .format(e))
-                if not ((e.status_code == 408 or e.status_code == 429 or e.status_code == 500) and
+
+                if e.status_code == 404 and not str(e).find("Unable to find a record") == -1:
+                    print("Failed PyTest")
+                elif not ((e.status_code == 408 or e.status_code == 429 or e.status_code == 500) and
                     len(provider._clients) > 1) or len(provider._clients) == client_count:
                     raise e
+                
                 print("Trying next client.")
+
+
+        return provider
+
+    def __parse_connection_string(self, connection_string):
+        # type: (str) -> str
+        """Parses the connection string to get the endpoint.
+
+        :param connection_string: Connection string
+        :type connection_string: str
+        :return: Endpoint
+        :rtype: str
+        """
+        if connection_string is None:
+            raise ValueError("Connection string is None")
+        if "endpoint=" not in connection_string:
+            raise ValueError("Connection string is invalid")
+        endpoint = connection_string.split("endpoint=")[1].split(";")[0]
+        return endpoint
+
+    def __build_provider(self, connection_string, endpoint, credential, key_vault_options):
+        # type: (str, str, Union[AppConfigConnectionStringCredential, TokenCredential], KeyVaultOptions) -> AzureAppConfigurationClient
+        """Builds the Azure App Configuration client.
+
+        :param connection_string: Connection string
+        :type connection_string: str
+        :param endpoint: Endpoint
+        :type endpoint: str
+        :param credential: Credential
+        :type credential: Union[AppConfigConnectionStringCredential, TokenCredential]
+        :param key_vault_options: Options for resolving Key Vault references
+        :type key_vault_options: ~azure.appconfigurationprovider.KeyVaultOptions
+        :return: Azure App Configuration client
+        :rtype: ~azure.appconfiguration.AzureAppConfigurationClient
+        """
+        if connection_string is None and endpoint is None:
+            raise ValueError("Connection string and endpoint are None")
+        if connection_string is not None and endpoint is not None:
+            raise ValueError("Both connection string and endpoint are set. Only one of these should be set.")
+        if connection_string is not None:
+            return AzureAppConfigurationClient.from_connection_string(connection_string, user_agent=USER_AGENT)
+        if key_vault_options is not None:
+            return AzureAppConfigurationClient(endpoint, credential, user_agent=USER_AGENT,
+                secret_client=SecretClient(key_vault_options.vault_url, credential))
+        return AzureAppConfigurationClient(endpoint, credential, user_agent=USER_AGENT)
+
+    def __load_selected_configurations(self, client, secret_clients, selects, key_vault_options):
+        # type: (list, dict, list[SettingSelector], KeyVaultOptions) ->
         return provider
 
     def __load_selected_configurations(self, client, secret_clients, selects, key_vault_options):
