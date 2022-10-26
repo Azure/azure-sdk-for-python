@@ -64,7 +64,7 @@ def file_asset_id(variable_recorder) -> str:
 @pytest.fixture
 def artifact_path(tmpdir_factory, variable_recorder) -> str:  # type: ignore
     file_name = tmpdir_factory.mktemp("artifact_testing").join(TEST_ARTIFACT_FILE)
-    file_content = variable_recorder.get_or_record("file_content", str(uuid.uuid4()))
+    file_content = variable_recorder.get_or_record("file_content", "")
     file_name.write(file_content)
     return str(file_name)
 
