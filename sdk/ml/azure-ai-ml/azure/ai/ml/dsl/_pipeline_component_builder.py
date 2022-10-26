@@ -244,7 +244,10 @@ class PipelineComponentBuilder:
         for key, value in outputs.items():
             if not isinstance(key, str) or not isinstance(value, NodeOutput) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
-            meta = value._meta is not None or value is not None
+            if value._meta is not None:
+                meta = value._meta
+            else:
+                meta = value
 
             # hack: map component output type to valid pipeline output type
             def _map_type(_meta):
