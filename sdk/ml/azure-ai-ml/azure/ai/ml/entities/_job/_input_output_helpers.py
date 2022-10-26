@@ -12,8 +12,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import LiteralJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType, LiteralJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
 from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput as RestMLTableJobInput
@@ -65,6 +64,7 @@ OUTPUT_MOUNT_MAPPING_TO_REST = {
 }
 
 
+# TODO: Remove this as both rest type and sdk type are snake case now.
 def get_output_type_mapping_from_rest():
     """Get output type mapping."""
     return {
@@ -191,7 +191,8 @@ def to_rest_dataset_literal_inputs(
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
             validate_pipeline_input_key_contains_allowed_characters(input_name)
-        else:
+        elif job_type:
+            # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
             if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
@@ -255,6 +256,7 @@ def from_rest_inputs_to_dataset_literal(
         if input_value is None:
             continue
 
+        # TODO: Remove this as both rest type and sdk type are snake case now.
         type_transfer_dict = get_output_type_mapping_from_rest()
         # deal with invalid input type submitted by feb api
         # todo: backend help convert node level input/output type

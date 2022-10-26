@@ -93,6 +93,7 @@ def load_component_entity_from_rest_json(path) -> Component:
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestCommandComponent:
     def test_serialize_deserialize_basic(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
@@ -194,7 +195,7 @@ class TestCommandComponent:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
         # make sure default code has generated with name and version as content
         assert component_entity.code
-        assert COMPONENT_CODE_PLACEHOLDER == component_entity.code
+        assert component_entity.code == COMPONENT_CODE_PLACEHOLDER
 
     def test_serialize_deserialize_input_output_path(self, mock_machinelearning_client: MLClient):
         expected_value_dict = {
@@ -292,6 +293,14 @@ class TestCommandComponent:
         )
         component_hash2 = component_entity2._get_anonymous_hash()
         assert component_hash1 != component_hash2
+
+    def test_command_component_with_properties(self):
+        test_path = "./tests/test_configs/components/helloworld_component_with_properties.yml"
+        component_entity = load_component(source=test_path)
+        assert component_entity.properties == {"azureml.pipelines.dynamic": "true"}
+
+        validation_result = component_entity._validate()
+        assert validation_result.passed is True
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)

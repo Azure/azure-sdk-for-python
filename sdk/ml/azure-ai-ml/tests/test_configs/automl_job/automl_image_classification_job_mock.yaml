@@ -49,6 +49,9 @@ search_space:
     gradient_accumulation_step:
       type: choice
       values: [1, 2]
+    ams_gradient:
+      type: choice
+      values: [true, false]
 
   - model_name:
       type: choice
@@ -66,3 +69,4 @@ search_space:
     training_crop_size:
       type: choice
       values: [224, 256]
+    ams_gradient: false

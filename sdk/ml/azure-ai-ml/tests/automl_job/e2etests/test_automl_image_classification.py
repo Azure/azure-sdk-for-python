@@ -22,7 +22,7 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 
-@pytest.mark.automle2etest
+@pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(
     condition=not is_live(),

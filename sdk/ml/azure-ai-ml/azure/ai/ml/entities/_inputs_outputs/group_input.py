@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import copy
 from enum import Enum as PyEnum
 
 from azure.ai.ml.constants._component import IOConstants
@@ -38,9 +38,15 @@ class GroupInput(Input):
         from .._job.pipeline._io import PipelineInput
 
         default_dict = {}
+        # Note: no top-level group names at this time.
         for k, v in self.values.items():
-            # Assign directly if is subgroup, else create PipelineInput object
-            default_dict[k] = v.default if isinstance(v, GroupInput) else PipelineInput(name=k, data=v.default, meta=v)
+            # Create PipelineInput object if not subgroup
+            if not isinstance(v, GroupInput):
+                default_dict[k] = PipelineInput(name=k, data=v.default, meta=v)
+                continue
+            # Copy and insert k into group names for subgroup
+            default_dict[k] = copy.deepcopy(v.default)
+            default_dict[k].insert_group_name_for_items(k)
         return self._create_group_attr_dict(default_dict)
 
     @classmethod

@@ -34,6 +34,7 @@ def mock_workspace_connection_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestWorkspaceConnectionsOperation:
     @pytest.mark.parametrize(
         "arg", [ConnectionCategory.GIT, ConnectionCategory.PYTHON_FEED, ConnectionCategory.CONTAINER_REGISTRY]

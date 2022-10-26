@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities import Data
+from azure.ai.ml.entities import Data, Model
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
@@ -23,7 +23,7 @@ from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpr
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -189,6 +189,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             NodeOutput,
             Input,
             Data,
+            Model,
             str,
             bool,
             int,
@@ -231,7 +232,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 value = value._deepcopy()  # Decoupled input and output
                 io_dict[key] = value
                 value.mode = None
-            elif isinstance(value, dict):
+            elif type(value) == dict: # pylint: disable=unidiomatic-typecheck
+                # Use type comparison instead of is_instance to skip _GroupAttrDict
+                # when loading from yaml io will be a dict,
+                # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
                 # parse dict to allowed type
                 io_dict[key] = parse_cls(**value)
 
@@ -313,7 +317,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.

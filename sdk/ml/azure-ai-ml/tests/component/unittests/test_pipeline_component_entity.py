@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 import pytest
+import yaml
 
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml.entities import PipelineComponent, PipelineJob
@@ -16,6 +17,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineComponentEntity:
     def test_inline_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_inline_pipeline_component.yml"
@@ -415,3 +417,29 @@ class TestPipelineComponentEntity:
             "'group' is defined as a parameter group but got input '${{parent.inputs.top_group}}' with type '<class 'str'>'"
             in str(e.value)
         )
+
+    def test_simple_jobs_from_rest(self) -> None:
+        test_path = "./tests/test_configs/components/pipeline_component_jobs_rest_data.json"
+        with open(test_path, "r") as f:
+            json_in_file = yaml.safe_load(f)
+        json_in_file = json_in_file['properties']['component_spec']['jobs']
+        jobs = PipelineComponent._resolve_sub_nodes(json_in_file)
+        node_dict = {key: node._to_rest_object() for key, node in jobs.items()}['component_a_job']
+        assert node_dict['computeId'] == '${{parent.inputs.node_compute}}'
+        assert node_dict['outputs'] == {
+            'output_binding': {'type': 'literal', 'value': '${{parent.outputs.output}}'},
+            'output_binding2': {'type': 'literal', 'value': '${{parent.outputs.output}}'},
+            'output_data': {'job_output_type': 'uri_folder', 'mode': 'Upload'},
+            'output_data_legacy': {'job_output_type': 'uri_folder', 'mode': 'Upload'}}
+        assert node_dict['inputs'] == {
+            'binding_input': {'job_input_type': 'literal', 'value': '${{parent.inputs.component_in_path}}'},
+            'data_input': {'job_input_type': 'uri_file',
+                           'mode': 'Download',
+                           'uri': 'https://my-blob/path/to/data'},
+            'data_input_legacy': {'job_input_type': 'uri_file',
+                                  'mode': 'Download',
+                                  'uri': 'https://my-blob/path/to/data'},
+            'literal_input': {'job_input_type': 'literal', 'value': '11'},
+            'literal_input2': {'job_input_type': 'literal', 'value': '12'}}
+        assert node_dict['resources'] == {'instance_count': 1, 'properties': {
+            'target_selector': {'my_resource_only': 'false', 'allow_spot_vm': 'true'}}, 'shm_size': '2g'}

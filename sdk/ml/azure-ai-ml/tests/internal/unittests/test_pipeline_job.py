@@ -8,7 +8,7 @@ import pydash
 import pytest
 import yaml
 
-from azure.ai.ml import Input, load_component
+from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
     AISuperComputerConfiguration,
     AISuperComputerScalePolicy,
@@ -19,6 +19,16 @@ from azure.ai.ml._internal import (
     ITPResourceConfiguration,
     ITPRetrySettings,
     TargetSelector,
+    Command,
+    Scope,
+    HDInsight,
+    Parallel,
+    Distributed,
+    DataTransfer,
+    Starlite,
+    Pipeline,
+    Hemera,
+    Ae365exepool,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
 from azure.ai.ml.constants._common import AssetTypes
@@ -37,6 +47,7 @@ from .._utils import (
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJob:
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
@@ -58,6 +69,30 @@ class TestPipelineJob:
         result = dsl_pipeline._validate()
         assert result._to_dict() == {"result": "Succeeded"}
 
+        # check if node type is correct
+        node_in_pipeline = dsl_pipeline.jobs["node"]
+        if node_func.type == "CommandComponent":
+            assert isinstance(node_in_pipeline, Command)
+        elif node_func.type == "ScopeComponent":
+            assert isinstance(node_in_pipeline, Scope)
+        elif node_func.type == "HDInsightComponent":
+            assert isinstance(node_in_pipeline, HDInsight)
+        elif node_func.type == "ParallelComponent":
+            assert isinstance(node_in_pipeline, Parallel)
+        elif node_func.type == "DistributedComponent":
+            assert isinstance(node_in_pipeline, Distributed)
+        elif node_func.type == "DataTransferComponent":
+            assert isinstance(node_in_pipeline, DataTransfer)
+        elif node_func.type == "StarliteComponent":
+            assert isinstance(node_in_pipeline, Starlite)
+        elif node_func.type == "PipelineComponent":
+            assert isinstance(node_in_pipeline, Pipeline)
+        elif node_func.type == "HemeraComponent":
+            assert isinstance(node_in_pipeline, Hemera)
+        elif node_func.type == "Ae365exepoolComponent":
+            assert isinstance(node_in_pipeline, Ae365exepool)
+
+        # check if node's runsettings are set correctly
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
@@ -164,7 +199,7 @@ class TestPipelineJob:
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_internal_component_output_as_pipeline_component_output(self):
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component_func = load_component(yaml_path, params_override=[{"inputs": {}}])
 
         @pipeline()
@@ -220,7 +255,7 @@ class TestPipelineJob:
         assert result._to_dict() == {"result": "Succeeded"}
 
     def test_gjd_internal_component_in_pipeline(self):
-        yaml_path = "./tests/test_configs/internal/ls_command_component.yaml"  # GJD is based on CommandComponent
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # GJD is based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
 
@@ -246,7 +281,7 @@ class TestPipelineJob:
 
     def test_elastic_component_in_pipeline(self):
         yaml_path = (
-            "./tests/test_configs/internal/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
+            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
         )
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
@@ -303,7 +338,7 @@ class TestPipelineJob:
 
     def test_singularity_component_in_pipeline(self):
         yaml_path = (
-            "./tests/test_configs/internal/ls_command_component.yaml"  # singularity is based on CommandComponent
+            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
         )
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
@@ -366,7 +401,7 @@ class TestPipelineJob:
         }
 
     def test_load_pipeline_job_with_internal_components_as_node(self):
-        yaml_path = Path("./tests/test_configs/internal/helloworld_component_scope.yml")
+        yaml_path = Path("./tests/test_configs/internal/helloworld/helloworld_component_scope.yml")
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
@@ -472,7 +507,7 @@ class TestPipelineJob:
         assert dsl_pipeline._to_dict() == regenerated_pipeline_job._to_dict()
 
     def test_components_input_output(self):
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component: InternalComponent = load_component(yaml_path)
 
         fake_input = Input(type=AssetTypes.MLTABLE, path="azureml:scope_tsv:1")
@@ -527,3 +562,49 @@ class TestPipelineJob:
             if key.startswith("data_"):
                 expected_inputs[key] = {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"}
         assert rest_obj.properties.jobs["node"]["inputs"] == expected_inputs
+
+    def test_data_binding_on_node_runsettings(self):
+        test_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
+        component: InternalComponent = load_component(test_path)
+
+        @pipeline()
+        def pipeline_func(compute_name: str = "cpu-cluster", environment_name: str = "AzureML-PyTorch-1.6-GPU:1"):
+            node = component(
+                training_data=Input(path="./tests/test_configs/data"),
+                max_epochs=1,
+            )
+            node.compute = compute_name
+            node.environment = environment_name
+        pipeline_job = pipeline_func()
+        assert pipeline_job._validate().passed, repr(pipeline_job._validate())
+        rest_object = pipeline_job._to_rest_object().properties.jobs["node"]
+        assert str(rest_object["computeId"]) == "${{parent.inputs.compute_name}}"
+        assert str(rest_object["environment"]) == "${{parent.inputs.environment_name}}"
+
+    def test_pipeline_with_setting_node_output_directly(self) -> None:
+        component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
+        copy_func = load_component(component_dir / "command-linux/copy/component.yaml")
+
+        copy_file = copy_func(
+            input_dir=None,
+            file_names=None,
+        )
+
+        copy_file.outputs.output_dir.path = "path_on_datastore"
+        assert copy_file.outputs.output_dir.path == "path_on_datastore"
+        assert copy_file.outputs.output_dir.type == "path"
+
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(
+            source="./tests/test_configs/internal/pipeline_jobs/pipeline_job_with_properties.yml"
+        )
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]
+
