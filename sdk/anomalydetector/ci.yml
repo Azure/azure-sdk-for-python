@@ -20,6 +20,7 @@ pr:
     - hotfix/*
     - release/*
     - restapi*
+    - xingyuyue/multi_ad_sample
   paths:
     include:
     - sdk/anomalydetector/
