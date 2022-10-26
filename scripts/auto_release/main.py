@@ -390,7 +390,7 @@ class CodegenTestPR:
                 continue
             for j in range(i, len(content)):
                 for item in items:
-                    if item in content[i]:
+                    if item in content[j]:
                         dependencies.append(content[i].strip().strip(',').strip('\"'))
             break
         return dependencies
