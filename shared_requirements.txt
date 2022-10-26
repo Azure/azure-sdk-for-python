@@ -218,6 +218,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-monitor-ingestion azure-core<2.0.0,>=1.24.0
 #override azure-communication-sms msrest>=0.7.1
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.24.0
+#override azure-mgmt-resource typing_extensions>=4.3.0; python_version<'3.8.0'
 #override azure-communication-phonenumbers msrest>=0.7.1
 #override azure-communication-chat msrest>=0.7.1
 #override azure-communication-chat azure-core<2.0.0,>=1.24.0
