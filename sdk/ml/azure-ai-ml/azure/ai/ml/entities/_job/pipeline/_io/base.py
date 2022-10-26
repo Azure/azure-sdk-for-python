@@ -384,7 +384,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
-            is_control = self._meta.is_control if self._meta else None
+            is_control = self._meta.is_control if self._meta is not None else None
             result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control)
         else:
             msg = "Got unexpected type for output: {}."
