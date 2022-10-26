@@ -17,7 +17,6 @@ from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput, Pipeli
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 from .._schema.component import NodeType
-from ._input_outputs import InternalInput
 
 
 class InternalBaseNode(BaseNode):
@@ -73,9 +72,6 @@ class InternalBaseNode(BaseNode):
             properties=properties,
             **kwargs,
         )
-
-    def _build_input(self, name, meta: Input, data) -> NodeInput:
-        return super(InternalBaseNode, self)._build_input(name, InternalInput._cast_from_input_or_dict(meta), data)
 
     @property
     def _skip_required_compute_missing_validation(self) -> bool:

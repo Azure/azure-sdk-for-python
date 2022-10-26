@@ -26,6 +26,7 @@ from azure.ai.ml.constants._common import (
     CommonYamlFields,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
@@ -507,7 +508,7 @@ class Component(
 
     @contextmanager
     def _resolve_local_code(self):
-        """Resolve working directory path for the component."""
+        """Create a Code object pointing to local code and yield it."""
         if hasattr(self, "code"):
             code = getattr(self, "code")
             # Hack: when code not specified, we generated a file which contains
@@ -522,9 +523,9 @@ class Component(
                     code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
                     with open(code, "w") as f:
                         f.write(COMPONENT_CODE_PLACEHOLDER)
-                    yield code
+                    yield Code(base_path=self._base_path, path=code)
             else:
-                yield code
+                # call component.code.setter first in case there is a custom setter
+                yield Code(base_path=self._base_path, path=code)
         else:
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                yield tmp_dir
+            raise ValueError(f"{self.__class__} does not have attribute code.")
