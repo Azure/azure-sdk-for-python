@@ -77,7 +77,7 @@ setup(
         # Used for PR 718512
         "colorama<=0.4.4",
         "pyjwt<3.0.0",
-        "azure-storage-blob<13.0.0,>=12.10.0",
+        "azure-storage-blob<13.0.0,>=12.14.0b1",
         "azure-storage-file-share<13.0.0",
         "azure-storage-file-datalake<13.0.0",
         "pydash<6.0.0",
