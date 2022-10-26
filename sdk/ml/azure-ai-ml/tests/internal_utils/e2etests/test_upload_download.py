@@ -195,7 +195,7 @@ class TestUpload(AzureRecordedTestCase):
 
         assert (name, str(version)) == (artifact_info["name"], artifact_info["version"])
 
-    @pytest.mark.skip(reason="test timing out")
+    #@pytest.mark.skip(reason="test timing out")
     def test_artifact_blob_dir_upload_and_download(
         self,
         storage_account_name: str,
