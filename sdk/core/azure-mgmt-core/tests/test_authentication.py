@@ -32,12 +32,7 @@ from azure.mgmt.core.policies._authentication import _parse_claims_challenge, AR
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
-
-try:
-    from unittest.mock import Mock
-except ImportError:
-    # python < 3.3
-    from mock import Mock
+from unittest.mock import Mock
 
 
 @pytest.mark.parametrize(
