@@ -1154,6 +1154,23 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_list_blobs_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        blob_client = container.get_blob_client('blob1')
+        blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
+
+        # Act
+        for blob_properties in container.list_blobs():
+            assert blob_properties.blob_tier == StandardBlobTier.Cold
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_list_blobs(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2194,6 +2211,25 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert a[0].version_id
         assert a[1].name == 'a/blob2'
         assert a[1].version_id
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_walk_blobs_cold_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+        data = b'hello world'
+
+        container.get_blob_client('blob1').upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
+
+        # Act
+        resp = list(container.walk_blobs())
+
+        # Assert
+        for blob_properties in resp:
+            assert blob_properties.blob_tier == StandardBlobTier.Cold
 
     @BlobPreparer()
     @recorded_by_proxy

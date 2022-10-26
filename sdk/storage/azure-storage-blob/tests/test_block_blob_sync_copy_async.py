@@ -217,6 +217,20 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         assert self.source_blob_data == content
 
     @BlobPreparer()
+    async def test_copy_blob_with_cold_tier_sync(self, storage_account_name, storage_account_key):
+        await self._setup(storage_account_name, storage_account_key)
+        dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+        blob_tier = StandardBlobTier.Cold
+
+        # Act
+        await dest_blob.start_copy_from_url(self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True)
+        copy_blob_properties = await dest_blob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
+
+    @BlobPreparer()
     @recorded_by_proxy_async
     async def test_sync_copy_blob_returns_vid(self, **kwargs):
         storage_account_name = kwargs.pop("versioned_storage_account_name")
