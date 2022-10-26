@@ -334,11 +334,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         # Some sanity checking of the outputs. Unit tests already extensively cover the translation to/from REST of outputs. If the job finishes successfully,
         # that means all of the outputs were set properly by the CLI.
         job_out_1 = created_job.outputs.get("job_out_path_1", None)
-        assert job_out_1
+        assert job_out_1 is not None
         assert job_out_1.mode == InputOutputModes.RW_MOUNT
 
         job_out_2 = created_job.outputs.get("job_out_path_2", None)
-        assert job_out_2
+        assert job_out_2 is not None
         assert job_out_2.mode == InputOutputModes.UPLOAD
 
         hello_world_component_1_outputs = created_job.jobs["hello_world_component_1"].outputs
@@ -1329,11 +1329,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.RO_MOUNT
 
         train_job = created_job.jobs["train_job"]
@@ -1349,11 +1349,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.UPLOAD
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.RO_MOUNT
 
         train_job = created_job.jobs["train_job"]
@@ -1369,11 +1369,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.RO_MOUNT
 
         train_job = created_job.jobs["train_job"]
@@ -1391,11 +1391,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.DOWNLOAD
 
         train_job = created_job.jobs["train_job"]
@@ -1413,11 +1413,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.DOWNLOAD
 
         train_job = created_job.jobs["train_job"]

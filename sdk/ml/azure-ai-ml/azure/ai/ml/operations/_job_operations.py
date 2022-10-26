@@ -873,9 +873,9 @@ class JobOperations(_ScopeDependentOperations):
         """
         if isinstance(job, AutoMLJob):
             self._resolve_job_input(job.training_data, job._base_path)
-            if job.validation_data:
+            if job.validation_data is not None:
                 self._resolve_job_input(job.validation_data, job._base_path)
-            if hasattr(job, "test_data") and job.test_data:
+            if hasattr(job, "test_data") and job.test_data is not None:
                 self._resolve_job_input(job.test_data, job._base_path)
 
     def _resolve_azureml_id(self, job: Job) -> Job:
