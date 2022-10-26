@@ -27,7 +27,6 @@
 import abc
 from typing import TypeVar, Generic
 from contextlib import AbstractContextManager   # pylint: disable=unused-import
-from ._base_async import AsyncPipeline
 
 ABC = abc.ABC
 
@@ -157,5 +156,6 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
         self.context = context
 
 from ._base import Pipeline  # pylint: disable=wrong-import-position
+from ._base_async import AsyncPipeline  # pylint: disable=wrong-import-position
 
 __all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext", "AsyncPipeline"]
