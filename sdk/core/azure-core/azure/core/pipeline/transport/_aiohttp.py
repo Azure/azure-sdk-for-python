@@ -195,12 +195,8 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword str proxy: will define the proxy to use all the time
         """
         await self.open()
-        try:
-            auto_decompress = self.session.auto_decompress  # type: ignore
-        except AttributeError:
-            # auto_decompress is introduced in aiohttp 3.7. We need this to handle Python 3.6.
-            auto_decompress = False
-
+        auto_decompress = self.session.auto_decompress  # type: ignore
+        
         proxies = config.pop('proxies', None)
         if proxies and 'proxy' not in config:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
