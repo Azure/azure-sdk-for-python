@@ -27,6 +27,7 @@
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
 
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
