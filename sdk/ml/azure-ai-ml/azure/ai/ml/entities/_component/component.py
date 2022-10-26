@@ -27,6 +27,7 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_FORMAT,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
@@ -449,31 +450,24 @@ class Component(
 
     @contextmanager
     def _resolve_local_code(self):
-        """Resolve working directory path for the component."""
-        # quick yield for scenario that component's code is a single file
-        if hasattr(self, "code") and getattr(self, "code") is not None and os.path.isfile(getattr(self, "code")):
-            yield getattr(self, "code")
+        """Create a Code object pointing to local code and yield it."""
+        if hasattr(self, "code"):
+            code = getattr(self, "code")
+            # Hack: when code not specified, we generated a file which contains
+            # COMPONENT_PLACEHOLDER as code
+            # This hack was introduced because job does not allow running component without a
+            # code, and we need to make sure when component updated some field(eg: description),
+            # the code remains the same. Benefit of using a constant code for all components
+            # without code is this will generate same code for anonymous components which
+            # enables component reuse
+            if code is None:
+                with tempfile.TemporaryDirectory() as tmp_dir:
+                    code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
+                    with open(code, "w") as f:
+                        f.write(COMPONENT_CODE_PLACEHOLDER)
+                    yield Code(base_path=self._base_path, path=code)
+            else:
+                # call component.code.setter first in case there is a custom setter
+                yield Code(base_path=self._base_path, path=code)
         else:
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                if not hasattr(self, "code"):
-                    yield tmp_dir
-                else:
-                    code = getattr(self, "code")
-                    if code is None:
-                        # Hack: when code not specified, we generated a file which contains
-                        # COMPONENT_PLACEHOLDER as code
-                        # This hack was introduced because job does not allow running component without a
-                        # code, and we need to make sure when component updated some field(eg: description),
-                        # the code remains the same. Benefit of using a constant code for all components
-                        # without code is this will generate same code for anonymous components which
-                        # enables component reuse
-                        code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
-                        with open(code, "w") as f:
-                            f.write(COMPONENT_CODE_PLACEHOLDER)
-                        yield code
-                    else:
-                        # copy to temp folder to filter potential __pycache__
-                        src_path = Path(self.base_path) / code
-                        dst_path = Path(tmp_dir) / src_path.name
-                        _copy_folder_ignore_pycache(src_path, dst_path)
-                        yield dst_path
+            raise ValueError(f"{self.__class__} does not have attribute code.")

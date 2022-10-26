@@ -329,7 +329,8 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
             assert (code_path / "LICENSE").exists()
             assert (code_path / "library.zip").exists()
@@ -352,7 +353,8 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
             if has_additional_includes:
                 # additional includes is specified, code will be tmp folder and need to check each item
@@ -529,3 +531,18 @@ class TestComponent:
         with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
+
+    def test_anonymous_component_reuse(self):
+        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml")
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+
+        component: InternalComponent = load_component(source=yaml_path)
+        with component._resolve_local_code() as code:
+            assert code.name == expected_snapshot_id
+
+            code.name = expected_snapshot_id
+            with pytest.raises(
+                AttributeError,
+                match="InternalCode name are calculated based on its content and cannot be changed.*"
+            ):
+                code.name = expected_snapshot_id + "1"

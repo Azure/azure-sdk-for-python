@@ -1126,8 +1126,14 @@
         "Nify",
         "ctxt",
         "unflattened",
-	  "deseralize",
-	  "wday"
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
       ]
     }
   ],
