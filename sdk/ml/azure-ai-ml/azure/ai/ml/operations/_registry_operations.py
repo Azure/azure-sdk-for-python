@@ -121,6 +121,14 @@ class RegistryOperations:
         """Create a new Azure Machine Learning Registry,
         or try to update if it already exists.
 
+        Note: Due to service limitations we have to sleep for
+        an additional 30~45 seconds AFTER the LRO Poller concludes
+        before the registry will be consistently deleted from the
+        perspective of subsequent operations.
+        If a deletion is required for subsequent operations to
+        work properly, callers should implement that logic until the
+        service has been fixed to return a reliable LRO.
+
         :param registry: Registry definition.
         :type registry: Registry
         :return: A poller to track the operation status.
