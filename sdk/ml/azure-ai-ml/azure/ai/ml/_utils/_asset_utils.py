@@ -420,7 +420,6 @@ def upload_file(
     source: str,
     dest: str = None,
     msg: Optional[str] = None,
-    size: int = 0,
     show_progress: Optional[bool] = None,
     in_directory: bool = False,
     callback: Any = None,
