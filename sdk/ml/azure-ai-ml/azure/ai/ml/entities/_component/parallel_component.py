@@ -16,6 +16,7 @@ from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 
 from ..._schema import PathAwareSchema
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
@@ -233,15 +234,13 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
             "resources": (dict, JobResourceConfiguration),
         }
 
-    def _to_dict(self) -> Dict:
-        """Dump the parallel component content into a dictionary."""
-        tmp_dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(ParallelComponent, self)._to_dict()})
-        # The backend treats the partition keys as a serialized json string.
-        if "partition_keys" in tmp_dict:
+    def _to_rest_object(self) -> ComponentVersionData:
+        rest_object = super()._to_rest_object()
+        if self.partition_keys:
             import json
-            tmp_dict["partition_keys"] = json.dumps(tmp_dict["partition_keys"])
-        return tmp_dict
-
+            rest_object.properties.component_spec["partition_keys"]= \
+                json.dumps(self.partition_keys)
+        return rest_object
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
