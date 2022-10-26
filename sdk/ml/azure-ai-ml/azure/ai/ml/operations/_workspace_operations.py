@@ -142,7 +142,6 @@ class WorkspaceOperations:
     def begin_create(
         self,
         workspace: Workspace,
-        update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
@@ -151,7 +150,6 @@ class WorkspaceOperations:
 
         :param workspace: Workspace definition.
         :type workspace: Workspace
-        :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
@@ -164,8 +162,10 @@ class WorkspaceOperations:
 
         # idempotent behavior
         if existing_workspace:
-            existing_workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
-            existing_workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            existing_workspace.container_registry = workspace.container_registry \
+                or existing_workspace.container_registry
+            existing_workspace.application_insights = workspace.application_insights \
+                or existing_workspace.application_insights
             existing_workspace.identity = workspace.identity or existing_workspace.identity
             existing_workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
