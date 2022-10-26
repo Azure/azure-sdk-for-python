@@ -394,6 +394,5 @@ def test_request_bytes_body_and_content_kwarg(old_request):
         new_request.content ==
         bytes_input
     )
-    assert old_request.headers["Content-Length"] == new_request.headers['Content-Length'] == '13'
-    assert new_request.headers["Content-Type"] == "text/plain"
+    assert old_request.headers == new_request.headers == {'Content-Length': '13'}
     assert old_request.files == new_request.files
