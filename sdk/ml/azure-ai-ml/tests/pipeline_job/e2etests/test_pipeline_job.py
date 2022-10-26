@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict
 
 from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import is_live
 import pydash
 import pytest
 from marshmallow import ValidationError
@@ -615,6 +616,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="need further investigation for these cases unreliability under none live mode")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
