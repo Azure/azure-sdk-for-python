@@ -35,8 +35,6 @@ class _EventHubProcessorTest(EventPerfTest):
             self.async_checkpoint_store = AsyncBlobCheckpointStore.from_connection_string(storage_connection_str, self.container_name)
 
         transport_type = TransportType.AmqpOverWebsocket if arguments.transport_type==1 else TransportType.Amqp
-        print(transport_type)
-        print(arguments.uamqp_transport)
 
         self.consumer = EventHubConsumerClient.from_connection_string(
             connection_string,
@@ -142,8 +140,6 @@ class _SendTest(BatchPerfTest):
         eventhub_name = self.get_from_env("AZURE_EVENTHUB_NAME")
 
         transport_type = TransportType.AmqpOverWebsocket if arguments.transport_type==1 else TransportType.Amqp
-        print(transport_type)
-        print(arguments.uamqp_transport)
 
         self.producer = EventHubProducerClient.from_connection_string(
             connection_string,
