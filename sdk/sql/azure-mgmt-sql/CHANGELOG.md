@@ -1,5 +1,98 @@
 # Release History
 
+## 4.0.0 (2022-10-26)
+
+### Features Added
+
+  - Added operation ManagedDatabasesOperations.begin_cancel_move
+  - Added operation ManagedDatabasesOperations.begin_complete_move
+  - Added operation ManagedDatabasesOperations.begin_start_move
+  - Added operation ServerConnectionPoliciesOperations.list_by_server
+  - Added operation TransparentDataEncryptionsOperations.list_by_database
+  - Added operation group DatabaseAdvancedThreatProtectionSettingsOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentBaselinesOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentExecuteScanOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentScanResultOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentScansOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentsSettingsOperations
+  - Added operation group DistributedAvailabilityGroupsOperations
+  - Added operation group EndpointCertificatesOperations
+  - Added operation group IPv6FirewallRulesOperations
+  - Added operation group ManagedDatabaseAdvancedThreatProtectionSettingsOperations
+  - Added operation group ManagedDatabaseMoveOperationsOperations
+  - Added operation group ManagedInstanceAdvancedThreatProtectionSettingsOperations
+  - Added operation group ManagedInstanceDtcsOperations
+  - Added operation group ManagedServerDnsAliasesOperations
+  - Added operation group ServerAdvancedThreatProtectionSettingsOperations
+  - Added operation group ServerTrustCertificatesOperations
+  - Added operation group SqlVulnerabilityAssessmentBaselineOperations
+  - Added operation group SqlVulnerabilityAssessmentBaselinesOperations
+  - Added operation group SqlVulnerabilityAssessmentExecuteScanOperations
+  - Added operation group SqlVulnerabilityAssessmentRuleBaselineOperations
+  - Added operation group SqlVulnerabilityAssessmentRuleBaselinesOperations
+  - Added operation group SqlVulnerabilityAssessmentScanResultOperations
+  - Added operation group SqlVulnerabilityAssessmentScansOperations
+  - Added operation group SqlVulnerabilityAssessmentsOperations
+  - Added operation group SqlVulnerabilityAssessmentsSettingsOperations
+  - Added operation group SynapseLinkWorkspacesOperations
+  - Model Database has a new parameter federated_client_id
+  - Model Database has a new parameter identity
+  - Model Database has a new parameter source_resource_id
+  - Model DatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model DatabaseUpdate has a new parameter federated_client_id
+  - Model DatabaseUpdate has a new parameter identity
+  - Model ElasticPool has a new parameter high_availability_replica_count
+  - Model ElasticPoolUpdate has a new parameter high_availability_replica_count
+  - Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ManagedDatabase has a new parameter storage_container_identity
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_backup_type
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_restore_plan_size_mb
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_restored_size_mb
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter diff_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter full_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter log_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_queued
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_restored
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_restoring
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_skipped
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_unrestorable
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter type_properties_type
+  - Model ManagedDatabaseUpdate has a new parameter storage_container_identity
+  - Model ManagedInstance has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter service_principal
+  - Model ManagedInstanceUpdate has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter service_principal
+  - Model ServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ServerDevOpsAuditingSettings has a new parameter is_managed_identity_in_use
+  - Model VirtualCluster has a new parameter version
+  - Model VirtualClusterUpdate has a new parameter version
+
+### Breaking Changes
+
+  - Model ManagedInstance no longer has parameter storage_account_type
+  - Model ManagedInstanceUpdate no longer has parameter storage_account_type
+  - Model RestorableDroppedDatabase no longer has parameter elastic_pool_id
+  - Model VirtualCluster no longer has parameter family
+  - Model VirtualCluster no longer has parameter maintenance_configuration_id
+  - Model VirtualClusterUpdate no longer has parameter family
+  - Model VirtualClusterUpdate no longer has parameter maintenance_configuration_id
+  - Operation TransparentDataEncryptionsOperations.create_or_update has a new parameter tde_name
+  - Operation TransparentDataEncryptionsOperations.create_or_update no longer has parameter transparent_data_encryption_name
+  - Operation TransparentDataEncryptionsOperations.get has a new parameter tde_name
+  - Operation TransparentDataEncryptionsOperations.get no longer has parameter transparent_data_encryption_name
+  - Removed operation ReplicationLinksOperations.begin_unlink
+  - Removed operation group OperationsHealthOperations
+  - Removed operation group TransparentDataEncryptionActivitiesOperations
+  - Renamed operation LedgerDigestUploadsOperations.create_or_update to LedgerDigestUploadsOperations.begin_create_or_update
+  - Renamed operation LedgerDigestUploadsOperations.disable to LedgerDigestUploadsOperations.begin_disable
+  - Renamed operation ReplicationLinksOperations.delete to ReplicationLinksOperations.begin_delete
+  - Renamed operation ServerConnectionPoliciesOperations.create_or_update to ServerConnectionPoliciesOperations.begin_create_or_update
+  - Renamed operation VirtualClustersOperations.update_dns_servers to VirtualClustersOperations.begin_update_dns_servers
+
 ## 4.0.0b4 (2022-09-29)
 
 ### Features Added

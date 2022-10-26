@@ -436,6 +436,7 @@ from ._sql_management_client_enums import DatabaseReadScale
 from ._sql_management_client_enums import DatabaseState
 from ._sql_management_client_enums import DatabaseStatus
 from ._sql_management_client_enums import DayOfWeek
+from ._sql_management_client_enums import DevOpsAuditingSettingsName
 from ._sql_management_client_enums import DiffBackupIntervalInHours
 from ._sql_management_client_enums import DtcName
 from ._sql_management_client_enums import ElasticPoolLicenseType
@@ -977,6 +978,7 @@ __all__ = [
     "DatabaseState",
     "DatabaseStatus",
     "DayOfWeek",
+    "DevOpsAuditingSettingsName",
     "DiffBackupIntervalInHours",
     "DtcName",
     "ElasticPoolLicenseType",
