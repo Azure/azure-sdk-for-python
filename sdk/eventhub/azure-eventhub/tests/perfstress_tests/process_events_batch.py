@@ -66,6 +66,7 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
             await self.error_raised_async(e)
 
     def process_error_sync(self, _, error):
+        print(error)
         self.error_raised_sync(error)
 
     async def process_error_async(self, _, error):
@@ -101,3 +102,5 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
     def add_arguments(parser):
         super(ProcessEventsBatchTest, ProcessEventsBatchTest).add_arguments(parser)
         parser.add_argument('--max-batch-size', nargs='?', type=int, help='Maximum number of events to process in a single batch. Defaults to 100.', default=100)
+        parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
+        parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)        
