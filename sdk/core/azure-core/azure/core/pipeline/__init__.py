@@ -26,6 +26,8 @@
 
 import abc
 from typing import TypeVar, Generic
+from contextlib import AbstractContextManager   # pylint: disable=unused-import
+
 ABC = abc.ABC
 
 HTTPResponseType = TypeVar("HTTPResponseType")
